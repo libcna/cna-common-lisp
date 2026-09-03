@@ -90,18 +90,20 @@ member or list, and LAYER-DEPTH orders the sprite."))
                               (color nil color-supplied-p)
                               (rotation 0.0f0) origin (scale 1.0f0)
                               (effects :none) (layer-depth 0.0f0))
-  (cna-lisp.internal:check-usable batch "draw-texture")
-  (cna-lisp.internal:check-live texture "draw-texture")
-  (unless (%begun-p batch)
-    (error 'microsoft.xna.framework:cna-invalid-state-error
-           :operation "draw-texture" :object-type 'sprite-batch
-           :format-control "DRAW-TEXTURE is only legal between BEGIN and END."))
+  ;; Arguments are checked before state, the same order the CNA C ABI documents
+  ;; for itself: a call that gets both wrong reports the argument.
   (when (and position destination)
     (error 'microsoft.xna.framework:cna-usage-error
            :operation "draw-texture"
            :format-control
            "give either :POSITION or :DESTINATION, not both: they are different XNA ~
             overloads and mean different things."))
+  (cna-lisp.internal:check-usable batch "draw-texture")
+  (cna-lisp.internal:check-live texture "draw-texture")
+  (unless (%begun-p batch)
+    (error 'microsoft.xna.framework:cna-invalid-state-error
+           :operation "draw-texture" :object-type 'sprite-batch
+           :format-control "DRAW-TEXTURE is only legal between BEGIN and END."))
   (let* ((tint (if color-supplied-p color (microsoft.xna.framework:white)))
          (src (or source (bounds texture)))
          (scale-x (if (numberp scale) (coerce scale 'single-float)

@@ -64,8 +64,8 @@ registry. Private; not part of the published API.")
    #:with-contained-callback #:*pending-callback-condition*
    #:take-pending-callback-condition #:release-callback-error-buffer
    #:call-native-frame
-   ;; misc -----------------------------------------------------------------
-   #:clamp-byte #:copy-if-value))
+   ;; floating point ---------------------------------------------------------
+   #:with-binary32-semantics))
 
 (defpackage #:cna-lisp.internal.framework
   (:documentation "Private tables and helpers for the Microsoft.Xna.Framework projection.")

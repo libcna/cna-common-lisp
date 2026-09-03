@@ -291,7 +291,7 @@
         {
           "name": "title-0",
           "c_type": "CNA_StringView",
-          "cffi_type": ":uint64",
+          "cffi_type": ":pointer",
           "flattened_from": "CNA_StringView",
           "eightbyte": 0
         },
@@ -1110,7 +1110,7 @@
         {
           "name": "path-0",
           "c_type": "CNA_StringView",
-          "cffi_type": ":uint64",
+          "cffi_type": ":pointer",
           "flattened_from": "CNA_StringView",
           "eightbyte": 0
         },
@@ -1660,7 +1660,7 @@
       "direction": "in",
       "versioned": false,
       "by_value_flattening": [
-        ":uint64",
+        ":pointer",
         ":uint64"
       ],
       "eightbyte_classes": [

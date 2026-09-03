@@ -22,7 +22,8 @@ rather than a division by zero."
   (let ((w (viewport-width viewport)) (h (viewport-height viewport)))
     (if (or (zerop w) (zerop h))
         0.0f0
-        (/ (coerce w 'single-float) (coerce h 'single-float)))))
+        (cna-lisp.internal:with-binary32-semantics
+          (/ (coerce w 'single-float) (coerce h 'single-float))))))
 
 (defun viewport-bounds (viewport)
   "Viewport.Bounds."

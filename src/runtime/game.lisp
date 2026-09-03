@@ -458,10 +458,16 @@ shutdown callbacks run inside that call, and a game that could not be resolved
 there would be a callback arriving after teardown."
   (let ((already-disposed (disposed-p game))
         (token (%callback-token game)))
-    (call-next-method)
-    (unless already-disposed
-      (when token (cna-lisp.internal:unregister-callback-target token))
-      (setf (slot-value game 'callback-token) nil)
-      (when (eq (cna-lisp.internal:active-game) game)
-        (setf (cna-lisp.internal:active-game) nil))))
+    (if already-disposed
+        (call-next-method)
+        ;; The cleanup must happen even when the shutdown reported a failure:
+        ;; CNA released the handle either way, so leaving the registry entry or
+        ;; the active-game slot behind would mean a destroyed game that still
+        ;; looks live to the next `make-instance'.
+        (unwind-protect (call-next-method)
+          (progn
+            (when token (cna-lisp.internal:unregister-callback-target token))
+            (setf (slot-value game 'callback-token) nil)
+            (when (eq (cna-lisp.internal:active-game) game)
+              (setf (cna-lisp.internal:active-game) nil))))))
   (values))

@@ -281,14 +281,27 @@ def flatten_aggregate(sname, abi):
             "%s has a non-INTEGER eightbyte (%s): passing it in an SSE register is not "
             "expressible in CFFI without cffi-libffi. Route left unbound."
             % (sname, ",".join(classes)))
+    # An eightbyte that is exactly one pointer field is bound as :pointer. It
+    # occupies the same INTEGER register either way, but CFFI will not accept a
+    # foreign pointer where an integer is declared, and turning every pointer
+    # into an address at the call site would be a hand conversion in 294 places.
+    pointer_eightbytes = {}
+    for ctype, fname, count in abi.struct_fields[sname]:
+        off, fsize = layout["fields"][fname]
+        if count is None and fsize == 8 and off % 8 == 0:
+            if abi.resolve(ctype)[0] == "pointer":
+                pointer_eightbytes[off // 8] = True
     out = []
     remaining = size
-    for _ in classes:
+    for index, _ in enumerate(classes):
         chunk = min(8, remaining)
-        out.append({1: ":uint8", 2: ":uint16", 4: ":uint32", 8: ":uint64"}.get(chunk))
-        if out[-1] is None:
-            raise Error("%s has an eightbyte of %d bytes, which has no scalar of the same "
-                        "width" % (sname, chunk))
+        if pointer_eightbytes.get(index):
+            out.append(":pointer")
+        else:
+            out.append({1: ":uint8", 2: ":uint16", 4: ":uint32", 8: ":uint64"}.get(chunk))
+            if out[-1] is None:
+                raise Error("%s has an eightbyte of %d bytes, which has no scalar of the "
+                            "same width" % (sname, chunk))
         remaining -= chunk
     return out
 
@@ -427,7 +440,7 @@ def build(abi, manifest):
                         "aggregate for by-value passing" % (fname, detail))
                 for i, cf in enumerate(flat):
                     params.append({"name": "%s-%d" % (pname, i), "c_type": detail,
-                                   "cffi_type": cf, "flattened_from": detail,
+                                                          "cffi_type": cf, "flattened_from": detail,
                                    "eightbyte": i})
             else:
                 params.append({"name": pname, "c_type": ctype,
@@ -550,12 +563,12 @@ def emit_functions(resolved):
         out.append("")
     out.append("(defparameter *bound-native-functions*")
     out.append("  '(" + "\n    ".join(
-        "(\"%s\" %s %s :thread %s :ownership %s)"
-        % (f["name"], f["returns"],
+        "(\"%s\" %s %s %s :thread %s :ownership %s)"
+        % (f["name"], "%" + lisp_name(f["name"])[len("cna-"):], f["returns"],
            "(" + " ".join(p["cffi_type"] for p in f["params"]) + ")",
            ":" + f["thread"], "\"" + f["ownership"] + "\"")
         for f in resolved["functions"]) + ")")
-    out.append("  \"Every native route this binding may call, with its bound CFFI shape.\")")
+    out.append("  \"Every native route this binding may call: C name, Lisp name, and bound CFFI shape.\")")
     out.append("")
     return "\n".join(out) + "\n"
 
@@ -749,6 +762,26 @@ def main(argv):
     }
     write("docs/generated/native-abi-manifest.json",
           json.dumps(report, indent=2, sort_keys=False) + "\n", args.check, changed)
+
+    # A digest of every generated file, so a stale or hand-edited one is caught in
+    # an image that has no CNA headers and no C compiler.
+    digests = {}
+    for path in ["src/internal/ffi/constants.generated.lisp",
+                 "src/internal/ffi/structs.generated.lisp",
+                 "src/internal/ffi/functions.generated.lisp",
+                 "src/framework/predefined-colors.generated.lisp",
+                 "tools/native-abi/probe.generated.c",
+                 "tools/native-abi/valueprobe.generated.c"]:
+        full = os.path.join(ROOT, path)
+        if os.path.exists(full):
+            with open(full, encoding="utf-8") as fh:
+                digests[path] = sha256_of(fh.read())
+    write("docs/generated/generated-files.json",
+          json.dumps({"schema_version": 1,
+                      "generator": "tools/native-abi/generate.py",
+                      "abi_version": baseline["abi_version"],
+                      "files": digests}, indent=2) + "\n",
+          args.check, changed)
 
     if args.check:
         if changed:

@@ -45,6 +45,22 @@ Currently blocked by this:
 
 The getter is present. The refusal is proved by the generator, not asserted.
 
+## A fixed time step does not make a frame count an update count
+
+Measured: under CNA's fixed time step, a frame that took longer than the target
+step is followed by catch-up updates, so `n` calls to `run-one-frame` can deliver
+more than `n` updates. A full garbage collection between frames is enough to
+trigger it.
+
+Drawing is one per frame in both modes. Under **variable** timing
+(`(setf (is-fixed-time-step game) nil)`) a frame is exactly one update and one
+draw, with a full collection in between or without.
+
+That is why every deterministic frame-count claim in this project -- the
+template's `--frames 60` and `--frames 600`, and the tests that pin an update
+count -- uses variable timing. A deterministic claim under a fixed step would be
+a claim about how fast the machine happened to be.
+
 ## Texture extent comes from the image, not from CNA
 
 CNA has no route reporting a `Texture2D`'s pixel extent. `width` and `height`

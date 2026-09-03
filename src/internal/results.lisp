@@ -10,7 +10,7 @@
 
 (defparameter *result-conditions*
   `((,ffi::+result-invalid-argument+  . microsoft.xna.framework:cna-invalid-argument-error)
-    (,ffi::+result-invalid-handle+    . microsoft.xna.framework:cna-invalid-handle-error)
+    (,ffi::+result-invalid-handle+    . microsoft.xna.framework:cna-invalid-object-error)
     (,ffi::+result-invalid-state+     . microsoft.xna.framework:cna-invalid-state-error)
     (,ffi::+result-out-of-memory+     . microsoft.xna.framework:cna-out-of-memory-error)
     (,ffi::+result-io+                . microsoft.xna.framework:cna-io-error)

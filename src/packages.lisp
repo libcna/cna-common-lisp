@@ -71,7 +71,7 @@
    #:dispose #:disposed-p #:with-disposal
    ;; --- conditions --------------------------------------------------------
    #:cna-error #:cna-native-error #:cna-usage-error
-   #:cna-invalid-argument-error #:cna-invalid-handle-error
+   #:cna-invalid-argument-error #:cna-invalid-object-error
    #:cna-invalid-state-error #:cna-out-of-memory-error #:cna-io-error
    #:cna-not-supported-error #:cna-platform-error #:cna-thread-error
    #:cna-callback-error #:cna-overflow-error #:cna-encoding-error

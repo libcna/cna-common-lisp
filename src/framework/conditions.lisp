@@ -57,7 +57,7 @@ API.")
   (define-native-conditions
     (cna-invalid-argument-error
      "An argument violated the CNA native contract.")
-    (cna-invalid-handle-error
+    (cna-invalid-object-error
      "A native object was stale, already destroyed, or of the wrong kind.")
     (cna-invalid-state-error
      "The operation is not valid for the current object or runtime state.")

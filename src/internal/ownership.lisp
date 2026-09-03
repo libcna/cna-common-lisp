@@ -108,7 +108,7 @@ generation."))
   (check-owner-thread (owner-thread-of object) operation :object-type (type-of object))
   (when (and (member (ownership-of object) '(:owned :borrowed))
              (zerop (handle-of object)))
-    (error 'microsoft.xna.framework:cna-invalid-handle-error
+    (error 'microsoft.xna.framework:cna-invalid-object-error
            :operation operation
            :object-type (type-of object)
            :format-control "~a holds no native handle."

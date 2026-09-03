@@ -22,7 +22,7 @@
 (defconstant +alignof-cna-error-info+ 8)
 
 ;;; CNA_StringView -- 16 bytes, 8-byte aligned, from core.h.
-;;; Passed by value as :uint64 :uint64 (System V AMD64 eightbyte classes: INTEGER INTEGER).
+;;; Passed by value as :pointer :uint64 (System V AMD64 eightbyte classes: INTEGER INTEGER).
 (defcstruct (cna-string-view :size 16)
   (data :pointer :offset 0)
   (byte-length :uint64 :offset 8))

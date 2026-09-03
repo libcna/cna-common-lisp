@@ -66,8 +66,9 @@ integer arithmetic on the clamped values."
 
 (defun color-multiply (color scale)
   "Color.Multiply(Color, float): every channel scaled and clamped."
-  (let ((s (coerce scale 'single-float)))
+  (cna-lisp.internal:with-binary32-semantics
+   (let ((s (coerce scale 'single-float)))
     (make-color (%byte (* (color-r color) s))
                 (%byte (* (color-g color) s))
                 (%byte (* (color-b color) s))
-                (%byte (* (color-a color) s)))))
+                (%byte (* (color-a color) s))))))

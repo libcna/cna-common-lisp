@@ -218,7 +218,7 @@ error
     │   └── cna-abi-rejected-error   found-version, admitted-versions
     └── cna-native-error             CNA refused or failed
         ├── cna-invalid-argument-error   cna-not-supported-error
-        ├── cna-invalid-handle-error     cna-platform-error
+        ├── cna-invalid-object-error     cna-platform-error
         ├── cna-invalid-state-error      cna-thread-error
         ├── cna-out-of-memory-error      cna-overflow-error
         ├── cna-io-error                 cna-encoding-error

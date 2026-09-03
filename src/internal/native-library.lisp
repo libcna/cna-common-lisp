@@ -28,7 +28,7 @@
 (defun %resolve-requested-path ()
   (let ((raw (uiop:getenv +native-library-environment-variable+)))
     (when (or (null raw) (string= raw ""))
-      (error 'cna-native-library-error
+      (error 'microsoft.xna.framework:cna-native-library-error
              :operation "resolve-native-library"
              :native-library-path nil
              :format-control
@@ -48,7 +48,7 @@ cannot be loaded. Returns the truename of the loaded library."
       (let* ((requested (%resolve-requested-path))
              (path (pathname requested)))
         (unless (uiop:absolute-pathname-p path)
-          (error 'cna-native-library-error
+          (error 'microsoft.xna.framework:cna-native-library-error
                  :operation "resolve-native-library"
                  :native-library-path requested
                  :format-control
@@ -58,13 +58,13 @@ cannot be loaded. Returns the truename of the loaded library."
                  :format-arguments (list +native-library-environment-variable+ requested)))
         (let ((truename (probe-file path)))
           (unless truename
-            (error 'cna-native-library-error
+            (error 'microsoft.xna.framework:cna-native-library-error
                    :operation "resolve-native-library"
                    :native-library-path requested
                    :format-control "~a names ~s, which does not exist."
                    :format-arguments (list +native-library-environment-variable+ requested)))
           (when (uiop:directory-pathname-p truename)
-            (error 'cna-native-library-error
+            (error 'microsoft.xna.framework:cna-native-library-error
                    :operation "resolve-native-library"
                    :native-library-path requested
                    :format-control "~a names ~s, which is a directory, not a shared library."
@@ -73,7 +73,7 @@ cannot be loaded. Returns the truename of the loaded library."
               (setf *native-library-handle*
                     (cffi:load-foreign-library (namestring truename)))
             (error (condition)
-              (error 'cna-native-library-error
+              (error 'microsoft.xna.framework:cna-native-library-error
                      :operation "load-native-library"
                      :native-library-path (namestring truename)
                      :format-control "cannot load ~s: ~a"

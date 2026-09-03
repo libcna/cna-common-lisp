@@ -24,6 +24,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; --- conditions come before anything that can fail ---------------------
    (:file "framework/conditions")
    ;; --- private runtime ---------------------------------------------------
+   (:file "internal/float-semantics")
    (:file "internal/results")
    (:file "internal/utf8")
    (:file "internal/native-library")

@@ -149,23 +149,27 @@ generic function can express the family."
 (defun vector2-unit-y () (%make-vector2 0.0f0 1.0f0))
 
 (defun vector2-add (left right)
-  (%make-vector2 (+ (vector2-x left) (vector2-x right))
-                 (+ (vector2-y left) (vector2-y right))))
+  (cna-lisp.internal:with-binary32-semantics
+    (%make-vector2 (+ (vector2-x left) (vector2-x right))
+                   (+ (vector2-y left) (vector2-y right)))))
 
 (defun vector2-subtract (left right)
-  (%make-vector2 (- (vector2-x left) (vector2-x right))
-                 (- (vector2-y left) (vector2-y right))))
+  (cna-lisp.internal:with-binary32-semantics
+    (%make-vector2 (- (vector2-x left) (vector2-x right))
+                   (- (vector2-y left) (vector2-y right)))))
 
 (defgeneric vector2-multiply (vector factor)
   (:documentation "Vector2.Multiply, by a scalar or component-wise by another vector."))
 
 (defmethod vector2-multiply ((vector vector2) (factor real))
-  (let ((s (f factor)))
-    (%make-vector2 (* (vector2-x vector) s) (* (vector2-y vector) s))))
+  (cna-lisp.internal:with-binary32-semantics
+    (let ((s (f factor)))
+      (%make-vector2 (* (vector2-x vector) s) (* (vector2-y vector) s)))))
 
 (defmethod vector2-multiply ((vector vector2) (factor vector2))
-  (%make-vector2 (* (vector2-x vector) (vector2-x factor))
-                 (* (vector2-y vector) (vector2-y factor))))
+  (cna-lisp.internal:with-binary32-semantics
+    (%make-vector2 (* (vector2-x vector) (vector2-x factor))
+                   (* (vector2-y vector) (vector2-y factor)))))
 
 (defgeneric vector2-divide (vector divisor)
   (:documentation "Vector2.Divide, by a scalar or component-wise by another vector."))
@@ -173,23 +177,28 @@ generic function can express the family."
 (defmethod vector2-divide ((vector vector2) (divisor real))
   ;; XNA divides once and multiplies twice; reproducing that order matters,
   ;; because x * (1/d) and x / d do not always answer the same binary32.
-  (let ((reciprocal (/ 1.0f0 (f divisor))))
-    (%make-vector2 (* (vector2-x vector) reciprocal) (* (vector2-y vector) reciprocal))))
+  (cna-lisp.internal:with-binary32-semantics
+    (let ((reciprocal (/ 1.0f0 (f divisor))))
+      (%make-vector2 (* (vector2-x vector) reciprocal)
+                     (* (vector2-y vector) reciprocal)))))
 
 (defmethod vector2-divide ((vector vector2) (divisor vector2))
-  (%make-vector2 (/ (vector2-x vector) (vector2-x divisor))
-                 (/ (vector2-y vector) (vector2-y divisor))))
+  (cna-lisp.internal:with-binary32-semantics
+    (%make-vector2 (/ (vector2-x vector) (vector2-x divisor))
+                   (/ (vector2-y vector) (vector2-y divisor)))))
 
 (defun vector2-negate (vector)
   (%make-vector2 (- (vector2-x vector)) (- (vector2-y vector))))
 
 (defun vector2-dot (left right)
-  (+ (* (vector2-x left) (vector2-x right))
-     (* (vector2-y left) (vector2-y right))))
+  (cna-lisp.internal:with-binary32-semantics
+    (+ (* (vector2-x left) (vector2-x right))
+       (* (vector2-y left) (vector2-y right)))))
 
 (defun vector2-length-squared (vector)
-  (+ (* (vector2-x vector) (vector2-x vector))
-     (* (vector2-y vector) (vector2-y vector))))
+  (cna-lisp.internal:with-binary32-semantics
+    (+ (* (vector2-x vector) (vector2-x vector))
+       (* (vector2-y vector) (vector2-y vector)))))
 
 (defun %sqrt-as-xna (single)
   "Math.Sqrt on a binary32 argument, cast back to binary32.
@@ -197,31 +206,35 @@ generic function can express the family."
 The square root itself is computed in binary64 because that is the only overload
 the original calls; the result is then narrowed. Doing the whole computation in
 binary64 would answer different bits."
-  (f (sqrt (coerce single 'double-float))))
+  (cna-lisp.internal:with-binary32-semantics
+    (f (sqrt (coerce single 'double-float)))))
 
 (defun vector2-length (vector)
   (%sqrt-as-xna (vector2-length-squared vector)))
 
 (defun vector2-distance-squared (left right)
-  (let ((dx (- (vector2-x left) (vector2-x right)))
-        (dy (- (vector2-y left) (vector2-y right))))
-    (+ (* dx dx) (* dy dy))))
+  (cna-lisp.internal:with-binary32-semantics
+    (let ((dx (- (vector2-x left) (vector2-x right)))
+          (dy (- (vector2-y left) (vector2-y right))))
+      (+ (* dx dx) (* dy dy)))))
 
 (defun vector2-distance (left right)
   (%sqrt-as-xna (vector2-distance-squared left right)))
 
 (defun vector2-normalize (vector)
   "Vector2.Normalize. Mutates VECTOR, exactly as the instance method does."
-  (let ((scale (/ 1.0f0 (%sqrt-as-xna (vector2-length-squared vector)))))
-    (setf (vector2-x vector) (* (vector2-x vector) scale)
-          (vector2-y vector) (* (vector2-y vector) scale))
-    vector))
+  (cna-lisp.internal:with-binary32-semantics
+    (let ((scale (/ 1.0f0 (%sqrt-as-xna (vector2-length-squared vector)))))
+      (setf (vector2-x vector) (* (vector2-x vector) scale)
+            (vector2-y vector) (* (vector2-y vector) scale))
+      vector)))
 
 (defun vector2-equal (left right)
   "Vector2.Equals. Uses = on binary32, so a NaN component is never equal to
 itself -- which is what the original answers too."
-  (and (= (vector2-x left) (vector2-x right))
-       (= (vector2-y left) (vector2-y right))))
+  (cna-lisp.internal:with-binary32-semantics
+    (and (= (vector2-x left) (vector2-x right))
+         (= (vector2-y left) (vector2-y right)))))
 
 ;;; ----------------------------------------------------------- PlayerIndex
 
