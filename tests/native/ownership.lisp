@@ -70,7 +70,7 @@
       (let ((second (make-instance 'counting-game)))
         (unwind-protect
              (let ((stale-device (xna:graphics-device game)))
-               (signals xna:cna-ownership-error (gfx:viewport-of stale-device)))
+               (signals xna:cna-ownership-error (gfx:viewport stale-device)))
           (xna:dispose second))))))
 
 (define-native-test a-shutdown-callback-failure-is-reported-with-its-condition

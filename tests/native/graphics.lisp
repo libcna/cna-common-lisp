@@ -23,7 +23,7 @@
   (call-next-method)
   (let ((device (xna:graphics-device game)))
     (setf (renderer game) (gfx:renderer-name device)
-          (viewport game) (gfx:viewport-of device)
+          (viewport game) (gfx:viewport device)
           (texture game) (gfx:texture-2d-from-png-file device (fixture-path "cna-lisp-mark.png"))
           (batch game) (make-instance 'gfx:sprite-batch :graphics-device device))))
 
@@ -106,7 +106,7 @@
                            (fail "the device was usable outside a callback"))
         (xna:cna-scope-error (condition)
           (is (search "lifecycle" (princ-to-string condition)))))
-      (signals xna:cna-scope-error (gfx:viewport-of device))
+      (signals xna:cna-scope-error (gfx:viewport device))
       (signals xna:cna-scope-error (gfx:renderer-name device)))))
 
 (define-native-test the-graphics-device-is-the-same-object-every-time
@@ -118,7 +118,7 @@
 (define-native-test the-manager-answers-the-games-own-device
   (with-graphics-game (game :exit-after 1)
     (xna:run game)
-    (is (eq (xna:graphics-device game) (xna:graphics-device-of (manager game))))))
+    (is (eq (xna:graphics-device game) (xna:graphics-device (manager game))))))
 
 (define-native-test manager-preferences-round-trip
   (with-graphics-game (game :exit-after 1)

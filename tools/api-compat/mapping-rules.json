@@ -1,0 +1,612 @@
+{
+ "schema_version": 1,
+ "description": "The deterministic projection from the selected XNA contract to Common Lisp. tools/api-compat/verify.py applies these rules to the live image; docs/common-lisp-mapping.md is the prose that explains them.",
+ "naming": {
+  "identifier": "A CLR identifier becomes a Lisp symbol by inserting a hyphen at each word boundary and lowercasing. Texture2D becomes texture-2d.",
+  "reference_type_member": "<member>, in the type's package, as a generic function or reader.",
+  "value_type_member": "<type>-<member>, in the type's package. The prefix is what keeps Rectangle's Left from colliding with Viewport's.",
+  "static_class_member": "<class>-<member>, so that Mouse and GamePad can join Keyboard's namespace without collision.",
+  "constructor": "make-instance for a reference type; make-<type> for a value type.",
+  "enum_member": "a keyword named by the identifier rule; the exact value is preserved in the runtime table."
+ },
+ "namespace_packages": {
+  "Microsoft.Xna.Framework": "microsoft.xna.framework",
+  "Microsoft.Xna.Framework.Graphics": "microsoft.xna.framework.graphics",
+  "Microsoft.Xna.Framework.Input": "microsoft.xna.framework.input"
+ },
+ "universal_not_applicable": [
+  {
+   "name": "ToString",
+   "reason": "CLR object printing. A Common Lisp object prints through PRINT-OBJECT, which is a method on a standard generic function rather than a named member of the projected type."
+  },
+  {
+   "name": "GetHashCode",
+   "reason": "The CLR hash code is not observable through a Common Lisp API; hashing here is SXHASH over the projected value."
+  },
+  {
+   "name": "Finalize",
+   "reason": "CNA-Lisp has no finalizer that touches a native resource, by design. See docs/ownership-and-lifetimes.md."
+  },
+  {
+   "name": "op_Inequality",
+   "reason": "Common Lisp has no operator overloading. Inequality is the negation of the projected equality predicate."
+  }
+ ],
+ "allowed_symbols": {
+  "microsoft.xna.framework": [
+   "keysp"
+  ],
+  "microsoft.xna.framework.graphics": [],
+  "microsoft.xna.framework.input": [
+   "keysp"
+  ]
+ },
+ "types": {
+  "Microsoft.Xna.Framework.Game": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "game",
+   "lisp_kind": "class",
+   "constructors": {
+    "new()": "make-instance"
+   },
+   "member_overrides": {
+    "OnExiting(Object,EventArgs)": {
+     "lisp": "on-exiting",
+     "generic": true,
+     "reason": "The CLR event-handler pattern passes a sender and an argument object. A CLOS method on the game needs neither: the game is the receiver, and the exiting notification carries nothing else."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. CNA-Lisp has no finalizer that touches a native resource, so there is nothing for the flag to distinguish."
+   },
+   "unimplemented": {
+    "OnActivated(Object,EventArgs)": "Needs the event projection.",
+    "OnDeactivated(Object,EventArgs)": "Needs the event projection.",
+    "ShowMissingRequirementMessage(Exception)": "Needs the CLR exception projection and a platform message box."
+   }
+  },
+  "Microsoft.Xna.Framework.GameTime": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "game-time",
+   "lisp_kind": "class",
+   "constructors": {
+    "new()": "make-instance",
+    "new(TimeSpan,TimeSpan,Boolean)": "make-instance",
+    "new(TimeSpan,TimeSpan)": "make-instance"
+   }
+  },
+  "Microsoft.Xna.Framework.GraphicsDeviceManager": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "graphics-device-manager",
+   "lisp_kind": "class",
+   "constructors": {
+    "new(Game)": "make-instance"
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected dispose(bool) pattern; see Game.Dispose(Boolean)."
+   }
+  },
+  "Microsoft.Xna.Framework.Color": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "color",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Int32,Int32,Int32)": "make-color",
+    "new(Int32,Int32,Int32,Int32)": "make-color"
+   },
+   "member_overrides": {
+    "Equals(Color)": {
+     "lisp": "color-equal"
+    },
+    "op_Equality(Color,Color)": {
+     "lisp": "color-equal"
+    },
+    "FromNonPremultiplied(Int32,Int32,Int32,Int32)": {
+     "lisp": "color-from-non-premultiplied"
+    },
+    "Multiply(Color,Single)": {
+     "lisp": "color-multiply"
+    },
+    "op_Multiply(Color,Single)": {
+     "lisp": "color-multiply"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   },
+   "unimplemented": {
+    "new(Single,Single,Single)": "The float constructors need Vector3/Vector4 clamping semantics that are not projected yet.",
+    "new(Single,Single,Single,Single)": "See the three-float constructor.",
+    "new(Vector3)": "Vector3 is not projected.",
+    "new(Vector4)": "Vector4 is not projected.",
+    "FromNonPremultiplied(Vector4)": "Vector4 is not projected.",
+    "ToVector3()": "Vector3 is not projected.",
+    "ToVector4()": "Vector4 is not projected.",
+    "Lerp(Color,Color,Single)": "Not implemented."
+   },
+   "overload_families": {
+    "Equals": {
+     "lisp": "color-equal",
+     "reason": "Common Lisp has no operator overloading; equality projects to a named predicate."
+    },
+    "Multiply": {
+     "lisp": "color-multiply",
+     "reason": "One projection; the operator and the named method are the same operation."
+    }
+   },
+   "predefined_value_properties": true,
+   "predefined_value_reason": "XNA's 141 predefined colours are static properties on a value type. They are reached here by keyword through PREDEFINED-COLOR, which the generated table makes exhaustive; the thirteen with a named function of their own are declared extensions. A Lisp constant would be wrong for all of them, because Color is mutable and every read of the original is a copy."
+  },
+  "Microsoft.Xna.Framework.Point": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "point",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Int32,Int32)": "make-point"
+   },
+   "member_overrides": {
+    "Equals(Point)": {
+     "lisp": "point-equal"
+    },
+    "op_Equality(Point,Point)": {
+     "lisp": "point-equal"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against; the typed overload is the projection."
+   },
+   "overload_families": {
+    "Equals": {
+     "lisp": "point-equal",
+     "reason": "Common Lisp has no operator overloading; equality projects to a named predicate."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Rectangle": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "rectangle",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Int32,Int32,Int32,Int32)": "make-rectangle"
+   },
+   "member_overrides": {
+    "Contains(Int32,Int32)": {
+     "lisp": "rectangle-contains-coordinates",
+     "reason": "Three arguments cannot share a congruent generic function with the two-argument overloads."
+    },
+    "Contains(Point)": {
+     "lisp": "rectangle-contains",
+     "generic": true
+    },
+    "Contains(Rectangle)": {
+     "lisp": "rectangle-contains",
+     "generic": true
+    },
+    "Equals(Rectangle)": {
+     "lisp": "rectangle-equal"
+    },
+    "op_Equality(Rectangle,Rectangle)": {
+     "lisp": "rectangle-equal"
+    },
+    "Offset(Int32,Int32)": {
+     "lisp": "rectangle-offset"
+    },
+    "Intersects(Rectangle)": {
+     "lisp": "rectangle-intersects"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   },
+   "unimplemented": {
+    "Offset(Point)": "The Point overload is not projected; the coordinate one is.",
+    "Contains(Point&,Boolean&)": "The by-reference overloads exist in XNA to avoid copying a value type into a call. Common Lisp passes a reference already, so the by-value overload is the whole contract; projecting the ref form would be a second name for one operation.",
+    "Contains(Rectangle&,Boolean&)": "See Contains(Point&,Boolean&).",
+    "Intersects(Rectangle&,Boolean&)": "See Contains(Point&,Boolean&).",
+    "Intersect(Rectangle,Rectangle)": "Not implemented.",
+    "Intersect(Rectangle&,Rectangle&,Rectangle&)": "Not implemented.",
+    "Union(Rectangle,Rectangle)": "Not implemented.",
+    "Union(Rectangle&,Rectangle&,Rectangle&)": "Not implemented."
+   },
+   "overload_families": {
+    "Contains": {
+     "lisp": "rectangle-contains and rectangle-contains-coordinates",
+     "reason": "The two-argument overloads share a generic function; the three-argument one cannot."
+    },
+    "Equals": {
+     "lisp": "rectangle-equal",
+     "reason": "Common Lisp has no operator overloading; equality projects to a named predicate."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Vector2": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "vector2",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single)": "make-vector2",
+    "new(Single)": "make-vector2"
+   },
+   "member_overrides": {
+    "Equals(Vector2)": {
+     "lisp": "vector2-equal"
+    },
+    "op_Equality(Vector2,Vector2)": {
+     "lisp": "vector2-equal"
+    },
+    "op_Addition(Vector2,Vector2)": {
+     "lisp": "vector2-add"
+    },
+    "op_Subtraction(Vector2,Vector2)": {
+     "lisp": "vector2-subtract"
+    },
+    "op_UnaryNegation(Vector2)": {
+     "lisp": "vector2-negate"
+    },
+    "op_Multiply(Vector2,Single)": {
+     "lisp": "vector2-multiply",
+     "generic": true
+    },
+    "op_Multiply(Single,Vector2)": {
+     "lisp": "vector2-multiply",
+     "generic": true
+    },
+    "op_Multiply(Vector2,Vector2)": {
+     "lisp": "vector2-multiply",
+     "generic": true
+    },
+    "op_Division(Vector2,Single)": {
+     "lisp": "vector2-divide",
+     "generic": true
+    },
+    "op_Division(Vector2,Vector2)": {
+     "lisp": "vector2-divide",
+     "generic": true
+    },
+    "Add(Vector2,Vector2)": {
+     "lisp": "vector2-add"
+    },
+    "Subtract(Vector2,Vector2)": {
+     "lisp": "vector2-subtract"
+    },
+    "Negate(Vector2)": {
+     "lisp": "vector2-negate"
+    },
+    "Multiply(Vector2,Single)": {
+     "lisp": "vector2-multiply",
+     "generic": true
+    },
+    "Multiply(Vector2,Vector2)": {
+     "lisp": "vector2-multiply",
+     "generic": true
+    },
+    "Divide(Vector2,Single)": {
+     "lisp": "vector2-divide",
+     "generic": true
+    },
+    "Divide(Vector2,Vector2)": {
+     "lisp": "vector2-divide",
+     "generic": true
+    },
+    "Distance(Vector2,Vector2)": {
+     "lisp": "vector2-distance"
+    },
+    "DistanceSquared(Vector2,Vector2)": {
+     "lisp": "vector2-distance-squared"
+    },
+    "Dot(Vector2,Vector2)": {
+     "lisp": "vector2-dot"
+    },
+    "Normalize()": {
+     "lisp": "vector2-normalize"
+    },
+    "Length()": {
+     "lisp": "vector2-length"
+    },
+    "LengthSquared()": {
+     "lisp": "vector2-length-squared"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   },
+   "unimplemented": {
+    "Add(Vector2&,Vector2&,Vector2&)": "A by-reference overload; see Rectangle.Contains(Point&,Boolean&).",
+    "Subtract(Vector2&,Vector2&,Vector2&)": "A by-reference overload.",
+    "Negate(Vector2&,Vector2&)": "A by-reference overload.",
+    "Multiply(Vector2&,Single,Vector2&)": "A by-reference overload.",
+    "Multiply(Vector2&,Vector2&,Vector2&)": "A by-reference overload.",
+    "Divide(Vector2&,Single,Vector2&)": "A by-reference overload.",
+    "Divide(Vector2&,Vector2&,Vector2&)": "A by-reference overload.",
+    "Distance(Vector2&,Vector2&,Single&)": "A by-reference overload.",
+    "DistanceSquared(Vector2&,Vector2&,Single&)": "A by-reference overload.",
+    "Dot(Vector2&,Vector2&,Single&)": "A by-reference overload.",
+    "Normalize(Vector2)": "The static Normalize answers a new vector; only the mutating instance method is projected.",
+    "Normalize(Vector2&,Vector2&)": "A by-reference overload."
+   },
+   "overload_families": {
+    "Equals": {
+     "lisp": "vector2-equal",
+     "reason": "Common Lisp has no operator overloading; equality projects to a named predicate."
+    },
+    "Multiply": {
+     "lisp": "vector2-multiply",
+     "reason": "One generic function with methods on REAL and on VECTOR2: congruent lambda lists, genuine type dispatch."
+    },
+    "Divide": {
+     "lisp": "vector2-divide",
+     "reason": "As Multiply."
+    },
+    "op_Multiply": {
+     "lisp": "vector2-multiply",
+     "reason": "As Multiply."
+    },
+    "op_Division": {
+     "lisp": "vector2-divide",
+     "reason": "As Multiply."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.PlayerIndex": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "player-index",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.GraphicsResource": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "graphics-resource",
+   "lisp_kind": "class",
+   "status": "missing",
+   "reason": "GraphicsResource's disposal contract, its Name, Tag and Disposing event need the event projection and the GraphicsDevice back-reference, neither of which is in Foundation 1. Texture2D and SpriteBatch carry CNA-Lisp's own disposal instead."
+  },
+  "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "graphics-device",
+   "lisp_kind": "class",
+   "constructors": {},
+   "member_overrides": {
+    "Clear(Color)": {
+     "lisp": "clear",
+     "generic": true
+    },
+    "Present()": {
+     "lisp": "present",
+     "generic": true
+    },
+    "Viewport": {
+     "lisp": "viewport",
+     "setf": false,
+     "status": "partial",
+     "reason": "The reader is present. The setter is externally blocked: cna_graphics_device_set_viewport takes CNA_Viewport (24 bytes) by value, which the System V AMD64 ABI classifies MEMORY and CFFI cannot pass without cffi-libffi. See docs/native-abi.md."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected dispose(bool) pattern."
+   },
+   "unimplemented": {
+    "Present(Rectangle],Rectangle],IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected.",
+    "Reset()": "Device reset is not projected.",
+    "Reset(PresentationParameters)": "Needs PresentationParameters.",
+    "Reset(PresentationParameters,GraphicsAdapter)": "Needs PresentationParameters and GraphicsAdapter.",
+    "Clear(ClearOptions,Vector4,Single,Int32)": "Needs ClearOptions and Vector4.",
+    "Clear(ClearOptions,Color,Single,Int32)": "Needs ClearOptions."
+   },
+   "overload_families": {
+    "Present": {
+     "lisp": "present",
+     "reason": "Only the no-argument overload is projected."
+    },
+    "Clear": {
+     "lisp": "clear",
+     "reason": "Only Clear(Color) is projected."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.Viewport": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "viewport",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Int32,Int32,Int32,Int32)": "make-viewport"
+   },
+   "unimplemented": {
+    "new(Rectangle)": "The rectangle constructor is not projected; the four-integer one is.",
+    "Project(Vector3,Matrix,Matrix,Matrix)": "Needs Vector3 and Matrix.",
+    "Unproject(Vector3,Matrix,Matrix,Matrix)": "Needs Vector3 and Matrix."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.Texture": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "texture",
+   "lisp_kind": "class",
+   "member_overrides": {
+    "Format": {
+     "lisp": "format-of",
+     "reason": "A member whose projected name would be a Common Lisp standard symbol takes an -of suffix: cl:format is inherited into this package."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.Texture2D": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "texture-2d",
+   "lisp_kind": "class",
+   "expected_superclass": "microsoft.xna.framework.graphics:texture",
+   "constructors": {},
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected dispose(bool) pattern."
+   },
+   "unimplemented": {
+    "new(GraphicsDevice,Int32,Int32)": "Creating an empty texture is not projected in this milestone.",
+    "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)": "See the three-argument constructor.",
+    "FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "Needs the System.IO.Stream projection. TEXTURE-2D-FROM-PNG-BYTES and TEXTURE-2D-FROM-PNG-FILE are CNA-Lisp additions over the same CNA route, and are declared as extensions rather than claimed as this member.",
+    "FromStream(GraphicsDevice,Stream)": "See the five-argument overload.",
+    "SaveAsJpeg(Stream,Int32,Int32)": "Needs the Stream projection.",
+    "SaveAsPng(Stream,Int32,Int32)": "Needs the Stream projection.",
+    "SetData(!!0[])": "Pixel access is not projected in this milestone.",
+    "SetData(!!0[],Int32,Int32)": "Pixel access is not projected.",
+    "SetData(Int32,Rectangle],!!0[],Int32,Int32)": "Pixel access is not projected.",
+    "GetData(!!0[])": "Pixel access is not projected.",
+    "GetData(!!0[],Int32,Int32)": "Pixel access is not projected.",
+    "GetData(Int32,Rectangle],!!0[],Int32,Int32)": "Pixel access is not projected."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.SpriteBatch": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "sprite-batch",
+   "lisp_kind": "class",
+   "constructors": {
+    "new(GraphicsDevice)": "make-instance"
+   },
+   "member_overrides": {
+    "Draw(Texture2D,Vector2,Color)": {
+     "lisp": "draw-texture",
+     "generic": true
+    },
+    "Draw(Texture2D,Vector2,Rectangle],Color)": {
+     "lisp": "draw-texture",
+     "generic": true
+    },
+    "Draw(Texture2D,Vector2,Rectangle],Color,Single,Vector2,Single,SpriteEffects,Single)": {
+     "lisp": "draw-texture",
+     "generic": true
+    },
+    "Draw(Texture2D,Vector2,Rectangle],Color,Single,Vector2,Vector2,SpriteEffects,Single)": {
+     "lisp": "draw-texture",
+     "generic": true
+    },
+    "Draw(Texture2D,Rectangle,Color)": {
+     "lisp": "draw-texture",
+     "generic": true
+    },
+    "Draw(Texture2D,Rectangle,Rectangle],Color)": {
+     "lisp": "draw-texture",
+     "generic": true
+    },
+    "Draw(Texture2D,Rectangle,Rectangle],Color,Single,Vector2,SpriteEffects,Single)": {
+     "lisp": "draw-texture",
+     "generic": true
+    },
+    "Begin()": {
+     "lisp": "begin",
+     "generic": true
+    },
+    "End()": {
+     "lisp": "end",
+     "generic": true
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected dispose(bool) pattern."
+   },
+   "unimplemented": {
+    "Begin(SpriteSortMode,BlendState)": "Needs BlendState.",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)": "Needs the four graphics state objects.",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)": "Needs the state objects and Effect.",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)": "Needs the state objects, Effect and Matrix.",
+    "DrawString(SpriteFont,String,Vector2,Color)": "Needs SpriteFont.",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "Needs SpriteFont and StringBuilder.",
+    "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont.",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder.",
+    "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont.",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder."
+   },
+   "overload_families": {
+    "Begin": {
+     "lisp": "begin",
+     "reason": "Only the no-argument overload is projected; the state-bearing ones need types this milestone does not have."
+    },
+    "Draw": {
+     "lisp": "draw-texture",
+     "reason": "All seven texture overloads are one generic function with keyword arguments. They differ only in which optional parameters are present and in whether the destination is a position or a rectangle, and DRAW-TEXTURE refuses both at once rather than guessing. Text drawing will be a separate generic function when SpriteFont arrives, because one DRAW would then be ambiguous."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.SpriteSortMode": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "sprite-sort-mode",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.SpriteEffects": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "sprite-effects",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.SurfaceFormat": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "surface-format",
+   "lisp_kind": "enum",
+   "extra_enum_members": [
+    "color-bgra-ext",
+    "color-srgb-ext",
+    "dxt5-srgb-ext",
+    "bc7-ext",
+    "bc7-srgb-ext",
+    "byte-ext",
+    "ushort-ext"
+   ],
+   "extra_enum_reason": "CNA's own renderer-specific surface formats. They are not XNA members; a texture CNA created can report one, so the projection must be able to name it, and a consumer never has to supply one."
+  },
+  "Microsoft.Xna.Framework.Input.Keyboard": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "keyboard",
+   "lisp_kind": "static",
+   "member_overrides": {
+    "GetState()": {
+     "lisp": "keyboard-get-state"
+    },
+    "GetState(PlayerIndex)": {
+     "lisp": "keyboard-get-state"
+    }
+   },
+   "overload_families": {
+    "GetState": {
+     "lisp": "keyboard-get-state",
+     "reason": "The player-slot overload is an optional argument: the lambda lists differ only by a trailing parameter, so one function expresses both without ambiguity."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Input.KeyboardState": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "keyboard-state",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Keys)": "make-keyboard-state"
+   },
+   "member_overrides": {
+    "IsKeyDown(Keys)": {
+     "lisp": "is-key-down",
+     "reason": "The value-type prefix is dropped here: the three query methods read as sentences at the call site and their names are unique in this namespace. Declared rather than assumed."
+    },
+    "IsKeyUp(Keys)": {
+     "lisp": "is-key-up",
+     "reason": "See IsKeyDown."
+    },
+    "GetPressedKeys()": {
+     "lisp": "get-pressed-keys",
+     "reason": "See IsKeyDown."
+    },
+    "Item": {
+     "lisp": "get-key-state",
+     "setf": false,
+     "reason": "The CLR indexer. Common Lisp has no indexer syntax, so it projects to a named reader."
+    },
+    "op_Equality(KeyboardState,KeyboardState)": {
+     "lisp": "keyboard-state-equal"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Input.KeyState": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "key-state",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Input.Keys": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "keys",
+   "lisp_kind": "enum"
+  }
+ }
+}

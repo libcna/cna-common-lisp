@@ -31,6 +31,14 @@ rather than a division by zero."
    (viewport-x viewport) (viewport-y viewport)
    (viewport-width viewport) (viewport-height viewport)))
 
+(defun (setf viewport-bounds) (rectangle viewport)
+  "Viewport.Bounds's setter: the position and extents follow the rectangle."
+  (setf (viewport-x viewport) (microsoft.xna.framework:rectangle-x rectangle)
+        (viewport-y viewport) (microsoft.xna.framework:rectangle-y rectangle)
+        (viewport-width viewport) (microsoft.xna.framework:rectangle-width rectangle)
+        (viewport-height viewport) (microsoft.xna.framework:rectangle-height rectangle))
+  rectangle)
+
 (defun viewport-title-safe-area (viewport)
   "Viewport.TitleSafeArea.
 

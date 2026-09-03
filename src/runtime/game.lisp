@@ -19,8 +19,14 @@
 (defconstant +default-target-elapsed-time-ticks+ 166667
   "XNA's default fixed step: 1/60 second, in 100-nanosecond ticks.")
 
+(defgeneric graphics-device (object)
+  (:documentation
+   "Game.GraphicsDevice, and GraphicsDeviceManager.GraphicsDevice.
+
+Both answer the same object, because in CNA they are the same device."))
+
 (defclass game (cna-lisp.internal:native-object)
-  ((graphics-device :initform nil :reader graphics-device
+  ((graphics-device :initform nil
                     :documentation "The game's GRAPHICS-DEVICE facade.")
    (callback-token :initform nil :reader %callback-token)
    (window-title :initarg :window-title :initform "CNA-Lisp Game" :reader window-title)
@@ -423,6 +429,9 @@ the projected type checkable against the runtime rather than asserted."))
      "clr-type-name")))
 
 ;;; --- disposal ----------------------------------------------------------
+
+(defmethod graphics-device ((game game))
+  (slot-value game 'graphics-device))
 
 (defmethod cna-lisp.internal:destroy-native ((game game))
   ;; `cna_game_destroy' releases the handle even when it answers

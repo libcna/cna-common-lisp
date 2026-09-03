@@ -157,16 +157,52 @@ Generated reports are the authority:
 | `docs/generated/api-compat-report.json` | the structural projection: complete / partial / missing |
 | `docs/generated/behavior-corpus.json` | behaviour observations and their origin |
 
-The counts in `README.md`, this file and `NEXT.md` are cross-checked against
-those reports by `tools/qualification/verify-numbers.py`.
+The counts in `README.md`, this file, `NEXT.md` and `docs/compatibility.md` are
+cross-checked against those reports by `tools/qualification/verify-numbers.py`,
+which refuses any figure in the prose that the reports do not produce.
+
+### Structural compatibility, as generated
+
+<!-- generated:selected types=21 -->
+<!-- generated:selected members=689 -->
+<!-- generated:complete types=11 -->
+<!-- generated:partial types=9 -->
+<!-- generated:missing types=1 -->
+<!-- generated:complete members=474 -->
+<!-- generated:missing members=181 -->
+<!-- generated:not-applicable members=33 -->
+<!-- generated:disagreement total=0 -->
+
+Selection **Foundation 1**: 21 types, 689 members.
+
+| | |
+| --- | --- |
+| Types complete / partial / missing | **11 / 9 / 1** |
+| Members complete | **474** |
+| Members missing | **181** |
+| Members not applicable | **33** |
+| Members partial | **1** |
+| **Disagreement diagnostics** | **0** |
+
+Every remaining diagnostic is an absence. Nothing implemented disagrees with the
+contract, nothing private has leaked into a public package, and no exported
+symbol is unaccounted for. `docs/compatibility.md` has the per-type table.
 
 ### Native ABI, as generated
 
 | | |
 | --- | --- |
+<!-- generated:bound native functions=68 -->
+<!-- generated:bound native structs=19 -->
+<!-- generated:bound native struct fields=93 -->
+<!-- generated:bound native constants=237 -->
+<!-- generated:bound native callbacks=2 -->
+<!-- generated:by-value aggregates=2 -->
+<!-- generated:blocked routes=1 -->
+
 | Bound functions | 68 |
 | Bound structs | 19 |
-| Bound struct fields | 110 |
+| Bound struct fields | 93 |
 | Bound constants | 237 |
 | Bound callback typedefs | 2 |
 | By-value aggregates admitted | 2 (`CNA_Color`, `CNA_StringView`) |

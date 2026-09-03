@@ -57,6 +57,34 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
+<!-- generated:selected types=21 -->
+<!-- generated:selected members=689 -->
+<!-- generated:complete types=11 -->
+<!-- generated:partial types=9 -->
+<!-- generated:missing types=1 -->
+<!-- generated:complete members=474 -->
+<!-- generated:missing members=181 -->
+<!-- generated:disagreement total=0 -->
+<!-- generated:bound native functions=68 -->
+<!-- generated:bound native structs=19 -->
+
+The generated scoreboard, over a selection of **21 XNA types and 689 members**:
+
+| | |
+| --- | --- |
+| Types complete / partial / missing | **11 / 9 / 1** |
+| Members complete / missing | **474 / 181** |
+| **Disagreement diagnostics** | **0** |
+
+Zero disagreement means nothing implemented contradicts the contract, nothing
+private leaked into a public package, and every exported symbol is accounted
+for. It does **not** mean the binding is finished: 181 members are missing and
+are reported as missing. `docs/compatibility.md` is the authority.
+
+The private foreign layer binds **68 native routes** and **19 native structs**,
+all of them generated from the canonical CNA headers and checked by a C
+compiler.
+
 ## Installing
 
 CNA-Lisp is an ordinary ASDF system. Quicklisp or Qlot may be used to obtain its

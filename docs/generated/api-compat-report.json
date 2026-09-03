@@ -1,0 +1,1800 @@
+{
+ "schema_version": 1,
+ "implementation": "SBCL 2.5.2.debian",
+ "profile": "XNA 4.0 Windows runtime",
+ "selection": {
+  "name": "Foundation 1",
+  "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
+  "type_count": 21,
+  "member_count": 689
+ },
+ "provenance": {
+  "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
+  "snapshot_sha256": "7207908eb7926cc90a156d0370c907add4dda465421cea1cbec51afba2f97fdc",
+  "snapshot_types": 257,
+  "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
+ },
+ "totals": {
+  "types": 21,
+  "members": 689,
+  "types_by_status": {
+   "partial": 9,
+   "complete": 11,
+   "missing": 1
+  },
+  "members_by_status": {
+   "complete": 474,
+   "missing": 181,
+   "not-applicable": 33,
+   "partial": 1
+  },
+  "diagnostics": 182,
+  "diagnostics_by_category": {
+   "missing_type": 1,
+   "missing_member": 181,
+   "wrong_package": 0,
+   "wrong_kind": 0,
+   "wrong_superclass": 0,
+   "wrong_generic_function_shape": 0,
+   "wrong_lambda_list": 0,
+   "wrong_accessor_mutability": 0,
+   "overload_mapping_mismatch": 0,
+   "event_mapping_mismatch": 0,
+   "enum_mismatch": 0,
+   "unexpected_public_symbol": 0,
+   "private_implementation_leak": 0,
+   "unmeasured_category": 0
+  },
+  "disagreement_total": 0
+ },
+ "types": [
+  {
+   "name": "Microsoft.Xna.Framework.Game",
+   "status": "partial",
+   "members": {
+    "new()": "complete",
+    "Run()": "complete",
+    "RunOneFrame()": "complete",
+    "Tick()": "complete",
+    "SuppressDraw()": "complete",
+    "Exit()": "complete",
+    "BeginRun()": "complete",
+    "EndRun()": "complete",
+    "Update(GameTime)": "complete",
+    "BeginDraw()": "complete",
+    "Draw(GameTime)": "complete",
+    "EndDraw()": "complete",
+    "Initialize()": "complete",
+    "ResetElapsedTime()": "complete",
+    "OnActivated(Object,EventArgs)": "missing",
+    "OnDeactivated(Object,EventArgs)": "missing",
+    "OnExiting(Object,EventArgs)": "complete",
+    "LoadContent()": "complete",
+    "UnloadContent()": "complete",
+    "Dispose()": "complete",
+    "Finalize()": "not-applicable",
+    "Dispose(Boolean)": "not-applicable",
+    "ShowMissingRequirementMessage(Exception)": "missing",
+    "LaunchParameters": "missing",
+    "Components": "missing",
+    "Services": "missing",
+    "InactiveSleepTime": "complete",
+    "IsMouseVisible": "complete",
+    "TargetElapsedTime": "complete",
+    "IsFixedTimeStep": "complete",
+    "Window": "missing",
+    "IsActive": "complete",
+    "GraphicsDevice": "complete",
+    "Content": "missing",
+    "Activated": "missing",
+    "Deactivated": "missing",
+    "Exiting": "missing",
+    "Disposed": "missing"
+   },
+   "lisp": "microsoft.xna.framework:game"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameTime",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "new(TimeSpan,TimeSpan,Boolean)": "complete",
+    "new(TimeSpan,TimeSpan)": "complete",
+    "TotalGameTime": "complete",
+    "ElapsedGameTime": "complete",
+    "IsRunningSlowly": "complete"
+   },
+   "lisp": "microsoft.xna.framework:game-time"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GraphicsDeviceManager",
+   "status": "partial",
+   "members": {
+    "new(Game)": "complete",
+    "ApplyChanges()": "complete",
+    "ToggleFullScreen()": "complete",
+    "FindBestDevice(Boolean)": "missing",
+    "CanResetDevice(GraphicsDeviceInformation)": "missing",
+    "RankDevices(List`1)": "missing",
+    "OnDeviceCreated(Object,EventArgs)": "missing",
+    "OnDeviceDisposing(Object,EventArgs)": "missing",
+    "OnDeviceReset(Object,EventArgs)": "missing",
+    "OnDeviceResetting(Object,EventArgs)": "missing",
+    "Dispose(Boolean)": "not-applicable",
+    "OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "missing",
+    "GraphicsProfile": "missing",
+    "PreferredDepthStencilFormat": "missing",
+    "PreferredBackBufferFormat": "missing",
+    "PreferredBackBufferWidth": "complete",
+    "PreferredBackBufferHeight": "complete",
+    "IsFullScreen": "complete",
+    "SynchronizeWithVerticalRetrace": "complete",
+    "PreferMultiSampling": "missing",
+    "SupportedOrientations": "missing",
+    "GraphicsDevice": "complete",
+    "DeviceCreated": "missing",
+    "DeviceResetting": "missing",
+    "DeviceReset": "missing",
+    "DeviceDisposing": "missing",
+    "PreparingDeviceSettings": "missing",
+    "Disposed": "missing",
+    "DefaultBackBufferWidth": "missing",
+    "DefaultBackBufferHeight": "missing"
+   },
+   "lisp": "microsoft.xna.framework:graphics-device-manager"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Color",
+   "status": "partial",
+   "members": {
+    "new(Int32,Int32,Int32)": "complete",
+    "new(Int32,Int32,Int32,Int32)": "complete",
+    "new(Single,Single,Single)": "missing",
+    "new(Single,Single,Single,Single)": "missing",
+    "new(Vector3)": "missing",
+    "new(Vector4)": "missing",
+    "FromNonPremultiplied(Vector4)": "missing",
+    "FromNonPremultiplied(Int32,Int32,Int32,Int32)": "complete",
+    "ToVector3()": "missing",
+    "ToVector4()": "missing",
+    "Lerp(Color,Color,Single)": "missing",
+    "Multiply(Color,Single)": "complete",
+    "op_Multiply(Color,Single)": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Color)": "complete",
+    "op_Equality(Color,Color)": "complete",
+    "op_Inequality(Color,Color)": "not-applicable",
+    "R": "complete",
+    "G": "complete",
+    "B": "complete",
+    "A": "complete",
+    "PackedValue": "complete",
+    "Transparent": "complete",
+    "AliceBlue": "complete",
+    "AntiqueWhite": "complete",
+    "Aqua": "complete",
+    "Aquamarine": "complete",
+    "Azure": "complete",
+    "Beige": "complete",
+    "Bisque": "complete",
+    "Black": "complete",
+    "BlanchedAlmond": "complete",
+    "Blue": "complete",
+    "BlueViolet": "complete",
+    "Brown": "complete",
+    "BurlyWood": "complete",
+    "CadetBlue": "complete",
+    "Chartreuse": "complete",
+    "Chocolate": "complete",
+    "Coral": "complete",
+    "CornflowerBlue": "complete",
+    "Cornsilk": "complete",
+    "Crimson": "complete",
+    "Cyan": "complete",
+    "DarkBlue": "complete",
+    "DarkCyan": "complete",
+    "DarkGoldenrod": "complete",
+    "DarkGray": "complete",
+    "DarkGreen": "complete",
+    "DarkKhaki": "complete",
+    "DarkMagenta": "complete",
+    "DarkOliveGreen": "complete",
+    "DarkOrange": "complete",
+    "DarkOrchid": "complete",
+    "DarkRed": "complete",
+    "DarkSalmon": "complete",
+    "DarkSeaGreen": "complete",
+    "DarkSlateBlue": "complete",
+    "DarkSlateGray": "complete",
+    "DarkTurquoise": "complete",
+    "DarkViolet": "complete",
+    "DeepPink": "complete",
+    "DeepSkyBlue": "complete",
+    "DimGray": "complete",
+    "DodgerBlue": "complete",
+    "Firebrick": "complete",
+    "FloralWhite": "complete",
+    "ForestGreen": "complete",
+    "Fuchsia": "complete",
+    "Gainsboro": "complete",
+    "GhostWhite": "complete",
+    "Gold": "complete",
+    "Goldenrod": "complete",
+    "Gray": "complete",
+    "Green": "complete",
+    "GreenYellow": "complete",
+    "Honeydew": "complete",
+    "HotPink": "complete",
+    "IndianRed": "complete",
+    "Indigo": "complete",
+    "Ivory": "complete",
+    "Khaki": "complete",
+    "Lavender": "complete",
+    "LavenderBlush": "complete",
+    "LawnGreen": "complete",
+    "LemonChiffon": "complete",
+    "LightBlue": "complete",
+    "LightCoral": "complete",
+    "LightCyan": "complete",
+    "LightGoldenrodYellow": "complete",
+    "LightGreen": "complete",
+    "LightGray": "complete",
+    "LightPink": "complete",
+    "LightSalmon": "complete",
+    "LightSeaGreen": "complete",
+    "LightSkyBlue": "complete",
+    "LightSlateGray": "complete",
+    "LightSteelBlue": "complete",
+    "LightYellow": "complete",
+    "Lime": "complete",
+    "LimeGreen": "complete",
+    "Linen": "complete",
+    "Magenta": "complete",
+    "Maroon": "complete",
+    "MediumAquamarine": "complete",
+    "MediumBlue": "complete",
+    "MediumOrchid": "complete",
+    "MediumPurple": "complete",
+    "MediumSeaGreen": "complete",
+    "MediumSlateBlue": "complete",
+    "MediumSpringGreen": "complete",
+    "MediumTurquoise": "complete",
+    "MediumVioletRed": "complete",
+    "MidnightBlue": "complete",
+    "MintCream": "complete",
+    "MistyRose": "complete",
+    "Moccasin": "complete",
+    "NavajoWhite": "complete",
+    "Navy": "complete",
+    "OldLace": "complete",
+    "Olive": "complete",
+    "OliveDrab": "complete",
+    "Orange": "complete",
+    "OrangeRed": "complete",
+    "Orchid": "complete",
+    "PaleGoldenrod": "complete",
+    "PaleGreen": "complete",
+    "PaleTurquoise": "complete",
+    "PaleVioletRed": "complete",
+    "PapayaWhip": "complete",
+    "PeachPuff": "complete",
+    "Peru": "complete",
+    "Pink": "complete",
+    "Plum": "complete",
+    "PowderBlue": "complete",
+    "Purple": "complete",
+    "Red": "complete",
+    "RosyBrown": "complete",
+    "RoyalBlue": "complete",
+    "SaddleBrown": "complete",
+    "Salmon": "complete",
+    "SandyBrown": "complete",
+    "SeaGreen": "complete",
+    "SeaShell": "complete",
+    "Sienna": "complete",
+    "Silver": "complete",
+    "SkyBlue": "complete",
+    "SlateBlue": "complete",
+    "SlateGray": "complete",
+    "Snow": "complete",
+    "SpringGreen": "complete",
+    "SteelBlue": "complete",
+    "Tan": "complete",
+    "Teal": "complete",
+    "Thistle": "complete",
+    "Tomato": "complete",
+    "Turquoise": "complete",
+    "Violet": "complete",
+    "Wheat": "complete",
+    "White": "complete",
+    "WhiteSmoke": "complete",
+    "Yellow": "complete",
+    "YellowGreen": "complete"
+   },
+   "lisp": "microsoft.xna.framework:color"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Point",
+   "status": "complete",
+   "members": {
+    "new(Int32,Int32)": "complete",
+    "Equals(Point)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(Point,Point)": "complete",
+    "op_Inequality(Point,Point)": "not-applicable",
+    "Zero": "complete",
+    "X": "complete",
+    "Y": "complete"
+   },
+   "lisp": "microsoft.xna.framework:point"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Rectangle",
+   "status": "partial",
+   "members": {
+    "new(Int32,Int32,Int32,Int32)": "complete",
+    "Offset(Point)": "missing",
+    "Offset(Int32,Int32)": "complete",
+    "Inflate(Int32,Int32)": "complete",
+    "Contains(Int32,Int32)": "complete",
+    "Contains(Point)": "complete",
+    "Contains(Point&,Boolean&)": "missing",
+    "Contains(Rectangle)": "complete",
+    "Contains(Rectangle&,Boolean&)": "missing",
+    "Intersects(Rectangle)": "complete",
+    "Intersects(Rectangle&,Boolean&)": "missing",
+    "Intersect(Rectangle,Rectangle)": "missing",
+    "Intersect(Rectangle&,Rectangle&,Rectangle&)": "missing",
+    "Union(Rectangle,Rectangle)": "missing",
+    "Union(Rectangle&,Rectangle&,Rectangle&)": "missing",
+    "Equals(Rectangle)": "complete",
+    "Equals(Object)": "not-applicable",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "op_Equality(Rectangle,Rectangle)": "complete",
+    "op_Inequality(Rectangle,Rectangle)": "not-applicable",
+    "Left": "complete",
+    "Right": "complete",
+    "Top": "complete",
+    "Bottom": "complete",
+    "Location": "complete",
+    "Center": "complete",
+    "Empty": "complete",
+    "IsEmpty": "complete",
+    "X": "complete",
+    "Y": "complete",
+    "Width": "complete",
+    "Height": "complete"
+   },
+   "lisp": "microsoft.xna.framework:rectangle"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Vector2",
+   "status": "partial",
+   "members": {
+    "new(Single,Single)": "complete",
+    "new(Single)": "complete",
+    "ToString()": "not-applicable",
+    "Equals(Vector2)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Length()": "complete",
+    "LengthSquared()": "complete",
+    "Distance(Vector2,Vector2)": "complete",
+    "Distance(Vector2&,Vector2&,Single&)": "missing",
+    "DistanceSquared(Vector2,Vector2)": "complete",
+    "DistanceSquared(Vector2&,Vector2&,Single&)": "missing",
+    "Dot(Vector2,Vector2)": "complete",
+    "Dot(Vector2&,Vector2&,Single&)": "missing",
+    "Normalize()": "complete",
+    "Normalize(Vector2)": "missing",
+    "Normalize(Vector2&,Vector2&)": "missing",
+    "Reflect(Vector2,Vector2)": "missing",
+    "Reflect(Vector2&,Vector2&,Vector2&)": "missing",
+    "Min(Vector2,Vector2)": "missing",
+    "Min(Vector2&,Vector2&,Vector2&)": "missing",
+    "Max(Vector2,Vector2)": "missing",
+    "Max(Vector2&,Vector2&,Vector2&)": "missing",
+    "Clamp(Vector2,Vector2,Vector2)": "missing",
+    "Clamp(Vector2&,Vector2&,Vector2&,Vector2&)": "missing",
+    "Lerp(Vector2,Vector2,Single)": "missing",
+    "Lerp(Vector2&,Vector2&,Single,Vector2&)": "missing",
+    "Barycentric(Vector2,Vector2,Vector2,Single,Single)": "missing",
+    "Barycentric(Vector2&,Vector2&,Vector2&,Single,Single,Vector2&)": "missing",
+    "SmoothStep(Vector2,Vector2,Single)": "missing",
+    "SmoothStep(Vector2&,Vector2&,Single,Vector2&)": "missing",
+    "CatmullRom(Vector2,Vector2,Vector2,Vector2,Single)": "missing",
+    "CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "missing",
+    "Hermite(Vector2,Vector2,Vector2,Vector2,Single)": "missing",
+    "Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "missing",
+    "Transform(Vector2,Matrix)": "missing",
+    "Transform(Vector2&,Matrix&,Vector2&)": "missing",
+    "TransformNormal(Vector2,Matrix)": "missing",
+    "TransformNormal(Vector2&,Matrix&,Vector2&)": "missing",
+    "Transform(Vector2,Quaternion)": "missing",
+    "Transform(Vector2&,Quaternion&,Vector2&)": "missing",
+    "Transform(Vector2,Matrix&,Vector2)": "missing",
+    "Transform(Vector2,Int32,Matrix&,Vector2,Int32,Int32)": "missing",
+    "TransformNormal(Vector2,Matrix&,Vector2)": "missing",
+    "TransformNormal(Vector2,Int32,Matrix&,Vector2,Int32,Int32)": "missing",
+    "Transform(Vector2,Quaternion&,Vector2)": "missing",
+    "Transform(Vector2,Int32,Quaternion&,Vector2,Int32,Int32)": "missing",
+    "Negate(Vector2)": "complete",
+    "Negate(Vector2&,Vector2&)": "missing",
+    "Add(Vector2,Vector2)": "complete",
+    "Add(Vector2&,Vector2&,Vector2&)": "missing",
+    "Subtract(Vector2,Vector2)": "complete",
+    "Subtract(Vector2&,Vector2&,Vector2&)": "missing",
+    "Multiply(Vector2,Vector2)": "complete",
+    "Multiply(Vector2&,Vector2&,Vector2&)": "missing",
+    "Multiply(Vector2,Single)": "complete",
+    "Multiply(Vector2&,Single,Vector2&)": "missing",
+    "Divide(Vector2,Vector2)": "complete",
+    "Divide(Vector2&,Vector2&,Vector2&)": "missing",
+    "Divide(Vector2,Single)": "complete",
+    "Divide(Vector2&,Single,Vector2&)": "missing",
+    "op_UnaryNegation(Vector2)": "complete",
+    "op_Equality(Vector2,Vector2)": "complete",
+    "op_Inequality(Vector2,Vector2)": "not-applicable",
+    "op_Addition(Vector2,Vector2)": "complete",
+    "op_Subtraction(Vector2,Vector2)": "complete",
+    "op_Multiply(Vector2,Vector2)": "complete",
+    "op_Multiply(Vector2,Single)": "complete",
+    "op_Multiply(Single,Vector2)": "complete",
+    "op_Division(Vector2,Vector2)": "complete",
+    "op_Division(Vector2,Single)": "complete",
+    "Zero": "complete",
+    "One": "complete",
+    "UnitX": "complete",
+    "UnitY": "complete",
+    "X": "complete",
+    "Y": "complete"
+   },
+   "lisp": "microsoft.xna.framework:vector2"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.PlayerIndex",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "One": "complete",
+    "Two": "complete",
+    "Three": "complete",
+    "Four": "complete"
+   },
+   "lisp": "microsoft.xna.framework:player-index"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+   "status": "missing",
+   "reason": "GraphicsResource's disposal contract, its Name, Tag and Disposing event need the event projection and the GraphicsDevice back-reference, neither of which is in Foundation 1. Texture2D and SpriteBatch carry CNA-Lisp's own disposal instead.",
+   "members": {
+    "ToString()": "missing",
+    "Dispose(Boolean)": "missing",
+    "Dispose()": "missing",
+    "Finalize()": "missing",
+    "IsDisposed": "missing",
+    "Tag": "missing",
+    "Name": "missing",
+    "GraphicsDevice": "missing",
+    "Disposing": "missing"
+   }
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+   "status": "partial",
+   "members": {
+    "new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "missing",
+    "Present(Nullable`1,Nullable`1,IntPtr)": "complete",
+    "Present()": "complete",
+    "Reset()": "missing",
+    "Reset(PresentationParameters)": "missing",
+    "Reset(PresentationParameters,GraphicsAdapter)": "missing",
+    "DrawPrimitives(PrimitiveType,Int32,Int32)": "missing",
+    "DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)": "missing",
+    "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int32,Int32,Int32)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int16,Int32,Int32)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int32,Int32,Int32,VertexDeclaration)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int16,Int32,Int32,VertexDeclaration)": "missing",
+    "DrawUserPrimitives(PrimitiveType,!!0,Int32,Int32)": "missing",
+    "DrawUserPrimitives(PrimitiveType,!!0,Int32,Int32,VertexDeclaration)": "missing",
+    "Clear(ClearOptions,Vector4,Single,Int32)": "missing",
+    "Clear(ClearOptions,Color,Single,Int32)": "missing",
+    "Clear(Color)": "complete",
+    "SetRenderTargets(RenderTargetBinding)": "missing",
+    "SetRenderTarget(RenderTargetCube,CubeMapFace)": "missing",
+    "SetRenderTarget(RenderTarget2D)": "missing",
+    "GetRenderTargets()": "missing",
+    "GetBackBufferData(Nullable`1,!!0,Int32,Int32)": "missing",
+    "GetBackBufferData(!!0,Int32,Int32)": "missing",
+    "GetBackBufferData(!!0)": "missing",
+    "GetVertexBuffers()": "missing",
+    "SetVertexBuffer(VertexBuffer,Int32)": "missing",
+    "SetVertexBuffer(VertexBuffer)": "missing",
+    "SetVertexBuffers(VertexBufferBinding)": "missing",
+    "Dispose(Boolean)": "not-applicable",
+    "Dispose()": "missing",
+    "Finalize()": "not-applicable",
+    "IsDisposed": "missing",
+    "ScissorRectangle": "missing",
+    "Indices": "missing",
+    "Viewport": "partial",
+    "DisplayMode": "missing",
+    "GraphicsDeviceStatus": "missing",
+    "GraphicsProfile": "missing",
+    "Adapter": "missing",
+    "PresentationParameters": "missing",
+    "RasterizerState": "missing",
+    "ReferenceStencil": "missing",
+    "DepthStencilState": "missing",
+    "MultiSampleMask": "missing",
+    "BlendFactor": "missing",
+    "BlendState": "missing",
+    "VertexTextures": "missing",
+    "Textures": "missing",
+    "VertexSamplerStates": "missing",
+    "SamplerStates": "missing",
+    "Disposing": "missing",
+    "ResourceDestroyed": "missing",
+    "ResourceCreated": "missing",
+    "DeviceLost": "missing",
+    "DeviceReset": "missing",
+    "DeviceResetting": "missing"
+   },
+   "lisp": "microsoft.xna.framework.graphics:graphics-device"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.Viewport",
+   "status": "partial",
+   "members": {
+    "new(Int32,Int32,Int32,Int32)": "complete",
+    "new(Rectangle)": "missing",
+    "ToString()": "not-applicable",
+    "Project(Vector3,Matrix,Matrix,Matrix)": "missing",
+    "Unproject(Vector3,Matrix,Matrix,Matrix)": "missing",
+    "X": "complete",
+    "Y": "complete",
+    "Width": "complete",
+    "Height": "complete",
+    "MinDepth": "complete",
+    "MaxDepth": "complete",
+    "Bounds": "complete",
+    "AspectRatio": "complete",
+    "TitleSafeArea": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:viewport"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.Texture",
+   "status": "complete",
+   "members": {
+    "LevelCount": "complete",
+    "Format": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:texture"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.Texture2D",
+   "status": "partial",
+   "members": {
+    "new(GraphicsDevice,Int32,Int32)": "missing",
+    "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)": "missing",
+    "FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "missing",
+    "FromStream(GraphicsDevice,Stream)": "missing",
+    "SaveAsJpeg(Stream,Int32,Int32)": "missing",
+    "SaveAsPng(Stream,Int32,Int32)": "missing",
+    "SetData(!!0)": "missing",
+    "SetData(!!0,Int32,Int32)": "missing",
+    "SetData(Int32,Nullable`1,!!0,Int32,Int32)": "missing",
+    "GetData(!!0)": "missing",
+    "GetData(!!0,Int32,Int32)": "missing",
+    "GetData(Int32,Nullable`1,!!0,Int32,Int32)": "missing",
+    "Dispose(Boolean)": "not-applicable",
+    "Bounds": "complete",
+    "Height": "complete",
+    "Width": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:texture-2d"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SpriteBatch",
+   "status": "partial",
+   "members": {
+    "new(GraphicsDevice)": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "Begin()": "complete",
+    "Begin(SpriteSortMode,BlendState)": "missing",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)": "missing",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)": "missing",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)": "missing",
+    "End()": "complete",
+    "Draw(Texture2D,Vector2,Color)": "complete",
+    "Draw(Texture2D,Vector2,Nullable`1,Color)": "missing",
+    "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Single,SpriteEffects,Single)": "missing",
+    "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "missing",
+    "Draw(Texture2D,Rectangle,Color)": "complete",
+    "Draw(Texture2D,Rectangle,Nullable`1,Color)": "missing",
+    "Draw(Texture2D,Rectangle,Nullable`1,Color,Single,Vector2,SpriteEffects,Single)": "missing",
+    "DrawString(SpriteFont,String,Vector2,Color)": "missing",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "missing",
+    "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "missing",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "missing",
+    "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "missing",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "missing"
+   },
+   "lisp": "microsoft.xna.framework.graphics:sprite-batch"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Deferred": "complete",
+    "Immediate": "complete",
+    "Texture": "complete",
+    "BackToFront": "complete",
+    "FrontToBack": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:sprite-sort-mode"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "None": "complete",
+    "FlipHorizontally": "complete",
+    "FlipVertically": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:sprite-effects"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Color": "complete",
+    "Bgr565": "complete",
+    "Bgra5551": "complete",
+    "Bgra4444": "complete",
+    "Dxt1": "complete",
+    "Dxt3": "complete",
+    "Dxt5": "complete",
+    "NormalizedByte2": "complete",
+    "NormalizedByte4": "complete",
+    "Rgba1010102": "complete",
+    "Rg32": "complete",
+    "Rgba64": "complete",
+    "Alpha8": "complete",
+    "Single": "complete",
+    "Vector2": "complete",
+    "Vector4": "complete",
+    "HalfSingle": "complete",
+    "HalfVector2": "complete",
+    "HalfVector4": "complete",
+    "HdrBlendable": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:surface-format"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Keyboard",
+   "status": "complete",
+   "members": {
+    "GetState()": "complete",
+    "GetState(PlayerIndex)": "complete"
+   },
+   "projection": "static class: microsoft.xna.framework.input:keyboard-<member>"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.KeyboardState",
+   "status": "complete",
+   "members": {
+    "new(Keys)": "complete",
+    "IsKeyDown(Keys)": "complete",
+    "IsKeyUp(Keys)": "complete",
+    "GetPressedKeys()": "complete",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "op_Equality(KeyboardState,KeyboardState)": "complete",
+    "op_Inequality(KeyboardState,KeyboardState)": "not-applicable",
+    "Item": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:keyboard-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.KeyState",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Down": "complete",
+    "Up": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:key-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Keys",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "A": "complete",
+    "Add": "complete",
+    "Apps": "complete",
+    "Attn": "complete",
+    "B": "complete",
+    "Back": "complete",
+    "BrowserBack": "complete",
+    "BrowserFavorites": "complete",
+    "BrowserForward": "complete",
+    "BrowserHome": "complete",
+    "BrowserRefresh": "complete",
+    "BrowserSearch": "complete",
+    "BrowserStop": "complete",
+    "C": "complete",
+    "CapsLock": "complete",
+    "Crsel": "complete",
+    "D": "complete",
+    "D0": "complete",
+    "D1": "complete",
+    "D2": "complete",
+    "D3": "complete",
+    "D4": "complete",
+    "D5": "complete",
+    "D6": "complete",
+    "D7": "complete",
+    "D8": "complete",
+    "D9": "complete",
+    "Decimal": "complete",
+    "Delete": "complete",
+    "Divide": "complete",
+    "Down": "complete",
+    "E": "complete",
+    "End": "complete",
+    "Enter": "complete",
+    "EraseEof": "complete",
+    "Escape": "complete",
+    "Execute": "complete",
+    "Exsel": "complete",
+    "F": "complete",
+    "F1": "complete",
+    "F10": "complete",
+    "F11": "complete",
+    "F12": "complete",
+    "F13": "complete",
+    "F14": "complete",
+    "F15": "complete",
+    "F16": "complete",
+    "F17": "complete",
+    "F18": "complete",
+    "F19": "complete",
+    "F2": "complete",
+    "F20": "complete",
+    "F21": "complete",
+    "F22": "complete",
+    "F23": "complete",
+    "F24": "complete",
+    "F3": "complete",
+    "F4": "complete",
+    "F5": "complete",
+    "F6": "complete",
+    "F7": "complete",
+    "F8": "complete",
+    "F9": "complete",
+    "G": "complete",
+    "H": "complete",
+    "Help": "complete",
+    "Home": "complete",
+    "I": "complete",
+    "ImeConvert": "complete",
+    "ImeNoConvert": "complete",
+    "Insert": "complete",
+    "J": "complete",
+    "K": "complete",
+    "Kana": "complete",
+    "Kanji": "complete",
+    "L": "complete",
+    "LaunchApplication1": "complete",
+    "LaunchApplication2": "complete",
+    "LaunchMail": "complete",
+    "LeftControl": "complete",
+    "Left": "complete",
+    "LeftAlt": "complete",
+    "LeftShift": "complete",
+    "LeftWindows": "complete",
+    "M": "complete",
+    "MediaNextTrack": "complete",
+    "MediaPlayPause": "complete",
+    "MediaPreviousTrack": "complete",
+    "MediaStop": "complete",
+    "Multiply": "complete",
+    "N": "complete",
+    "None": "complete",
+    "NumLock": "complete",
+    "NumPad0": "complete",
+    "NumPad1": "complete",
+    "NumPad2": "complete",
+    "NumPad3": "complete",
+    "NumPad4": "complete",
+    "NumPad5": "complete",
+    "NumPad6": "complete",
+    "NumPad7": "complete",
+    "NumPad8": "complete",
+    "NumPad9": "complete",
+    "O": "complete",
+    "OemAuto": "complete",
+    "OemCopy": "complete",
+    "OemEnlW": "complete",
+    "OemSemicolon": "complete",
+    "OemBackslash": "complete",
+    "OemQuestion": "complete",
+    "OemTilde": "complete",
+    "OemOpenBrackets": "complete",
+    "OemPipe": "complete",
+    "OemCloseBrackets": "complete",
+    "OemQuotes": "complete",
+    "Oem8": "complete",
+    "OemClear": "complete",
+    "OemComma": "complete",
+    "OemMinus": "complete",
+    "OemPeriod": "complete",
+    "OemPlus": "complete",
+    "P": "complete",
+    "Pa1": "complete",
+    "PageDown": "complete",
+    "PageUp": "complete",
+    "Pause": "complete",
+    "Play": "complete",
+    "Print": "complete",
+    "PrintScreen": "complete",
+    "ProcessKey": "complete",
+    "Q": "complete",
+    "R": "complete",
+    "RightControl": "complete",
+    "Right": "complete",
+    "RightAlt": "complete",
+    "RightShift": "complete",
+    "RightWindows": "complete",
+    "S": "complete",
+    "Scroll": "complete",
+    "Select": "complete",
+    "SelectMedia": "complete",
+    "Separator": "complete",
+    "Sleep": "complete",
+    "Space": "complete",
+    "Subtract": "complete",
+    "T": "complete",
+    "Tab": "complete",
+    "U": "complete",
+    "Up": "complete",
+    "V": "complete",
+    "VolumeDown": "complete",
+    "VolumeMute": "complete",
+    "VolumeUp": "complete",
+    "W": "complete",
+    "X": "complete",
+    "Y": "complete",
+    "Z": "complete",
+    "Zoom": "complete",
+    "ChatPadGreen": "complete",
+    "ChatPadOrange": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:keys"
+  }
+ ],
+ "diagnostics": [
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.OnActivated(Object,EventArgs)",
+   "detail": "Needs the event projection."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.OnDeactivated(Object,EventArgs)",
+   "detail": "Needs the event projection."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.ShowMissingRequirementMessage(Exception)",
+   "detail": "Needs the CLR exception projection and a platform message box."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.LaunchParameters",
+   "detail": "no exported 'launch-parameters' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.Components",
+   "detail": "no exported 'components' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.Services",
+   "detail": "no exported 'services' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.Window",
+   "detail": "no exported 'window' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.Content",
+   "detail": "no exported 'content' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.Activated",
+   "detail": "no exported 'activated' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.Deactivated",
+   "detail": "no exported 'deactivated' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.Exiting",
+   "detail": "no exported 'exiting' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Game.Disposed",
+   "detail": "no exported 'disposed' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)",
+   "detail": "no exported 'find-best-device' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation)",
+   "detail": "no exported 'can-reset-device' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)",
+   "detail": "no exported 'rank-devices' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceCreated(Object,EventArgs)",
+   "detail": "no exported 'on-device-created' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceDisposing(Object,EventArgs)",
+   "detail": "no exported 'on-device-disposing' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceReset(Object,EventArgs)",
+   "detail": "no exported 'on-device-reset' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceResetting(Object,EventArgs)",
+   "detail": "no exported 'on-device-resetting' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)",
+   "detail": "no exported 'on-preparing-device-settings' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.GraphicsProfile",
+   "detail": "no exported 'graphics-profile' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreferredDepthStencilFormat",
+   "detail": "no exported 'preferred-depth-stencil-format' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreferredBackBufferFormat",
+   "detail": "no exported 'preferred-back-buffer-format' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreferMultiSampling",
+   "detail": "no exported 'prefer-multi-sampling' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.SupportedOrientations",
+   "detail": "no exported 'supported-orientations' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceCreated",
+   "detail": "no exported 'device-created' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceResetting",
+   "detail": "no exported 'device-resetting' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceReset",
+   "detail": "no exported 'device-reset' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceDisposing",
+   "detail": "no exported 'device-disposing' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings",
+   "detail": "no exported 'preparing-device-settings' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.Disposed",
+   "detail": "no exported 'disposed' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DefaultBackBufferWidth",
+   "detail": "no exported 'default-back-buffer-width' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DefaultBackBufferHeight",
+   "detail": "no exported 'default-back-buffer-height' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Color.new(Single,Single,Single)",
+   "detail": "The float constructors need Vector3/Vector4 clamping semantics that are not projected yet."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Color.new(Single,Single,Single,Single)",
+   "detail": "See the three-float constructor."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Color.new(Vector3)",
+   "detail": "Vector3 is not projected."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Color.new(Vector4)",
+   "detail": "Vector4 is not projected."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Color.FromNonPremultiplied(Vector4)",
+   "detail": "Vector4 is not projected."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Color.ToVector3()",
+   "detail": "Vector3 is not projected."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Color.ToVector4()",
+   "detail": "Vector4 is not projected."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Color.Lerp(Color,Color,Single)",
+   "detail": "Not implemented."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Rectangle.Offset(Point)",
+   "detail": "The Point overload is not projected; the coordinate one is."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Rectangle.Contains(Point&,Boolean&)",
+   "detail": "The by-reference overloads exist in XNA to avoid copying a value type into a call. Common Lisp passes a reference already, so the by-value overload is the whole contract; projecting the ref form would be a second name for one operation."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Rectangle.Contains(Rectangle&,Boolean&)",
+   "detail": "See Contains(Point&,Boolean&)."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Rectangle.Intersects(Rectangle&,Boolean&)",
+   "detail": "See Contains(Point&,Boolean&)."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Rectangle.Intersect(Rectangle,Rectangle)",
+   "detail": "Not implemented."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Rectangle.Intersect(Rectangle&,Rectangle&,Rectangle&)",
+   "detail": "Not implemented."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Rectangle.Union(Rectangle,Rectangle)",
+   "detail": "Not implemented."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Rectangle.Union(Rectangle&,Rectangle&,Rectangle&)",
+   "detail": "Not implemented."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Distance(Vector2&,Vector2&,Single&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.DistanceSquared(Vector2&,Vector2&,Single&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Dot(Vector2&,Vector2&,Single&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Normalize(Vector2)",
+   "detail": "The static Normalize answers a new vector; only the mutating instance method is projected."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Normalize(Vector2&,Vector2&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Reflect(Vector2,Vector2)",
+   "detail": "no exported 'vector2-reflect' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Reflect(Vector2&,Vector2&,Vector2&)",
+   "detail": "no exported 'vector2-reflect' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Min(Vector2,Vector2)",
+   "detail": "no exported 'vector2-min' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Min(Vector2&,Vector2&,Vector2&)",
+   "detail": "no exported 'vector2-min' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Max(Vector2,Vector2)",
+   "detail": "no exported 'vector2-max' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Max(Vector2&,Vector2&,Vector2&)",
+   "detail": "no exported 'vector2-max' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Clamp(Vector2,Vector2,Vector2)",
+   "detail": "no exported 'vector2-clamp' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Clamp(Vector2&,Vector2&,Vector2&,Vector2&)",
+   "detail": "no exported 'vector2-clamp' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Lerp(Vector2,Vector2,Single)",
+   "detail": "no exported 'vector2-lerp' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Lerp(Vector2&,Vector2&,Single,Vector2&)",
+   "detail": "no exported 'vector2-lerp' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Barycentric(Vector2,Vector2,Vector2,Single,Single)",
+   "detail": "no exported 'vector2-barycentric' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Barycentric(Vector2&,Vector2&,Vector2&,Single,Single,Vector2&)",
+   "detail": "no exported 'vector2-barycentric' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.SmoothStep(Vector2,Vector2,Single)",
+   "detail": "no exported 'vector2-smooth-step' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.SmoothStep(Vector2&,Vector2&,Single,Vector2&)",
+   "detail": "no exported 'vector2-smooth-step' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.CatmullRom(Vector2,Vector2,Vector2,Vector2,Single)",
+   "detail": "no exported 'vector2-catmull-rom' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)",
+   "detail": "no exported 'vector2-catmull-rom' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Hermite(Vector2,Vector2,Vector2,Vector2,Single)",
+   "detail": "no exported 'vector2-hermite' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)",
+   "detail": "no exported 'vector2-hermite' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Matrix)",
+   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2&,Matrix&,Vector2&)",
+   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.TransformNormal(Vector2,Matrix)",
+   "detail": "no exported 'vector2-transform-normal' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.TransformNormal(Vector2&,Matrix&,Vector2&)",
+   "detail": "no exported 'vector2-transform-normal' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Quaternion)",
+   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2&,Quaternion&,Vector2&)",
+   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Matrix&,Vector2)",
+   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Int32,Matrix&,Vector2,Int32,Int32)",
+   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.TransformNormal(Vector2,Matrix&,Vector2)",
+   "detail": "no exported 'vector2-transform-normal' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.TransformNormal(Vector2,Int32,Matrix&,Vector2,Int32,Int32)",
+   "detail": "no exported 'vector2-transform-normal' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Quaternion&,Vector2)",
+   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Int32,Quaternion&,Vector2,Int32,Int32)",
+   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Negate(Vector2&,Vector2&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Add(Vector2&,Vector2&,Vector2&)",
+   "detail": "A by-reference overload; see Rectangle.Contains(Point&,Boolean&)."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Subtract(Vector2&,Vector2&,Vector2&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Multiply(Vector2&,Vector2&,Vector2&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Multiply(Vector2&,Single,Vector2&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Divide(Vector2&,Vector2&,Vector2&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector2.Divide(Vector2&,Single,Vector2&)",
+   "detail": "A by-reference overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.ToString",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Dispose",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Dispose",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Finalize",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.IsDisposed",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Tag",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Name",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.GraphicsDevice",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Disposing",
+   "detail": "the type itself is not projected"
+  },
+  {
+   "category": "missing_type",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+   "detail": "GraphicsResource's disposal contract, its Name, Tag and Disposing event need the event projection and the GraphicsDevice back-reference, neither of which is in Foundation 1. Texture2D and SpriteBatch carry CNA-Lisp's own disposal instead."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.new(GraphicsAdapter,GraphicsProfile,PresentationParameters)",
+   "detail": "this constructor signature is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Reset()",
+   "detail": "Device reset is not projected."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Reset(PresentationParameters)",
+   "detail": "Needs PresentationParameters."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Reset(PresentationParameters,GraphicsAdapter)",
+   "detail": "Needs PresentationParameters and GraphicsAdapter."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawPrimitives(PrimitiveType,Int32,Int32)",
+   "detail": "no exported 'draw-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)",
+   "detail": "no exported 'draw-indexed-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)",
+   "detail": "no exported 'draw-instanced-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int32,Int32,Int32)",
+   "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int16,Int32,Int32)",
+   "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int32,Int32,Int32,VertexDeclaration)",
+   "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int16,Int32,Int32,VertexDeclaration)",
+   "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType,!!0,Int32,Int32)",
+   "detail": "no exported 'draw-user-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType,!!0,Int32,Int32,VertexDeclaration)",
+   "detail": "no exported 'draw-user-primitives' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Clear(ClearOptions,Vector4,Single,Int32)",
+   "detail": "Needs ClearOptions and Vector4."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Clear(ClearOptions,Color,Single,Int32)",
+   "detail": "Needs ClearOptions."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetRenderTargets(RenderTargetBinding)",
+   "detail": "no exported 'set-render-targets' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetRenderTarget(RenderTargetCube,CubeMapFace)",
+   "detail": "no exported 'set-render-target' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetRenderTarget(RenderTarget2D)",
+   "detail": "no exported 'set-render-target' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetRenderTargets()",
+   "detail": "no exported 'get-render-targets' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(Nullable`1,!!0,Int32,Int32)",
+   "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(!!0,Int32,Int32)",
+   "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(!!0)",
+   "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetVertexBuffers()",
+   "detail": "no exported 'get-vertex-buffers' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetVertexBuffer(VertexBuffer,Int32)",
+   "detail": "no exported 'set-vertex-buffer' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetVertexBuffer(VertexBuffer)",
+   "detail": "no exported 'set-vertex-buffer' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetVertexBuffers(VertexBufferBinding)",
+   "detail": "no exported 'set-vertex-buffers' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Dispose()",
+   "detail": "no exported 'dispose' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.IsDisposed",
+   "detail": "no exported 'is-disposed' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ScissorRectangle",
+   "detail": "no exported 'scissor-rectangle' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Indices",
+   "detail": "no exported 'indices' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DisplayMode",
+   "detail": "no exported 'display-mode' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GraphicsDeviceStatus",
+   "detail": "no exported 'graphics-device-status' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GraphicsProfile",
+   "detail": "no exported 'graphics-profile' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Adapter",
+   "detail": "no exported 'adapter' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.PresentationParameters",
+   "detail": "no exported 'presentation-parameters' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.RasterizerState",
+   "detail": "no exported 'rasterizer-state' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ReferenceStencil",
+   "detail": "no exported 'reference-stencil' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DepthStencilState",
+   "detail": "no exported 'depth-stencil-state' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.MultiSampleMask",
+   "detail": "no exported 'multi-sample-mask' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.BlendFactor",
+   "detail": "no exported 'blend-factor' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.BlendState",
+   "detail": "no exported 'blend-state' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.VertexTextures",
+   "detail": "no exported 'vertex-textures' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Textures",
+   "detail": "no exported 'textures' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.VertexSamplerStates",
+   "detail": "no exported 'vertex-sampler-states' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SamplerStates",
+   "detail": "no exported 'sampler-states' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Disposing",
+   "detail": "no exported 'disposing' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceDestroyed",
+   "detail": "no exported 'resource-destroyed' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceCreated",
+   "detail": "no exported 'resource-created' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceLost",
+   "detail": "no exported 'device-lost' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceReset",
+   "detail": "no exported 'device-reset' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceResetting",
+   "detail": "no exported 'device-resetting' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Viewport.new(Rectangle)",
+   "detail": "The rectangle constructor is not projected; the four-integer one is."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Viewport.Project(Vector3,Matrix,Matrix,Matrix)",
+   "detail": "Needs Vector3 and Matrix."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Viewport.Unproject(Vector3,Matrix,Matrix,Matrix)",
+   "detail": "Needs Vector3 and Matrix."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.new(GraphicsDevice,Int32,Int32)",
+   "detail": "Creating an empty texture is not projected in this milestone."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)",
+   "detail": "See the three-argument constructor."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)",
+   "detail": "Needs the System.IO.Stream projection. TEXTURE-2D-FROM-PNG-BYTES and TEXTURE-2D-FROM-PNG-FILE are CNA-Lisp additions over the same CNA route, and are declared as extensions rather than claimed as this member."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream)",
+   "detail": "See the five-argument overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SaveAsJpeg(Stream,Int32,Int32)",
+   "detail": "Needs the Stream projection."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SaveAsPng(Stream,Int32,Int32)",
+   "detail": "Needs the Stream projection."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(!!0)",
+   "detail": "no exported 'set-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(!!0,Int32,Int32)",
+   "detail": "no exported 'set-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(Int32,Nullable`1,!!0,Int32,Int32)",
+   "detail": "no exported 'set-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(!!0)",
+   "detail": "no exported 'get-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(!!0,Int32,Int32)",
+   "detail": "no exported 'get-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(Int32,Nullable`1,!!0,Int32,Int32)",
+   "detail": "no exported 'get-data' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState)",
+   "detail": "Needs BlendState."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)",
+   "detail": "Needs the four graphics state objects."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)",
+   "detail": "Needs the state objects and Effect."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)",
+   "detail": "Needs the state objects, Effect and Matrix."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Vector2,Nullable`1,Color)",
+   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Single,SpriteEffects,Single)",
+   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)",
+   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Rectangle,Nullable`1,Color)",
+   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Rectangle,Nullable`1,Color,Single,Vector2,SpriteEffects,Single)",
+   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,String,Vector2,Color)",
+   "detail": "Needs SpriteFont."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,StringBuilder,Vector2,Color)",
+   "detail": "Needs SpriteFont and StringBuilder."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)",
+   "detail": "Needs SpriteFont."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)",
+   "detail": "Needs SpriteFont and StringBuilder."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)",
+   "detail": "Needs SpriteFont."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)",
+   "detail": "Needs SpriteFont and StringBuilder."
+  }
+ ]
+}

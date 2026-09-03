@@ -1,0 +1,175 @@
+# Compatibility
+
+Every number here is generated. `docs/generated/api-compat-report.json` is the
+authority, `tools/api-compat/verify.py` produces it, and
+`tools/qualification/verify-numbers.py` refuses any figure in this repository's
+prose that does not match it.
+
+## How the measurement works
+
+1. **The contract** is a hash-pinned public-metadata snapshot of the Microsoft
+   XNA Framework 4.0 Windows runtime profile: 257 types with their public
+   members. `tools/api-compat/import-contract.py` refuses to run unless the
+   snapshot's SHA-256 is exactly the pinned one, and extracts the selected
+   subset into `tools/api-compat/reference/xna40-selected-contract.json`. No
+   Microsoft binary is stored here or distributed.
+
+2. **The projection** is `tools/api-compat/mapping-rules.json`: the deterministic
+   rules that turn a CLR element into a Lisp one, plus every declared exception
+   with its reason. `docs/common-lisp-mapping.md` is the prose for the same
+   rules.
+
+3. **The image** is dumped by `tools/api-compat/dump-surface.lisp` straight out
+   of a loaded CNA-Lisp: whatever it actually exports, with each symbol's kind,
+   lambda list, setf-ability, class precedence and documentation.
+
+4. **The verifier** compares them and classifies every selected type and member.
+
+```sh
+sbcl --script tools/api-compat/dump-surface.lisp
+python3 tools/api-compat/verify.py --strict
+```
+
+## Classification
+
+| Status | Meaning |
+| --- | --- |
+| `complete` | projected, with the shape the rules require |
+| `partial` | projected, but part of the member is not reachable |
+| `missing` | not projected |
+| `not-applicable` | the member has no meaning in Common Lisp, with a declared reason |
+| `externally-blocked` | something outside CNA-Lisp prevents it, with evidence |
+
+## Diagnostic categories
+
+Fourteen categories are measured. Two of them mean *absence*; the other twelve
+mean **disagreement** -- the binding claiming something that is not so, or hiding
+something.
+
+| Absence | Disagreement |
+| --- | --- |
+| `missing_type` | `wrong_package`, `wrong_kind`, `wrong_superclass` |
+| `missing_member` | `wrong_generic_function_shape`, `wrong_lambda_list` |
+| | `wrong_accessor_mutability`, `overload_mapping_mismatch` |
+| | `event_mapping_mismatch`, `enum_mismatch` |
+| | `unexpected_public_symbol`, `private_implementation_leak` |
+| | `unmeasured_category` |
+
+**Strict verification is allowed to be red while real surface is missing.** It is
+never allowed to be green because an allowlist hid something: a public symbol
+that is neither a mapped XNA member nor a declared extension is a diagnostic, and
+so is a category nothing measures.
+
+For a qualified milestone every disagreement category must be zero, every type
+claimed complete must have no local diagnostics, and the remaining red must be
+genuine absence.
+
+## Current measurement
+
+<!-- generated:selected types=21 -->
+<!-- generated:selected members=689 -->
+<!-- generated:complete types=11 -->
+<!-- generated:partial types=9 -->
+<!-- generated:missing types=1 -->
+<!-- generated:complete members=474 -->
+<!-- generated:partial members=1 -->
+<!-- generated:missing members=181 -->
+<!-- generated:not-applicable members=33 -->
+<!-- generated:disagreement total=0 -->
+
+Selection **Foundation 1**: 21 types, 689 members.
+
+| | |
+| --- | --- |
+| Types complete | **11** |
+| Types partial | **9** |
+| Types missing | **1** |
+| Members complete | **474** |
+| Members partial | **1** |
+| Members missing | **181** |
+| Members not applicable | **33** |
+| **Disagreement diagnostics** | **0** |
+
+Every remaining diagnostic is an absence. Nothing implemented disagrees with the
+contract, nothing private has leaked into a public package, and no exported
+symbol is unaccounted for.
+
+| Type | Status | complete | partial | missing | n/a |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `M.X.F.Game` | **partial** | 24 | 0 | 12 | 2 |
+| `M.X.F.GameTime` | **complete** | 6 | 0 | 0 | 0 |
+| `M.X.F.GraphicsDeviceManager` | **partial** | 8 | 0 | 21 | 1 |
+| `M.X.F.Color` | **partial** | 153 | 0 | 8 | 4 |
+| `M.X.F.Point` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Rectangle` | **partial** | 21 | 0 | 8 | 4 |
+| `M.X.F.Vector2` | **partial** | 31 | 0 | 42 | 4 |
+| `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
+| `M.X.F.Graphics.GraphicsResource` | **missing** | 0 | 0 | 9 | 0 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 3 | 1 | 51 | 2 |
+| `M.X.F.Graphics.Viewport` | **partial** | 10 | 0 | 3 | 1 |
+| `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
+| `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
+| `M.X.F.Graphics.SpriteBatch` | **partial** | 5 | 0 | 15 | 1 |
+| `M.X.F.Graphics.SpriteSortMode` | **complete** | 5 | 0 | 0 | 1 |
+| `M.X.F.Graphics.SpriteEffects` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Graphics.SurfaceFormat` | **complete** | 20 | 0 | 0 | 1 |
+| `M.X.F.Input.Keyboard` | **complete** | 2 | 0 | 0 | 0 |
+| `M.X.F.Input.KeyboardState` | **complete** | 6 | 0 | 0 | 3 |
+| `M.X.F.Input.KeyState` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Input.Keys` | **complete** | 160 | 0 | 0 | 1 |
+
+### The one partial member
+
+`GraphicsDevice.Viewport`: the reader is present, the setter is externally
+blocked. `cna_graphics_device_set_viewport` takes `CNA_Viewport` (24 bytes) by
+value, which the System V AMD64 ABI classifies MEMORY, and CFFI cannot pass a
+MEMORY-class aggregate without `cffi-libffi`. The refusal is proved by
+`tools/native-abi/generate.py` rather than asserted; see `docs/native-abi.md`.
+
+### The one missing type
+
+`Graphics.GraphicsResource` is `Texture2D`'s and `SpriteBatch`'s base class in
+XNA. Its `Name`, `Tag`, `GraphicsDevice` and `Disposing` event need the event
+projection and a device back-reference, neither of which is in this milestone.
+`Texture2D` and `SpriteBatch` carry CNA-Lisp's own disposal instead, which is why
+they work without it.
+
+## Behaviour, as distinct from structure
+
+Structure says a member exists with the right shape. It says nothing about what
+the member *does*. That is the behaviour corpus in `tests/behavior/corpus.lisp`,
+which records the origin of every observation:
+
+| Origin | Meaning |
+| --- | --- |
+| `:xna-derived` | derived from the selected Microsoft XNA contract |
+| `:abi-derived` | a fact about the CNA C ABI's own published contract |
+| `:mapping` | a CNA-Lisp mapping decision |
+
+The separation is the point. **CNA is never the oracle for what XNA does**: a
+runtime cannot prove its own compatibility. An `:xna-derived` observation that
+CNA also answers may be cross-checked against CNA; it is never established by it.
+
+## Native ABI
+
+<!-- generated:bound native functions=68 -->
+<!-- generated:bound native structs=19 -->
+<!-- generated:bound native struct fields=93 -->
+<!-- generated:bound native constants=237 -->
+<!-- generated:bound native callbacks=2 -->
+<!-- generated:by-value aggregates=2 -->
+<!-- generated:blocked routes=1 -->
+<!-- generated:abi version encoded=5376 -->
+
+| | |
+| --- | --- |
+| Bound functions | 68 |
+| Bound structs | 19 |
+| Bound struct fields | 93 |
+| Bound constants | 237 |
+| Bound callback typedefs | 2 |
+| By-value aggregates admitted | 2 |
+| Routes proved blocked | 1 |
+| Admitted ABI versions | 0.21.0 only (encoded 5376) |
+
+See `docs/native-abi.md` for what the C compiler proves about each of those.

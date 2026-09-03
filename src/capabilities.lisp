@@ -36,6 +36,35 @@
     (microsoft.xna.framework.graphics texture-2d-from-png-bytes texture-2d-from-png-file
      "Texture2D.FromStream over CNA's decode routes. The Stream projection this
       member's real signature needs is not part of this milestone.")
+    (microsoft.xna.framework
+     cna-error cna-native-error cna-usage-error
+     cna-invalid-argument-error cna-invalid-object-error cna-invalid-state-error
+     cna-out-of-memory-error cna-io-error cna-not-supported-error cna-platform-error
+     cna-thread-error cna-callback-error cna-overflow-error cna-encoding-error
+     cna-internal-error cna-shutting-down-error cna-buffer-too-small-error
+     cna-disposed-error cna-ownership-error cna-scope-error
+     cna-native-library-error cna-abi-rejected-error
+     cna-error-operation cna-error-native-message cna-error-object-type
+     cna-abi-found-version cna-abi-admitted-versions cna-native-library-path
+     cna-callback-underlying-condition
+     "The condition hierarchy. XNA has exception types of its own, and they are a
+      separate closure; these are the conditions a binding over a native runtime
+      must have in order to report a native failure as a Lisp condition instead of
+      a result code. The CNA result code behind one is deliberately not readable.")
+    (microsoft.xna.framework +ticks-per-second+ +default-target-elapsed-time-ticks+
+     "The TimeSpan tick rate and XNA's default fixed step, as named constants. The
+      values are part of the contract; naming them keeps them out of prose.")
+    (microsoft.xna.framework color-from-packed-value
+     "Constructing a Color from its packed value. XNA reaches this through the
+      settable PackedValue property on a default-constructed Color; a constructor
+      is the direct way to say it in Lisp.")
+    (microsoft.xna.framework window-title
+     "The game window's title, reached through the game. GameWindow is not
+      projected as a type in this milestone, and the title is the one part of it
+      CNA's C ABI exposes without one.")
+    (microsoft.xna.framework.graphics viewport-equal
+     "Structural equality for Viewport. The XNA struct has no Equals of its own,
+      and a projected value type that cannot be compared is awkward to test.")
     (microsoft.xna.framework.input keyboard-get-state
      "Keyboard.GetState. Static classes project as <class>-<member> so that
       Mouse and GamePad can join the namespace without colliding."))

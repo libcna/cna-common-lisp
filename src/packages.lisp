@@ -21,7 +21,6 @@
 (defpackage #:microsoft.xna.framework
   (:documentation "Common Lisp projection of the Microsoft.Xna.Framework namespace.")
   (:use #:cl)
-  (:shadow #:exit)
   (:export
    ;; --- Point -------------------------------------------------------------
    #:point #:make-point #:point-p #:copy-point #:point-x #:point-y
@@ -51,7 +50,6 @@
    #:player-index #:player-index-value #:player-index-from-value
    ;; --- GameTime ----------------------------------------------------------
    #:game-time #:total-game-time #:elapsed-game-time #:is-running-slowly
-   #:total-game-time-ticks #:elapsed-game-time-ticks
    #:total-game-time-seconds #:elapsed-game-time-seconds
    #:+ticks-per-second+
    ;; --- Game --------------------------------------------------------------
@@ -63,7 +61,7 @@
    #:target-elapsed-time #:inactive-sleep-time #:window-title #:clr-type-name
    #:+default-target-elapsed-time-ticks+
    ;; --- GraphicsDeviceManager ---------------------------------------------
-   #:graphics-device-manager #:game-of #:graphics-device-of
+   #:graphics-device-manager #:game
    #:apply-changes #:toggle-full-screen #:is-full-screen
    #:preferred-back-buffer-width #:preferred-back-buffer-height
    #:synchronize-with-vertical-retrace
@@ -100,7 +98,7 @@
    #:surface-format #:surface-format-value #:surface-format-from-value
    #:all-surface-format
    ;; --- GraphicsDevice ----------------------------------------------------
-   #:graphics-device #:clear #:viewport-of #:present #:renderer-name
+   #:graphics-device #:clear #:present #:renderer-name
    ;; --- Texture and Texture2D ---------------------------------------------
    #:texture #:texture-2d
    #:texture-2d-from-png-file #:texture-2d-from-png-bytes

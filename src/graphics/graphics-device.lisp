@@ -70,10 +70,16 @@ only time CNA lends the device out."))
        "clear" :object-type 'graphics-device)))
   (values))
 
-(defgeneric viewport-of (graphics-device)
-  (:documentation "GraphicsDevice.Viewport."))
+(defgeneric viewport (graphics-device)
+  (:documentation
+   "GraphicsDevice.Viewport.
 
-(defmethod viewport-of ((device graphics-device))
+The reader is present; the setter is not, and cannot be until CFFI can pass a
+MEMORY-class aggregate. `cna_graphics_device_set_viewport' takes CNA_Viewport by
+value, and at 24 bytes the System V AMD64 ABI passes it on the stack. See
+docs/native-abi.md."))
+
+(defmethod viewport ((device graphics-device))
   (let ((handle (%resolve-device-handle device "viewport")))
     (cffi:with-foreign-object (vp '(:struct cna-lisp.internal.ffi::cna-viewport))
       (cna-lisp.internal:check-result

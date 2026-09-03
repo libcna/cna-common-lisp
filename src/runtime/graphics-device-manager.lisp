@@ -8,7 +8,7 @@
 (in-package #:microsoft.xna.framework)
 
 (defclass graphics-device-manager (cna-lisp.internal:native-object)
-  ((game :initarg :game :initform nil :reader game-of))
+  ((game :initarg :game :initform nil :reader game))
   (:documentation
    "Microsoft.Xna.Framework.GraphicsDeviceManager.
 
@@ -46,16 +46,12 @@ Dispose it before the game it belongs to."))
           (cna-lisp.internal:owner-thread-of game)))
   (cna-lisp.internal:register-child game manager))
 
-(defgeneric graphics-device-of (manager)
-  (:documentation
-   "GraphicsDeviceManager.GraphicsDevice: the device the manager manages.
+(defmethod graphics-device ((manager graphics-device-manager))
+  "GraphicsDeviceManager.GraphicsDevice: the device the manager manages.
 
 It is the game's own device, borrowed on the same terms, so this answers the
-game's GRAPHICS-DEVICE facade rather than a second object with a second
-lifetime."))
-
-(defmethod graphics-device-of ((manager graphics-device-manager))
-  (graphics-device (game-of manager)))
+game's GRAPHICS-DEVICE facade rather than a second object with a second lifetime."
+  (graphics-device (game manager)))
 
 (defgeneric apply-changes (manager)
   (:documentation "GraphicsDeviceManager.ApplyChanges()."))
