@@ -60,30 +60,31 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=24 -->
-<!-- generated:selected members=881 -->
-<!-- generated:complete types=12 -->
-<!-- generated:partial types=11 -->
+<!-- generated:selected types=26 -->
+<!-- generated:selected members=1043 -->
+<!-- generated:complete types=16 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=609 -->
-<!-- generated:missing members=165 -->
-<!-- generated:not-applicable members=106 -->
+<!-- generated:complete members=739 -->
+<!-- generated:partial members=1 -->
+<!-- generated:missing members=141 -->
+<!-- generated:not-applicable members=162 -->
 <!-- generated:disagreement total=0 -->
 <!-- generated:bound native functions=68 -->
 <!-- generated:bound native structs=19 -->
 
-The generated scoreboard, over a selection of **24 XNA types and 881 members**:
+The generated scoreboard, over a selection of **26 XNA types and 1043 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **12 / 11 / 1** |
-| Members complete / missing | **609 / 165** |
-| Members not applicable | **106** |
+| Types complete / partial / missing | **16 / 9 / 1** |
+| Members complete / missing | **739 / 141** |
+| Members not applicable | **162** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, and every exported symbol is accounted
-for. It does **not** mean the binding is finished: 165 members are missing and
+for. It does **not** mean the binding is finished: 141 members are missing and
 are reported as missing. `docs/compatibility.md` is the authority.
 
 The private foreign layer binds **68 native routes** and **19 native structs**,

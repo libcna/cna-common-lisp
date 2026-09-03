@@ -337,6 +337,41 @@
     },
     "Hermite(Vector2,Vector2,Vector2,Vector2,Single)": {
      "lisp": "vector2-hermite"
+    },
+    "Transform(Vector2,Matrix)": {
+     "lisp": "vector2-transform",
+     "generic": true
+    },
+    "Transform(Vector2,Quaternion)": {
+     "lisp": "vector2-transform",
+     "generic": true
+    },
+    "TransformNormal(Vector2,Matrix)": {
+     "lisp": "vector2-transform-normal"
+    },
+    "Transform(Vector2[],Matrix&,Vector2[])": {
+     "lisp": "vector2-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector2[],Int32,Matrix&,Vector2[],Int32,Int32)": {
+     "lisp": "vector2-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector2[],Quaternion&,Vector2[])": {
+     "lisp": "vector2-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector2[],Int32,Quaternion&,Vector2[],Int32,Int32)": {
+     "lisp": "vector2-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "TransformNormal(Vector2[],Matrix&,Vector2[])": {
+     "lisp": "vector2-transform-normal-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "TransformNormal(Vector2[],Int32,Matrix&,Vector2[],Int32,Int32)": {
+     "lisp": "vector2-transform-normal-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
     }
    },
    "not_applicable": {
@@ -351,7 +386,10 @@
     "Distance(Vector2&,Vector2&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "DistanceSquared(Vector2&,Vector2&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Dot(Vector2&,Vector2&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Normalize(Vector2&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
+    "Normalize(Vector2&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Transform(Vector2&,Matrix&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "TransformNormal(Vector2&,Matrix&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Transform(Vector2&,Quaternion&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    },
    "unimplemented": {},
    "overload_families": {
@@ -378,6 +416,14 @@
     "Normalize": {
      "lisp": "vector2-normalize and vector2-normalized",
      "reason": "The instance form mutates; the static form does not."
+    },
+    "Transform": {
+     "lisp": "vector2-transform and vector2-transform-array",
+     "reason": "The three-argument whole-array overload and the six-argument windowed one differ only by trailing parameters, so one function with :SOURCE-INDEX, :DESTINATION-INDEX and :LENGTH expresses both. The Matrix and Quaternion forms are methods of the element transform, dispatching on the second argument."
+    },
+    "TransformNormal": {
+     "lisp": "vector2-transform-normal and vector2-transform-normal-array",
+     "reason": "The three-argument whole-array overload and the six-argument windowed one differ only by trailing parameters, so one function with :SOURCE-INDEX, :DESTINATION-INDEX and :LENGTH expresses both. The Matrix and Quaternion forms are methods of the element transform, dispatching on the second argument."
     }
    },
    "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
@@ -605,7 +651,7 @@
    "lisp_name": "keyboard-state",
    "lisp_kind": "structure",
    "constructors": {
-    "new(Keys)": "make-keyboard-state"
+    "new(Keys[])": "make-keyboard-state"
    },
    "member_overrides": {
     "IsKeyDown(Keys)": {
@@ -800,6 +846,41 @@
     },
     "Reflect(Vector3,Vector3)": {
      "lisp": "vector3-reflect"
+    },
+    "Transform(Vector3,Matrix)": {
+     "lisp": "vector3-transform",
+     "generic": true
+    },
+    "Transform(Vector3,Quaternion)": {
+     "lisp": "vector3-transform",
+     "generic": true
+    },
+    "TransformNormal(Vector3,Matrix)": {
+     "lisp": "vector3-transform-normal"
+    },
+    "Transform(Vector3[],Matrix&,Vector3[])": {
+     "lisp": "vector3-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": {
+     "lisp": "vector3-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector3[],Quaternion&,Vector3[])": {
+     "lisp": "vector3-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector3[],Int32,Quaternion&,Vector3[],Int32,Int32)": {
+     "lisp": "vector3-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "TransformNormal(Vector3[],Matrix&,Vector3[])": {
+     "lisp": "vector3-transform-normal-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "TransformNormal(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": {
+     "lisp": "vector3-transform-normal-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
     }
    },
    "not_applicable": {
@@ -826,20 +907,10 @@
     "Divide(Vector3&,Vector3&,Vector3&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Divide(Vector3&,Single,Vector3&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Transform(Vector3&,Matrix&,Vector3&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector3&,Quaternion&,Vector3&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "TransformNormal(Vector3&,Matrix&,Vector3&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector3[],Matrix&,Vector3[])": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector3[],Quaternion&,Vector3[])": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector3[],Int32,Quaternion&,Vector3[],Int32,Int32)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "TransformNormal(Vector3[],Matrix&,Vector3[])": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "TransformNormal(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
+    "Transform(Vector3&,Quaternion&,Vector3&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    },
-   "unimplemented": {
-    "Transform(Vector3,Matrix)": "Needs Matrix or Quaternion, neither of which is projected yet.",
-    "Transform(Vector3,Quaternion)": "Needs Matrix or Quaternion, neither of which is projected yet.",
-    "TransformNormal(Vector3,Matrix)": "Needs Matrix or Quaternion, neither of which is projected yet."
-   },
+   "unimplemented": {},
    "overload_families": {
     "Equals": {
      "lisp": "vector3-equal",
@@ -868,6 +939,14 @@
     ".ctor": {
      "lisp": "make-vector3 and make-vector3-from-vector2",
      "reason": "The constructor family splits on what its first argument is, and Common Lisp cannot dispatch a constructor on that without making the whole family one function that guesses. Each shape gets a named maker instead."
+    },
+    "Transform": {
+     "lisp": "vector3-transform and vector3-transform-array",
+     "reason": "The three-argument whole-array overload and the six-argument windowed one differ only by trailing parameters, so one function with :SOURCE-INDEX, :DESTINATION-INDEX and :LENGTH expresses both. The Matrix and Quaternion forms are methods of the element transform, dispatching on the second argument."
+    },
+    "TransformNormal": {
+     "lisp": "vector3-transform-normal and vector3-transform-normal-array",
+     "reason": "The three-argument whole-array overload and the six-argument windowed one differ only by trailing parameters, so one function with :SOURCE-INDEX, :DESTINATION-INDEX and :LENGTH expresses both. The Matrix and Quaternion forms are methods of the element transform, dispatching on the second argument."
     }
    },
    "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
@@ -988,6 +1067,46 @@
     },
     "LengthSquared()": {
      "lisp": "vector4-length-squared"
+    },
+    "Transform(Vector2,Matrix)": {
+     "lisp": "vector4-transform",
+     "generic": true
+    },
+    "Transform(Vector3,Matrix)": {
+     "lisp": "vector4-transform",
+     "generic": true
+    },
+    "Transform(Vector4,Matrix)": {
+     "lisp": "vector4-transform",
+     "generic": true
+    },
+    "Transform(Vector2,Quaternion)": {
+     "lisp": "vector4-transform",
+     "generic": true
+    },
+    "Transform(Vector3,Quaternion)": {
+     "lisp": "vector4-transform",
+     "generic": true
+    },
+    "Transform(Vector4,Quaternion)": {
+     "lisp": "vector4-transform",
+     "generic": true
+    },
+    "Transform(Vector4[],Matrix&,Vector4[])": {
+     "lisp": "vector4-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector4[],Int32,Matrix&,Vector4[],Int32,Int32)": {
+     "lisp": "vector4-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector4[],Quaternion&,Vector4[])": {
+     "lisp": "vector4-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+    },
+    "Transform(Vector4[],Int32,Quaternion&,Vector4[],Int32,Int32)": {
+     "lisp": "vector4-transform-array",
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
     }
    },
    "not_applicable": {
@@ -1012,24 +1131,13 @@
     "Divide(Vector4&,Vector4&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Divide(Vector4&,Single,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Transform(Vector2&,Matrix&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector2&,Quaternion&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Transform(Vector3&,Matrix&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector3&,Quaternion&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Transform(Vector4&,Matrix&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector4&,Quaternion&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector4[],Matrix&,Vector4[])": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector4[],Int32,Matrix&,Vector4[],Int32,Int32)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector4[],Quaternion&,Vector4[])": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector4[],Int32,Quaternion&,Vector4[],Int32,Int32)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
+    "Transform(Vector2&,Quaternion&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Transform(Vector3&,Quaternion&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Transform(Vector4&,Quaternion&,Vector4&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    },
-   "unimplemented": {
-    "Transform(Vector2,Matrix)": "Needs Matrix or Quaternion, neither of which is projected yet.",
-    "Transform(Vector2,Quaternion)": "Needs Matrix or Quaternion, neither of which is projected yet.",
-    "Transform(Vector3,Matrix)": "Needs Matrix or Quaternion, neither of which is projected yet.",
-    "Transform(Vector3,Quaternion)": "Needs Matrix or Quaternion, neither of which is projected yet.",
-    "Transform(Vector4,Matrix)": "Needs Matrix or Quaternion, neither of which is projected yet.",
-    "Transform(Vector4,Quaternion)": "Needs Matrix or Quaternion, neither of which is projected yet."
-   },
+   "unimplemented": {},
    "overload_families": {
     "Equals": {
      "lisp": "vector4-equal",
@@ -1058,9 +1166,474 @@
     ".ctor": {
      "lisp": "make-vector4, make-vector4-from-vector2 and make-vector4-from-vector3",
      "reason": "The constructor family splits on what its first argument is, and Common Lisp cannot dispatch a constructor on that without making the whole family one function that guesses. Each shape gets a named maker instead."
+    },
+    "Transform": {
+     "lisp": "vector4-transform and vector4-transform-array",
+     "reason": "The three-argument whole-array overload and the six-argument windowed one differ only by trailing parameters, so one function with :SOURCE-INDEX, :DESTINATION-INDEX and :LENGTH expresses both. The Matrix and Quaternion forms are methods of the element transform, dispatching on the second argument."
+    },
+    "TransformNormal": {
+     "lisp": "vector4-transform-normal and vector4-transform-normal-array",
+     "reason": "The three-argument whole-array overload and the six-argument windowed one differ only by trailing parameters, so one function with :SOURCE-INDEX, :DESTINATION-INDEX and :LENGTH expresses both. The Matrix and Quaternion forms are methods of the element transform, dispatching on the second argument."
     }
    },
    "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
+  },
+  "Microsoft.Xna.Framework.Quaternion": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "quaternion",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-quaternion",
+    "new(Vector3,Single)": "make-quaternion-from-vector3"
+   },
+   "member_overrides": {
+    "Equals(Quaternion)": {
+     "lisp": "quaternion-equal"
+    },
+    "op_Equality(Quaternion,Quaternion)": {
+     "lisp": "quaternion-equal"
+    },
+    "op_Addition(Quaternion,Quaternion)": {
+     "lisp": "quaternion-add"
+    },
+    "op_Subtraction(Quaternion,Quaternion)": {
+     "lisp": "quaternion-subtract"
+    },
+    "op_UnaryNegation(Quaternion)": {
+     "lisp": "quaternion-negate"
+    },
+    "op_Multiply(Quaternion,Quaternion)": {
+     "lisp": "quaternion-multiply",
+     "generic": true
+    },
+    "op_Multiply(Quaternion,Single)": {
+     "lisp": "quaternion-multiply",
+     "generic": true
+    },
+    "op_Division(Quaternion,Quaternion)": {
+     "lisp": "quaternion-divide"
+    },
+    "Add(Quaternion,Quaternion)": {
+     "lisp": "quaternion-add"
+    },
+    "Subtract(Quaternion,Quaternion)": {
+     "lisp": "quaternion-subtract"
+    },
+    "Negate(Quaternion)": {
+     "lisp": "quaternion-negate"
+    },
+    "Multiply(Quaternion,Quaternion)": {
+     "lisp": "quaternion-multiply",
+     "generic": true
+    },
+    "Multiply(Quaternion,Single)": {
+     "lisp": "quaternion-multiply",
+     "generic": true
+    },
+    "Divide(Quaternion,Quaternion)": {
+     "lisp": "quaternion-divide"
+    },
+    "Dot(Quaternion,Quaternion)": {
+     "lisp": "quaternion-dot"
+    },
+    "Concatenate(Quaternion,Quaternion)": {
+     "lisp": "quaternion-concatenate"
+    },
+    "Lerp(Quaternion,Quaternion,Single)": {
+     "lisp": "quaternion-lerp"
+    },
+    "Slerp(Quaternion,Quaternion,Single)": {
+     "lisp": "quaternion-slerp"
+    },
+    "Inverse(Quaternion)": {
+     "lisp": "quaternion-inverse"
+    },
+    "Normalize()": {
+     "lisp": "quaternion-normalize"
+    },
+    "Normalize(Quaternion)": {
+     "lisp": "quaternion-normalized",
+     "reason": "The instance Normalize mutates and the static one answers a new value."
+    },
+    "Conjugate()": {
+     "lisp": "quaternion-conjugate"
+    },
+    "Conjugate(Quaternion)": {
+     "lisp": "quaternion-conjugated",
+     "reason": "The instance Conjugate mutates and the static one answers a new value."
+    },
+    "Length()": {
+     "lisp": "quaternion-length"
+    },
+    "LengthSquared()": {
+     "lisp": "quaternion-length-squared"
+    },
+    "CreateFromAxisAngle(Vector3,Single)": {
+     "lisp": "quaternion-create-from-axis-angle"
+    },
+    "CreateFromYawPitchRoll(Single,Single,Single)": {
+     "lisp": "quaternion-create-from-yaw-pitch-roll"
+    },
+    "CreateFromRotationMatrix(Matrix)": {
+     "lisp": "quaternion-create-from-rotation-matrix"
+    },
+    "Identity": {
+     "lisp": "quaternion-identity"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against.",
+    "Normalize(Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Conjugate(Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Inverse(Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateFromAxisAngle(Vector3&,Single,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateFromYawPitchRoll(Single,Single,Single,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateFromRotationMatrix(Matrix&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Dot(Quaternion&,Quaternion&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Slerp(Quaternion&,Quaternion&,Single,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Lerp(Quaternion&,Quaternion&,Single,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Concatenate(Quaternion&,Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Negate(Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Add(Quaternion&,Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Subtract(Quaternion&,Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Multiply(Quaternion&,Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Multiply(Quaternion&,Single,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Divide(Quaternion&,Quaternion&,Quaternion&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
+   },
+   "unimplemented": {},
+   "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+   "overload_families": {
+    "Equals": {
+     "lisp": "quaternion-equal",
+     "reason": "Common Lisp has no operator overloading."
+    },
+    "Multiply": {
+     "lisp": "quaternion-multiply",
+     "reason": "One generic function with methods on QUATERNION and on REAL."
+    },
+    "op_Multiply": {
+     "lisp": "quaternion-multiply",
+     "reason": "As Multiply."
+    },
+    "Normalize": {
+     "lisp": "quaternion-normalize and quaternion-normalized",
+     "reason": "The instance form mutates; the static form does not."
+    },
+    "Conjugate": {
+     "lisp": "quaternion-conjugate and quaternion-conjugated",
+     "reason": "The instance form mutates; the static form does not."
+    },
+    ".ctor": {
+     "lisp": "make-quaternion and make-quaternion-from-vector3",
+     "reason": "The constructor family splits on its first argument's type."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Matrix": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "matrix",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single)": "make-matrix"
+   },
+   "member_overrides": {
+    "Equals(Matrix)": {
+     "lisp": "matrix-equal"
+    },
+    "op_Equality(Matrix,Matrix)": {
+     "lisp": "matrix-equal"
+    },
+    "op_Addition(Matrix,Matrix)": {
+     "lisp": "matrix-add"
+    },
+    "op_Subtraction(Matrix,Matrix)": {
+     "lisp": "matrix-subtract"
+    },
+    "op_UnaryNegation(Matrix)": {
+     "lisp": "matrix-negate"
+    },
+    "op_Multiply(Matrix,Matrix)": {
+     "lisp": "matrix-multiply",
+     "generic": true
+    },
+    "op_Multiply(Matrix,Single)": {
+     "lisp": "matrix-multiply",
+     "generic": true
+    },
+    "op_Multiply(Single,Matrix)": {
+     "lisp": "matrix-multiply",
+     "generic": true
+    },
+    "op_Division(Matrix,Matrix)": {
+     "lisp": "matrix-divide",
+     "generic": true
+    },
+    "op_Division(Matrix,Single)": {
+     "lisp": "matrix-divide",
+     "generic": true
+    },
+    "Add(Matrix,Matrix)": {
+     "lisp": "matrix-add"
+    },
+    "Subtract(Matrix,Matrix)": {
+     "lisp": "matrix-subtract"
+    },
+    "Negate(Matrix)": {
+     "lisp": "matrix-negate"
+    },
+    "Multiply(Matrix,Matrix)": {
+     "lisp": "matrix-multiply",
+     "generic": true
+    },
+    "Multiply(Matrix,Single)": {
+     "lisp": "matrix-multiply",
+     "generic": true
+    },
+    "Divide(Matrix,Matrix)": {
+     "lisp": "matrix-divide",
+     "generic": true
+    },
+    "Divide(Matrix,Single)": {
+     "lisp": "matrix-divide",
+     "generic": true
+    },
+    "Transpose(Matrix)": {
+     "lisp": "matrix-transpose"
+    },
+    "Determinant()": {
+     "lisp": "matrix-determinant"
+    },
+    "Invert(Matrix)": {
+     "lisp": "matrix-invert"
+    },
+    "Lerp(Matrix,Matrix,Single)": {
+     "lisp": "matrix-lerp"
+    },
+    "Transform(Matrix,Quaternion)": {
+     "lisp": "matrix-transform"
+    },
+    "CreateTranslation(Vector3)": {
+     "lisp": "matrix-create-translation",
+     "generic": true
+    },
+    "CreateTranslation(Single,Single,Single)": {
+     "lisp": "matrix-create-translation",
+     "generic": true
+    },
+    "CreateScale(Vector3)": {
+     "lisp": "matrix-create-scale",
+     "generic": true
+    },
+    "CreateScale(Single,Single,Single)": {
+     "lisp": "matrix-create-scale",
+     "generic": true
+    },
+    "CreateScale(Single)": {
+     "lisp": "matrix-create-scale",
+     "generic": true
+    },
+    "CreateRotationX(Single)": {
+     "lisp": "matrix-create-rotation-x"
+    },
+    "CreateRotationY(Single)": {
+     "lisp": "matrix-create-rotation-y"
+    },
+    "CreateRotationZ(Single)": {
+     "lisp": "matrix-create-rotation-z"
+    },
+    "CreateFromAxisAngle(Vector3,Single)": {
+     "lisp": "matrix-create-from-axis-angle"
+    },
+    "CreateFromQuaternion(Quaternion)": {
+     "lisp": "matrix-create-from-quaternion"
+    },
+    "CreateFromYawPitchRoll(Single,Single,Single)": {
+     "lisp": "matrix-create-from-yaw-pitch-roll"
+    },
+    "CreatePerspectiveFieldOfView(Single,Single,Single,Single)": {
+     "lisp": "matrix-create-perspective-field-of-view"
+    },
+    "CreatePerspective(Single,Single,Single,Single)": {
+     "lisp": "matrix-create-perspective"
+    },
+    "CreatePerspectiveOffCenter(Single,Single,Single,Single,Single,Single)": {
+     "lisp": "matrix-create-perspective-off-center"
+    },
+    "CreateOrthographic(Single,Single,Single,Single)": {
+     "lisp": "matrix-create-orthographic"
+    },
+    "CreateOrthographicOffCenter(Single,Single,Single,Single,Single,Single)": {
+     "lisp": "matrix-create-orthographic-off-center"
+    },
+    "CreateLookAt(Vector3,Vector3,Vector3)": {
+     "lisp": "matrix-create-look-at"
+    },
+    "CreateWorld(Vector3,Vector3,Vector3)": {
+     "lisp": "matrix-create-world"
+    },
+    "CreateBillboard(Vector3,Vector3,Vector3,Vector3])": {
+     "lisp": "matrix-create-billboard",
+     "reason": "The Vector3? camera-forward argument is an optional argument here; NIL is the absent value."
+    },
+    "Identity": {
+     "lisp": "matrix-identity"
+    },
+    "Up": {
+     "lisp": "matrix-up"
+    },
+    "Down": {
+     "lisp": "matrix-down"
+    },
+    "Right": {
+     "lisp": "matrix-right"
+    },
+    "Left": {
+     "lisp": "matrix-left"
+    },
+    "Forward": {
+     "lisp": "matrix-forward"
+    },
+    "Backward": {
+     "lisp": "matrix-backward"
+    },
+    "Translation": {
+     "lisp": "matrix-translation"
+    },
+    "M11": {
+     "lisp": "matrix-m11"
+    },
+    "M12": {
+     "lisp": "matrix-m12"
+    },
+    "M13": {
+     "lisp": "matrix-m13"
+    },
+    "M14": {
+     "lisp": "matrix-m14"
+    },
+    "M21": {
+     "lisp": "matrix-m21"
+    },
+    "M22": {
+     "lisp": "matrix-m22"
+    },
+    "M23": {
+     "lisp": "matrix-m23"
+    },
+    "M24": {
+     "lisp": "matrix-m24"
+    },
+    "M31": {
+     "lisp": "matrix-m31"
+    },
+    "M32": {
+     "lisp": "matrix-m32"
+    },
+    "M33": {
+     "lisp": "matrix-m33"
+    },
+    "M34": {
+     "lisp": "matrix-m34"
+    },
+    "M41": {
+     "lisp": "matrix-m41"
+    },
+    "M42": {
+     "lisp": "matrix-m42"
+    },
+    "M43": {
+     "lisp": "matrix-m43"
+    },
+    "M44": {
+     "lisp": "matrix-m44"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against.",
+    "Transpose(Matrix&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Invert(Matrix&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Lerp(Matrix&,Matrix&,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Negate(Matrix&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Add(Matrix&,Matrix&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Subtract(Matrix&,Matrix&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Multiply(Matrix&,Matrix&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Multiply(Matrix&,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Divide(Matrix&,Matrix&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Divide(Matrix&,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Transform(Matrix&,Quaternion&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateTranslation(Vector3&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateTranslation(Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateScale(Vector3&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateScale(Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateScale(Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateRotationX(Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateRotationY(Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateRotationZ(Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateFromAxisAngle(Vector3&,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateFromQuaternion(Quaternion&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateFromYawPitchRoll(Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreatePerspectiveFieldOfView(Single,Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreatePerspective(Single,Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreatePerspectiveOffCenter(Single,Single,Single,Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateOrthographic(Single,Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateOrthographicOffCenter(Single,Single,Single,Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateLookAt(Vector3&,Vector3&,Vector3&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateWorld(Vector3&,Vector3&,Vector3&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateBillboard(Vector3&,Vector3&,Vector3&,Vector3],Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
+   },
+   "unimplemented": {
+    "CreateShadow(Vector3,Plane)": "Needs Plane, which is not projected yet.",
+    "CreateShadow(Vector3&,Plane&,Matrix&)": "Needs Plane, which is not projected yet.",
+    "CreateReflection(Plane)": "Needs Plane, which is not projected yet.",
+    "CreateReflection(Plane&,Matrix&)": "Needs Plane, which is not projected yet.",
+    "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Vector3],Vector3])": "The constrained billboard's degenerate-axis fallback is a chain of three nested thresholds against two optional vectors. It is deferred rather than approximated: an implementation that agreed on the ordinary case and diverged on the degenerate one would be worse than its absence.",
+    "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Vector3],Vector3],Matrix&)": "See the by-value overload.",
+    "Decompose(Vector3&,Quaternion&,Vector3&)": "Decompose is implemented with unsafe pointer arithmetic over a private CanonicalBasis and VectorBasis pair -- some 540 IL instructions with a fallback path for degenerate scales. Reproducing it faithfully is a separate piece of work, and an approximation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than its absence."
+   },
+   "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+   "overload_families": {
+    "Equals": {
+     "lisp": "matrix-equal",
+     "reason": "Common Lisp has no operator overloading."
+    },
+    "Multiply": {
+     "lisp": "matrix-multiply",
+     "reason": "One generic function with methods on MATRIX and on REAL."
+    },
+    "op_Multiply": {
+     "lisp": "matrix-multiply",
+     "reason": "As Multiply."
+    },
+    "Divide": {
+     "lisp": "matrix-divide",
+     "reason": "As Multiply."
+    },
+    "op_Division": {
+     "lisp": "matrix-divide",
+     "reason": "As Multiply."
+    },
+    "CreateTranslation": {
+     "lisp": "matrix-create-translation",
+     "reason": "One generic function with methods on VECTOR3 and on REAL; the three-float form uses the optional arguments."
+    },
+    "CreateScale": {
+     "lisp": "matrix-create-scale",
+     "reason": "As CreateTranslation, with the uniform form distinguished by supplying only one argument."
+    },
+    "CreateShadow": {
+     "lisp": null,
+     "reason": "Not projected: needs Plane."
+    },
+    "CreateReflection": {
+     "lisp": null,
+     "reason": "Not projected: needs Plane."
+    },
+    "CreateConstrainedBillboard": {
+     "lisp": null,
+     "reason": "Deferred; see the unimplemented entry."
+    }
+   },
+   "field_naming_reason": "The M<row><column> fields keep their digits together: matrix-m11, not matrix-m-1-1. The identifier rule would split at the digit boundary and the result would be unreadable for the one type where the indices are the name."
   }
  }
 }

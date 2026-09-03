@@ -352,6 +352,33 @@
           "documentation": "The loaded CNA library reports an ABI version this build has not qualified.\nThe CNA 0.x C ABI is experimental, so CNA-Lisp admits an explicit set of versions\nwhose whole bound surface a compiler has verified, and refuses every other."
         },
         {
+          "name": "cna-argument-out-of-range-error",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": true,
+          "metaclass": "condition-class",
+          "precedence": [
+            "microsoft.xna.framework:cna-argument-out-of-range-error",
+            "microsoft.xna.framework:cna-usage-error",
+            "microsoft.xna.framework:cna-error",
+            "common-lisp:error",
+            "common-lisp:serious-condition",
+            "common-lisp:condition",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "An argument is outside the range the original accepts.\n\nThis is CNA-Lisp's projection of System.ArgumentOutOfRangeException, which is the\nonly base-class-library exception the selected XNA surface throws at a caller.\nProjecting it -- rather than letting the check disappear -- is what keeps\n`(matrix-create-perspective-field-of-view 0 ...)' refusing here as it refuses\nthere."
+        },
+        {
           "name": "cna-buffer-too-small-error",
           "fbound": false,
           "macro": false,
@@ -546,6 +573,26 @@
         },
         {
           "name": "cna-error-operation",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "condition"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "cna-error-parameter-name",
           "fbound": true,
           "macro": false,
           "generic": true,
@@ -1278,7 +1325,47 @@
           "documentation": null
         },
         {
+          "name": "copy-matrix",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "copy-point",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "copy-quaternion",
           "fbound": true,
           "macro": false,
           "generic": false,
@@ -1918,6 +2005,42 @@
           "documentation": "Color(byte, byte, byte, byte) with A defaulting to fully opaque.\n\nReal arguments outside 0-255 are clamped, which is what XNA's float constructors\ndo; the byte constructors take bytes and cannot be out of range at all."
         },
         {
+          "name": "make-matrix",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "&optional",
+            "(m11 0.0)",
+            "(m12 0.0)",
+            "(m13 0.0)",
+            "(m14 0.0)",
+            "(m21 0.0)",
+            "(m22 0.0)",
+            "(m23 0.0)",
+            "(m24 0.0)",
+            "(m31 0.0)",
+            "(m32 0.0)",
+            "(m33 0.0)",
+            "(m34 0.0)",
+            "(m41 0.0)",
+            "(m42 0.0)",
+            "(m43 0.0)",
+            "(m44 0.0)"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix(float x 16), in row order."
+        },
+        {
           "name": "make-point",
           "fbound": true,
           "macro": false,
@@ -1938,6 +2061,51 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "make-quaternion",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "&optional",
+            "(x 0.0)",
+            "(y 0.0)",
+            "(z 0.0)",
+            "(w 0.0)"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion(float, float, float, float)."
+        },
+        {
+          "name": "make-quaternion-from-vector3",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "vector3",
+            "w"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion(Vector3, float): the vector part and the scalar part."
         },
         {
           "name": "make-rectangle",
@@ -2358,6 +2526,1180 @@
           "documentation": "MathHelper.WrapAngle.\n\nThe remainder is taken in binary64, exactly as the IL does -- it calls\nMath.IEEERemainder(double, double) with the widened angle and the binary64\nrendering of two pi -- and only then narrowed. Both comparisons that follow are\nunordered, so a NaN passes through unchanged."
         },
         {
+          "name": "matrix",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework:matrix",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Matrix: a 4x4 binary32 matrix, row-major."
+        },
+        {
+          "name": "matrix-add",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Add."
+        },
+        {
+          "name": "matrix-backward",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "vector",
+            "matrix"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Backward: the third row's vector part."
+        },
+        {
+          "name": "matrix-create-billboard",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object-position",
+            "camera-position",
+            "camera-up-vector",
+            "&optional",
+            "camera-forward-vector"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateBillboard.\n\nCAMERA-FORWARD-VECTOR is XNA's `Vector3?': NIL is the absent value, and it is\nconsulted only when the object and the camera are closer together than the\nframework's own 0.0001f squared-distance threshold."
+        },
+        {
+          "name": "matrix-create-from-axis-angle",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "axis",
+            "angle"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateFromAxisAngle."
+        },
+        {
+          "name": "matrix-create-from-quaternion",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateFromQuaternion."
+        },
+        {
+          "name": "matrix-create-from-yaw-pitch-roll",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "yaw",
+            "pitch",
+            "roll"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateFromYawPitchRoll: the quaternion of the same name, as a matrix."
+        },
+        {
+          "name": "matrix-create-look-at",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "camera-position",
+            "camera-target",
+            "camera-up-vector"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateLookAt."
+        },
+        {
+          "name": "matrix-create-orthographic",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "width",
+            "height",
+            "z-near-plane",
+            "z-far-plane"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateOrthographic."
+        },
+        {
+          "name": "matrix-create-orthographic-off-center",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right",
+            "bottom",
+            "top",
+            "z-near-plane",
+            "z-far-plane"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateOrthographicOffCenter."
+        },
+        {
+          "name": "matrix-create-perspective",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "width",
+            "height",
+            "near-plane-distance",
+            "far-plane-distance"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreatePerspective."
+        },
+        {
+          "name": "matrix-create-perspective-field-of-view",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "field-of-view",
+            "aspect-ratio",
+            "near-plane-distance",
+            "far-plane-distance"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreatePerspectiveFieldOfView.\n\nThe four range checks are the framework's own, and each refuses with the name of\nthe argument it is about, as ArgumentOutOfRangeException does there."
+        },
+        {
+          "name": "matrix-create-perspective-off-center",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right",
+            "bottom",
+            "top",
+            "near-plane-distance",
+            "far-plane-distance"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreatePerspectiveOffCenter."
+        },
+        {
+          "name": "matrix-create-rotation-x",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "radians"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateRotationX."
+        },
+        {
+          "name": "matrix-create-rotation-y",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "radians"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateRotationY."
+        },
+        {
+          "name": "matrix-create-rotation-z",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "radians"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateRotationZ."
+        },
+        {
+          "name": "matrix-create-scale",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "x",
+            "&optional",
+            "y",
+            "z"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateScale, from a Vector3, from three floats, or from one uniform\nfloat."
+        },
+        {
+          "name": "matrix-create-translation",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "x",
+            "&optional",
+            "y",
+            "z"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateTranslation, from a Vector3 or from three floats."
+        },
+        {
+          "name": "matrix-create-world",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "position",
+            "forward",
+            "up"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateWorld.\n\nThe third row is the *negated, normalised* forward vector: XNA's world matrices\nlook down -Z."
+        },
+        {
+          "name": "matrix-determinant",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Determinant, by the framework's own cofactor expansion."
+        },
+        {
+          "name": "matrix-divide",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "matrix",
+            "divisor"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Divide, component-wise or by a scalar."
+        },
+        {
+          "name": "matrix-down",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "vector",
+            "matrix"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Down: the negated second row."
+        },
+        {
+          "name": "matrix-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Equals."
+        },
+        {
+          "name": "matrix-forward",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "vector",
+            "matrix"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Forward: the negated third row."
+        },
+        {
+          "name": "matrix-identity",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Identity."
+        },
+        {
+          "name": "matrix-invert",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Invert, by the framework's own cofactor expansion.\n\nA singular matrix answers a matrix of infinities and NaNs rather than signalling,\nbecause the framework divides by the determinant without checking it and IEEE 754\ndefault handling is what the CLR uses."
+        },
+        {
+          "name": "matrix-left",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "vector",
+            "matrix"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Left: the negated first row."
+        },
+        {
+          "name": "matrix-lerp",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix1",
+            "matrix2",
+            "amount"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Lerp, component by component."
+        },
+        {
+          "name": "matrix-m11",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m12",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m13",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m14",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m21",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m22",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m23",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m24",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m31",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m32",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m33",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m34",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m41",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m42",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m43",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-m44",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-multiply",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "matrix",
+            "factor"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Multiply, by another matrix or by a scalar.\n\n`(matrix-multiply a b)' applies A first and then B, because these are row-major\nmatrices multiplied on the left by a row vector."
+        },
+        {
+          "name": "matrix-negate",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Negate."
+        },
+        {
+          "name": "matrix-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "matrix-right",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "vector",
+            "matrix"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Right: the first row's vector part."
+        },
+        {
+          "name": "matrix-subtract",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Subtract."
+        },
+        {
+          "name": "matrix-transform",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix",
+            "rotation"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Transform: MATRIX rotated by a quaternion."
+        },
+        {
+          "name": "matrix-translation",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "vector",
+            "matrix"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Translation: the fourth row's vector part."
+        },
+        {
+          "name": "matrix-transpose",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Transpose."
+        },
+        {
+          "name": "matrix-up",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "vector",
+            "matrix"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Up: the second row's vector part."
+        },
+        {
           "name": "on-exiting",
           "fbound": true,
           "macro": false,
@@ -2682,6 +4024,573 @@
           "constant": false,
           "value": null,
           "documentation": "Color.Purple: a fresh Color each call."
+        },
+        {
+          "name": "quaternion",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework:quaternion",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Quaternion."
+        },
+        {
+          "name": "quaternion-add",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Add."
+        },
+        {
+          "name": "quaternion-concatenate",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value1",
+            "value2"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Concatenate: the rotation of VALUE1 followed by that of VALUE2.\n\nIt is the Hamilton product with the operands the other way round, which is\nexactly what the IL does and the opposite of what the name suggests to somebody\nwho assumes multiplication order."
+        },
+        {
+          "name": "quaternion-conjugate",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Conjugate(), the instance method: negates the vector part in place."
+        },
+        {
+          "name": "quaternion-conjugated",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Conjugate(Quaternion), the static method: answers a new quaternion."
+        },
+        {
+          "name": "quaternion-create-from-axis-angle",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "axis",
+            "angle"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.CreateFromAxisAngle."
+        },
+        {
+          "name": "quaternion-create-from-rotation-matrix",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.CreateFromRotationMatrix.\n\nFour branches on the matrix trace and its diagonal, in the framework's own order.\nThe largest diagonal term decides which component is recovered from a square root\nand which three are recovered from off-diagonal differences, which is what keeps\nthe result stable."
+        },
+        {
+          "name": "quaternion-create-from-yaw-pitch-roll",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "yaw",
+            "pitch",
+            "roll"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.CreateFromYawPitchRoll."
+        },
+        {
+          "name": "quaternion-divide",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Divide: LEFT times the inverse of RIGHT."
+        },
+        {
+          "name": "quaternion-dot",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Dot."
+        },
+        {
+          "name": "quaternion-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Equals."
+        },
+        {
+          "name": "quaternion-identity",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Identity."
+        },
+        {
+          "name": "quaternion-inverse",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Inverse: the conjugate scaled by the reciprocal of the squared\nlength. No square root is taken; the framework does not take one here."
+        },
+        {
+          "name": "quaternion-length",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Length."
+        },
+        {
+          "name": "quaternion-length-squared",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.LengthSquared."
+        },
+        {
+          "name": "quaternion-lerp",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion1",
+            "quaternion2",
+            "amount"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Lerp.\n\nLinear interpolation on the shorter arc -- the second quaternion is subtracted\nrather than added when the two point away from each other -- and the result is\nnormalised in both branches."
+        },
+        {
+          "name": "quaternion-multiply",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "quaternion",
+            "factor"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Multiply, by another quaternion or by a scalar."
+        },
+        {
+          "name": "quaternion-negate",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Negate."
+        },
+        {
+          "name": "quaternion-normalize",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Normalize(), the instance method: mutates and answers the receiver."
+        },
+        {
+          "name": "quaternion-normalized",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Normalize(Quaternion), the static method: answers a new quaternion."
+        },
+        {
+          "name": "quaternion-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "quaternion-slerp",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "quaternion1",
+            "quaternion2",
+            "amount"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Slerp.\n\nBelow the framework's own 0.999999f threshold the two quaternions are treated as\nparallel and the interpolation degenerates to the linear one, without\nnormalising. That threshold is a constant in the assembly, not a tolerance chosen\nhere."
+        },
+        {
+          "name": "quaternion-subtract",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Quaternion.Subtract."
+        },
+        {
+          "name": "quaternion-w",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "quaternion-x",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "quaternion-y",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "quaternion-z",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "rectangle",
@@ -3922,6 +5831,100 @@
           "documentation": null
         },
         {
+          "name": "vector2-transform",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "value",
+            "transform"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector2.Transform, by a Matrix or by a Quaternion.\n\nThe matrix form includes the translation row; VECTOR2-TRANSFORM-NORMAL is the one\nthat does not."
+        },
+        {
+          "name": "vector2-transform-array",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "source",
+            "transform",
+            "destination",
+            "&key",
+            "(source-index 0)",
+            "(destination-index 0)",
+            "length"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector2.Transform over an array, by a Matrix or a Quaternion.\n\nSOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed overload; with\nnone of them the whole of SOURCE is transformed. DESTINATION is answered."
+        },
+        {
+          "name": "vector2-transform-normal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "normal",
+            "matrix"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector2.TransformNormal: the matrix form without the translation."
+        },
+        {
+          "name": "vector2-transform-normal-array",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "source",
+            "transform",
+            "destination",
+            "&key",
+            "(source-index 0)",
+            "(destination-index 0)",
+            "length"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector2.TransformNormal over an array. See VECTOR2-TRANSFORM-ARRAY."
+        },
+        {
           "name": "vector2-unit-x",
           "fbound": true,
           "macro": false,
@@ -4663,6 +6666,100 @@
           "documentation": "Vector3.Subtract."
         },
         {
+          "name": "vector3-transform",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "value",
+            "transform"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector3.Transform, by a Matrix or by a Quaternion."
+        },
+        {
+          "name": "vector3-transform-array",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "source",
+            "transform",
+            "destination",
+            "&key",
+            "(source-index 0)",
+            "(destination-index 0)",
+            "length"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector3.Transform over an array, by a Matrix or a Quaternion.\nSee VECTOR2-TRANSFORM-ARRAY."
+        },
+        {
+          "name": "vector3-transform-normal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "normal",
+            "matrix"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector3.TransformNormal: the matrix form without the translation."
+        },
+        {
+          "name": "vector3-transform-normal-array",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "source",
+            "transform",
+            "destination",
+            "&key",
+            "(source-index 0)",
+            "(destination-index 0)",
+            "length"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector3.TransformNormal over an array. See VECTOR2-TRANSFORM-ARRAY."
+        },
+        {
           "name": "vector3-unit-x",
           "fbound": true,
           "macro": false,
@@ -5329,6 +7426,53 @@
           "constant": false,
           "value": null,
           "documentation": "Vector4.Subtract."
+        },
+        {
+          "name": "vector4-transform",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "value",
+            "transform"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector4.Transform: a Vector2, Vector3 or Vector4 by a Matrix or a Quaternion,\nanswering a Vector4.\n\nThe shorter inputs are extended the way the framework extends them: a Vector2 or\nVector3 rotated by a quaternion answers W = 1, while a Vector4 keeps its own W."
+        },
+        {
+          "name": "vector4-transform-array",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "source",
+            "transform",
+            "destination",
+            "&key",
+            "(source-index 0)",
+            "(destination-index 0)",
+            "length"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Vector4.Transform over an array, by a Matrix or a Quaternion.\nSee VECTOR2-TRANSFORM-ARRAY."
         },
         {
           "name": "vector4-unit-w",
@@ -7333,7 +9477,9 @@
         "cna-abi-found-version",
         "cna-abi-admitted-versions",
         "cna-native-library-path",
-        "cna-callback-underlying-condition"
+        "cna-callback-underlying-condition",
+        "cna-argument-out-of-range-error",
+        "cna-error-parameter-name"
       ],
       "reason": "The condition hierarchy. XNA has exception types of its own, and they are a\n      separate closure; these are the conditions a binding over a native runtime\n      must have in order to report a native failure as a Lisp condition instead of\n      a result code. The CNA result code behind one is deliberately not readable."
     },

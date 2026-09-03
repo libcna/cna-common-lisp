@@ -47,6 +47,7 @@
      cna-error-operation cna-error-native-message cna-error-object-type
      cna-abi-found-version cna-abi-admitted-versions cna-native-library-path
      cna-callback-underlying-condition
+     cna-argument-out-of-range-error cna-error-parameter-name
      "The condition hierarchy. XNA has exception types of its own, and they are a
       separate closure; these are the conditions a binding over a native runtime
       must have in order to report a native failure as a Lisp condition instead of

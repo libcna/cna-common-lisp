@@ -70,6 +70,45 @@
    #:vector4-min #:vector4-max #:vector4-clamp
    #:vector4-lerp #:vector4-smooth-step #:vector4-barycentric
    #:vector4-catmull-rom #:vector4-hermite #:vector4-equal
+   ;; --- Quaternion --------------------------------------------------------
+   #:quaternion #:make-quaternion #:quaternion-p #:copy-quaternion
+   #:make-quaternion-from-vector3
+   #:quaternion-x #:quaternion-y #:quaternion-z #:quaternion-w
+   #:quaternion-identity #:quaternion-length #:quaternion-length-squared
+   #:quaternion-normalize #:quaternion-normalized
+   #:quaternion-conjugate #:quaternion-conjugated #:quaternion-inverse
+   #:quaternion-dot #:quaternion-concatenate
+   #:quaternion-create-from-axis-angle #:quaternion-create-from-yaw-pitch-roll
+   #:quaternion-create-from-rotation-matrix
+   #:quaternion-add #:quaternion-subtract #:quaternion-negate
+   #:quaternion-multiply #:quaternion-divide
+   #:quaternion-lerp #:quaternion-slerp #:quaternion-equal
+   ;; --- Matrix ------------------------------------------------------------
+   #:matrix #:make-matrix #:matrix-p #:copy-matrix #:matrix-identity
+   #:matrix-m11 #:matrix-m12 #:matrix-m13 #:matrix-m14
+   #:matrix-m21 #:matrix-m22 #:matrix-m23 #:matrix-m24
+   #:matrix-m31 #:matrix-m32 #:matrix-m33 #:matrix-m34
+   #:matrix-m41 #:matrix-m42 #:matrix-m43 #:matrix-m44
+   #:matrix-up #:matrix-down #:matrix-right #:matrix-left
+   #:matrix-forward #:matrix-backward #:matrix-translation
+   #:matrix-create-translation #:matrix-create-scale
+   #:matrix-create-rotation-x #:matrix-create-rotation-y #:matrix-create-rotation-z
+   #:matrix-create-from-axis-angle #:matrix-create-from-quaternion
+   #:matrix-create-from-yaw-pitch-roll
+   #:matrix-create-perspective-field-of-view #:matrix-create-perspective
+   #:matrix-create-perspective-off-center
+   #:matrix-create-orthographic #:matrix-create-orthographic-off-center
+   #:matrix-create-look-at #:matrix-create-world #:matrix-create-billboard
+   #:matrix-transpose #:matrix-determinant #:matrix-invert
+   #:matrix-add #:matrix-subtract #:matrix-negate
+   #:matrix-multiply #:matrix-divide #:matrix-lerp #:matrix-transform
+   #:matrix-equal
+   ;; --- transforms --------------------------------------------------------
+   #:vector2-transform #:vector2-transform-normal
+   #:vector2-transform-array #:vector2-transform-normal-array
+   #:vector3-transform #:vector3-transform-normal
+   #:vector3-transform-array #:vector3-transform-normal-array
+   #:vector4-transform #:vector4-transform-array
    ;; --- MathHelper --------------------------------------------------------
    #:+math-helper-e+ #:+math-helper-log2e+ #:+math-helper-log10e+
    #:+math-helper-pi+ #:+math-helper-two-pi+
@@ -113,6 +152,7 @@
    #:cna-not-supported-error #:cna-platform-error #:cna-thread-error
    #:cna-callback-error #:cna-overflow-error #:cna-encoding-error
    #:cna-internal-error #:cna-shutting-down-error #:cna-buffer-too-small-error
+   #:cna-argument-out-of-range-error #:cna-error-parameter-name
    #:cna-disposed-error #:cna-ownership-error #:cna-scope-error
    #:cna-native-library-error #:cna-abi-rejected-error
    #:cna-error-operation #:cna-error-native-message #:cna-error-object-type

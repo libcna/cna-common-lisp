@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1",
   "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
-  "type_count": 24,
-  "member_count": 881
+  "type_count": 26,
+  "member_count": 1043
  },
  "types": [
   {
@@ -11500,6 +11500,4276 @@
      "static": true,
      "constant": true,
      "value": "0.7853982"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Quaternion",
+   "kind": "struct",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.ValueType",
+   "interfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.Quaternion]"
+   ],
+   "directInterfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.Quaternion]"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "x",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "y",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "z",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "w",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "vectorPart",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "scalarPart",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "ToString",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "other",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "obj",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetHashCode",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "LengthSquared",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Single",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Length",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Single",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Normalize",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Normalize",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Normalize",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Conjugate",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Conjugate",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Conjugate",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Inverse",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Inverse",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromAxisAngle",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "axis",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "angle",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromAxisAngle",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "axis",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "angle",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromYawPitchRoll",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "yaw",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "pitch",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "roll",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromYawPitchRoll",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "yaw",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "pitch",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "roll",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromRotationMatrix",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromRotationMatrix",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dot",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Single",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dot",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "System.Single&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Slerp",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "amount",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Slerp",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "amount",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Lerp",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "amount",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Lerp",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "amount",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Concatenate",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "value2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Concatenate",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "value2",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Negate",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Negate",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Add",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Add",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Subtract",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Subtract",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "scaleFactor",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "scaleFactor",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Divide",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Divide",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_UnaryNegation",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Equality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Inequality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Addition",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Subtraction",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "scaleFactor",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Division",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Quaternion",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion1",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "quaternion2",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Identity",
+     "type": "Microsoft.Xna.Framework.Quaternion",
+     "static": true,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "field",
+     "name": "X",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Y",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Z",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "W",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Matrix",
+   "kind": "struct",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.ValueType",
+   "interfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.Matrix]"
+   ],
+   "directInterfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.Matrix]"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "m11",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m12",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m13",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m14",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m21",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m22",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m23",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m24",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m31",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m32",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m33",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m34",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m41",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m42",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m43",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "m44",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateBillboard",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "objectPosition",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraPosition",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraUpVector",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraForwardVector",
+       "type": "System.Nullable`1[Microsoft.Xna.Framework.Vector3]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateBillboard",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "objectPosition",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraPosition",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraUpVector",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraForwardVector",
+       "type": "System.Nullable`1[Microsoft.Xna.Framework.Vector3]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateConstrainedBillboard",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "objectPosition",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraPosition",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rotateAxis",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraForwardVector",
+       "type": "System.Nullable`1[Microsoft.Xna.Framework.Vector3]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "objectForwardVector",
+       "type": "System.Nullable`1[Microsoft.Xna.Framework.Vector3]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateConstrainedBillboard",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "objectPosition",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraPosition",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rotateAxis",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraForwardVector",
+       "type": "System.Nullable`1[Microsoft.Xna.Framework.Vector3]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "objectForwardVector",
+       "type": "System.Nullable`1[Microsoft.Xna.Framework.Vector3]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateTranslation",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "position",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateTranslation",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "position",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateTranslation",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "xPosition",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "yPosition",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zPosition",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateTranslation",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "xPosition",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "yPosition",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zPosition",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateScale",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "xScale",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "yScale",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zScale",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateScale",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "xScale",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "yScale",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zScale",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateScale",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "scales",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateScale",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "scales",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateScale",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "scale",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateScale",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "scale",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateRotationX",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "radians",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateRotationX",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "radians",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateRotationY",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "radians",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateRotationY",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "radians",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateRotationZ",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "radians",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateRotationZ",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "radians",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromAxisAngle",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "axis",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "angle",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromAxisAngle",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "axis",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "angle",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreatePerspectiveFieldOfView",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "fieldOfView",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "aspectRatio",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "nearPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "farPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreatePerspectiveFieldOfView",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "fieldOfView",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "aspectRatio",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "nearPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "farPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreatePerspective",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "width",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "height",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "nearPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "farPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreatePerspective",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "width",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "height",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "nearPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "farPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreatePerspectiveOffCenter",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "left",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "right",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "bottom",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "top",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "nearPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "farPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreatePerspectiveOffCenter",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "left",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "right",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "bottom",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "top",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "nearPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "farPlaneDistance",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateOrthographic",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "width",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "height",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zNearPlane",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zFarPlane",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateOrthographic",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "width",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "height",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zNearPlane",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zFarPlane",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateOrthographicOffCenter",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "left",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "right",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "bottom",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "top",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zNearPlane",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zFarPlane",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateOrthographicOffCenter",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "left",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "right",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "bottom",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "top",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zNearPlane",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "zFarPlane",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateLookAt",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "cameraPosition",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraTarget",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraUpVector",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateLookAt",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "cameraPosition",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraTarget",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "cameraUpVector",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateWorld",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "position",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "forward",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "up",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateWorld",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "position",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "forward",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "up",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromQuaternion",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromQuaternion",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "quaternion",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromYawPitchRoll",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "yaw",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "pitch",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "roll",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFromYawPitchRoll",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "yaw",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "pitch",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "roll",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateShadow",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "lightDirection",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "plane",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateShadow",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "lightDirection",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "plane",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateReflection",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateReflection",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Decompose",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "scale",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rotation",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "translation",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Transform",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rotation",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Transform",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rotation",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "ToString",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "other",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "obj",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetHashCode",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Transpose",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Transpose",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Determinant",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Single",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Invert",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Invert",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Lerp",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "amount",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Lerp",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "amount",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Negate",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Negate",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Add",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Add",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Subtract",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Subtract",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "scaleFactor",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "scaleFactor",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Divide",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Divide",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Divide",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "divider",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Divide",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "divider",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_UnaryNegation",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Equality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Inequality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Addition",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Subtraction",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "scaleFactor",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Multiply",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "scaleFactor",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Division",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix2",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Division",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "matrix1",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "divider",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Identity",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": true,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Up",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Down",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Right",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Left",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Forward",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Backward",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Translation",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "field",
+     "name": "M11",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M12",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M13",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M14",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M21",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M22",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M23",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M24",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M31",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M32",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M33",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M34",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M41",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M42",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M43",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "M44",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
     }
    ]
   },

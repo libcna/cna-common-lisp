@@ -163,24 +163,24 @@ which refuses any figure in the prose that the reports do not produce.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=24 -->
-<!-- generated:selected members=881 -->
-<!-- generated:complete types=12 -->
-<!-- generated:partial types=11 -->
+<!-- generated:selected types=26 -->
+<!-- generated:selected members=1043 -->
+<!-- generated:complete types=16 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=609 -->
-<!-- generated:missing members=165 -->
-<!-- generated:not-applicable members=106 -->
+<!-- generated:complete members=739 -->
+<!-- generated:missing members=141 -->
+<!-- generated:not-applicable members=162 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1**: 24 types, 881 members.
+Selection **Foundation 1**: 26 types, 1043 members.
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **12 / 11 / 1** |
-| Members complete | **609** |
-| Members missing | **165** |
-| Members not applicable | **106** |
+| Types complete / partial / missing | **16 / 9 / 1** |
+| Members complete | **739** |
+| Members missing | **141** |
+| Members not applicable | **162** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
 

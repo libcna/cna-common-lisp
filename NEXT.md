@@ -38,8 +38,8 @@ would go stale the moment the next commit lands.
 | Gate | Result |
 | --- | --- |
 | ASDF load from a fresh image | no warnings |
-| `asdf:test-system` with a native library | **1317 checks, 0 failures, 0 not run** |
-| `asdf:test-system` without one | 956 checks, 0 failures, **61 not run** and reported as such |
+| `asdf:test-system` with a native library | **1436 checks, 0 failures, 0 not run** |
+| `asdf:test-system` without one | 1075 checks, 0 failures, **61 not run** and reported as such |
 | Compiler-backed ABI probe | compiles clean at `-Wall -Wextra -Werror -Wpedantic` |
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
@@ -54,23 +54,23 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=24 -->
-<!-- generated:selected members=881 -->
-<!-- generated:complete types=12 -->
-<!-- generated:partial types=11 -->
+<!-- generated:selected types=26 -->
+<!-- generated:selected members=1043 -->
+<!-- generated:complete types=16 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=609 -->
-<!-- generated:missing members=165 -->
-<!-- generated:not-applicable members=106 -->
+<!-- generated:complete members=739 -->
+<!-- generated:partial members=1 -->
+<!-- generated:missing members=141 -->
+<!-- generated:not-applicable members=162 -->
 <!-- generated:disagreement total=0 -->
 
-24 selected types, 881 members: **12 complete, 11 partial, 1 missing**;
-**609 members complete, 165 missing**, 106 not applicable, 1 partial.
+26 selected types, 1043 members: **16 complete, 9 partial, 1 missing**;
+**739 members complete, 141 missing**, 162 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
-Every remaining missing member of `Vector2`, `Vector3` and `Vector4` is a
-`Transform` or `TransformNormal` overload. All of them need `Matrix` or
-`Quaternion`, which is why those two are the next thing to build.
+`MathHelper`, `Vector2`, `Vector3`, `Vector4` and `Quaternion` are complete.
+`Matrix` has seven members left, and each of them names what it is waiting for.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -93,16 +93,20 @@ released CNA-Lisp may require a C toolchain, which it currently may not.
 The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts.
 
-1. **`Quaternion` and `Matrix`**, from the same pinned IL. They are the only
-   thing standing between the three vector types and completion: every one of
-   their remaining missing members is a `Transform` or `TransformNormal`
-   overload. `MathHelper`, `Vector3` and `Vector4` are done.
+1. **`Plane`**, which is small and unblocks three of `Matrix`'s seven remaining
+   members (`CreateShadow` twice and `CreateReflection`). Then **`Ray`,
+   `BoundingBox`, `BoundingSphere`, `BoundingFrustum`, `ContainmentType`,
+   `PlaneIntersectionType`** -- `Matrix` and `Quaternion` are in place, so the
+   whole geometry closure is now unblocked.
 2. **Complete `Rectangle`** (`Intersect`, `Union`, the `Point` overload of
    `Offset`) and **`Color`** (the float and vector constructors, `ToVector3`,
    `ToVector4`, `Lerp`) -- `Color`'s vector members are unblocked now that
    `Vector3` and `Vector4` exist.
-3. **`Plane`, `Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum`,
-   `ContainmentType`, `PlaneIntersectionType`** once `Matrix` is there.
+3. **`Matrix.Decompose` and `Matrix.CreateConstrainedBillboard`**, the two
+   deferred members. Both are real work rather than transcription: `Decompose` is
+   540 IL instructions over a private pointer basis with a degenerate-scale
+   fallback, and the constrained billboard has a three-deep threshold chain. Read
+   them properly or leave them absent; do not approximate either.
 4. **The `Curve` family**: `Curve`, `CurveKey`, `CurveKeyCollection`,
    `CurveContinuity`, `CurveLoopType`, `CurveTangent`. Pure managed, CNA has the
    routes for cross-checking.

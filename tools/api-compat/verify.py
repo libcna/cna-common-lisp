@@ -55,10 +55,18 @@ def kebab(name):
 
 
 def simple(type_name):
+    """The short spelling of a CLR type, keeping array-ness and by-reference-ness.
+
+    An array parameter must stay distinguishable from a single value: XNA has
+    both Transform(Vector3, Matrix) and Transform(Vector3[], ref Matrix,
+    Vector3[]), and collapsing them would let one rule silently claim the other.
+    """
     if not type_name:
         return type_name
-    base = type_name.split("[")[0]
-    return base.split(".")[-1]
+    suffix = "[]" if type_name.endswith("[]") else ""
+    base = type_name[:-2] if suffix else type_name
+    base = base.split("[")[0]
+    return base.split(".")[-1] + suffix
 
 
 def signature(member):

@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1",
   "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
-  "type_count": 24,
-  "member_count": 881
+  "type_count": 26,
+  "member_count": 1043
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,23 +15,23 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 24,
-  "members": 881,
+  "types": 26,
+  "members": 1043,
   "types_by_status": {
-   "partial": 11,
-   "complete": 12,
+   "partial": 9,
+   "complete": 16,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 609,
-   "missing": 165,
-   "not-applicable": 106,
+   "complete": 739,
+   "missing": 141,
+   "not-applicable": 162,
    "partial": 1
   },
-  "diagnostics": 166,
+  "diagnostics": 142,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 165,
+   "missing_member": 141,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -374,7 +374,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Vector2",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(Single,Single)": "complete",
     "new(Single)": "complete",
@@ -411,18 +411,18 @@
     "CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "complete",
     "Hermite(Vector2,Vector2,Vector2,Vector2,Single)": "complete",
     "Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "complete",
-    "Transform(Vector2,Matrix)": "missing",
-    "Transform(Vector2&,Matrix&,Vector2&)": "missing",
-    "TransformNormal(Vector2,Matrix)": "missing",
-    "TransformNormal(Vector2&,Matrix&,Vector2&)": "missing",
-    "Transform(Vector2,Quaternion)": "missing",
-    "Transform(Vector2&,Quaternion&,Vector2&)": "missing",
-    "Transform(Vector2,Matrix&,Vector2)": "missing",
-    "Transform(Vector2,Int32,Matrix&,Vector2,Int32,Int32)": "missing",
-    "TransformNormal(Vector2,Matrix&,Vector2)": "missing",
-    "TransformNormal(Vector2,Int32,Matrix&,Vector2,Int32,Int32)": "missing",
-    "Transform(Vector2,Quaternion&,Vector2)": "missing",
-    "Transform(Vector2,Int32,Quaternion&,Vector2,Int32,Int32)": "missing",
+    "Transform(Vector2,Matrix)": "complete",
+    "Transform(Vector2&,Matrix&,Vector2&)": "not-applicable",
+    "TransformNormal(Vector2,Matrix)": "complete",
+    "TransformNormal(Vector2&,Matrix&,Vector2&)": "not-applicable",
+    "Transform(Vector2,Quaternion)": "complete",
+    "Transform(Vector2&,Quaternion&,Vector2&)": "not-applicable",
+    "Transform(Vector2[],Matrix&,Vector2[])": "complete",
+    "Transform(Vector2[],Int32,Matrix&,Vector2[],Int32,Int32)": "complete",
+    "TransformNormal(Vector2[],Matrix&,Vector2[])": "complete",
+    "TransformNormal(Vector2[],Int32,Matrix&,Vector2[],Int32,Int32)": "complete",
+    "Transform(Vector2[],Quaternion&,Vector2[])": "complete",
+    "Transform(Vector2[],Int32,Quaternion&,Vector2[],Int32,Int32)": "complete",
     "Negate(Vector2)": "complete",
     "Negate(Vector2&,Vector2&)": "not-applicable",
     "Add(Vector2,Vector2)": "complete",
@@ -458,7 +458,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Vector3",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(Single,Single,Single)": "complete",
     "new(Single)": "complete",
@@ -498,18 +498,18 @@
     "CatmullRom(Vector3&,Vector3&,Vector3&,Vector3&,Single,Vector3&)": "not-applicable",
     "Hermite(Vector3,Vector3,Vector3,Vector3,Single)": "complete",
     "Hermite(Vector3&,Vector3&,Vector3&,Vector3&,Single,Vector3&)": "not-applicable",
-    "Transform(Vector3,Matrix)": "missing",
+    "Transform(Vector3,Matrix)": "complete",
     "Transform(Vector3&,Matrix&,Vector3&)": "not-applicable",
-    "TransformNormal(Vector3,Matrix)": "missing",
+    "TransformNormal(Vector3,Matrix)": "complete",
     "TransformNormal(Vector3&,Matrix&,Vector3&)": "not-applicable",
-    "Transform(Vector3,Quaternion)": "missing",
+    "Transform(Vector3,Quaternion)": "complete",
     "Transform(Vector3&,Quaternion&,Vector3&)": "not-applicable",
-    "Transform(Vector3,Matrix&,Vector3)": "missing",
-    "Transform(Vector3,Int32,Matrix&,Vector3,Int32,Int32)": "missing",
-    "TransformNormal(Vector3,Matrix&,Vector3)": "missing",
-    "TransformNormal(Vector3,Int32,Matrix&,Vector3,Int32,Int32)": "missing",
-    "Transform(Vector3,Quaternion&,Vector3)": "missing",
-    "Transform(Vector3,Int32,Quaternion&,Vector3,Int32,Int32)": "missing",
+    "Transform(Vector3[],Matrix&,Vector3[])": "complete",
+    "Transform(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": "complete",
+    "TransformNormal(Vector3[],Matrix&,Vector3[])": "complete",
+    "TransformNormal(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": "complete",
+    "Transform(Vector3[],Quaternion&,Vector3[])": "complete",
+    "Transform(Vector3[],Int32,Quaternion&,Vector3[],Int32,Int32)": "complete",
     "Negate(Vector3)": "complete",
     "Negate(Vector3&,Vector3&)": "not-applicable",
     "Add(Vector3,Vector3)": "complete",
@@ -553,7 +553,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Vector4",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(Single,Single,Single,Single)": "complete",
     "new(Vector2,Single,Single)": "complete",
@@ -590,22 +590,22 @@
     "CatmullRom(Vector4&,Vector4&,Vector4&,Vector4&,Single,Vector4&)": "not-applicable",
     "Hermite(Vector4,Vector4,Vector4,Vector4,Single)": "complete",
     "Hermite(Vector4&,Vector4&,Vector4&,Vector4&,Single,Vector4&)": "not-applicable",
-    "Transform(Vector2,Matrix)": "missing",
+    "Transform(Vector2,Matrix)": "complete",
     "Transform(Vector2&,Matrix&,Vector4&)": "not-applicable",
-    "Transform(Vector3,Matrix)": "missing",
+    "Transform(Vector3,Matrix)": "complete",
     "Transform(Vector3&,Matrix&,Vector4&)": "not-applicable",
-    "Transform(Vector4,Matrix)": "missing",
+    "Transform(Vector4,Matrix)": "complete",
     "Transform(Vector4&,Matrix&,Vector4&)": "not-applicable",
-    "Transform(Vector2,Quaternion)": "missing",
+    "Transform(Vector2,Quaternion)": "complete",
     "Transform(Vector2&,Quaternion&,Vector4&)": "not-applicable",
-    "Transform(Vector3,Quaternion)": "missing",
+    "Transform(Vector3,Quaternion)": "complete",
     "Transform(Vector3&,Quaternion&,Vector4&)": "not-applicable",
-    "Transform(Vector4,Quaternion)": "missing",
+    "Transform(Vector4,Quaternion)": "complete",
     "Transform(Vector4&,Quaternion&,Vector4&)": "not-applicable",
-    "Transform(Vector4,Matrix&,Vector4)": "missing",
-    "Transform(Vector4,Int32,Matrix&,Vector4,Int32,Int32)": "missing",
-    "Transform(Vector4,Quaternion&,Vector4)": "missing",
-    "Transform(Vector4,Int32,Quaternion&,Vector4,Int32,Int32)": "missing",
+    "Transform(Vector4[],Matrix&,Vector4[])": "complete",
+    "Transform(Vector4[],Int32,Matrix&,Vector4[],Int32,Int32)": "complete",
+    "Transform(Vector4[],Quaternion&,Vector4[])": "complete",
+    "Transform(Vector4[],Int32,Quaternion&,Vector4[],Int32,Int32)": "complete",
     "Negate(Vector4)": "complete",
     "Negate(Vector4&,Vector4&)": "not-applicable",
     "Add(Vector4,Vector4)": "complete",
@@ -670,6 +670,182 @@
    "projection": "static class: microsoft.xna.framework:math-helper-<member>"
   },
   {
+   "name": "Microsoft.Xna.Framework.Quaternion",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector3,Single)": "complete",
+    "ToString()": "not-applicable",
+    "Equals(Quaternion)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "LengthSquared()": "complete",
+    "Length()": "complete",
+    "Normalize()": "complete",
+    "Normalize(Quaternion)": "complete",
+    "Normalize(Quaternion&,Quaternion&)": "not-applicable",
+    "Conjugate()": "complete",
+    "Conjugate(Quaternion)": "complete",
+    "Conjugate(Quaternion&,Quaternion&)": "not-applicable",
+    "Inverse(Quaternion)": "complete",
+    "Inverse(Quaternion&,Quaternion&)": "not-applicable",
+    "CreateFromAxisAngle(Vector3,Single)": "complete",
+    "CreateFromAxisAngle(Vector3&,Single,Quaternion&)": "not-applicable",
+    "CreateFromYawPitchRoll(Single,Single,Single)": "complete",
+    "CreateFromYawPitchRoll(Single,Single,Single,Quaternion&)": "not-applicable",
+    "CreateFromRotationMatrix(Matrix)": "complete",
+    "CreateFromRotationMatrix(Matrix&,Quaternion&)": "not-applicable",
+    "Dot(Quaternion,Quaternion)": "complete",
+    "Dot(Quaternion&,Quaternion&,Single&)": "not-applicable",
+    "Slerp(Quaternion,Quaternion,Single)": "complete",
+    "Slerp(Quaternion&,Quaternion&,Single,Quaternion&)": "not-applicable",
+    "Lerp(Quaternion,Quaternion,Single)": "complete",
+    "Lerp(Quaternion&,Quaternion&,Single,Quaternion&)": "not-applicable",
+    "Concatenate(Quaternion,Quaternion)": "complete",
+    "Concatenate(Quaternion&,Quaternion&,Quaternion&)": "not-applicable",
+    "Negate(Quaternion)": "complete",
+    "Negate(Quaternion&,Quaternion&)": "not-applicable",
+    "Add(Quaternion,Quaternion)": "complete",
+    "Add(Quaternion&,Quaternion&,Quaternion&)": "not-applicable",
+    "Subtract(Quaternion,Quaternion)": "complete",
+    "Subtract(Quaternion&,Quaternion&,Quaternion&)": "not-applicable",
+    "Multiply(Quaternion,Quaternion)": "complete",
+    "Multiply(Quaternion&,Quaternion&,Quaternion&)": "not-applicable",
+    "Multiply(Quaternion,Single)": "complete",
+    "Multiply(Quaternion&,Single,Quaternion&)": "not-applicable",
+    "Divide(Quaternion,Quaternion)": "complete",
+    "Divide(Quaternion&,Quaternion&,Quaternion&)": "not-applicable",
+    "op_UnaryNegation(Quaternion)": "complete",
+    "op_Equality(Quaternion,Quaternion)": "complete",
+    "op_Inequality(Quaternion,Quaternion)": "not-applicable",
+    "op_Addition(Quaternion,Quaternion)": "complete",
+    "op_Subtraction(Quaternion,Quaternion)": "complete",
+    "op_Multiply(Quaternion,Quaternion)": "complete",
+    "op_Multiply(Quaternion,Single)": "complete",
+    "op_Division(Quaternion,Quaternion)": "complete",
+    "Identity": "complete",
+    "X": "complete",
+    "Y": "complete",
+    "Z": "complete",
+    "W": "complete"
+   },
+   "lisp": "microsoft.xna.framework:quaternion"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Matrix",
+   "status": "partial",
+   "members": {
+    "new(Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single)": "complete",
+    "CreateBillboard(Vector3,Vector3,Vector3,Nullable`1)": "complete",
+    "CreateBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Matrix&)": "complete",
+    "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)": "missing",
+    "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)": "missing",
+    "CreateTranslation(Vector3)": "complete",
+    "CreateTranslation(Vector3&,Matrix&)": "not-applicable",
+    "CreateTranslation(Single,Single,Single)": "complete",
+    "CreateTranslation(Single,Single,Single,Matrix&)": "not-applicable",
+    "CreateScale(Single,Single,Single)": "complete",
+    "CreateScale(Single,Single,Single,Matrix&)": "not-applicable",
+    "CreateScale(Vector3)": "complete",
+    "CreateScale(Vector3&,Matrix&)": "not-applicable",
+    "CreateScale(Single)": "complete",
+    "CreateScale(Single,Matrix&)": "not-applicable",
+    "CreateRotationX(Single)": "complete",
+    "CreateRotationX(Single,Matrix&)": "not-applicable",
+    "CreateRotationY(Single)": "complete",
+    "CreateRotationY(Single,Matrix&)": "not-applicable",
+    "CreateRotationZ(Single)": "complete",
+    "CreateRotationZ(Single,Matrix&)": "not-applicable",
+    "CreateFromAxisAngle(Vector3,Single)": "complete",
+    "CreateFromAxisAngle(Vector3&,Single,Matrix&)": "not-applicable",
+    "CreatePerspectiveFieldOfView(Single,Single,Single,Single)": "complete",
+    "CreatePerspectiveFieldOfView(Single,Single,Single,Single,Matrix&)": "not-applicable",
+    "CreatePerspective(Single,Single,Single,Single)": "complete",
+    "CreatePerspective(Single,Single,Single,Single,Matrix&)": "not-applicable",
+    "CreatePerspectiveOffCenter(Single,Single,Single,Single,Single,Single)": "complete",
+    "CreatePerspectiveOffCenter(Single,Single,Single,Single,Single,Single,Matrix&)": "not-applicable",
+    "CreateOrthographic(Single,Single,Single,Single)": "complete",
+    "CreateOrthographic(Single,Single,Single,Single,Matrix&)": "not-applicable",
+    "CreateOrthographicOffCenter(Single,Single,Single,Single,Single,Single)": "complete",
+    "CreateOrthographicOffCenter(Single,Single,Single,Single,Single,Single,Matrix&)": "not-applicable",
+    "CreateLookAt(Vector3,Vector3,Vector3)": "complete",
+    "CreateLookAt(Vector3&,Vector3&,Vector3&,Matrix&)": "not-applicable",
+    "CreateWorld(Vector3,Vector3,Vector3)": "complete",
+    "CreateWorld(Vector3&,Vector3&,Vector3&,Matrix&)": "not-applicable",
+    "CreateFromQuaternion(Quaternion)": "complete",
+    "CreateFromQuaternion(Quaternion&,Matrix&)": "not-applicable",
+    "CreateFromYawPitchRoll(Single,Single,Single)": "complete",
+    "CreateFromYawPitchRoll(Single,Single,Single,Matrix&)": "not-applicable",
+    "CreateShadow(Vector3,Plane)": "missing",
+    "CreateShadow(Vector3&,Plane&,Matrix&)": "missing",
+    "CreateReflection(Plane)": "missing",
+    "CreateReflection(Plane&,Matrix&)": "missing",
+    "Decompose(Vector3&,Quaternion&,Vector3&)": "missing",
+    "Transform(Matrix,Quaternion)": "complete",
+    "Transform(Matrix&,Quaternion&,Matrix&)": "not-applicable",
+    "ToString()": "not-applicable",
+    "Equals(Matrix)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Transpose(Matrix)": "complete",
+    "Transpose(Matrix&,Matrix&)": "not-applicable",
+    "Determinant()": "complete",
+    "Invert(Matrix)": "complete",
+    "Invert(Matrix&,Matrix&)": "not-applicable",
+    "Lerp(Matrix,Matrix,Single)": "complete",
+    "Lerp(Matrix&,Matrix&,Single,Matrix&)": "not-applicable",
+    "Negate(Matrix)": "complete",
+    "Negate(Matrix&,Matrix&)": "not-applicable",
+    "Add(Matrix,Matrix)": "complete",
+    "Add(Matrix&,Matrix&,Matrix&)": "not-applicable",
+    "Subtract(Matrix,Matrix)": "complete",
+    "Subtract(Matrix&,Matrix&,Matrix&)": "not-applicable",
+    "Multiply(Matrix,Matrix)": "complete",
+    "Multiply(Matrix&,Matrix&,Matrix&)": "not-applicable",
+    "Multiply(Matrix,Single)": "complete",
+    "Multiply(Matrix&,Single,Matrix&)": "not-applicable",
+    "Divide(Matrix,Matrix)": "complete",
+    "Divide(Matrix&,Matrix&,Matrix&)": "not-applicable",
+    "Divide(Matrix,Single)": "complete",
+    "Divide(Matrix&,Single,Matrix&)": "not-applicable",
+    "op_UnaryNegation(Matrix)": "complete",
+    "op_Equality(Matrix,Matrix)": "complete",
+    "op_Inequality(Matrix,Matrix)": "not-applicable",
+    "op_Addition(Matrix,Matrix)": "complete",
+    "op_Subtraction(Matrix,Matrix)": "complete",
+    "op_Multiply(Matrix,Matrix)": "complete",
+    "op_Multiply(Matrix,Single)": "complete",
+    "op_Multiply(Single,Matrix)": "complete",
+    "op_Division(Matrix,Matrix)": "complete",
+    "op_Division(Matrix,Single)": "complete",
+    "Identity": "complete",
+    "Up": "complete",
+    "Down": "complete",
+    "Right": "complete",
+    "Left": "complete",
+    "Forward": "complete",
+    "Backward": "complete",
+    "Translation": "complete",
+    "M11": "complete",
+    "M12": "complete",
+    "M13": "complete",
+    "M14": "complete",
+    "M21": "complete",
+    "M22": "complete",
+    "M23": "complete",
+    "M24": "complete",
+    "M31": "complete",
+    "M32": "complete",
+    "M33": "complete",
+    "M34": "complete",
+    "M41": "complete",
+    "M42": "complete",
+    "M43": "complete",
+    "M44": "complete"
+   },
+   "lisp": "microsoft.xna.framework:matrix"
+  },
+  {
    "name": "Microsoft.Xna.Framework.PlayerIndex",
    "status": "complete",
    "members": {
@@ -710,26 +886,26 @@
     "DrawPrimitives(PrimitiveType,Int32,Int32)": "missing",
     "DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)": "missing",
     "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": "missing",
-    "DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int32,Int32,Int32)": "missing",
-    "DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int16,Int32,Int32)": "missing",
-    "DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int32,Int32,Int32,VertexDeclaration)": "missing",
-    "DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int16,Int32,Int32,VertexDeclaration)": "missing",
-    "DrawUserPrimitives(PrimitiveType,!!0,Int32,Int32)": "missing",
-    "DrawUserPrimitives(PrimitiveType,!!0,Int32,Int32,VertexDeclaration)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32,VertexDeclaration)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32,VertexDeclaration)": "missing",
+    "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32)": "missing",
+    "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32,VertexDeclaration)": "missing",
     "Clear(ClearOptions,Vector4,Single,Int32)": "missing",
     "Clear(ClearOptions,Color,Single,Int32)": "missing",
     "Clear(Color)": "complete",
-    "SetRenderTargets(RenderTargetBinding)": "missing",
+    "SetRenderTargets(RenderTargetBinding[])": "missing",
     "SetRenderTarget(RenderTargetCube,CubeMapFace)": "missing",
     "SetRenderTarget(RenderTarget2D)": "missing",
     "GetRenderTargets()": "missing",
-    "GetBackBufferData(Nullable`1,!!0,Int32,Int32)": "missing",
-    "GetBackBufferData(!!0,Int32,Int32)": "missing",
-    "GetBackBufferData(!!0)": "missing",
+    "GetBackBufferData(Nullable`1,!!0[],Int32,Int32)": "missing",
+    "GetBackBufferData(!!0[],Int32,Int32)": "missing",
+    "GetBackBufferData(!!0[])": "missing",
     "GetVertexBuffers()": "missing",
     "SetVertexBuffer(VertexBuffer,Int32)": "missing",
     "SetVertexBuffer(VertexBuffer)": "missing",
-    "SetVertexBuffers(VertexBufferBinding)": "missing",
+    "SetVertexBuffers(VertexBufferBinding[])": "missing",
     "Dispose(Boolean)": "not-applicable",
     "Dispose()": "missing",
     "Finalize()": "not-applicable",
@@ -801,12 +977,12 @@
     "FromStream(GraphicsDevice,Stream)": "missing",
     "SaveAsJpeg(Stream,Int32,Int32)": "missing",
     "SaveAsPng(Stream,Int32,Int32)": "missing",
-    "SetData(!!0)": "missing",
-    "SetData(!!0,Int32,Int32)": "missing",
-    "SetData(Int32,Nullable`1,!!0,Int32,Int32)": "missing",
-    "GetData(!!0)": "missing",
-    "GetData(!!0,Int32,Int32)": "missing",
-    "GetData(Int32,Nullable`1,!!0,Int32,Int32)": "missing",
+    "SetData(!!0[])": "missing",
+    "SetData(!!0[],Int32,Int32)": "missing",
+    "SetData(Int32,Nullable`1,!!0[],Int32,Int32)": "missing",
+    "GetData(!!0[])": "missing",
+    "GetData(!!0[],Int32,Int32)": "missing",
+    "GetData(Int32,Nullable`1,!!0[],Int32,Int32)": "missing",
     "Dispose(Boolean)": "not-applicable",
     "Bounds": "complete",
     "Height": "complete",
@@ -907,7 +1083,7 @@
    "name": "Microsoft.Xna.Framework.Input.KeyboardState",
    "status": "complete",
    "members": {
-    "new(Keys)": "complete",
+    "new(Keys[])": "complete",
     "IsKeyDown(Keys)": "complete",
     "IsKeyUp(Keys)": "complete",
     "GetPressedKeys()": "complete",
@@ -1321,158 +1497,38 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Matrix)",
-   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+   "subject": "Microsoft.Xna.Framework.Matrix.CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)",
+   "detail": "no exported 'matrix-create-constrained-billboard' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2&,Matrix&,Vector2&)",
-   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+   "subject": "Microsoft.Xna.Framework.Matrix.CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)",
+   "detail": "no exported 'matrix-create-constrained-billboard' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.TransformNormal(Vector2,Matrix)",
-   "detail": "no exported 'vector2-transform-normal' in microsoft.xna.framework"
+   "subject": "Microsoft.Xna.Framework.Matrix.CreateShadow(Vector3,Plane)",
+   "detail": "Needs Plane, which is not projected yet."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.TransformNormal(Vector2&,Matrix&,Vector2&)",
-   "detail": "no exported 'vector2-transform-normal' in microsoft.xna.framework"
+   "subject": "Microsoft.Xna.Framework.Matrix.CreateShadow(Vector3&,Plane&,Matrix&)",
+   "detail": "Needs Plane, which is not projected yet."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Quaternion)",
-   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+   "subject": "Microsoft.Xna.Framework.Matrix.CreateReflection(Plane)",
+   "detail": "Needs Plane, which is not projected yet."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2&,Quaternion&,Vector2&)",
-   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
+   "subject": "Microsoft.Xna.Framework.Matrix.CreateReflection(Plane&,Matrix&)",
+   "detail": "Needs Plane, which is not projected yet."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Matrix&,Vector2)",
-   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Int32,Matrix&,Vector2,Int32,Int32)",
-   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.TransformNormal(Vector2,Matrix&,Vector2)",
-   "detail": "no exported 'vector2-transform-normal' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.TransformNormal(Vector2,Int32,Matrix&,Vector2,Int32,Int32)",
-   "detail": "no exported 'vector2-transform-normal' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Quaternion&,Vector2)",
-   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Transform(Vector2,Int32,Quaternion&,Vector2,Int32,Int32)",
-   "detail": "no exported 'vector2-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Matrix)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.TransformNormal(Vector3,Matrix)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Quaternion)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Matrix&,Vector3)",
-   "detail": "no exported 'vector3-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Int32,Matrix&,Vector3,Int32,Int32)",
-   "detail": "no exported 'vector3-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.TransformNormal(Vector3,Matrix&,Vector3)",
-   "detail": "no exported 'vector3-transform-normal' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.TransformNormal(Vector3,Int32,Matrix&,Vector3,Int32,Int32)",
-   "detail": "no exported 'vector3-transform-normal' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Quaternion&,Vector3)",
-   "detail": "no exported 'vector3-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Int32,Quaternion&,Vector3,Int32,Int32)",
-   "detail": "no exported 'vector3-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector2,Matrix)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector3,Matrix)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Matrix)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector2,Quaternion)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector3,Quaternion)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Quaternion)",
-   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Matrix&,Vector4)",
-   "detail": "no exported 'vector4-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Int32,Matrix&,Vector4,Int32,Int32)",
-   "detail": "no exported 'vector4-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Quaternion&,Vector4)",
-   "detail": "no exported 'vector4-transform' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Int32,Quaternion&,Vector4,Int32,Int32)",
-   "detail": "no exported 'vector4-transform' in microsoft.xna.framework"
+   "subject": "Microsoft.Xna.Framework.Matrix.Decompose(Vector3&,Quaternion&,Vector3&)",
+   "detail": "Decompose is implemented with unsafe pointer arithmetic over a private CanonicalBasis and VectorBasis pair -- some 540 IL instructions with a fallback path for degenerate scales. Reproducing it faithfully is a separate piece of work, and an approximation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than its absence."
   },
   {
    "category": "missing_member",
@@ -1561,32 +1617,32 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int32,Int32,Int32)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32)",
    "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int16,Int32,Int32)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32)",
    "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int32,Int32,Int32,VertexDeclaration)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32,VertexDeclaration)",
    "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0,Int32,Int32,Int16,Int32,Int32,VertexDeclaration)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32,VertexDeclaration)",
    "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType,!!0,Int32,Int32)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32)",
    "detail": "no exported 'draw-user-primitives' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType,!!0,Int32,Int32,VertexDeclaration)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32,VertexDeclaration)",
    "detail": "no exported 'draw-user-primitives' in microsoft.xna.framework.graphics"
   },
   {
@@ -1601,7 +1657,7 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetRenderTargets(RenderTargetBinding)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetRenderTargets(RenderTargetBinding[])",
    "detail": "no exported 'set-render-targets' in microsoft.xna.framework.graphics"
   },
   {
@@ -1621,17 +1677,17 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(Nullable`1,!!0,Int32,Int32)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(Nullable`1,!!0[],Int32,Int32)",
    "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(!!0,Int32,Int32)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(!!0[],Int32,Int32)",
    "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(!!0)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(!!0[])",
    "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
   },
   {
@@ -1651,7 +1707,7 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetVertexBuffers(VertexBufferBinding)",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetVertexBuffers(VertexBufferBinding[])",
    "detail": "no exported 'set-vertex-buffers' in microsoft.xna.framework.graphics"
   },
   {
@@ -1826,32 +1882,32 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(!!0)",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(!!0[])",
+   "detail": "Pixel access is not projected in this milestone."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(!!0[],Int32,Int32)",
+   "detail": "Pixel access is not projected."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(Int32,Nullable`1,!!0[],Int32,Int32)",
    "detail": "no exported 'set-data' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(!!0,Int32,Int32)",
-   "detail": "no exported 'set-data' in microsoft.xna.framework.graphics"
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(!!0[])",
+   "detail": "Pixel access is not projected."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(Int32,Nullable`1,!!0,Int32,Int32)",
-   "detail": "no exported 'set-data' in microsoft.xna.framework.graphics"
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(!!0[],Int32,Int32)",
+   "detail": "Pixel access is not projected."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(!!0)",
-   "detail": "no exported 'get-data' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(!!0,Int32,Int32)",
-   "detail": "no exported 'get-data' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(Int32,Nullable`1,!!0,Int32,Int32)",
+   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(Int32,Nullable`1,!!0[],Int32,Int32)",
    "detail": "no exported 'get-data' in microsoft.xna.framework.graphics"
   },
   {

@@ -203,6 +203,86 @@
   (= (* 1.0f0 (/ 1.0f0 3.0f0))
      (xna:vector3-x (xna:vector3-divide (xna:make-vector3 1 1 1) 3.0f0))))
 
+(defobservation "quaternion.concatenate-reverses" :xna-derived
+    "Microsoft.Xna.Framework.Quaternion"
+  "Concatenate(a, b) is the Hamilton product with the operands reversed: it reads
+   its *second* argument into the slots Multiply reads its first from."
+  (let ((a (xna:quaternion-create-from-axis-angle (xna:vector3-unit-x) 0.5))
+        (b (xna:quaternion-create-from-axis-angle (xna:vector3-unit-y) 0.7)))
+    (xna:quaternion-equal (xna:quaternion-concatenate a b)
+                          (xna:quaternion-multiply b a))))
+
+(defobservation "quaternion.inverse-divides-by-length-squared" :xna-derived
+    "Microsoft.Xna.Framework.Quaternion"
+  "Inverse scales the conjugate by the reciprocal of the *squared* length; no
+   square root is taken."
+  (= 0.5f0 (xna:quaternion-w (xna:quaternion-inverse (xna:make-quaternion 0 0 0 2)))))
+
+(defobservation "quaternion.slerp-threshold" :xna-derived
+    "Microsoft.Xna.Framework.Quaternion"
+  "Slerp treats quaternions whose dot product exceeds 0.999999f as parallel and
+   interpolates linearly without normalising."
+  (let* ((a (xna:quaternion-identity))
+         (b (xna:quaternion-identity))
+         (mid (xna:quaternion-slerp a b 0.5)))
+    (= 1.0f0 (xna:quaternion-w mid))))
+
+(defobservation "matrix.translation-in-the-fourth-row" :xna-derived
+    "Microsoft.Xna.Framework.Matrix"
+  "XNA matrices are row-major and multiplied on the left by a row vector, so the
+   translation is M41 M42 M43 -- not the fourth column."
+  (let ((m (xna:matrix-create-translation (xna:make-vector3 1 2 3))))
+    (and (= 1.0f0 (xna:matrix-m41 m)) (= 0.0f0 (xna:matrix-m14 m)))))
+
+(defobservation "matrix.multiply-applies-the-left-first" :xna-derived
+    "Microsoft.Xna.Framework.Matrix"
+  "Multiply(a, b) applies a and then b."
+  (let ((point (xna:make-vector3 1 0 0)))
+    (xna:vector3-equal
+     (xna:vector3-transform point (xna:matrix-multiply
+                                   (xna:matrix-create-scale 2)
+                                   (xna:matrix-create-translation
+                                    (xna:make-vector3 1 0 0))))
+     (xna:make-vector3 3 0 0))))
+
+(defobservation "matrix.forward-is-negated-third-row" :xna-derived
+    "Microsoft.Xna.Framework.Matrix"
+  "Matrix.Forward is the negated third row and Backward is the third row."
+  (let ((m (xna:matrix-identity)))
+    (and (xna:vector3-equal (xna:matrix-forward m) (xna:make-vector3 0 0 -1))
+         (xna:vector3-equal (xna:matrix-backward m) (xna:make-vector3 0 0 1)))))
+
+(defobservation "matrix.perspective-range-checks" :xna-derived
+    "Microsoft.Xna.Framework.Matrix"
+  "CreatePerspectiveFieldOfView refuses a field of view outside (0, pi), a
+   non-positive plane distance, and a near plane at or beyond the far plane."
+  (flet ((refused (&rest arguments)
+           (handler-case (progn (apply #'xna:matrix-create-perspective-field-of-view
+                                       arguments)
+                                nil)
+             (xna:cna-argument-out-of-range-error () t))))
+    (and (refused 0.0 1.0 1.0 100.0)
+         (refused xna:+math-helper-pi+ 1.0 1.0 100.0)
+         (refused 1.0 1.0 0.0 100.0)
+         (refused 1.0 1.0 100.0 1.0))))
+
+(defobservation "matrix.perspective-clip-volume" :xna-derived
+    "Microsoft.Xna.Framework.Matrix"
+  "XNA's clip space runs z from 0 at the near plane to w at the far plane, unlike
+   OpenGL's -w to w."
+  (let* ((projection (xna:matrix-create-perspective-field-of-view
+                      xna:+math-helper-pi-over4+ 1.0 1.0 100.0))
+         (near (xna:vector4-transform (xna:make-vector3 0 0 -1) projection)))
+    (< (abs (xna:vector4-z near)) 1.0e-4)))
+
+(defobservation "vector4.transform-extends-with-w-one" :xna-derived
+    "Microsoft.Xna.Framework.Vector4"
+  "A Vector2 or Vector3 transformed into a Vector4 is extended with W = 1, so the
+   translation applies; a Vector4 keeps its own W."
+  (let ((m (xna:matrix-create-translation (xna:make-vector3 1 2 3))))
+    (and (= 1.0f0 (xna:vector4-x (xna:vector4-transform (xna:make-vector2 0 0) m)))
+         (= 0.0f0 (xna:vector4-x (xna:vector4-transform (xna:make-vector4 0 0 0 0) m))))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

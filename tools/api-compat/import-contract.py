@@ -34,6 +34,8 @@ SELECTED = [
     "Microsoft.Xna.Framework.Vector3",
     "Microsoft.Xna.Framework.Vector4",
     "Microsoft.Xna.Framework.MathHelper",
+    "Microsoft.Xna.Framework.Quaternion",
+    "Microsoft.Xna.Framework.Matrix",
     "Microsoft.Xna.Framework.PlayerIndex",
     "Microsoft.Xna.Framework.Graphics.GraphicsResource",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
