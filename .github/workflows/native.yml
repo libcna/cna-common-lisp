@@ -1,0 +1,141 @@
+# Native gates. Every one of these needs a real CNA C ABI shared library, and
+# most of them need the CNA source it was built from.
+#
+# The stages are separate on purpose: a failure in the compiler-backed ABI check
+# means something different from a failure in the runtime tests, and neither means
+# what a failure in the isolated consumer run means.
+
+name: Native
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      cna_ref:
+        description: 'CNA branch or tag to build the C ABI from'
+        required: false
+        default: 'next'
+
+concurrency:
+  group: native-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CNA_REF: ${{ github.event.inputs.cna_ref || 'next' }}
+
+jobs:
+  native:
+    name: CNA C ABI, ABI gate, runtime tests, isolated consumer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout CNA-Lisp
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          path: cna-common-lisp
+
+      - name: Checkout the template
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: openeggbert/cna-common-lisp-template
+          path: cna-common-lisp-template
+
+      - name: Checkout CNA
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: openeggbert/cna
+          ref: ${{ env.CNA_REF }}
+          path: cna
+
+      - name: Checkout sharp-runtime
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: openeggbert/sharp-runtime
+          path: sharp-runtime
+
+      - name: Install build and Lisp toolchains
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            sbcl cmake ninja-build build-essential ccache pkg-config python3 \
+            libasound2-dev libpulse-dev libx11-dev libxext-dev libxrandr-dev \
+            libxcursor-dev libxi-dev libxfixes-dev libwayland-dev libxkbcommon-dev \
+            libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libswscale-dev
+          sbcl --version
+          cc --version
+
+      # ---------------------------------------------------------------- stage 1
+      - name: Build a minimal HEADLESS CNA C API
+        working-directory: cna
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCNA_BUILD_C_API=ON \
+            -DCNA_BUILD_TESTS=OFF \
+            -DCNA_BUILD_EXAMPLES=OFF \
+            -DCNA_PLATFORM=SDL3 \
+            -DCNA_AUDIO_PLATFORM=SDL3 \
+            -DCNA_GRAPHICS_RENDERER=HEADLESS \
+            -DCNA_SHARP_RUNTIME_ROOT="${GITHUB_WORKSPACE}/sharp-runtime"
+          cmake --build build --target cna_c_api -j"$(nproc)"
+          echo "CNA_NATIVE_LIBRARY=$(readlink -f build/modules/c-api/libcna_c_api.so)" >> "$GITHUB_ENV"
+          echo "CNA_HEADERS=$(readlink -f modules/c-api/include)" >> "$GITHUB_ENV"
+          echo "CNA_ABI_BASELINE=$(readlink -f tools/c-api/abi_baseline.json)" >> "$GITHUB_ENV"
+
+      - name: The library exports what the manifest binds
+        working-directory: cna-common-lisp
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess, sys
+          manifest = json.load(open("docs/generated/native-abi-manifest.json"))
+          out = subprocess.run(["nm", "-D", "--defined-only", os.environ["CNA_NATIVE_LIBRARY"]],
+                               capture_output=True, text=True, check=True).stdout
+          exported = {line.split()[-1].split("@")[0] for line in out.splitlines() if " T " in line}
+          missing = [f["name"] for f in manifest["functions"] if f["name"] not in exported]
+          if missing:
+              sys.exit("routes absent from the built library: %s" % missing)
+          print("all %d bound routes are exported" % len(manifest["functions"]))
+          PY
+
+      # ---------------------------------------------------------------- stage 2
+      - name: Compiler-backed ABI verification
+        working-directory: cna-common-lisp
+        run: tools/native-abi/verify.sh "$CNA_HEADERS"
+
+      # ---------------------------------------------------------------- stage 3
+      - name: Install Quicklisp and the pinned dependencies
+        run: |
+          curl -sSLo /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
+          sbcl --non-interactive --load /tmp/quicklisp.lisp \
+               --eval '(quicklisp-quickstart:install :path "~/quicklisp/")'
+          sbcl --non-interactive --load ~/quicklisp/setup.lisp \
+               --eval '(ql-dist:install-dist "http://beta.quicklisp.org/dist/quicklisp/2026-01-01/distinfo.txt" :replace t :prompt nil)' \
+               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :fiveam))'
+
+      - name: Native runtime tests
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: |
+          sbcl --non-interactive \
+               --load ~/quicklisp/setup.lisp \
+               --eval '(push (truename ".") asdf:*central-registry*)' \
+               --eval '(asdf:test-system "cna-common-lisp")'
+
+      # ---------------------------------------------------------------- stage 4
+      - name: Isolated consumer qualification, 60 and 600 frames
+        working-directory: cna-common-lisp
+        run: |
+          tools/qualification/isolated-consumer.sh \
+            "${GITHUB_WORKSPACE}/cna-common-lisp-template"
+
+      - name: Upload the generated reports
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: cna-lisp-reports
+          path: cna-common-lisp/docs/generated/

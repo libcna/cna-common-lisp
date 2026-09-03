@@ -1,0 +1,89 @@
+# Pure Lisp gates. Nothing here needs a CNA native library, a C compiler or a CNA
+# source checkout, and nothing here is evidence about the C ABI, the game loop,
+# graphics, input or ownership -- the runner prints that in so many words when the
+# native layer does not run. See native.yml for the gates that do.
+
+name: Lisp
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: lisp-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pure-lisp:
+    name: Compile, load and test without a native library
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install SBCL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends sbcl
+          sbcl --version
+
+      # A cache miss must never change the result: everything below is
+      # reproducible from the pinned Quicklisp dist, and the cache only makes it
+      # quicker.
+      - name: Cache Quicklisp
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
+        with:
+          path: ~/quicklisp
+          key: quicklisp-${{ runner.os }}-2026-01-01-${{ hashFiles('cna-common-lisp.asd') }}
+          restore-keys: quicklisp-${{ runner.os }}-2026-01-01-
+
+      - name: Install Quicklisp and the pinned dependencies
+        run: |
+          if [ ! -f "$HOME/quicklisp/setup.lisp" ]; then
+            curl -sSLo /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
+            sbcl --non-interactive --load /tmp/quicklisp.lisp \
+                 --eval '(quicklisp-quickstart:install :path "~/quicklisp/")'
+          fi
+          sbcl --non-interactive --load ~/quicklisp/setup.lisp \
+               --eval '(ql-dist:install-dist "http://beta.quicklisp.org/dist/quicklisp/2026-01-01/distinfo.txt" :replace t :prompt nil)' \
+               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :fiveam))'
+
+      - name: Compile and load from a fresh image, with no warnings tolerated
+        run: |
+          sbcl --script - <<'LISP'
+          (require :asdf)
+          (load (merge-pathnames "quicklisp/setup.lisp" (user-homedir-pathname)))
+          (push (truename ".") asdf:*central-registry*)
+          (defvar *problems* '())
+          (handler-bind ((warning (lambda (c)
+                                    (push (format nil "~a: ~a" (type-of c) c) *problems*))))
+            (asdf:load-system "cna-common-lisp"))
+          (when *problems*
+            (format *error-output* "~&~{~a~%~}" (reverse *problems*))
+            (uiop:quit 1))
+          (format t "~&loaded with no warnings~%")
+          LISP
+
+      - name: asdf:test-system, without a native library
+        run: |
+          sbcl --non-interactive \
+               --load ~/quicklisp/setup.lisp \
+               --eval '(push (truename ".") asdf:*central-registry*)' \
+               --eval '(asdf:test-system "cna-common-lisp")'
+
+      - name: Structural verification and the generated reports
+        run: |
+          sbcl --script tools/api-compat/dump-surface.lisp
+          python3 tools/api-compat/verify.py --strict
+          python3 tools/qualification/verify-numbers.py
+
+      - name: The generated reports must be the committed ones
+        run: |
+          git diff --exit-code -- docs/generated/ \
+            || { echo "the committed generated reports are stale; regenerate them"; exit 1; }
+
+      - name: Whitespace
+        run: git diff --check "$(git rev-list --max-parents=0 HEAD | tail -1)"..HEAD
