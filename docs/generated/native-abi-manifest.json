@@ -1,0 +1,2922 @@
+{
+  "schema_version": 1,
+  "abi_version": {
+    "encoded": 5376,
+    "major": 0,
+    "minor": 21,
+    "patch": 0,
+    "runtime": 5376
+  },
+  "admitted_abi_versions": [
+    {
+      "version": "0.21.0",
+      "encoded": 5376,
+      "evidence": "tools/native-abi/probe.generated.c compiled against this version's canonical headers; every bound prototype, struct size, alignment, field offset and field size in this manifest verified by the C compiler, and every by-value aggregate verified at run time through tools/native-abi/valueprobe.generated.c."
+    }
+  ],
+  "by_value_aggregate_rule": {
+    "admitted_classification": "INTEGER",
+    "max_size_bytes": 16,
+    "rule": "A by-value aggregate parameter is bound only when the System V AMD64 ABI classifies every one of its eightbytes as INTEGER and its size is at most 16 bytes. Such a parameter is passed as one scalar argument per eightbyte, which occupies exactly the argument registers or stack slots the aggregate itself would occupy. An aggregate with any floating-point eightbyte (SSE class) or larger than 16 bytes is refused by the generator and the route that needs it is left unbound and reported as blocked.",
+    "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
+  },
+  "counts": {
+    "functions": 68,
+    "structs": 19,
+    "struct_fields": 93,
+    "constants": 237,
+    "callbacks": 2,
+    "by_value_aggregates": 2,
+    "blocked_routes": 1
+  },
+  "blocked_routes": [
+    {
+      "name": "cna_graphics_device_set_viewport",
+      "header": "graphics_device.h",
+      "c_prototype": "CNA_Result cna_graphics_device_set_viewport(CNA_Handle graphics_device, CNA_Viewport viewport)",
+      "reason_code": "by-value-aggregate-not-expressible",
+      "reason": "Takes CNA_Viewport (24 bytes) by value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot pass a MEMORY-class aggregate without cffi-libffi, which a released CNA-Lisp must not require. The generator proves this refusal rather than asserting it.",
+      "generator_proof": "CNA_Viewport is 24 bytes: the System V AMD64 ABI classifies it MEMORY, which CFFI cannot express without cffi-libffi. Route left unbound."
+    }
+  ],
+  "functions": [
+    {
+      "name": "cna_get_abi_version",
+      "header": "abi.h",
+      "c_returns": "uint32_t",
+      "returns": ":uint32",
+      "params": [],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "uint32_t cna_get_abi_version(void)"
+    },
+    {
+      "name": "cna_error_get_last_info",
+      "header": "core.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_info",
+          "c_type": "CNA_ErrorInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_error_get_last_info(CNA_ErrorInfo* out_info)"
+    },
+    {
+      "name": "cna_error_get_last_message_size",
+      "header": "core.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_error_get_last_message_size(uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_error_copy_last_message",
+      "header": "core.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write",
+      "c_prototype": "CNA_Result cna_error_copy_last_message(char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_game_create",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "create_info",
+          "c_type": "const CNA_GameCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_game",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "creates-affinity",
+      "ownership": "creates-owned:game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_create(const CNA_GameCreateInfo* create_info, CNA_Handle* out_game)"
+    },
+    {
+      "name": "cna_game_destroy",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_destroy(CNA_Handle game)"
+    },
+    {
+      "name": "cna_game_run",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_run(CNA_Handle game)"
+    },
+    {
+      "name": "cna_game_run_one_frame",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_run_one_frame(CNA_Handle game)"
+    },
+    {
+      "name": "cna_game_tick",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_tick(CNA_Handle game)"
+    },
+    {
+      "name": "cna_game_request_exit",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_request_exit(CNA_Handle game)"
+    },
+    {
+      "name": "cna_game_suppress_draw",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_suppress_draw(CNA_Handle game)"
+    },
+    {
+      "name": "cna_game_reset_elapsed_time",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_reset_elapsed_time(CNA_Handle game)"
+    },
+    {
+      "name": "cna_game_clear",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "color-0",
+          "c_type": "CNA_Color",
+          "cffi_type": ":uint32",
+          "flattened_from": "CNA_Color",
+          "eightbyte": 0
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_clear(CNA_Handle game, CNA_Color color)"
+    },
+    {
+      "name": "cna_game_set_window_title",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "title-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "title-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "borrowed UTF-8 view; embedded NUL refused",
+      "c_prototype": "CNA_Result cna_game_set_window_title(CNA_Handle game, CNA_StringView title)"
+    },
+    {
+      "name": "cna_game_set_frame_hooks_ext",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "hooks",
+          "c_type": "const CNA_GameFrameHooks*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows-table:copied-during-call",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_set_frame_hooks_ext(CNA_Handle game, const CNA_GameFrameHooks* hooks)"
+    },
+    {
+      "name": "cna_game_get_is_active",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_active",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_get_is_active(CNA_Handle game, CNA_Bool* out_active)"
+    },
+    {
+      "name": "cna_game_get_is_mouse_visible",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_visible",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_get_is_mouse_visible(CNA_Handle game, CNA_Bool* out_visible)"
+    },
+    {
+      "name": "cna_game_set_is_mouse_visible",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "visible",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_set_is_mouse_visible(CNA_Handle game, CNA_Bool visible)"
+    },
+    {
+      "name": "cna_game_get_is_fixed_time_step",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_fixed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_get_is_fixed_time_step(CNA_Handle game, CNA_Bool* out_fixed)"
+    },
+    {
+      "name": "cna_game_set_is_fixed_time_step",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "fixed",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_set_is_fixed_time_step(CNA_Handle game, CNA_Bool fixed)"
+    },
+    {
+      "name": "cna_game_get_target_elapsed_time_ticks",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_get_target_elapsed_time_ticks(CNA_Handle game, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_game_set_target_elapsed_time_ticks",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "ticks",
+          "c_type": "int64_t",
+          "cffi_type": ":int64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_set_target_elapsed_time_ticks(CNA_Handle game, int64_t ticks)"
+    },
+    {
+      "name": "cna_game_get_inactive_sleep_time_ticks",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_get_inactive_sleep_time_ticks(CNA_Handle game, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_game_set_inactive_sleep_time_ticks",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "ticks",
+          "c_type": "int64_t",
+          "cffi_type": ":int64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_set_inactive_sleep_time_ticks(CNA_Handle game, int64_t ticks)"
+    },
+    {
+      "name": "cna_game_get_type_name_size",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_get_type_name_size(CNA_Handle game, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_game_copy_type_name",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write",
+      "c_prototype": "CNA_Result cna_game_copy_type_name(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_game_get_graphics_device",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_graphics_device",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows-callback-scoped:graphics-device",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_get_graphics_device(CNA_Handle game, CNA_Handle* out_graphics_device)"
+    },
+    {
+      "name": "cna_graphics_device_get_viewport",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_viewport",
+          "c_type": "CNA_Viewport*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_viewport(CNA_Handle graphics_device, CNA_Viewport* out_viewport)"
+    },
+    {
+      "name": "cna_graphics_device_clear_rgba",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "r",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "g",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "b",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "a",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_clear_rgba(CNA_Handle graphics_device, float r, float g, float b, float a)"
+    },
+    {
+      "name": "cna_graphics_device_present",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_present(CNA_Handle graphics_device)"
+    },
+    {
+      "name": "cna_graphics_device_get_renderer_info",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_RendererInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_renderer_info(CNA_Handle graphics_device, CNA_RendererInfo* out_info)"
+    },
+    {
+      "name": "cna_graphics_device_copy_renderer_name",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write",
+      "c_prototype": "CNA_Result cna_graphics_device_copy_renderer_name(CNA_Handle graphics_device, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_graphics_device_get_type_name_size",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_type_name_size(CNA_Handle graphics_device, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_graphics_device_copy_type_name",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write",
+      "c_prototype": "CNA_Result cna_graphics_device_copy_type_name(CNA_Handle graphics_device, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_graphics_device_manager_create",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:graphics-device-manager",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_create(CNA_Handle game, CNA_GraphicsDeviceManagerHandle* out_manager)"
+    },
+    {
+      "name": "cna_graphics_device_manager_destroy",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:graphics-device-manager",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_destroy(CNA_GraphicsDeviceManagerHandle manager)"
+    },
+    {
+      "name": "cna_graphics_device_manager_apply_changes",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_apply_changes(CNA_GraphicsDeviceManagerHandle manager)"
+    },
+    {
+      "name": "cna_graphics_device_manager_toggle_full_screen",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_toggle_full_screen(CNA_GraphicsDeviceManagerHandle manager)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_is_full_screen",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_full_screen",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_is_full_screen(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool* out_full_screen)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_is_full_screen",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "full_screen",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_is_full_screen(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool full_screen)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_preferred_back_buffer_width",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_width",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_preferred_back_buffer_width(CNA_GraphicsDeviceManagerHandle manager, int32_t* out_width)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_preferred_back_buffer_width",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "width",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_preferred_back_buffer_width(CNA_GraphicsDeviceManagerHandle manager, int32_t width)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_preferred_back_buffer_height",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_height",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_preferred_back_buffer_height(CNA_GraphicsDeviceManagerHandle manager, int32_t* out_height)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_preferred_back_buffer_height",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "height",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_preferred_back_buffer_height(CNA_GraphicsDeviceManagerHandle manager, int32_t height)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_synchronize_with_vertical_retrace",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_synchronize",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_synchronize_with_vertical_retrace(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool* out_synchronize)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_synchronize_with_vertical_retrace",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "synchronize",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_synchronize_with_vertical_retrace(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool synchronize)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_graphics_device",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_graphics_device",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows-callback-scoped:graphics-device",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_graphics_device(CNA_GraphicsDeviceManagerHandle manager, CNA_Handle* out_graphics_device)"
+    },
+    {
+      "name": "cna_texture2d_create_from_encoded_memory",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "encoded_data",
+          "c_type": "const uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "encoded_byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "decode_info",
+          "c_type": "const CNA_Texture2DDecodeInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:texture-2d:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_create_from_encoded_memory(CNA_Handle graphics_device, const uint8_t* encoded_data, uint64_t encoded_byte_count, const CNA_Texture2DDecodeInfo* decode_info, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_texture2d_create_from_file_with_device",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "path-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "path-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:texture-2d:child-of-game",
+      "string_rule": "borrowed UTF-8 view; embedded NUL refused",
+      "c_prototype": "CNA_Result cna_texture2d_create_from_file_with_device(CNA_Handle graphics_device, CNA_StringView path, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_texture2d_destroy",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:texture-2d",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_destroy(CNA_Handle texture)"
+    },
+    {
+      "name": "cna_texture2d_get_storage_info",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_Texture2DStorageInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_get_storage_info(CNA_Handle texture, CNA_Texture2DStorageInfo* out_info)"
+    },
+    {
+      "name": "cna_texture2d_get_type_name_byte_count",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_get_type_name_byte_count(CNA_Handle texture, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_texture2d_copy_type_name",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write",
+      "c_prototype": "CNA_Result cna_texture2d_copy_type_name(CNA_Handle texture, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_texture_get_info",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_TextureInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture_get_info(CNA_Handle texture, CNA_TextureInfo* out_info)"
+    },
+    {
+      "name": "cna_sprite_batch_create",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_sprite_batch",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:sprite-batch:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_create(CNA_Handle graphics_device, CNA_Handle* out_sprite_batch)"
+    },
+    {
+      "name": "cna_sprite_batch_destroy",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:sprite-batch",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_destroy(CNA_Handle sprite_batch)"
+    },
+    {
+      "name": "cna_sprite_batch_begin",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "begin_info",
+          "c_type": "const CNA_SpriteBatchBeginInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_begin(CNA_Handle sprite_batch, const CNA_SpriteBatchBeginInfo* begin_info)"
+    },
+    {
+      "name": "cna_sprite_batch_submit_many",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "commands",
+          "c_type": "const CNA_SpriteCommand*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "command_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_submit_many(CNA_Handle sprite_batch, const CNA_SpriteCommand* commands, uint64_t command_count)"
+    },
+    {
+      "name": "cna_sprite_batch_end",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_end(CNA_Handle sprite_batch)"
+    },
+    {
+      "name": "cna_sprite_batch_get_type_name_size",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_get_type_name_size(CNA_Handle sprite_batch, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_sprite_batch_copy_type_name",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write",
+      "c_prototype": "CNA_Result cna_sprite_batch_copy_type_name(CNA_Handle sprite_batch, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_keyboard_get_state",
+      "header": "input.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_KeyboardState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_keyboard_get_state(CNA_Handle game, CNA_KeyboardState* out_state)"
+    },
+    {
+      "name": "cna_keyboard_get_state_for_player",
+      "header": "input_keyboard.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "player_index",
+          "c_type": "CNA_PlayerIndex",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_KeyboardState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_keyboard_get_state_for_player(CNA_Handle game, CNA_PlayerIndex player_index, CNA_KeyboardState* out_state)"
+    },
+    {
+      "name": "cna_keyboard_state_init",
+      "header": "input_keyboard.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_state",
+          "c_type": "CNA_KeyboardState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_keyboard_state_init(CNA_KeyboardState* out_state)"
+    },
+    {
+      "name": "cna_keyboard_state_init_from_keys",
+      "header": "input_keyboard.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "keys",
+          "c_type": "const CNA_Key*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_KeyboardState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_keyboard_state_init_from_keys(const CNA_Key* keys, uint64_t count, CNA_KeyboardState* out_state)"
+    },
+    {
+      "name": "cna_keyboard_state_get_key_state",
+      "header": "input_keyboard.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "state",
+          "c_type": "const CNA_KeyboardState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "key",
+          "c_type": "CNA_Key",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_key_state",
+          "c_type": "CNA_KeyState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_keyboard_state_get_key_state(const CNA_KeyboardState* state, CNA_Key key, CNA_KeyState* out_key_state)"
+    },
+    {
+      "name": "cna_keyboard_state_equals",
+      "header": "input_keyboard.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "left",
+          "c_type": "const CNA_KeyboardState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "right",
+          "c_type": "const CNA_KeyboardState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_equals",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_keyboard_state_equals(const CNA_KeyboardState* left, const CNA_KeyboardState* right, CNA_Bool* out_equals)"
+    },
+    {
+      "name": "cna_keyboard_state_get_hash_code",
+      "header": "input_keyboard.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "state",
+          "c_type": "const CNA_KeyboardState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_hash",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_keyboard_state_get_hash_code(const CNA_KeyboardState* state, int32_t* out_hash)"
+    }
+  ],
+  "structs": [
+    {
+      "name": "CNA_ErrorInfo",
+      "size": 24,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "result",
+          "c_type": "CNA_Result",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "category",
+          "c_type": "CNA_ErrorCategory",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "message_byte_length",
+          "c_type": "uint64_t",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "core.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_StringView",
+      "size": 16,
+      "align": 8,
+      "fields": [
+        {
+          "name": "data",
+          "c_type": "const char*",
+          "offset": 0,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "byte_length",
+          "c_type": "uint64_t",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "core.h",
+      "direction": "in",
+      "versioned": false,
+      "by_value_flattening": [
+        ":uint64",
+        ":uint64"
+      ],
+      "eightbyte_classes": [
+        "INTEGER",
+        "INTEGER"
+      ]
+    },
+    {
+      "name": "CNA_Color",
+      "size": 4,
+      "align": 1,
+      "fields": [
+        {
+          "name": "r",
+          "c_type": "uint8_t",
+          "offset": 0,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "g",
+          "c_type": "uint8_t",
+          "offset": 1,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "b",
+          "c_type": "uint8_t",
+          "offset": 2,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "a",
+          "c_type": "uint8_t",
+          "offset": 3,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "core.h",
+      "direction": "inout",
+      "versioned": false,
+      "by_value_flattening": [
+        ":uint32"
+      ],
+      "eightbyte_classes": [
+        "INTEGER"
+      ]
+    },
+    {
+      "name": "CNA_Rectangle",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "x",
+          "c_type": "int32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "y",
+          "c_type": "int32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "core.h",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_Point",
+      "size": 8,
+      "align": 4,
+      "fields": [
+        {
+          "name": "x",
+          "c_type": "int32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "y",
+          "c_type": "int32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "math_values.h",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_Vector2",
+      "size": 8,
+      "align": 4,
+      "fields": [
+        {
+          "name": "x",
+          "c_type": "float",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "y",
+          "c_type": "float",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "core.h",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_Viewport",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "x",
+          "c_type": "int32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "y",
+          "c_type": "int32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "min_depth",
+          "c_type": "float",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "max_depth",
+          "c_type": "float",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics_device.h",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_GameTime",
+      "size": 24,
+      "align": 8,
+      "fields": [
+        {
+          "name": "total_game_time_ticks",
+          "c_type": "int64_t",
+          "offset": 0,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":int64",
+          "kind": "scalar"
+        },
+        {
+          "name": "elapsed_game_time_ticks",
+          "c_type": "int64_t",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":int64",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_running_slowly",
+          "c_type": "CNA_Bool",
+          "offset": 16,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 17,
+          "size": 7,
+          "count": 7,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "runtime.h",
+      "direction": "out",
+      "versioned": false
+    },
+    {
+      "name": "CNA_CallbackError",
+      "size": 24,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "message",
+          "c_type": "CNA_StringView",
+          "offset": 8,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_StringView",
+          "kind": "aggregate"
+        }
+      ],
+      "header": "runtime.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GameCallbacks",
+      "size": 56,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "load_content",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "update",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "draw",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "unload_content",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 32,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "exiting",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "offset": 48,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        }
+      ],
+      "header": "runtime.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GameFrameHooks",
+      "size": 56,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "initialize",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "begin_run",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "end_run",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "begin_draw",
+          "c_type": "CNA_GameBeginDrawCallback",
+          "offset": 32,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "end_draw",
+          "c_type": "CNA_GameLifecycleCallback",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "offset": 48,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        }
+      ],
+      "header": "runtime.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GameCreateInfo",
+      "size": 48,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_fixed_time_step",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 9,
+          "size": 7,
+          "count": 7,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "target_elapsed_time_ticks",
+          "c_type": "int64_t",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":int64",
+          "kind": "scalar"
+        },
+        {
+          "name": "window_title",
+          "c_type": "CNA_StringView",
+          "offset": 24,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_StringView",
+          "kind": "aggregate"
+        },
+        {
+          "name": "callbacks",
+          "c_type": "const CNA_GameCallbacks*",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        }
+      ],
+      "header": "runtime.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_TextureInfo",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "level_count",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture2DDecodeInfo",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "zoom",
+          "c_type": "CNA_Bool",
+          "offset": 16,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 17,
+          "size": 7,
+          "count": 7,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture2DStorageInfo",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_renderer",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_cpu_shadow",
+          "c_type": "CNA_Bool",
+          "offset": 9,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 10,
+          "size": 6,
+          "count": 6,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteBatchBeginInfo",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "sort_mode",
+          "c_type": "CNA_SpriteSortMode",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteCommand",
+      "size": 72,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_Rectangle",
+          "offset": 16,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Rectangle",
+          "kind": "aggregate"
+        },
+        {
+          "name": "source",
+          "c_type": "CNA_Rectangle",
+          "offset": 32,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Rectangle",
+          "kind": "aggregate"
+        },
+        {
+          "name": "color",
+          "c_type": "CNA_Color",
+          "offset": 48,
+          "size": 4,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Color",
+          "kind": "aggregate"
+        },
+        {
+          "name": "rotation",
+          "c_type": "float",
+          "offset": 52,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "origin",
+          "c_type": "CNA_Vector2",
+          "offset": 56,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "effects",
+          "c_type": "CNA_SpriteEffects",
+          "offset": 64,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "layer_depth",
+          "c_type": "float",
+          "offset": 68,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_KeyboardState",
+      "size": 40,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "pressed_key_words",
+          "c_type": "uint64_t",
+          "offset": 8,
+          "size": 32,
+          "count": 4,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "input.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_RendererInfo",
+      "size": 32,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "renderer_name_byte_length",
+          "c_type": "uint64_t",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "capability_flags",
+          "c_type": "CNA_GraphicsCapabilityFlags",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "renderer_type",
+          "c_type": "CNA_GraphicsRendererType",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "max_texture_dimension",
+          "c_type": "uint32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics.h",
+      "direction": "out",
+      "versioned": true
+    }
+  ],
+  "callbacks": [
+    {
+      "name": "CNA_GameLifecycleCallback",
+      "returns": ":uint32",
+      "c_returns": "CNA_Result",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "game_time",
+          "c_type": "const CNA_GameTime*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_error",
+          "c_type": "CNA_CallbackError*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
+      "name": "CNA_GameBeginDrawCallback",
+      "returns": ":uint32",
+      "c_returns": "CNA_Result",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "game_time",
+          "c_type": "const CNA_GameTime*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_should_draw",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_error",
+          "c_type": "CNA_CallbackError*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    }
+  ],
+  "constants": {
+    "CNA_ABI_VERSION": 5376,
+    "CNA_ABI_VERSION_MAJOR": 0,
+    "CNA_ABI_VERSION_MINOR": 21,
+    "CNA_ABI_VERSION_PATCH": 0,
+    "CNA_ERROR_CATEGORY_ARGUMENT": 1,
+    "CNA_ERROR_CATEGORY_CALLBACK": 9,
+    "CNA_ERROR_CATEGORY_ENCODING": 11,
+    "CNA_ERROR_CATEGORY_HANDLE": 2,
+    "CNA_ERROR_CATEGORY_INTERNAL": 12,
+    "CNA_ERROR_CATEGORY_IO": 5,
+    "CNA_ERROR_CATEGORY_MEMORY": 4,
+    "CNA_ERROR_CATEGORY_NONE": 0,
+    "CNA_ERROR_CATEGORY_NOT_SUPPORTED": 6,
+    "CNA_ERROR_CATEGORY_PLATFORM": 7,
+    "CNA_ERROR_CATEGORY_RANGE": 10,
+    "CNA_ERROR_CATEGORY_SHUTTING_DOWN": 13,
+    "CNA_ERROR_CATEGORY_STATE": 3,
+    "CNA_ERROR_CATEGORY_THREAD": 8,
+    "CNA_FALSE": 0,
+    "CNA_INVALID_HANDLE": 0,
+    "CNA_KEY_A": 65,
+    "CNA_KEY_ADD": 107,
+    "CNA_KEY_APPS": 93,
+    "CNA_KEY_ATTN": 246,
+    "CNA_KEY_B": 66,
+    "CNA_KEY_BACK": 8,
+    "CNA_KEY_BROWSER_BACK": 166,
+    "CNA_KEY_BROWSER_FAVORITES": 171,
+    "CNA_KEY_BROWSER_FORWARD": 167,
+    "CNA_KEY_BROWSER_HOME": 172,
+    "CNA_KEY_BROWSER_REFRESH": 168,
+    "CNA_KEY_BROWSER_SEARCH": 170,
+    "CNA_KEY_BROWSER_STOP": 169,
+    "CNA_KEY_C": 67,
+    "CNA_KEY_CAPS_LOCK": 20,
+    "CNA_KEY_CHAT_PAD_GREEN": 202,
+    "CNA_KEY_CHAT_PAD_ORANGE": 203,
+    "CNA_KEY_CRSEL": 247,
+    "CNA_KEY_D": 68,
+    "CNA_KEY_D0": 48,
+    "CNA_KEY_D1": 49,
+    "CNA_KEY_D2": 50,
+    "CNA_KEY_D3": 51,
+    "CNA_KEY_D4": 52,
+    "CNA_KEY_D5": 53,
+    "CNA_KEY_D6": 54,
+    "CNA_KEY_D7": 55,
+    "CNA_KEY_D8": 56,
+    "CNA_KEY_D9": 57,
+    "CNA_KEY_DECIMAL": 110,
+    "CNA_KEY_DELETE": 46,
+    "CNA_KEY_DIVIDE": 111,
+    "CNA_KEY_DOWN": 40,
+    "CNA_KEY_E": 69,
+    "CNA_KEY_END": 35,
+    "CNA_KEY_ENTER": 13,
+    "CNA_KEY_ERASE_EOF": 249,
+    "CNA_KEY_ESCAPE": 27,
+    "CNA_KEY_EXECUTE": 43,
+    "CNA_KEY_EXSEL": 248,
+    "CNA_KEY_F": 70,
+    "CNA_KEY_F1": 112,
+    "CNA_KEY_F10": 121,
+    "CNA_KEY_F11": 122,
+    "CNA_KEY_F12": 123,
+    "CNA_KEY_F13": 124,
+    "CNA_KEY_F14": 125,
+    "CNA_KEY_F15": 126,
+    "CNA_KEY_F16": 127,
+    "CNA_KEY_F17": 128,
+    "CNA_KEY_F18": 129,
+    "CNA_KEY_F19": 130,
+    "CNA_KEY_F2": 113,
+    "CNA_KEY_F20": 131,
+    "CNA_KEY_F21": 132,
+    "CNA_KEY_F22": 133,
+    "CNA_KEY_F23": 134,
+    "CNA_KEY_F24": 135,
+    "CNA_KEY_F3": 114,
+    "CNA_KEY_F4": 115,
+    "CNA_KEY_F5": 116,
+    "CNA_KEY_F6": 117,
+    "CNA_KEY_F7": 118,
+    "CNA_KEY_F8": 119,
+    "CNA_KEY_F9": 120,
+    "CNA_KEY_G": 71,
+    "CNA_KEY_H": 72,
+    "CNA_KEY_HELP": 47,
+    "CNA_KEY_HOME": 36,
+    "CNA_KEY_I": 73,
+    "CNA_KEY_IME_CONVERT": 28,
+    "CNA_KEY_IME_NO_CONVERT": 29,
+    "CNA_KEY_INSERT": 45,
+    "CNA_KEY_J": 74,
+    "CNA_KEY_K": 75,
+    "CNA_KEY_KANA": 21,
+    "CNA_KEY_KANJI": 25,
+    "CNA_KEY_L": 76,
+    "CNA_KEY_LAUNCH_APPLICATION1": 182,
+    "CNA_KEY_LAUNCH_APPLICATION2": 183,
+    "CNA_KEY_LAUNCH_MAIL": 180,
+    "CNA_KEY_LEFT": 37,
+    "CNA_KEY_LEFT_ALT": 164,
+    "CNA_KEY_LEFT_CONTROL": 162,
+    "CNA_KEY_LEFT_SHIFT": 160,
+    "CNA_KEY_LEFT_WINDOWS": 91,
+    "CNA_KEY_M": 77,
+    "CNA_KEY_MEDIA_NEXT_TRACK": 176,
+    "CNA_KEY_MEDIA_PLAY_PAUSE": 179,
+    "CNA_KEY_MEDIA_PREVIOUS_TRACK": 177,
+    "CNA_KEY_MEDIA_STOP": 178,
+    "CNA_KEY_MULTIPLY": 106,
+    "CNA_KEY_N": 78,
+    "CNA_KEY_NONE": 0,
+    "CNA_KEY_NUM_LOCK": 144,
+    "CNA_KEY_NUM_PAD0": 96,
+    "CNA_KEY_NUM_PAD1": 97,
+    "CNA_KEY_NUM_PAD2": 98,
+    "CNA_KEY_NUM_PAD3": 99,
+    "CNA_KEY_NUM_PAD4": 100,
+    "CNA_KEY_NUM_PAD5": 101,
+    "CNA_KEY_NUM_PAD6": 102,
+    "CNA_KEY_NUM_PAD7": 103,
+    "CNA_KEY_NUM_PAD8": 104,
+    "CNA_KEY_NUM_PAD9": 105,
+    "CNA_KEY_O": 79,
+    "CNA_KEY_OEM8": 223,
+    "CNA_KEY_OEM_AUTO": 243,
+    "CNA_KEY_OEM_BACKSLASH": 226,
+    "CNA_KEY_OEM_CLEAR": 254,
+    "CNA_KEY_OEM_CLOSE_BRACKETS": 221,
+    "CNA_KEY_OEM_COMMA": 188,
+    "CNA_KEY_OEM_COPY": 242,
+    "CNA_KEY_OEM_ENL_W": 244,
+    "CNA_KEY_OEM_MINUS": 189,
+    "CNA_KEY_OEM_OPEN_BRACKETS": 219,
+    "CNA_KEY_OEM_PERIOD": 190,
+    "CNA_KEY_OEM_PIPE": 220,
+    "CNA_KEY_OEM_PLUS": 187,
+    "CNA_KEY_OEM_QUESTION": 191,
+    "CNA_KEY_OEM_QUOTES": 222,
+    "CNA_KEY_OEM_SEMICOLON": 186,
+    "CNA_KEY_OEM_TILDE": 192,
+    "CNA_KEY_P": 80,
+    "CNA_KEY_PA1": 253,
+    "CNA_KEY_PAGE_DOWN": 34,
+    "CNA_KEY_PAGE_UP": 33,
+    "CNA_KEY_PAUSE": 19,
+    "CNA_KEY_PLAY": 250,
+    "CNA_KEY_PRINT": 42,
+    "CNA_KEY_PRINT_SCREEN": 44,
+    "CNA_KEY_PROCESS_KEY": 229,
+    "CNA_KEY_Q": 81,
+    "CNA_KEY_R": 82,
+    "CNA_KEY_RIGHT": 39,
+    "CNA_KEY_RIGHT_ALT": 165,
+    "CNA_KEY_RIGHT_CONTROL": 163,
+    "CNA_KEY_RIGHT_SHIFT": 161,
+    "CNA_KEY_RIGHT_WINDOWS": 92,
+    "CNA_KEY_S": 83,
+    "CNA_KEY_SCROLL": 145,
+    "CNA_KEY_SELECT": 41,
+    "CNA_KEY_SELECT_MEDIA": 181,
+    "CNA_KEY_SEPARATOR": 108,
+    "CNA_KEY_SLEEP": 95,
+    "CNA_KEY_SPACE": 32,
+    "CNA_KEY_STATE_DOWN": 1,
+    "CNA_KEY_STATE_UP": 0,
+    "CNA_KEY_SUBTRACT": 109,
+    "CNA_KEY_T": 84,
+    "CNA_KEY_TAB": 9,
+    "CNA_KEY_U": 85,
+    "CNA_KEY_UP": 38,
+    "CNA_KEY_V": 86,
+    "CNA_KEY_VOLUME_DOWN": 174,
+    "CNA_KEY_VOLUME_MUTE": 173,
+    "CNA_KEY_VOLUME_UP": 175,
+    "CNA_KEY_W": 87,
+    "CNA_KEY_X": 88,
+    "CNA_KEY_Y": 89,
+    "CNA_KEY_Z": 90,
+    "CNA_KEY_ZOOM": 251,
+    "CNA_PLAYER_INDEX_FOUR": 3,
+    "CNA_PLAYER_INDEX_ONE": 0,
+    "CNA_PLAYER_INDEX_THREE": 2,
+    "CNA_PLAYER_INDEX_TWO": 1,
+    "CNA_RESULT_BUFFER_TOO_SMALL": 14,
+    "CNA_RESULT_CALLBACK": 9,
+    "CNA_RESULT_ENCODING": 11,
+    "CNA_RESULT_INTERNAL": 12,
+    "CNA_RESULT_INVALID_ARGUMENT": 1,
+    "CNA_RESULT_INVALID_HANDLE": 2,
+    "CNA_RESULT_INVALID_STATE": 3,
+    "CNA_RESULT_IO": 5,
+    "CNA_RESULT_NOT_SUPPORTED": 6,
+    "CNA_RESULT_OUT_OF_MEMORY": 4,
+    "CNA_RESULT_OVERFLOW": 10,
+    "CNA_RESULT_PLATFORM": 7,
+    "CNA_RESULT_SHUTTING_DOWN": 13,
+    "CNA_RESULT_SUCCESS": 0,
+    "CNA_RESULT_THREAD": 8,
+    "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY": 1,
+    "CNA_SPRITE_EFFECT_FLIP_VERTICALLY": 2,
+    "CNA_SPRITE_EFFECT_NONE": 0,
+    "CNA_SPRITE_SORT_MODE_BACK_TO_FRONT": 3,
+    "CNA_SPRITE_SORT_MODE_DEFERRED": 0,
+    "CNA_SPRITE_SORT_MODE_FRONT_TO_BACK": 4,
+    "CNA_SPRITE_SORT_MODE_IMMEDIATE": 1,
+    "CNA_SPRITE_SORT_MODE_TEXTURE": 2,
+    "CNA_SURFACE_FORMAT_ALPHA8": 12,
+    "CNA_SURFACE_FORMAT_BC7_EXT": 23,
+    "CNA_SURFACE_FORMAT_BC7_SRGB_EXT": 24,
+    "CNA_SURFACE_FORMAT_BGR565": 1,
+    "CNA_SURFACE_FORMAT_BGRA4444": 3,
+    "CNA_SURFACE_FORMAT_BGRA5551": 2,
+    "CNA_SURFACE_FORMAT_BYTE_EXT": 25,
+    "CNA_SURFACE_FORMAT_COLOR": 0,
+    "CNA_SURFACE_FORMAT_COLOR_BGRA_EXT": 20,
+    "CNA_SURFACE_FORMAT_COLOR_SRGB_EXT": 21,
+    "CNA_SURFACE_FORMAT_DXT1": 4,
+    "CNA_SURFACE_FORMAT_DXT3": 5,
+    "CNA_SURFACE_FORMAT_DXT5": 6,
+    "CNA_SURFACE_FORMAT_DXT5_SRGB_EXT": 22,
+    "CNA_SURFACE_FORMAT_HALF_SINGLE": 16,
+    "CNA_SURFACE_FORMAT_HALF_VECTOR2": 17,
+    "CNA_SURFACE_FORMAT_HALF_VECTOR4": 18,
+    "CNA_SURFACE_FORMAT_HDR_BLENDABLE": 19,
+    "CNA_SURFACE_FORMAT_NORMALIZED_BYTE2": 7,
+    "CNA_SURFACE_FORMAT_NORMALIZED_BYTE4": 8,
+    "CNA_SURFACE_FORMAT_RG32": 10,
+    "CNA_SURFACE_FORMAT_RGBA1010102": 9,
+    "CNA_SURFACE_FORMAT_RGBA64": 11,
+    "CNA_SURFACE_FORMAT_SINGLE": 13,
+    "CNA_SURFACE_FORMAT_USHORT_EXT": 26,
+    "CNA_SURFACE_FORMAT_VECTOR2": 14,
+    "CNA_SURFACE_FORMAT_VECTOR4": 15,
+    "CNA_TRUE": 1
+  }
+}

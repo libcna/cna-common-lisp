@@ -1,0 +1,13 @@
+*.fasl
+*.fas
+*.lib
+*.o
+*.so
+*.dylib
+*.dll
+build-probe/
+build-consumer/
+.qlot/
+qlfile.lock
+/tmp/
+*~

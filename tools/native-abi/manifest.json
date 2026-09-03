@@ -1,0 +1,622 @@
+{
+  "schema_version": 1,
+  "description": "The whole CNA C ABI surface CNA-Lisp binds. Nothing outside this file reaches the native library. Types are not written here: the generator reads them from the canonical CNA headers so a hand-copied signature can never drift from the ABI it claims to describe.",
+  "header_roots": {
+    "qualification": "modules/c-api/include",
+    "note": "A header root is supplied to the generator with --headers; it is never read at runtime."
+  },
+  "admitted_abi_versions": [
+    {
+      "version": "0.21.0",
+      "encoded": 5376,
+      "evidence": "tools/native-abi/probe.generated.c compiled against this version's canonical headers; every bound prototype, struct size, alignment, field offset and field size in this manifest verified by the C compiler, and every by-value aggregate verified at run time through tools/native-abi/valueprobe.generated.c."
+    }
+  ],
+  "by_value_aggregate_rule": {
+    "admitted_classification": "INTEGER",
+    "max_size_bytes": 16,
+    "rule": "A by-value aggregate parameter is bound only when the System V AMD64 ABI classifies every one of its eightbytes as INTEGER and its size is at most 16 bytes. Such a parameter is passed as one scalar argument per eightbyte, which occupies exactly the argument registers or stack slots the aggregate itself would occupy. An aggregate with any floating-point eightbyte (SSE class) or larger than 16 bytes is refused by the generator and the route that needs it is left unbound and reported as blocked.",
+    "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
+  },
+  "constants": {
+    "from_headers": [
+      "CNA_ABI_VERSION",
+      "CNA_ABI_VERSION_MAJOR",
+      "CNA_ABI_VERSION_MINOR",
+      "CNA_ABI_VERSION_PATCH",
+      "CNA_RESULT_SUCCESS",
+      "CNA_RESULT_INVALID_ARGUMENT",
+      "CNA_RESULT_INVALID_HANDLE",
+      "CNA_RESULT_INVALID_STATE",
+      "CNA_RESULT_OUT_OF_MEMORY",
+      "CNA_RESULT_IO",
+      "CNA_RESULT_NOT_SUPPORTED",
+      "CNA_RESULT_PLATFORM",
+      "CNA_RESULT_THREAD",
+      "CNA_RESULT_CALLBACK",
+      "CNA_RESULT_OVERFLOW",
+      "CNA_RESULT_ENCODING",
+      "CNA_RESULT_INTERNAL",
+      "CNA_RESULT_SHUTTING_DOWN",
+      "CNA_RESULT_BUFFER_TOO_SMALL",
+      "CNA_ERROR_CATEGORY_NONE",
+      "CNA_ERROR_CATEGORY_ARGUMENT",
+      "CNA_ERROR_CATEGORY_HANDLE",
+      "CNA_ERROR_CATEGORY_STATE",
+      "CNA_ERROR_CATEGORY_MEMORY",
+      "CNA_ERROR_CATEGORY_IO",
+      "CNA_ERROR_CATEGORY_NOT_SUPPORTED",
+      "CNA_ERROR_CATEGORY_PLATFORM",
+      "CNA_ERROR_CATEGORY_THREAD",
+      "CNA_ERROR_CATEGORY_CALLBACK",
+      "CNA_ERROR_CATEGORY_RANGE",
+      "CNA_ERROR_CATEGORY_ENCODING",
+      "CNA_ERROR_CATEGORY_INTERNAL",
+      "CNA_ERROR_CATEGORY_SHUTTING_DOWN",
+      "CNA_FALSE",
+      "CNA_TRUE",
+      "CNA_INVALID_HANDLE",
+      "CNA_KEY_STATE_UP",
+      "CNA_KEY_STATE_DOWN",
+      "CNA_SPRITE_SORT_MODE_DEFERRED",
+      "CNA_SPRITE_SORT_MODE_IMMEDIATE",
+      "CNA_SPRITE_SORT_MODE_TEXTURE",
+      "CNA_SPRITE_SORT_MODE_BACK_TO_FRONT",
+      "CNA_SPRITE_SORT_MODE_FRONT_TO_BACK",
+      "CNA_SPRITE_EFFECT_NONE",
+      "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY",
+      "CNA_SPRITE_EFFECT_FLIP_VERTICALLY",
+      "CNA_PLAYER_INDEX_ONE",
+      "CNA_PLAYER_INDEX_TWO",
+      "CNA_PLAYER_INDEX_THREE",
+      "CNA_PLAYER_INDEX_FOUR"
+    ],
+    "prefix_families": [
+      {
+        "prefix": "CNA_KEY_",
+        "exclude_prefixes": [
+          "CNA_KEY_STATE_",
+          "CNA_KEY_MODIFIER_"
+        ],
+        "lisp_family": "keys"
+      },
+      {
+        "prefix": "CNA_SURFACE_FORMAT_",
+        "lisp_family": "surface-format"
+      }
+    ]
+  },
+  "structs": [
+    {
+      "name": "CNA_ErrorInfo",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_StringView",
+      "direction": "in",
+      "versioned": false,
+      "by_value": true
+    },
+    {
+      "name": "CNA_Color",
+      "direction": "inout",
+      "versioned": false,
+      "by_value": true
+    },
+    {
+      "name": "CNA_Rectangle",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_Point",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_Vector2",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_Viewport",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_GameTime",
+      "direction": "out",
+      "versioned": false
+    },
+    {
+      "name": "CNA_CallbackError",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GameCallbacks",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GameFrameHooks",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GameCreateInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_TextureInfo",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture2DDecodeInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture2DStorageInfo",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteBatchBeginInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteCommand",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_KeyboardState",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_RendererInfo",
+      "direction": "out",
+      "versioned": true
+    }
+  ],
+  "callbacks": [
+    {
+      "name": "CNA_GameLifecycleCallback"
+    },
+    {
+      "name": "CNA_GameBeginDrawCallback"
+    }
+  ],
+  "functions": [
+    {
+      "name": "cna_get_abi_version",
+      "header": "abi.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_error_get_last_info",
+      "header": "core.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_error_get_last_message_size",
+      "header": "core.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_error_copy_last_message",
+      "header": "core.h",
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write"
+    },
+    {
+      "name": "cna_game_create",
+      "header": "runtime.h",
+      "thread": "creates-affinity",
+      "ownership": "creates-owned:game"
+    },
+    {
+      "name": "cna_game_destroy",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "destroys:game"
+    },
+    {
+      "name": "cna_game_run",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_run_one_frame",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_tick",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_request_exit",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_suppress_draw",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_reset_elapsed_time",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_clear",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_set_window_title",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "borrowed UTF-8 view; embedded NUL refused"
+    },
+    {
+      "name": "cna_game_set_frame_hooks_ext",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "borrows-table:copied-during-call"
+    },
+    {
+      "name": "cna_game_get_is_active",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_get_is_mouse_visible",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_set_is_mouse_visible",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_get_is_fixed_time_step",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_set_is_fixed_time_step",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_get_target_elapsed_time_ticks",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_set_target_elapsed_time_ticks",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_get_inactive_sleep_time_ticks",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_set_inactive_sleep_time_ticks",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_get_type_name_size",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_copy_type_name",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write"
+    },
+    {
+      "name": "cna_game_get_graphics_device",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "borrows-callback-scoped:graphics-device"
+    },
+    {
+      "name": "cna_graphics_device_get_viewport",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_clear_rgba",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_present",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_get_renderer_info",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_copy_renderer_name",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write"
+    },
+    {
+      "name": "cna_graphics_device_get_type_name_size",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_copy_type_name",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write"
+    },
+    {
+      "name": "cna_graphics_device_manager_create",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "creates-owned:graphics-device-manager"
+    },
+    {
+      "name": "cna_graphics_device_manager_destroy",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "destroys:graphics-device-manager"
+    },
+    {
+      "name": "cna_graphics_device_manager_apply_changes",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_toggle_full_screen",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_is_full_screen",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_is_full_screen",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_preferred_back_buffer_width",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_preferred_back_buffer_width",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_preferred_back_buffer_height",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_preferred_back_buffer_height",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_synchronize_with_vertical_retrace",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_synchronize_with_vertical_retrace",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_graphics_device",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "borrows-callback-scoped:graphics-device"
+    },
+    {
+      "name": "cna_texture2d_create_from_encoded_memory",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "creates-owned:texture-2d:child-of-game"
+    },
+    {
+      "name": "cna_texture2d_create_from_file_with_device",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "creates-owned:texture-2d:child-of-game",
+      "string_rule": "borrowed UTF-8 view; embedded NUL refused"
+    },
+    {
+      "name": "cna_texture2d_destroy",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "destroys:texture-2d"
+    },
+    {
+      "name": "cna_texture2d_get_storage_info",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture2d_get_type_name_byte_count",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture2d_copy_type_name",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write"
+    },
+    {
+      "name": "cna_texture_get_info",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sprite_batch_create",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "creates-owned:sprite-batch:child-of-game"
+    },
+    {
+      "name": "cna_sprite_batch_destroy",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "destroys:sprite-batch"
+    },
+    {
+      "name": "cna_sprite_batch_begin",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sprite_batch_submit_many",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sprite_batch_end",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sprite_batch_get_type_name_size",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sprite_batch_copy_type_name",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": "count-then-copy, no terminator, no partial write"
+    },
+    {
+      "name": "cna_keyboard_get_state",
+      "header": "input.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_keyboard_get_state_for_player",
+      "header": "input_keyboard.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_keyboard_state_init",
+      "header": "input_keyboard.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_keyboard_state_init_from_keys",
+      "header": "input_keyboard.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_keyboard_state_get_key_state",
+      "header": "input_keyboard.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_keyboard_state_equals",
+      "header": "input_keyboard.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_keyboard_state_get_hash_code",
+      "header": "input_keyboard.h",
+      "thread": "any",
+      "ownership": "none"
+    }
+  ],
+  "blocked_routes": [
+    {
+      "name": "cna_graphics_device_set_viewport",
+      "header": "graphics_device.h",
+      "reason_code": "by-value-aggregate-not-expressible",
+      "reason": "Takes CNA_Viewport (24 bytes) by value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot pass a MEMORY-class aggregate without cffi-libffi, which a released CNA-Lisp must not require. The generator proves this refusal rather than asserting it."
+    }
+  ]
+}
