@@ -504,6 +504,8 @@ CNA_Result (*const cna_lisp_probe_cna_game_set_inactive_sleep_time_ticks)(CNA_Ha
 CNA_Result (*const cna_lisp_probe_cna_game_get_type_name_size)(CNA_Handle, uint64_t*) = cna_game_get_type_name_size;
 CNA_Result (*const cna_lisp_probe_cna_game_copy_type_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_game_copy_type_name;
 CNA_Result (*const cna_lisp_probe_cna_game_get_graphics_device)(CNA_Handle, CNA_Handle*) = cna_game_get_graphics_device;
+CNA_Result (*const cna_lisp_probe_cna_game_subscribe)(CNA_Handle, CNA_GameEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*) = cna_game_subscribe;
+CNA_Result (*const cna_lisp_probe_cna_game_unsubscribe)(CNA_GameEventRegistrationHandle) = cna_game_unsubscribe;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_viewport)(CNA_Handle, CNA_Viewport*) = cna_graphics_device_get_viewport;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_clear_rgba)(CNA_Handle, float, float, float, float) = cna_graphics_device_clear_rgba;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_present)(CNA_Handle) = cna_graphics_device_present;
@@ -571,6 +573,7 @@ CNA_Result (*const cna_lisp_probe_cna_touch_panel_set_display_orientation)(CNA_H
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
 _Static_assert(sizeof(CNA_GameBeginDrawCallback) == sizeof(void (*)(void)), "CNA_GameBeginDrawCallback size");
+_Static_assert(sizeof(CNA_GameEventCallback) == sizeof(void (*)(void)), "CNA_GameEventCallback size");
 
 /* --- constants --- */
 _Static_assert((int64_t)(CNA_ABI_VERSION) == INT64_C(5376), "CNA_ABI_VERSION value");
@@ -635,6 +638,10 @@ _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_GAMEPAD) == INT64_C(1), "CNA_GAMEPAD_T
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_GUITAR) == INT64_C(6), "CNA_GAMEPAD_TYPE_GUITAR value");
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_UNKNOWN) == INT64_C(0), "CNA_GAMEPAD_TYPE_UNKNOWN value");
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_WHEEL) == INT64_C(2), "CNA_GAMEPAD_TYPE_WHEEL value");
+_Static_assert((int64_t)(CNA_GAME_EVENT_ACTIVATED) == INT64_C(0), "CNA_GAME_EVENT_ACTIVATED value");
+_Static_assert((int64_t)(CNA_GAME_EVENT_DEACTIVATED) == INT64_C(1), "CNA_GAME_EVENT_DEACTIVATED value");
+_Static_assert((int64_t)(CNA_GAME_EVENT_DISPOSED) == INT64_C(2), "CNA_GAME_EVENT_DISPOSED value");
+_Static_assert((int64_t)(CNA_GAME_EVENT_EXITING) == INT64_C(3), "CNA_GAME_EVENT_EXITING value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_DOUBLE_TAP) == INT64_C(2), "CNA_GESTURE_TYPE_DOUBLE_TAP value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_DRAG_COMPLETE) == INT64_C(256), "CNA_GESTURE_TYPE_DRAG_COMPLETE value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_FLICK) == INT64_C(128), "CNA_GESTURE_TYPE_FLICK value");

@@ -62,9 +62,28 @@
     "Dispose(Boolean)": "The protected dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. CNA-Lisp has no finalizer that touches a native resource, so there is nothing for the flag to distinguish."
    },
    "unimplemented": {
-    "OnActivated(Object,EventArgs)": "Needs the event projection.",
-    "OnDeactivated(Object,EventArgs)": "Needs the event projection.",
+    "OnActivated(Object,EventArgs)": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not.",
+    "OnDeactivated(Object,EventArgs)": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not.",
     "ShowMissingRequirementMessage(Exception)": "Needs the CLR exception projection and a platform message box."
+   },
+   "events": {
+    "Activated": {
+     "add": "add-activated-handler",
+     "remove": "remove-activated-handler",
+     "reason": "A CLR event is two operations, add_E and remove_E, and it projects to two generic functions on the object that raises it. They are generic because Disposed is raised by more than one type in this package and a plain function could not be specialised on the second. The handler takes the sender and nothing else: EventArgs.Empty carries no information, and a second always-empty argument would be something every handler had to write and ignore."
+    },
+    "Deactivated": {
+     "add": "add-deactivated-handler",
+     "remove": "remove-deactivated-handler"
+    },
+    "Exiting": {
+     "add": "add-exiting-handler",
+     "remove": "remove-exiting-handler"
+    },
+    "Disposed": {
+     "add": "add-disposed-handler",
+     "remove": "remove-disposed-handler"
+    }
    }
   },
   "Microsoft.Xna.Framework.GameTime": {

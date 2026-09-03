@@ -31,7 +31,12 @@ Both answer the same object, because in CNA they are the same device."))
    (callback-token :initform nil :reader %callback-token)
    (window-title :initarg :window-title :initform "CNA-Lisp Game" :reader window-title)
    (running :initform nil :accessor %running-p)
-   (content-loaded :initform nil :accessor %content-loaded-p))
+   (content-loaded :initform nil :accessor %content-loaded-p)
+   (event-handlers :initform '() :accessor %event-handlers
+                   :documentation
+                   "One entry per live event subscription: (EVENT FUNCTION TOKEN
+. REGISTRATION-HANDLE). Kept on the game because XNA's -= takes the handler
+itself, so the binding has to be able to find the registration from it."))
   (:documentation
    "Microsoft.Xna.Framework.Game.
 
@@ -473,7 +478,13 @@ the projected type checkable against the runtime rather than asserted."))
                                                  :object-type (type-of game)
                                                  :callback-condition condition)))
              (cna-lisp.internal:check-result code "dispose" :object-type (type-of game)))
-      (cna-lisp.internal:release-callback-error-buffer))))
+      (progn
+        ;; The Disposed event is raised *inside* `cna_game_destroy', so the
+        ;; subscriptions and the registry entries that root their handlers have
+        ;; to survive that call and be released after it -- not before, which
+        ;; would silently swallow the last event the game ever raises.
+        (%release-game-event-handlers game)
+        (cna-lisp.internal:release-callback-error-buffer)))))
 
 (defmethod print-object ((game game) stream)
   (print-unreadable-object (game stream :type t :identity t)

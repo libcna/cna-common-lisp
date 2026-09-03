@@ -68,6 +68,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "input/touch")
    ;; --- Game and the graphics device manager ------------------------------
    (:file "runtime/game")
+   (:file "runtime/events")
    (:file "runtime/graphics-device-manager")
    ;; --- declared capabilities and deliberate absences ----------------------
    (:file "capabilities"))
@@ -103,6 +104,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/abi-gate")
    (:file "native/struct-passing")
    (:file "native/game-lifecycle")
+   (:file "native/events")
    (:file "native/graphics")
    (:file "native/keyboard")
    (:file "native/mouse")

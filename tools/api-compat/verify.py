@@ -211,6 +211,11 @@ def verify_rule_freshness(report, type_rule, contract_type):
     present = {signature(m) for m in contract_type["members"]}
     constructors = {signature(m) for m in contract_type["members"]
                     if m["kind"] == "constructor"}
+    for key in sorted(type_rule.get("events", {})):
+        if key not in {m["name"] for m in contract_type["members"]
+                       if m["kind"] == "event"}:
+            report.add("stale_mapping_rule", "%s events[%s]" % (name, key),
+                       "no event of this type has that name")
     for section in RULE_SECTIONS:
         expected = constructors if section == "constructors" else present
         for key in sorted(type_rule.get(section, {})):
@@ -300,6 +305,40 @@ def verify_type(report, rules, contract_type, surface, packages, claimed):
     return result
 
 
+def verify_event(report, type_rule, member, subject, symbols, package, claimed):
+    """Verify one CLR event against its declared projection.
+
+    A CLR event is two operations, `add_E` and `remove_E`, and the projection is
+    two generic functions on the object that raises it. The rule must name both;
+    an event with no rule is missing, and an event whose rule names a symbol that
+    is not a generic function is an `event_mapping_mismatch` -- because a plain
+    function could not be specialised on a second type that raises the same
+    event, and `Disposed` is raised by two of them.
+    """
+    rule = type_rule.get("events", {}).get(member["name"])
+    if rule is None:
+        report.add("missing_member", subject, "no event projection is declared")
+        return "missing"
+    for role in ("add", "remove"):
+        name = rule.get(role)
+        if not name:
+            report.add("event_mapping_mismatch", subject,
+                       "the event projection declares no %r function" % role)
+            return "missing"
+        entry = symbols.get(name)
+        if entry is None:
+            report.add("missing_member", subject,
+                       "no exported %r in %s" % (name, package))
+            return "missing"
+        claimed.setdefault(package, set()).add(name)
+        if not entry["generic"]:
+            report.add("event_mapping_mismatch", subject,
+                       "%r is not a generic function, so it cannot be specialised "
+                       "on a second type that raises the same event" % name)
+            return "missing"
+    return "complete"
+
+
 def verify_members(report, rules, type_rule, contract_type, symbols, package, claimed,
                    surface_predefined=()):
     statuses = {}
@@ -339,6 +378,10 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
             statuses[sig] = "missing"
             report.add("missing_member", subject, unimplemented)
             continue
+        if member["kind"] == "event":
+            statuses[sig] = verify_event(report, type_rule, member, subject, symbols,
+                                         package, claimed)
+            continue
         expected, override = expected_symbol(rules, type_rule, contract_type["name"], member)
         if expected is None:
             statuses[sig] = "not-applicable"
@@ -362,13 +405,6 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
         claimed.setdefault(package, set()).add(expected)
         statuses[sig] = "complete"
 
-        if member["kind"] == "event":
-            # A symbol was found where an event should be, but CNA-Lisp has no event
-            # projection yet, so whatever it is, it is not that event.
-            report.add("event_mapping_mismatch", subject,
-                       "%r exists but CNA-Lisp has no event projection" % expected)
-            statuses[sig] = "missing"
-            continue
         if override.get("kind") == "constant":
             if not entry["constant"]:
                 report.add("wrong_kind", subject, "%r is not a constant" % expected)
@@ -489,14 +525,32 @@ def verify_unexpected(report, rules, surface, packages, claimed):
 
 
 def verify_leaks(report, packages):
-    forbidden = ("handle", "cffi", "pointer", "foreign", "registry", "token",
-                 "generation", "struct-size", "defcfun", "%")
+    """No exported name may mention an ABI concept.
+
+    The match is on whole hyphen-separated words, not on substrings: HANDLER is
+    not HANDLE, and a substring test reports every ADD-<EVENT>-HANDLER as a leak.
+    A false positive here is worse than it looks, because the obvious repair is
+    to delete the forbidden word and stop checking for it at all.
+    """
+    forbidden_words = ("handle", "cffi", "pointer", "foreign", "registry", "token",
+                       "generation", "defcfun")
+    forbidden_pairs = (("struct", "size"),)
     for package, symbols in packages.items():
         for name in symbols:
-            for bad in forbidden:
-                if bad in name:
+            words = name.split("-")
+            for bad in forbidden_words:
+                if bad in words:
                     report.add("private_implementation_leak", "%s:%s" % (package, name),
-                               "the exported name mentions %r" % bad)
+                               "the exported name has %r as a word" % bad)
+            for a, b in forbidden_pairs:
+                for first, second in zip(words, words[1:]):
+                    if first == a and second == b:
+                        report.add("private_implementation_leak",
+                                   "%s:%s" % (package, name),
+                                   "the exported name has %r in it" % (a + "-" + b))
+            if "%" in name:
+                report.add("private_implementation_leak", "%s:%s" % (package, name),
+                           "the exported name mentions '%'")
 
 
 def main(argv):

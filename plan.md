@@ -205,9 +205,9 @@ which refuses any figure in the prose that the reports do not produce.
 <!-- generated:complete types=70 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1167 -->
+<!-- generated:complete members=1171 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=119 -->
+<!-- generated:missing members=115 -->
 <!-- generated:not-applicable members=345 -->
 <!-- generated:disagreement total=0 -->
 
@@ -216,8 +216,8 @@ Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
 | | |
 | --- | --- |
 | Types complete / partial / missing | **70 / 6 / 1** |
-| Members complete | **1167** |
-| Members missing | **119** |
+| Members complete | **1171** |
+| Members missing | **115** |
 | Members not applicable | **345** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |

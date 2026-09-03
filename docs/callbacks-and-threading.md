@@ -110,3 +110,26 @@ If a later CNA subsystem invokes callbacks from worker threads, the members that
 depend on it will stay absent until that exact configuration has been qualified
 on SBCL. An untested claim about foreign-thread callbacks would be worth less
 than no claim.
+
+## An event handler has nowhere to report a failure
+
+The lifecycle callbacks return a `CNA_Result` and fill in a diagnostic structure,
+so a condition contained inside one is reported to CNA, turned into
+`CNA_RESULT_CALLBACK`, and re-signalled on the Lisp side with the original
+condition attached. That is the whole containment story for the game loop.
+
+`CNA_GameEventCallback` returns **void**. There is no result code and no
+diagnostic structure, so a condition signalled by a handler passed to
+`add-activated-handler` and its neighbours cannot be reported to the framework at
+all. What happens instead:
+
+* the condition is contained -- it never unwinds across the C frame, which is the
+  rule that matters most;
+* it is preserved in the same place a lifecycle callback's is, so the next native
+  call that drains that place re-signals the real condition;
+* and if no such call ever comes, it is lost. The case where that happens is
+  `Disposed`, which is raised inside `cna_game_destroy` while the game is going
+  away.
+
+This is a real limit of the C ABI's event shape, not of the binding, and a
+handler that needs its failures seen should catch them itself.

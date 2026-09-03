@@ -56,6 +56,10 @@
       "CNA_FALSE",
       "CNA_TRUE",
       "CNA_INVALID_HANDLE",
+      "CNA_GAME_EVENT_ACTIVATED",
+      "CNA_GAME_EVENT_DEACTIVATED",
+      "CNA_GAME_EVENT_DISPOSED",
+      "CNA_GAME_EVENT_EXITING",
       "CNA_KEY_STATE_UP",
       "CNA_KEY_STATE_DOWN",
       "CNA_MOUSE_BUTTON_NONE",
@@ -308,6 +312,9 @@
     },
     {
       "name": "CNA_GameBeginDrawCallback"
+    },
+    {
+      "name": "CNA_GameEventCallback"
     }
   ],
   "functions": [
@@ -475,6 +482,18 @@
       "header": "graphics.h",
       "thread": "owner",
       "ownership": "borrows-callback-scoped:graphics-device"
+    },
+    {
+      "name": "cna_game_subscribe",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_game_unsubscribe",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "destroys"
     },
     {
       "name": "cna_graphics_device_get_viewport",

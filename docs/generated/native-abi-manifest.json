@@ -21,11 +21,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 90,
+    "functions": 92,
     "structs": 28,
     "struct_fields": 191,
-    "constants": 302,
-    "callbacks": 2,
+    "constants": 306,
+    "callbacks": 3,
     "by_value_aggregates": 2,
     "shimmed_routes": 1
   },
@@ -625,6 +625,60 @@
       "ownership": "borrows-callback-scoped:graphics-device",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_game_get_graphics_device(CNA_Handle game, CNA_Handle* out_graphics_device)"
+    },
+    {
+      "name": "cna_game_subscribe",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "event",
+          "c_type": "CNA_GameEvent",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_GameEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GameEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_subscribe(CNA_Handle game, CNA_GameEvent event, CNA_GameEventCallback callback, void* context, CNA_GameEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_game_unsubscribe",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_GameEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_unsubscribe(CNA_GameEventRegistrationHandle registration)"
     },
     {
       "name": "cna_graphics_device_get_viewport",
@@ -4223,6 +4277,18 @@
           "cffi_type": ":pointer"
         }
       ]
+    },
+    {
+      "name": "CNA_GameEventCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
     }
   ],
   "constants": {
@@ -4288,6 +4354,10 @@
     "CNA_GAMEPAD_TYPE_GUITAR": 6,
     "CNA_GAMEPAD_TYPE_UNKNOWN": 0,
     "CNA_GAMEPAD_TYPE_WHEEL": 2,
+    "CNA_GAME_EVENT_ACTIVATED": 0,
+    "CNA_GAME_EVENT_DEACTIVATED": 1,
+    "CNA_GAME_EVENT_DISPOSED": 2,
+    "CNA_GAME_EVENT_EXITING": 3,
     "CNA_GESTURE_TYPE_DOUBLE_TAP": 2,
     "CNA_GESTURE_TYPE_DRAG_COMPLETE": 256,
     "CNA_GESTURE_TYPE_FLICK": 128,

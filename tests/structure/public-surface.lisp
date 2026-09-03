@@ -41,20 +41,60 @@
           (push symbol leaks))))
     (is (null leaks) "private symbols exported from a public package: ~s" leaks)))
 
+(defun hyphen-words (name)
+  "NAME split on hyphens, which is how a Lisp symbol spells its words."
+  (loop with start = 0
+        for position = (position #\- name :start start)
+        collect (subseq name start position)
+        while position do (setf start (1+ position))))
+
 (test no-public-symbol-names-an-abi-concept
   ;; Names are the other half of the leak: a symbol called HANDLE-OF would be a
   ;; leak even if its home package were public.
-  (let ((forbidden '("HANDLE" "CFFI" "POINTER" "FOREIGN" "DEFCFUN" "DEFCSTRUCT"
-                     "CNA-GAME-" "CNA_" "%CNA" "REGISTRY" "TOKEN" "GENERATION"
-                     "STRUCT-SIZE" "STRUCT-VERSION" "UINT" "INT8"
-                     "INT32" "INT64" "CALLBACK-TABLE" "VOID" "RESULT"))
+  ;;
+  ;; The match is on whole hyphen-separated words, not on substrings. HANDLER is
+  ;; not HANDLE, and a substring test would report ADD-EXITING-HANDLER as an ABI
+  ;; leak -- a false positive that would eventually be silenced by deleting the
+  ;; forbidden word, which is exactly the wrong repair. The two entries that are
+  ;; genuinely prefixes rather than words are matched as prefixes and say so.
+  (let ((forbidden-words '("HANDLE" "CFFI" "POINTER" "FOREIGN" "DEFCFUN" "DEFCSTRUCT"
+                           "REGISTRY" "TOKEN" "GENERATION" "UINT" "INT8"
+                           "INT32" "INT64" "VOID" "RESULT"))
+        (forbidden-prefixes '("CNA-GAME-" "CNA_" "%CNA"))
+        (forbidden-pairs '(("STRUCT" "SIZE") ("STRUCT" "VERSION") ("CALLBACK" "TABLE")))
         (leaks '()))
     (dolist (symbol (all-public-symbols))
-      (let ((name (symbol-name symbol)))
-        (dolist (bad forbidden)
-          (when (search bad name)
-            (push (list symbol bad) leaks)))))
+      (let* ((name (symbol-name symbol))
+             (words (hyphen-words name)))
+        (dolist (bad forbidden-words)
+          (when (member bad words :test #'string=)
+            (push (list symbol bad) leaks)))
+        (dolist (bad forbidden-prefixes)
+          (when (eql 0 (search bad name))
+            (push (list symbol bad) leaks)))
+        (dolist (pair forbidden-pairs)
+          (loop for (a b) on words
+                when (and b (string= a (first pair)) (string= b (second pair)))
+                  do (push (list symbol (format nil "~a-~a" (first pair) (second pair)))
+                           leaks)))))
     (is (null leaks) "public symbols naming an ABI concept: ~s" leaks)))
+
+(test the-abi-word-check-still-catches-a-real-leak
+  ;; The check above matches whole words rather than substrings, which is a
+  ;; weakening -- so here is the proof it still bites. Every name on the left is
+  ;; a leak and must be caught; every name on the right is innocent and must not.
+  (flet ((leaks-p (name)
+           (let ((words (hyphen-words name)))
+             (or (some (lambda (bad) (member bad words :test #'string=))
+                       '("HANDLE" "TOKEN" "POINTER" "GENERATION" "REGISTRY"))
+                 (loop for (a b) on words
+                       thereis (and b (string= a "STRUCT") (string= b "SIZE")))))))
+    (dolist (name '("HANDLE-OF" "GAME-HANDLE" "THE-TOKEN" "STRUCT-SIZE-OF"
+                    "POINTER-TO" "GENERATION-OF" "CALLBACK-REGISTRY"))
+      (is (leaks-p name) "~a should be caught as an ABI leak" name))
+    (dolist (name '("ADD-EXITING-HANDLER" "REMOVE-DISPOSED-HANDLER" "HANDLER"
+                    "TOKENISE" "STRUCT-SIZED"))
+      (is (not (leaks-p name)) "~a is not an ABI leak" name))))
 
 (test no-public-symbol-starts-with-a-percent-sign
   ;; % is CNA-Lisp's private-function convention throughout.

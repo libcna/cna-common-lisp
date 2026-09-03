@@ -50,6 +50,24 @@ CNA result code.")
         (funcall dispatcher (pointer-address context) game out-should-draw out-error)
         9)))
 
+(defvar *game-event-dispatcher* nil
+  "Function of one integer token, called when CNA raises a subscribed game event.
+
+A CNA_GameEventCallback returns nothing, so there is no channel to report a
+failure through: the dispatcher must contain whatever the handler signals and
+answer normally. See docs/callbacks-and-threading.md.")
+
+(defcallback game-event-callback :void ((context :pointer))
+  (let ((dispatcher *game-event-dispatcher*))
+    ;; No dispatcher means the registry was torn down under a live subscription.
+    ;; There is nothing to report it to, so the only thing left is to do nothing.
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context))))))
+
+(defun game-event-callback-pointer ()
+  "The one top-level callback CNA is given for every game event subscription."
+  (callback game-event-callback))
+
 (defun lifecycle-callback-pointer (kind)
   "The top-level callback pointer CNA is given for KIND."
   (ecase kind

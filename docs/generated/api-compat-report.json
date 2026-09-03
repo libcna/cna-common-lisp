@@ -23,15 +23,15 @@
    "missing": 1
   },
   "members_by_status": {
-   "complete": 1167,
-   "missing": 119,
+   "complete": 1171,
+   "missing": 115,
    "not-applicable": 345,
    "partial": 1
   },
-  "diagnostics": 120,
+  "diagnostics": 116,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 119,
+   "missing_member": 115,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -88,10 +88,10 @@
     "IsActive": "complete",
     "GraphicsDevice": "complete",
     "Content": "missing",
-    "Activated": "missing",
-    "Deactivated": "missing",
-    "Exiting": "missing",
-    "Disposed": "missing"
+    "Activated": "complete",
+    "Deactivated": "complete",
+    "Exiting": "complete",
+    "Disposed": "complete"
    },
    "lisp": "microsoft.xna.framework:game"
   },
@@ -2226,12 +2226,12 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Game.OnActivated(Object,EventArgs)",
-   "detail": "Needs the event projection."
+   "detail": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Game.OnDeactivated(Object,EventArgs)",
-   "detail": "Needs the event projection."
+   "detail": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not."
   },
   {
    "category": "missing_member",
@@ -2262,26 +2262,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Game.Content",
    "detail": "no exported 'content' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.Activated",
-   "detail": "no exported 'activated' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.Deactivated",
-   "detail": "no exported 'deactivated' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.Exiting",
-   "detail": "no exported 'exiting' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.Disposed",
-   "detail": "no exported 'disposed' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",
@@ -2351,32 +2331,32 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceCreated",
-   "detail": "no exported 'device-created' in microsoft.xna.framework"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceResetting",
-   "detail": "no exported 'device-resetting' in microsoft.xna.framework"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceReset",
-   "detail": "no exported 'device-reset' in microsoft.xna.framework"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceDisposing",
-   "detail": "no exported 'device-disposing' in microsoft.xna.framework"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings",
-   "detail": "no exported 'preparing-device-settings' in microsoft.xna.framework"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.Disposed",
-   "detail": "no exported 'disposed' in microsoft.xna.framework"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
@@ -2671,32 +2651,32 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Disposing",
-   "detail": "no exported 'disposing' in microsoft.xna.framework.graphics"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceDestroyed",
-   "detail": "no exported 'resource-destroyed' in microsoft.xna.framework.graphics"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceCreated",
-   "detail": "no exported 'resource-created' in microsoft.xna.framework.graphics"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceLost",
-   "detail": "no exported 'device-lost' in microsoft.xna.framework.graphics"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceReset",
-   "detail": "no exported 'device-reset' in microsoft.xna.framework.graphics"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceResetting",
-   "detail": "no exported 'device-resetting' in microsoft.xna.framework.graphics"
+   "detail": "no event projection is declared"
   },
   {
    "category": "missing_member",

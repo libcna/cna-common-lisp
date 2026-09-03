@@ -429,6 +429,41 @@ extension.
 No fake .NET base class library is invented. Only the BCL surface the selected
 XNA profile actually reaches is projected, and each projection is recorded here.
 
+### 7a. Events
+
+A CLR event is two operations -- `add_E` and `remove_E` -- and it projects to two
+**generic functions** on the object that raises it:
+
+    (add-activated-handler game (lambda (game) ...))
+    (remove-activated-handler game the-same-function)
+
+Three decisions, each with a reason a reader can check.
+
+* **Generic functions, not plain ones.** `Disposed` is raised by more than one
+  type in one package -- `Game` and `GraphicsDeviceManager` -- so a plain
+  function could not be specialised on the second. The verifier rejects an event
+  projection whose add or remove is not generic, for exactly that reason.
+* **The handler takes the sender and nothing else.** The events in the selection
+  carry `EventArgs.Empty`, which holds no information. A second always-empty
+  argument would be something every handler had to write and ignore. This is the
+  same decision `on-exiting` already records.
+* **Removal takes the function, not a registration object.** `-=` takes the
+  delegate, so this takes the function; the object keeps the native registration
+  beside the function it belongs to and finds it by identity. Removing a handler
+  that is not subscribed answers `nil` rather than signalling, which is what `-=`
+  does silently.
+
+A condition signalled inside a handler cannot be reported to the framework:
+CNA's event callback returns `void`, so there is no result code and no
+diagnostic structure. It is contained and preserved on the Lisp side, and
+`docs/callbacks-and-threading.md` says what happens to it.
+
+The protected `On<Event>` methods -- `OnActivated`, `OnDeactivated` -- are the
+base class's way of letting a subclass intercept an event before its handlers
+run. CNA raises the events itself, so there is no place in this projection for a
+subclass to stand between CNA and the handlers, and those two are reported
+missing with that reason rather than projected as something they are not.
+
 ## 11. Disposal
 
 `dispose` and `disposed-p` are CNA-Lisp additions rather than XNA members: XNA

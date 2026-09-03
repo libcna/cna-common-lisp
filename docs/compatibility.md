@@ -87,9 +87,9 @@ genuine absence.
 <!-- generated:complete types=70 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1167 -->
+<!-- generated:complete members=1171 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=119 -->
+<!-- generated:missing members=115 -->
 <!-- generated:not-applicable members=345 -->
 <!-- generated:disagreement total=0 -->
 
@@ -100,9 +100,9 @@ Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
 | Types complete | **70** |
 | Types partial | **6** |
 | Types missing | **1** |
-| Members complete | **1167** |
+| Members complete | **1171** |
 | Members partial | **1** |
-| Members missing | **119** |
+| Members missing | **115** |
 | Members not applicable | **345** |
 | **Disagreement diagnostics** | **0** |
 
@@ -113,7 +113,7 @@ collapsed overload family says how each of its overloads is expressed.
 
 | Type | Status | complete | partial | missing | n/a |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `M.X.F.Game` | **partial** | 24 | 0 | 12 | 2 |
+| `M.X.F.Game` | **partial** | 28 | 0 | 8 | 2 |
 | `M.X.F.GameTime` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 8 | 0 | 21 | 1 |
 | `M.X.F.Color` | **complete** | 161 | 0 | 0 | 4 |
@@ -239,11 +239,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=90 -->
+<!-- generated:bound native functions=92 -->
 <!-- generated:bound native structs=28 -->
 <!-- generated:bound native struct fields=191 -->
-<!-- generated:bound native constants=302 -->
-<!-- generated:bound native callbacks=2 -->
+<!-- generated:bound native constants=306 -->
+<!-- generated:bound native callbacks=3 -->
 <!-- generated:by-value aggregates=2 -->
 <!-- generated:shimmed routes=1 -->
 <!-- generated:abi version encoded=5376 -->

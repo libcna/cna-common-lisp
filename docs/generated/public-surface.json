@@ -254,6 +254,94 @@
           "documentation": "100-nanosecond ticks in one second, as System.TimeSpan counts them."
         },
         {
+          "name": "add-activated-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.Activated: the game gained focus.\n\nHANDLER is called with the game and nothing else, on the thread CNA raises the\nevent on."
+        },
+        {
+          "name": "add-deactivated-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.Deactivated: the game lost focus."
+        },
+        {
+          "name": "add-disposed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.Disposed: the game was disposed.\n\nA condition signalled from this handler has nowhere to go -- see the file\nheader -- because there is no later native call to report it through."
+        },
+        {
+          "name": "add-exiting-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.Exiting: the game is exiting.\n\nThis only observes. ON-EXITING is the overridable step that runs as part of the\nshutdown; a handler here cannot stop it."
+        },
+        {
           "name": "all-containment-type",
           "fbound": true,
           "macro": false,
@@ -8253,6 +8341,94 @@
           "constant": false,
           "value": null,
           "documentation": "Color.Red: a fresh Color each call."
+        },
+        {
+          "name": "remove-activated-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-activated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-deactivated-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-deactivated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-disposed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-disposed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-exiting-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-exiting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
           "name": "reset-elapsed-time",

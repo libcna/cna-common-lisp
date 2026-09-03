@@ -122,6 +122,14 @@
 (defcfun ("cna_game_get_graphics_device" %game-get-graphics-device) :uint32
   (game :uint64) (out-graphics-device :pointer))
 
+;;; CNA_Result cna_game_subscribe(CNA_Handle game, CNA_GameEvent event, CNA_GameEventCallback callback, void* context, CNA_GameEventRegistrationHandle* out_registration)
+(defcfun ("cna_game_subscribe" %game-subscribe) :uint32
+  (game :uint64) (event :uint32) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_game_unsubscribe(CNA_GameEventRegistrationHandle registration)
+(defcfun ("cna_game_unsubscribe" %game-unsubscribe) :uint32
+  (registration :uint64))
+
 ;;; CNA_Result cna_graphics_device_get_viewport(CNA_Handle graphics_device, CNA_Viewport* out_viewport)
 (defcfun ("cna_graphics_device_get_viewport" %graphics-device-get-viewport) :uint32
   (graphics-device :uint64) (out-viewport :pointer))
@@ -402,6 +410,8 @@
     ("cna_game_get_type_name_size" %game-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_game_copy_type_name" %game-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_game_get_graphics_device" %game-get-graphics-device :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows-callback-scoped:graphics-device")
+    ("cna_game_subscribe" %game-subscribe :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_game_unsubscribe" %game-unsubscribe :uint32 (:uint64) :thread :owner :ownership "destroys")
     ("cna_graphics_device_get_viewport" %graphics-device-get-viewport :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_clear_rgba" %graphics-device-clear-rgba :uint32 (:uint64 :float :float :float :float) :thread :owner :ownership "none")
     ("cna_graphics_device_present" %graphics-device-present :uint32 (:uint64) :thread :owner :ownership "none")

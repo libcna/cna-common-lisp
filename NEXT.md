@@ -61,14 +61,14 @@ and nothing in this repository says otherwise.
 <!-- generated:complete types=70 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1167 -->
+<!-- generated:complete members=1171 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=119 -->
+<!-- generated:missing members=115 -->
 <!-- generated:not-applicable members=345 -->
 <!-- generated:disagreement total=0 -->
 
 77 selected types, 1632 members: **70 complete, 6 partial, 1 missing**;
-**1167 members complete, 119 missing**, 345 not applicable, 1 partial.
+**1171 members complete, 115 missing**, 345 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 **Every pure-managed type in the selection is complete.** The math types
@@ -104,18 +104,20 @@ listed after.
 
 1. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-2. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
-   `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`, and the
-   **event projection** the four `Game` events and six `GraphicsDevice` events
-   need. That one decision unblocks `GraphicsResource` and 21 of
-   `GraphicsDeviceManager`'s 30 members.
-3. **`System.IO.Stream` and `TitleContainer`**, which unblock
+2. **`GraphicsDeviceManager`'s six events and `GraphicsResource`.** The event
+   projection exists now -- `Game`'s four events are bound to
+   `cna_game_subscribe` -- so these are the same shape over
+   `cna_graphics_device_manager_subscribe`, and `GraphicsResource` becomes
+   reachable once its `Disposing` event has somewhere to go.
+3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+   `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
+4. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-4. **Graphics state objects** (`BlendState`, `DepthStencilState`,
+5. **Graphics state objects** (`BlendState`, `DepthStencilState`,
    `RasterizerState`, `SamplerState`), which unblock `SpriteBatch.Begin`'s four
    state-bearing overloads.
-5. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-6. **Audio, effects, models, media, storage, gamer services, networking.**
+6. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
+7. **Audio, effects, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 
