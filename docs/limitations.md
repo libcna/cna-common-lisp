@@ -103,30 +103,40 @@ These are absent, and measured as absent, not faked:
 * `Effect`, `Model`, vertex and index buffers, and everything else that draws in
   three dimensions;
 * audio, media, storage, gamer services and networking;
-* the bounding volumes -- `Ray`, `BoundingBox`, `BoundingSphere`,
-  `BoundingFrustum` -- and the `Curve` family.
+* `BoundingFrustum`, and the `Curve` family.
 
 The value types are present: `Vector2`, `Vector3`, `Vector4`, `Quaternion`,
-`Matrix`, `Plane`, `MathHelper`, `ContainmentType` and `PlaneIntersectionType`.
-They are pure Lisp and touch no native route.
+`Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`, `MathHelper`,
+`ContainmentType` and `PlaneIntersectionType`. They are pure Lisp and touch no
+native route.
 
-### Three members of Matrix, and three of Plane
+### Three members of Matrix, and the frustum members
 
 | Member | Why |
 | --- | --- |
 | `Matrix.Decompose` | 540 IL instructions over a private `CanonicalBasis`/`VectorBasis` pair using unsafe pointer arithmetic, with a fallback path for degenerate scales. An implementation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than the absence. |
 | `Matrix.CreateConstrainedBillboard` (both overloads) | A three-deep threshold chain over two optional vectors. Same reason. |
-| `Plane.Intersects(BoundingBox / BoundingSphere / BoundingFrustum)` | Needs the bounding volumes. |
+| `Plane.Intersects(BoundingFrustum)`, `Ray.Intersects(BoundingFrustum)`, `BoundingBox.Intersects/Contains(BoundingFrustum)`, `BoundingSphere.CreateFromFrustum/Intersects/Contains(BoundingFrustum)` | Needs `BoundingFrustum`, which is the next closure. |
 
-## The bounding volumes are one closure, not four
+## BoundingFrustum is what is left of the bounding volumes
 
-`Ray`, `BoundingBox`, `BoundingSphere` and `BoundingFrustum` intersect and
-contain each other in every combination -- roughly ninety members whose behaviour
-is dominated by branch conditions and small epsilons (`1E-05f` in
-`Ray.Intersects(Plane)`, `1E-06f` in `BoundingBox.Intersects(Ray)`), and
-`BoundingFrustum` computes its corners by intersecting three planes at a time.
-Implementing three of the four would leave every cross-product member missing
-anyway, so they are deferred together rather than started.
+`Ray`, `BoundingBox` and `BoundingSphere` are implemented, including every
+intersection and containment between them and with `Plane`. What remains is
+`BoundingFrustum`, which is a different kind of work: it derives six planes from
+a matrix, computes its eight corners by intersecting three planes at a time, and
+tests convex bodies with a Gilbert-Johnson-Keerthi solver over a private
+`Gjk` type. The seven members above are the cross-product members that need it;
+they are absent rather than approximated.
+
+The three implemented volumes are read from the IL branch by branch, down to the
+epsilons (`1E-05f` in `Ray.Intersects(Plane)`, `1E-06f` in
+`BoundingBox.Intersects(Ray)`), the strict `<` that makes a point exactly on a
+`BoundingSphere`'s surface *Disjoint*, and one arithmetic defect XNA shipped:
+`BoundingBox.Contains(BoundingSphere)` tests the X extent against the radius
+twice, the second time where the Z extent belongs. That defect is reproduced,
+because the contract is what the framework answers, and it is marked as a defect
+wherever it is reproduced -- in the source, in the unit test and in the
+behaviour corpus.
 
 ## Foreign-thread callbacks
 

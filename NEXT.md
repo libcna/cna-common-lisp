@@ -56,24 +56,25 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=29 -->
-<!-- generated:selected members=1081 -->
+<!-- generated:selected types=32 -->
+<!-- generated:selected members=1163 -->
 <!-- generated:complete types=18 -->
-<!-- generated:partial types=10 -->
+<!-- generated:partial types=13 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=756 -->
+<!-- generated:complete members=800 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=136 -->
-<!-- generated:not-applicable members=188 -->
+<!-- generated:missing members=140 -->
+<!-- generated:not-applicable members=222 -->
 <!-- generated:disagreement total=0 -->
 
-29 selected types, 1081 members: **18 complete, 10 partial, 1 missing**;
-**756 members complete, 136 missing**, 188 not applicable, 1 partial.
+32 selected types, 1163 members: **18 complete, 13 partial, 1 missing**;
+**800 members complete, 140 missing**, 222 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 `MathHelper`, `Vector2`, `Vector3`, `Vector4` and `Quaternion` are complete.
-`Matrix` has three members left and `Plane` has three, and each of the six names
-what it is waiting for.
+`Matrix` has three members left; `Plane`, `Ray`, `BoundingBox` and
+`BoundingSphere` have between one and three each, and every one of those is
+`BoundingFrustum` — the next closure, and the only thing they are waiting for.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 

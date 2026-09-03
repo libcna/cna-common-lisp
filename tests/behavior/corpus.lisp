@@ -283,6 +283,87 @@
     (and (= 1.0f0 (xna:vector4-x (xna:vector4-transform (xna:make-vector2 0 0) m)))
          (= 0.0f0 (xna:vector4-x (xna:vector4-transform (xna:make-vector4 0 0 0 0) m))))))
 
+(defobservation "boundingsphere.contains-point-is-strict" :xna-derived
+    "Microsoft.Xna.Framework.BoundingSphere"
+  "Contains(Vector3) compares the squared distance with a strict <, so a point
+   exactly on the surface is Disjoint, not Contains."
+  (let ((unit (xna:make-bounding-sphere (xna:make-vector3 0 0 0) 1.0)))
+    (and (eq :contains (xna:bounding-sphere-contains unit (xna:make-vector3 0.5 0 0)))
+         (eq :disjoint (xna:bounding-sphere-contains unit (xna:make-vector3 1 0 0))))))
+
+(defobservation "boundingbox.contains-point-is-inclusive" :xna-derived
+    "Microsoft.Xna.Framework.BoundingBox"
+  "Contains(Vector3) is inclusive on every face, unlike BoundingSphere's."
+  (eq :contains (xna:bounding-box-contains
+                 (xna:make-bounding-box (xna:make-vector3 0 0 0) (xna:make-vector3 1 1 1))
+                 (xna:make-vector3 1 1 1))))
+
+(defobservation "boundingbox.corner-order" :xna-derived
+    "Microsoft.Xna.Framework.BoundingBox"
+  "GetCorners returns the eight corners in a fixed order beginning
+   (Min.X, Max.Y, Max.Z) and ending (Min.X, Min.Y, Min.Z); callers index into it."
+  (let ((corners (xna:bounding-box-get-corners
+                  (xna:make-bounding-box (xna:make-vector3 -1 -2 -3)
+                                         (xna:make-vector3 1 2 3)))))
+    (and (= 8 (length corners))
+         (= -1.0f0 (xna:vector3-x (aref corners 0)))
+         (=  3.0f0 (xna:vector3-z (aref corners 0)))
+         (= -3.0f0 (xna:vector3-z (aref corners 7)))
+         (= -2.0f0 (xna:vector3-y (aref corners 7))))))
+
+(defobservation "boundingbox.contains-sphere-repeats-the-x-extent" :xna-derived
+    "Microsoft.Xna.Framework.BoundingBox"
+  "Contains(BoundingSphere) tests Max.X - Min.X against the radius twice, the
+   second time where the Z extent belongs. The only inputs that can see the
+   difference are a zero radius against a box with no thickness in Z, where XNA
+   answers Contains."
+  (eq :contains
+      (xna:bounding-box-contains
+       (xna:make-bounding-box (xna:make-vector3 -10 -10 5) (xna:make-vector3 10 10 5))
+       (xna:make-bounding-sphere (xna:make-vector3 0 0 5) 0.0))))
+
+(defobservation "ray.intersects-plane-clamps-a-small-negative" :xna-derived
+    "Microsoft.Xna.Framework.Ray"
+  "Intersects(Plane) rejects a direction within 1e-5 of parallel, and clamps a
+   distance between -1e-5 and 0 up to 0 rather than reporting a miss."
+  (let ((plane (xna:make-plane 0 1 0 0)))
+    (and (null (xna:ray-intersects (xna:make-ray (xna:make-vector3 0 5 0)
+                                                 (xna:make-vector3 1 0 0))
+                                   plane))
+         (eql 0.0f0 (xna:ray-intersects (xna:make-ray (xna:make-vector3 0 0 0)
+                                                      (xna:make-vector3 0 -1 0))
+                                        plane)))))
+
+(defobservation "ray.starting-inside-answers-zero" :xna-derived
+    "Microsoft.Xna.Framework.Ray"
+  "A ray whose position is already inside a sphere or a box answers 0, not the
+   distance to the far surface."
+  (and (eql 0.0f0 (xna:ray-intersects
+                   (xna:make-ray (xna:make-vector3 0 0 0) (xna:make-vector3 1 0 0))
+                   (xna:make-bounding-sphere (xna:make-vector3 0 0 0) 1.0)))
+       (eql 0.0f0 (xna:ray-intersects
+                   (xna:make-ray (xna:make-vector3 0 0 0) (xna:make-vector3 1 0 0))
+                   (xna:make-bounding-box (xna:make-vector3 -1 -1 -1)
+                                          (xna:make-vector3 1 1 1))))))
+
+(defobservation "boundingsphere.transform-uses-the-largest-row" :xna-derived
+    "Microsoft.Xna.Framework.BoundingSphere"
+  "Transform scales the radius by the longest of the matrix's three basis rows,
+   so a non-uniform scale grows the sphere to the largest axis."
+  (let ((scaled (xna:bounding-sphere-transform
+                 (xna:make-bounding-sphere (xna:make-vector3 0 0 0) 2.0)
+                 (xna:matrix-create-scale 1 3 2))))
+    (< (abs (- 6.0f0 (xna:bounding-sphere-radius scaled))) 1.0e-5)))
+
+(defobservation "boundingsphere.merge-keeps-the-containing-sphere" :xna-derived
+    "Microsoft.Xna.Framework.BoundingSphere"
+  "CreateMerged returns the original sphere unchanged when one already contains
+   the other, in either argument order."
+  (let ((big (xna:make-bounding-sphere (xna:make-vector3 0 0 0) 5.0))
+        (small (xna:make-bounding-sphere (xna:make-vector3 1 0 0) 1.0)))
+    (and (xna:bounding-sphere-equal (xna:bounding-sphere-create-merged big small) big)
+         (xna:bounding-sphere-equal (xna:bounding-sphere-create-merged small big) big))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

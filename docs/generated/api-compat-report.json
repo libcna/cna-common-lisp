@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1",
   "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
-  "type_count": 29,
-  "member_count": 1081
+  "type_count": 32,
+  "member_count": 1163
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,23 +15,23 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 29,
-  "members": 1081,
+  "types": 32,
+  "members": 1163,
   "types_by_status": {
-   "partial": 10,
+   "partial": 13,
    "complete": 18,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 756,
-   "missing": 136,
-   "not-applicable": 188,
+   "complete": 800,
+   "missing": 140,
+   "not-applicable": 222,
    "partial": 1
   },
-  "diagnostics": 137,
+  "diagnostics": 141,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 136,
+   "missing_member": 140,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -872,10 +872,10 @@
     "DotCoordinate(Vector3&,Single&)": "not-applicable",
     "DotNormal(Vector3)": "complete",
     "DotNormal(Vector3&,Single&)": "not-applicable",
-    "Intersects(BoundingBox)": "missing",
+    "Intersects(BoundingBox)": "complete",
     "Intersects(BoundingBox&,PlaneIntersectionType&)": "not-applicable",
     "Intersects(BoundingFrustum)": "missing",
-    "Intersects(BoundingSphere)": "missing",
+    "Intersects(BoundingSphere)": "complete",
     "Intersects(BoundingSphere&,PlaneIntersectionType&)": "not-applicable",
     "op_Equality(Plane,Plane)": "complete",
     "op_Inequality(Plane,Plane)": "not-applicable",
@@ -905,6 +905,109 @@
     "Intersecting": "complete"
    },
    "lisp": "microsoft.xna.framework:plane-intersection-type"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Ray",
+   "status": "partial",
+   "members": {
+    "new(Vector3,Vector3)": "complete",
+    "Equals(Ray)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "Intersects(BoundingBox)": "complete",
+    "Intersects(BoundingBox&,Nullable`1)": "not-applicable",
+    "Intersects(BoundingFrustum)": "missing",
+    "Intersects(Plane)": "complete",
+    "Intersects(Plane&,Nullable`1)": "not-applicable",
+    "Intersects(BoundingSphere)": "complete",
+    "Intersects(BoundingSphere&,Nullable`1)": "not-applicable",
+    "op_Equality(Ray,Ray)": "complete",
+    "op_Inequality(Ray,Ray)": "not-applicable",
+    "Position": "complete",
+    "Direction": "complete"
+   },
+   "lisp": "microsoft.xna.framework:ray"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.BoundingBox",
+   "status": "partial",
+   "members": {
+    "new(Vector3,Vector3)": "complete",
+    "GetCorners()": "complete",
+    "GetCorners(Vector3[])": "complete",
+    "Equals(BoundingBox)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "CreateMerged(BoundingBox,BoundingBox)": "complete",
+    "CreateMerged(BoundingBox&,BoundingBox&,BoundingBox&)": "not-applicable",
+    "CreateFromSphere(BoundingSphere)": "complete",
+    "CreateFromSphere(BoundingSphere&,BoundingBox&)": "not-applicable",
+    "CreateFromPoints(IEnumerable`1)": "complete",
+    "Intersects(BoundingBox)": "complete",
+    "Intersects(BoundingBox&,Boolean&)": "not-applicable",
+    "Intersects(BoundingFrustum)": "missing",
+    "Intersects(Plane)": "complete",
+    "Intersects(Plane&,PlaneIntersectionType&)": "not-applicable",
+    "Intersects(Ray)": "complete",
+    "Intersects(Ray&,Nullable`1)": "not-applicable",
+    "Intersects(BoundingSphere)": "complete",
+    "Intersects(BoundingSphere&,Boolean&)": "not-applicable",
+    "Contains(BoundingBox)": "complete",
+    "Contains(BoundingBox&,ContainmentType&)": "not-applicable",
+    "Contains(BoundingFrustum)": "missing",
+    "Contains(Vector3)": "complete",
+    "Contains(Vector3&,ContainmentType&)": "not-applicable",
+    "Contains(BoundingSphere)": "complete",
+    "Contains(BoundingSphere&,ContainmentType&)": "not-applicable",
+    "op_Equality(BoundingBox,BoundingBox)": "complete",
+    "op_Inequality(BoundingBox,BoundingBox)": "not-applicable",
+    "CornerCount": "complete",
+    "Min": "complete",
+    "Max": "complete"
+   },
+   "lisp": "microsoft.xna.framework:bounding-box"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.BoundingSphere",
+   "status": "partial",
+   "members": {
+    "new(Vector3,Single)": "complete",
+    "Equals(BoundingSphere)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "CreateMerged(BoundingSphere,BoundingSphere)": "complete",
+    "CreateMerged(BoundingSphere&,BoundingSphere&,BoundingSphere&)": "not-applicable",
+    "CreateFromBoundingBox(BoundingBox)": "complete",
+    "CreateFromBoundingBox(BoundingBox&,BoundingSphere&)": "not-applicable",
+    "CreateFromPoints(IEnumerable`1)": "complete",
+    "CreateFromFrustum(BoundingFrustum)": "missing",
+    "Intersects(BoundingBox)": "complete",
+    "Intersects(BoundingBox&,Boolean&)": "not-applicable",
+    "Intersects(BoundingFrustum)": "missing",
+    "Intersects(Plane)": "complete",
+    "Intersects(Plane&,PlaneIntersectionType&)": "not-applicable",
+    "Intersects(Ray)": "complete",
+    "Intersects(Ray&,Nullable`1)": "not-applicable",
+    "Intersects(BoundingSphere)": "complete",
+    "Intersects(BoundingSphere&,Boolean&)": "not-applicable",
+    "Contains(BoundingBox)": "complete",
+    "Contains(BoundingBox&,ContainmentType&)": "not-applicable",
+    "Contains(BoundingFrustum)": "missing",
+    "Contains(Vector3)": "complete",
+    "Contains(Vector3&,ContainmentType&)": "not-applicable",
+    "Contains(BoundingSphere)": "complete",
+    "Contains(BoundingSphere&,ContainmentType&)": "not-applicable",
+    "Transform(Matrix)": "complete",
+    "Transform(Matrix&,BoundingSphere&)": "not-applicable",
+    "op_Equality(BoundingSphere,BoundingSphere)": "complete",
+    "op_Inequality(BoundingSphere,BoundingSphere)": "not-applicable",
+    "Center": "complete",
+    "Radius": "complete"
+   },
+   "lisp": "microsoft.xna.framework:bounding-sphere"
   },
   {
    "name": "Microsoft.Xna.Framework.PlayerIndex",
@@ -1573,18 +1676,38 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Plane.Intersects(BoundingBox)",
-   "detail": "Needs the bounding volumes, which are the next closure."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Plane.Intersects(BoundingFrustum)",
    "detail": "Needs the bounding volumes, which are the next closure."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Plane.Intersects(BoundingSphere)",
-   "detail": "Needs the bounding volumes, which are the next closure."
+   "subject": "Microsoft.Xna.Framework.Ray.Intersects(BoundingFrustum)",
+   "detail": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.BoundingBox.Intersects(BoundingFrustum)",
+   "detail": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.BoundingBox.Contains(BoundingFrustum)",
+   "detail": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.BoundingSphere.CreateFromFrustum(BoundingFrustum)",
+   "detail": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.BoundingSphere.Intersects(BoundingFrustum)",
+   "detail": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.BoundingSphere.Contains(BoundingFrustum)",
+   "detail": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
   },
   {
    "category": "missing_member",

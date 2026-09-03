@@ -82,28 +82,28 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=29 -->
-<!-- generated:selected members=1081 -->
+<!-- generated:selected types=32 -->
+<!-- generated:selected members=1163 -->
 <!-- generated:complete types=18 -->
-<!-- generated:partial types=10 -->
+<!-- generated:partial types=13 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=756 -->
+<!-- generated:complete members=800 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=136 -->
-<!-- generated:not-applicable members=188 -->
+<!-- generated:missing members=140 -->
+<!-- generated:not-applicable members=222 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1**: 29 types, 1081 members.
+Selection **Foundation 1**: 32 types, 1163 members.
 
 | | |
 | --- | --- |
 | Types complete | **18** |
-| Types partial | **10** |
+| Types partial | **13** |
 | Types missing | **1** |
-| Members complete | **756** |
+| Members complete | **800** |
 | Members partial | **1** |
-| Members missing | **136** |
-| Members not applicable | **188** |
+| Members missing | **140** |
+| Members not applicable | **222** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -125,9 +125,12 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.MathHelper` | **complete** | 19 | 0 | 0 | 0 |
 | `M.X.F.Quaternion` | **complete** | 35 | 0 | 0 | 20 |
 | `M.X.F.Matrix` | **partial** | 68 | 0 | 3 | 36 |
-| `M.X.F.Plane` | **partial** | 15 | 0 | 3 | 12 |
+| `M.X.F.Plane` | **partial** | 17 | 0 | 1 | 12 |
 | `M.X.F.ContainmentType` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.PlaneIntersectionType` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Ray` | **partial** | 8 | 0 | 1 | 7 |
+| `M.X.F.BoundingBox` | **partial** | 18 | 0 | 2 | 13 |
+| `M.X.F.BoundingSphere` | **partial** | 16 | 0 | 3 | 14 |
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **missing** | 0 | 0 | 9 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 2 | 1 | 52 | 2 |
@@ -145,7 +148,7 @@ collapsed overload family says how each of its overloads is expressed.
 
 ### Not applicable, and why so many
 
-188 members are classified not applicable, and most of them are one thing: the
+222 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value

@@ -7,6 +7,25 @@
       "package": "microsoft.xna.framework",
       "symbols": [
         {
+          "name": "+bounding-box-corner-count+",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": true,
+          "value": 8,
+          "documentation": "BoundingBox.CornerCount."
+        },
+        {
           "name": "+default-target-elapsed-time-ticks+",
           "fbound": false,
           "macro": false,
@@ -334,6 +353,497 @@
           "constant": false,
           "value": null,
           "documentation": "Color.Blue: a fresh Color each call."
+        },
+        {
+          "name": "bounding-box",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework:bounding-box",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.BoundingBox: an axis-aligned box as two corners."
+        },
+        {
+          "name": "bounding-box-contains",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "box",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingBox.Contains: a CONTAINMENT-TYPE for a point, a box or a sphere."
+        },
+        {
+          "name": "bounding-box-create-from-points",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "points"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingBox.CreateFromPoints.\n\nThe accumulators start at plus and minus the largest finite binary32, which is\nwhat the framework starts them at -- not at the first point -- so a sequence of\none point answers a degenerate box rather than a box around the extremes."
+        },
+        {
+          "name": "bounding-box-create-from-sphere",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "sphere"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingBox.CreateFromSphere."
+        },
+        {
+          "name": "bounding-box-create-merged",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "original",
+            "additional"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingBox.CreateMerged: the smallest box containing both."
+        },
+        {
+          "name": "bounding-box-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingBox.Equals."
+        },
+        {
+          "name": "bounding-box-get-corners",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "box",
+            "&optional",
+            "corners"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingBox.GetCorners, in the framework's own order.\n\nThe order is a contract, not an implementation detail -- code indexes into it --\nso it is reproduced exactly: the four corners at maximum Z first, counting from\nthe one at minimum X and maximum Y, then the same four at minimum Z. CORNERS, when\ngiven, is filled and answered; otherwise a fresh vector of eight is made."
+        },
+        {
+          "name": "bounding-box-intersects",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "box",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingBox.Intersects: a Boolean for a box or a sphere, a\nPLANE-INTERSECTION-TYPE for a plane, and a distance or NIL for a ray."
+        },
+        {
+          "name": "bounding-box-max",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "bounding-box-min",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "bounding-box-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "bounding-sphere",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework:bounding-sphere",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.BoundingSphere: a centre and a radius."
+        },
+        {
+          "name": "bounding-sphere-center",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "bounding-sphere-contains",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "sphere",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere.Contains: a CONTAINMENT-TYPE for a point, a box or a sphere."
+        },
+        {
+          "name": "bounding-sphere-create-from-bounding-box",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "box"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere.CreateFromBoundingBox: the sphere around a box's diagonal."
+        },
+        {
+          "name": "bounding-sphere-create-from-points",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "points"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere.CreateFromPoints.\n\nThe framework's own two passes: take the six axis-extreme points, start from the\nwidest of the three pairs, then grow the sphere over every point that falls\noutside it. Not a bounding box's diagonal, and not an exact minimal sphere."
+        },
+        {
+          "name": "bounding-sphere-create-merged",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "original",
+            "additional"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere.CreateMerged."
+        },
+        {
+          "name": "bounding-sphere-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere.Equals."
+        },
+        {
+          "name": "bounding-sphere-intersects",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "sphere",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere.Intersects: a Boolean for a box or a sphere, a\nPLANE-INTERSECTION-TYPE for a plane, and a distance or NIL for a ray."
+        },
+        {
+          "name": "bounding-sphere-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "bounding-sphere-radius",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "bounding-sphere-transform",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "sphere",
+            "matrix"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere.Transform.\n\nThe radius is scaled by the largest of the three row lengths, so a non-uniform\nscale answers a sphere that still contains the transformed one."
         },
         {
           "name": "clr-type-name",
@@ -1480,6 +1990,48 @@
           "documentation": "The exact ABI value of a CONTAINMENT-TYPE member."
         },
         {
+          "name": "copy-bounding-box",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "copy-bounding-sphere",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "copy-color",
           "fbound": true,
           "macro": false,
@@ -1565,6 +2117,27 @@
         },
         {
           "name": "copy-quaternion",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "copy-ray",
           "fbound": true,
           "macro": false,
           "generic": false,
@@ -2210,6 +2783,52 @@
           "documentation": "Color.Magenta: a fresh Color each call."
         },
         {
+          "name": "make-bounding-box",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "&optional",
+            "(min (vector3-zero))",
+            "(max (vector3-zero))"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingBox(Vector3, Vector3)."
+        },
+        {
+          "name": "make-bounding-sphere",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "&optional",
+            "(center (vector3-zero))",
+            "(radius 0.0)"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere(Vector3, float)."
+        },
+        {
           "name": "make-color",
           "fbound": true,
           "macro": false,
@@ -2431,6 +3050,29 @@
           "constant": false,
           "value": null,
           "documentation": "Quaternion(Vector3, float): the vector part and the scalar part."
+        },
+        {
+          "name": "make-ray",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "&optional",
+            "(position (vector3-zero))",
+            "(direction (vector3-zero))"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Ray(Vector3, Vector3)."
         },
         {
           "name": "make-rectangle",
@@ -4377,6 +5019,28 @@
           "documentation": "The exact ABI value of a PLANE-INTERSECTION-TYPE member."
         },
         {
+          "name": "plane-intersects",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "plane",
+            "volume"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane.Intersects: which side of the plane a volume lies on, as a\nPLANE-INTERSECTION-TYPE."
+        },
+        {
           "name": "plane-normal",
           "fbound": true,
           "macro": false,
@@ -5359,6 +6023,143 @@
         },
         {
           "name": "quaternion-z",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "ray",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework:ray",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Ray: a position and a direction."
+        },
+        {
+          "name": "ray-direction",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "ray-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Ray.Equals."
+        },
+        {
+          "name": "ray-intersects",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "ray",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Ray.Intersects: the distance along the ray to the first intersection, or NIL.\n\nNIL is XNA's `float?' with no value. A ray that starts inside the volume answers\nzero, not the distance to the far side."
+        },
+        {
+          "name": "ray-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "ray-position",
           "fbound": true,
           "macro": false,
           "generic": false,

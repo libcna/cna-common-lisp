@@ -115,6 +115,21 @@
    #:plane-intersection-type #:plane-intersection-type-value
    #:plane-intersection-type-from-value #:all-plane-intersection-type
    #:matrix-create-reflection #:matrix-create-shadow
+   ;; --- Ray, BoundingBox, BoundingSphere ----------------------------------
+   #:ray #:make-ray #:ray-p #:copy-ray #:ray-position #:ray-direction
+   #:ray-intersects #:ray-equal
+   #:bounding-box #:make-bounding-box #:bounding-box-p #:copy-bounding-box
+   #:bounding-box-min #:bounding-box-max #:+bounding-box-corner-count+
+   #:bounding-box-get-corners #:bounding-box-create-merged
+   #:bounding-box-create-from-sphere #:bounding-box-create-from-points
+   #:bounding-box-intersects #:bounding-box-contains #:bounding-box-equal
+   #:bounding-sphere #:make-bounding-sphere #:bounding-sphere-p
+   #:copy-bounding-sphere
+   #:bounding-sphere-center #:bounding-sphere-radius
+   #:bounding-sphere-create-merged #:bounding-sphere-create-from-bounding-box
+   #:bounding-sphere-create-from-points #:bounding-sphere-transform
+   #:bounding-sphere-intersects #:bounding-sphere-contains #:bounding-sphere-equal
+   #:plane-intersects
    ;; --- transforms --------------------------------------------------------
    #:vector2-transform #:vector2-transform-normal
    #:vector2-transform-array #:vector2-transform-normal-array

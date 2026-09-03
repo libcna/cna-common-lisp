@@ -50,6 +50,13 @@ stubs:
   binary32, in XNA's own order of operations, each method written from the
   disassembled IL of the hash-pinned assembly rather than from a description of
   what it should do;
+* the 3D transform types on the same footing: `Quaternion`, `Matrix` and
+  `Plane`, including the projection, view, billboard and reflection builders;
+* the bounding volumes `Ray`, `BoundingBox` and `BoundingSphere` with the whole
+  intersection and containment lattice between them, `ContainmentType` and
+  `PlaneIntersectionType` — down to which comparison is strict, which epsilon
+  the framework chose, and one arithmetic defect it shipped, each recorded
+  where it is reproduced;
 * `Texture2D` decoded from a real PNG into a real native texture;
 * `SpriteBatch` with a real textured draw, with rotation, scale, origin, tint,
   source rectangle, effects and layer depth;
@@ -60,36 +67,36 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=29 -->
-<!-- generated:selected members=1081 -->
+<!-- generated:selected types=32 -->
+<!-- generated:selected members=1163 -->
 <!-- generated:complete types=18 -->
-<!-- generated:partial types=10 -->
+<!-- generated:partial types=13 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=756 -->
+<!-- generated:complete members=800 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=136 -->
-<!-- generated:not-applicable members=188 -->
+<!-- generated:missing members=140 -->
+<!-- generated:not-applicable members=222 -->
 <!-- generated:disagreement total=0 -->
 <!-- generated:bound native functions=69 -->
 <!-- generated:bound native structs=20 -->
 
-The generated scoreboard, over a selection of **29 XNA types and 1081 members**:
+The generated scoreboard, over a selection of **32 XNA types and 1163 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **18 / 10 / 1** |
-| Members complete / missing | **756 / 136** |
-| Members not applicable | **188** |
+| Types complete / partial / missing | **18 / 13 / 1** |
+| Members complete / missing | **800 / 140** |
+| Members not applicable | **222** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, every exported symbol is accounted for, no
 mapping rule names a member that does not exist, and every overload family that
 collapses onto one function says how each overload is expressed. It does **not**
-mean the binding is finished: 136 members are missing and are reported as
+mean the binding is finished: 140 members are missing and are reported as
 missing. `docs/compatibility.md` is the authority.
 
-The private foreign layer binds **68 native routes** and **19 native structs**,
+The private foreign layer binds **69 native routes** and **20 native structs**,
 all of them generated from the canonical CNA headers and checked by a C
 compiler.
 

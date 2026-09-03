@@ -253,6 +253,25 @@ the real method lambda lists in the image. A family that collapses without
 declaring how each overload is distinguished — by CLOS dispatch, by a trailing
 optional argument, or by keywords — is a `wrong_overload_shape` diagnostic.
 
+### One generic function, three return types
+
+`BoundingSphere.Intersects` has four overloads, and three different return types
+between them: a Boolean for a box or another sphere, a `PlaneIntersectionType`
+for a plane, and a `Nullable<float>` for a ray. CLOS dispatches on the argument,
+so all four collapse onto `bounding-sphere-intersects` and the answer's *type*
+follows the argument's, which is exactly what the original does. The
+documentation string of each such generic function names the return type per
+argument type, because the lambda list cannot.
+
+`Nullable<float>` maps to a `single-float` or `nil`, never to a distinguished
+float. A miss is `nil`; a hit at distance zero is `0.0f0`, and those are
+different answers a caller has to be able to tell apart.
+
+Each of these families declares `distinguished_by: "dispatch"` in
+`tools/api-compat/mapping-rules.json`, so the verifier checks that a method
+really is specialised on each overload's argument type rather than the family
+having quietly become one method that accepts anything.
+
 ### By-reference overloads
 
 XNA pairs almost every value-type computation with a by-reference form:
@@ -397,6 +416,21 @@ Three failures are easy to commit and hard to see, so each has a check:
   pixels and the origin is in source-texture pixels with the scale applied after
   that offset, so rounding a rectangle out of them loses the fractional position
   and moves the sprite.
+
+### A defect in the original is part of the contract
+
+`BoundingBox.Contains(BoundingSphere)` tests `Max.X - Min.X` against the radius
+twice, the second time in the slot where the Z extent belongs. It is a typo in
+the shipped assembly, it is observable — a zero radius against a box with no
+thickness in Z answers Contains where the intended test answers Intersects — and
+it is reproduced here, because a binding whose job is to agree with XNA does not
+get to decide which of XNA's answers are the real ones. What the projection does
+owe the reader is a note wherever the defect is reproduced: the source comment
+cites the IL offset, the unit test says the quirk is the point of the test, and
+the behaviour corpus records it as `:xna-derived` with the inputs that see it.
+
+Silently "fixing" it would be the worse failure of the two, and an unmarked
+reproduction would be the second worst.
 
 ## 13. Declared extensions
 
