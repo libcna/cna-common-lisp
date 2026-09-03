@@ -321,4 +321,59 @@ namespace: seventeen packed value types and nothing else.")
    #:mouse-state-left-button #:mouse-state-middle-button #:mouse-state-right-button
    #:mouse-state-x-button-1 #:mouse-state-x-button-2 #:mouse-state-equal
    ;; --- Mouse -------------------------------------------------------------
-   #:mouse-get-state #:mouse-set-position))
+   #:mouse-get-state #:mouse-set-position
+   ;; --- gamepad enumerations ----------------------------------------------
+   #:buttons #:buttons-value #:buttons-from-value #:all-buttons
+   #:game-pad-type #:game-pad-type-value #:game-pad-type-from-value
+   #:all-game-pad-type
+   #:game-pad-dead-zone #:game-pad-dead-zone-value #:game-pad-dead-zone-from-value
+   #:all-game-pad-dead-zone
+   ;; --- GamePadButtons ----------------------------------------------------
+   #:game-pad-buttons #:make-game-pad-buttons #:game-pad-buttons-p
+   #:copy-game-pad-buttons #:game-pad-buttons-equal
+   #:game-pad-buttons-a #:game-pad-buttons-b #:game-pad-buttons-x #:game-pad-buttons-y
+   #:game-pad-buttons-back #:game-pad-buttons-start #:game-pad-buttons-big-button
+   #:game-pad-buttons-left-shoulder #:game-pad-buttons-right-shoulder
+   #:game-pad-buttons-left-stick #:game-pad-buttons-right-stick
+   ;; --- GamePadDPad -------------------------------------------------------
+   #:game-pad-dpad #:make-game-pad-dpad #:game-pad-dpad-p #:copy-game-pad-dpad
+   #:game-pad-dpad-up #:game-pad-dpad-down #:game-pad-dpad-left #:game-pad-dpad-right
+   #:game-pad-dpad-equal
+   ;; --- GamePadThumbSticks and GamePadTriggers ----------------------------
+   #:game-pad-thumb-sticks #:make-game-pad-thumb-sticks #:game-pad-thumb-sticks-p
+   #:copy-game-pad-thumb-sticks #:game-pad-thumb-sticks-left
+   #:game-pad-thumb-sticks-right #:game-pad-thumb-sticks-equal
+   #:game-pad-triggers #:make-game-pad-triggers #:game-pad-triggers-p
+   #:copy-game-pad-triggers #:game-pad-triggers-left #:game-pad-triggers-right
+   #:game-pad-triggers-equal
+   ;; --- GamePadState ------------------------------------------------------
+   #:game-pad-state #:make-game-pad-state #:make-game-pad-state-from-values
+   #:game-pad-state-p #:copy-game-pad-state #:game-pad-state-equal
+   #:game-pad-state-is-connected #:game-pad-state-packet-number
+   #:game-pad-state-buttons #:game-pad-state-dpad
+   #:game-pad-state-thumb-sticks #:game-pad-state-triggers
+   #:game-pad-state-is-button-down #:game-pad-state-is-button-up
+   ;; --- GamePadCapabilities -----------------------------------------------
+   #:game-pad-capabilities #:game-pad-capabilities-p #:copy-game-pad-capabilities
+   #:game-pad-capabilities-game-pad-type #:game-pad-capabilities-is-connected
+   #:game-pad-capabilities-has-a-button #:game-pad-capabilities-has-b-button
+   #:game-pad-capabilities-has-x-button #:game-pad-capabilities-has-y-button
+   #:game-pad-capabilities-has-back-button #:game-pad-capabilities-has-start-button
+   #:game-pad-capabilities-has-big-button
+   #:game-pad-capabilities-has-dpad-up-button #:game-pad-capabilities-has-dpad-down-button
+   #:game-pad-capabilities-has-dpad-left-button
+   #:game-pad-capabilities-has-dpad-right-button
+   #:game-pad-capabilities-has-left-shoulder-button
+   #:game-pad-capabilities-has-right-shoulder-button
+   #:game-pad-capabilities-has-left-stick-button
+   #:game-pad-capabilities-has-right-stick-button
+   #:game-pad-capabilities-has-left-x-thumb-stick
+   #:game-pad-capabilities-has-left-y-thumb-stick
+   #:game-pad-capabilities-has-right-x-thumb-stick
+   #:game-pad-capabilities-has-right-y-thumb-stick
+   #:game-pad-capabilities-has-left-trigger #:game-pad-capabilities-has-right-trigger
+   #:game-pad-capabilities-has-left-vibration-motor
+   #:game-pad-capabilities-has-right-vibration-motor
+   #:game-pad-capabilities-has-voice-support
+   ;; --- GamePad -----------------------------------------------------------
+   #:game-pad-get-state #:game-pad-get-capabilities #:game-pad-set-vibration))

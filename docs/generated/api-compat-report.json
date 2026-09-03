@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. The closures added so far are pure managed and touch no native route: the 3D transform types, the bounding volumes, and the Curve family.",
-  "type_count": 59,
-  "member_count": 1436
+  "type_count": 69,
+  "member_count": 1565
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 59,
-  "members": 1436,
+  "types": 69,
+  "members": 1565,
   "types_by_status": {
    "partial": 6,
-   "complete": 52,
+   "complete": 62,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 1002,
+   "complete": 1108,
    "missing": 119,
-   "not-applicable": 314,
+   "not-applicable": 337,
    "partial": 1
   },
   "diagnostics": 120,
@@ -1857,6 +1857,205 @@
     "ChatPadOrange": "complete"
    },
    "lisp": "microsoft.xna.framework.input:keys"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePad",
+   "status": "complete",
+   "members": {
+    "GetState(PlayerIndex)": "complete",
+    "GetState(PlayerIndex,GamePadDeadZone)": "complete",
+    "GetCapabilities(PlayerIndex)": "complete",
+    "SetVibration(PlayerIndex,Single,Single)": "complete"
+   },
+   "projection": "static class: microsoft.xna.framework.input:game-pad-<member>"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePadState",
+   "status": "complete",
+   "members": {
+    "new(GamePadThumbSticks,GamePadTriggers,GamePadButtons,GamePadDPad)": "complete",
+    "new(Vector2,Vector2,Single,Single,Buttons[])": "complete",
+    "IsButtonDown(Buttons)": "complete",
+    "IsButtonUp(Buttons)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(GamePadState,GamePadState)": "complete",
+    "op_Inequality(GamePadState,GamePadState)": "not-applicable",
+    "Buttons": "complete",
+    "DPad": "complete",
+    "IsConnected": "complete",
+    "PacketNumber": "complete",
+    "ThumbSticks": "complete",
+    "Triggers": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:game-pad-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePadButtons",
+   "status": "complete",
+   "members": {
+    "new(Buttons)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(GamePadButtons,GamePadButtons)": "complete",
+    "op_Inequality(GamePadButtons,GamePadButtons)": "not-applicable",
+    "A": "complete",
+    "B": "complete",
+    "Back": "complete",
+    "X": "complete",
+    "Y": "complete",
+    "Start": "complete",
+    "LeftShoulder": "complete",
+    "LeftStick": "complete",
+    "RightShoulder": "complete",
+    "RightStick": "complete",
+    "BigButton": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:game-pad-buttons"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePadDPad",
+   "status": "complete",
+   "members": {
+    "new(ButtonState,ButtonState,ButtonState,ButtonState)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(GamePadDPad,GamePadDPad)": "complete",
+    "op_Inequality(GamePadDPad,GamePadDPad)": "not-applicable",
+    "Up": "complete",
+    "Down": "complete",
+    "Right": "complete",
+    "Left": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:game-pad-dpad"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+   "status": "complete",
+   "members": {
+    "new(Vector2,Vector2)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(GamePadThumbSticks,GamePadThumbSticks)": "complete",
+    "op_Inequality(GamePadThumbSticks,GamePadThumbSticks)": "not-applicable",
+    "Left": "complete",
+    "Right": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:game-pad-thumb-sticks"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+   "status": "complete",
+   "members": {
+    "new(Single,Single)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(GamePadTriggers,GamePadTriggers)": "complete",
+    "op_Inequality(GamePadTriggers,GamePadTriggers)": "not-applicable",
+    "Left": "complete",
+    "Right": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:game-pad-triggers"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePadCapabilities",
+   "status": "complete",
+   "members": {
+    "GamePadType": "complete",
+    "IsConnected": "complete",
+    "HasAButton": "complete",
+    "HasBackButton": "complete",
+    "HasBButton": "complete",
+    "HasDPadDownButton": "complete",
+    "HasDPadLeftButton": "complete",
+    "HasDPadRightButton": "complete",
+    "HasDPadUpButton": "complete",
+    "HasLeftShoulderButton": "complete",
+    "HasLeftStickButton": "complete",
+    "HasRightShoulderButton": "complete",
+    "HasRightStickButton": "complete",
+    "HasStartButton": "complete",
+    "HasXButton": "complete",
+    "HasYButton": "complete",
+    "HasBigButton": "complete",
+    "HasLeftXThumbStick": "complete",
+    "HasLeftYThumbStick": "complete",
+    "HasRightXThumbStick": "complete",
+    "HasRightYThumbStick": "complete",
+    "HasLeftTrigger": "complete",
+    "HasRightTrigger": "complete",
+    "HasLeftVibrationMotor": "complete",
+    "HasRightVibrationMotor": "complete",
+    "HasVoiceSupport": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:game-pad-capabilities"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Buttons",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "A": "complete",
+    "B": "complete",
+    "X": "complete",
+    "Y": "complete",
+    "Back": "complete",
+    "Start": "complete",
+    "DPadUp": "complete",
+    "DPadDown": "complete",
+    "DPadLeft": "complete",
+    "DPadRight": "complete",
+    "LeftShoulder": "complete",
+    "RightShoulder": "complete",
+    "LeftStick": "complete",
+    "RightStick": "complete",
+    "BigButton": "complete",
+    "LeftThumbstickLeft": "complete",
+    "LeftThumbstickRight": "complete",
+    "LeftThumbstickDown": "complete",
+    "LeftThumbstickUp": "complete",
+    "RightThumbstickLeft": "complete",
+    "RightThumbstickRight": "complete",
+    "RightThumbstickDown": "complete",
+    "RightThumbstickUp": "complete",
+    "LeftTrigger": "complete",
+    "RightTrigger": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:buttons"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePadType",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Unknown": "complete",
+    "ArcadeStick": "complete",
+    "DancePad": "complete",
+    "FlightStick": "complete",
+    "GamePad": "complete",
+    "Wheel": "complete",
+    "Guitar": "complete",
+    "DrumKit": "complete",
+    "AlternateGuitar": "complete",
+    "BigButtonPad": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:game-pad-type"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.GamePadDeadZone",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "None": "complete",
+    "IndependentAxes": "complete",
+    "Circular": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:game-pad-dead-zone"
   },
   {
    "name": "Microsoft.Xna.Framework.Input.Mouse",

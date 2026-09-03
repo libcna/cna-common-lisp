@@ -56,28 +56,29 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=59 -->
-<!-- generated:selected members=1436 -->
-<!-- generated:complete types=52 -->
+<!-- generated:selected types=69 -->
+<!-- generated:selected members=1565 -->
+<!-- generated:complete types=62 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1002 -->
+<!-- generated:complete members=1108 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=314 -->
+<!-- generated:not-applicable members=337 -->
 <!-- generated:disagreement total=0 -->
 
-59 selected types, 1436 members: **52 complete, 6 partial, 1 missing**;
-**1002 members complete, 119 missing**, 314 not applicable, 1 partial.
+69 selected types, 1565 members: **62 complete, 6 partial, 1 missing**;
+**1108 members complete, 119 missing**, 337 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 **Every pure-managed type in the selection is complete.** The math types
 -- `Vector2`, `Vector3`, `Vector4`, `Quaternion`, `Matrix`, `Plane`, `Ray`,
 `BoundingBox`, `BoundingSphere`, `BoundingFrustum`, `MathHelper`, `Color`,
 `Point`, `Rectangle` -- the `Curve` family, the seventeen packed vector types and all six
-enumerations answer every member of the selected contract, and so do `Mouse`,
-`MouseState` and `ButtonState`. Everything still missing is native-facing:
-graphics, the gamepad and the touch panel, content, and the event projection.
+enumerations answer every member of the selected contract, and so does the whole
+input surface except the touch panel -- the keyboard, the mouse and the `GamePad`
+family. Everything still missing is native-facing: graphics, the touch panel,
+content, and the event projection.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -103,11 +104,10 @@ listed after.
 
 1. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-2. **The rest of input**: the `GamePad` family and `Input.Touch`. `Mouse` and
-   `MouseState` are done -- CNA's `cna_gamepad_get_state` and `cna_touch_get_state`
-   are the routes the other two need, and both are richer than the mouse's one
-   struct: `GamePadState` carries four nested structures and a dead-zone mode, and
-   `TouchCollection` is a collection type.
+2. **`Input.Touch`**, the last of the input namespace: `TouchPanel`,
+   `TouchCollection`, `TouchLocation`, `GestureSample` and the three touch
+   enumerations, over `cna_touch_get_state`. `TouchCollection` is a collection
+   type, so it will want the same treatment `CurveKeyCollection` got.
 3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`, and the
    **event projection** the four `Game` events and six `GraphicsDevice` events

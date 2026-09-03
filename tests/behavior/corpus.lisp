@@ -645,6 +645,30 @@
        (= #x07E0 (pv:bgr565-packed-value (pv:make-bgr565 0.0 1.0 0.0)))
        (= #x001F (pv:bgr565-packed-value (pv:make-bgr565 0.0 0.0 1.0)))))
 
+(defobservation "gamepad.buttons-values-are-the-contracts" :xna-derived
+    "Microsoft.Xna.Framework.Input.Buttons"
+  "The Buttons flags enum's values are XNA's own, so a saved input binding keeps
+   meaning the same thing: A is 0x1000, DPadUp is 1, LeftTrigger is 0x800000."
+  (and (= #x1000 (input:buttons-value :a))
+       (= #x8000 (input:buttons-value :y))
+       (= 1 (input:buttons-value :dpad-up))
+       (= #x800000 (input:buttons-value :left-trigger))
+       (= 25 (length (input:all-buttons)))))
+
+(defobservation "gamepad.type-values-jump-at-big-button-pad" :xna-derived
+    "Microsoft.Xna.Framework.Input.GamePadType"
+  "GamePadType runs 0 through 8 and then jumps to 0x300 for BigButtonPad, which
+   is not the consecutive numbering the C ABI uses."
+  (and (= 8 (input:game-pad-type-value :drum-kit))
+       (= #x300 (input:game-pad-type-value :big-button-pad))))
+
+(defobservation "gamepad.buttons-cannot-hold-a-dpad-bit" :xna-derived
+    "Microsoft.Xna.Framework.Input.GamePadButtons"
+  "GamePadButtons is eleven separate ButtonState fields, so it has nowhere to put
+   a directional-pad member and its equality cannot see one."
+  (input:game-pad-buttons-equal (input:make-game-pad-buttons '(:a :dpad-up))
+                                (input:make-game-pad-buttons '(:a))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

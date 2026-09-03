@@ -70,34 +70,36 @@ stubs:
 * `Texture2D` decoded from a real PNG into a real native texture;
 * `SpriteBatch` with a real textured draw, with rotation, scale, origin, tint,
   source rectangle, effects and layer depth;
-* `Keyboard`, `KeyboardState`, `KeyState` and all 160 `Keys` members, and
-  `Mouse`, `MouseState` and `ButtonState` over CNA's own mouse routes;
+* the input surface over CNA's own routes: `Keyboard`, `KeyboardState`,
+  `KeyState` and all 160 `Keys` members; `Mouse`, `MouseState` and
+  `ButtonState`; and the whole `GamePad` family — state, capabilities,
+  vibration, the dead-zone modes and the `Buttons` flags enum;
 * a full condition hierarchy, deterministic disposal, generation-checked
   ownership, thread affinity, and callback condition containment.
 
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=59 -->
-<!-- generated:selected members=1436 -->
-<!-- generated:complete types=52 -->
+<!-- generated:selected types=69 -->
+<!-- generated:selected members=1565 -->
+<!-- generated:complete types=62 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1002 -->
+<!-- generated:complete members=1108 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=314 -->
+<!-- generated:not-applicable members=337 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=74 -->
-<!-- generated:bound native structs=21 -->
+<!-- generated:bound native functions=78 -->
+<!-- generated:bound native structs=24 -->
 
-The generated scoreboard, over a selection of **59 XNA types and 1436 members**:
+The generated scoreboard, over a selection of **69 XNA types and 1565 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **52 / 6 / 1** |
-| Members complete / missing | **1002 / 119** |
-| Members not applicable | **314** |
+| Types complete / partial / missing | **62 / 6 / 1** |
+| Members complete / missing | **1108 / 119** |
+| Members not applicable | **337** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
@@ -107,7 +109,7 @@ collapses onto one function says how each overload is expressed. It does **not**
 mean the binding is finished: 119 members are missing and are reported as
 missing. `docs/compatibility.md` is the authority.
 
-The private foreign layer binds **74 native routes** and **21 native structs**,
+The private foreign layer binds **78 native routes** and **24 native structs**,
 all of them generated from the canonical CNA headers and checked by a C
 compiler.
 

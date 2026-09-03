@@ -21,10 +21,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 74,
-    "structs": 21,
-    "struct_fields": 112,
-    "constants": 243,
+    "functions": 78,
+    "structs": 24,
+    "struct_fields": 163,
+    "constants": 282,
     "callbacks": 2,
     "by_value_aggregates": 2,
     "shimmed_routes": 1
@@ -1753,6 +1753,129 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_mouse_state_equals(const CNA_MouseState* left, const CNA_MouseState* right, CNA_Bool* out_equals)"
+    },
+    {
+      "name": "cna_gamepad_get_state",
+      "header": "input.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "player_index",
+          "c_type": "CNA_PlayerIndex",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_GamePadState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_gamepad_get_state(CNA_Handle game, CNA_PlayerIndex player_index, CNA_GamePadState* out_state)"
+    },
+    {
+      "name": "cna_gamepad_get_state_with_dead_zone",
+      "header": "input.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "player_index",
+          "c_type": "CNA_PlayerIndex",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "dead_zone_mode",
+          "c_type": "CNA_GamePadDeadZone",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_GamePadState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_gamepad_get_state_with_dead_zone(CNA_Handle game, CNA_PlayerIndex player_index, CNA_GamePadDeadZone dead_zone_mode, CNA_GamePadState* out_state)"
+    },
+    {
+      "name": "cna_gamepad_get_capabilities",
+      "header": "input_gamepad.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "player_index",
+          "c_type": "CNA_PlayerIndex",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_capabilities",
+          "c_type": "CNA_GamePadCapabilities*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_gamepad_get_capabilities(CNA_Handle game, CNA_PlayerIndex player_index, CNA_GamePadCapabilities* out_capabilities)"
+    },
+    {
+      "name": "cna_gamepad_set_vibration",
+      "header": "input_gamepad.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "player_index",
+          "c_type": "CNA_PlayerIndex",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "left_motor",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "right_motor",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "out_applied",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_gamepad_set_vibration(CNA_Handle game, CNA_PlayerIndex player_index, float left_motor, float right_motor, CNA_Bool* out_applied)"
     }
   ],
   "structs": [
@@ -2816,6 +2939,495 @@
       "versioned": true
     },
     {
+      "name": "CNA_GamePadAnalogState",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "left_thumb_stick",
+          "c_type": "CNA_Vector2",
+          "offset": 0,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "right_thumb_stick",
+          "c_type": "CNA_Vector2",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "left_trigger",
+          "c_type": "float",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "right_trigger",
+          "c_type": "float",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "input.h",
+      "direction": "out",
+      "versioned": false
+    },
+    {
+      "name": "CNA_GamePadState",
+      "size": 48,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_connected",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved0",
+          "c_type": "uint8_t",
+          "offset": 9,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "packet_number",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "pressed_buttons",
+          "c_type": "CNA_GamePadButtonFlags",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved1",
+          "c_type": "uint32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "analog",
+          "c_type": "CNA_GamePadAnalogState",
+          "offset": 24,
+          "size": 24,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_GamePadAnalogState",
+          "kind": "aggregate"
+        }
+      ],
+      "header": "input.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GamePadCapabilities",
+      "size": 48,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "gamepad_type",
+          "c_type": "CNA_GamePadType",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_connected",
+          "c_type": "CNA_Bool",
+          "offset": 12,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_a_button",
+          "c_type": "CNA_Bool",
+          "offset": 13,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_b_button",
+          "c_type": "CNA_Bool",
+          "offset": 14,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_x_button",
+          "c_type": "CNA_Bool",
+          "offset": 15,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_y_button",
+          "c_type": "CNA_Bool",
+          "offset": 16,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_back_button",
+          "c_type": "CNA_Bool",
+          "offset": 17,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_start_button",
+          "c_type": "CNA_Bool",
+          "offset": 18,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_big_button",
+          "c_type": "CNA_Bool",
+          "offset": 19,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_dpad_up_button",
+          "c_type": "CNA_Bool",
+          "offset": 20,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_dpad_down_button",
+          "c_type": "CNA_Bool",
+          "offset": 21,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_dpad_left_button",
+          "c_type": "CNA_Bool",
+          "offset": 22,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_dpad_right_button",
+          "c_type": "CNA_Bool",
+          "offset": 23,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_left_shoulder_button",
+          "c_type": "CNA_Bool",
+          "offset": 24,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_right_shoulder_button",
+          "c_type": "CNA_Bool",
+          "offset": 25,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_left_stick_button",
+          "c_type": "CNA_Bool",
+          "offset": 26,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_right_stick_button",
+          "c_type": "CNA_Bool",
+          "offset": 27,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_left_x_thumb_stick",
+          "c_type": "CNA_Bool",
+          "offset": 28,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_left_y_thumb_stick",
+          "c_type": "CNA_Bool",
+          "offset": 29,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_right_x_thumb_stick",
+          "c_type": "CNA_Bool",
+          "offset": 30,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_right_y_thumb_stick",
+          "c_type": "CNA_Bool",
+          "offset": 31,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_left_trigger",
+          "c_type": "CNA_Bool",
+          "offset": 32,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_right_trigger",
+          "c_type": "CNA_Bool",
+          "offset": 33,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_left_vibration_motor",
+          "c_type": "CNA_Bool",
+          "offset": 34,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_right_vibration_motor",
+          "c_type": "CNA_Bool",
+          "offset": 35,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_voice_support",
+          "c_type": "CNA_Bool",
+          "offset": 36,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_light_bar_ext",
+          "c_type": "CNA_Bool",
+          "offset": 37,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_trigger_vibration_motors_ext",
+          "c_type": "CNA_Bool",
+          "offset": 38,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_misc1_ext",
+          "c_type": "CNA_Bool",
+          "offset": 39,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_paddle1_ext",
+          "c_type": "CNA_Bool",
+          "offset": 40,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_paddle2_ext",
+          "c_type": "CNA_Bool",
+          "offset": 41,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_paddle3_ext",
+          "c_type": "CNA_Bool",
+          "offset": 42,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_paddle4_ext",
+          "c_type": "CNA_Bool",
+          "offset": 43,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_touchpad_ext",
+          "c_type": "CNA_Bool",
+          "offset": 44,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_gyro_ext",
+          "c_type": "CNA_Bool",
+          "offset": 45,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_accelerometer_ext",
+          "c_type": "CNA_Bool",
+          "offset": 46,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 47,
+          "size": 1,
+          "count": 1,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "input_gamepad.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
       "name": "CNA_RendererInfo",
       "size": 32,
       "align": 8,
@@ -3070,6 +3682,45 @@
     "CNA_ERROR_CATEGORY_STATE": 3,
     "CNA_ERROR_CATEGORY_THREAD": 8,
     "CNA_FALSE": 0,
+    "CNA_GAMEPAD_BUTTON_A": 4096,
+    "CNA_GAMEPAD_BUTTON_B": 8192,
+    "CNA_GAMEPAD_BUTTON_BACK": 32,
+    "CNA_GAMEPAD_BUTTON_BIG_BUTTON": 2048,
+    "CNA_GAMEPAD_BUTTON_DPAD_DOWN": 2,
+    "CNA_GAMEPAD_BUTTON_DPAD_LEFT": 4,
+    "CNA_GAMEPAD_BUTTON_DPAD_RIGHT": 8,
+    "CNA_GAMEPAD_BUTTON_DPAD_UP": 1,
+    "CNA_GAMEPAD_BUTTON_LEFT_SHOULDER": 256,
+    "CNA_GAMEPAD_BUTTON_LEFT_STICK": 64,
+    "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_DOWN": 536870912,
+    "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_LEFT": 2097152,
+    "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_RIGHT": 1073741824,
+    "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_UP": 268435456,
+    "CNA_GAMEPAD_BUTTON_LEFT_TRIGGER": 8388608,
+    "CNA_GAMEPAD_BUTTON_NONE": 0,
+    "CNA_GAMEPAD_BUTTON_RIGHT_SHOULDER": 512,
+    "CNA_GAMEPAD_BUTTON_RIGHT_STICK": 128,
+    "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_DOWN": 33554432,
+    "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_LEFT": 134217728,
+    "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_RIGHT": 67108864,
+    "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_UP": 16777216,
+    "CNA_GAMEPAD_BUTTON_RIGHT_TRIGGER": 4194304,
+    "CNA_GAMEPAD_BUTTON_START": 16,
+    "CNA_GAMEPAD_BUTTON_X": 16384,
+    "CNA_GAMEPAD_BUTTON_Y": 32768,
+    "CNA_GAMEPAD_DEAD_ZONE_CIRCULAR": 2,
+    "CNA_GAMEPAD_DEAD_ZONE_INDEPENDENT_AXES": 1,
+    "CNA_GAMEPAD_DEAD_ZONE_NONE": 0,
+    "CNA_GAMEPAD_TYPE_ALTERNATE_GUITAR": 7,
+    "CNA_GAMEPAD_TYPE_ARCADE_STICK": 3,
+    "CNA_GAMEPAD_TYPE_BIG_BUTTON_PAD": 9,
+    "CNA_GAMEPAD_TYPE_DANCE_PAD": 5,
+    "CNA_GAMEPAD_TYPE_DRUM_KIT": 8,
+    "CNA_GAMEPAD_TYPE_FLIGHT_STICK": 4,
+    "CNA_GAMEPAD_TYPE_GAMEPAD": 1,
+    "CNA_GAMEPAD_TYPE_GUITAR": 6,
+    "CNA_GAMEPAD_TYPE_UNKNOWN": 0,
+    "CNA_GAMEPAD_TYPE_WHEEL": 2,
     "CNA_INVALID_HANDLE": 0,
     "CNA_KEY_A": 65,
     "CNA_KEY_ADD": 107,

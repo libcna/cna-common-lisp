@@ -186,6 +186,10 @@ that a keyword-taking projection accepts no keywords at all."
    "key-state" (alist-object microsoft.xna.framework.input::*key-state-table*)
    "player-index" (alist-object microsoft.xna.framework::*player-index-table*)
    "button-state" (alist-object microsoft.xna.framework.input::*button-state-table*)
+   "buttons" (alist-object microsoft.xna.framework.input::*buttons-table*)
+   "game-pad-type" (alist-object microsoft.xna.framework.input::*game-pad-type-table*)
+   "game-pad-dead-zone"
+   (alist-object microsoft.xna.framework.input::*game-pad-dead-zone-table*)
    "sprite-sort-mode" (alist-object microsoft.xna.framework.graphics::*sprite-sort-mode-table*)
    "sprite-effects" (alist-object microsoft.xna.framework.graphics::*sprite-effects-table*)
    "surface-format" (alist-object microsoft.xna.framework.graphics::*surface-format-table*)

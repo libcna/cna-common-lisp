@@ -3070,6 +3070,305 @@
    "not_applicable": {
     "WindowHandle": "An IntPtr naming a native platform window. Answering it would put a raw platform pointer in the public API, which this projection does not do, and setting it would need a window handle a CNA-Lisp program never has: CNA owns the game's window. There is nothing a consumer of this binding could do with either direction of the property."
    }
+  },
+  "Microsoft.Xna.Framework.Input.Buttons": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "buttons",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Input.GamePadType": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad-type",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Input.GamePadDeadZone": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad-dead-zone",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Input.GamePadButtons": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad-buttons",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Buttons)": "make-game-pad-buttons"
+   },
+   "member_overrides": {
+    "A": {
+     "lisp": "game-pad-buttons-a",
+     "reason": "XNA holds eleven separate ButtonState fields; this holds the pressed-bit set with the readers derived, because eleven parallel slots are eleven chances to drift. Members outside the eleven are masked away on the way in, so equality sees exactly what the original's does."
+    },
+    "B": {
+     "lisp": "game-pad-buttons-b"
+    },
+    "X": {
+     "lisp": "game-pad-buttons-x"
+    },
+    "Y": {
+     "lisp": "game-pad-buttons-y"
+    },
+    "Back": {
+     "lisp": "game-pad-buttons-back"
+    },
+    "Start": {
+     "lisp": "game-pad-buttons-start"
+    },
+    "BigButton": {
+     "lisp": "game-pad-buttons-big-button"
+    },
+    "LeftShoulder": {
+     "lisp": "game-pad-buttons-left-shoulder"
+    },
+    "RightShoulder": {
+     "lisp": "game-pad-buttons-right-shoulder"
+    },
+    "LeftStick": {
+     "lisp": "game-pad-buttons-left-stick"
+    },
+    "RightStick": {
+     "lisp": "game-pad-buttons-right-stick"
+    },
+    "op_Equality(GamePadButtons,GamePadButtons)": {
+     "lisp": "game-pad-buttons-equal",
+     "reason": "This type does not implement IEquatable, so op_Equality is the only typed comparison the contract has and the named predicate projects it."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Input.GamePadDPad": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad-dpad",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(ButtonState,ButtonState,ButtonState,ButtonState)": "make-game-pad-dpad"
+   },
+   "member_overrides": {
+    "Up": {
+     "lisp": "game-pad-dpad-up",
+     "reason": "The constructor's argument order is up, down, left, right."
+    },
+    "Down": {
+     "lisp": "game-pad-dpad-down"
+    },
+    "Left": {
+     "lisp": "game-pad-dpad-left"
+    },
+    "Right": {
+     "lisp": "game-pad-dpad-right"
+    },
+    "op_Equality(GamePadDPad,GamePadDPad)": {
+     "lisp": "game-pad-dpad-equal",
+     "reason": "This type does not implement IEquatable, so op_Equality is the only typed comparison the contract has and the named predicate projects it."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Input.GamePadThumbSticks": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad-thumb-sticks",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Vector2,Vector2)": "make-game-pad-thumb-sticks"
+   },
+   "member_overrides": {
+    "Left": {
+     "lisp": "game-pad-thumb-sticks-left"
+    },
+    "Right": {
+     "lisp": "game-pad-thumb-sticks-right"
+    },
+    "op_Equality(GamePadThumbSticks,GamePadThumbSticks)": {
+     "lisp": "game-pad-thumb-sticks-equal",
+     "reason": "This type does not implement IEquatable, so op_Equality is the only typed comparison the contract has and the named predicate projects it."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Input.GamePadTriggers": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad-triggers",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single)": "make-game-pad-triggers"
+   },
+   "member_overrides": {
+    "Left": {
+     "lisp": "game-pad-triggers-left"
+    },
+    "Right": {
+     "lisp": "game-pad-triggers-right"
+    },
+    "op_Equality(GamePadTriggers,GamePadTriggers)": {
+     "lisp": "game-pad-triggers-equal",
+     "reason": "This type does not implement IEquatable, so op_Equality is the only typed comparison the contract has and the named predicate projects it."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Input.GamePadState": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad-state",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(GamePadThumbSticks,GamePadTriggers,GamePadButtons,GamePadDPad)": "make-game-pad-state",
+    "new(Vector2,Vector2,Single,Single,Buttons[])": "make-game-pad-state-from-values"
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-game-pad-state and make-game-pad-state-from-values",
+     "reason": "The two constructors take different things -- four value types, or two vectors, two floats and a set of buttons -- and one function accepting either would be telling them apart by the run-time type of an argument. The first takes keywords rather than four positional value types, because its argument order is thumbsticks, triggers, buttons, dpad and getting it wrong is a type error the C# compiler catches and Lisp does not."
+    }
+   },
+   "member_overrides": {
+    "IsButtonDown(Buttons)": {
+     "lisp": "game-pad-state-is-button-down",
+     "reason": "Buttons is a flags enum, so the argument may be one member or a set of them; a set asks whether every one of them is down."
+    },
+    "IsButtonUp(Buttons)": {
+     "lisp": "game-pad-state-is-button-up"
+    },
+    "op_Equality(GamePadState,GamePadState)": {
+     "lisp": "game-pad-state-equal"
+    },
+    "IsConnected": {
+     "lisp": "game-pad-state-is-connected"
+    },
+    "PacketNumber": {
+     "lisp": "game-pad-state-packet-number"
+    },
+    "Buttons": {
+     "lisp": "game-pad-state-buttons"
+    },
+    "DPad": {
+     "lisp": "game-pad-state-dpad"
+    },
+    "ThumbSticks": {
+     "lisp": "game-pad-state-thumb-sticks"
+    },
+    "Triggers": {
+     "lisp": "game-pad-state-triggers"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Input.GamePadCapabilities": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad-capabilities",
+   "lisp_kind": "structure",
+   "constructors": {},
+   "member_overrides": {
+    "GamePadType": {
+     "lisp": "game-pad-capabilities-game-pad-type",
+     "reason": "XNA gives this type no public constructor: GAME-PAD-GET-CAPABILITIES is the only way to obtain one, and this projection keeps it that way."
+    },
+    "IsConnected": {
+     "lisp": "game-pad-capabilities-is-connected"
+    },
+    "HasAButton": {
+     "lisp": "game-pad-capabilities-has-a-button"
+    },
+    "HasBButton": {
+     "lisp": "game-pad-capabilities-has-b-button"
+    },
+    "HasXButton": {
+     "lisp": "game-pad-capabilities-has-x-button"
+    },
+    "HasYButton": {
+     "lisp": "game-pad-capabilities-has-y-button"
+    },
+    "HasBackButton": {
+     "lisp": "game-pad-capabilities-has-back-button"
+    },
+    "HasStartButton": {
+     "lisp": "game-pad-capabilities-has-start-button"
+    },
+    "HasBigButton": {
+     "lisp": "game-pad-capabilities-has-big-button"
+    },
+    "HasDPadUpButton": {
+     "lisp": "game-pad-capabilities-has-dpad-up-button"
+    },
+    "HasDPadDownButton": {
+     "lisp": "game-pad-capabilities-has-dpad-down-button"
+    },
+    "HasDPadLeftButton": {
+     "lisp": "game-pad-capabilities-has-dpad-left-button"
+    },
+    "HasDPadRightButton": {
+     "lisp": "game-pad-capabilities-has-dpad-right-button"
+    },
+    "HasLeftShoulderButton": {
+     "lisp": "game-pad-capabilities-has-left-shoulder-button"
+    },
+    "HasRightShoulderButton": {
+     "lisp": "game-pad-capabilities-has-right-shoulder-button"
+    },
+    "HasLeftStickButton": {
+     "lisp": "game-pad-capabilities-has-left-stick-button"
+    },
+    "HasRightStickButton": {
+     "lisp": "game-pad-capabilities-has-right-stick-button"
+    },
+    "HasLeftXThumbStick": {
+     "lisp": "game-pad-capabilities-has-left-x-thumb-stick"
+    },
+    "HasLeftYThumbStick": {
+     "lisp": "game-pad-capabilities-has-left-y-thumb-stick"
+    },
+    "HasRightXThumbStick": {
+     "lisp": "game-pad-capabilities-has-right-x-thumb-stick"
+    },
+    "HasRightYThumbStick": {
+     "lisp": "game-pad-capabilities-has-right-y-thumb-stick"
+    },
+    "HasLeftTrigger": {
+     "lisp": "game-pad-capabilities-has-left-trigger"
+    },
+    "HasRightTrigger": {
+     "lisp": "game-pad-capabilities-has-right-trigger"
+    },
+    "HasLeftVibrationMotor": {
+     "lisp": "game-pad-capabilities-has-left-vibration-motor"
+    },
+    "HasRightVibrationMotor": {
+     "lisp": "game-pad-capabilities-has-right-vibration-motor"
+    },
+    "HasVoiceSupport": {
+     "lisp": "game-pad-capabilities-has-voice-support"
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Input.GamePad": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "game-pad",
+   "lisp_kind": "static",
+   "member_overrides": {
+    "GetState(PlayerIndex)": {
+     "lisp": "game-pad-get-state",
+     "distinguished_by": "arity",
+     "reason": "The dead-zone overload adds one trailing argument, so it is a trailing optional here; without it CNA applies its own default, which is what the one-argument overload does."
+    },
+    "GetState(PlayerIndex,GamePadDeadZone)": {
+     "lisp": "game-pad-get-state",
+     "distinguished_by": "arity"
+    },
+    "GetCapabilities(PlayerIndex)": {
+     "lisp": "game-pad-get-capabilities"
+    },
+    "SetVibration(PlayerIndex,Single,Single)": {
+     "lisp": "game-pad-set-vibration"
+    }
+   }
   }
  }
 }

@@ -310,6 +310,22 @@
 (defcfun ("cna_mouse_state_equals" %mouse-state-equals) :uint32
   (left :pointer) (right :pointer) (out-equals :pointer))
 
+;;; CNA_Result cna_gamepad_get_state(CNA_Handle game, CNA_PlayerIndex player_index, CNA_GamePadState* out_state)
+(defcfun ("cna_gamepad_get_state" %gamepad-get-state) :uint32
+  (game :uint64) (player-index :uint32) (out-state :pointer))
+
+;;; CNA_Result cna_gamepad_get_state_with_dead_zone(CNA_Handle game, CNA_PlayerIndex player_index, CNA_GamePadDeadZone dead_zone_mode, CNA_GamePadState* out_state)
+(defcfun ("cna_gamepad_get_state_with_dead_zone" %gamepad-get-state-with-dead-zone) :uint32
+  (game :uint64) (player-index :uint32) (dead-zone-mode :uint32) (out-state :pointer))
+
+;;; CNA_Result cna_gamepad_get_capabilities(CNA_Handle game, CNA_PlayerIndex player_index, CNA_GamePadCapabilities* out_capabilities)
+(defcfun ("cna_gamepad_get_capabilities" %gamepad-get-capabilities) :uint32
+  (game :uint64) (player-index :uint32) (out-capabilities :pointer))
+
+;;; CNA_Result cna_gamepad_set_vibration(CNA_Handle game, CNA_PlayerIndex player_index, float left_motor, float right_motor, CNA_Bool* out_applied)
+(defcfun ("cna_gamepad_set_vibration" %gamepad-set-vibration) :uint32
+  (game :uint64) (player-index :uint32) (left-motor :float) (right-motor :float) (out-applied :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -384,6 +400,10 @@
     ("cna_mouse_set_position" %mouse-set-position :uint32 (:uint64 :int32 :int32) :thread :owner :ownership "none")
     ("cna_mouse_state_init" %mouse-state-init :uint32 (:pointer) :thread :any :ownership "none")
     ("cna_mouse_state_init_from_values" %mouse-state-init-from-values :uint32 (:int32 :int32 :int32 :uint32 :pointer) :thread :any :ownership "none")
-    ("cna_mouse_state_equals" %mouse-state-equals :uint32 (:pointer :pointer :pointer) :thread :any :ownership "none"))
+    ("cna_mouse_state_equals" %mouse-state-equals :uint32 (:pointer :pointer :pointer) :thread :any :ownership "none")
+    ("cna_gamepad_get_state" %gamepad-get-state :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_gamepad_get_state_with_dead_zone" %gamepad-get-state-with-dead-zone :uint32 (:uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_gamepad_get_capabilities" %gamepad-get-capabilities :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_gamepad_set_vibration" %gamepad-set-vibration :uint32 (:uint64 :uint32 :float :float :pointer) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

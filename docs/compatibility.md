@@ -82,28 +82,28 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=59 -->
-<!-- generated:selected members=1436 -->
-<!-- generated:complete types=52 -->
+<!-- generated:selected types=69 -->
+<!-- generated:selected members=1565 -->
+<!-- generated:complete types=62 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1002 -->
+<!-- generated:complete members=1108 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=314 -->
+<!-- generated:not-applicable members=337 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1 and the managed closures**: 59 types, 1436 members.
+Selection **Foundation 1 and the managed closures**: 69 types, 1565 members.
 
 | | |
 | --- | --- |
-| Types complete | **52** |
+| Types complete | **62** |
 | Types partial | **6** |
 | Types missing | **1** |
-| Members complete | **1002** |
+| Members complete | **1108** |
 | Members partial | **1** |
 | Members missing | **119** |
-| Members not applicable | **314** |
+| Members not applicable | **337** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -169,13 +169,23 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Input.KeyboardState` | **complete** | 6 | 0 | 0 | 3 |
 | `M.X.F.Input.KeyState` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Input.Keys` | **complete** | 160 | 0 | 0 | 1 |
+| `M.X.F.Input.GamePad` | **complete** | 4 | 0 | 0 | 0 |
+| `M.X.F.Input.GamePadState` | **complete** | 11 | 0 | 0 | 4 |
+| `M.X.F.Input.GamePadButtons` | **complete** | 13 | 0 | 0 | 4 |
+| `M.X.F.Input.GamePadDPad` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Input.GamePadThumbSticks` | **complete** | 4 | 0 | 0 | 4 |
+| `M.X.F.Input.GamePadTriggers` | **complete** | 4 | 0 | 0 | 4 |
+| `M.X.F.Input.GamePadCapabilities` | **complete** | 26 | 0 | 0 | 0 |
+| `M.X.F.Input.Buttons` | **complete** | 25 | 0 | 0 | 1 |
+| `M.X.F.Input.GamePadType` | **complete** | 10 | 0 | 0 | 1 |
+| `M.X.F.Input.GamePadDeadZone` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Input.Mouse` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Input.MouseState` | **complete** | 10 | 0 | 0 | 4 |
 | `M.X.F.Input.ButtonState` | **complete** | 2 | 0 | 0 | 1 |
 
 ### Not applicable, and why so many
 
-314 members are classified not applicable, and most of them are one thing: the
+337 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value
@@ -221,10 +231,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=74 -->
-<!-- generated:bound native structs=21 -->
-<!-- generated:bound native struct fields=112 -->
-<!-- generated:bound native constants=243 -->
+<!-- generated:bound native functions=78 -->
+<!-- generated:bound native structs=24 -->
+<!-- generated:bound native struct fields=163 -->
+<!-- generated:bound native constants=282 -->
 <!-- generated:bound native callbacks=2 -->
 <!-- generated:by-value aggregates=2 -->
 <!-- generated:shimmed routes=1 -->

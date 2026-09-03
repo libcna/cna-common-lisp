@@ -179,6 +179,30 @@ Lisp caller writes that function over the operations instead.
 They are absent from the measured selection rather than reported as missing
 types, because reporting a type as missing would claim it *should* be projected.
 
+## No controller was attached when the gamepad tests ran
+
+The `GamePad` family is bound to CNA's own routes and the native tests exercise
+all four of them -- state, state with an explicit dead zone, capabilities and
+vibration -- inside a running game. What they check is that the routes work and
+that a **disconnected** slot answers a well-formed snapshot with every button up,
+rather than failing or returning rubbish. No controller was attached to the
+machine that ran them, so nothing here claims that a pressed button reads as
+pressed, that a thumbstick reads its position, or that vibration was felt.
+
+Two related things this binding does not do:
+
+* the analog **direction bits** -- `Buttons.LeftThumbstickUp` and its seven
+  relatives -- are read from CNA rather than recomputed from the thumbstick
+  vectors. CNA's C ABI documents `pressed_buttons` as carrying the physical and
+  derived bits, and this binding trusts its implementation to derive them, which
+  is what a binding is for. It has not independently verified that derivation
+  against XNA;
+* `GamePadType` is **translated** rather than passed through. CNA numbers the pad
+  types consecutively 0 through 9; XNA numbers them 0 through 8 and then jumps to
+  0x300 for `BigButtonPad`. The projection answers the contract's number, and the
+  two tables are deliberately separate so that neither can be mistaken for the
+  other.
+
 ## Foreign-thread callbacks
 
 Not claimed and not tested. See `docs/callbacks-and-threading.md`.

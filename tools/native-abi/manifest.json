@@ -64,6 +64,45 @@
       "CNA_MOUSE_BUTTON_RIGHT",
       "CNA_MOUSE_BUTTON_X1",
       "CNA_MOUSE_BUTTON_X2",
+      "CNA_GAMEPAD_BUTTON_NONE",
+      "CNA_GAMEPAD_BUTTON_DPAD_UP",
+      "CNA_GAMEPAD_BUTTON_DPAD_DOWN",
+      "CNA_GAMEPAD_BUTTON_DPAD_LEFT",
+      "CNA_GAMEPAD_BUTTON_DPAD_RIGHT",
+      "CNA_GAMEPAD_BUTTON_START",
+      "CNA_GAMEPAD_BUTTON_BACK",
+      "CNA_GAMEPAD_BUTTON_LEFT_STICK",
+      "CNA_GAMEPAD_BUTTON_RIGHT_STICK",
+      "CNA_GAMEPAD_BUTTON_LEFT_SHOULDER",
+      "CNA_GAMEPAD_BUTTON_RIGHT_SHOULDER",
+      "CNA_GAMEPAD_BUTTON_BIG_BUTTON",
+      "CNA_GAMEPAD_BUTTON_A",
+      "CNA_GAMEPAD_BUTTON_B",
+      "CNA_GAMEPAD_BUTTON_X",
+      "CNA_GAMEPAD_BUTTON_Y",
+      "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_LEFT",
+      "CNA_GAMEPAD_BUTTON_RIGHT_TRIGGER",
+      "CNA_GAMEPAD_BUTTON_LEFT_TRIGGER",
+      "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_UP",
+      "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_DOWN",
+      "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_RIGHT",
+      "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_LEFT",
+      "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_UP",
+      "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_DOWN",
+      "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_RIGHT",
+      "CNA_GAMEPAD_TYPE_UNKNOWN",
+      "CNA_GAMEPAD_TYPE_GAMEPAD",
+      "CNA_GAMEPAD_TYPE_WHEEL",
+      "CNA_GAMEPAD_TYPE_ARCADE_STICK",
+      "CNA_GAMEPAD_TYPE_FLIGHT_STICK",
+      "CNA_GAMEPAD_TYPE_DANCE_PAD",
+      "CNA_GAMEPAD_TYPE_GUITAR",
+      "CNA_GAMEPAD_TYPE_ALTERNATE_GUITAR",
+      "CNA_GAMEPAD_TYPE_DRUM_KIT",
+      "CNA_GAMEPAD_TYPE_BIG_BUTTON_PAD",
+      "CNA_GAMEPAD_DEAD_ZONE_NONE",
+      "CNA_GAMEPAD_DEAD_ZONE_INDEPENDENT_AXES",
+      "CNA_GAMEPAD_DEAD_ZONE_CIRCULAR",
       "CNA_SPRITE_SORT_MODE_DEFERRED",
       "CNA_SPRITE_SORT_MODE_IMMEDIATE",
       "CNA_SPRITE_SORT_MODE_TEXTURE",
@@ -187,6 +226,21 @@
     },
     {
       "name": "CNA_MouseState",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GamePadAnalogState",
+      "direction": "out",
+      "versioned": false
+    },
+    {
+      "name": "CNA_GamePadState",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GamePadCapabilities",
       "direction": "inout",
       "versioned": true
     },
@@ -660,6 +714,30 @@
       "name": "cna_mouse_state_equals",
       "header": "input_mouse.h",
       "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_gamepad_get_state",
+      "header": "input.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_gamepad_get_state_with_dead_zone",
+      "header": "input.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_gamepad_get_capabilities",
+      "header": "input_gamepad.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_gamepad_set_vibration",
+      "header": "input_gamepad.h",
+      "thread": "owner",
       "ownership": "none"
     }
   ],
