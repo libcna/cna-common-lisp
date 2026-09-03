@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. The closures added so far are pure managed and touch no native route: the 3D transform types, the bounding volumes, and the Curve family.",
-  "type_count": 39,
-  "member_count": 1248
+  "type_count": 56,
+  "member_count": 1416
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 39,
-  "members": 1248,
+  "types": 56,
+  "members": 1416,
   "types_by_status": {
    "partial": 6,
-   "complete": 32,
+   "complete": 49,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 888,
+   "complete": 988,
    "missing": 119,
-   "not-applicable": 240,
+   "not-applicable": 308,
    "partial": 1
   },
   "diagnostics": 120,
@@ -1367,6 +1367,293 @@
     "HdrBlendable": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:surface-format"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
+   "status": "complete",
+   "members": {
+    "new(Single)": "complete",
+    "ToAlpha()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Alpha8)": "complete",
+    "op_Equality(Alpha8,Alpha8)": "complete",
+    "op_Inequality(Alpha8,Alpha8)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:alpha8"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single)": "complete",
+    "new(Vector3)": "complete",
+    "ToVector3()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Bgr565)": "complete",
+    "op_Equality(Bgr565,Bgr565)": "complete",
+    "op_Inequality(Bgr565,Bgr565)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:bgr565"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Bgra4444)": "complete",
+    "op_Equality(Bgra4444,Bgra4444)": "complete",
+    "op_Inequality(Bgra4444,Bgra4444)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:bgra4444"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Bgra5551)": "complete",
+    "op_Equality(Bgra5551,Bgra5551)": "complete",
+    "op_Inequality(Bgra5551,Bgra5551)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:bgra5551"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Byte4)": "complete",
+    "op_Equality(Byte4,Byte4)": "complete",
+    "op_Inequality(Byte4,Byte4)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:byte4"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle",
+   "status": "complete",
+   "members": {
+    "new(Single)": "complete",
+    "ToSingle()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(HalfSingle)": "complete",
+    "op_Equality(HalfSingle,HalfSingle)": "complete",
+    "op_Inequality(HalfSingle,HalfSingle)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:half-single"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2",
+   "status": "complete",
+   "members": {
+    "new(Single,Single)": "complete",
+    "new(Vector2)": "complete",
+    "ToVector2()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(HalfVector2)": "complete",
+    "op_Equality(HalfVector2,HalfVector2)": "complete",
+    "op_Inequality(HalfVector2,HalfVector2)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:half-vector2"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(HalfVector4)": "complete",
+    "op_Equality(HalfVector4,HalfVector4)": "complete",
+    "op_Inequality(HalfVector4,HalfVector4)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:half-vector4"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2",
+   "status": "complete",
+   "members": {
+    "new(Single,Single)": "complete",
+    "new(Vector2)": "complete",
+    "ToVector2()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(NormalizedByte2)": "complete",
+    "op_Equality(NormalizedByte2,NormalizedByte2)": "complete",
+    "op_Inequality(NormalizedByte2,NormalizedByte2)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:normalized-byte2"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(NormalizedByte4)": "complete",
+    "op_Equality(NormalizedByte4,NormalizedByte4)": "complete",
+    "op_Inequality(NormalizedByte4,NormalizedByte4)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:normalized-byte4"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2",
+   "status": "complete",
+   "members": {
+    "new(Single,Single)": "complete",
+    "new(Vector2)": "complete",
+    "ToVector2()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(NormalizedShort2)": "complete",
+    "op_Equality(NormalizedShort2,NormalizedShort2)": "complete",
+    "op_Inequality(NormalizedShort2,NormalizedShort2)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:normalized-short2"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(NormalizedShort4)": "complete",
+    "op_Equality(NormalizedShort4,NormalizedShort4)": "complete",
+    "op_Inequality(NormalizedShort4,NormalizedShort4)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:normalized-short4"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32",
+   "status": "complete",
+   "members": {
+    "new(Single,Single)": "complete",
+    "new(Vector2)": "complete",
+    "ToVector2()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Rg32)": "complete",
+    "op_Equality(Rg32,Rg32)": "complete",
+    "op_Inequality(Rg32,Rg32)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:rg32"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Rgba1010102)": "complete",
+    "op_Equality(Rgba1010102,Rgba1010102)": "complete",
+    "op_Inequality(Rgba1010102,Rgba1010102)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:rgba1010102"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Rgba64)": "complete",
+    "op_Equality(Rgba64,Rgba64)": "complete",
+    "op_Inequality(Rgba64,Rgba64)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:rgba64"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2",
+   "status": "complete",
+   "members": {
+    "new(Single,Single)": "complete",
+    "new(Vector2)": "complete",
+    "ToVector2()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Short2)": "complete",
+    "op_Equality(Short2,Short2)": "complete",
+    "op_Inequality(Short2,Short2)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:short2"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
+   "status": "complete",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector4)": "complete",
+    "ToVector4()": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "Equals(Short4)": "complete",
+    "op_Equality(Short4,Short4)": "complete",
+    "op_Inequality(Short4,Short4)": "not-applicable",
+    "PackedValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics.packed-vector:short4"
   },
   {
    "name": "Microsoft.Xna.Framework.Input.Keyboard",

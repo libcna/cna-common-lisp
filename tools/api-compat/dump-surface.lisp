@@ -24,6 +24,7 @@
 (defparameter *packages*
   '("MICROSOFT.XNA.FRAMEWORK"
     "MICROSOFT.XNA.FRAMEWORK.GRAPHICS"
+    "MICROSOFT.XNA.FRAMEWORK.GRAPHICS.PACKED-VECTOR"
     "MICROSOFT.XNA.FRAMEWORK.INPUT"))
 
 ;;; --- a very small JSON writer -------------------------------------------

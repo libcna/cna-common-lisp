@@ -607,6 +607,44 @@
          (= 10.0f0 (xna:curve-key-value (xna:curve-key-collection-item keys 1)))
          (= 99.0f0 (xna:curve-key-value (xna:curve-key-collection-item keys 2))))))
 
+(defobservation "packedvector.half-is-not-binary16" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle"
+  "XNA's 16-bit half has no infinity and no NaN: an exponent of 31 means 2^16
+   rather than a special value, so the format reaches 131008 where IEEE 754
+   binary16 stops at 65504, and anything larger saturates there."
+  (and (= 65504.0f0 (pv:half-single-to-single (pv:make-half-single 65504.0)))
+       (= 70016.0f0 (pv:half-single-to-single (pv:make-half-single 70000.0)))
+       (= 131008.0f0 (pv:half-single-to-single (pv:make-half-single 200000.0)))
+       (= 131008.0f0 (pv:half-single-to-single
+                      (pv:make-half-single
+                       (cna-lisp.internal:bits-single-float #x7F800000))))))
+
+(defobservation "packedvector.signed-normalised-reserves-a-code-point" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2"
+  "PackSNorm clamps to plus or minus half the range, so -1.0 packs to 0x81 and
+   the pattern below it is never produced; UnpackSNorm reads that reserved
+   pattern back as exactly -1.0."
+  (and (= #x81 (pv:normalized-byte2-packed-value (pv:make-normalized-byte2 -1.0 0.0)))
+       (= -1.0f0 (xna:vector2-x (pv:normalized-byte2-to-vector2
+                                 (pv:make-normalized-byte2 -1.0 0.0))))))
+
+(defobservation "packedvector.rounds-half-to-even" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8"
+  "Every packed conversion rounds through Math.Round(double), which rounds halves
+   to even, so the half-way inputs land on the even code point either side."
+  (and (= 0 (pv:alpha8-packed-value (pv:make-alpha8 (/ 0.5 255.0))))
+       (= 2 (pv:alpha8-packed-value (pv:make-alpha8 (/ 1.5 255.0))))
+       (= 2 (pv:alpha8-packed-value (pv:make-alpha8 (/ 2.5 255.0))))))
+
+(defobservation "packedvector.bgr565-layout" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565"
+  "Bgr565 puts five bits of X at the top of the word, six of Y in the middle and
+   five of Z at the bottom -- the reverse of the component order every non-Bgr
+   packed type uses."
+  (and (= #xF800 (pv:bgr565-packed-value (pv:make-bgr565 1.0 0.0 0.0)))
+       (= #x07E0 (pv:bgr565-packed-value (pv:make-bgr565 0.0 1.0 0.0)))
+       (= #x001F (pv:bgr565-packed-value (pv:make-bgr565 0.0 0.0 1.0)))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

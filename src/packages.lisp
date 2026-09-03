@@ -243,6 +243,63 @@
    ;; --- SpriteBatch -------------------------------------------------------
    #:sprite-batch #:begin #:end #:draw-texture))
 
+(defpackage #:microsoft.xna.framework.graphics.packed-vector
+  (:documentation
+   "Common Lisp projection of the Microsoft.Xna.Framework.Graphics.PackedVector
+namespace: seventeen packed value types and nothing else.")
+  (:use #:cl)
+  (:local-nicknames (#:xna #:microsoft.xna.framework))
+  (:export
+   #:alpha8 #:make-alpha8 #:alpha8-p #:copy-alpha8
+   #:alpha8-packed-value #:alpha8-to-alpha #:alpha8-equal
+   #:bgr565 #:make-bgr565 #:bgr565-p #:copy-bgr565
+   #:bgr565-packed-value #:bgr565-to-vector3 #:bgr565-equal
+   #:make-bgr565-from-vector
+   #:bgra4444 #:make-bgra4444 #:bgra4444-p #:copy-bgra4444
+   #:bgra4444-packed-value #:bgra4444-to-vector4 #:bgra4444-equal
+   #:make-bgra4444-from-vector
+   #:bgra5551 #:make-bgra5551 #:bgra5551-p #:copy-bgra5551
+   #:bgra5551-packed-value #:bgra5551-to-vector4 #:bgra5551-equal
+   #:make-bgra5551-from-vector
+   #:byte4 #:make-byte4 #:byte4-p #:copy-byte4
+   #:byte4-packed-value #:byte4-to-vector4 #:byte4-equal
+   #:make-byte4-from-vector
+   #:half-single #:make-half-single #:half-single-p #:copy-half-single
+   #:half-single-packed-value #:half-single-to-single #:half-single-equal
+   #:half-vector2 #:make-half-vector2 #:half-vector2-p #:copy-half-vector2
+   #:half-vector2-packed-value #:half-vector2-to-vector2 #:half-vector2-equal
+   #:make-half-vector2-from-vector
+   #:half-vector4 #:make-half-vector4 #:half-vector4-p #:copy-half-vector4
+   #:half-vector4-packed-value #:half-vector4-to-vector4 #:half-vector4-equal
+   #:make-half-vector4-from-vector
+   #:normalized-byte2 #:make-normalized-byte2 #:normalized-byte2-p #:copy-normalized-byte2
+   #:normalized-byte2-packed-value #:normalized-byte2-to-vector2 #:normalized-byte2-equal
+   #:make-normalized-byte2-from-vector
+   #:normalized-byte4 #:make-normalized-byte4 #:normalized-byte4-p #:copy-normalized-byte4
+   #:normalized-byte4-packed-value #:normalized-byte4-to-vector4 #:normalized-byte4-equal
+   #:make-normalized-byte4-from-vector
+   #:normalized-short2 #:make-normalized-short2 #:normalized-short2-p #:copy-normalized-short2
+   #:normalized-short2-packed-value #:normalized-short2-to-vector2 #:normalized-short2-equal
+   #:make-normalized-short2-from-vector
+   #:normalized-short4 #:make-normalized-short4 #:normalized-short4-p #:copy-normalized-short4
+   #:normalized-short4-packed-value #:normalized-short4-to-vector4 #:normalized-short4-equal
+   #:make-normalized-short4-from-vector
+   #:rg32 #:make-rg32 #:rg32-p #:copy-rg32
+   #:rg32-packed-value #:rg32-to-vector2 #:rg32-equal
+   #:make-rg32-from-vector
+   #:rgba1010102 #:make-rgba1010102 #:rgba1010102-p #:copy-rgba1010102
+   #:rgba1010102-packed-value #:rgba1010102-to-vector4 #:rgba1010102-equal
+   #:make-rgba1010102-from-vector
+   #:rgba64 #:make-rgba64 #:rgba64-p #:copy-rgba64
+   #:rgba64-packed-value #:rgba64-to-vector4 #:rgba64-equal
+   #:make-rgba64-from-vector
+   #:short2 #:make-short2 #:short2-p #:copy-short2
+   #:short2-packed-value #:short2-to-vector2 #:short2-equal
+   #:make-short2-from-vector
+   #:short4 #:make-short4 #:short4-p #:copy-short4
+   #:short4-packed-value #:short4-to-vector4 #:short4-equal
+   #:make-short4-from-vector))
+
 (defpackage #:microsoft.xna.framework.input
   (:documentation "Common Lisp projection of the Microsoft.Xna.Framework.Input namespace.")
   (:use #:cl)

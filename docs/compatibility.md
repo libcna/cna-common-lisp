@@ -82,28 +82,28 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=39 -->
-<!-- generated:selected members=1248 -->
-<!-- generated:complete types=32 -->
+<!-- generated:selected types=56 -->
+<!-- generated:selected members=1416 -->
+<!-- generated:complete types=49 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=888 -->
+<!-- generated:complete members=988 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=240 -->
+<!-- generated:not-applicable members=308 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1 and the managed closures**: 39 types, 1248 members.
+Selection **Foundation 1 and the managed closures**: 56 types, 1416 members.
 
 | | |
 | --- | --- |
-| Types complete | **32** |
+| Types complete | **49** |
 | Types partial | **6** |
 | Types missing | **1** |
-| Members complete | **888** |
+| Members complete | **988** |
 | Members partial | **1** |
 | Members missing | **119** |
-| Members not applicable | **240** |
+| Members not applicable | **308** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -148,6 +148,23 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.SpriteSortMode` | **complete** | 5 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SpriteEffects` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SurfaceFormat` | **complete** | 20 | 0 | 0 | 1 |
+| `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Bgra5551` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Byte4` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.HalfSingle` | **complete** | 5 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.HalfVector2` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.HalfVector4` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.NormalizedByte2` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.NormalizedByte4` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.NormalizedShort2` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.NormalizedShort4` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Rg32` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Rgba1010102` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Rgba64` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Short2` | **complete** | 6 | 0 | 0 | 4 |
+| `M.X.F.Graphics.PackedVector.Short4` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Input.Keyboard` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Input.KeyboardState` | **complete** | 6 | 0 | 0 | 3 |
 | `M.X.F.Input.KeyState` | **complete** | 2 | 0 | 0 | 1 |
@@ -155,7 +172,7 @@ collapsed overload family says how each of its overloads is expressed.
 
 ### Not applicable, and why so many
 
-240 members are classified not applicable, and most of them are one thing: the
+308 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value

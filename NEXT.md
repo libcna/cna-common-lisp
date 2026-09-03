@@ -56,26 +56,26 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=39 -->
-<!-- generated:selected members=1248 -->
-<!-- generated:complete types=32 -->
+<!-- generated:selected types=56 -->
+<!-- generated:selected members=1416 -->
+<!-- generated:complete types=49 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=888 -->
+<!-- generated:complete members=988 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=240 -->
+<!-- generated:not-applicable members=308 -->
 <!-- generated:disagreement total=0 -->
 
-39 selected types, 1248 members: **32 complete, 6 partial, 1 missing**;
-**888 members complete, 119 missing**, 240 not applicable, 1 partial.
+56 selected types, 1416 members: **49 complete, 6 partial, 1 missing**;
+**988 members complete, 119 missing**, 308 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 **Every pure-managed type in the selection is complete.** The math types
 -- `Vector2`, `Vector3`, `Vector4`, `Quaternion`, `Matrix`, `Plane`, `Ray`,
 `BoundingBox`, `BoundingSphere`, `BoundingFrustum`, `MathHelper`, `Color`,
-`Point`, `Rectangle` -- the `Curve` family, and all six enumerations answer every
-member of the selected contract. Everything still missing is native-facing:
+`Point`, `Rectangle` -- the `Curve` family, the seventeen packed vector types and all six
+enumerations answer every member of the selected contract. Everything still missing is native-facing:
 graphics, input beyond the keyboard, content, and the event projection.
 
 ## GLOBAL_ACTIONABLE_LOCAL
@@ -97,24 +97,23 @@ is a packaging limit, not a blocker.
 The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts.
 
-1. **Packed vectors**: the 19-type `Graphics.PackedVector` family. Pure managed.
-2. **Vertex descriptors and vertex value types**: `VertexElement`,
+1. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-3. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
+2. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
    `Input.Touch`. `Mouse.GetState` becomes `mouse-get-state`, which is the whole
    reason the static-class rule exists.
-4. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`, and the
    **event projection** the four `Game` events and six `GraphicsDevice` events
    need. That one decision unblocks `GraphicsResource` and 21 of
    `GraphicsDeviceManager`'s 30 members.
-5. **`System.IO.Stream` and `TitleContainer`**, which unblock
+4. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-6. **Graphics state objects** (`BlendState`, `DepthStencilState`,
+5. **Graphics state objects** (`BlendState`, `DepthStencilState`,
    `RasterizerState`, `SamplerState`), which unblock `SpriteBatch.Begin`'s four
    state-bearing overloads.
-7. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-8. **Audio, effects, models, media, storage, gamer services, networking.**
+6. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
+7. **Audio, effects, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 

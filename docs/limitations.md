@@ -167,6 +167,18 @@ because the contract is what the framework answers, and it is marked as a defect
 wherever it is reproduced -- in the source, in the unit test and in the
 behaviour corpus.
 
+## The two IPackedVector interfaces are not projected
+
+`IPackedVector` and `IPackedVector<TPacked>` are interfaces, and Common Lisp has
+no interface concept to project them onto. Everything they declare is present on
+each of the seventeen packed types as an ordinary function -- the packed value
+and the conversion to and from a vector -- so nothing is missing except the
+ability to write a function over "any packed vector" by naming the interface. A
+Lisp caller writes that function over the operations instead.
+
+They are absent from the measured selection rather than reported as missing
+types, because reporting a type as missing would claim it *should* be projected.
+
 ## Foreign-thread callbacks
 
 Not claimed and not tested. See `docs/callbacks-and-threading.md`.

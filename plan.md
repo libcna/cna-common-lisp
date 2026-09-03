@@ -179,7 +179,8 @@ are pure managed and touch no native route:
 * the bounding volumes -- `Ray`, `BoundingBox`, `BoundingSphere`,
   `BoundingFrustum`, `ContainmentType`, `PlaneIntersectionType`;
 * the `Curve` family -- `Curve`, `CurveKey`, `CurveKeyCollection`,
-  `CurveContinuity`, `CurveLoopType`, `CurveTangent`.
+  `CurveContinuity`, `CurveLoopType`, `CurveTangent`;
+* the seventeen `Graphics.PackedVector` types, in their own package.
 
 ## 6. Measured status
 
@@ -197,25 +198,25 @@ which refuses any figure in the prose that the reports do not produce.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=39 -->
-<!-- generated:selected members=1248 -->
-<!-- generated:complete types=32 -->
+<!-- generated:selected types=56 -->
+<!-- generated:selected members=1416 -->
+<!-- generated:complete types=49 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=888 -->
+<!-- generated:complete members=988 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=240 -->
+<!-- generated:not-applicable members=308 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1 and the managed closures**: 39 types, 1248 members.
+Selection **Foundation 1 and the managed closures**: 56 types, 1416 members.
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **32 / 6 / 1** |
-| Members complete | **888** |
+| Types complete / partial / missing | **49 / 6 / 1** |
+| Members complete | **988** |
 | Members missing | **119** |
-| Members not applicable | **240** |
+| Members not applicable | **308** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
 

@@ -54,6 +54,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "framework/game-time")
    ;; --- Microsoft.Xna.Framework.Graphics ----------------------------------
    (:file "graphics/enums")
+   (:file "graphics/packed-vector")
    (:file "graphics/viewport")
    (:file "graphics/graphics-device")
    (:file "graphics/texture-2d")
@@ -85,6 +86,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "unit/bounding-frustum")
    (:file "unit/color")
    (:file "unit/curve")
+   (:file "unit/packed-vector")
    (:file "unit/game-time")
    (:file "unit/keys")
    (:file "unit/conditions")

@@ -53,3 +53,20 @@ in XNA, instead of signalling."
 (defun negative-zero-p (number)
   "True when NUMBER is the negative zero of its format."
   (and (floatp number) (zerop number) (minusp (float-sign number))))
+
+;;; The bit pattern of a binary32, which the half-precision packed vectors need
+;;; and Common Lisp does not define. Same reason as the predicates above: this is
+;;; the part of IEEE 754 the standard leaves to the implementation.
+
+(declaim (inline single-float-bits bits-single-float))
+
+(defun single-float-bits (number)
+  "NUMBER's binary32 bit pattern, as an unsigned 32-bit integer."
+  #+sbcl (logand (sb-kernel:single-float-bits (float number 1.0f0)) #xFFFFFFFF)
+  #-sbcl (error "no binary32 bit access on this implementation"))
+
+(defun bits-single-float (bits)
+  "The binary32 number an unsigned 32-bit pattern names."
+  #+sbcl (sb-kernel:make-single-float
+          (if (logbitp 31 bits) (- bits (ash 1 32)) bits))
+  #-sbcl (error "no binary32 bit access on this implementation"))

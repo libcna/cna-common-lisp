@@ -56,6 +56,9 @@ stubs:
 * the `Curve` family — `Curve`, `CurveKey`, `CurveKeyCollection` and the three
   curve enumerations — with the five loop types, the three tangent kinds and the
   step continuity all behaving as the framework's own IL does;
+* the seventeen `Graphics.PackedVector` formats, generated from one table of bit
+  layouts, including XNA's 16-bit half — which is **not** IEEE 754 binary16 and
+  says so in the code, the tests and the documentation;
 * the whole bounding-volume family — `Ray`, `BoundingBox`, `BoundingSphere` and
   `BoundingFrustum`, with every intersection and containment between them,
   `ContainmentType` and `PlaneIntersectionType` — down to which comparison is
@@ -74,26 +77,26 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=39 -->
-<!-- generated:selected members=1248 -->
-<!-- generated:complete types=32 -->
+<!-- generated:selected types=56 -->
+<!-- generated:selected members=1416 -->
+<!-- generated:complete types=49 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=888 -->
+<!-- generated:complete members=988 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=240 -->
+<!-- generated:not-applicable members=308 -->
 <!-- generated:disagreement total=0 -->
 <!-- generated:bound native functions=69 -->
 <!-- generated:bound native structs=20 -->
 
-The generated scoreboard, over a selection of **39 XNA types and 1248 members**:
+The generated scoreboard, over a selection of **56 XNA types and 1416 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **32 / 6 / 1** |
-| Members complete / missing | **888 / 119** |
-| Members not applicable | **240** |
+| Types complete / partial / missing | **49 / 6 / 1** |
+| Members complete / missing | **988 / 119** |
+| Members not applicable | **308** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing

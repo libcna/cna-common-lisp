@@ -2,7 +2,7 @@
  "schema_version": 1,
  "description": "The deterministic projection from the selected XNA contract to Common Lisp. tools/api-compat/verify.py applies these rules to the live image; docs/common-lisp-mapping.md is the prose that explains them.",
  "naming": {
-  "identifier": "A CLR identifier becomes a Lisp symbol by inserting a hyphen at each word boundary and lowercasing. Texture2D becomes texture-2d.",
+  "identifier": "A CLR identifier becomes a Lisp symbol by inserting a hyphen at each case boundary and lowercasing. Texture2D becomes texture-2d, because the D after the digit starts a new word; Bgra4444 becomes bgra4444, because nothing does. That is the same rule the generated ABI constants already follow.",
   "reference_type_member": "<member>, in the type's package, as a generic function or reader.",
   "value_type_member": "<type>-<member>, in the type's package. The prefix is what keeps Rectangle's Left from colliding with Viewport's.",
   "static_class_member": "<class>-<member>, so that Mouse and GamePad can join Keyboard's namespace without collision.",
@@ -12,7 +12,8 @@
  "namespace_packages": {
   "Microsoft.Xna.Framework": "microsoft.xna.framework",
   "Microsoft.Xna.Framework.Graphics": "microsoft.xna.framework.graphics",
-  "Microsoft.Xna.Framework.Input": "microsoft.xna.framework.input"
+  "Microsoft.Xna.Framework.Input": "microsoft.xna.framework.input",
+  "Microsoft.Xna.Framework.Graphics.PackedVector": "microsoft.xna.framework.graphics.packed-vector"
  },
  "universal_not_applicable": [
   {
@@ -2458,6 +2459,553 @@
     "IsConstant": {
      "lisp": "curve-is-constant"
     }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "alpha8",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single)": "make-alpha8"
+   },
+   "member_overrides": {
+    "ToAlpha()": {
+     "lisp": "alpha8-to-alpha"
+    },
+    "Equals(Alpha8)": {
+     "lisp": "alpha8-equal"
+    },
+    "op_Equality(Alpha8,Alpha8)": {
+     "lisp": "alpha8-equal"
+    },
+    "PackedValue": {
+     "lisp": "alpha8-packed-value",
+     "setf": true
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "bgr565",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single)": "make-bgr565",
+    "new(Vector3)": "make-bgr565-from-vector"
+   },
+   "member_overrides": {
+    "ToVector3()": {
+     "lisp": "bgr565-to-vector3"
+    },
+    "Equals(Bgr565)": {
+     "lisp": "bgr565-equal"
+    },
+    "op_Equality(Bgr565,Bgr565)": {
+     "lisp": "bgr565-equal"
+    },
+    "PackedValue": {
+     "lisp": "bgr565-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-bgr565 and make-bgr565-from-vector",
+     "reason": "The component constructor and the vector constructor are separate names, as MAKE-PLANE and MAKE-PLANE-FROM-VECTOR4 are: one function taking either four floats or one vector would be telling two constructors apart by the run-time type of an argument rather than by the call."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "bgra4444",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-bgra4444",
+    "new(Vector4)": "make-bgra4444-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "bgra4444-to-vector4"
+    },
+    "Equals(Bgra4444)": {
+     "lisp": "bgra4444-equal"
+    },
+    "op_Equality(Bgra4444,Bgra4444)": {
+     "lisp": "bgra4444-equal"
+    },
+    "PackedValue": {
+     "lisp": "bgra4444-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-bgra4444 and make-bgra4444-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "bgra5551",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-bgra5551",
+    "new(Vector4)": "make-bgra5551-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "bgra5551-to-vector4"
+    },
+    "Equals(Bgra5551)": {
+     "lisp": "bgra5551-equal"
+    },
+    "op_Equality(Bgra5551,Bgra5551)": {
+     "lisp": "bgra5551-equal"
+    },
+    "PackedValue": {
+     "lisp": "bgra5551-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-bgra5551 and make-bgra5551-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "byte4",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-byte4",
+    "new(Vector4)": "make-byte4-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "byte4-to-vector4"
+    },
+    "Equals(Byte4)": {
+     "lisp": "byte4-equal"
+    },
+    "op_Equality(Byte4,Byte4)": {
+     "lisp": "byte4-equal"
+    },
+    "PackedValue": {
+     "lisp": "byte4-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-byte4 and make-byte4-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "half-single",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single)": "make-half-single"
+   },
+   "member_overrides": {
+    "ToSingle()": {
+     "lisp": "half-single-to-single"
+    },
+    "Equals(HalfSingle)": {
+     "lisp": "half-single-equal"
+    },
+    "op_Equality(HalfSingle,HalfSingle)": {
+     "lisp": "half-single-equal"
+    },
+    "PackedValue": {
+     "lisp": "half-single-packed-value",
+     "setf": true
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "half-vector2",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single)": "make-half-vector2",
+    "new(Vector2)": "make-half-vector2-from-vector"
+   },
+   "member_overrides": {
+    "ToVector2()": {
+     "lisp": "half-vector2-to-vector2"
+    },
+    "Equals(HalfVector2)": {
+     "lisp": "half-vector2-equal"
+    },
+    "op_Equality(HalfVector2,HalfVector2)": {
+     "lisp": "half-vector2-equal"
+    },
+    "PackedValue": {
+     "lisp": "half-vector2-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-half-vector2 and make-half-vector2-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "half-vector4",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-half-vector4",
+    "new(Vector4)": "make-half-vector4-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "half-vector4-to-vector4"
+    },
+    "Equals(HalfVector4)": {
+     "lisp": "half-vector4-equal"
+    },
+    "op_Equality(HalfVector4,HalfVector4)": {
+     "lisp": "half-vector4-equal"
+    },
+    "PackedValue": {
+     "lisp": "half-vector4-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-half-vector4 and make-half-vector4-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "normalized-byte2",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single)": "make-normalized-byte2",
+    "new(Vector2)": "make-normalized-byte2-from-vector"
+   },
+   "member_overrides": {
+    "ToVector2()": {
+     "lisp": "normalized-byte2-to-vector2"
+    },
+    "Equals(NormalizedByte2)": {
+     "lisp": "normalized-byte2-equal"
+    },
+    "op_Equality(NormalizedByte2,NormalizedByte2)": {
+     "lisp": "normalized-byte2-equal"
+    },
+    "PackedValue": {
+     "lisp": "normalized-byte2-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-normalized-byte2 and make-normalized-byte2-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "normalized-byte4",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-normalized-byte4",
+    "new(Vector4)": "make-normalized-byte4-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "normalized-byte4-to-vector4"
+    },
+    "Equals(NormalizedByte4)": {
+     "lisp": "normalized-byte4-equal"
+    },
+    "op_Equality(NormalizedByte4,NormalizedByte4)": {
+     "lisp": "normalized-byte4-equal"
+    },
+    "PackedValue": {
+     "lisp": "normalized-byte4-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-normalized-byte4 and make-normalized-byte4-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "normalized-short2",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single)": "make-normalized-short2",
+    "new(Vector2)": "make-normalized-short2-from-vector"
+   },
+   "member_overrides": {
+    "ToVector2()": {
+     "lisp": "normalized-short2-to-vector2"
+    },
+    "Equals(NormalizedShort2)": {
+     "lisp": "normalized-short2-equal"
+    },
+    "op_Equality(NormalizedShort2,NormalizedShort2)": {
+     "lisp": "normalized-short2-equal"
+    },
+    "PackedValue": {
+     "lisp": "normalized-short2-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-normalized-short2 and make-normalized-short2-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "normalized-short4",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-normalized-short4",
+    "new(Vector4)": "make-normalized-short4-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "normalized-short4-to-vector4"
+    },
+    "Equals(NormalizedShort4)": {
+     "lisp": "normalized-short4-equal"
+    },
+    "op_Equality(NormalizedShort4,NormalizedShort4)": {
+     "lisp": "normalized-short4-equal"
+    },
+    "PackedValue": {
+     "lisp": "normalized-short4-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-normalized-short4 and make-normalized-short4-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "rg32",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single)": "make-rg32",
+    "new(Vector2)": "make-rg32-from-vector"
+   },
+   "member_overrides": {
+    "ToVector2()": {
+     "lisp": "rg32-to-vector2"
+    },
+    "Equals(Rg32)": {
+     "lisp": "rg32-equal"
+    },
+    "op_Equality(Rg32,Rg32)": {
+     "lisp": "rg32-equal"
+    },
+    "PackedValue": {
+     "lisp": "rg32-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-rg32 and make-rg32-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "rgba1010102",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-rgba1010102",
+    "new(Vector4)": "make-rgba1010102-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "rgba1010102-to-vector4"
+    },
+    "Equals(Rgba1010102)": {
+     "lisp": "rgba1010102-equal"
+    },
+    "op_Equality(Rgba1010102,Rgba1010102)": {
+     "lisp": "rgba1010102-equal"
+    },
+    "PackedValue": {
+     "lisp": "rgba1010102-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-rgba1010102 and make-rgba1010102-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "rgba64",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-rgba64",
+    "new(Vector4)": "make-rgba64-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "rgba64-to-vector4"
+    },
+    "Equals(Rgba64)": {
+     "lisp": "rgba64-equal"
+    },
+    "op_Equality(Rgba64,Rgba64)": {
+     "lisp": "rgba64-equal"
+    },
+    "PackedValue": {
+     "lisp": "rgba64-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-rgba64 and make-rgba64-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Short2": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "short2",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single)": "make-short2",
+    "new(Vector2)": "make-short2-from-vector"
+   },
+   "member_overrides": {
+    "ToVector2()": {
+     "lisp": "short2-to-vector2"
+    },
+    "Equals(Short2)": {
+     "lisp": "short2-equal"
+    },
+    "op_Equality(Short2,Short2)": {
+     "lisp": "short2-equal"
+    },
+    "PackedValue": {
+     "lisp": "short2-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-short2 and make-short2-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.PackedVector.Short4": {
+   "lisp_package": "microsoft.xna.framework.graphics.packed-vector",
+   "lisp_name": "short4",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Single,Single,Single,Single)": "make-short4",
+    "new(Vector4)": "make-short4-from-vector"
+   },
+   "member_overrides": {
+    "ToVector4()": {
+     "lisp": "short4-to-vector4"
+    },
+    "Equals(Short4)": {
+     "lisp": "short4-equal"
+    },
+    "op_Equality(Short4,Short4)": {
+     "lisp": "short4-equal"
+    },
+    "PackedValue": {
+     "lisp": "short4-packed-value",
+     "setf": true
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-short4 and make-short4-from-vector",
+     "reason": "As every other packed vector type."
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
    }
   }
  }

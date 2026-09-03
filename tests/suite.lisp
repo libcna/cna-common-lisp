@@ -18,6 +18,7 @@
   (:use #:cl #:fiveam)
   (:local-nicknames (#:xna   #:microsoft.xna.framework)
                     (#:gfx   #:microsoft.xna.framework.graphics)
+                    (#:pv    #:microsoft.xna.framework.graphics.packed-vector)
                     (#:input #:microsoft.xna.framework.input)
                     (#:int   #:cna-lisp.internal)
                     (#:ffi   #:cna-lisp.internal.ffi))
