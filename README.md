@@ -65,27 +65,29 @@ placeholder methods that answer a default and claim success.
 <!-- generated:complete types=18 -->
 <!-- generated:partial types=10 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=762 -->
+<!-- generated:complete members=756 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=140 -->
-<!-- generated:not-applicable members=178 -->
+<!-- generated:missing members=136 -->
+<!-- generated:not-applicable members=188 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=68 -->
-<!-- generated:bound native structs=19 -->
+<!-- generated:bound native functions=69 -->
+<!-- generated:bound native structs=20 -->
 
 The generated scoreboard, over a selection of **29 XNA types and 1081 members**:
 
 | | |
 | --- | --- |
 | Types complete / partial / missing | **18 / 10 / 1** |
-| Members complete / missing | **762 / 140** |
-| Members not applicable | **178** |
+| Members complete / missing | **756 / 136** |
+| Members not applicable | **188** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
-private leaked into a public package, and every exported symbol is accounted
-for. It does **not** mean the binding is finished: 140 members are missing and
-are reported as missing. `docs/compatibility.md` is the authority.
+private leaked into a public package, every exported symbol is accounted for, no
+mapping rule names a member that does not exist, and every overload family that
+collapses onto one function says how each overload is expressed. It does **not**
+mean the binding is finished: 136 members are missing and are reported as
+missing. `docs/compatibility.md` is the authority.
 
 The private foreign layer binds **68 native routes** and **19 native structs**,
 all of them generated from the canonical CNA headers and checked by a C
@@ -209,7 +211,7 @@ python3 tools/native-abi/generate.py \
 tools/native-abi/verify.sh /path/to/cna/modules/c-api/include
 
 # structural compatibility report
-sbcl --script tools/api-compat/verify.lisp
+tools/api-compat/verify.sh --strict
 ```
 
 Neither is needed to *use* a released CNA-Lisp: a consumer needs SBCL, the ASDF

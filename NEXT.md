@@ -11,6 +11,7 @@ export CNA_NATIVE_LIBRARY=/absolute/path/to/libcna_c_api.so   # ABI 0.21.0, HEAD
 export CNA_HEADERS=/path/to/cna/modules/c-api/include
 export CNA_ABI_BASELINE=/path/to/cna/tools/c-api/abi_baseline.json
 export CNA_LISP_VALUEPROBE="$PWD/build-probe/libcna-lisp-valueprobe.so"
+export CNA_LISP_SHIM="$PWD/build-probe/libcna-lisp-shim.so"      # optional
 
 # 1. the generated foreign layer is current
 python3 tools/native-abi/generate.py --check --headers "$CNA_HEADERS" --baseline "$CNA_ABI_BASELINE"
@@ -38,8 +39,9 @@ would go stale the moment the next commit lands.
 | Gate | Result |
 | --- | --- |
 | ASDF load from a fresh image | no warnings |
-| `asdf:test-system` with a native library | **1475 checks, 0 failures, 0 not run** |
-| `asdf:test-system` without one | 1114 checks, 0 failures, **61 not run** and reported as such |
+| `asdf:test-system` with a native library and the shim | **1503 checks, 0 failures** |
+| `asdf:test-system` with a native library, no shim | 1500 checks, 0 failures (the setter's refusal path) |
+| `asdf:test-system` without either | 1123 checks, 0 failures, **67 not run** and reported as such |
 | Compiler-backed ABI probe | compiles clean at `-Wall -Wextra -Werror -Wpedantic` |
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
@@ -59,14 +61,14 @@ and nothing in this repository says otherwise.
 <!-- generated:complete types=18 -->
 <!-- generated:partial types=10 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=762 -->
+<!-- generated:complete members=756 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=140 -->
-<!-- generated:not-applicable members=178 -->
+<!-- generated:missing members=136 -->
+<!-- generated:not-applicable members=188 -->
 <!-- generated:disagreement total=0 -->
 
 29 selected types, 1081 members: **18 complete, 10 partial, 1 missing**;
-**762 members complete, 140 missing**, 178 not applicable, 1 partial.
+**756 members complete, 136 missing**, 188 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 `MathHelper`, `Vector2`, `Vector3`, `Vector4` and `Quaternion` are complete.
@@ -75,19 +77,17 @@ what it is waiting for.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
-**GLOBAL_ACTIONABLE_LOCAL is not zero.** There is a great deal of local work left,
-and none of it is blocked on anything outside this repository. The one genuinely
-external block is a single member.
+**GLOBAL_ACTIONABLE_LOCAL is not zero**, and there is now **nothing externally
+blocked at all**. Every remaining absence is local work.
 
-### Externally blocked (1 member)
-
-| Member | Blocker |
-| --- | --- |
-| `GraphicsDevice.Viewport` setter | `cna_graphics_device_set_viewport` takes `CNA_Viewport` (24 bytes) by value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot pass a MEMORY-class aggregate without `cffi-libffi`, which needs libffi headers and a C compiler at load time. Proved by `tools/native-abi/generate.py`, recorded in `docs/generated/native-abi-manifest.json` under `blocked_routes`. |
-
-Unblocking it needs one of: a CNA route taking the viewport by pointer; a CFFI
-that can pass a MEMORY-class aggregate without libffi; or a decision that a
-released CNA-Lisp may require a C toolchain, which it currently may not.
+`GraphicsDevice.Viewport`'s setter used to be recorded here as the one external
+blocker, on the grounds that CFFI cannot pass a 24-byte aggregate by value. That
+was a true fact and a wrong conclusion: a tiny private shim for a *proved* ABI
+impedance mismatch is exactly the permitted remedy, and the generator now emits
+one. The setter works through it. The shim stays optional -- a release must load
+with no C toolchain -- so without `CNA_LISP_SHIM` the setter refuses with a
+condition naming the variable, the command that builds one, and the reason. That
+is a packaging limit, not a blocker.
 
 ## What to do next, in order
 
@@ -159,6 +159,21 @@ that can be finished, tested and measured before the next one starts.
   is the by-value overload's, and Common Lisp passes a reference already. 75
   members are classified that way, each with the reason recorded in the mapping
   rules.
+* **A `&key` lambda list accepts everything unless something refuses.** That is
+  how `draw-texture` came to accept combinations XNA has no overload for, and how
+  `begin` came to offer a `Begin(SpriteSortMode)` that does not exist. The rules
+  now carry a keyword set per overload and the verifier checks it; do not add a
+  keyword without adding it to the rules and refusing the shapes it does not
+  belong to.
+* **A mapping rule keyed on a signature no member produces is silently ignored.**
+  It is now a `stale_mapping_rule` diagnostic. When adding rules, take the
+  signature from the generated report, not from a listing script -- ten of them
+  were wrong because `System.Nullable\`1[Rectangle]` had been shortened by
+  splitting on the wrong character.
+* **A position and a destination rectangle are not interchangeable.**
+  `SpriteBatch.Draw`'s position overloads take
+  `cna_sprite_batch_submit_scaled_many`; computing a rectangle from a position
+  and a scale loses the fractional position and moves the origin.
 * **An exported symbol that is neither a mapped member nor a declared extension
   is a diagnostic.** Adding a convenience function means adding an entry to
   `cna-lisp.internal::*binding-extensions*` with the reason it exists. That is the

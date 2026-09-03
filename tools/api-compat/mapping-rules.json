@@ -246,23 +246,28 @@
     },
     "op_Multiply(Vector2,Single)": {
      "lisp": "vector2-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Single,Vector2)": {
      "lisp": "vector2-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Vector2,Vector2)": {
      "lisp": "vector2-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Vector2,Single)": {
      "lisp": "vector2-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Vector2,Vector2)": {
      "lisp": "vector2-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Add(Vector2,Vector2)": {
      "lisp": "vector2-add"
@@ -275,19 +280,23 @@
     },
     "Multiply(Vector2,Single)": {
      "lisp": "vector2-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Multiply(Vector2,Vector2)": {
      "lisp": "vector2-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Vector2,Single)": {
      "lisp": "vector2-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Vector2,Vector2)": {
      "lisp": "vector2-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Distance(Vector2,Vector2)": {
      "lisp": "vector2-distance"
@@ -340,38 +349,46 @@
     },
     "Transform(Vector2,Matrix)": {
      "lisp": "vector2-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Vector2,Quaternion)": {
      "lisp": "vector2-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "TransformNormal(Vector2,Matrix)": {
      "lisp": "vector2-transform-normal"
     },
     "Transform(Vector2[],Matrix&,Vector2[])": {
      "lisp": "vector2-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector2[],Int32,Matrix&,Vector2[],Int32,Int32)": {
      "lisp": "vector2-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector2[],Quaternion&,Vector2[])": {
      "lisp": "vector2-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector2[],Int32,Quaternion&,Vector2[],Int32,Int32)": {
      "lisp": "vector2-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "TransformNormal(Vector2[],Matrix&,Vector2[])": {
      "lisp": "vector2-transform-normal-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "TransformNormal(Vector2[],Int32,Matrix&,Vector2[],Int32,Int32)": {
      "lisp": "vector2-transform-normal-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     }
    },
    "not_applicable": {
@@ -389,7 +406,16 @@
     "Normalize(Vector2&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Transform(Vector2&,Matrix&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "TransformNormal(Vector2&,Matrix&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Transform(Vector2&,Quaternion&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
+    "Transform(Vector2&,Quaternion&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Reflect(Vector2&,Vector2&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Min(Vector2&,Vector2&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Max(Vector2&,Vector2&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Clamp(Vector2&,Vector2&,Vector2&,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Lerp(Vector2&,Vector2&,Single,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Barycentric(Vector2&,Vector2&,Vector2&,Single,Single,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "SmoothStep(Vector2&,Vector2&,Single,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    },
    "unimplemented": {},
    "overload_families": {
@@ -452,25 +478,26 @@
     },
     "Present()": {
      "lisp": "present",
-     "generic": true
+     "generic": true,
+     "positional": 1
     },
     "Viewport": {
      "lisp": "viewport",
-     "setf": false,
+     "setf": true,
      "status": "partial",
-     "reason": "The reader is present. The setter is externally blocked: cna_graphics_device_set_viewport takes CNA_Viewport (24 bytes) by value, which the System V AMD64 ABI classifies MEMORY and CFFI cannot pass without cffi-libffi. See docs/native-abi.md."
+     "reason": "The reader is unconditional. The setter goes through the optional private shim: cna_graphics_device_set_viewport takes CNA_Viewport by value, and the System V AMD64 ABI passes a 24-byte aggregate in memory, which CFFI cannot do without cffi-libffi. The shim is not shipped prebuilt -- a release must load with no C toolchain -- so a consumer that has not built it gets a CNA-NOT-SUPPORTED-ERROR naming CNA_LISP_SHIM and the command that produces one. The qualified configuration includes the shim and exercises the setter."
     }
    },
    "not_applicable": {
     "Dispose(Boolean)": "The protected dispose(bool) pattern."
    },
    "unimplemented": {
-    "Present(Rectangle],Rectangle],IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected.",
     "Reset()": "Device reset is not projected.",
     "Reset(PresentationParameters)": "Needs PresentationParameters.",
     "Reset(PresentationParameters,GraphicsAdapter)": "Needs PresentationParameters and GraphicsAdapter.",
     "Clear(ClearOptions,Vector4,Single,Int32)": "Needs ClearOptions and Vector4.",
-    "Clear(ClearOptions,Color,Single,Int32)": "Needs ClearOptions."
+    "Clear(ClearOptions,Color,Single,Int32)": "Needs ClearOptions.",
+    "Present(Nullable`1,Nullable`1,IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected."
    },
    "overload_families": {
     "Present": {
@@ -525,10 +552,10 @@
     "SaveAsPng(Stream,Int32,Int32)": "Needs the Stream projection.",
     "SetData(!!0[])": "Pixel access is not projected in this milestone.",
     "SetData(!!0[],Int32,Int32)": "Pixel access is not projected.",
-    "SetData(Int32,Rectangle],!!0[],Int32,Int32)": "Pixel access is not projected.",
     "GetData(!!0[])": "Pixel access is not projected.",
     "GetData(!!0[],Int32,Int32)": "Pixel access is not projected.",
-    "GetData(Int32,Rectangle],!!0[],Int32,Int32)": "Pixel access is not projected."
+    "SetData(Int32,Nullable`1,!!0[],Int32,Int32)": "Pixel access is not projected.",
+    "GetData(Int32,Nullable`1,!!0[],Int32,Int32)": "Pixel access is not projected."
    }
   },
   "Microsoft.Xna.Framework.Graphics.SpriteBatch": {
@@ -541,39 +568,94 @@
    "member_overrides": {
     "Draw(Texture2D,Vector2,Color)": {
      "lisp": "draw-texture",
-     "generic": true
-    },
-    "Draw(Texture2D,Vector2,Rectangle],Color)": {
-     "lisp": "draw-texture",
-     "generic": true
-    },
-    "Draw(Texture2D,Vector2,Rectangle],Color,Single,Vector2,Single,SpriteEffects,Single)": {
-     "lisp": "draw-texture",
-     "generic": true
-    },
-    "Draw(Texture2D,Vector2,Rectangle],Color,Single,Vector2,Vector2,SpriteEffects,Single)": {
-     "lisp": "draw-texture",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "position",
+      "color"
+     ]
     },
     "Draw(Texture2D,Rectangle,Color)": {
      "lisp": "draw-texture",
-     "generic": true
-    },
-    "Draw(Texture2D,Rectangle,Rectangle],Color)": {
-     "lisp": "draw-texture",
-     "generic": true
-    },
-    "Draw(Texture2D,Rectangle,Rectangle],Color,Single,Vector2,SpriteEffects,Single)": {
-     "lisp": "draw-texture",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "destination",
+      "color"
+     ]
     },
     "Begin()": {
      "lisp": "begin",
-     "generic": true
+     "generic": true,
+     "positional": 1
     },
     "End()": {
      "lisp": "end",
      "generic": true
+    },
+    "Draw(Texture2D,Vector2,Nullable`1,Color)": {
+     "lisp": "draw-texture",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "position",
+      "source",
+      "color"
+     ]
+    },
+    "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Single,SpriteEffects,Single)": {
+     "lisp": "draw-texture",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "position",
+      "source",
+      "color",
+      "rotation",
+      "origin",
+      "scale",
+      "effects",
+      "layer-depth"
+     ]
+    },
+    "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)": {
+     "lisp": "draw-texture",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "position",
+      "source",
+      "color",
+      "rotation",
+      "origin",
+      "scale",
+      "effects",
+      "layer-depth"
+     ]
+    },
+    "Draw(Texture2D,Rectangle,Nullable`1,Color)": {
+     "lisp": "draw-texture",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "destination",
+      "source",
+      "color"
+     ]
+    },
+    "Draw(Texture2D,Rectangle,Nullable`1,Color,Single,Vector2,SpriteEffects,Single)": {
+     "lisp": "draw-texture",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "destination",
+      "source",
+      "color",
+      "rotation",
+      "origin",
+      "effects",
+      "layer-depth"
+     ]
     }
    },
    "not_applicable": {
@@ -594,11 +676,11 @@
    "overload_families": {
     "Begin": {
      "lisp": "begin",
-     "reason": "Only the no-argument overload is projected; the state-bearing ones need types this milestone does not have."
+     "reason": "Only the no-argument overload is projected. XNA's next Begin takes a SpriteSortMode and a BlendState together, so offering a sort mode alone would be an overload XNA does not have."
     },
     "Draw": {
      "lisp": "draw-texture",
-     "reason": "All seven texture overloads are one generic function with keyword arguments. They differ only in which optional parameters are present and in whether the destination is a position or a rectangle, and DRAW-TEXTURE refuses both at once rather than guessing. Text drawing will be a separate generic function when SpriteFont arrives, because one DRAW would then be ambiguous."
+     "reason": "All seven texture overloads are one generic function whose keyword combination selects the overload, and only those seven combinations are accepted: :COLOR is required, exactly one of :POSITION and :DESTINATION must be given, the transform group is all-or-nothing, and :SCALE belongs to the position family alone. The two placements take CNA's two different submission routes, because a position and a destination rectangle are not interchangeable."
     }
    }
   },
@@ -633,10 +715,12 @@
    "lisp_kind": "static",
    "member_overrides": {
     "GetState()": {
-     "lisp": "keyboard-get-state"
+     "lisp": "keyboard-get-state",
+     "distinguished_by": "arity"
     },
     "GetState(PlayerIndex)": {
-     "lisp": "keyboard-get-state"
+     "lisp": "keyboard-get-state",
+     "distinguished_by": "arity"
     }
    },
    "overload_families": {
@@ -752,23 +836,28 @@
     },
     "op_Multiply(Vector3,Single)": {
      "lisp": "vector3-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Single,Vector3)": {
      "lisp": "vector3-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Vector3,Vector3)": {
      "lisp": "vector3-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Vector3,Single)": {
      "lisp": "vector3-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Vector3,Vector3)": {
      "lisp": "vector3-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Add(Vector3,Vector3)": {
      "lisp": "vector3-add"
@@ -781,19 +870,23 @@
     },
     "Multiply(Vector3,Single)": {
      "lisp": "vector3-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Multiply(Vector3,Vector3)": {
      "lisp": "vector3-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Vector3,Single)": {
      "lisp": "vector3-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Vector3,Vector3)": {
      "lisp": "vector3-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Distance(Vector3,Vector3)": {
      "lisp": "vector3-distance"
@@ -849,38 +942,46 @@
     },
     "Transform(Vector3,Matrix)": {
      "lisp": "vector3-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Vector3,Quaternion)": {
      "lisp": "vector3-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "TransformNormal(Vector3,Matrix)": {
      "lisp": "vector3-transform-normal"
     },
     "Transform(Vector3[],Matrix&,Vector3[])": {
      "lisp": "vector3-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": {
      "lisp": "vector3-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector3[],Quaternion&,Vector3[])": {
      "lisp": "vector3-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector3[],Int32,Quaternion&,Vector3[],Int32,Int32)": {
      "lisp": "vector3-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "TransformNormal(Vector3[],Matrix&,Vector3[])": {
      "lisp": "vector3-transform-normal-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "TransformNormal(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": {
      "lisp": "vector3-transform-normal-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     }
    },
    "not_applicable": {
@@ -979,23 +1080,28 @@
     },
     "op_Multiply(Vector4,Single)": {
      "lisp": "vector4-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Single,Vector4)": {
      "lisp": "vector4-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Vector4,Vector4)": {
      "lisp": "vector4-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Vector4,Single)": {
      "lisp": "vector4-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Vector4,Vector4)": {
      "lisp": "vector4-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Add(Vector4,Vector4)": {
      "lisp": "vector4-add"
@@ -1008,19 +1114,23 @@
     },
     "Multiply(Vector4,Single)": {
      "lisp": "vector4-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Multiply(Vector4,Vector4)": {
      "lisp": "vector4-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Vector4,Single)": {
      "lisp": "vector4-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Vector4,Vector4)": {
      "lisp": "vector4-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Distance(Vector4,Vector4)": {
      "lisp": "vector4-distance"
@@ -1070,43 +1180,53 @@
     },
     "Transform(Vector2,Matrix)": {
      "lisp": "vector4-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Vector3,Matrix)": {
      "lisp": "vector4-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Vector4,Matrix)": {
      "lisp": "vector4-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Vector2,Quaternion)": {
      "lisp": "vector4-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Vector3,Quaternion)": {
      "lisp": "vector4-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Vector4,Quaternion)": {
      "lisp": "vector4-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Vector4[],Matrix&,Vector4[])": {
      "lisp": "vector4-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector4[],Int32,Matrix&,Vector4[],Int32,Int32)": {
      "lisp": "vector4-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector4[],Quaternion&,Vector4[])": {
      "lisp": "vector4-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     },
     "Transform(Vector4[],Int32,Quaternion&,Vector4[],Int32,Int32)": {
      "lisp": "vector4-transform-array",
-     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them."
+     "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
+     "distinguished_by": "arity"
     }
    },
    "not_applicable": {
@@ -1170,10 +1290,6 @@
     "Transform": {
      "lisp": "vector4-transform and vector4-transform-array",
      "reason": "The three-argument whole-array overload and the six-argument windowed one differ only by trailing parameters, so one function with :SOURCE-INDEX, :DESTINATION-INDEX and :LENGTH expresses both. The Matrix and Quaternion forms are methods of the element transform, dispatching on the second argument."
-    },
-    "TransformNormal": {
-     "lisp": "vector4-transform-normal and vector4-transform-normal-array",
-     "reason": "The three-argument whole-array overload and the six-argument windowed one differ only by trailing parameters, so one function with :SOURCE-INDEX, :DESTINATION-INDEX and :LENGTH expresses both. The Matrix and Quaternion forms are methods of the element transform, dispatching on the second argument."
     }
    },
    "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
@@ -1204,11 +1320,13 @@
     },
     "op_Multiply(Quaternion,Quaternion)": {
      "lisp": "quaternion-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Quaternion,Single)": {
      "lisp": "quaternion-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Quaternion,Quaternion)": {
      "lisp": "quaternion-divide"
@@ -1224,11 +1342,13 @@
     },
     "Multiply(Quaternion,Quaternion)": {
      "lisp": "quaternion-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Multiply(Quaternion,Single)": {
      "lisp": "quaternion-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Quaternion,Quaternion)": {
      "lisp": "quaternion-divide"
@@ -1354,23 +1474,28 @@
     },
     "op_Multiply(Matrix,Matrix)": {
      "lisp": "matrix-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Matrix,Single)": {
      "lisp": "matrix-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Multiply(Single,Matrix)": {
      "lisp": "matrix-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Matrix,Matrix)": {
      "lisp": "matrix-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "op_Division(Matrix,Single)": {
      "lisp": "matrix-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Add(Matrix,Matrix)": {
      "lisp": "matrix-add"
@@ -1383,19 +1508,23 @@
     },
     "Multiply(Matrix,Matrix)": {
      "lisp": "matrix-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Multiply(Matrix,Single)": {
      "lisp": "matrix-multiply",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Matrix,Matrix)": {
      "lisp": "matrix-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Divide(Matrix,Single)": {
      "lisp": "matrix-divide",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transpose(Matrix)": {
      "lisp": "matrix-transpose"
@@ -1414,23 +1543,28 @@
     },
     "CreateTranslation(Vector3)": {
      "lisp": "matrix-create-translation",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch-and-arity"
     },
     "CreateTranslation(Single,Single,Single)": {
      "lisp": "matrix-create-translation",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch-and-arity"
     },
     "CreateScale(Vector3)": {
      "lisp": "matrix-create-scale",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch-and-arity"
     },
     "CreateScale(Single,Single,Single)": {
      "lisp": "matrix-create-scale",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch-and-arity"
     },
     "CreateScale(Single)": {
      "lisp": "matrix-create-scale",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch-and-arity"
     },
     "CreateRotationX(Single)": {
      "lisp": "matrix-create-rotation-x"
@@ -1470,10 +1604,6 @@
     },
     "CreateWorld(Vector3,Vector3,Vector3)": {
      "lisp": "matrix-create-world"
-    },
-    "CreateBillboard(Vector3,Vector3,Vector3,Vector3])": {
-     "lisp": "matrix-create-billboard",
-     "reason": "The Vector3? camera-forward argument is an optional argument here; NIL is the absent value."
     },
     "Identity": {
      "lisp": "matrix-identity"
@@ -1552,6 +1682,10 @@
     },
     "CreateReflection(Plane)": {
      "lisp": "matrix-create-reflection"
+    },
+    "CreateBillboard(Vector3,Vector3,Vector3,Nullable`1)": {
+     "lisp": "matrix-create-billboard",
+     "reason": "The Vector3? camera-forward argument is an optional argument here; NIL is the absent value."
     }
    },
    "not_applicable": {
@@ -1585,14 +1719,14 @@
     "CreateOrthographicOffCenter(Single,Single,Single,Single,Single,Single,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "CreateLookAt(Vector3&,Vector3&,Vector3&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "CreateWorld(Vector3&,Vector3&,Vector3&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "CreateBillboard(Vector3&,Vector3&,Vector3&,Vector3],Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "CreateShadow(Vector3&,Plane&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "CreateReflection(Plane&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
+    "CreateReflection(Plane&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    },
    "unimplemented": {
-    "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Vector3],Vector3])": "The constrained billboard's degenerate-axis fallback is a chain of three nested thresholds against two optional vectors. It is deferred rather than approximated: an implementation that agreed on the ordinary case and diverged on the degenerate one would be worse than its absence.",
-    "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Vector3],Vector3],Matrix&)": "See the by-value overload.",
-    "Decompose(Vector3&,Quaternion&,Vector3&)": "Decompose is implemented with unsafe pointer arithmetic over a private CanonicalBasis and VectorBasis pair -- some 540 IL instructions with a fallback path for degenerate scales. Reproducing it faithfully is a separate piece of work, and an approximation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than its absence."
+    "Decompose(Vector3&,Quaternion&,Vector3&)": "Decompose is implemented with unsafe pointer arithmetic over a private CanonicalBasis and VectorBasis pair -- some 540 IL instructions with a fallback path for degenerate scales. Reproducing it faithfully is a separate piece of work, and an approximation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than its absence.",
+    "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)": "The constrained billboard's degenerate-axis fallback is a chain of three nested thresholds against two optional vectors. It is deferred rather than approximated: an implementation that agreed on the ordinary case and diverged on the degenerate one would be worse than its absence.",
+    "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)": "See the by-value overload."
    },
    "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
    "overload_families": {
@@ -1667,11 +1801,13 @@
     },
     "Transform(Plane,Matrix)": {
      "lisp": "plane-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Transform(Plane,Quaternion)": {
      "lisp": "plane-transform",
-     "generic": true
+     "generic": true,
+     "distinguished_by": "dispatch"
     },
     "Dot(Vector4)": {
      "lisp": "plane-dot"
@@ -1695,7 +1831,6 @@
     "Transform(Plane&,Matrix&,Plane&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Transform(Plane&,Quaternion&,Plane&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Intersects(BoundingBox&,PlaneIntersectionType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "Intersects(BoundingFrustum&,PlaneIntersectionType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Intersects(BoundingSphere&,PlaneIntersectionType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Dot(Vector4&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "DotCoordinate(Vector3&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",

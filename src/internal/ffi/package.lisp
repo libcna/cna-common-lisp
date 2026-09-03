@@ -39,6 +39,8 @@ registry. Private; not part of the published API.")
    ;; native library -------------------------------------------------------
    #:ensure-native-library #:native-library-path #:native-library-loaded-p
    #:*native-library-path*
+   #:ensure-shim-library #:shim-loaded-p #:shim-library-path
+   #:shim-entry-point #:refuse-without-shim
    ;; ABI gate -------------------------------------------------------------
    #:ensure-abi-admitted #:admitted-abi-versions #:loaded-abi-version
    #:decode-abi-version #:encode-abi-version #:format-abi-version

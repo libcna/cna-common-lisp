@@ -183,6 +183,11 @@
       "name": "CNA_RendererInfo",
       "direction": "out",
       "versioned": true
+    },
+    {
+      "name": "CNA_SpriteScaledCommand",
+      "direction": "in",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -550,6 +555,12 @@
       "ownership": "none"
     },
     {
+      "name": "cna_sprite_batch_submit_scaled_many",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
       "name": "cna_sprite_batch_end",
       "header": "graphics.h",
       "thread": "owner",
@@ -611,12 +622,14 @@
       "ownership": "none"
     }
   ],
-  "blocked_routes": [
+  "shimmed_routes": [
     {
       "name": "cna_graphics_device_set_viewport",
       "header": "graphics_device.h",
-      "reason_code": "by-value-aggregate-not-expressible",
-      "reason": "Takes CNA_Viewport (24 bytes) by value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot pass a MEMORY-class aggregate without cffi-libffi, which a released CNA-Lisp must not require. The generator proves this refusal rather than asserting it."
+      "thread": "owner",
+      "ownership": "none",
+      "reason": "Takes CNA_Viewport (24 bytes) by value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot pass a MEMORY-class aggregate without cffi-libffi, which a released CNA-Lisp must not require. The generator proves that refusal, and then emits the smallest thing that gets past it: a wrapper that takes the aggregate by pointer and the real route by function pointer, and does nothing but the one ABI transition. It is private, optional, never the public API, and the binding works without it in every other respect."
     }
-  ]
+  ],
+  "shim_policy": "A shim exists only for a route the generator has *proved* it cannot bind, it does nothing but reconstruct an aggregate and call through a caller-supplied function pointer, and it is never linked against CNA -- so it cannot drift from the library it forwards to. It is not shipped prebuilt: CNA_LISP_SHIM names it when a maintainer has built it, and the members that need it refuse with an actionable condition when it is absent."
 }

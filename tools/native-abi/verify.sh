@@ -36,6 +36,13 @@ $cc -std=c11 -Wall -Wextra -Werror -Wpedantic -fPIC -shared \
     -o "$out/libcna-lisp-valueprobe.so" "$here/valueprobe.generated.c"
 echo "   ok: $out/libcna-lisp-valueprobe.so"
 
+echo "== building the private shim =="
+$cc -std=c11 -Wall -Wextra -Werror -Wpedantic -fPIC -shared \
+    -I "$headers" -DCNA_C_API_STATIC \
+    -o "$out/libcna-lisp-shim.so" "$here/shim.generated.c"
+echo "   ok: $out/libcna-lisp-shim.so"
+echo "   the shim is optional: CNA_LISP_SHIM names it, and CNA-Lisp works without it"
+
 echo "== regeneration check =="
 python3 "$here/generate.py" --check \
     --headers "$headers" \

@@ -115,7 +115,7 @@ that it did not run rather than passing."
           (length (sb-introspect:function-lambda-list lisp-name))))))
 
 (test every-bound-struct-has-a-recorded-layout
-  (is (= 19 (length ffi:*native-struct-layouts*)))
+  (is (= 20 (length ffi:*native-struct-layouts*)))
   (dolist (row ffi:*native-struct-layouts*)
     (destructuring-bind (name size align fields) row
       (is (symbolp name))

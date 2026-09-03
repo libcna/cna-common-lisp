@@ -92,6 +92,35 @@
                            (package-name (symbol-package symbol))
                            (symbol-name symbol))))
 
+(defun keyword-names (lambda-list)
+  "The &key parameter names of one lambda list, as strings."
+  (let ((tail (member '&key lambda-list)))
+    (loop for item in (rest tail)
+          until (member item lambda-list-keywords)
+          collect (string-downcase
+                   (princ-to-string (if (consp item)
+                                        (if (consp (first item))
+                                            (second (first item))
+                                            (first item))
+                                        item))))))
+
+(defun effective-keywords (name)
+  "Every keyword the generic function NAME accepts, across all its methods.
+
+A DEFGENERIC lambda list says `&key' and stops; the keywords live on the methods.
+A verifier that checked the generic function's own lambda list would conclude
+that a keyword-taking projection accepts no keywords at all."
+  (handler-case
+      (let ((function (and (fboundp name) (fdefinition name))))
+        (if (typep function 'generic-function)
+            (sort (remove-duplicates
+                   (loop for method in (sb-mop:generic-function-methods function)
+                         append (keyword-names (sb-mop:method-lambda-list method)))
+                   :test #'string=)
+                  #'string<)
+            (sort (keyword-names (sb-introspect:function-lambda-list name)) #'string<)))
+    (error () nil)))
+
 (defun class-precedence (class)
   (handler-case
       (progn
@@ -114,6 +143,9 @@
      "lambda_list" (or (and (fboundp symbol) (not (macro-function symbol))
                             (lambda-list-of symbol))
                        '(:array))
+     "keywords" (or (and (fboundp symbol) (not (macro-function symbol))
+                         (effective-keywords symbol))
+                    '(:array))
      "setf_fbound" (if (fboundp setf-name) t :false)
      "setf_lambda_list" (or (and (fboundp setf-name) (lambda-list-of setf-name)) '(:array))
      "class" (if class t :false)

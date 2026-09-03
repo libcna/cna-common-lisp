@@ -12,6 +12,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -30,6 +31,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -48,6 +50,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -66,6 +69,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -84,6 +88,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -102,6 +107,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -120,6 +126,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -138,6 +145,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -156,6 +164,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -174,6 +183,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -192,6 +202,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -210,6 +221,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -230,6 +242,7 @@
           "lambda_list": [
             "manager"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -250,6 +263,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -270,6 +284,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -288,6 +303,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -306,6 +322,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -326,6 +343,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -346,6 +364,7 @@
           "lambda_list": [
             "condition"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -366,6 +385,7 @@
           "lambda_list": [
             "condition"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -384,6 +404,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -411,6 +432,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -438,6 +460,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -465,6 +488,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -494,6 +518,7 @@
           "lambda_list": [
             "condition"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -512,6 +537,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -539,6 +565,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -566,6 +593,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -593,6 +621,7 @@
           "lambda_list": [
             "condition"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -613,6 +642,7 @@
           "lambda_list": [
             "condition"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -633,6 +663,7 @@
           "lambda_list": [
             "condition"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -653,6 +684,7 @@
           "lambda_list": [
             "condition"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -671,6 +703,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -698,6 +731,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -725,6 +759,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -752,6 +787,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -779,6 +815,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -806,6 +843,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -832,6 +870,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -861,6 +900,7 @@
           "lambda_list": [
             "condition"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -879,6 +919,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -906,6 +947,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -933,6 +975,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -960,6 +1003,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -987,6 +1031,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1014,6 +1059,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1041,6 +1087,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1068,6 +1115,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1095,6 +1143,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1121,6 +1170,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1146,6 +1196,7 @@
           "lambda_list": [
             "color"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -1169,6 +1220,7 @@
           "lambda_list": [
             "color"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -1193,6 +1245,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1216,6 +1269,7 @@
             "b",
             "a"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1236,6 +1290,7 @@
           "lambda_list": [
             "packed"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1256,6 +1311,7 @@
           "lambda_list": [
             "color"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -1280,6 +1336,7 @@
             "color",
             "scale"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1300,6 +1357,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1320,6 +1378,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -1343,6 +1402,7 @@
           "lambda_list": [
             "color"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -1364,6 +1424,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1384,6 +1445,7 @@
           "lambda_list": [
             "integer"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1404,6 +1466,7 @@
           "lambda_list": [
             "member"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1424,6 +1487,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1444,6 +1508,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1464,6 +1529,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1484,6 +1550,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1504,6 +1571,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1524,6 +1592,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1544,6 +1613,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1564,6 +1634,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1584,6 +1655,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1602,6 +1674,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1620,6 +1693,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1640,6 +1714,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1660,6 +1735,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1681,6 +1757,7 @@
             "game",
             "game-time"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1701,6 +1778,7 @@
           "lambda_list": [
             "game-time"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1721,6 +1799,7 @@
           "lambda_list": [
             "game-time"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1741,6 +1820,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1761,6 +1841,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1781,6 +1862,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1801,6 +1883,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1825,6 +1908,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1850,6 +1934,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1868,6 +1953,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -1892,6 +1978,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1910,6 +1997,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1930,6 +2018,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -1953,6 +2042,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1973,6 +2063,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -1993,6 +2084,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -2016,6 +2108,7 @@
           "lambda_list": [
             "manager"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -2039,6 +2132,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -2062,6 +2156,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2082,6 +2177,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2100,6 +2196,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2124,6 +2221,7 @@
             "(b 0)",
             "(a 255)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2160,6 +2258,7 @@
             "(m43 0.0)",
             "(m44 0.0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2184,6 +2283,7 @@
             "(c 0.0)",
             "(d 0.0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2205,6 +2305,7 @@
             "normal",
             "d"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2227,6 +2328,7 @@
             "point2",
             "point3"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2247,6 +2349,7 @@
           "lambda_list": [
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2269,6 +2372,7 @@
             "(x 0)",
             "(y 0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2293,6 +2397,7 @@
             "(z 0.0)",
             "(w 0.0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2314,6 +2419,7 @@
             "vector3",
             "w"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2338,6 +2444,7 @@
             "(width 0)",
             "(height 0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2360,6 +2467,7 @@
             "(x 0.0)",
             "(y 0.0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2383,6 +2491,7 @@
             "(y nil y-supplied-p)",
             "(z 0.0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2404,6 +2513,7 @@
             "vector2",
             "z"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2428,6 +2538,7 @@
             "(z 0.0)",
             "(w 0.0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2450,6 +2561,7 @@
             "z",
             "w"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2471,6 +2583,7 @@
             "vector3",
             "w"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2495,6 +2608,7 @@
             "amount1",
             "amount2"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2519,6 +2633,7 @@
             "value4",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2541,6 +2656,7 @@
             "min",
             "max"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2562,6 +2678,7 @@
             "value1",
             "value2"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2586,6 +2703,7 @@
             "tangent2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2608,6 +2726,7 @@
             "value2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2629,6 +2748,7 @@
             "value1",
             "value2"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2650,6 +2770,7 @@
             "value1",
             "value2"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2672,6 +2793,7 @@
             "value2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2692,6 +2814,7 @@
           "lambda_list": [
             "radians"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2712,6 +2835,7 @@
           "lambda_list": [
             "degrees"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2732,6 +2856,7 @@
           "lambda_list": [
             "angle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2750,6 +2875,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -2776,6 +2902,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2796,6 +2923,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "vector",
@@ -2823,6 +2951,7 @@
             "&optional",
             "camera-forward-vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2844,6 +2973,7 @@
             "axis",
             "angle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2864,6 +2994,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2886,6 +3017,7 @@
             "pitch",
             "roll"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2908,6 +3040,7 @@
             "camera-target",
             "camera-up-vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2931,6 +3064,7 @@
             "z-near-plane",
             "z-far-plane"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2956,6 +3090,7 @@
             "z-near-plane",
             "z-far-plane"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -2979,6 +3114,7 @@
             "near-plane-distance",
             "far-plane-distance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3002,6 +3138,7 @@
             "near-plane-distance",
             "far-plane-distance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3027,6 +3164,7 @@
             "near-plane-distance",
             "far-plane-distance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3047,6 +3185,7 @@
           "lambda_list": [
             "plane"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3067,6 +3206,7 @@
           "lambda_list": [
             "radians"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3087,6 +3227,7 @@
           "lambda_list": [
             "radians"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3107,6 +3248,7 @@
           "lambda_list": [
             "radians"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3130,6 +3272,7 @@
             "y",
             "z"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3151,6 +3294,7 @@
             "light-direction",
             "plane"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3174,6 +3318,7 @@
             "y",
             "z"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3196,6 +3341,7 @@
             "forward",
             "up"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3216,6 +3362,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3237,6 +3384,7 @@
             "matrix",
             "divisor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3257,6 +3405,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "vector",
@@ -3281,6 +3430,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3301,6 +3451,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "vector",
@@ -3322,6 +3473,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3342,6 +3494,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3362,6 +3515,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "vector",
@@ -3387,6 +3541,7 @@
             "matrix2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3407,6 +3562,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3430,6 +3586,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3453,6 +3610,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3476,6 +3634,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3499,6 +3658,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3522,6 +3682,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3545,6 +3706,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3568,6 +3730,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3591,6 +3754,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3614,6 +3778,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3637,6 +3802,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3660,6 +3826,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3683,6 +3850,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3706,6 +3874,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3729,6 +3898,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3752,6 +3922,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -3776,6 +3947,7 @@
             "matrix",
             "factor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3796,6 +3968,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3816,6 +3989,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3836,6 +4010,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "vector",
@@ -3860,6 +4035,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3881,6 +4057,7 @@
             "matrix",
             "rotation"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3901,6 +4078,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "vector",
@@ -3924,6 +4102,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3944,6 +4123,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "vector",
@@ -3967,6 +4147,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -3985,6 +4166,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4003,6 +4185,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -4028,6 +4211,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -4052,6 +4236,7 @@
             "plane",
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4073,6 +4258,7 @@
             "plane",
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4094,6 +4280,7 @@
             "plane",
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4115,6 +4302,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4133,6 +4321,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4153,6 +4342,7 @@
           "lambda_list": [
             "integer"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4173,6 +4363,7 @@
           "lambda_list": [
             "member"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4193,6 +4384,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -4216,6 +4408,7 @@
           "lambda_list": [
             "plane"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4236,6 +4429,7 @@
           "lambda_list": [
             "plane"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4256,6 +4450,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4277,6 +4472,7 @@
             "plane",
             "transform"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4295,6 +4491,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4315,6 +4512,7 @@
           "lambda_list": [
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4335,6 +4533,7 @@
           "lambda_list": [
             "member"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4353,6 +4552,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -4379,6 +4579,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4399,6 +4600,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4419,6 +4621,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -4442,6 +4645,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -4463,6 +4667,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4483,6 +4688,7 @@
           "lambda_list": [
             "keyword"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4501,6 +4707,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4521,6 +4728,7 @@
           "lambda_list": [
             "manager"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -4544,6 +4752,7 @@
           "lambda_list": [
             "manager"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -4565,6 +4774,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4583,6 +4793,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -4609,6 +4820,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4630,6 +4842,7 @@
             "value1",
             "value2"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4650,6 +4863,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4670,6 +4884,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4691,6 +4906,7 @@
             "axis",
             "angle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4711,6 +4927,7 @@
           "lambda_list": [
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4733,6 +4950,7 @@
             "pitch",
             "roll"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4754,6 +4972,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4775,6 +4994,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4796,6 +5016,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4814,6 +5035,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4834,6 +5056,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4854,6 +5077,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4874,6 +5098,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4896,6 +5121,7 @@
             "quaternion2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4917,6 +5143,7 @@
             "quaternion",
             "factor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4937,6 +5164,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4957,6 +5185,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4977,6 +5206,7 @@
           "lambda_list": [
             "quaternion"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -4997,6 +5227,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5019,6 +5250,7 @@
             "quaternion2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5040,6 +5272,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5060,6 +5293,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5083,6 +5317,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5106,6 +5341,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5129,6 +5365,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5150,6 +5387,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -5175,6 +5413,7 @@
           "lambda_list": [
             "rectangle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5195,6 +5434,7 @@
           "lambda_list": [
             "rectangle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5216,6 +5456,7 @@
             "rectangle",
             "other"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5238,6 +5479,7 @@
             "x",
             "y"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5256,6 +5498,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5277,6 +5520,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5297,6 +5541,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5322,6 +5567,7 @@
             "horizontal",
             "vertical"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5343,6 +5589,7 @@
             "rectangle",
             "other"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5363,6 +5610,7 @@
           "lambda_list": [
             "rectangle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5383,6 +5631,7 @@
           "lambda_list": [
             "rectangle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5403,6 +5652,7 @@
           "lambda_list": [
             "rectangle"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "point",
@@ -5428,6 +5678,7 @@
             "dx",
             "dy"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5448,6 +5699,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5468,6 +5720,7 @@
           "lambda_list": [
             "rectangle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5488,6 +5741,7 @@
           "lambda_list": [
             "rectangle"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5508,6 +5762,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5531,6 +5786,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5554,6 +5810,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5575,6 +5832,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5595,6 +5853,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5615,6 +5874,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5635,6 +5895,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5655,6 +5916,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5675,6 +5937,7 @@
           "lambda_list": [
             "manager"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5698,6 +5961,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -5721,6 +5985,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5741,6 +6006,7 @@
           "lambda_list": [
             "manager"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5761,6 +6027,7 @@
           "lambda_list": [
             "game-time"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5781,6 +6048,7 @@
           "lambda_list": [
             "game-time"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5799,6 +6067,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5819,6 +6088,7 @@
           "lambda_list": [
             "game"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5840,6 +6110,7 @@
             "game",
             "game-time"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5858,6 +6129,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -5884,6 +6156,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5908,6 +6181,7 @@
             "amount1",
             "amount2"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5932,6 +6206,7 @@
             "value4",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5954,6 +6229,7 @@
             "min",
             "max"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5975,6 +6251,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -5996,6 +6273,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6017,6 +6295,7 @@
             "vector",
             "divisor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6038,6 +6317,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6059,6 +6339,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6083,6 +6364,7 @@
             "tangent2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6103,6 +6385,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6123,6 +6406,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6145,6 +6429,7 @@
             "value2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6166,6 +6451,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6187,6 +6473,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6208,6 +6495,7 @@
             "vector",
             "factor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6228,6 +6516,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6248,6 +6537,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6268,6 +6558,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6286,6 +6577,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6306,6 +6598,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6327,6 +6620,7 @@
             "vector",
             "normal"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6349,6 +6643,7 @@
             "value2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6370,6 +6665,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6391,6 +6687,7 @@
             "value",
             "transform"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6417,6 +6714,11 @@
             "(destination-index 0)",
             "length"
           ],
+          "keywords": [
+            "destination-index",
+            "length",
+            "source-index"
+          ],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6438,6 +6740,7 @@
             "normal",
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6464,6 +6767,11 @@
             "(destination-index 0)",
             "length"
           ],
+          "keywords": [
+            "destination-index",
+            "length",
+            "source-index"
+          ],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6482,6 +6790,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6500,6 +6809,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6520,6 +6830,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -6543,6 +6854,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -6564,6 +6876,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6582,6 +6895,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -6608,6 +6922,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6626,6 +6941,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6650,6 +6966,7 @@
             "amount1",
             "amount2"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6674,6 +6991,7 @@
             "value4",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6696,6 +7014,7 @@
             "min",
             "max"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6717,6 +7036,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6738,6 +7058,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6759,6 +7080,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6780,6 +7102,7 @@
             "vector",
             "divisor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6801,6 +7124,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6819,6 +7143,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6840,6 +7165,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6858,6 +7184,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6882,6 +7209,7 @@
             "tangent2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6900,6 +7228,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6920,6 +7249,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6940,6 +7270,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6962,6 +7293,7 @@
             "value2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -6983,6 +7315,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7004,6 +7337,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7025,6 +7359,7 @@
             "vector",
             "factor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7045,6 +7380,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7065,6 +7401,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7085,6 +7422,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7103,6 +7441,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7123,6 +7462,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7144,6 +7484,7 @@
             "vector",
             "normal"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7162,6 +7503,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7184,6 +7526,7 @@
             "value2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7205,6 +7548,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7226,6 +7570,7 @@
             "value",
             "transform"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7252,6 +7597,11 @@
             "(destination-index 0)",
             "length"
           ],
+          "keywords": [
+            "destination-index",
+            "length",
+            "source-index"
+          ],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7273,6 +7623,7 @@
             "normal",
             "matrix"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7299,6 +7650,11 @@
             "(destination-index 0)",
             "length"
           ],
+          "keywords": [
+            "destination-index",
+            "length",
+            "source-index"
+          ],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7317,6 +7673,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7335,6 +7692,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7353,6 +7711,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7371,6 +7730,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7391,6 +7751,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -7414,6 +7775,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -7437,6 +7799,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -7458,6 +7821,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7476,6 +7840,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -7502,6 +7867,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7526,6 +7892,7 @@
             "amount1",
             "amount2"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7550,6 +7917,7 @@
             "value4",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7572,6 +7940,7 @@
             "min",
             "max"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7593,6 +7962,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7614,6 +7984,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7635,6 +8006,7 @@
             "vector",
             "divisor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7656,6 +8028,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7677,6 +8050,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7701,6 +8075,7 @@
             "tangent2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7721,6 +8096,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7741,6 +8117,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7763,6 +8140,7 @@
             "value2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7784,6 +8162,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7805,6 +8184,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7826,6 +8206,7 @@
             "vector",
             "factor"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7846,6 +8227,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7866,6 +8248,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7886,6 +8269,7 @@
           "lambda_list": [
             "vector"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7904,6 +8288,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7924,6 +8309,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7946,6 +8332,7 @@
             "value2",
             "amount"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7967,6 +8354,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -7988,6 +8376,7 @@
             "value",
             "transform"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8014,6 +8403,11 @@
             "(destination-index 0)",
             "length"
           ],
+          "keywords": [
+            "destination-index",
+            "length",
+            "source-index"
+          ],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8032,6 +8426,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8050,6 +8445,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8068,6 +8464,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8086,6 +8483,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8106,6 +8504,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -8129,6 +8528,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -8152,6 +8552,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -8175,6 +8576,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -8196,6 +8598,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8214,6 +8617,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8234,6 +8638,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "title",
@@ -8255,6 +8660,7 @@
           "macro": true,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8273,6 +8679,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8296,6 +8703,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8314,6 +8722,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8332,6 +8741,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8350,10 +8760,9 @@
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "sprite-batch",
-            "&key",
-            "sort-mode"
+            "sprite-batch"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8364,7 +8773,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "SpriteBatch.Begin(). SORT-MODE is a SPRITE-SORT-MODE member; the state-bearing\noverloads are not part of this milestone."
+          "documentation": "SpriteBatch.Begin().\n\nTakes no arguments, because XNA's no-argument overload takes none and its next\none takes a SpriteSortMode *and* a BlendState together. Offering a sort mode on\nits own would be an eighth overload that XNA does not have, and it would have to\nbe withdrawn when the state-bearing overloads arrive. Until then the sort mode is\nDeferred, which is what Begin() selects."
         },
         {
           "name": "bounds",
@@ -8374,6 +8783,7 @@
           "lambda_list": [
             "texture"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8395,6 +8805,7 @@
             "graphics-device",
             "color"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8415,6 +8826,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8446,6 +8858,17 @@
             "effects",
             "layer-depth"
           ],
+          "keywords": [
+            "color",
+            "destination",
+            "effects",
+            "layer-depth",
+            "origin",
+            "position",
+            "rotation",
+            "scale",
+            "source"
+          ],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8456,7 +8879,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "SpriteBatch.Draw for a texture.\n\nPOSITION places the sprite's origin; DESTINATION gives an explicit destination\nrectangle instead. SOURCE selects a sub-rectangle of the texture, COLOR tints,\nROTATION is in radians, ORIGIN is the rotation and scale centre in texture\ntexels, SCALE is a uniform or per-axis factor, EFFECTS is a SPRITE-EFFECTS\nmember or list, and LAYER-DEPTH orders the sprite."
+          "documentation": "SpriteBatch.Draw for a texture: all seven of XNA's texture overloads.\n\nThey differ in whether the sprite is placed by a **position** or by a\n**destination rectangle**, and in whether the transform group is present. The\nkeyword combination selects the overload, and only the seven combinations XNA\nactually has are accepted:\n\n    :position :color                                          Draw(t, Vector2, Color)\n    :position :source :color                                  Draw(t, Vector2, Rectangle?, Color)\n    :position [:source] :color :rotation :origin :scale\n              :effects :layer-depth                           the two scaled overloads\n    :destination :color                                       Draw(t, Rectangle, Color)\n    :destination :source :color                               Draw(t, Rectangle, Rectangle?, Color)\n    :destination [:source] :color :rotation :origin\n                 :effects :layer-depth                        Draw(t, Rectangle, Rectangle?, ...)\n\n:COLOR is required, because every one of the seven takes one. Exactly one of\n:POSITION and :DESTINATION must be given. :ROTATION, :ORIGIN, :EFFECTS and\n:LAYER-DEPTH are all-or-nothing, because XNA has no overload carrying some of\nthem. :SCALE belongs to the position family only -- the destination overload has\nno scale parameter, and a destination rectangle already says how big the sprite\nis.\n\nA position and a destination rectangle are **not interchangeable**, and this does\nnot convert between them: with a position, the origin is measured in\nsource-texture pixels and the scale applies after that offset, which no computed\nrectangle reproduces. The two shapes take CNA's two different submission\nroutes."
         },
         {
           "name": "end",
@@ -8466,6 +8889,7 @@
           "lambda_list": [
             "sprite-batch"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8486,6 +8910,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8504,6 +8929,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -8530,6 +8956,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8550,6 +8977,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8576,6 +9004,7 @@
             "(min-depth 0.0)",
             "(max-depth 1.0)"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8596,6 +9025,7 @@
           "lambda_list": [
             "graphics-device"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8616,6 +9046,7 @@
           "lambda_list": [
             "graphics-device"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8634,6 +9065,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -8658,6 +9090,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8678,6 +9111,7 @@
           "lambda_list": [
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8698,6 +9132,7 @@
           "lambda_list": [
             "member"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8716,6 +9151,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8736,6 +9172,7 @@
           "lambda_list": [
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8756,6 +9193,7 @@
           "lambda_list": [
             "member"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8774,6 +9212,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8794,6 +9233,7 @@
           "lambda_list": [
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8814,6 +9254,7 @@
           "lambda_list": [
             "member"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8832,6 +9273,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -8856,6 +9298,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -8884,6 +9327,7 @@
             "graphics-device",
             "octets"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8905,6 +9349,7 @@
             "graphics-device",
             "path"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8925,8 +9370,12 @@
           "lambda_list": [
             "graphics-device"
           ],
-          "setf_fbound": false,
-          "setf_lambda_list": [],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "viewport",
+            "graphics-device"
+          ],
           "class": true,
           "structure": true,
           "condition": false,
@@ -8950,6 +9399,7 @@
           "lambda_list": [
             "viewport"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -8970,6 +9420,7 @@
           "lambda_list": [
             "viewport"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "rectangle",
@@ -8994,6 +9445,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9014,6 +9466,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -9037,6 +9490,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -9060,6 +9514,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -9083,6 +9538,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9103,6 +9559,7 @@
           "lambda_list": [
             "viewport"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9123,6 +9580,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -9146,6 +9604,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -9169,6 +9628,7 @@
           "lambda_list": [
             "instance"
           ],
+          "keywords": [],
           "setf_fbound": true,
           "setf_lambda_list": [
             "value",
@@ -9192,6 +9652,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9215,6 +9676,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9235,6 +9697,7 @@
           "lambda_list": [
             "state"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9256,6 +9719,7 @@
             "state",
             "key"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9276,6 +9740,7 @@
           "lambda_list": [
             "state"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9297,6 +9762,7 @@
             "state",
             "key"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9318,6 +9784,7 @@
             "state",
             "key"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9336,6 +9803,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9356,6 +9824,7 @@
           "lambda_list": [
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9376,6 +9845,7 @@
           "lambda_list": [
             "state"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9397,6 +9867,7 @@
             "&optional",
             "player-index"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9415,6 +9886,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": true,
@@ -9441,6 +9913,7 @@
             "left",
             "right"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9461,6 +9934,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9479,6 +9953,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9499,6 +9974,7 @@
           "lambda_list": [
             "value"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9519,6 +9995,7 @@
           "lambda_list": [
             "key"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9539,6 +10016,7 @@
           "lambda_list": [
             "object"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -9560,6 +10038,7 @@
             "&optional",
             "pressed-keys"
           ],
+          "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
           "class": false,
@@ -10114,9 +10593,9 @@
     {
       "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport.set",
       "kind": "member",
-      "status": "externally-blocked",
-      "reason_code": "by-value-aggregate-not-expressible",
-      "reason": "cna_graphics_device_set_viewport takes CNA_Viewport (24 bytes) by\n              value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot\n              pass a MEMORY-class aggregate without cffi-libffi, which requires\n              libffi headers and a C compiler at load time -- a released CNA-Lisp\n              must need neither. The refusal is proved by\n              tools/native-abi/generate.py rather than asserted; see\n              docs/generated/native-abi-manifest.json, blocked_routes."
+      "status": "partial",
+      "reason_code": "by-value-aggregate-needs-shim",
+      "reason": "cna_graphics_device_set_viewport takes CNA_Viewport (24 bytes) by\n              value. The System V AMD64 ABI classifies it MEMORY, which CFFI\n              cannot pass without cffi-libffi -- a dependency a released CNA-Lisp\n              must not have. The generator proves that refusal and emits a tiny\n              private shim that takes the aggregate by pointer and the real route\n              by function pointer; the setter goes through it. The shim is\n              optional and not shipped prebuilt, so without CNA_LISP_SHIM the\n              setter refuses with an actionable condition. See docs/native-abi.md."
     },
     {
       "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString",
@@ -10130,7 +10609,7 @@
       "kind": "member",
       "status": "missing",
       "reason_code": null,
-      "reason": "Needs BlendState, SamplerState, DepthStencilState, RasterizerState\n              and Effect, none of which is in this milestone."
+      "reason": "Needs BlendState, SamplerState, DepthStencilState, RasterizerState\n              and Effect, none of which is in this milestone. BEGIN therefore\n              takes no arguments at all: XNA's next overload takes a\n              SpriteSortMode *and* a BlendState together, so offering a sort mode\n              on its own would be an overload XNA does not have, and it would\n              have to be withdrawn when the real ones arrive."
     },
     {
       "subject": "Microsoft.Xna.Framework.Game.Components",

@@ -219,6 +219,23 @@
 (defconstant +sizeof-cna-renderer-info+ 32)
 (defconstant +alignof-cna-renderer-info+ 8)
 
+;;; CNA_SpriteScaledCommand -- 72 bytes, 8-byte aligned, from graphics.h.
+(defcstruct (cna-sprite-scaled-command :size 72)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (texture :uint64 :offset 8)
+  (position (:struct cna-vector-2) :offset 16)
+  (source (:struct cna-rectangle) :offset 24)
+  (color (:struct cna-color) :offset 40)
+  (rotation :float :offset 44)
+  (origin (:struct cna-vector-2) :offset 48)
+  (scale (:struct cna-vector-2) :offset 56)
+  (effects :uint32 :offset 64)
+  (layer-depth :float :offset 68))
+
+(defconstant +sizeof-cna-sprite-scaled-command+ 72)
+(defconstant +alignof-cna-sprite-scaled-command+ 8)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -240,6 +257,7 @@
     (cna-sprite-batch-begin-info 16 4 ((struct-size 0 4) (struct-version 4 4) (sort-mode 8 4) (reserved 12 4)))
     (cna-sprite-command 72 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (destination 16 16) (source 32 16) (color 48 4) (rotation 52 4) (origin 56 8) (effects 64 4) (layer-depth 68 4)))
     (cna-keyboard-state 40 8 ((struct-size 0 4) (struct-version 4 4) (pressed-key-words 8 32)))
-    (cna-renderer-info 32 8 ((struct-size 0 4) (struct-version 4 4) (renderer-name-byte-length 8 8) (capability-flags 16 8) (renderer-type 24 4) (max-texture-dimension 28 4))))
+    (cna-renderer-info 32 8 ((struct-size 0 4) (struct-version 4 4) (renderer-name-byte-length 8 8) (capability-flags 16 8) (renderer-type 24 4) (max-texture-dimension 28 4)))
+    (cna-sprite-scaled-command 72 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (position 16 8) (source 24 16) (color 40 4) (rotation 44 4) (origin 48 8) (scale 56 8) (effects 64 4) (layer-depth 68 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

@@ -21,21 +21,43 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 68,
-    "structs": 19,
-    "struct_fields": 93,
+    "functions": 69,
+    "structs": 20,
+    "struct_fields": 104,
     "constants": 237,
     "callbacks": 2,
     "by_value_aggregates": 2,
-    "blocked_routes": 1
+    "shimmed_routes": 1
   },
-  "blocked_routes": [
+  "shim_policy": "A shim exists only for a route the generator has *proved* it cannot bind, it does nothing but reconstruct an aggregate and call through a caller-supplied function pointer, and it is never linked against CNA -- so it cannot drift from the library it forwards to. It is not shipped prebuilt: CNA_LISP_SHIM names it when a maintainer has built it, and the members that need it refuse with an actionable condition when it is absent.",
+  "shimmed_routes": [
     {
       "name": "cna_graphics_device_set_viewport",
       "header": "graphics_device.h",
       "c_prototype": "CNA_Result cna_graphics_device_set_viewport(CNA_Handle graphics_device, CNA_Viewport viewport)",
-      "reason_code": "by-value-aggregate-not-expressible",
-      "reason": "Takes CNA_Viewport (24 bytes) by value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot pass a MEMORY-class aggregate without cffi-libffi, which a released CNA-Lisp must not require. The generator proves this refusal rather than asserting it.",
+      "shim_name": "cna_lisp_shim_cna_graphics_device_set_viewport",
+      "returns": ":uint32",
+      "c_returns": "CNA_Result",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "kind": "scalar",
+          "detail": null
+        },
+        {
+          "name": "viewport",
+          "c_type": "CNA_Viewport",
+          "kind": "aggregate",
+          "detail": "CNA_Viewport"
+        }
+      ],
+      "cffi_params": [
+        ":pointer",
+        ":uint64",
+        ":pointer"
+      ],
+      "reason": "Takes CNA_Viewport (24 bytes) by value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot pass a MEMORY-class aggregate without cffi-libffi, which a released CNA-Lisp must not require. The generator proves that refusal, and then emits the smallest thing that gets past it: a wrapper that takes the aggregate by pointer and the real route by function pointer, and does nothing but the one ABI transition. It is private, optional, never the public API, and the binding works without it in every other respect.",
       "generator_proof": "CNA_Viewport is 24 bytes: the System V AMD64 ABI classifies it MEMORY, which CFFI cannot express without cffi-libffi. Route left unbound."
     }
   ],
@@ -1336,6 +1358,33 @@
       "c_prototype": "CNA_Result cna_sprite_batch_submit_many(CNA_Handle sprite_batch, const CNA_SpriteCommand* commands, uint64_t command_count)"
     },
     {
+      "name": "cna_sprite_batch_submit_scaled_many",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "commands",
+          "c_type": "const CNA_SpriteScaledCommand*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "command_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_submit_scaled_many(CNA_Handle sprite_batch, const CNA_SpriteScaledCommand* commands, uint64_t command_count)"
+    },
+    {
       "name": "cna_sprite_batch_end",
       "header": "graphics.h",
       "c_returns": "CNA_Result",
@@ -2616,6 +2665,115 @@
       ],
       "header": "graphics.h",
       "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteScaledCommand",
+      "size": 72,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "position",
+          "c_type": "CNA_Vector2",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "source",
+          "c_type": "CNA_Rectangle",
+          "offset": 24,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Rectangle",
+          "kind": "aggregate"
+        },
+        {
+          "name": "color",
+          "c_type": "CNA_Color",
+          "offset": 40,
+          "size": 4,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Color",
+          "kind": "aggregate"
+        },
+        {
+          "name": "rotation",
+          "c_type": "float",
+          "offset": 44,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "origin",
+          "c_type": "CNA_Vector2",
+          "offset": 48,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "scale",
+          "c_type": "CNA_Vector2",
+          "offset": 56,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "effects",
+          "c_type": "CNA_SpriteEffects",
+          "offset": 64,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "layer_depth",
+          "c_type": "float",
+          "offset": 68,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics.h",
+      "direction": "in",
       "versioned": true
     }
   ],

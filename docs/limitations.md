@@ -37,13 +37,20 @@ The cost is that a route taking a by-value aggregate the System V AMD64 ABI
 classifies as MEMORY (larger than 16 bytes), or one with a floating-point (SSE)
 eightbyte, cannot be bound. See `docs/native-abi.md`.
 
-Currently blocked by this:
+One member is affected: `GraphicsDevice.Viewport`'s setter, whose route takes
+`CNA_Viewport` (24 bytes) by value. The refusal is proved by the generator, not
+asserted.
 
-| Member | Route |
-| --- | --- |
-| `GraphicsDevice.Viewport` setter | `cna_graphics_device_set_viewport` takes `CNA_Viewport` (24 bytes) by value |
+It is **not blocked**, though. The generator emits a tiny private shim -- a
+wrapper that takes the aggregate by pointer and the real route by function
+pointer, and does nothing else -- and the setter goes through it. The shim is
+optional and is **not shipped prebuilt**, because a released CNA-Lisp must load
+with no C toolchain: `tools/native-abi/verify.sh` builds it, `CNA_LISP_SHIM`
+names it, and without it the setter signals a `cna-not-supported-error` naming
+the variable, the command and the reason. The reader works either way.
 
-The getter is present. The refusal is proved by the generator, not asserted.
+The qualified configuration includes the shim, and the test suite asserts both
+outcomes.
 
 ## A fixed time step does not make a frame count an update count
 

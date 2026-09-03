@@ -120,6 +120,9 @@ jobs:
         working-directory: cna-common-lisp
         env:
           CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+          # The shim is optional; the suite asserts both outcomes, so the run that
+          # supplies it exercises the viewport setter rather than its refusal.
+          CNA_LISP_SHIM: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-shim.so
         run: |
           sbcl --non-interactive \
                --load ~/quicklisp/setup.lisp \
@@ -127,6 +130,16 @@ jobs:
                --eval '(asdf:test-system "cna-common-lisp")'
 
       # ---------------------------------------------------------------- stage 4
+      - name: Native runtime tests again, without the optional shim
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: |
+          sbcl --non-interactive \
+               --load ~/quicklisp/setup.lisp \
+               --eval '(push (truename ".") asdf:*central-registry*)' \
+               --eval '(asdf:test-system "cna-common-lisp")'
+
       - name: Isolated consumer qualification, 60 and 600 frames
         working-directory: cna-common-lisp
         run: |

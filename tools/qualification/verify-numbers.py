@@ -40,7 +40,7 @@ def main():
         "bound native constants": abi["counts"]["constants"],
         "bound native callbacks": abi["counts"]["callbacks"],
         "by-value aggregates": abi["counts"]["by_value_aggregates"],
-        "blocked routes": abi["counts"]["blocked_routes"],
+        "shimmed routes": abi["counts"]["shimmed_routes"],
         "selected types": compat["totals"]["types"],
         "selected members": compat["totals"]["members"],
         "complete types": compat["totals"]["types_by_status"].get("complete", 0),

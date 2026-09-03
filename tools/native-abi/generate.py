@@ -452,9 +452,9 @@ def build(abi, manifest):
             "string_rule": spec.get("string_rule"),
             "c_prototype": "%s %s(%s)" % (ret, fname, args or "void"),
         })
-    # ---- blocked routes: the refusal is proved, not asserted -------------
-    resolved["blocked_routes"] = []
-    for spec in manifest.get("blocked_routes", []):
+    # ---- shimmed routes: the refusal is proved, then worked around -------
+    resolved["shimmed_routes"] = []
+    for spec in manifest.get("shimmed_routes", []):
         fname = spec["name"]
         if fname not in abi.prototypes:
             raise Error("blocked route %s is absent from the supplied headers" % fname)
@@ -472,12 +472,28 @@ def build(abi, manifest):
                     proof = str(exc)
                     break
         if proof is None:
-            raise Error("blocked route %s is not actually blocked by the manifest rule; "
-                        "bind it instead of claiming it is blocked" % fname)
-        resolved["blocked_routes"].append({
+            raise Error("shimmed route %s is not actually blocked by the manifest rule; "
+                        "bind it directly instead of shimming it" % fname)
+        params = []
+        for decl in split_args(args):
+            ctype, pname = parse_param(decl)
+            kind, detail = abi.resolve(ctype)
+            params.append({"name": pname, "c_type": ctype, "kind": kind,
+                           "detail": detail if kind == "aggregate" else None})
+        rk, rd = abi.resolve(ret)
+        resolved["shimmed_routes"].append({
             "name": fname, "header": abi.proto_header[fname],
             "c_prototype": "%s %s(%s)" % (ret, fname, args or "void"),
-            "reason_code": spec["reason_code"], "reason": spec["reason"],
+            "shim_name": "cna_lisp_shim_" + fname,
+            "returns": rd if rk == "scalar" else ":pointer",
+            "c_returns": ret,
+            "params": params,
+            "cffi_params": ([":pointer"] +
+                            [":pointer" if p["kind"] == "aggregate"
+                             else (":pointer" if p["kind"] == "pointer" else p["detail"]
+                                   or abi.resolve(p["c_type"])[1])
+                             for p in params]),
+            "reason": spec["reason"],
             "generator_proof": proof,
         })
     return resolved, families
@@ -654,6 +670,46 @@ def _c_param_types(f):
     return types
 
 
+def emit_shim(resolved):
+    """The whole private shim: one wrapper per route the generator proved unbindable.
+
+    Each wrapper takes the real route as a function pointer and every by-value
+    aggregate by pointer, reconstructs the aggregate, and calls through. It is
+    never linked against CNA, so it cannot drift from the library it forwards to,
+    and it holds no state and makes no decision.
+    """
+    out = [C_HEAD.format(name="shim.generated.c").replace(
+        "it never\n * ships and is never linked into CNA-Lisp.",
+        "it is not\n * shipped prebuilt, is never linked against CNA, and is loaded only when\n"
+        " * CNA_LISP_SHIM names a build of it.")]
+    if not resolved["shimmed_routes"]:
+        out.append("int cna_lisp_shim_count(void) { return 0; }")
+        return "\n".join(out) + "\n"
+    for route in resolved["shimmed_routes"]:
+        types = ", ".join(p["c_type"] for p in route["params"]) or "void"
+        # A function pointer, not a void*: ISO C forbids converting an object
+        # pointer to a function pointer, and -Wpedantic is right to say so.
+        params = ["void (*target)(void)"]
+        arguments = []
+        for p in route["params"]:
+            if p["kind"] == "aggregate":
+                params.append("const %s *%s" % (p["detail"], p["name"]))
+                arguments.append("*%s" % p["name"])
+            else:
+                params.append("%s %s" % (p["c_type"], p["name"]))
+                arguments.append(p["name"])
+        out.append("/* %s */" % route["c_prototype"])
+        out.append("%s %s(%s)" % (route["c_returns"], route["shim_name"], ", ".join(params)))
+        out.append("{")
+        out.append("    typedef %s (*target_t)(%s);" % (route["c_returns"], types))
+        out.append("    return ((target_t)target)(%s);" % ", ".join(arguments))
+        out.append("}")
+        out.append("")
+    out.append("int cna_lisp_shim_count(void) { return %d; }"
+               % len(resolved["shimmed_routes"]))
+    return "\n".join(out) + "\n"
+
+
 def emit_valueprobe(resolved):
     """A tiny shared object whose functions receive each admitted by-value
     aggregate and report the bytes that actually arrived."""
@@ -738,6 +794,7 @@ def main(argv):
     write("tools/native-abi/probe.generated.c", emit_probe(resolved), args.check, changed)
     write("tools/native-abi/valueprobe.generated.c",
           emit_valueprobe(resolved), args.check, changed)
+    write("tools/native-abi/shim.generated.c", emit_shim(resolved), args.check, changed)
 
     report = {
         "schema_version": 1,
@@ -752,9 +809,10 @@ def main(argv):
             "callbacks": len(resolved["callbacks"]),
             "by_value_aggregates": sum(
                 1 for s in resolved["structs"] if "by_value_flattening" in s),
-            "blocked_routes": len(resolved["blocked_routes"]),
+            "shimmed_routes": len(resolved["shimmed_routes"]),
         },
-        "blocked_routes": resolved["blocked_routes"],
+        "shim_policy": manifest.get("shim_policy"),
+        "shimmed_routes": resolved["shimmed_routes"],
         "functions": resolved["functions"],
         "structs": resolved["structs"],
         "callbacks": resolved["callbacks"],
@@ -771,7 +829,8 @@ def main(argv):
                  "src/internal/ffi/functions.generated.lisp",
                  "src/framework/predefined-colors.generated.lisp",
                  "tools/native-abi/probe.generated.c",
-                 "tools/native-abi/valueprobe.generated.c"]:
+                 "tools/native-abi/valueprobe.generated.c",
+                 "tools/native-abi/shim.generated.c"]:
         full = os.path.join(ROOT, path)
         if os.path.exists(full):
             with open(full, encoding="utf-8") as fh:

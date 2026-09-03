@@ -246,6 +246,10 @@
 (defcfun ("cna_sprite_batch_submit_many" %sprite-batch-submit-many) :uint32
   (sprite-batch :uint64) (commands :pointer) (command-count :uint64))
 
+;;; CNA_Result cna_sprite_batch_submit_scaled_many(CNA_Handle sprite_batch, const CNA_SpriteScaledCommand* commands, uint64_t command_count)
+(defcfun ("cna_sprite_batch_submit_scaled_many" %sprite-batch-submit-scaled-many) :uint32
+  (sprite-batch :uint64) (commands :pointer) (command-count :uint64))
+
 ;;; CNA_Result cna_sprite_batch_end(CNA_Handle sprite_batch)
 (defcfun ("cna_sprite_batch_end" %sprite-batch-end) :uint32
   (sprite-batch :uint64))
@@ -345,6 +349,7 @@
     ("cna_sprite_batch_destroy" %sprite-batch-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:sprite-batch")
     ("cna_sprite_batch_begin" %sprite-batch-begin :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_sprite_batch_submit_many" %sprite-batch-submit-many :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_sprite_batch_submit_scaled_many" %sprite-batch-submit-scaled-many :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
     ("cna_sprite_batch_end" %sprite-batch-end :uint32 (:uint64) :thread :owner :ownership "none")
     ("cna_sprite_batch_get_type_name_size" %sprite-batch-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_sprite_batch_copy_type_name" %sprite-batch-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")

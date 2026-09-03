@@ -224,6 +224,35 @@ Never done: one `&rest` sink; accepting everything and guessing; answering
 success for a shape that is not supported; dropping an overload silently; adding
 a default that changes behaviour.
 
+### The keyword combination *is* the overload
+
+When a family collapses onto one keyword-taking function, the keyword combination
+selects the overload — and **only the combinations the original has are
+accepted**. `SpriteBatch.Draw` is the worked example:
+
+| XNA overload | Keywords |
+| --- | --- |
+| `Draw(t, Vector2, Color)` | `:position :color` |
+| `Draw(t, Vector2, Rectangle?, Color)` | `:position :source :color` |
+| `Draw(t, Vector2, Rectangle?, Color, float, Vector2, float, SpriteEffects, float)` | `:position [:source] :color :rotation :origin :scale :effects :layer-depth` |
+| `Draw(t, Vector2, Rectangle?, Color, float, Vector2, Vector2, SpriteEffects, float)` | the same, with `:scale` a `vector2` |
+| `Draw(t, Rectangle, Color)` | `:destination :color` |
+| `Draw(t, Rectangle, Rectangle?, Color)` | `:destination :source :color` |
+| `Draw(t, Rectangle, Rectangle?, Color, float, Vector2, SpriteEffects, float)` | `:destination [:source] :color :rotation :origin :effects :layer-depth` |
+
+Everything else is refused: no placement, both placements, no `:color`, half the
+transform group, `:scale` without the transform group, `:scale` with a
+`:destination`. A keyword-taking projection that accepted a combination the
+original lacks would be **inventing an overload**, which is the failure the whole
+overload section exists to prevent — and it is easy to do accidentally, because a
+`&key` lambda list accepts every combination unless something says otherwise.
+
+The mapping rules therefore carry, per overload, the exact keyword set that
+expresses it, and `tools/api-compat/verify.py` checks every one of them against
+the real method lambda lists in the image. A family that collapses without
+declaring how each overload is distinguished — by CLOS dispatch, by a trailing
+optional argument, or by keywords — is a `wrong_overload_shape` diagnostic.
+
 ### By-reference overloads
 
 XNA pairs almost every value-type computation with a by-reference form:
@@ -347,7 +376,29 @@ runtime needs one operation and one question that apply to anything holding a
 handle. `with-disposal` is an `unwind-protect` convenience, not a replacement for
 the object model. See `docs/ownership-and-lifetimes.md`.
 
-## 12. Declared extensions
+## 12. What the projection refuses to invent
+
+Three failures are easy to commit and hard to see, so each has a check:
+
+* **An overload the original does not have.** A `&key` lambda list accepts every
+  combination unless something refuses; `draw-texture` refuses the six illegal
+  ones, and `begin` takes no arguments because XNA's next `Begin` overload takes
+  a `SpriteSortMode` *and* a `BlendState` together.
+* **A mapping rule that names nothing.** A rule keyed on a signature no member
+  produces is silently ignored and the default naming rule applies instead, so
+  the member ends up reported under a mapping nobody wrote. That is a
+  `stale_mapping_rule` diagnostic, and it is how five `SpriteBatch.Draw`
+  overloads once came to be reported missing while a rule for each of them sat in
+  the file being skipped.
+* **A route reimplemented instead of used.** `SpriteBatch.Draw`'s position-and-
+  scale overloads take CNA's `cna_sprite_batch_submit_scaled_many`, not a
+  destination rectangle computed from the position. The C ABI says the two are
+  not interchangeable and it is right: the position is in floating-point screen
+  pixels and the origin is in source-texture pixels with the scale applied after
+  that offset, so rounding a rectangle out of them loses the fractional position
+  and moves the sprite.
+
+## 13. Declared extensions
 
 Every public symbol that is not a mapped XNA member is listed in
 `cna-lisp.internal::*binding-extensions*` with the reason it exists. The

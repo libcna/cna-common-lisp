@@ -33,7 +33,7 @@
   (handler-case
       (progn
         (gfx:clear (xna:graphics-device game) (xna:cornflower-blue))
-        (gfx:begin (batch game) :sort-mode :deferred)
+        (gfx:begin (batch game))
         (unwind-protect
              (gfx:draw-texture (batch game) (texture game)
                                :position (xna:make-vector2 10.0 20.0)
@@ -158,3 +158,161 @@
     (signals xna:cna-usage-error
       (gfx:texture-2d-from-png-bytes (xna:graphics-device game)
                                      (make-array 0 :element-type '(unsigned-byte 8))))))
+
+;;; --- the seven Draw overloads, and only those -------------------------------
+
+(define-native-test the-draw-overload-shapes-xna-has-are-accepted
+  ;; One call per XNA texture overload, all seven, inside one frame.
+  (let ((game (make-instance 'draw-shapes-game :exit-after 2)))
+    (unwind-protect
+         (progn (xna:run game)
+                (is (null (draw-error game)) "a legal Draw shape was refused: ~a"
+                    (draw-error game))
+                (is (= 7 (accepted game)) "~d of the seven overloads went through"
+                    (accepted game)))
+      (progn
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))
+
+(define-native-test the-draw-shapes-xna-does-not-have-are-refused
+  (with-graphics-game (game :exit-after 1)
+    (xna:run game)
+    (let ((batch (batch game)) (texture (texture game)))
+      (macrolet ((refuses (why &rest arguments)
+                   `(handler-case
+                        (progn (gfx:draw-texture batch texture ,@arguments)
+                               (fail ,why))
+                      (xna:cna-usage-error () t))))
+        ;; Neither a position nor a destination.
+        (is (refuses "a Draw with no placement was accepted" :color (xna:white)))
+        ;; Both.
+        (is (refuses "a Draw with both placements was accepted"
+                     :position (xna:make-vector2 0.0 0.0)
+                     :destination (xna:make-rectangle 0 0 1 1)
+                     :color (xna:white)))
+        ;; No colour: XNA has no such overload.
+        (is (refuses "a Draw without a colour was accepted"
+                     :position (xna:make-vector2 0.0 0.0)))
+        ;; Half the transform group.
+        (is (refuses "a Draw with a rotation but no origin was accepted"
+                     :position (xna:make-vector2 0.0 0.0) :color (xna:white)
+                     :rotation 0.5))
+        ;; Scale without the transform group.
+        (is (refuses "a Draw with a scale and no transform group was accepted"
+                     :position (xna:make-vector2 0.0 0.0) :color (xna:white)
+                     :scale 2.0))
+        ;; Scale with a destination rectangle: XNA's destination overload has none.
+        (is (refuses "a Draw with both a destination and a scale was accepted"
+                     :destination (xna:make-rectangle 0 0 8 8) :color (xna:white)
+                     :rotation 0.0 :origin (xna:vector2-zero)
+                     :effects :none :layer-depth 0.0 :scale 2.0))))))
+
+(define-native-test a-positioned-sprite-takes-the-scaled-route
+  ;; The two placements are different C ABI routes, not one with a computed
+  ;; rectangle: a fractional position and a source-texture-pixel origin have no
+  ;; rectangle that reproduces them.
+  (with-graphics-game (game :exit-after 1)
+    (xna:run game)
+    (let ((batch (batch game)) (texture (texture game)))
+      (gfx:begin batch)
+      (unwind-protect
+           (finishes
+             (gfx:draw-texture batch texture
+                               :position (xna:make-vector2 10.25 20.75)
+                               :color (xna:white)
+                               :rotation 0.5
+                               :origin (xna:make-vector2 16.0 16.0)
+                               :scale (xna:make-vector2 1.5 2.5)
+                               :effects :flip-horizontally
+                               :layer-depth 0.25))
+        (gfx:end batch)))))
+
+;;; --- the viewport setter and the optional private shim -----------------------
+
+(defclass viewport-game (graphics-game)
+  ((set-result :initform nil :accessor set-result)
+   (read-back  :initform nil :accessor read-back)))
+
+(defmethod xna:draw ((game viewport-game) game-time)
+  (declare (ignore game-time))
+  (incf (draws game))
+  (when (= 1 (draws game))
+    (let* ((device (xna:graphics-device game))
+           (original (gfx:viewport device))
+           (wanted (gfx:make-viewport 4 8 64 32 0.25 0.75)))
+      (handler-case
+          (progn (setf (gfx:viewport device) wanted)
+                 (setf (read-back game) (gfx:viewport device)
+                       (set-result game) :set))
+        (xna:cna-not-supported-error (condition)
+          (setf (set-result game) (princ-to-string condition)))
+        (error (condition) (setf (set-result game) (list :other condition))))
+      (ignore-errors (setf (gfx:viewport device) original)))))
+
+(define-native-test the-viewport-setter-works-or-says-exactly-what-it-needs
+  ;; The one member that goes through the optional shim. With the shim it must
+  ;; actually set the viewport; without it, it must refuse in a way that names
+  ;; the environment variable and the reason. Both are real outcomes; silently
+  ;; doing nothing is not.
+  (let ((game (make-instance 'viewport-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (let ((result (set-result game)))
+             (is (not (null result)) "the setter was never reached")
+             (cond
+               ((eq result :set)
+                (is (int:shim-loaded-p))
+                (let ((back (read-back game)))
+                  (is (= 4 (gfx:viewport-x back)))
+                  (is (= 8 (gfx:viewport-y back)))
+                  (is (= 64 (gfx:viewport-width back)))
+                  (is (= 32 (gfx:viewport-height back)))
+                  (is (= 0.25f0 (gfx:viewport-min-depth back)))
+                  (is (= 0.75f0 (gfx:viewport-max-depth back)))))
+               ((stringp result)
+                (is (not (int:shim-loaded-p)))
+                (is (search "CNA_LISP_SHIM" result)
+                    "the refusal does not name the variable that supplies the shim")
+                (is (search "verify.sh" result)
+                    "the refusal does not say how to build the shim")
+                (is (search "System V" result)
+                    "the refusal does not say why a shim is needed at all"))
+               (t (fail "the setter failed in an unexpected way: ~s" result)))))
+      (progn
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))
+
+(define-native-test the-shim-is-optional-and-absent-is-not-an-error
+  ;; Loading CNA-Lisp must never require the shim. This asserts the loader's
+  ;; contract directly: with no CNA_LISP_SHIM, ENSURE-SHIM-LIBRARY answers NIL
+  ;; rather than signalling.
+  (let ((int::*shim-library-handle* nil)
+        (int::*shim-library-path* nil)
+        (saved (uiop:getenv "CNA_LISP_SHIM")))
+    (unwind-protect
+         (progn (sb-posix:unsetenv "CNA_LISP_SHIM")
+                (is (null (int:ensure-shim-library)))
+                (is (null (int:shim-entry-point
+                           "cna_lisp_shim_cna_graphics_device_set_viewport"))))
+      (when (and saved (string/= saved "")) (sb-posix:setenv "CNA_LISP_SHIM" saved 1)))))
+
+(define-native-test a-named-but-missing-shim-is-refused-by-name
+  (let ((int::*shim-library-handle* nil)
+        (int::*shim-library-path* nil)
+        (saved (uiop:getenv "CNA_LISP_SHIM")))
+    (unwind-protect
+         (progn
+           (sb-posix:setenv "CNA_LISP_SHIM" "/nonexistent/libcna-lisp-shim.so" 1)
+           (handler-case (progn (int:ensure-shim-library)
+                                (fail "a nonexistent shim path was accepted"))
+             (xna:cna-native-library-error (condition)
+               (is (search "/nonexistent/libcna-lisp-shim.so"
+                           (princ-to-string condition))))))
+      (if (and saved (string/= saved ""))
+          (sb-posix:setenv "CNA_LISP_SHIM" saved 1)
+          (sb-posix:unsetenv "CNA_LISP_SHIM")))))

@@ -53,7 +53,23 @@ something.
 | | `wrong_accessor_mutability`, `overload_mapping_mismatch` |
 | | `event_mapping_mismatch`, `enum_mismatch` |
 | | `unexpected_public_symbol`, `private_implementation_leak` |
-| | `unmeasured_category` |
+| | `unmeasured_category`, `stale_mapping_rule` |
+| | `wrong_overload_shape` |
+
+Two of those exist because "zero diagnostics" was once true and still not enough.
+
+`stale_mapping_rule` catches a rule keyed on a signature no member produces. Such
+a rule is silently ignored, the default naming rule applies instead, and the
+member is reported under a mapping nobody wrote. Adding the check found ten of
+them at once, including five `SpriteBatch.Draw` overloads reported missing while
+a rule for each sat in the file being skipped — and nine by-reference members
+reported *complete* against the by-value function.
+
+`wrong_overload_shape` catches a family collapsing onto one function without
+saying how each overload is distinguished, and a declared keyword set that the
+function does not actually accept. Both are checked against the real method
+lambda lists in the image, not against the generic function's, which says `&key`
+and stops.
 
 **Strict verification is allowed to be red while real surface is missing.** It is
 never allowed to be green because an allowlist hid something: a public symbol
@@ -71,10 +87,10 @@ genuine absence.
 <!-- generated:complete types=18 -->
 <!-- generated:partial types=10 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=762 -->
+<!-- generated:complete members=756 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=140 -->
-<!-- generated:not-applicable members=178 -->
+<!-- generated:missing members=136 -->
+<!-- generated:not-applicable members=188 -->
 <!-- generated:disagreement total=0 -->
 
 Selection **Foundation 1**: 29 types, 1081 members.
@@ -84,15 +100,16 @@ Selection **Foundation 1**: 29 types, 1081 members.
 | Types complete | **18** |
 | Types partial | **10** |
 | Types missing | **1** |
-| Members complete | **762** |
+| Members complete | **756** |
 | Members partial | **1** |
-| Members missing | **140** |
-| Members not applicable | **178** |
+| Members missing | **136** |
+| Members not applicable | **188** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
-contract, nothing private has leaked into a public package, and no exported
-symbol is unaccounted for.
+contract, nothing private has leaked into a public package, no exported symbol is
+unaccounted for, no mapping rule names a member that does not exist, and every
+collapsed overload family says how each of its overloads is expressed.
 
 | Type | Status | complete | partial | missing | n/a |
 | --- | --- | ---: | ---: | ---: | ---: |
@@ -102,22 +119,22 @@ symbol is unaccounted for.
 | `M.X.F.Color` | **partial** | 153 | 0 | 8 | 4 |
 | `M.X.F.Point` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Rectangle` | **partial** | 21 | 0 | 3 | 9 |
-| `M.X.F.Vector2` | **complete** | 59 | 0 | 0 | 18 |
+| `M.X.F.Vector2` | **complete** | 50 | 0 | 0 | 27 |
 | `M.X.F.Vector3` | **complete** | 60 | 0 | 0 | 28 |
 | `M.X.F.Vector4` | **complete** | 56 | 0 | 0 | 29 |
 | `M.X.F.MathHelper` | **complete** | 19 | 0 | 0 | 0 |
 | `M.X.F.Quaternion` | **complete** | 35 | 0 | 0 | 20 |
-| `M.X.F.Matrix` | **partial** | 69 | 0 | 3 | 35 |
+| `M.X.F.Matrix` | **partial** | 68 | 0 | 3 | 36 |
 | `M.X.F.Plane` | **partial** | 15 | 0 | 3 | 12 |
 | `M.X.F.ContainmentType` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.PlaneIntersectionType` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **missing** | 0 | 0 | 9 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 3 | 1 | 51 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 2 | 1 | 52 | 2 |
 | `M.X.F.Graphics.Viewport` | **partial** | 10 | 0 | 3 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
-| `M.X.F.Graphics.SpriteBatch` | **partial** | 5 | 0 | 15 | 1 |
+| `M.X.F.Graphics.SpriteBatch` | **partial** | 10 | 0 | 10 | 1 |
 | `M.X.F.Graphics.SpriteSortMode` | **complete** | 5 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SpriteEffects` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SurfaceFormat` | **complete** | 20 | 0 | 0 | 1 |
@@ -128,7 +145,7 @@ symbol is unaccounted for.
 
 ### Not applicable, and why so many
 
-178 members are classified not applicable, and most of them are one thing: the
+188 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value
@@ -174,24 +191,24 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=68 -->
-<!-- generated:bound native structs=19 -->
-<!-- generated:bound native struct fields=93 -->
+<!-- generated:bound native functions=69 -->
+<!-- generated:bound native structs=20 -->
+<!-- generated:bound native struct fields=104 -->
 <!-- generated:bound native constants=237 -->
 <!-- generated:bound native callbacks=2 -->
 <!-- generated:by-value aggregates=2 -->
-<!-- generated:blocked routes=1 -->
+<!-- generated:shimmed routes=1 -->
 <!-- generated:abi version encoded=5376 -->
 
 | | |
 | --- | --- |
-| Bound functions | 68 |
-| Bound structs | 19 |
-| Bound struct fields | 93 |
+| Bound functions | 69 |
+| Bound structs | 20 |
+| Bound struct fields | 104 |
 | Bound constants | 237 |
 | Bound callback typedefs | 2 |
 | By-value aggregates admitted | 2 |
-| Routes proved blocked | 1 |
+| Routes proved unbindable, and shimmed | 1 |
 | Admitted ABI versions | 0.21.0 only (encoded 5376) |
 
 See `docs/native-abi.md` for what the C compiler proves about each of those.

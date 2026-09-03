@@ -252,6 +252,31 @@ _Static_assert(sizeof(((CNA_RendererInfo *)0)->renderer_type) == 4, "CNA_Rendere
 _Static_assert(offsetof(CNA_RendererInfo, max_texture_dimension) == 28, "CNA_RendererInfo.max_texture_dimension offset");
 _Static_assert(sizeof(((CNA_RendererInfo *)0)->max_texture_dimension) == 4, "CNA_RendererInfo.max_texture_dimension size");
 
+_Static_assert(sizeof(CNA_SpriteScaledCommand) == 72, "CNA_SpriteScaledCommand size");
+_Static_assert(_Alignof(CNA_SpriteScaledCommand) == 8, "CNA_SpriteScaledCommand alignment");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, struct_size) == 0, "CNA_SpriteScaledCommand.struct_size offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->struct_size) == 4, "CNA_SpriteScaledCommand.struct_size size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, struct_version) == 4, "CNA_SpriteScaledCommand.struct_version offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->struct_version) == 4, "CNA_SpriteScaledCommand.struct_version size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, texture) == 8, "CNA_SpriteScaledCommand.texture offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->texture) == 8, "CNA_SpriteScaledCommand.texture size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, position) == 16, "CNA_SpriteScaledCommand.position offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->position) == 8, "CNA_SpriteScaledCommand.position size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, source) == 24, "CNA_SpriteScaledCommand.source offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->source) == 16, "CNA_SpriteScaledCommand.source size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, color) == 40, "CNA_SpriteScaledCommand.color offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->color) == 4, "CNA_SpriteScaledCommand.color size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, rotation) == 44, "CNA_SpriteScaledCommand.rotation offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->rotation) == 4, "CNA_SpriteScaledCommand.rotation size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, origin) == 48, "CNA_SpriteScaledCommand.origin offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->origin) == 8, "CNA_SpriteScaledCommand.origin size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, scale) == 56, "CNA_SpriteScaledCommand.scale offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->scale) == 8, "CNA_SpriteScaledCommand.scale size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, effects) == 64, "CNA_SpriteScaledCommand.effects offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->effects) == 4, "CNA_SpriteScaledCommand.effects size");
+_Static_assert(offsetof(CNA_SpriteScaledCommand, layer_depth) == 68, "CNA_SpriteScaledCommand.layer_depth offset");
+_Static_assert(sizeof(((CNA_SpriteScaledCommand *)0)->layer_depth) == 4, "CNA_SpriteScaledCommand.layer_depth size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -312,6 +337,7 @@ CNA_Result (*const cna_lisp_probe_cna_sprite_batch_create)(CNA_Handle, CNA_Handl
 CNA_Result (*const cna_lisp_probe_cna_sprite_batch_destroy)(CNA_Handle) = cna_sprite_batch_destroy;
 CNA_Result (*const cna_lisp_probe_cna_sprite_batch_begin)(CNA_Handle, const CNA_SpriteBatchBeginInfo*) = cna_sprite_batch_begin;
 CNA_Result (*const cna_lisp_probe_cna_sprite_batch_submit_many)(CNA_Handle, const CNA_SpriteCommand*, uint64_t) = cna_sprite_batch_submit_many;
+CNA_Result (*const cna_lisp_probe_cna_sprite_batch_submit_scaled_many)(CNA_Handle, const CNA_SpriteScaledCommand*, uint64_t) = cna_sprite_batch_submit_scaled_many;
 CNA_Result (*const cna_lisp_probe_cna_sprite_batch_end)(CNA_Handle) = cna_sprite_batch_end;
 CNA_Result (*const cna_lisp_probe_cna_sprite_batch_get_type_name_size)(CNA_Handle, uint64_t*) = cna_sprite_batch_get_type_name_size;
 CNA_Result (*const cna_lisp_probe_cna_sprite_batch_copy_type_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_sprite_batch_copy_type_name;

@@ -23,15 +23,15 @@
    "missing": 1
   },
   "members_by_status": {
-   "complete": 762,
-   "missing": 140,
-   "not-applicable": 178,
+   "complete": 756,
+   "missing": 136,
+   "not-applicable": 188,
    "partial": 1
   },
-  "diagnostics": 141,
+  "diagnostics": 137,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 140,
+   "missing_member": 136,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -43,7 +43,9 @@
    "enum_mismatch": 0,
    "unexpected_public_symbol": 0,
    "private_implementation_leak": 0,
-   "unmeasured_category": 0
+   "unmeasured_category": 0,
+   "stale_mapping_rule": 0,
+   "wrong_overload_shape": 0
   },
   "disagreement_total": 0
  },
@@ -394,23 +396,23 @@
     "Normalize(Vector2)": "complete",
     "Normalize(Vector2&,Vector2&)": "not-applicable",
     "Reflect(Vector2,Vector2)": "complete",
-    "Reflect(Vector2&,Vector2&,Vector2&)": "complete",
+    "Reflect(Vector2&,Vector2&,Vector2&)": "not-applicable",
     "Min(Vector2,Vector2)": "complete",
-    "Min(Vector2&,Vector2&,Vector2&)": "complete",
+    "Min(Vector2&,Vector2&,Vector2&)": "not-applicable",
     "Max(Vector2,Vector2)": "complete",
-    "Max(Vector2&,Vector2&,Vector2&)": "complete",
+    "Max(Vector2&,Vector2&,Vector2&)": "not-applicable",
     "Clamp(Vector2,Vector2,Vector2)": "complete",
-    "Clamp(Vector2&,Vector2&,Vector2&,Vector2&)": "complete",
+    "Clamp(Vector2&,Vector2&,Vector2&,Vector2&)": "not-applicable",
     "Lerp(Vector2,Vector2,Single)": "complete",
-    "Lerp(Vector2&,Vector2&,Single,Vector2&)": "complete",
+    "Lerp(Vector2&,Vector2&,Single,Vector2&)": "not-applicable",
     "Barycentric(Vector2,Vector2,Vector2,Single,Single)": "complete",
-    "Barycentric(Vector2&,Vector2&,Vector2&,Single,Single,Vector2&)": "complete",
+    "Barycentric(Vector2&,Vector2&,Vector2&,Single,Single,Vector2&)": "not-applicable",
     "SmoothStep(Vector2,Vector2,Single)": "complete",
-    "SmoothStep(Vector2&,Vector2&,Single,Vector2&)": "complete",
+    "SmoothStep(Vector2&,Vector2&,Single,Vector2&)": "not-applicable",
     "CatmullRom(Vector2,Vector2,Vector2,Vector2,Single)": "complete",
-    "CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "complete",
+    "CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "not-applicable",
     "Hermite(Vector2,Vector2,Vector2,Vector2,Single)": "complete",
-    "Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "complete",
+    "Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "not-applicable",
     "Transform(Vector2,Matrix)": "complete",
     "Transform(Vector2&,Matrix&,Vector2&)": "not-applicable",
     "TransformNormal(Vector2,Matrix)": "complete",
@@ -737,7 +739,7 @@
    "members": {
     "new(Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single)": "complete",
     "CreateBillboard(Vector3,Vector3,Vector3,Nullable`1)": "complete",
-    "CreateBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Matrix&)": "complete",
+    "CreateBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Matrix&)": "not-applicable",
     "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)": "missing",
     "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)": "missing",
     "CreateTranslation(Vector3)": "complete",
@@ -937,7 +939,7 @@
    "status": "partial",
    "members": {
     "new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "missing",
-    "Present(Nullable`1,Nullable`1,IntPtr)": "complete",
+    "Present(Nullable`1,Nullable`1,IntPtr)": "missing",
     "Present()": "complete",
     "Reset()": "missing",
     "Reset(PresentationParameters)": "missing",
@@ -1062,12 +1064,12 @@
     "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)": "missing",
     "End()": "complete",
     "Draw(Texture2D,Vector2,Color)": "complete",
-    "Draw(Texture2D,Vector2,Nullable`1,Color)": "missing",
-    "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Single,SpriteEffects,Single)": "missing",
-    "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "missing",
+    "Draw(Texture2D,Vector2,Nullable`1,Color)": "complete",
+    "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Single,SpriteEffects,Single)": "complete",
+    "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "complete",
     "Draw(Texture2D,Rectangle,Color)": "complete",
-    "Draw(Texture2D,Rectangle,Nullable`1,Color)": "missing",
-    "Draw(Texture2D,Rectangle,Nullable`1,Color,Single,Vector2,SpriteEffects,Single)": "missing",
+    "Draw(Texture2D,Rectangle,Nullable`1,Color)": "complete",
+    "Draw(Texture2D,Rectangle,Nullable`1,Color,Single,Vector2,SpriteEffects,Single)": "complete",
     "DrawString(SpriteFont,String,Vector2,Color)": "missing",
     "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "missing",
     "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "missing",
@@ -1557,12 +1559,12 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Matrix.CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)",
-   "detail": "no exported 'matrix-create-constrained-billboard' in microsoft.xna.framework"
+   "detail": "The constrained billboard's degenerate-axis fallback is a chain of three nested thresholds against two optional vectors. It is deferred rather than approximated: an implementation that agreed on the ordinary case and diverged on the degenerate one would be worse than its absence."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Matrix.CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)",
-   "detail": "no exported 'matrix-create-constrained-billboard' in microsoft.xna.framework"
+   "detail": "See the by-value overload."
   },
   {
    "category": "missing_member",
@@ -1638,6 +1640,11 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.new(GraphicsAdapter,GraphicsProfile,PresentationParameters)",
    "detail": "this constructor signature is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Present(Nullable`1,Nullable`1,IntPtr)",
+   "detail": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected."
   },
   {
    "category": "missing_member",
@@ -1947,7 +1954,7 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(Int32,Nullable`1,!!0[],Int32,Int32)",
-   "detail": "no exported 'set-data' in microsoft.xna.framework.graphics"
+   "detail": "Pixel access is not projected."
   },
   {
    "category": "missing_member",
@@ -1962,7 +1969,7 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(Int32,Nullable`1,!!0[],Int32,Int32)",
-   "detail": "no exported 'get-data' in microsoft.xna.framework.graphics"
+   "detail": "Pixel access is not projected."
   },
   {
    "category": "missing_member",
@@ -1983,31 +1990,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)",
    "detail": "Needs the state objects, Effect and Matrix."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Vector2,Nullable`1,Color)",
-   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Single,SpriteEffects,Single)",
-   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)",
-   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Rectangle,Nullable`1,Color)",
-   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Draw(Texture2D,Rectangle,Nullable`1,Color,Single,Vector2,SpriteEffects,Single)",
-   "detail": "no exported 'draw' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",

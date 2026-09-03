@@ -111,3 +111,62 @@ qualified, is a failure and not a skip."
   (setf (decoded game)
         (microsoft.xna.framework.graphics:texture-2d-from-png-bytes
          (xna:graphics-device game) (payload game))))
+
+(defclass draw-shapes-game (counting-game)
+  ((manager :initform nil :accessor manager)
+   (batch   :initform nil :accessor batch)
+   (texture :initform nil :accessor texture)
+   (accepted :initform 0 :accessor accepted)
+   (draw-error :initform nil :accessor draw-error))
+  (:documentation
+   "A game that submits one sprite per XNA texture-Draw overload, all seven."))
+
+(defmethod initialize-instance :after ((game draw-shapes-game) &key)
+  (setf (manager game) (make-instance 'xna:graphics-device-manager :game game)))
+
+(defmethod xna:load-content ((game draw-shapes-game))
+  (call-next-method)
+  (let ((device (xna:graphics-device game)))
+    (setf (texture game) (microsoft.xna.framework.graphics:texture-2d-from-png-file
+                          device (fixture-path "cna-lisp-mark.png"))
+          (batch game) (make-instance 'microsoft.xna.framework.graphics:sprite-batch
+                                      :graphics-device device))))
+
+(defmethod xna:draw ((game draw-shapes-game) game-time)
+  (declare (ignore game-time))
+  (incf (draws game))
+  (handler-case
+      (let ((batch (batch game))
+            (texture (texture game))
+            (position (xna:make-vector2 4.5 6.25))
+            (destination (xna:make-rectangle 0 0 32 32))
+            (source (xna:make-rectangle 0 0 16 16))
+            (origin (xna:make-vector2 8.0 8.0)))
+        (microsoft.xna.framework.graphics:begin batch)
+        (unwind-protect
+             (flet ((submit (&rest arguments)
+                      (apply #'microsoft.xna.framework.graphics:draw-texture
+                             batch texture arguments)
+                      (incf (accepted game))))
+               ;; Draw(t, Vector2, Color)
+               (submit :position position :color (xna:white))
+               ;; Draw(t, Vector2, Rectangle?, Color)
+               (submit :position position :source source :color (xna:white))
+               ;; Draw(t, Vector2, Rectangle?, Color, float, Vector2, float, Effects, float)
+               (submit :position position :source source :color (xna:white)
+                       :rotation 0.5 :origin origin :scale 2.0
+                       :effects :none :layer-depth 0.25)
+               ;; ... and the Vector2-scale one
+               (submit :position position :source source :color (xna:white)
+                       :rotation 0.5 :origin origin :scale (xna:make-vector2 1.5 2.5)
+                       :effects :flip-horizontally :layer-depth 0.5)
+               ;; Draw(t, Rectangle, Color)
+               (submit :destination destination :color (xna:white))
+               ;; Draw(t, Rectangle, Rectangle?, Color)
+               (submit :destination destination :source source :color (xna:white))
+               ;; Draw(t, Rectangle, Rectangle?, Color, float, Vector2, Effects, float)
+               (submit :destination destination :source source :color (xna:white)
+                       :rotation 0.5 :origin origin
+                       :effects :flip-vertically :layer-depth 0.75))
+          (microsoft.xna.framework.graphics:end batch)))
+    (error (condition) (setf (draw-error game) condition))))

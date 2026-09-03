@@ -99,7 +99,19 @@ Admitted: **0.21.0 only** (encoded 5376). Not a range, not "any 0.x", not "this
 minor or newer". A version enters the set after the whole bound surface has
 passed the compiler gate against that version's headers.
 
-### 4.3 By-value aggregates are flattened, and the flattening is proved
+### 4.3 Overloads are refused, not merely mapped
+
+A `&key` lambda list accepts every keyword combination unless something refuses.
+So the mapping rules carry, per overload, the exact keyword set that expresses
+it; the verifier checks each against the real method lambda lists; and the
+implementation refuses the combinations XNA does not have. `SpriteBatch.Draw` is
+the worked example, with all seven overloads and six refused shapes.
+
+A mapping rule keyed on a signature no member produces is a diagnostic in its own
+right, because such a rule is silently ignored and the default naming rule
+applies instead.
+
+### 4.4 By-value aggregates are flattened, and the flattening is proved
 
 Measured, not assumed: CFFI answers *"Unable to call structures by value without
 cffi-libffi loaded"*, and `cffi-libffi` needs libffi headers and a C compiler at
@@ -115,20 +127,28 @@ generator**, and the route is recorded as blocked with the generator's own proof
 by-value prototypes; the run-time test calls them through the flattened shape and
 compares byte for byte.
 
-### 4.4 The graphics device stores no handle
+One route resists even that: `cna_graphics_device_set_viewport` takes a 24-byte
+aggregate, which the ABI passes in memory. For that one the generator emits a
+tiny private shim -- a wrapper that takes the aggregate by pointer and the real
+route by function pointer, links against nothing, and does only the ABI
+transition. It is optional and not shipped prebuilt, so a release still loads
+with no C toolchain; `CNA_LISP_SHIM` names a build of it and the setter refuses
+with an actionable condition when it is absent.
+
+### 4.5 The graphics device stores no handle
 
 CNA lends the device only inside a lifecycle callback and only for its duration.
 `graphics-device` is therefore a parent-owned facade that resolves a fresh
 borrowed handle per operation, and refuses with `cna-scope-error` outside a
 callback.
 
-### 4.5 No finalizer destroys anything
+### 4.6 No finalizer destroys anything
 
 Every CNA handle is thread-affine; a finalizer runs on the collector's thread. A
 finalizer that called CNA would be calling it from the wrong thread by
 construction. Disposal is `dispose`, and it is deterministic.
 
-### 4.6 Conditions, never result codes
+### 4.7 Conditions, never result codes
 
 One place translates a result code, and the code is not a public reader. A
 callback's condition is preserved as an object and re-signalled on the Lisp side
@@ -168,10 +188,10 @@ which refuses any figure in the prose that the reports do not produce.
 <!-- generated:complete types=18 -->
 <!-- generated:partial types=10 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=762 -->
+<!-- generated:complete members=756 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=140 -->
-<!-- generated:not-applicable members=178 -->
+<!-- generated:missing members=136 -->
+<!-- generated:not-applicable members=188 -->
 <!-- generated:disagreement total=0 -->
 
 Selection **Foundation 1**: 29 types, 1081 members.
@@ -179,15 +199,16 @@ Selection **Foundation 1**: 29 types, 1081 members.
 | | |
 | --- | --- |
 | Types complete / partial / missing | **18 / 10 / 1** |
-| Members complete | **762** |
-| Members missing | **140** |
-| Members not applicable | **178** |
+| Members complete | **756** |
+| Members missing | **136** |
+| Members not applicable | **188** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
 
-Every remaining diagnostic is an absence. Nothing implemented disagrees with the
-contract, nothing private has leaked into a public package, and no exported
-symbol is unaccounted for. `docs/compatibility.md` has the per-type table.
+Every remaining diagnostic is an absence, and "zero disagreement" now means more
+than it used to: no mapping rule names a member that does not exist, and every
+collapsed overload family declares how each overload is distinguished, with its
+keyword set checked against the real method lambda lists.
 
 ### Behaviour authority
 

@@ -211,51 +211,73 @@ answers true, exactly as the original's does.")
            :format-control
            "a CNA game is already live in this process. CNA allows exactly one; dispose ~
             the existing game before creating another."))
-  (let ((token (cna-lisp.internal:register-callback-target game)))
+  ;; Construction is transactional. Four things happen after the native game
+  ;; exists -- the frame hooks, the device facade, the child registration and the
+  ;; active-game slot -- and any of them can fail. Before this was one unwind, a
+  ;; failure in the third left a live native game and a callback registry entry
+  ;; behind, with no Lisp object anybody could dispose.
+  (let ((token (cna-lisp.internal:register-callback-target game))
+        (created nil)
+        (committed nil))
     (setf (slot-value game 'callback-token) token)
-    (handler-bind ((error (lambda (condition)
-                            (declare (ignore condition))
-                            (cna-lisp.internal:unregister-callback-target token)
-                            (setf (slot-value game 'callback-token) nil))))
-      (cffi:with-foreign-object (callbacks '(:struct cna-lisp.internal.ffi::cna-game-callbacks))
-        (%fill-game-callbacks callbacks token)
-        (cna-lisp.internal:with-utf8-view (title-data title-length (window-title game))
-          (cffi:with-foreign-object (info '(:struct cna-lisp.internal.ffi::cna-game-create-info))
-            (cffi:foreign-funcall "memset" :pointer info :int 0
-                                  :size cna-lisp.internal.ffi::+sizeof-cna-game-create-info+
-                                  :void)
-            (macrolet ((slot (name)
-                         `(cffi:foreign-slot-value
-                           info '(:struct cna-lisp.internal.ffi::cna-game-create-info) ',name)))
-              (setf (slot cna-lisp.internal.ffi::struct-size)
-                    cna-lisp.internal.ffi::+sizeof-cna-game-create-info+
-                    (slot cna-lisp.internal.ffi::struct-version) 1
-                    (slot cna-lisp.internal.ffi::is-fixed-time-step)
-                    (cna-lisp.internal.ffi:cna-bool-of fixed-time-step)
-                    (slot cna-lisp.internal.ffi::target-elapsed-time-ticks) target-elapsed-time
-                    (slot cna-lisp.internal.ffi::callbacks) callbacks)
-              (let ((view (cffi:foreign-slot-pointer
-                           info '(:struct cna-lisp.internal.ffi::cna-game-create-info)
-                           'cna-lisp.internal.ffi::window-title)))
-                (setf (cffi:foreign-slot-value
-                       view '(:struct cna-lisp.internal.ffi::cna-string-view)
-                       'cna-lisp.internal.ffi::data) title-data
-                      (cffi:foreign-slot-value
-                       view '(:struct cna-lisp.internal.ffi::cna-string-view)
-                       'cna-lisp.internal.ffi::byte-length) title-length)))
-            (cffi:with-foreign-object (out :uint64)
-              (cna-lisp.internal:check-result
-               (cna-lisp.internal.ffi::%game-create info out)
-               "make-instance game" :object-type (type-of game))
-              (setf (cna-lisp.internal:handle-of game) (cffi:mem-ref out :uint64)))))))
-    (%install-frame-hooks (cna-lisp.internal:handle-of game) token)
-    (setf (slot-value game 'graphics-device)
-          (make-instance 'microsoft.xna.framework.graphics:graphics-device
-                         :ownership :parent-owned
-                         :owner game
-                         :owner-thread (cna-lisp.internal:owner-thread-of game)))
-    (cna-lisp.internal:register-child game (slot-value game 'graphics-device))
-    (setf (cna-lisp.internal:active-game) game)))
+    (unwind-protect
+         (progn
+    (cffi:with-foreign-object (callbacks '(:struct cna-lisp.internal.ffi::cna-game-callbacks))
+           (%fill-game-callbacks callbacks token)
+           (cna-lisp.internal:with-utf8-view (title-data title-length (window-title game))
+             (cffi:with-foreign-object (info '(:struct cna-lisp.internal.ffi::cna-game-create-info))
+               (cffi:foreign-funcall "memset" :pointer info :int 0
+                                     :size cna-lisp.internal.ffi::+sizeof-cna-game-create-info+
+                                     :void)
+               (macrolet ((slot (name)
+                            `(cffi:foreign-slot-value
+                              info '(:struct cna-lisp.internal.ffi::cna-game-create-info) ',name)))
+                 (setf (slot cna-lisp.internal.ffi::struct-size)
+                       cna-lisp.internal.ffi::+sizeof-cna-game-create-info+
+                       (slot cna-lisp.internal.ffi::struct-version) 1
+                       (slot cna-lisp.internal.ffi::is-fixed-time-step)
+                       (cna-lisp.internal.ffi:cna-bool-of fixed-time-step)
+                       (slot cna-lisp.internal.ffi::target-elapsed-time-ticks) target-elapsed-time
+                       (slot cna-lisp.internal.ffi::callbacks) callbacks)
+                 (let ((view (cffi:foreign-slot-pointer
+                              info '(:struct cna-lisp.internal.ffi::cna-game-create-info)
+                              'cna-lisp.internal.ffi::window-title)))
+                   (setf (cffi:foreign-slot-value
+                          view '(:struct cna-lisp.internal.ffi::cna-string-view)
+                          'cna-lisp.internal.ffi::data) title-data
+                         (cffi:foreign-slot-value
+                          view '(:struct cna-lisp.internal.ffi::cna-string-view)
+                          'cna-lisp.internal.ffi::byte-length) title-length)))
+               (cffi:with-foreign-object (out :uint64)
+                 (cna-lisp.internal:check-result
+                  (cna-lisp.internal.ffi::%game-create info out)
+                  "make-instance game" :object-type (type-of game))
+                 (setf (cna-lisp.internal:handle-of game) (cffi:mem-ref out :uint64))))))
+           (setf created t)
+           (%install-frame-hooks (cna-lisp.internal:handle-of game) token)
+           (setf (slot-value game 'graphics-device)
+                 (make-instance 'microsoft.xna.framework.graphics:graphics-device
+                                :ownership :parent-owned
+                                :owner game
+                                :owner-thread (cna-lisp.internal:owner-thread-of game)))
+           (cna-lisp.internal:register-child game (slot-value game 'graphics-device))
+           (setf (cna-lisp.internal:active-game) game)
+           (setf committed t))
+      (unless committed
+        ;; Destroy the native game if it was created, and stop CNA being able to
+        ;; call back either way. A failure here must not mask the one that caused
+        ;; the rollback.
+        (when created
+          (ignore-errors
+           (cna-lisp.internal.ffi::%game-destroy (cna-lisp.internal:handle-of game))))
+        (ignore-errors (cna-lisp.internal:release-callback-error-buffer))
+        (cna-lisp.internal:take-pending-callback-condition)
+        (cna-lisp.internal:unregister-callback-target token)
+        (setf (slot-value game 'callback-token) nil
+              (cna-lisp.internal:handle-of game) 0
+              (cna-lisp.internal:disposed-state-of game) t)
+        (when (eq (cna-lisp.internal:active-game) game)
+          (setf (cna-lisp.internal:active-game) nil))))))
 
 ;;; --- running -----------------------------------------------------------
 

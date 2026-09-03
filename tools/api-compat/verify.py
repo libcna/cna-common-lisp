@@ -39,6 +39,8 @@ CATEGORIES = [
     "unexpected_public_symbol",
     "private_implementation_leak",
     "unmeasured_category",
+    "stale_mapping_rule",
+    "wrong_overload_shape",
 ]
 
 # Categories that mean the binding disagrees with the contract or hides something,
@@ -181,12 +183,56 @@ def verify_enum(report, rules, type_rule, contract_type, surface):
     return statuses
 
 
+RULE_SECTIONS = ("member_overrides", "not_applicable", "unimplemented", "constructors",
+                 "blocked")
+
+# How an overload family may collapse onto one Lisp function. A family that
+# collapses has to name one of these, and a member that claims "keywords" has to
+# list them, so that "one function expresses them all" is checkable rather than
+# assertable.
+DISTINGUISHING_MECHANISMS = frozenset((
+    "dispatch",              # CLOS dispatch on an argument's type
+    "arity",                 # a trailing optional argument
+    "dispatch-and-arity",    # both
+    "keywords",              # a declared keyword set, listed per overload
+))
+
+
+def verify_rule_freshness(report, type_rule, contract_type):
+    """Every key in a type's rules must name a member the contract actually has.
+
+    A rule keyed on a signature that no member produces is worse than no rule: it
+    is silently ignored, the default naming rule applies instead, and the member
+    is reported under a mapping nobody wrote. That is exactly how five
+    SpriteBatch.Draw overloads came to be reported missing while a rule for each
+    of them sat in this file being skipped.
+    """
+    name = contract_type["name"]
+    present = {signature(m) for m in contract_type["members"]}
+    constructors = {signature(m) for m in contract_type["members"]
+                    if m["kind"] == "constructor"}
+    for section in RULE_SECTIONS:
+        expected = constructors if section == "constructors" else present
+        for key in sorted(type_rule.get(section, {})):
+            if key not in expected:
+                report.add("stale_mapping_rule", "%s %s[%s]" % (name, section, key),
+                           "no member of this type has that signature")
+    families = {m["name"] for m in contract_type["members"]}
+    families.add(".ctor")
+    for key in sorted(type_rule.get("overload_families", {})):
+        if key not in families:
+            report.add("stale_mapping_rule", "%s overload_families[%s]" % (name, key),
+                       "no member of this type has that name")
+
+
 def verify_type(report, rules, contract_type, surface, packages, claimed):
     name = contract_type["name"]
     type_rule = rules["types"].get(name)
     if type_rule is None:
         report.add("unmeasured_category", name, "no projection rule for this type")
         return {"name": name, "status": "unmeasured", "members": {}}
+
+    verify_rule_freshness(report, type_rule, contract_type)
 
     if type_rule.get("status") == "missing":
         for member in contract_type["members"]:
@@ -348,6 +394,29 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
             report.add("wrong_lambda_list", subject,
                        "%r has lambda list %s, expected %s"
                        % (expected, entry["lambda_list"], arity))
+        # A member that collapses into a keyword-taking function must say which
+        # keywords express it, and every one of them must really be accepted.
+        # Without this, "one function with keyword arguments expresses all seven
+        # overloads" is a sentence rather than a claim.
+        keywords = override.get("keywords")
+        if keywords is not None:
+            accepted = set(entry.get("keywords") or ())
+            accepted.update(item.lstrip("&") for item in entry["lambda_list"])
+            missing_keywords = [k for k in keywords if k not in accepted]
+            if missing_keywords:
+                report.add("wrong_overload_shape", subject,
+                           "%r does not accept %s" % (expected, missing_keywords))
+        positional = override.get("positional")
+        if positional is not None:
+            required = [item for item in entry["lambda_list"]
+                        if not item.startswith("&")]
+            stop = next((i for i, item in enumerate(entry["lambda_list"])
+                         if item.startswith("&")), len(entry["lambda_list"]))
+            required = entry["lambda_list"][:stop]
+            if len(required) != positional:
+                report.add("wrong_overload_shape", subject,
+                           "%r takes %d required argument(s), expected %d"
+                           % (expected, len(required), positional))
         if override.get("status") == "partial":
             statuses[sig] = "partial"
     # An overload family that collapsed to one symbol must say so.
@@ -371,6 +440,32 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
             report.add("overload_mapping_mismatch",
                        "%s.%s" % (contract_type["name"], family),
                        "maps to %d symbols with no declared overload family" % len(mapped))
+        # A family that collapses several *complete* overloads onto ONE symbol has
+        # to distinguish them somehow. Requiring a declared keyword set per
+        # overload is what turns "one function expresses them all" into something
+        # a machine can check.
+        complete = [m for m in members if statuses.get(signature(m)) == "complete"]
+        if len(mapped) == 1 and len(complete) > 1 and family != ".ctor":
+            overrides = type_rule.get("member_overrides", {})
+            undeclared = [signature(m) for m in complete
+                          if not overrides.get(signature(m), {}).get("distinguished_by")]
+            if undeclared:
+                report.add("wrong_overload_shape",
+                           "%s.%s" % (contract_type["name"], family),
+                           "%d overloads collapse onto %r without declaring how each is "
+                           "expressed: %s"
+                           % (len(complete), list(mapped)[0], undeclared[:4]))
+            for member in complete:
+                sig = signature(member)
+                mechanism = overrides.get(sig, {}).get("distinguished_by")
+                if mechanism and mechanism not in DISTINGUISHING_MECHANISMS:
+                    report.add("wrong_overload_shape",
+                               "%s.%s" % (contract_type["name"], sig),
+                               "%r is not a distinguishing mechanism" % mechanism)
+                if mechanism == "keywords" and not overrides.get(sig, {}).get("keywords"):
+                    report.add("wrong_overload_shape",
+                               "%s.%s" % (contract_type["name"], sig),
+                               "claims to be distinguished by keywords and lists none")
     return statuses
 
 

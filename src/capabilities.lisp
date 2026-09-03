@@ -89,22 +89,27 @@ diagnostic.")
     (:type "Microsoft.Xna.Framework.Content.ContentManager" :status :missing
      :reason "Content and XNB are a later closure.")
     (:member "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport.set"
-     :status :externally-blocked
-     :reason-code "by-value-aggregate-not-expressible"
+     :status :partial
+     :reason-code "by-value-aggregate-needs-shim"
      :reason "cna_graphics_device_set_viewport takes CNA_Viewport (24 bytes) by
-              value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot
-              pass a MEMORY-class aggregate without cffi-libffi, which requires
-              libffi headers and a C compiler at load time -- a released CNA-Lisp
-              must need neither. The refusal is proved by
-              tools/native-abi/generate.py rather than asserted; see
-              docs/generated/native-abi-manifest.json, blocked_routes.")
+              value. The System V AMD64 ABI classifies it MEMORY, which CFFI
+              cannot pass without cffi-libffi -- a dependency a released CNA-Lisp
+              must not have. The generator proves that refusal and emits a tiny
+              private shim that takes the aggregate by pointer and the real route
+              by function pointer; the setter goes through it. The shim is
+              optional and not shipped prebuilt, so without CNA_LISP_SHIM the
+              setter refuses with an actionable condition. See docs/native-abi.md.")
     (:member "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString"
      :status :missing
      :reason "Needs SpriteFont, which is a later closure.")
     (:member "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(state overloads)"
      :status :missing
      :reason "Needs BlendState, SamplerState, DepthStencilState, RasterizerState
-              and Effect, none of which is in this milestone.")
+              and Effect, none of which is in this milestone. BEGIN therefore
+              takes no arguments at all: XNA's next overload takes a
+              SpriteSortMode *and* a BlendState together, so offering a sort mode
+              on its own would be an overload XNA does not have, and it would
+              have to be withdrawn when the real ones arrive.")
     (:member "Microsoft.Xna.Framework.Game.Components" :status :missing
      :reason "Needs the game component engine.")
     (:member "Microsoft.Xna.Framework.Game.Content" :status :missing

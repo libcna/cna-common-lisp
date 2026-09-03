@@ -133,6 +133,50 @@ renderer is present is what makes a headless qualification run interpretable."))
                      (dotimes (i n v)
                        (setf (aref v i) (cffi:mem-aref buffer :uint8 i))))))))))))) 
 
+(defparameter +viewport-shim-reason+
+  "cna_graphics_device_set_viewport takes CNA_Viewport by value, and at 24 bytes the System V
+AMD64 ABI passes it in memory rather than in registers -- which CFFI cannot express without
+cffi-libffi, a dependency a released CNA-Lisp must not have."
+  "Why the viewport setter is the one member that needs the optional shim.")
+
+(defgeneric (setf viewport) (viewport graphics-device)
+  (:documentation
+   "GraphicsDevice.Viewport's setter.
+
+This is the one member of the projection that goes through the optional private
+shim: the route takes CNA_Viewport by value, and the System V AMD64 ABI passes a
+24-byte aggregate in memory, which CFFI cannot do without cffi-libffi. Without the
+shim it refuses with a CNA-NOT-SUPPORTED-ERROR saying how to build one; the reader
+and everything else work regardless."))
+
+(defmethod (setf viewport) (new-viewport (device graphics-device))
+  (let ((entry (cna-lisp.internal:shim-entry-point
+                "cna_lisp_shim_cna_graphics_device_set_viewport")))
+    (unless entry
+      (cna-lisp.internal:refuse-without-shim
+       "(setf viewport)" "cna_lisp_shim_cna_graphics_device_set_viewport"
+       +viewport-shim-reason+))
+    (let ((handle (%resolve-device-handle device "(setf viewport)")))
+      (cffi:with-foreign-object (vp '(:struct cna-lisp.internal.ffi::cna-viewport))
+        (macrolet ((slot (name)
+                     `(cffi:foreign-slot-value
+                       vp '(:struct cna-lisp.internal.ffi::cna-viewport) ',name)))
+          (setf (slot cna-lisp.internal.ffi::x) (viewport-x new-viewport)
+                (slot cna-lisp.internal.ffi::y) (viewport-y new-viewport)
+                (slot cna-lisp.internal.ffi::width) (viewport-width new-viewport)
+                (slot cna-lisp.internal.ffi::height) (viewport-height new-viewport)
+                (slot cna-lisp.internal.ffi::min-depth) (viewport-min-depth new-viewport)
+                (slot cna-lisp.internal.ffi::max-depth) (viewport-max-depth new-viewport)))
+        (cna-lisp.internal:check-result
+         (cffi:foreign-funcall-pointer
+          entry ()
+          :pointer (cffi:foreign-symbol-pointer "cna_graphics_device_set_viewport")
+          :uint64 handle
+          :pointer vp
+          :uint32)
+         "(setf viewport)" :object-type 'graphics-device))))
+  new-viewport)
+
 (defgeneric present (graphics-device)
   (:documentation "GraphicsDevice.Present()."))
 

@@ -20,6 +20,7 @@ canonical CNA headers by `tools/native-abi/generate.py`, which then emits:
 | `src/framework/predefined-colors.generated.lisp` | the 141 predefined XNA colours, from the ABI's own table |
 | `tools/native-abi/probe.generated.c` | the compile-time prototype and layout gate |
 | `tools/native-abi/valueprobe.generated.c` | the run-time by-value aggregate gate |
+| `tools/native-abi/shim.generated.c` | the optional private shim, one wrapper per proved-unbindable route |
 | `docs/generated/native-abi-manifest.json` | the resolved, fully typed manifest, with evidence |
 
 A hand-copied signature cannot drift from the ABI it claims to describe, because
@@ -120,20 +121,48 @@ compares byte for byte, including with integer arguments before and after the
 aggregate so that register and stack assignment is exercised rather than only the
 first slot. If the flattening were wrong on some platform, that test fails there.
 
-### Blocked routes
+### Routes the generator refuses, and the one shim
 
-A route that cannot be bound is recorded in the manifest's `blocked_routes`, and
-the generator **proves** the block rather than accepting the claim: it resolves
+A route that cannot be bound is recorded in the manifest's `shimmed_routes`, and
+the generator **proves** the refusal rather than accepting the claim: it resolves
 the route's real parameter types and requires the flattening to actually fail. A
-"blocked" route that could in fact be bound is a generator error.
+route claimed unbindable that could in fact be bound is a generator error.
 
 | Route | Why |
 | --- | --- |
 | `cna_graphics_device_set_viewport` | takes `CNA_Viewport` (24 bytes) by value: MEMORY class |
 
-`Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport`'s setter is therefore
-absent, and is reported as externally blocked with this reason rather than as
-unfinished work. The getter is bound and present.
+For that one route the generator then emits the smallest thing that gets past it,
+`tools/native-abi/shim.generated.c`:
+
+```c
+CNA_Result cna_lisp_shim_cna_graphics_device_set_viewport(
+    void (*target)(void), CNA_Handle graphics_device, const CNA_Viewport *viewport)
+{
+    typedef CNA_Result (*target_t)(CNA_Handle, CNA_Viewport);
+    return ((target_t)target)(graphics_device, *viewport);
+}
+```
+
+Four properties make this a shim rather than a second implementation:
+
+* it takes the aggregate **by pointer** and the real route **by function
+  pointer**, and does nothing but the one ABI transition;
+* it is **never linked against CNA**, so it cannot drift from the library it
+  forwards to — the caller supplies the target, which CNA-Lisp resolves from the
+  library it already loaded;
+* it holds no state and makes no decision;
+* it is **not the public API** and is not reachable from one: only
+  `(setf viewport)` uses it.
+
+It is **optional**. A released CNA-Lisp must load with no C toolchain, so the
+shim is not shipped prebuilt. `CNA_LISP_SHIM` names a build of it;
+`tools/native-abi/verify.sh` produces one; and without it `(setf viewport)`
+signals a `cna-not-supported-error` that names the variable, the command and the
+reason. Nothing else in the binding depends on it, and
+`tests/native/graphics.lisp` asserts both outcomes -- the setter really setting a
+viewport when the shim is present, and the refusal naming all three things when it
+is not.
 
 ## Strings and buffers
 
