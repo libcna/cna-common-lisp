@@ -38,8 +38,8 @@ would go stale the moment the next commit lands.
 | Gate | Result |
 | --- | --- |
 | ASDF load from a fresh image | no warnings |
-| `asdf:test-system` with a native library | **1436 checks, 0 failures, 0 not run** |
-| `asdf:test-system` without one | 1075 checks, 0 failures, **61 not run** and reported as such |
+| `asdf:test-system` with a native library | **1475 checks, 0 failures, 0 not run** |
+| `asdf:test-system` without one | 1114 checks, 0 failures, **61 not run** and reported as such |
 | Compiler-backed ABI probe | compiles clean at `-Wall -Wextra -Werror -Wpedantic` |
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
@@ -54,23 +54,24 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=26 -->
-<!-- generated:selected members=1043 -->
-<!-- generated:complete types=16 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=29 -->
+<!-- generated:selected members=1081 -->
+<!-- generated:complete types=18 -->
+<!-- generated:partial types=10 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=739 -->
+<!-- generated:complete members=762 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=141 -->
-<!-- generated:not-applicable members=162 -->
+<!-- generated:missing members=140 -->
+<!-- generated:not-applicable members=178 -->
 <!-- generated:disagreement total=0 -->
 
-26 selected types, 1043 members: **16 complete, 9 partial, 1 missing**;
-**739 members complete, 141 missing**, 162 not applicable, 1 partial.
+29 selected types, 1081 members: **18 complete, 10 partial, 1 missing**;
+**762 members complete, 140 missing**, 178 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 `MathHelper`, `Vector2`, `Vector3`, `Vector4` and `Quaternion` are complete.
-`Matrix` has seven members left, and each of them names what it is waiting for.
+`Matrix` has three members left and `Plane` has three, and each of the six names
+what it is waiting for.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -93,11 +94,14 @@ released CNA-Lisp may require a C toolchain, which it currently may not.
 The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts.
 
-1. **`Plane`**, which is small and unblocks three of `Matrix`'s seven remaining
-   members (`CreateShadow` twice and `CreateReflection`). Then **`Ray`,
-   `BoundingBox`, `BoundingSphere`, `BoundingFrustum`, `ContainmentType`,
-   `PlaneIntersectionType`** -- `Matrix` and `Quaternion` are in place, so the
-   whole geometry closure is now unblocked.
+1. **The bounding volumes**: `Ray`, `BoundingBox`, `BoundingSphere` and
+   `BoundingFrustum`. `Plane`, `ContainmentType` and `PlaneIntersectionType` are
+   done and `Plane`'s three remaining members are the ones that need these. The
+   four types intersect and contain each other in every combination, so they are
+   one closure and not four: implement them together or the cross-products stay
+   missing anyway. `BoundingFrustum` is the hard one -- its corners come from
+   intersecting three planes at a time, and its frustum-frustum test is not the
+   naive one.
 2. **Complete `Rectangle`** (`Intersect`, `Union`, the `Point` overload of
    `Offset`) and **`Color`** (the float and vector constructors, `ToVector3`,
    `ToVector4`, `Lerp`) -- `Color`'s vector members are unblocked now that

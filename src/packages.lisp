@@ -103,6 +103,18 @@
    #:matrix-add #:matrix-subtract #:matrix-negate
    #:matrix-multiply #:matrix-divide #:matrix-lerp #:matrix-transform
    #:matrix-equal
+   ;; --- Plane and the geometry enums --------------------------------------
+   #:plane #:make-plane #:plane-p #:copy-plane
+   #:make-plane-from-normal #:make-plane-from-vector4 #:make-plane-from-points
+   #:plane-normal #:plane-d #:+plane-normalize-epsilon+
+   #:plane-normalize #:plane-normalized
+   #:plane-dot #:plane-dot-coordinate #:plane-dot-normal
+   #:plane-transform #:plane-equal
+   #:containment-type #:containment-type-value #:containment-type-from-value
+   #:all-containment-type
+   #:plane-intersection-type #:plane-intersection-type-value
+   #:plane-intersection-type-from-value #:all-plane-intersection-type
+   #:matrix-create-reflection #:matrix-create-shadow
    ;; --- transforms --------------------------------------------------------
    #:vector2-transform #:vector2-transform-normal
    #:vector2-transform-array #:vector2-transform-normal-array

@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1",
   "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
-  "type_count": 26,
-  "member_count": 1043
+  "type_count": 29,
+  "member_count": 1081
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,23 +15,23 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 26,
-  "members": 1043,
+  "types": 29,
+  "members": 1081,
   "types_by_status": {
-   "partial": 9,
-   "complete": 16,
+   "partial": 10,
+   "complete": 18,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 739,
-   "missing": 141,
-   "not-applicable": 162,
+   "complete": 762,
+   "missing": 140,
+   "not-applicable": 178,
    "partial": 1
   },
-  "diagnostics": 142,
+  "diagnostics": 141,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 141,
+   "missing_member": 140,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -776,10 +776,10 @@
     "CreateFromQuaternion(Quaternion&,Matrix&)": "not-applicable",
     "CreateFromYawPitchRoll(Single,Single,Single)": "complete",
     "CreateFromYawPitchRoll(Single,Single,Single,Matrix&)": "not-applicable",
-    "CreateShadow(Vector3,Plane)": "missing",
-    "CreateShadow(Vector3&,Plane&,Matrix&)": "missing",
-    "CreateReflection(Plane)": "missing",
-    "CreateReflection(Plane&,Matrix&)": "missing",
+    "CreateShadow(Vector3,Plane)": "complete",
+    "CreateShadow(Vector3&,Plane&,Matrix&)": "not-applicable",
+    "CreateReflection(Plane)": "complete",
+    "CreateReflection(Plane&,Matrix&)": "not-applicable",
     "Decompose(Vector3&,Quaternion&,Vector3&)": "missing",
     "Transform(Matrix,Quaternion)": "complete",
     "Transform(Matrix&,Quaternion&,Matrix&)": "not-applicable",
@@ -844,6 +844,65 @@
     "M44": "complete"
    },
    "lisp": "microsoft.xna.framework:matrix"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Plane",
+   "status": "partial",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector3,Single)": "complete",
+    "new(Vector4)": "complete",
+    "new(Vector3,Vector3,Vector3)": "complete",
+    "Equals(Plane)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "Normalize()": "complete",
+    "Normalize(Plane)": "complete",
+    "Normalize(Plane&,Plane&)": "not-applicable",
+    "Transform(Plane,Matrix)": "complete",
+    "Transform(Plane&,Matrix&,Plane&)": "not-applicable",
+    "Transform(Plane,Quaternion)": "complete",
+    "Transform(Plane&,Quaternion&,Plane&)": "not-applicable",
+    "Dot(Vector4)": "complete",
+    "Dot(Vector4&,Single&)": "not-applicable",
+    "DotCoordinate(Vector3)": "complete",
+    "DotCoordinate(Vector3&,Single&)": "not-applicable",
+    "DotNormal(Vector3)": "complete",
+    "DotNormal(Vector3&,Single&)": "not-applicable",
+    "Intersects(BoundingBox)": "missing",
+    "Intersects(BoundingBox&,PlaneIntersectionType&)": "not-applicable",
+    "Intersects(BoundingFrustum)": "missing",
+    "Intersects(BoundingSphere)": "missing",
+    "Intersects(BoundingSphere&,PlaneIntersectionType&)": "not-applicable",
+    "op_Equality(Plane,Plane)": "complete",
+    "op_Inequality(Plane,Plane)": "not-applicable",
+    "Normal": "complete",
+    "D": "complete"
+   },
+   "lisp": "microsoft.xna.framework:plane"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.ContainmentType",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Disjoint": "complete",
+    "Contains": "complete",
+    "Intersects": "complete"
+   },
+   "lisp": "microsoft.xna.framework:containment-type"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.PlaneIntersectionType",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Front": "complete",
+    "Back": "complete",
+    "Intersecting": "complete"
+   },
+   "lisp": "microsoft.xna.framework:plane-intersection-type"
   },
   {
    "name": "Microsoft.Xna.Framework.PlayerIndex",
@@ -1507,28 +1566,23 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Matrix.CreateShadow(Vector3,Plane)",
-   "detail": "Needs Plane, which is not projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Matrix.CreateShadow(Vector3&,Plane&,Matrix&)",
-   "detail": "Needs Plane, which is not projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Matrix.CreateReflection(Plane)",
-   "detail": "Needs Plane, which is not projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Matrix.CreateReflection(Plane&,Matrix&)",
-   "detail": "Needs Plane, which is not projected yet."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Matrix.Decompose(Vector3&,Quaternion&,Vector3&)",
    "detail": "Decompose is implemented with unsafe pointer arithmetic over a private CanonicalBasis and VectorBasis pair -- some 540 IL instructions with a fallback path for degenerate scales. Reproducing it faithfully is a separate piece of work, and an approximation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than its absence."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Plane.Intersects(BoundingBox)",
+   "detail": "Needs the bounding volumes, which are the next closure."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Plane.Intersects(BoundingFrustum)",
+   "detail": "Needs the bounding volumes, which are the next closure."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Plane.Intersects(BoundingSphere)",
+   "detail": "Needs the bounding volumes, which are the next closure."
   },
   {
    "category": "missing_member",

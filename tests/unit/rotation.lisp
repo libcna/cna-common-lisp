@@ -317,3 +317,105 @@ is the point of neither. Exact equality is asserted wherever it can be."
       (xna:vector3-transform-array source m destination :length 5))
     (signals xna:cna-argument-out-of-range-error
       (xna:vector3-transform-array source m destination :destination-index 1))))
+
+;;; --- Plane and the geometry enums --------------------------------------------
+
+(test the-geometry-enums-are-keywords-with-the-abi-values
+  (is (= 0 (xna:containment-type-value :disjoint)))
+  (is (= 1 (xna:containment-type-value :contains)))
+  (is (= 2 (xna:containment-type-value :intersects)))
+  (is (eq :contains (xna:containment-type-from-value 1)))
+  (is (= 0 (xna:plane-intersection-type-value :front)))
+  (is (= 1 (xna:plane-intersection-type-value :back)))
+  (is (= 2 (xna:plane-intersection-type-value :intersecting)))
+  (is (typep :front 'xna:plane-intersection-type))
+  (is (not (typep :sideways 'xna:plane-intersection-type)))
+  (signals xna:cna-usage-error (xna:containment-type-value :nonsense)))
+
+(test a-plane-through-three-points-has-a-unit-normal
+  (let ((p (xna:make-plane-from-points (xna:make-vector3 0 0 0)
+                                       (xna:make-vector3 1 0 0)
+                                       (xna:make-vector3 0 1 0))))
+    (is (~= 1.0f0 (xna:vector3-length (xna:plane-normal p))))
+    ;; The normal is the cross product of the two edges taken from the first
+    ;; point, in that order, so this winding faces +Z. Reversing two of the
+    ;; points flips it.
+    (is (vector3~= (xna:plane-normal p) (xna:make-vector3 0 0 1) 1.0e-6))
+    (is (vector3~= (xna:plane-normal
+                    (xna:make-plane-from-points (xna:make-vector3 0 0 0)
+                                                (xna:make-vector3 0 1 0)
+                                                (xna:make-vector3 1 0 0)))
+                   (xna:make-vector3 0 0 -1) 1.0e-6))
+    (is (~= 0.0f0 (xna:plane-d p)))))
+
+(test plane-dot-coordinate-is-the-signed-distance
+  (let ((p (xna:make-plane 0 1 0 0)))
+    (is (= 5.0f0 (xna:plane-dot-coordinate p (xna:make-vector3 0 5 0))))
+    (is (= -5.0f0 (xna:plane-dot-coordinate p (xna:make-vector3 0 -5 0))))
+    (is (= 0.0f0 (xna:plane-dot-coordinate p (xna:make-vector3 100 0 -100)))))
+  ;; A plane offset from the origin: D is added, not subtracted.
+  (let ((p (xna:make-plane 0 1 0 -3)))
+    (is (= 0.0f0 (xna:plane-dot-coordinate p (xna:make-vector3 0 3 0))))))
+
+(test plane-dot-uses-w-as-the-coefficient-of-d
+  (let ((p (xna:make-plane 1 2 3 4)))
+    (is (= (+ 1.0f0 4.0f0 9.0f0 16.0f0) (xna:plane-dot p (xna:make-vector4 1 2 3 4))))
+    (is (= 14.0f0 (xna:plane-dot-normal p (xna:make-vector3 1 2 3))))))
+
+(test plane-normalize-leaves-an-already-unit-normal-exactly-alone
+  ;; The framework compares the squared length against one binary32 epsilon and
+  ;; returns without touching anything. A plane whose normal is unit but whose D
+  ;; is large is the case where that is observable.
+  (let ((p (xna:make-plane 0 1 0 1000)))
+    (xna:plane-normalize p)
+    (is (= 1000.0f0 (xna:plane-d p)) "an already-unit normal must not rescale D")))
+
+(test plane-normalize-scales-both-the-normal-and-d
+  (let ((p (xna:make-plane 0 2 0 10)))
+    (xna:plane-normalize p)
+    (is (= 1.0f0 (xna:vector3-y (xna:plane-normal p))))
+    (is (= 5.0f0 (xna:plane-d p)))))
+
+(test plane-normalized-does-not-mutate
+  (let* ((p (xna:make-plane 0 2 0 10))
+         (n (xna:plane-normalized p)))
+    (is (= 2.0f0 (xna:vector3-y (xna:plane-normal p))))
+    (is (= 1.0f0 (xna:vector3-y (xna:plane-normal n))))))
+
+(test plane-transform-keeps-points-on-the-plane
+  ;; The transpose of the inverse is the only thing that does this under a
+  ;; non-uniform scale, which is why the plane transform is not the vector one.
+  (let* ((plane (xna:make-plane 0 1 0 -2))
+         (m (xna:matrix-multiply (xna:matrix-create-scale 1 3 1)
+                                 (xna:matrix-create-translation
+                                  (xna:make-vector3 0 1 0))))
+         (transformed (xna:plane-transform plane m))
+         (on-plane (xna:make-vector3 5 2 -4))
+         (moved (xna:vector3-transform on-plane m)))
+    (is (~= 0.0f0 (xna:plane-dot-coordinate plane on-plane)))
+    (is (~= 0.0f0 (xna:plane-dot-coordinate transformed moved) 1.0e-4))))
+
+(test matrix-create-reflection-mirrors-through-the-plane
+  (let* ((plane (xna:make-plane 0 1 0 0))
+         (m (xna:matrix-create-reflection plane)))
+    (is (vector3~= (xna:vector3-transform (xna:make-vector3 1 2 3) m)
+                   (xna:make-vector3 1 -2 3) 1.0e-6))
+    ;; A point on the plane is its own reflection.
+    (is (vector3~= (xna:vector3-transform (xna:make-vector3 4 0 5) m)
+                   (xna:make-vector3 4 0 5) 1.0e-6))))
+
+(test matrix-create-reflection-does-not-mutate-its-plane
+  (let ((plane (xna:make-plane 0 2 0 4)))
+    (xna:matrix-create-reflection plane)
+    (is (= 2.0f0 (xna:vector3-y (xna:plane-normal plane))))
+    (is (= 4.0f0 (xna:plane-d plane)))))
+
+(test matrix-create-shadow-flattens-onto-the-plane
+  (let* ((plane (xna:make-plane 0 1 0 0))
+         (light (xna:make-vector3 0 -1 0))
+         (m (xna:matrix-create-shadow light plane))
+         (shadow (xna:vector4-transform (xna:make-vector3 3 10 -2) m)))
+    ;; The result is homogeneous; dividing through puts it on the plane.
+    (is (/= 0.0f0 (xna:vector4-w shadow)))
+    (let ((y (/ (xna:vector4-y shadow) (xna:vector4-w shadow))))
+      (is (~= 0.0f0 y 1.0e-4)))))

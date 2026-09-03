@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1",
   "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
-  "type_count": 26,
-  "member_count": 1043
+  "type_count": 29,
+  "member_count": 1081
  },
  "types": [
   {
@@ -15770,6 +15770,774 @@
      "static": false,
      "constant": false,
      "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Plane",
+   "kind": "struct",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.ValueType",
+   "interfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.Plane]"
+   ],
+   "directInterfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.Plane]"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "a",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "b",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "c",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "d",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "normal",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "d",
+       "type": "System.Single",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Vector4",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "point1",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "point2",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "point3",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "other",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "obj",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetHashCode",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "ToString",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Normalize",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Normalize",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Plane",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Normalize",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Transform",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Plane",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "plane",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Transform",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "plane",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "matrix",
+       "type": "Microsoft.Xna.Framework.Matrix&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Transform",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Plane",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "plane",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rotation",
+       "type": "Microsoft.Xna.Framework.Quaternion",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Transform",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "plane",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rotation",
+       "type": "Microsoft.Xna.Framework.Quaternion&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dot",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Single",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Vector4",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dot",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Vector4&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "System.Single&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "DotCoordinate",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Single",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "DotCoordinate",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "System.Single&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "DotNormal",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Single",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "DotNormal",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "System.Single&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.PlaneIntersectionType",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "box",
+       "type": "Microsoft.Xna.Framework.BoundingBox",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "box",
+       "type": "Microsoft.Xna.Framework.BoundingBox&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.PlaneIntersectionType&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.PlaneIntersectionType",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "frustum",
+       "type": "Microsoft.Xna.Framework.BoundingFrustum",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.PlaneIntersectionType",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sphere",
+       "type": "Microsoft.Xna.Framework.BoundingSphere",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sphere",
+       "type": "Microsoft.Xna.Framework.BoundingSphere&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.PlaneIntersectionType&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Equality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "lhs",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rhs",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Inequality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "lhs",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rhs",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "field",
+     "name": "Normal",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "D",
+     "type": "System.Single",
+     "static": false,
+     "constant": false,
+     "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.ContainmentType",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Disjoint",
+     "type": "Microsoft.Xna.Framework.ContainmentType",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Contains",
+     "type": "Microsoft.Xna.Framework.ContainmentType",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Intersects",
+     "type": "Microsoft.Xna.Framework.ContainmentType",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.PlaneIntersectionType",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Front",
+     "type": "Microsoft.Xna.Framework.PlaneIntersectionType",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Back",
+     "type": "Microsoft.Xna.Framework.PlaneIntersectionType",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Intersecting",
+     "type": "Microsoft.Xna.Framework.PlaneIntersectionType",
+     "static": true,
+     "constant": true,
+     "value": "2"
     }
    ]
   },

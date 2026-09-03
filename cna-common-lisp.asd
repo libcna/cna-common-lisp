@@ -42,6 +42,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "framework/quaternion")
    (:file "framework/matrix")
    (:file "framework/transforms")
+   (:file "framework/plane")
    (:file "framework/color")
    (:file "framework/predefined-colors.generated")
    (:file "framework/named-colors")

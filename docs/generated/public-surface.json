@@ -151,6 +151,24 @@
           "documentation": "MathHelper.TwoPi."
         },
         {
+          "name": "+plane-normalize-epsilon+",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": true,
+          "value": null,
+          "documentation": "The binary32 epsilon Plane.Normalize compares the squared length against.\n\nA plane whose normal is already within this of unit length is left exactly as it\nis -- not renormalised -- which is why normalising twice is not the same as\nnormalising once for a normal that is very nearly unit."
+        },
+        {
           "name": "+ticks-per-second+",
           "fbound": false,
           "macro": false,
@@ -167,6 +185,42 @@
           "constant": true,
           "value": 10000000,
           "documentation": "100-nanosecond ticks in one second, as System.TimeSpan counts them."
+        },
+        {
+          "name": "all-containment-type",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every CONTAINMENT-TYPE member, in value order."
+        },
+        {
+          "name": "all-plane-intersection-type",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every PLANE-INTERSECTION-TYPE member, in value order."
         },
         {
           "name": "apply-changes",
@@ -1305,6 +1359,64 @@
           "documentation": null
         },
         {
+          "name": "containment-type",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.ContainmentType."
+        },
+        {
+          "name": "containment-type-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "integer"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The CONTAINMENT-TYPE member an ABI value names."
+        },
+        {
+          "name": "containment-type-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact ABI value of a CONTAINMENT-TYPE member."
+        },
+        {
           "name": "copy-color",
           "fbound": true,
           "macro": false,
@@ -1326,6 +1438,26 @@
         },
         {
           "name": "copy-matrix",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "copy-plane",
           "fbound": true,
           "macro": false,
           "generic": false,
@@ -2039,6 +2171,93 @@
           "constant": false,
           "value": null,
           "documentation": "Matrix(float x 16), in row order."
+        },
+        {
+          "name": "make-plane",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "&optional",
+            "(a 0.0)",
+            "(b 0.0)",
+            "(c 0.0)",
+            "(d 0.0)"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane(float, float, float, float)."
+        },
+        {
+          "name": "make-plane-from-normal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "normal",
+            "d"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane(Vector3, float)."
+        },
+        {
+          "name": "make-plane-from-points",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "point1",
+            "point2",
+            "point3"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane(Vector3, Vector3, Vector3): the plane through three points.\n\nThe normal is the cross product of the two edges from POINT1, normalised, and D\nis minus its dot with POINT1. Three collinear points answer a plane of NaNs\nrather than signalling, exactly as the original does."
+        },
+        {
+          "name": "make-plane-from-vector4",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane(Vector4): the X, Y and Z become the normal and the W becomes D."
         },
         {
           "name": "make-point",
@@ -2821,6 +3040,26 @@
           "documentation": "Matrix.CreatePerspectiveOffCenter."
         },
         {
+          "name": "matrix-create-reflection",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "plane"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateReflection.\n\nThe plane is normalised first -- the framework normalises the copy it was given,\nso the caller's plane is untouched here too."
+        },
+        {
           "name": "matrix-create-rotation-x",
           "fbound": true,
           "macro": false,
@@ -2902,6 +3141,27 @@
           "constant": false,
           "value": null,
           "documentation": "Matrix.CreateScale, from a Vector3, from three floats, or from one uniform\nfloat."
+        },
+        {
+          "name": "matrix-create-shadow",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "light-direction",
+            "plane"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateShadow: flattens geometry onto a plane along a light direction.\n\nThe plane is normalised first. When the light is parallel to the plane the dot\nproduct is zero and the matrix is degenerate -- the framework does not check, and\nneither does this."
         },
         {
           "name": "matrix-create-translation",
@@ -3736,6 +3996,298 @@
           "constant": false,
           "value": null,
           "documentation": "Color.Orange: a fresh Color each call."
+        },
+        {
+          "name": "plane",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework:plane",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Plane: a normal and a distance from the origin.\n\nThe plane is the set of points p for which `(plane-dot-coordinate plane p)' is\nzero."
+        },
+        {
+          "name": "plane-d",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "plane-dot",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "plane",
+            "value"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane.Dot(Vector4): the normal dotted with XYZ plus D times W."
+        },
+        {
+          "name": "plane-dot-coordinate",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "plane",
+            "value"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane.DotCoordinate(Vector3): the signed distance to a point, for a normalised\nplane."
+        },
+        {
+          "name": "plane-dot-normal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "plane",
+            "value"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane.DotNormal(Vector3): the normal dotted with a direction."
+        },
+        {
+          "name": "plane-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane.Equals."
+        },
+        {
+          "name": "plane-intersection-type",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.PlaneIntersectionType."
+        },
+        {
+          "name": "plane-intersection-type-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "integer"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The PLANE-INTERSECTION-TYPE member an ABI value names."
+        },
+        {
+          "name": "plane-intersection-type-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact ABI value of a PLANE-INTERSECTION-TYPE member."
+        },
+        {
+          "name": "plane-normal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "plane-normalize",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "plane"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane.Normalize(), the instance method: mutates PLANE and answers it.\n\nDoes nothing when the squared length of the normal is already within one binary32\nepsilon of one. That early exit is the framework's, and it is observable."
+        },
+        {
+          "name": "plane-normalized",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "plane"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane.Normalize(Plane), the static method: answers a new plane."
+        },
+        {
+          "name": "plane-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "plane-transform",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "plane",
+            "transform"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Plane.Transform, by a Matrix or by a Quaternion.\n\nThe matrix form multiplies by the *transpose of the inverse*, which is what keeps\na plane a plane under a non-uniform scale."
         },
         {
           "name": "player-index",
@@ -9236,6 +9788,16 @@
       "bc7-srgb-ext": 24,
       "byte-ext": 25,
       "ushort-ext": 26
+    },
+    "containment-type": {
+      "disjoint": 0,
+      "contains": 1,
+      "intersects": 2
+    },
+    "plane-intersection-type": {
+      "front": 0,
+      "back": 1,
+      "intersecting": 2
     }
   },
   "predefined_colors": [
@@ -9482,6 +10044,13 @@
         "cna-error-parameter-name"
       ],
       "reason": "The condition hierarchy. XNA has exception types of its own, and they are a\n      separate closure; these are the conditions a binding over a native runtime\n      must have in order to report a native failure as a Lisp condition instead of\n      a result code. The CNA result code behind one is deliberately not readable."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "+plane-normalize-epsilon+"
+      ],
+      "reason": "The binary32 epsilon Plane.Normalize compares its squared length against\n      before deciding to do nothing. It is a literal in the assembly rather than a\n      named constant there, and naming it here is what lets a test assert the\n      early exit instead of describing it."
     },
     {
       "package": "microsoft.xna.framework",

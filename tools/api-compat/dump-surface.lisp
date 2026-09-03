@@ -154,7 +154,10 @@
    "player-index" (alist-object microsoft.xna.framework::*player-index-table*)
    "sprite-sort-mode" (alist-object microsoft.xna.framework.graphics::*sprite-sort-mode-table*)
    "sprite-effects" (alist-object microsoft.xna.framework.graphics::*sprite-effects-table*)
-   "surface-format" (alist-object microsoft.xna.framework.graphics::*surface-format-table*)))
+   "surface-format" (alist-object microsoft.xna.framework.graphics::*surface-format-table*)
+   "containment-type" (alist-object microsoft.xna.framework::*containment-type-table*)
+   "plane-intersection-type"
+   (alist-object microsoft.xna.framework::*plane-intersection-type-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

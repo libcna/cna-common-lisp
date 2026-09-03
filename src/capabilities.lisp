@@ -52,6 +52,11 @@
       separate closure; these are the conditions a binding over a native runtime
       must have in order to report a native failure as a Lisp condition instead of
       a result code. The CNA result code behind one is deliberately not readable.")
+    (microsoft.xna.framework +plane-normalize-epsilon+
+     "The binary32 epsilon Plane.Normalize compares its squared length against
+      before deciding to do nothing. It is a literal in the assembly rather than a
+      named constant there, and naming it here is what lets a test assert the
+      early exit instead of describing it.")
     (microsoft.xna.framework +ticks-per-second+ +default-target-elapsed-time-ticks+
      "The TimeSpan tick rate and XNA's default fixed step, as named constants. The
       values are part of the contract; naming them keeps them out of prose.")

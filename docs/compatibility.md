@@ -66,28 +66,28 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=26 -->
-<!-- generated:selected members=1043 -->
-<!-- generated:complete types=16 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=29 -->
+<!-- generated:selected members=1081 -->
+<!-- generated:complete types=18 -->
+<!-- generated:partial types=10 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=739 -->
+<!-- generated:complete members=762 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=141 -->
-<!-- generated:not-applicable members=162 -->
+<!-- generated:missing members=140 -->
+<!-- generated:not-applicable members=178 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1**: 26 types, 1043 members.
+Selection **Foundation 1**: 29 types, 1081 members.
 
 | | |
 | --- | --- |
-| Types complete | **16** |
-| Types partial | **9** |
+| Types complete | **18** |
+| Types partial | **10** |
 | Types missing | **1** |
-| Members complete | **739** |
+| Members complete | **762** |
 | Members partial | **1** |
-| Members missing | **141** |
-| Members not applicable | **162** |
+| Members missing | **140** |
+| Members not applicable | **178** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -107,7 +107,10 @@ symbol is unaccounted for.
 | `M.X.F.Vector4` | **complete** | 56 | 0 | 0 | 29 |
 | `M.X.F.MathHelper` | **complete** | 19 | 0 | 0 | 0 |
 | `M.X.F.Quaternion` | **complete** | 35 | 0 | 0 | 20 |
-| `M.X.F.Matrix` | **partial** | 67 | 0 | 7 | 33 |
+| `M.X.F.Matrix` | **partial** | 69 | 0 | 3 | 35 |
+| `M.X.F.Plane` | **partial** | 15 | 0 | 3 | 12 |
+| `M.X.F.ContainmentType` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.PlaneIntersectionType` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **missing** | 0 | 0 | 9 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 3 | 1 | 51 | 2 |
@@ -125,7 +128,7 @@ symbol is unaccounted for.
 
 ### Not applicable, and why so many
 
-162 members are classified not applicable, and most of them are one thing: the
+178 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value
