@@ -237,6 +237,25 @@ _Static_assert(sizeof(((CNA_KeyboardState *)0)->struct_version) == 4, "CNA_Keybo
 _Static_assert(offsetof(CNA_KeyboardState, pressed_key_words) == 8, "CNA_KeyboardState.pressed_key_words offset");
 _Static_assert(sizeof(((CNA_KeyboardState *)0)->pressed_key_words) == 32, "CNA_KeyboardState.pressed_key_words size");
 
+_Static_assert(sizeof(CNA_MouseState) == 32, "CNA_MouseState size");
+_Static_assert(_Alignof(CNA_MouseState) == 4, "CNA_MouseState alignment");
+_Static_assert(offsetof(CNA_MouseState, struct_size) == 0, "CNA_MouseState.struct_size offset");
+_Static_assert(sizeof(((CNA_MouseState *)0)->struct_size) == 4, "CNA_MouseState.struct_size size");
+_Static_assert(offsetof(CNA_MouseState, struct_version) == 4, "CNA_MouseState.struct_version offset");
+_Static_assert(sizeof(((CNA_MouseState *)0)->struct_version) == 4, "CNA_MouseState.struct_version size");
+_Static_assert(offsetof(CNA_MouseState, x) == 8, "CNA_MouseState.x offset");
+_Static_assert(sizeof(((CNA_MouseState *)0)->x) == 4, "CNA_MouseState.x size");
+_Static_assert(offsetof(CNA_MouseState, y) == 12, "CNA_MouseState.y offset");
+_Static_assert(sizeof(((CNA_MouseState *)0)->y) == 4, "CNA_MouseState.y size");
+_Static_assert(offsetof(CNA_MouseState, scroll_wheel) == 16, "CNA_MouseState.scroll_wheel offset");
+_Static_assert(sizeof(((CNA_MouseState *)0)->scroll_wheel) == 4, "CNA_MouseState.scroll_wheel size");
+_Static_assert(offsetof(CNA_MouseState, horizontal_scroll_wheel) == 20, "CNA_MouseState.horizontal_scroll_wheel offset");
+_Static_assert(sizeof(((CNA_MouseState *)0)->horizontal_scroll_wheel) == 4, "CNA_MouseState.horizontal_scroll_wheel size");
+_Static_assert(offsetof(CNA_MouseState, pressed_buttons) == 24, "CNA_MouseState.pressed_buttons offset");
+_Static_assert(sizeof(((CNA_MouseState *)0)->pressed_buttons) == 4, "CNA_MouseState.pressed_buttons size");
+_Static_assert(offsetof(CNA_MouseState, reserved) == 28, "CNA_MouseState.reserved offset");
+_Static_assert(sizeof(((CNA_MouseState *)0)->reserved) == 4, "CNA_MouseState.reserved size");
+
 _Static_assert(sizeof(CNA_RendererInfo) == 32, "CNA_RendererInfo size");
 _Static_assert(_Alignof(CNA_RendererInfo) == 8, "CNA_RendererInfo alignment");
 _Static_assert(offsetof(CNA_RendererInfo, struct_size) == 0, "CNA_RendererInfo.struct_size offset");
@@ -348,6 +367,11 @@ CNA_Result (*const cna_lisp_probe_cna_keyboard_state_init_from_keys)(const CNA_K
 CNA_Result (*const cna_lisp_probe_cna_keyboard_state_get_key_state)(const CNA_KeyboardState*, CNA_Key, CNA_KeyState*) = cna_keyboard_state_get_key_state;
 CNA_Result (*const cna_lisp_probe_cna_keyboard_state_equals)(const CNA_KeyboardState*, const CNA_KeyboardState*, CNA_Bool*) = cna_keyboard_state_equals;
 CNA_Result (*const cna_lisp_probe_cna_keyboard_state_get_hash_code)(const CNA_KeyboardState*, int32_t*) = cna_keyboard_state_get_hash_code;
+CNA_Result (*const cna_lisp_probe_cna_mouse_get_state)(CNA_Handle, CNA_MouseState*) = cna_mouse_get_state;
+CNA_Result (*const cna_lisp_probe_cna_mouse_set_position)(CNA_Handle, int32_t, int32_t) = cna_mouse_set_position;
+CNA_Result (*const cna_lisp_probe_cna_mouse_state_init)(CNA_MouseState*) = cna_mouse_state_init;
+CNA_Result (*const cna_lisp_probe_cna_mouse_state_init_from_values)(int32_t, int32_t, int32_t, CNA_MouseButtonFlags, CNA_MouseState*) = cna_mouse_state_init_from_values;
+CNA_Result (*const cna_lisp_probe_cna_mouse_state_equals)(const CNA_MouseState*, const CNA_MouseState*, CNA_Bool*) = cna_mouse_state_equals;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -536,6 +560,12 @@ _Static_assert((int64_t)(CNA_KEY_X) == INT64_C(88), "CNA_KEY_X value");
 _Static_assert((int64_t)(CNA_KEY_Y) == INT64_C(89), "CNA_KEY_Y value");
 _Static_assert((int64_t)(CNA_KEY_Z) == INT64_C(90), "CNA_KEY_Z value");
 _Static_assert((int64_t)(CNA_KEY_ZOOM) == INT64_C(251), "CNA_KEY_ZOOM value");
+_Static_assert((int64_t)(CNA_MOUSE_BUTTON_LEFT) == INT64_C(1), "CNA_MOUSE_BUTTON_LEFT value");
+_Static_assert((int64_t)(CNA_MOUSE_BUTTON_MIDDLE) == INT64_C(2), "CNA_MOUSE_BUTTON_MIDDLE value");
+_Static_assert((int64_t)(CNA_MOUSE_BUTTON_NONE) == INT64_C(0), "CNA_MOUSE_BUTTON_NONE value");
+_Static_assert((int64_t)(CNA_MOUSE_BUTTON_RIGHT) == INT64_C(4), "CNA_MOUSE_BUTTON_RIGHT value");
+_Static_assert((int64_t)(CNA_MOUSE_BUTTON_X1) == INT64_C(8), "CNA_MOUSE_BUTTON_X1 value");
+_Static_assert((int64_t)(CNA_MOUSE_BUTTON_X2) == INT64_C(16), "CNA_MOUSE_BUTTON_X2 value");
 _Static_assert((int64_t)(CNA_PLAYER_INDEX_FOUR) == INT64_C(3), "CNA_PLAYER_INDEX_FOUR value");
 _Static_assert((int64_t)(CNA_PLAYER_INDEX_ONE) == INT64_C(0), "CNA_PLAYER_INDEX_ONE value");
 _Static_assert((int64_t)(CNA_PLAYER_INDEX_THREE) == INT64_C(2), "CNA_PLAYER_INDEX_THREE value");

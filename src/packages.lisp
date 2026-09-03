@@ -312,4 +312,13 @@ namespace: seventeen packed value types and nothing else.")
    #:is-key-down #:is-key-up #:get-key-state #:get-pressed-keys
    #:keyboard-state-equal
    ;; --- Keyboard ----------------------------------------------------------
-   #:keyboard-get-state))
+   #:keyboard-get-state
+   ;; --- ButtonState -------------------------------------------------------
+   #:button-state #:button-state-value #:button-state-from-value #:all-button-state
+   ;; --- MouseState --------------------------------------------------------
+   #:mouse-state #:make-mouse-state #:mouse-state-p #:copy-mouse-state
+   #:mouse-state-x #:mouse-state-y #:mouse-state-scroll-wheel-value
+   #:mouse-state-left-button #:mouse-state-middle-button #:mouse-state-right-button
+   #:mouse-state-x-button-1 #:mouse-state-x-button-2 #:mouse-state-equal
+   ;; --- Mouse -------------------------------------------------------------
+   #:mouse-get-state #:mouse-set-position))

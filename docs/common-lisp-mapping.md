@@ -414,7 +414,7 @@ other.
 | `IEnumerable<T>` | a Lisp list or vector, whichever the member's shape fits |
 | read-only collection | a fresh Lisp sequence; the projection copies rather than aliasing |
 | `TimeSpan` | an integer count of 100-nanosecond ticks |
-| `IntPtr` | not projected; nothing in the selected surface reaches one |
+| `IntPtr` | not projected. `Mouse.WindowHandle` is the only member of the selection that has one, and it is classified not applicable: answering it would put a raw platform pointer in the public API, and setting it would need a window handle a CNA-Lisp program never has, because CNA owns the game's window |
 
 A member with a return value *and* `out` parameters answers the return value
 first and the `out` parameters after it, in their declared order.

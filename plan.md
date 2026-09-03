@@ -198,25 +198,25 @@ which refuses any figure in the prose that the reports do not produce.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=56 -->
-<!-- generated:selected members=1416 -->
-<!-- generated:complete types=49 -->
+<!-- generated:selected types=59 -->
+<!-- generated:selected members=1436 -->
+<!-- generated:complete types=52 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=988 -->
+<!-- generated:complete members=1002 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=308 -->
+<!-- generated:not-applicable members=314 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1 and the managed closures**: 56 types, 1416 members.
+Selection **Foundation 1 and the managed closures**: 59 types, 1436 members.
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **49 / 6 / 1** |
-| Members complete | **988** |
+| Types complete / partial / missing | **52 / 6 / 1** |
+| Members complete | **1002** |
 | Members missing | **119** |
-| Members not applicable | **308** |
+| Members not applicable | **314** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
 

@@ -207,6 +207,20 @@
 (defconstant +sizeof-cna-keyboard-state+ 40)
 (defconstant +alignof-cna-keyboard-state+ 8)
 
+;;; CNA_MouseState -- 32 bytes, 4-byte aligned, from input.h.
+(defcstruct (cna-mouse-state :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (x :int32 :offset 8)
+  (y :int32 :offset 12)
+  (scroll-wheel :int32 :offset 16)
+  (horizontal-scroll-wheel :int32 :offset 20)
+  (pressed-buttons :uint32 :offset 24)
+  (reserved :uint32 :offset 28))
+
+(defconstant +sizeof-cna-mouse-state+ 32)
+(defconstant +alignof-cna-mouse-state+ 4)
+
 ;;; CNA_RendererInfo -- 32 bytes, 8-byte aligned, from graphics.h.
 (defcstruct (cna-renderer-info :size 32)
   (struct-size :uint32 :offset 0)
@@ -257,6 +271,7 @@
     (cna-sprite-batch-begin-info 16 4 ((struct-size 0 4) (struct-version 4 4) (sort-mode 8 4) (reserved 12 4)))
     (cna-sprite-command 72 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (destination 16 16) (source 32 16) (color 48 4) (rotation 52 4) (origin 56 8) (effects 64 4) (layer-depth 68 4)))
     (cna-keyboard-state 40 8 ((struct-size 0 4) (struct-version 4 4) (pressed-key-words 8 32)))
+    (cna-mouse-state 32 4 ((struct-size 0 4) (struct-version 4 4) (x 8 4) (y 12 4) (scroll-wheel 16 4) (horizontal-scroll-wheel 20 4) (pressed-buttons 24 4) (reserved 28 4)))
     (cna-renderer-info 32 8 ((struct-size 0 4) (struct-version 4 4) (renderer-name-byte-length 8 8) (capability-flags 16 8) (renderer-type 24 4) (max-texture-dimension 28 4)))
     (cna-sprite-scaled-command 72 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (position 16 8) (source 24 16) (color 40 4) (rotation 44 4) (origin 48 8) (scale 56 8) (effects 64 4) (layer-depth 68 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")

@@ -3007,6 +3007,69 @@
    "not_applicable": {
     "Equals(Object)": "There is no universal Object to compare against."
    }
+  },
+  "Microsoft.Xna.Framework.Input.ButtonState": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "button-state",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Input.MouseState": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "mouse-state",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Int32,Int32,Int32,ButtonState,ButtonState,ButtonState,ButtonState,ButtonState)": "make-mouse-state"
+   },
+   "member_overrides": {
+    "op_Equality(MouseState,MouseState)": {
+     "lisp": "mouse-state-equal",
+     "reason": "MouseState does not implement IEquatable, so op_Equality is the only typed comparison the contract has and the named predicate projects it."
+    },
+    "X": {
+     "lisp": "mouse-state-x"
+    },
+    "Y": {
+     "lisp": "mouse-state-y"
+    },
+    "ScrollWheelValue": {
+     "lisp": "mouse-state-scroll-wheel-value"
+    },
+    "LeftButton": {
+     "lisp": "mouse-state-left-button"
+    },
+    "MiddleButton": {
+     "lisp": "mouse-state-middle-button"
+    },
+    "RightButton": {
+     "lisp": "mouse-state-right-button"
+    },
+    "XButton1": {
+     "lisp": "mouse-state-x-button-1"
+    },
+    "XButton2": {
+     "lisp": "mouse-state-x-button-2"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Input.Mouse": {
+   "lisp_package": "microsoft.xna.framework.input",
+   "lisp_name": "mouse",
+   "lisp_kind": "static",
+   "member_overrides": {
+    "GetState()": {
+     "lisp": "mouse-get-state",
+     "reason": "A static class member is <class>-<member>, so this and KEYBOARD-GET-STATE can share a package. Like the keyboard it takes no game argument: CNA allows one active game per process and CNA-Lisp resolves it."
+    },
+    "SetPosition(Int32,Int32)": {
+     "lisp": "mouse-set-position"
+    }
+   },
+   "not_applicable": {
+    "WindowHandle": "An IntPtr naming a native platform window. Answering it would put a raw platform pointer in the public API, which this projection does not do, and setting it would need a window handle a CNA-Lisp program never has: CNA owns the game's window. There is nothing a consumer of this binding could do with either direction of the property."
+   }
   }
  }
 }

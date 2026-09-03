@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. The closures added so far are pure managed and touch no native route: the 3D transform types, the bounding volumes, and the Curve family.",
-  "type_count": 56,
-  "member_count": 1416
+  "type_count": 59,
+  "member_count": 1436
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 56,
-  "members": 1416,
+  "types": 59,
+  "members": 1436,
   "types_by_status": {
    "partial": 6,
-   "complete": 49,
+   "complete": 52,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 988,
+   "complete": 1002,
    "missing": 119,
-   "not-applicable": 308,
+   "not-applicable": 314,
    "partial": 1
   },
   "diagnostics": 120,
@@ -1857,6 +1857,47 @@
     "ChatPadOrange": "complete"
    },
    "lisp": "microsoft.xna.framework.input:keys"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Mouse",
+   "status": "complete",
+   "members": {
+    "GetState()": "complete",
+    "SetPosition(Int32,Int32)": "complete",
+    "WindowHandle": "not-applicable"
+   },
+   "projection": "static class: microsoft.xna.framework.input:mouse-<member>"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.MouseState",
+   "status": "complete",
+   "members": {
+    "new(Int32,Int32,Int32,ButtonState,ButtonState,ButtonState,ButtonState,ButtonState)": "complete",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "Equals(Object)": "not-applicable",
+    "op_Equality(MouseState,MouseState)": "complete",
+    "op_Inequality(MouseState,MouseState)": "not-applicable",
+    "X": "complete",
+    "Y": "complete",
+    "LeftButton": "complete",
+    "RightButton": "complete",
+    "MiddleButton": "complete",
+    "XButton1": "complete",
+    "XButton2": "complete",
+    "ScrollWheelValue": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:mouse-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.ButtonState",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Released": "complete",
+    "Pressed": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input:button-state"
   }
  ],
  "diagnostics": [

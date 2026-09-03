@@ -47,6 +47,20 @@ that it did not run rather than passing."
                  (close (position #\" text :start (1+ open))))
             (push (cons relative (subseq text (1+ open) close)) pairs)))))))
 
+(defun manifest-count (key)
+  "One of the generated native-ABI manifest's counts, read out of the JSON.
+
+A literal here would mean editing a test to bind one more native route, which is
+the wrong direction: the manifest is the record, so the test reads it."
+  (let ((text (with-open-file (stream (repository-path
+                                       "docs/generated/native-abi-manifest.json"))
+                (let ((buffer (make-string (file-length stream))))
+                  (subseq buffer 0 (read-sequence buffer stream)))))
+        (needle (format nil "~s:" key)))
+    (let ((at (search needle text)))
+      (assert at () "the manifest records no ~a count" key)
+      (parse-integer text :start (+ at (length needle)) :junk-allowed t))))
+
 (test every-generated-file-says-it-is-generated
   (dolist (relative *generated-files*)
     (let ((path (repository-path relative)))
@@ -115,7 +129,10 @@ that it did not run rather than passing."
           (length (sb-introspect:function-lambda-list lisp-name))))))
 
 (test every-bound-struct-has-a-recorded-layout
-  (is (= 20 (length ffi:*native-struct-layouts*)))
+  ;; The count comes from the generated manifest rather than a literal, so
+  ;; binding one more struct does not mean editing a number in a test.
+  (is (= (manifest-count "structs") (length ffi:*native-struct-layouts*)))
+  (is (= (manifest-count "functions") (length ffi:*bound-native-functions*)))
   (dolist (row ffi:*native-struct-layouts*)
     (destructuring-bind (name size align fields) row
       (is (symbolp name))

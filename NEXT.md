@@ -56,27 +56,28 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=56 -->
-<!-- generated:selected members=1416 -->
-<!-- generated:complete types=49 -->
+<!-- generated:selected types=59 -->
+<!-- generated:selected members=1436 -->
+<!-- generated:complete types=52 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=988 -->
+<!-- generated:complete members=1002 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=308 -->
+<!-- generated:not-applicable members=314 -->
 <!-- generated:disagreement total=0 -->
 
-56 selected types, 1416 members: **49 complete, 6 partial, 1 missing**;
-**988 members complete, 119 missing**, 308 not applicable, 1 partial.
+59 selected types, 1436 members: **52 complete, 6 partial, 1 missing**;
+**1002 members complete, 119 missing**, 314 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 **Every pure-managed type in the selection is complete.** The math types
 -- `Vector2`, `Vector3`, `Vector4`, `Quaternion`, `Matrix`, `Plane`, `Ray`,
 `BoundingBox`, `BoundingSphere`, `BoundingFrustum`, `MathHelper`, `Color`,
 `Point`, `Rectangle` -- the `Curve` family, the seventeen packed vector types and all six
-enumerations answer every member of the selected contract. Everything still missing is native-facing:
-graphics, input beyond the keyboard, content, and the event projection.
+enumerations answer every member of the selected contract, and so do `Mouse`,
+`MouseState` and `ButtonState`. Everything still missing is native-facing:
+graphics, the gamepad and the touch panel, content, and the event projection.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -95,13 +96,18 @@ is a packaging limit, not a blocker.
 ## What to do next, in order
 
 The order follows the public-signature dependency graph: each step is a closure
-that can be finished, tested and measured before the next one starts.
+that can be finished, tested and measured before the next one starts. Where two
+steps do not depend on each other, the one a game actually reaches for goes
+first -- which is why `Mouse` was taken ahead of the vertex descriptors it was
+listed after.
 
 1. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-2. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
-   `Input.Touch`. `Mouse.GetState` becomes `mouse-get-state`, which is the whole
-   reason the static-class rule exists.
+2. **The rest of input**: the `GamePad` family and `Input.Touch`. `Mouse` and
+   `MouseState` are done -- CNA's `cna_gamepad_get_state` and `cna_touch_get_state`
+   are the routes the other two need, and both are richer than the mouse's one
+   struct: `GamePadState` carries four nested structures and a dead-zone mode, and
+   `TouchCollection` is a collection type.
 3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`, and the
    **event projection** the four `Game` events and six `GraphicsDevice` events

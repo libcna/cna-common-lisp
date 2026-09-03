@@ -80,6 +80,9 @@ SELECTED = [
     "Microsoft.Xna.Framework.Input.KeyboardState",
     "Microsoft.Xna.Framework.Input.KeyState",
     "Microsoft.Xna.Framework.Input.Keys",
+    "Microsoft.Xna.Framework.Input.Mouse",
+    "Microsoft.Xna.Framework.Input.MouseState",
+    "Microsoft.Xna.Framework.Input.ButtonState",
 ]
 
 

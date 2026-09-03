@@ -82,28 +82,28 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=56 -->
-<!-- generated:selected members=1416 -->
-<!-- generated:complete types=49 -->
+<!-- generated:selected types=59 -->
+<!-- generated:selected members=1436 -->
+<!-- generated:complete types=52 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=988 -->
+<!-- generated:complete members=1002 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=308 -->
+<!-- generated:not-applicable members=314 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1 and the managed closures**: 56 types, 1416 members.
+Selection **Foundation 1 and the managed closures**: 59 types, 1436 members.
 
 | | |
 | --- | --- |
-| Types complete | **49** |
+| Types complete | **52** |
 | Types partial | **6** |
 | Types missing | **1** |
-| Members complete | **988** |
+| Members complete | **1002** |
 | Members partial | **1** |
 | Members missing | **119** |
-| Members not applicable | **308** |
+| Members not applicable | **314** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -169,10 +169,13 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Input.KeyboardState` | **complete** | 6 | 0 | 0 | 3 |
 | `M.X.F.Input.KeyState` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Input.Keys` | **complete** | 160 | 0 | 0 | 1 |
+| `M.X.F.Input.Mouse` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Input.MouseState` | **complete** | 10 | 0 | 0 | 4 |
+| `M.X.F.Input.ButtonState` | **complete** | 2 | 0 | 0 | 1 |
 
 ### Not applicable, and why so many
 
-308 members are classified not applicable, and most of them are one thing: the
+314 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value
@@ -218,10 +221,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=69 -->
-<!-- generated:bound native structs=20 -->
-<!-- generated:bound native struct fields=104 -->
-<!-- generated:bound native constants=237 -->
+<!-- generated:bound native functions=74 -->
+<!-- generated:bound native structs=21 -->
+<!-- generated:bound native struct fields=112 -->
+<!-- generated:bound native constants=243 -->
 <!-- generated:bound native callbacks=2 -->
 <!-- generated:by-value aggregates=2 -->
 <!-- generated:shimmed routes=1 -->

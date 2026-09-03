@@ -21,10 +21,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 69,
-    "structs": 20,
-    "struct_fields": 104,
-    "constants": 237,
+    "functions": 74,
+    "structs": 21,
+    "struct_fields": 112,
+    "constants": 243,
     "callbacks": 2,
     "by_value_aggregates": 2,
     "shimmed_routes": 1
@@ -1623,6 +1623,136 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_keyboard_state_get_hash_code(const CNA_KeyboardState* state, int32_t* out_hash)"
+    },
+    {
+      "name": "cna_mouse_get_state",
+      "header": "input.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_MouseState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_mouse_get_state(CNA_Handle game, CNA_MouseState* out_state)"
+    },
+    {
+      "name": "cna_mouse_set_position",
+      "header": "input_mouse.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "x",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "y",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_mouse_set_position(CNA_Handle game, int32_t x, int32_t y)"
+    },
+    {
+      "name": "cna_mouse_state_init",
+      "header": "input_mouse.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_state",
+          "c_type": "CNA_MouseState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_mouse_state_init(CNA_MouseState* out_state)"
+    },
+    {
+      "name": "cna_mouse_state_init_from_values",
+      "header": "input_mouse.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "x",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "y",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "scroll_wheel",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "pressed_buttons",
+          "c_type": "CNA_MouseButtonFlags",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_MouseState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_mouse_state_init_from_values(int32_t x, int32_t y, int32_t scroll_wheel, CNA_MouseButtonFlags pressed_buttons, CNA_MouseState* out_state)"
+    },
+    {
+      "name": "cna_mouse_state_equals",
+      "header": "input_mouse.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "left",
+          "c_type": "const CNA_MouseState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "right",
+          "c_type": "const CNA_MouseState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_equals",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_mouse_state_equals(const CNA_MouseState* left, const CNA_MouseState* right, CNA_Bool* out_equals)"
     }
   ],
   "structs": [
@@ -2604,6 +2734,88 @@
       "versioned": true
     },
     {
+      "name": "CNA_MouseState",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "x",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "y",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "scroll_wheel",
+          "c_type": "int32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "horizontal_scroll_wheel",
+          "c_type": "int32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "pressed_buttons",
+          "c_type": "CNA_MouseButtonFlags",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "input.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
       "name": "CNA_RendererInfo",
       "size": 32,
       "align": 8,
@@ -3021,6 +3233,12 @@
     "CNA_KEY_Y": 89,
     "CNA_KEY_Z": 90,
     "CNA_KEY_ZOOM": 251,
+    "CNA_MOUSE_BUTTON_LEFT": 1,
+    "CNA_MOUSE_BUTTON_MIDDLE": 2,
+    "CNA_MOUSE_BUTTON_NONE": 0,
+    "CNA_MOUSE_BUTTON_RIGHT": 4,
+    "CNA_MOUSE_BUTTON_X1": 8,
+    "CNA_MOUSE_BUTTON_X2": 16,
     "CNA_PLAYER_INDEX_FOUR": 3,
     "CNA_PLAYER_INDEX_ONE": 0,
     "CNA_PLAYER_INDEX_THREE": 2,

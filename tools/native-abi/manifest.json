@@ -58,6 +58,12 @@
       "CNA_INVALID_HANDLE",
       "CNA_KEY_STATE_UP",
       "CNA_KEY_STATE_DOWN",
+      "CNA_MOUSE_BUTTON_NONE",
+      "CNA_MOUSE_BUTTON_LEFT",
+      "CNA_MOUSE_BUTTON_MIDDLE",
+      "CNA_MOUSE_BUTTON_RIGHT",
+      "CNA_MOUSE_BUTTON_X1",
+      "CNA_MOUSE_BUTTON_X2",
       "CNA_SPRITE_SORT_MODE_DEFERRED",
       "CNA_SPRITE_SORT_MODE_IMMEDIATE",
       "CNA_SPRITE_SORT_MODE_TEXTURE",
@@ -176,6 +182,11 @@
     },
     {
       "name": "CNA_KeyboardState",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_MouseState",
       "direction": "inout",
       "versioned": true
     },
@@ -618,6 +629,36 @@
     {
       "name": "cna_keyboard_state_get_hash_code",
       "header": "input_keyboard.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_mouse_get_state",
+      "header": "input.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_mouse_set_position",
+      "header": "input_mouse.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_mouse_state_init",
+      "header": "input_mouse.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_mouse_state_init_from_values",
+      "header": "input_mouse.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_mouse_state_equals",
+      "header": "input_mouse.h",
       "thread": "any",
       "ownership": "none"
     }

@@ -14972,6 +14972,25 @@
       "package": "microsoft.xna.framework.input",
       "symbols": [
         {
+          "name": "all-button-state",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of BUTTON-STATE, as keywords, in value order."
+        },
+        {
           "name": "all-keys",
           "fbound": true,
           "macro": false,
@@ -14989,6 +15008,67 @@
           "constant": false,
           "value": null,
           "documentation": "Every Keys member, as keywords, in value order."
+        },
+        {
+          "name": "button-state",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Input.ButtonState."
+        },
+        {
+          "name": "button-state-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The BUTTON-STATE member a value names."
+        },
+        {
+          "name": "button-state-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a BUTTON-STATE member."
         },
         {
           "name": "copy-keyboard-state",
@@ -15010,6 +15090,27 @@
           "constant": false,
           "value": null,
           "documentation": "A copy of STATE. Value semantics: the copy shares nothing with the original."
+        },
+        {
+          "name": "copy-mouse-state",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "get-key-state",
@@ -15351,6 +15452,326 @@
           "constant": false,
           "value": null,
           "documentation": "KeyboardState(Keys[]): a snapshot in which exactly PRESSED-KEYS are down.\n\nA duplicate key contributes once, exactly as the original's set-taking\nconstructors behave. A key outside the 256-slot range is refused rather than\nsilently dropped -- the deviation CNA's C ABI already documents, kept here so a\ncaller can never lose a key without being told."
+        },
+        {
+          "name": "make-mouse-state",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "&key",
+            "(x 0)",
+            "(y 0)",
+            "(scroll-wheel 0)",
+            "(left-button released)",
+            "(middle-button released)",
+            "(right-button released)",
+            "(x-button-1 released)",
+            "(x-button-2 released)"
+          ],
+          "keywords": [
+            "left-button",
+            "middle-button",
+            "right-button",
+            "scroll-wheel",
+            "x",
+            "x-button-1",
+            "x-button-2",
+            "y"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MouseState(int, int, int, ButtonState x 5).\n\nThe original takes eight positional arguments, five of which are the same type\nand tell each other apart only by position. Keywords here, because\n`(make-mouse-state 0 0 0 :released :pressed :released :released :released)' is a\nline nobody can read and one nobody can review."
+        },
+        {
+          "name": "mouse-get-state",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Mouse.GetState.\n\nAnswers a fresh MOUSE-STATE snapshot. Like KEYBOARD-GET-STATE it takes no game\nargument: CNA allows one active game per process, and CNA-Lisp resolves it."
+        },
+        {
+          "name": "mouse-set-position",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "x",
+            "y"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Mouse.SetPosition: move the cursor, in the window's logical coordinates."
+        },
+        {
+          "name": "mouse-state",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework.input:mouse-state",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Input.MouseState: where the mouse was at one instant."
+        },
+        {
+          "name": "mouse-state-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MouseState.Equals and op_Equality."
+        },
+        {
+          "name": "mouse-state-left-button",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MouseState.LeftButton."
+        },
+        {
+          "name": "mouse-state-middle-button",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MouseState.MiddleButton."
+        },
+        {
+          "name": "mouse-state-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "mouse-state-right-button",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MouseState.RightButton."
+        },
+        {
+          "name": "mouse-state-scroll-wheel-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MouseState.ScrollWheelValue: cumulative, in XNA's 120-unit notches, and not\nreset between frames -- a caller compares two snapshots rather than reading one."
+        },
+        {
+          "name": "mouse-state-x",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "mouse-state-x-button-1",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MouseState.XButton1."
+        },
+        {
+          "name": "mouse-state-x-button-2",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MouseState.XButton2."
+        },
+        {
+          "name": "mouse-state-y",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         }
       ]
     }
@@ -15527,6 +15948,10 @@
       "two": 1,
       "three": 2,
       "four": 3
+    },
+    "button-state": {
+      "released": 0,
+      "pressed": 1
     },
     "sprite-sort-mode": {
       "deferred": 0,

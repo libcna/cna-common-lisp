@@ -25,6 +25,9 @@ by tools/native-abi/generate.py.")
    #:lifecycle-callback-pointer
    #:*lifecycle-dispatcher*
    #:*begin-draw-dispatcher*
+   ;; constants the runtime reads by name
+   #:+mouse-button-left+ #:+mouse-button-middle+ #:+mouse-button-right+
+   #:+mouse-button-x1+ #:+mouse-button-x2+
    ;; type helpers
    #:cna-true-p #:cna-bool-of))
 

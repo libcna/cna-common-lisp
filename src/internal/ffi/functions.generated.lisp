@@ -290,6 +290,26 @@
 (defcfun ("cna_keyboard_state_get_hash_code" %keyboard-state-get-hash-code) :uint32
   (state :pointer) (out-hash :pointer))
 
+;;; CNA_Result cna_mouse_get_state(CNA_Handle game, CNA_MouseState* out_state)
+(defcfun ("cna_mouse_get_state" %mouse-get-state) :uint32
+  (game :uint64) (out-state :pointer))
+
+;;; CNA_Result cna_mouse_set_position(CNA_Handle game, int32_t x, int32_t y)
+(defcfun ("cna_mouse_set_position" %mouse-set-position) :uint32
+  (game :uint64) (x :int32) (y :int32))
+
+;;; CNA_Result cna_mouse_state_init(CNA_MouseState* out_state)
+(defcfun ("cna_mouse_state_init" %mouse-state-init) :uint32
+  (out-state :pointer))
+
+;;; CNA_Result cna_mouse_state_init_from_values(int32_t x, int32_t y, int32_t scroll_wheel, CNA_MouseButtonFlags pressed_buttons, CNA_MouseState* out_state)
+(defcfun ("cna_mouse_state_init_from_values" %mouse-state-init-from-values) :uint32
+  (x :int32) (y :int32) (scroll-wheel :int32) (pressed-buttons :uint32) (out-state :pointer))
+
+;;; CNA_Result cna_mouse_state_equals(const CNA_MouseState* left, const CNA_MouseState* right, CNA_Bool* out_equals)
+(defcfun ("cna_mouse_state_equals" %mouse-state-equals) :uint32
+  (left :pointer) (right :pointer) (out-equals :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -359,6 +379,11 @@
     ("cna_keyboard_state_init_from_keys" %keyboard-state-init-from-keys :uint32 (:pointer :uint64 :pointer) :thread :any :ownership "none")
     ("cna_keyboard_state_get_key_state" %keyboard-state-get-key-state :uint32 (:pointer :uint32 :pointer) :thread :any :ownership "none")
     ("cna_keyboard_state_equals" %keyboard-state-equals :uint32 (:pointer :pointer :pointer) :thread :any :ownership "none")
-    ("cna_keyboard_state_get_hash_code" %keyboard-state-get-hash-code :uint32 (:pointer :pointer) :thread :any :ownership "none"))
+    ("cna_keyboard_state_get_hash_code" %keyboard-state-get-hash-code :uint32 (:pointer :pointer) :thread :any :ownership "none")
+    ("cna_mouse_get_state" %mouse-get-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_mouse_set_position" %mouse-set-position :uint32 (:uint64 :int32 :int32) :thread :owner :ownership "none")
+    ("cna_mouse_state_init" %mouse-state-init :uint32 (:pointer) :thread :any :ownership "none")
+    ("cna_mouse_state_init_from_values" %mouse-state-init-from-values :uint32 (:int32 :int32 :int32 :uint32 :pointer) :thread :any :ownership "none")
+    ("cna_mouse_state_equals" %mouse-state-equals :uint32 (:pointer :pointer :pointer) :thread :any :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 
