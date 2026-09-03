@@ -100,6 +100,7 @@
    #:matrix-create-perspective-off-center
    #:matrix-create-orthographic #:matrix-create-orthographic-off-center
    #:matrix-create-look-at #:matrix-create-world #:matrix-create-billboard
+   #:matrix-create-constrained-billboard #:matrix-decompose
    #:matrix-transpose #:matrix-determinant #:matrix-invert
    #:matrix-add #:matrix-subtract #:matrix-negate
    #:matrix-multiply #:matrix-divide #:matrix-lerp #:matrix-transform

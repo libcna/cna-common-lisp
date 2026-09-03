@@ -185,23 +185,23 @@ which refuses any figure in the prose that the reports do not produce.
 
 <!-- generated:selected types=33 -->
 <!-- generated:selected members=1196 -->
-<!-- generated:complete types=25 -->
-<!-- generated:partial types=7 -->
+<!-- generated:complete types=26 -->
+<!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=840 -->
+<!-- generated:complete members=842 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=122 -->
-<!-- generated:not-applicable members=233 -->
+<!-- generated:missing members=119 -->
+<!-- generated:not-applicable members=234 -->
 <!-- generated:disagreement total=0 -->
 
 Selection **Foundation 1**: 33 types, 1196 members.
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **25 / 7 / 1** |
-| Members complete | **840** |
-| Members missing | **122** |
-| Members not applicable | **233** |
+| Types complete / partial / missing | **26 / 6 / 1** |
+| Members complete | **842** |
+| Members missing | **119** |
+| Members not applicable | **234** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
 

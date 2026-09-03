@@ -73,13 +73,13 @@ placeholder methods that answer a default and claim success.
 
 <!-- generated:selected types=33 -->
 <!-- generated:selected members=1196 -->
-<!-- generated:complete types=25 -->
-<!-- generated:partial types=7 -->
+<!-- generated:complete types=26 -->
+<!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=840 -->
+<!-- generated:complete members=842 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=122 -->
-<!-- generated:not-applicable members=233 -->
+<!-- generated:missing members=119 -->
+<!-- generated:not-applicable members=234 -->
 <!-- generated:disagreement total=0 -->
 <!-- generated:bound native functions=69 -->
 <!-- generated:bound native structs=20 -->
@@ -88,16 +88,16 @@ The generated scoreboard, over a selection of **33 XNA types and 1196 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **25 / 7 / 1** |
-| Members complete / missing | **840 / 122** |
-| Members not applicable | **233** |
+| Types complete / partial / missing | **26 / 6 / 1** |
+| Members complete / missing | **842 / 119** |
+| Members not applicable | **234** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, every exported symbol is accounted for, no
 mapping rule names a member that does not exist, and every overload family that
 collapses onto one function says how each overload is expressed. It does **not**
-mean the binding is finished: 122 members are missing and are reported as
+mean the binding is finished: 119 members are missing and are reported as
 missing. `docs/compatibility.md` is the authority.
 
 The private foreign layer binds **69 native routes** and **20 native structs**,

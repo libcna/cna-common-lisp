@@ -407,13 +407,20 @@ other.
 | `out T` | an additional return value (`values`) |
 | `ref T` on a value type | the mutable value object itself, mutated in place |
 | nullable reference | `nil` |
-| `Nullable<T>` value type | two values: the value and a present flag, never a sentinel |
+| `Nullable<T>` value type, returned | the value, or `nil` -- `nil` is not of the value's type, so it is not a sentinel |
+| `Nullable<T>` value type, as a parameter | an optional argument whose absent value is `nil` |
 | `T[]` | a Lisp vector, with the element type where it is fixed |
 | byte buffer | `(vector (unsigned-byte 8))` |
 | `IEnumerable<T>` | a Lisp list or vector, whichever the member's shape fits |
 | read-only collection | a fresh Lisp sequence; the projection copies rather than aliasing |
 | `TimeSpan` | an integer count of 100-nanosecond ticks |
 | `IntPtr` | not projected; nothing in the selected surface reaches one |
+
+A member with a return value *and* `out` parameters answers the return value
+first and the `out` parameters after it, in their declared order.
+`matrix-decompose` is the example, and the order matters: its first value says
+whether the decomposition succeeded, and the three that follow are filled in
+either way.
 
 `GameTime.TotalGameTime` is `total-game-time`, answering ticks.
 `total-game-time-seconds` is a CNA-Lisp convenience over it, declared as an

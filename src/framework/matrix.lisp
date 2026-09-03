@@ -383,6 +383,154 @@ framework's own 0.0001f squared-distance threshold."
                     (vector3-x object-position) (vector3-y object-position)
                     (vector3-z object-position) 1.0f0))))
 
+(defun %rank-by-magnitude (x y z)
+  "The indices of the largest, the middle and the smallest of three values.
+
+Written as the framework's own comparison chain rather than a sort, because the
+chain decides the ties: each test is `less than', so equal values keep the order
+0 < 1 < 2, and a NaN is treated as not-less-than everything it is compared with."
+  (if (< x y)
+      (if (< y z)
+          (values 2 1 0)
+          (if (< x z) (values 1 2 0) (values 1 0 2)))
+      (if (< x z)
+          (values 2 0 1)
+          (if (< y z) (values 0 2 1) (values 0 1 2)))))
+
+(defun %smallest-absolute-axis (vector)
+  "The index of VECTOR's smallest component in absolute value, by the same chain."
+  (let ((ax (abs (vector3-x vector)))
+        (ay (abs (vector3-y vector)))
+        (az (abs (vector3-z vector))))
+    (if (< ax ay)
+        (if (< ay az) 0 (if (< ax az) 0 2))
+        (if (< ax az) 1 (if (< ay az) 1 2)))))
+
+(defun matrix-decompose (matrix)
+  "Matrix.Decompose.
+
+Answers four values: whether the decomposition succeeded, then the scale, the
+rotation and the translation -- XNA's return value first and its three `out'
+parameters in their declared order.
+
+**A false first value still comes with the other three.** When the rotation part
+is not a rotation, the framework leaves the scale and the translation it computed
+and sets the rotation to the identity quaternion. A caller that ignores the flag
+gets a plausible-looking answer, so the flag is first.
+
+The interesting half of this member is what it does with a matrix that has a
+degenerate axis. It ranks the three axes by length, and for each one shorter than
+1e-4 substitutes: the canonical unit axis for the longest, the cross product of
+the longest axis with whichever canonical axis is most nearly perpendicular to it
+for the middle one, and the cross product of the other two for the shortest. Then
+it checks the determinant's sign, flips the longest axis and its scale if the
+matrix is left-handed, and finally refuses -- identity rotation, false -- when the
+determinant is not within 1e-4 of 1 after squaring the difference. All of that is
+transcribed from the assembly; an implementation that agreed on well-conditioned
+matrices and diverged here would be worse than none."
+  (cna-lisp.internal:with-binary32-semantics
+    (%with-m matrix
+      (let* ((rows (vector (%make-vector3 m11 m12 m13)
+                           (%make-vector3 m21 m22 m23)
+                           (%make-vector3 m31 m32 m33)))
+             (canonical (vector (vector3-unit-x) (vector3-unit-y) (vector3-unit-z)))
+             (scale (make-array 3 :element-type 'single-float
+                                  :initial-contents
+                                  (list (vector3-length (aref rows 0))
+                                        (vector3-length (aref rows 1))
+                                        (vector3-length (aref rows 2)))))
+             (translation (%make-vector3 m41 m42 m43)))
+        (multiple-value-bind (a b c)
+            (%rank-by-magnitude (aref scale 0) (aref scale 1) (aref scale 2))
+          (when (< (aref scale a) 1.0f-4)
+            (setf (aref rows a) (copy-vector3 (aref canonical a))))
+          (vector3-normalize (aref rows a))
+          (when (< (aref scale b) 1.0f-4)
+            (setf (aref rows b)
+                  (vector3-cross (aref rows a)
+                                 (aref canonical (%smallest-absolute-axis (aref rows a))))))
+          (vector3-normalize (aref rows b))
+          (when (< (aref scale c) 1.0f-4)
+            (setf (aref rows c) (vector3-cross (aref rows a) (aref rows b))))
+          (vector3-normalize (aref rows c))
+          (flet ((basis ()
+                   ;; The rows sit in an otherwise identity matrix, so its
+                   ;; determinant is the 3x3's.
+                   (%make-matrix (vector3-x (aref rows 0)) (vector3-y (aref rows 0))
+                                 (vector3-z (aref rows 0)) 0.0f0
+                                 (vector3-x (aref rows 1)) (vector3-y (aref rows 1))
+                                 (vector3-z (aref rows 1)) 0.0f0
+                                 (vector3-x (aref rows 2)) (vector3-y (aref rows 2))
+                                 (vector3-z (aref rows 2)) 0.0f0
+                                 0.0f0 0.0f0 0.0f0 1.0f0)))
+            (let ((determinant (matrix-determinant (basis))))
+              (when (< determinant 0.0f0)
+                ;; Left-handed: flip the longest axis and its scale, and take the
+                ;; determinant's sign with it rather than recomputing it.
+                (setf (aref scale a) (- (aref scale a))
+                      (aref rows a) (vector3-negate (aref rows a))
+                      determinant (- determinant)))
+              (let ((error-squared (let ((d (- determinant 1.0f0))) (* d d)))
+                    (scale-vector (%make-vector3 (aref scale 0) (aref scale 1)
+                                                 (aref scale 2))))
+                (if (< 1.0f-4 error-squared)
+                    (values nil scale-vector (quaternion-identity) translation)
+                    (values t scale-vector
+                            (quaternion-create-from-rotation-matrix (basis))
+                            translation))))))))))
+
+(defconstant +billboard-degenerate-axis-threshold+ 0.998254657f0
+  "The dot product past which a constrained billboard's axis counts as parallel
+to the view direction. XNA's literal, not a rounded cosine.")
+
+(defun matrix-create-constrained-billboard (object-position camera-position rotate-axis
+                                            &optional camera-forward-vector
+                                                      object-forward-vector)
+  "Matrix.CreateConstrainedBillboard.
+
+Like MATRIX-CREATE-BILLBOARD, except the billboard may only turn about
+ROTATE-AXIS. When the view direction is within 0.998254657 of parallel to that
+axis the rotation is unconstrained by the view, and the framework then picks a
+substitute forward direction through three nested tests -- which is the whole
+difficulty of this member and the reason it is transcribed rather than derived:
+
+  * OBJECT-FORWARD-VECTOR if it was given and is itself not parallel to the axis;
+  * otherwise `Vector3.Forward', unless the axis is parallel to *that* too;
+  * and in that last case `Vector3.Right'.
+
+Both optional arguments are XNA's `Vector3?': NIL is the absent value.
+CAMERA-FORWARD-VECTOR is consulted only when the object and the camera are
+closer together than 0.0001f squared."
+  (cna-lisp.internal:with-binary32-semantics
+    (let* ((delta (vector3-subtract object-position camera-position))
+           (squared (vector3-length-squared delta))
+           (view (if (< squared 0.0001f0)
+                     (if camera-forward-vector
+                         (vector3-negate camera-forward-vector)
+                         (vector3-forward))
+                     (vector3-multiply delta (/ 1.0f0 (%sqrt-as-xna squared)))))
+           (up (copy-vector3 rotate-axis))
+           right backward)
+      (flet ((parallel-p (vector)
+               (> (abs (vector3-dot rotate-axis vector))
+                  +billboard-degenerate-axis-threshold+)))
+        (if (parallel-p view)
+            (let ((substitute
+                    (cond ((and object-forward-vector
+                                (not (parallel-p object-forward-vector)))
+                           object-forward-vector)
+                          ((parallel-p (vector3-forward)) (vector3-right))
+                          (t (vector3-forward)))))
+              (setf right (vector3-normalize (vector3-cross rotate-axis substitute))
+                    backward (vector3-normalize (vector3-cross right rotate-axis))))
+            (setf right (vector3-normalize (vector3-cross rotate-axis view))
+                  backward (vector3-normalize (vector3-cross right up)))))
+      (%make-matrix (vector3-x right) (vector3-y right) (vector3-z right) 0.0f0
+                    (vector3-x up) (vector3-y up) (vector3-z up) 0.0f0
+                    (vector3-x backward) (vector3-y backward) (vector3-z backward) 0.0f0
+                    (vector3-x object-position) (vector3-y object-position)
+                    (vector3-z object-position) 1.0f0))))
+
 ;;; --- arithmetic -------------------------------------------------------------
 
 (defun matrix-transpose (matrix)

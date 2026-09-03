@@ -4082,6 +4082,32 @@
           "documentation": "Matrix.CreateBillboard.\n\nCAMERA-FORWARD-VECTOR is XNA's `Vector3?': NIL is the absent value, and it is\nconsulted only when the object and the camera are closer together than the\nframework's own 0.0001f squared-distance threshold."
         },
         {
+          "name": "matrix-create-constrained-billboard",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object-position",
+            "camera-position",
+            "rotate-axis",
+            "&optional",
+            "camera-forward-vector",
+            "object-forward-vector"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.CreateConstrainedBillboard.\n\nLike MATRIX-CREATE-BILLBOARD, except the billboard may only turn about\nROTATE-AXIS. When the view direction is within 0.998254657 of parallel to that\naxis the rotation is unconstrained by the view, and the framework then picks a\nsubstitute forward direction through three nested tests -- which is the whole\ndifficulty of this member and the reason it is transcribed rather than derived:\n\n  * OBJECT-FORWARD-VECTOR if it was given and is itself not parallel to the axis;\n  * otherwise `Vector3.Forward', unless the axis is parallel to *that* too;\n  * and in that last case `Vector3.Right'.\n\nBoth optional arguments are XNA's `Vector3?': NIL is the absent value.\nCAMERA-FORWARD-VECTOR is consulted only when the object and the camera are\ncloser together than 0.0001f squared."
+        },
+        {
           "name": "matrix-create-from-axis-angle",
           "fbound": true,
           "macro": false,
@@ -4470,6 +4496,27 @@
           "constant": false,
           "value": null,
           "documentation": "Matrix.CreateWorld.\n\nThe third row is the *negated, normalised* forward vector: XNA's world matrices\nlook down -Z."
+        },
+        {
+          "name": "matrix-decompose",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "matrix"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Matrix.Decompose.\n\nAnswers four values: whether the decomposition succeeded, then the scale, the\nrotation and the translation -- XNA's return value first and its three `out'\nparameters in their declared order.\n\n**A false first value still comes with the other three.** When the rotation part\nis not a rotation, the framework leaves the scale and the translation it computed\nand sets the rotation to the identity quaternion. A caller that ignores the flag\ngets a plausible-looking answer, so the flag is first.\n\nThe interesting half of this member is what it does with a matrix that has a\ndegenerate axis. It ranks the three axes by length, and for each one shorter than\n1e-4 substitutes: the canonical unit axis for the longest, the cross product of\nthe longest axis with whichever canonical axis is most nearly perpendicular to it\nfor the middle one, and the cross product of the other two for the shortest. Then\nit checks the determinant's sign, flips the longest axis and its scale if the\nmatrix is left-handed, and finally refuses -- identity rotation, false -- when the\ndeterminant is not within 1e-4 of 1 after squaring the difference. All of that is\ntranscribed from the assembly; an implementation that agreed on well-conditioned\nmatrices and diverged here would be worse than none."
         },
         {
           "name": "matrix-determinant",

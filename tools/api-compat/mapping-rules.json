@@ -1710,6 +1710,14 @@
     "CreateBillboard(Vector3,Vector3,Vector3,Nullable`1)": {
      "lisp": "matrix-create-billboard",
      "reason": "The Vector3? camera-forward argument is an optional argument here; NIL is the absent value."
+    },
+    "Decompose(Vector3&,Quaternion&,Vector3&)": {
+     "lisp": "matrix-decompose",
+     "reason": "The three out parameters become additional return values, in their declared order after the Boolean the method itself answers. The Boolean is first because a failed decomposition still fills in a scale and a translation, and a caller who ignores it gets a plausible wrong answer."
+    },
+    "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)": {
+     "lisp": "matrix-create-constrained-billboard",
+     "reason": "The two Vector3? arguments are optional arguments here; NIL is the absent value, as it is for CreateBillboard."
     }
    },
    "not_applicable": {
@@ -1745,12 +1753,8 @@
     "CreateWorld(Vector3&,Vector3&,Vector3&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "CreateShadow(Vector3&,Plane&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "CreateReflection(Plane&,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
-    "CreateBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
-   },
-   "unimplemented": {
-    "Decompose(Vector3&,Quaternion&,Vector3&)": "Decompose is implemented with unsafe pointer arithmetic over a private CanonicalBasis and VectorBasis pair -- some 540 IL instructions with a fallback path for degenerate scales. Reproducing it faithfully is a separate piece of work, and an approximation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than its absence.",
-    "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)": "The constrained billboard's degenerate-axis fallback is a chain of three nested thresholds against two optional vectors. It is deferred rather than approximated: an implementation that agreed on the ordinary case and diverged on the degenerate one would be worse than its absence.",
-    "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)": "See the by-value overload."
+    "CreateBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    },
    "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
    "overload_families": {

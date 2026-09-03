@@ -18,20 +18,20 @@
   "types": 33,
   "members": 1196,
   "types_by_status": {
-   "partial": 7,
-   "complete": 25,
+   "partial": 6,
+   "complete": 26,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 840,
-   "missing": 122,
-   "not-applicable": 233,
+   "complete": 842,
+   "missing": 119,
+   "not-applicable": 234,
    "partial": 1
   },
-  "diagnostics": 123,
+  "diagnostics": 120,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 122,
+   "missing_member": 119,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -735,13 +735,13 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Matrix",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single,Single)": "complete",
     "CreateBillboard(Vector3,Vector3,Vector3,Nullable`1)": "complete",
     "CreateBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Matrix&)": "not-applicable",
-    "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)": "missing",
-    "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)": "missing",
+    "CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)": "complete",
+    "CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)": "not-applicable",
     "CreateTranslation(Vector3)": "complete",
     "CreateTranslation(Vector3&,Matrix&)": "not-applicable",
     "CreateTranslation(Single,Single,Single)": "complete",
@@ -782,7 +782,7 @@
     "CreateShadow(Vector3&,Plane&,Matrix&)": "not-applicable",
     "CreateReflection(Plane)": "complete",
     "CreateReflection(Plane&,Matrix&)": "not-applicable",
-    "Decompose(Vector3&,Quaternion&,Vector3&)": "missing",
+    "Decompose(Vector3&,Quaternion&,Vector3&)": "complete",
     "Transform(Matrix,Quaternion)": "complete",
     "Transform(Matrix&,Quaternion&,Matrix&)": "not-applicable",
     "ToString()": "not-applicable",
@@ -1643,21 +1643,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DefaultBackBufferHeight",
    "detail": "no exported 'default-back-buffer-height' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Matrix.CreateConstrainedBillboard(Vector3,Vector3,Vector3,Nullable`1,Nullable`1)",
-   "detail": "The constrained billboard's degenerate-axis fallback is a chain of three nested thresholds against two optional vectors. It is deferred rather than approximated: an implementation that agreed on the ordinary case and diverged on the degenerate one would be worse than its absence."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Matrix.CreateConstrainedBillboard(Vector3&,Vector3&,Vector3&,Nullable`1,Nullable`1,Matrix&)",
-   "detail": "See the by-value overload."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Matrix.Decompose(Vector3&,Quaternion&,Vector3&)",
-   "detail": "Decompose is implemented with unsafe pointer arithmetic over a private CanonicalBasis and VectorBasis pair -- some 540 IL instructions with a fallback path for degenerate scales. Reproducing it faithfully is a separate piece of work, and an approximation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than its absence."
   },
   {
    "category": "missing_member",

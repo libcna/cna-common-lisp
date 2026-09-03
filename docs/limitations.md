@@ -110,12 +110,24 @@ The math types are present: `Vector2`, `Vector3`, `Vector4`, `Quaternion`,
 `MathHelper`, `ContainmentType` and `PlaneIntersectionType`. They are pure Lisp
 and touch no native route.
 
-### Three members of Matrix
+### Matrix.Decompose answers three things even when it fails
 
-| Member | Why |
-| --- | --- |
-| `Matrix.Decompose` | 540 IL instructions over a private `CanonicalBasis`/`VectorBasis` pair using unsafe pointer arithmetic, with a fallback path for degenerate scales. An implementation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than the absence. |
-| `Matrix.CreateConstrainedBillboard` (both overloads) | A three-deep threshold chain over two optional vectors. Same reason. |
+`Decompose` returns four values: a flag, then the scale, the rotation and the
+translation. **The flag is not advisory.** When the rotation part is not a
+rotation -- a shear, say -- the framework answers false and *still* fills in the
+scale it measured and the translation it read, with the rotation set to the
+identity quaternion. A caller who ignores the flag gets a plausible answer that
+does not reconstruct the matrix.
+
+Two other answers surprise people, and both are the framework's:
+
+* a left-handed matrix is not refused. `Decompose` flips the longest axis and
+  its scale, so a mirror comes back as a **negative scale** with no rotation;
+* an axis shorter than `1e-4` is replaced rather than treated as an error --
+  by the canonical unit axis for the longest, by a cross product with the
+  canonical axis most nearly perpendicular to it for the middle one, and by the
+  cross of the other two for the shortest. A wholly zero matrix therefore
+  decomposes *successfully*, into a zero scale and a half turn about X.
 
 ## What BoundingFrustum's answers are, and are not
 

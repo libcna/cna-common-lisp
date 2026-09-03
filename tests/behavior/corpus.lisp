@@ -509,6 +509,46 @@
                        (xna:rectangle-union (xna:make-rectangle 100 100 10 10)
                                             (xna:make-rectangle 0 0 0 0))))
 
+(defobservation "matrix.decompose-fills-in-on-failure" :xna-derived
+    "Microsoft.Xna.Framework.Matrix"
+  "Decompose answers false for a matrix with no scale-rotate-translate form, and
+   still fills in the scale and the translation it computed, with the rotation
+   set to the identity."
+  (multiple-value-bind (ok scale rotation translation)
+      (xna:matrix-decompose (xna:make-matrix 1 1 0 0  0 1 0 0  0 0 1 0  0 0 0 1))
+    (declare (ignore translation))
+    (and (null ok)
+         (< (abs (- (sqrt 2.0f0) (xna:vector3-x scale))) 1.0e-5)
+         (= 1.0f0 (xna:quaternion-w rotation)))))
+
+(defobservation "matrix.decompose-reports-a-mirror-as-negative-scale" :xna-derived
+    "Microsoft.Xna.Framework.Matrix"
+  "A left-handed matrix is not refused: Decompose flips the longest axis and its
+   scale, so a mirror answers a negative scale and no rotation."
+  (multiple-value-bind (ok scale rotation)
+      (xna:matrix-decompose (xna:matrix-create-scale -1 1 1))
+    (and ok (= -1.0f0 (xna:vector3-x scale))
+         (< (abs (- 1.0f0 (abs (xna:quaternion-w rotation)))) 1.0e-5))))
+
+(defobservation "matrix.constrained-billboard-substitution-order" :xna-derived
+    "Microsoft.Xna.Framework.Matrix"
+  "When the view direction is parallel to the rotation axis, CreateConstrainedBillboard
+   substitutes the object's forward vector, or Vector3.Forward when that is
+   parallel to the axis too, or Vector3.Right when the axis is parallel to
+   Forward."
+  (let ((from-object (xna:matrix-create-constrained-billboard
+                      (xna:make-vector3 0 0 0) (xna:make-vector3 0 10 0)
+                      (xna:make-vector3 0 1 0) nil (xna:make-vector3 1 0 0)))
+        (from-forward (xna:matrix-create-constrained-billboard
+                       (xna:make-vector3 0 0 0) (xna:make-vector3 0 10 0)
+                       (xna:make-vector3 0 1 0)))
+        (from-right (xna:matrix-create-constrained-billboard
+                     (xna:make-vector3 0 0 0) (xna:make-vector3 0 0 0)
+                     (xna:make-vector3 0 0 1))))
+    (and (< (abs (- -1.0f0 (xna:matrix-m13 from-object))) 1.0e-5)
+         (< (abs (- -1.0f0 (xna:matrix-m11 from-forward))) 1.0e-5)
+         (< (abs (- 1.0f0 (xna:matrix-m12 from-right))) 1.0e-5))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

@@ -419,3 +419,110 @@ is the point of neither. Exact equality is asserted wherever it can be."
     (is (/= 0.0f0 (xna:vector4-w shadow)))
     (let ((y (/ (xna:vector4-y shadow) (xna:vector4-w shadow))))
       (is (~= 0.0f0 y 1.0e-4)))))
+
+;;; --- Matrix.Decompose and the constrained billboard -------------------------
+
+(defun decompose-values (matrix)
+  (multiple-value-list (xna:matrix-decompose matrix)))
+
+(test decompose-splits-a-scale-rotate-translate-matrix
+  (destructuring-bind (ok scale rotation translation)
+      (decompose-values
+       (xna:matrix-multiply
+        (xna:matrix-multiply (xna:matrix-create-scale 2 2 2)
+                             (xna:matrix-create-rotation-z xna:+math-helper-pi-over4+))
+        (xna:matrix-create-translation (v3 5 6 7))))
+    (is (eq t ok))
+    (is (vector3~= scale (v3 2 2 2)))
+    (is (vector3~= translation (v3 5 6 7)))
+    (is (~= 0.38268346f0 (xna:quaternion-z rotation)))
+    (is (~= 0.92387956f0 (xna:quaternion-w rotation)))))
+
+(test decompose-reports-a-mirror-as-a-negative-scale
+  ;; A left-handed matrix is not refused: the framework flips the longest axis
+  ;; and its scale, so the answer is a negative scale and no rotation.
+  (destructuring-bind (ok scale rotation translation)
+      (decompose-values (xna:matrix-create-scale -1 1 1))
+    (is (eq t ok))
+    (is (vector3~= scale (v3 -1 1 1)))
+    (is (vector3~= translation (v3 0 0 0)))
+    (is (~= 1.0f0 (abs (xna:quaternion-w rotation))))))
+
+(test decompose-refuses-a-matrix-that-is-not-a-decomposition
+  ;; A shear has no scale-rotate-translate form. The framework answers false --
+  ;; and still fills in a scale and a translation, with the rotation set to the
+  ;; identity. A caller that ignores the flag gets a plausible wrong answer.
+  (destructuring-bind (ok scale rotation translation)
+      (decompose-values (xna:make-matrix 1 1 0 0  0 1 0 0  0 0 1 0  0 0 0 1))
+    (is (not ok))
+    (is (~= (sqrt 2.0f0) (xna:vector3-x scale)) "the scale is still the row length")
+    (is (vector3~= translation (v3 0 0 0)))
+    (is (~= 1.0f0 (xna:quaternion-w rotation)) "and the rotation is the identity")))
+
+(test decompose-substitutes-canonical-axes-for-degenerate-ones
+  ;; Every axis is zero-length, so all three substitutions fire: the canonical
+  ;; X axis for the longest, a cross product with the canonical axis most nearly
+  ;; perpendicular to it for the middle, and the cross of the other two for the
+  ;; shortest. The basis that comes out is a half turn about X, and the framework
+  ;; reports success.
+  (destructuring-bind (ok scale rotation translation)
+      (decompose-values (xna:matrix-create-scale 0 0 0))
+    (is (eq t ok))
+    (is (vector3~= scale (v3 0 0 0)))
+    (is (vector3~= translation (v3 0 0 0)))
+    (is (~= 1.0f0 (abs (xna:quaternion-x rotation))))
+    (is (~= 0.0f0 (xna:quaternion-w rotation))))
+  ;; One flat axis is enough to trigger only the last substitution.
+  (destructuring-bind (ok scale rotation translation)
+      (decompose-values (xna:matrix-create-scale 1 1 0))
+    (declare (ignore translation))
+    (is (eq t ok))
+    (is (vector3~= scale (v3 1 1 0)))
+    (is (~= 1.0f0 (xna:quaternion-w rotation)))))
+
+(test the-constrained-billboard-turns-only-about-its-axis
+  (let ((m (xna:matrix-create-constrained-billboard (v3 0 0 0) (v3 0 0 10) (v3 0 1 0))))
+    ;; The axis is the second row verbatim, which is the whole constraint.
+    (is (vector3~= (v3 (xna:matrix-m21 m) (xna:matrix-m22 m) (xna:matrix-m23 m))
+                   (v3 0 1 0)))
+    (is (vector3~= (v3 (xna:matrix-m11 m) (xna:matrix-m12 m) (xna:matrix-m13 m))
+                   (v3 -1 0 0)))
+    (is (vector3~= (v3 (xna:matrix-m31 m) (xna:matrix-m32 m) (xna:matrix-m33 m))
+                   (v3 0 0 -1)))
+    (is (vector3~= (v3 (xna:matrix-m41 m) (xna:matrix-m42 m) (xna:matrix-m43 m))
+                   (v3 0 0 0)))))
+
+(test the-constrained-billboard-picks-a-substitute-when-the-view-is-along-the-axis
+  ;; All three branches of the fallback chain, in the order the framework tries
+  ;; them: the object's own forward vector, then Vector3.Forward, then
+  ;; Vector3.Right when the axis is parallel to Forward as well.
+  (let ((from-object-forward
+          (xna:matrix-create-constrained-billboard (v3 0 0 0) (v3 0 10 0) (v3 0 1 0)
+                                                   nil (v3 1 0 0)))
+        (from-forward
+          (xna:matrix-create-constrained-billboard (v3 0 0 0) (v3 0 10 0) (v3 0 1 0)))
+        (from-right
+          (xna:matrix-create-constrained-billboard (v3 0 0 0) (v3 0 0 0) (v3 0 0 1))))
+    (is (vector3~= (v3 (xna:matrix-m11 from-object-forward)
+                       (xna:matrix-m12 from-object-forward)
+                       (xna:matrix-m13 from-object-forward))
+                   (v3 0 0 -1)))
+    (is (vector3~= (v3 (xna:matrix-m11 from-forward)
+                       (xna:matrix-m12 from-forward)
+                       (xna:matrix-m13 from-forward))
+                   (v3 -1 0 0)))
+    (is (vector3~= (v3 (xna:matrix-m11 from-right)
+                       (xna:matrix-m12 from-right)
+                       (xna:matrix-m13 from-right))
+                   (v3 0 1 0))
+        "the axis is parallel to Forward, so Right is the substitute")))
+
+(test an-object-forward-parallel-to-the-axis-is-rejected-too
+  ;; The object's forward vector is only used when it is itself not parallel to
+  ;; the rotation axis; here it is, so the chain falls through to Forward.
+  (let ((given (xna:matrix-create-constrained-billboard
+                (v3 0 0 0) (v3 0 10 0) (v3 0 1 0) nil (v3 0 1 0)))
+        (absent (xna:matrix-create-constrained-billboard
+                 (v3 0 0 0) (v3 0 10 0) (v3 0 1 0))))
+    (is (~= (xna:matrix-m11 given) (xna:matrix-m11 absent)))
+    (is (~= (xna:matrix-m13 given) (xna:matrix-m13 absent)))))

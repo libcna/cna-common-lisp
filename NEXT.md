@@ -58,25 +58,24 @@ and nothing in this repository says otherwise.
 
 <!-- generated:selected types=33 -->
 <!-- generated:selected members=1196 -->
-<!-- generated:complete types=25 -->
-<!-- generated:partial types=7 -->
+<!-- generated:complete types=26 -->
+<!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=840 -->
+<!-- generated:complete members=842 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=122 -->
-<!-- generated:not-applicable members=233 -->
+<!-- generated:missing members=119 -->
+<!-- generated:not-applicable members=234 -->
 <!-- generated:disagreement total=0 -->
 
-33 selected types, 1196 members: **25 complete, 7 partial, 1 missing**;
-**840 members complete, 122 missing**, 233 not applicable, 1 partial.
+33 selected types, 1196 members: **26 complete, 6 partial, 1 missing**;
+**842 members complete, 119 missing**, 234 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
-Every math type is complete except `Matrix`, which has three members left:
-`Decompose` and the two `CreateConstrainedBillboard` overloads. The bounding
-volumes are closed -- `Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum`
-and `Plane` answer every member of the cross product between them -- and so are
-`Color` and `Rectangle`. What is left is graphics, input beyond the keyboard,
-content, and the event projection.
+**Every selected math type is complete.** `Vector2`, `Vector3`, `Vector4`,
+`Quaternion`, `Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`,
+`BoundingFrustum`, `MathHelper`, `Color`, `Point`, `Rectangle` and the three
+enumerations answer every member of the selected contract. What is left is
+graphics, input beyond the keyboard, content, and the event projection.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
