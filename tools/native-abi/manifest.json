@@ -60,6 +60,11 @@
       "CNA_GAME_EVENT_DEACTIVATED",
       "CNA_GAME_EVENT_DISPOSED",
       "CNA_GAME_EVENT_EXITING",
+      "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED",
+      "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED",
+      "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING",
+      "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET",
+      "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING",
       "CNA_KEY_STATE_UP",
       "CNA_KEY_STATE_DOWN",
       "CNA_MOUSE_BUTTON_NONE",
@@ -616,6 +621,12 @@
       "header": "runtime_graphics_manager.h",
       "thread": "owner",
       "ownership": "borrows-callback-scoped:graphics-device"
+    },
+    {
+      "name": "cna_graphics_device_manager_subscribe",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "creates"
     },
     {
       "name": "cna_texture2d_create_from_encoded_memory",

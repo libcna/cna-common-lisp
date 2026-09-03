@@ -526,6 +526,7 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_preferred_back
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_synchronize_with_vertical_retrace)(CNA_GraphicsDeviceManagerHandle, CNA_Bool*) = cna_graphics_device_manager_get_synchronize_with_vertical_retrace;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_synchronize_with_vertical_retrace)(CNA_GraphicsDeviceManagerHandle, CNA_Bool) = cna_graphics_device_manager_set_synchronize_with_vertical_retrace;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_graphics_device)(CNA_GraphicsDeviceManagerHandle, CNA_Handle*) = cna_graphics_device_manager_get_graphics_device;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_subscribe)(CNA_GraphicsDeviceManagerHandle, CNA_GraphicsDeviceManagerEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*) = cna_graphics_device_manager_subscribe;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_create_from_encoded_memory)(CNA_Handle, const uint8_t*, uint64_t, const CNA_Texture2DDecodeInfo*, CNA_Handle*) = cna_texture2d_create_from_encoded_memory;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_create_from_file_with_device)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_texture2d_create_from_file_with_device;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_destroy)(CNA_Handle) = cna_texture2d_destroy;
@@ -653,6 +654,11 @@ _Static_assert((int64_t)(CNA_GESTURE_TYPE_PINCH) == INT64_C(64), "CNA_GESTURE_TY
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_PINCH_COMPLETE) == INT64_C(512), "CNA_GESTURE_TYPE_PINCH_COMPLETE value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_TAP) == INT64_C(1), "CNA_GESTURE_TYPE_TAP value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_VERTICAL_DRAG) == INT64_C(16), "CNA_GESTURE_TYPE_VERTICAL_DRAG value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED) == INT64_C(1), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING) == INT64_C(2), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET) == INT64_C(3), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING) == INT64_C(4), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED) == INT64_C(0), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED value");
 _Static_assert((int64_t)(CNA_INVALID_HANDLE) == INT64_C(0), "CNA_INVALID_HANDLE value");
 _Static_assert((int64_t)(CNA_KEY_A) == INT64_C(65), "CNA_KEY_A value");
 _Static_assert((int64_t)(CNA_KEY_ADD) == INT64_C(107), "CNA_KEY_ADD value");

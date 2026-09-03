@@ -21,10 +21,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 92,
+    "functions": 93,
     "structs": 28,
     "struct_fields": 191,
-    "constants": 306,
+    "constants": 311,
     "callbacks": 3,
     "by_value_aggregates": 2,
     "shimmed_routes": 1
@@ -1134,6 +1134,43 @@
       "ownership": "borrows-callback-scoped:graphics-device",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_manager_get_graphics_device(CNA_GraphicsDeviceManagerHandle manager, CNA_Handle* out_graphics_device)"
+    },
+    {
+      "name": "cna_graphics_device_manager_subscribe",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "event",
+          "c_type": "CNA_GraphicsDeviceManagerEvent",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_GameEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GameEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_subscribe(CNA_GraphicsDeviceManagerHandle manager, CNA_GraphicsDeviceManagerEvent event, CNA_GameEventCallback callback, void* context, CNA_GameEventRegistrationHandle* out_registration)"
     },
     {
       "name": "cna_texture2d_create_from_encoded_memory",
@@ -4369,6 +4406,11 @@
     "CNA_GESTURE_TYPE_PINCH_COMPLETE": 512,
     "CNA_GESTURE_TYPE_TAP": 1,
     "CNA_GESTURE_TYPE_VERTICAL_DRAG": 16,
+    "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED": 1,
+    "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING": 2,
+    "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET": 3,
+    "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING": 4,
+    "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED": 0,
     "CNA_INVALID_HANDLE": 0,
     "CNA_KEY_A": 65,
     "CNA_KEY_ADD": 107,

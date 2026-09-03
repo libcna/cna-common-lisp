@@ -95,3 +95,55 @@
            (finishes (xna:run game))
            (is (>= (updates game) 2) "the loop ran to its exit condition"))
       (ignore-errors (xna:dispose game)))))
+
+;;; --- GraphicsDeviceManager's events ------------------------------------------
+
+(defclass manager-event-game (counting-game)
+  ((manager :initform nil :accessor manager)
+   (created :initform 0 :accessor created-seen)
+   (disposed :initform 0 :accessor manager-disposed-seen)))
+
+(defmethod initialize-instance :after ((game manager-event-game) &key)
+  (setf (manager game) (make-instance 'xna:graphics-device-manager :game game))
+  (xna:add-device-created-handler
+   (manager game) (lambda (sender) (declare (ignore sender)) (incf (created-seen game))))
+  (xna:add-disposed-handler
+   (manager game)
+   (lambda (sender) (declare (ignore sender)) (incf (manager-disposed-seen game)))))
+
+(define-native-test the-manager-raises-its-own-events
+  (let ((game (make-instance 'manager-event-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (>= (created-seen game) 1)
+               "DeviceCreated is raised when the manager creates the device"))
+      (progn (xna:dispose (manager game)) (xna:dispose game)))
+    (is (= 1 (manager-disposed-seen game))
+        "and Disposed when the manager itself is disposed")))
+
+(define-native-test one-generic-function-serves-both-types
+  ;; ADD-DISPOSED-HANDLER is one generic function with a method on GAME and one
+  ;; on GRAPHICS-DEVICE-MANAGER. That is the reason the event projection uses
+  ;; generic functions at all, so it is worth asserting rather than assuming.
+  (let ((generic (fdefinition 'xna:add-disposed-handler)))
+    (is (typep generic 'generic-function))
+    (is (= 2 (length (sb-mop:generic-function-methods generic))))))
+
+(define-native-test manager-subscriptions-are-released-with-the-manager
+  (let ((before (int:callback-registry-count))
+        (game (make-instance 'counting-game :exit-after 1))
+        (manager nil))
+    (unwind-protect
+         (progn
+           (setf manager (make-instance 'xna:graphics-device-manager :game game))
+           (xna:add-device-reset-handler
+            manager (lambda (sender) (declare (ignore sender))))
+           (xna:add-device-resetting-handler
+            manager (lambda (sender) (declare (ignore sender))))
+           (xna:add-device-disposing-handler
+            manager (lambda (sender) (declare (ignore sender))))
+           (is (= (+ before 4) (int:callback-registry-count))
+               "the game plus the manager's three subscriptions"))
+      (progn (when manager (xna:dispose manager)) (xna:dispose game)))
+    (is (= before (int:callback-registry-count)))))

@@ -298,6 +298,94 @@
           "documentation": "Game.Deactivated: the game lost focus."
         },
         {
+          "name": "add-device-created-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.DeviceCreated: a graphics device was created.\n\nHANDLER is called with the manager. The device itself is reached through the\ngame, as it always is: the event carries nothing."
+        },
+        {
+          "name": "add-device-disposing-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.DeviceDisposing: the device is about to be disposed."
+        },
+        {
+          "name": "add-device-reset-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.DeviceReset: the device finished resetting."
+        },
+        {
+          "name": "add-device-resetting-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.DeviceResetting: the device is about to reset."
+        },
+        {
           "name": "add-disposed-handler",
           "fbound": true,
           "macro": false,
@@ -8385,6 +8473,94 @@
           "constant": false,
           "value": null,
           "documentation": "The `-=' of add-deactivated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-device-created-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-device-created-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-device-disposing-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-device-disposing-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-device-reset-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-device-reset-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-device-resetting-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-device-resetting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
           "name": "remove-disposed-handler",

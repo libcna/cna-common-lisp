@@ -483,7 +483,7 @@ the projected type checkable against the runtime rather than asserted."))
         ;; subscriptions and the registry entries that root their handlers have
         ;; to survive that call and be released after it -- not before, which
         ;; would silently swallow the last event the game ever raises.
-        (%release-game-event-handlers game)
+        (%release-event-handlers game)
         (cna-lisp.internal:release-callback-error-buffer)))))
 
 (defmethod print-object ((game game) stream)

@@ -23,15 +23,15 @@
    "missing": 1
   },
   "members_by_status": {
-   "complete": 1171,
-   "missing": 115,
+   "complete": 1176,
+   "missing": 110,
    "not-applicable": 345,
    "partial": 1
   },
-  "diagnostics": 116,
+  "diagnostics": 111,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 115,
+   "missing_member": 110,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -134,12 +134,12 @@
     "PreferMultiSampling": "missing",
     "SupportedOrientations": "missing",
     "GraphicsDevice": "complete",
-    "DeviceCreated": "missing",
-    "DeviceResetting": "missing",
-    "DeviceReset": "missing",
-    "DeviceDisposing": "missing",
+    "DeviceCreated": "complete",
+    "DeviceResetting": "complete",
+    "DeviceReset": "complete",
+    "DeviceDisposing": "complete",
     "PreparingDeviceSettings": "missing",
-    "Disposed": "missing",
+    "Disposed": "complete",
     "DefaultBackBufferWidth": "missing",
     "DefaultBackBufferHeight": "missing"
    },
@@ -2330,33 +2330,8 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceCreated",
-   "detail": "no event projection is declared"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceResetting",
-   "detail": "no event projection is declared"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceReset",
-   "detail": "no event projection is declared"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DeviceDisposing",
-   "detail": "no event projection is declared"
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings",
-   "detail": "no event projection is declared"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.Disposed",
-   "detail": "no event projection is declared"
+   "detail": "The only event in the selection that carries data. It needs PreparingDeviceSettingsEventArgs and GraphicsDeviceInformation, neither of which is in the selection, and CNA's non-ext callback for it can only observe the settings where XNA's event exists to change them. Projecting the observing form under the event's name would be a quieter kind of wrong than leaving it missing."
   },
   {
    "category": "missing_member",

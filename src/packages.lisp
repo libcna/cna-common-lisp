@@ -208,6 +208,10 @@
    #:add-deactivated-handler #:remove-deactivated-handler
    #:add-exiting-handler #:remove-exiting-handler
    #:add-disposed-handler #:remove-disposed-handler
+   #:add-device-created-handler #:remove-device-created-handler
+   #:add-device-resetting-handler #:remove-device-resetting-handler
+   #:add-device-reset-handler #:remove-device-reset-handler
+   #:add-device-disposing-handler #:remove-device-disposing-handler
    ;; --- lifetime ----------------------------------------------------------
    #:dispose #:disposed-p #:with-disposal
    ;; --- conditions --------------------------------------------------------

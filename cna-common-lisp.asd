@@ -67,9 +67,11 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "input/game-pad")
    (:file "input/touch")
    ;; --- Game and the graphics device manager ------------------------------
+   (:file "runtime/event-machinery")
    (:file "runtime/game")
-   (:file "runtime/events")
+   (:file "runtime/game-events")
    (:file "runtime/graphics-device-manager")
+   (:file "runtime/manager-events")
    ;; --- declared capabilities and deliberate absences ----------------------
    (:file "capabilities"))
   :in-order-to ((test-op (test-op "cna-common-lisp/tests"))))

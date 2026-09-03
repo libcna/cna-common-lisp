@@ -77,7 +77,8 @@ stubs:
   namespace, in a package of its own;
 * the CLR **event projection**: `game.Activated += handler` becomes
   `(add-activated-handler game handler)`, over CNA's own subscription routes,
-  with the registrations released deterministically with the game;
+  with the registrations released deterministically with the object. `Game`'s
+  four events and `GraphicsDeviceManager`'s five data-free ones are bound;
 * a full condition hierarchy, deterministic disposal, generation-checked
   ownership, thread affinity, and callback condition containment.
 
@@ -89,12 +90,12 @@ placeholder methods that answer a default and claim success.
 <!-- generated:complete types=70 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1171 -->
+<!-- generated:complete members=1176 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=115 -->
+<!-- generated:missing members=110 -->
 <!-- generated:not-applicable members=345 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=92 -->
+<!-- generated:bound native functions=93 -->
 <!-- generated:bound native structs=28 -->
 
 The generated scoreboard, over a selection of **77 XNA types and 1632 members**:
@@ -102,7 +103,7 @@ The generated scoreboard, over a selection of **77 XNA types and 1632 members**:
 | | |
 | --- | --- |
 | Types complete / partial / missing | **70 / 6 / 1** |
-| Members complete / missing | **1171 / 115** |
+| Members complete / missing | **1176 / 110** |
 | Members not applicable | **345** |
 | **Disagreement diagnostics** | **0** |
 
@@ -110,10 +111,10 @@ Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, every exported symbol is accounted for, no
 mapping rule names a member that does not exist, and every overload family that
 collapses onto one function says how each overload is expressed. It does **not**
-mean the binding is finished: 115 members are missing and are reported as
+mean the binding is finished: 110 members are missing and are reported as
 missing. `docs/compatibility.md` is the authority.
 
-The private foreign layer binds **92 native routes** and **28 native structs**,
+The private foreign layer binds **93 native routes** and **28 native structs**,
 all of them generated from the canonical CNA headers and checked by a C
 compiler.
 

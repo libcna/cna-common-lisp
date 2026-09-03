@@ -8,7 +8,11 @@
 (in-package #:microsoft.xna.framework)
 
 (defclass graphics-device-manager (cna-lisp.internal:native-object)
-  ((game :initarg :game :initform nil :reader game))
+  ((game :initarg :game :initform nil :reader game)
+   (event-handlers :initform '() :accessor %event-handlers
+                   :documentation
+                   "One entry per live event subscription, in the shape
+runtime/events.lisp defines."))
   (:documentation
    "Microsoft.Xna.Framework.GraphicsDeviceManager.
 
@@ -119,7 +123,11 @@ game's GRAPHICS-DEVICE facade rather than a second object with a second lifetime
     "GraphicsDeviceManager.SynchronizeWithVerticalRetrace."))
 
 (defmethod cna-lisp.internal:destroy-native ((manager graphics-device-manager))
-  (cna-lisp.internal:check-result
-   (cna-lisp.internal.ffi::%graphics-device-manager-destroy
-    (cna-lisp.internal:handle-of manager))
-   "dispose" :object-type 'graphics-device-manager))
+  (unwind-protect
+       (cna-lisp.internal:check-result
+        (cna-lisp.internal.ffi::%graphics-device-manager-destroy
+         (cna-lisp.internal:handle-of manager))
+        "dispose" :object-type 'graphics-device-manager)
+    ;; After the destroy, as for the game: the manager's Disposed event is
+    ;; raised inside it, and releasing the subscriptions first would swallow it.
+    (%release-event-handlers manager)))

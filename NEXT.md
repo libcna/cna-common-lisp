@@ -61,14 +61,14 @@ and nothing in this repository says otherwise.
 <!-- generated:complete types=70 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1171 -->
+<!-- generated:complete members=1176 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=115 -->
+<!-- generated:missing members=110 -->
 <!-- generated:not-applicable members=345 -->
 <!-- generated:disagreement total=0 -->
 
 77 selected types, 1632 members: **70 complete, 6 partial, 1 missing**;
-**1171 members complete, 115 missing**, 345 not applicable, 1 partial.
+**1176 members complete, 110 missing**, 345 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 **Every pure-managed type in the selection is complete.** The math types
@@ -104,11 +104,11 @@ listed after.
 
 1. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-2. **`GraphicsDeviceManager`'s six events and `GraphicsResource`.** The event
-   projection exists now -- `Game`'s four events are bound to
-   `cna_game_subscribe` -- so these are the same shape over
-   `cna_graphics_device_manager_subscribe`, and `GraphicsResource` becomes
-   reachable once its `Disposing` event has somewhere to go.
+2. **`GraphicsResource`.** Its `Disposing` event now has a projection to use,
+   and CNA has the whole surface -- `Name`, `Tag`, `IsDisposed`, the device
+   back-reference and `cna_graphics_resource_subscribe_disposing`. Making it the
+   real base class of `texture-2d` and `sprite-batch` is what turns the last
+   `missing` type into a `complete` one.
 3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
 4. **`System.IO.Stream` and `TitleContainer`**, which unblock

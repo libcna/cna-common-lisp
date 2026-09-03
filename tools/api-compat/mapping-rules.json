@@ -105,6 +105,32 @@
    },
    "not_applicable": {
     "Dispose(Boolean)": "The protected dispose(bool) pattern; see Game.Dispose(Boolean)."
+   },
+   "events": {
+    "DeviceCreated": {
+     "add": "add-device-created-handler",
+     "remove": "remove-device-created-handler",
+     "reason": "The same projection Game's events use, over cna_graphics_device_manager_subscribe. CNA gives manager registrations the same handle type and the same release route as the game's, so one mechanism serves both."
+    },
+    "DeviceResetting": {
+     "add": "add-device-resetting-handler",
+     "remove": "remove-device-resetting-handler"
+    },
+    "DeviceReset": {
+     "add": "add-device-reset-handler",
+     "remove": "remove-device-reset-handler"
+    },
+    "DeviceDisposing": {
+     "add": "add-device-disposing-handler",
+     "remove": "remove-device-disposing-handler"
+    },
+    "Disposed": {
+     "add": "add-disposed-handler",
+     "remove": "remove-disposed-handler"
+    }
+   },
+   "unimplemented": {
+    "PreparingDeviceSettings": "The only event in the selection that carries data. It needs PreparingDeviceSettingsEventArgs and GraphicsDeviceInformation, neither of which is in the selection, and CNA's non-ext callback for it can only observe the settings where XNA's event exists to change them. Projecting the observing form under the event's name would be a quieter kind of wrong than leaving it missing."
    }
   },
   "Microsoft.Xna.Framework.Color": {
