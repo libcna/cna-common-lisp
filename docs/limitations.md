@@ -102,13 +102,12 @@ These are absent, and measured as absent, not faked:
 * `Mouse`, `GamePad`, `TouchPanel`;
 * `Effect`, `Model`, vertex and index buffers, and everything else that draws in
   three dimensions;
-* audio, media, storage, gamer services and networking;
-* the `Curve` family.
+* audio, media, storage, gamer services and networking.
 
-The math types are present: `Vector2`, `Vector3`, `Vector4`, `Quaternion`,
-`Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum`,
-`MathHelper`, `ContainmentType` and `PlaneIntersectionType`. They are pure Lisp
-and touch no native route.
+The math types are present and complete: `Vector2`, `Vector3`, `Vector4`,
+`Quaternion`, `Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`,
+`BoundingFrustum`, `MathHelper`, `ContainmentType` and `PlaneIntersectionType`,
+and so is the `Curve` family. They are pure Lisp and touch no native route.
 
 ### Matrix.Decompose answers three things even when it fails
 

@@ -549,6 +549,64 @@
          (< (abs (- -1.0f0 (xna:matrix-m11 from-forward))) 1.0e-5)
          (< (abs (- 1.0f0 (xna:matrix-m12 from-right))) 1.0e-5))))
 
+(defobservation "curve.step-continuity-steps-at-the-segment-end" :xna-derived
+    "Microsoft.Xna.Framework.Curve"
+  "A key with CurveContinuity.Step makes the segment after it hold that key's
+   value until the next key, because the test is `amount < 1' rather than a
+   midpoint."
+  (let ((curve (make-instance 'xna:curve)))
+    (xna:curve-key-collection-add (xna:curve-keys curve)
+                                  (make-instance 'xna:curve-key :position 0.0 :value 0.0
+                                                                :continuity :step))
+    (xna:curve-key-collection-add (xna:curve-keys curve)
+                                  (make-instance 'xna:curve-key :position 1.0 :value 10.0))
+    (and (= 0.0f0 (xna:curve-evaluate curve 0.999))
+         (= 10.0f0 (xna:curve-evaluate curve 1.0)))))
+
+(defobservation "curve.cycle-offset-drifts" :xna-derived
+    "Microsoft.Xna.Framework.Curve"
+  "CurveLoopType.CycleOffset folds the position back into the key range like
+   Cycle and then adds one whole first-to-last value change per cycle, so a
+   looping curve drifts instead of repeating."
+  (let ((curve (make-instance 'xna:curve)))
+    (dolist (spec '((0.0 0.0) (1.0 2.0) (2.0 3.0)))
+      (xna:curve-key-collection-add
+       (xna:curve-keys curve)
+       (make-instance 'xna:curve-key :position (first spec) :value (second spec))))
+    (xna:curve-compute-tangents curve :linear)
+    (setf (xna:curve-post-loop curve) :cycle)
+    (let ((cycled (xna:curve-evaluate curve 2.5)))
+      (setf (xna:curve-post-loop curve) :cycle-offset)
+      (< (abs (- (+ cycled 3.0f0) (xna:curve-evaluate curve 2.5))) 1.0e-4))))
+
+(defobservation "curve.smooth-tangent-is-flat-at-an-end-key" :xna-derived
+    "Microsoft.Xna.Framework.Curve"
+  "ComputeTangents(Smooth) scales the neighbouring value change by each side's
+   share of the neighbouring position span, and an end key's neighbour on the
+   outer side is itself, so that tangent is zero rather than a mirror."
+  (let ((curve (make-instance 'xna:curve)))
+    (dolist (spec '((0.0 0.0) (1.0 1.0) (2.0 0.0)))
+      (xna:curve-key-collection-add
+       (xna:curve-keys curve)
+       (make-instance 'xna:curve-key :position (first spec) :value (second spec))))
+    (xna:curve-compute-tangents curve :smooth)
+    (let ((first-key (xna:curve-key-collection-item (xna:curve-keys curve) 0)))
+      (and (= 0.0f0 (xna:curve-key-tangent-in first-key))
+           (= 1.0f0 (xna:curve-key-tangent-out first-key))))))
+
+(defobservation "curvekeycollection.duplicate-positions-go-last" :xna-derived
+    "Microsoft.Xna.Framework.CurveKeyCollection"
+  "The collection sorts by position, allows duplicates, and inserts a new key
+   after every key already at its position."
+  (let ((keys (make-instance 'xna:curve-key-collection)))
+    (dolist (spec '((1.0 10.0) (0.0 0.0) (1.0 99.0)))
+      (xna:curve-key-collection-add
+       keys (make-instance 'xna:curve-key :position (first spec) :value (second spec))))
+    (and (= 3 (xna:curve-key-collection-count keys))
+         (= 0.0f0 (xna:curve-key-value (xna:curve-key-collection-item keys 0)))
+         (= 10.0f0 (xna:curve-key-value (xna:curve-key-collection-item keys 1)))
+         (= 99.0f0 (xna:curve-key-value (xna:curve-key-collection-item keys 2))))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

@@ -82,28 +82,28 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=33 -->
-<!-- generated:selected members=1196 -->
-<!-- generated:complete types=26 -->
+<!-- generated:selected types=39 -->
+<!-- generated:selected members=1248 -->
+<!-- generated:complete types=32 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=842 -->
+<!-- generated:complete members=888 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=234 -->
+<!-- generated:not-applicable members=240 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1**: 33 types, 1196 members.
+Selection **Foundation 1 and the managed closures**: 39 types, 1248 members.
 
 | | |
 | --- | --- |
-| Types complete | **26** |
+| Types complete | **32** |
 | Types partial | **6** |
 | Types missing | **1** |
-| Members complete | **842** |
+| Members complete | **888** |
 | Members partial | **1** |
 | Members missing | **119** |
-| Members not applicable | **234** |
+| Members not applicable | **240** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -132,6 +132,12 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.BoundingBox` | **complete** | 20 | 0 | 0 | 13 |
 | `M.X.F.BoundingSphere` | **complete** | 19 | 0 | 0 | 14 |
 | `M.X.F.BoundingFrustum` | **complete** | 22 | 0 | 0 | 11 |
+| `M.X.F.Curve` | **complete** | 11 | 0 | 0 | 0 |
+| `M.X.F.CurveKey` | **complete** | 12 | 0 | 0 | 3 |
+| `M.X.F.CurveKeyCollection` | **complete** | 13 | 0 | 0 | 0 |
+| `M.X.F.CurveContinuity` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.CurveLoopType` | **complete** | 5 | 0 | 0 | 1 |
+| `M.X.F.CurveTangent` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **missing** | 0 | 0 | 9 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 2 | 1 | 52 | 2 |
@@ -149,7 +155,7 @@ collapsed overload family says how each of its overloads is expressed.
 
 ### Not applicable, and why so many
 
-234 members are classified not applicable, and most of them are one thing: the
+240 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value

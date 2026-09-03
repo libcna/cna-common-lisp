@@ -9,48 +9,13 @@
 
 (in-package #:microsoft.xna.framework)
 
-(defparameter *containment-type-table*
+(define-xna-enum containment-type
   '((:disjoint . 0) (:contains . 1) (:intersects . 2))
-  "Microsoft.Xna.Framework.ContainmentType.")
+  :documentation "Microsoft.Xna.Framework.ContainmentType.")
 
-(deftype containment-type ()
-  "Microsoft.Xna.Framework.ContainmentType."
-  '(member :disjoint :contains :intersects))
-
-(defparameter *plane-intersection-type-table*
+(define-xna-enum plane-intersection-type
   '((:front . 0) (:back . 1) (:intersecting . 2))
-  "Microsoft.Xna.Framework.PlaneIntersectionType.")
-
-(deftype plane-intersection-type ()
-  "Microsoft.Xna.Framework.PlaneIntersectionType."
-  '(member :front :back :intersecting))
-
-(macrolet ((define-enum-conversions (name table)
-             (let ((value (intern (format nil "~a-VALUE" name)))
-                   (from (intern (format nil "~a-FROM-VALUE" name)))
-                   (all (intern (format nil "ALL-~a" name))))
-               `(progn
-                  (defun ,value (member)
-                    ,(format nil "The exact ABI value of a ~a member." name)
-                    (or (cdr (assoc member ,table))
-                        (if (eq member (car (first ,table)))
-                            0
-                            (error 'cna-usage-error
-                                   :operation ,(string-downcase (symbol-name value))
-                                   :format-control "~s is not a ~a member."
-                                   :format-arguments (list member ,(symbol-name name))))))
-                  (defun ,from (integer)
-                    ,(format nil "The ~a member an ABI value names." name)
-                    (or (car (rassoc integer ,table))
-                        (error 'cna-usage-error
-                               :operation ,(string-downcase (symbol-name from))
-                               :format-control "~d is not a ~a value."
-                               :format-arguments (list integer ,(symbol-name name)))))
-                  (defun ,all ()
-                    ,(format nil "Every ~a member, in value order." name)
-                    (mapcar #'car ,table))))))
-  (define-enum-conversions containment-type *containment-type-table*)
-  (define-enum-conversions plane-intersection-type *plane-intersection-type-table*))
+  :documentation "Microsoft.Xna.Framework.PlaneIntersectionType.")
 
 ;;; --- Plane ------------------------------------------------------------------
 

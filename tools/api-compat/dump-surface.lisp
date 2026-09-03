@@ -189,7 +189,10 @@ that a keyword-taking projection accepts no keywords at all."
    "surface-format" (alist-object microsoft.xna.framework.graphics::*surface-format-table*)
    "containment-type" (alist-object microsoft.xna.framework::*containment-type-table*)
    "plane-intersection-type"
-   (alist-object microsoft.xna.framework::*plane-intersection-type-table*)))
+   (alist-object microsoft.xna.framework::*plane-intersection-type-table*)
+   "curve-continuity" (alist-object microsoft.xna.framework::*curve-continuity-table*)
+   "curve-loop-type" (alist-object microsoft.xna.framework::*curve-loop-type-table*)
+   "curve-tangent" (alist-object microsoft.xna.framework::*curve-tangent-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

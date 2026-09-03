@@ -112,6 +112,24 @@
    #:plane-normalize #:plane-normalized
    #:plane-dot #:plane-dot-coordinate #:plane-dot-normal
    #:plane-transform #:plane-equal
+   #:curve #:curve-pre-loop #:curve-post-loop #:curve-keys #:curve-is-constant
+   #:curve-clone #:curve-evaluate #:curve-compute-tangent #:curve-compute-tangents
+   #:curve-key #:curve-key-position #:curve-key-value
+   #:curve-key-tangent-in #:curve-key-tangent-out #:curve-key-continuity
+   #:curve-key-clone #:curve-key-equal #:curve-key-compare-to
+   #:curve-key-collection #:curve-key-collection-count
+   #:curve-key-collection-is-read-only #:curve-key-collection-item
+   #:curve-key-collection-add #:curve-key-collection-remove-at
+   #:curve-key-collection-index-of #:curve-key-collection-contains
+   #:curve-key-collection-remove #:curve-key-collection-clear
+   #:curve-key-collection-keys #:curve-key-collection-copy-to
+   #:curve-key-collection-clone
+   #:curve-continuity #:curve-continuity-value #:curve-continuity-from-value
+   #:all-curve-continuity
+   #:curve-loop-type #:curve-loop-type-value #:curve-loop-type-from-value
+   #:all-curve-loop-type
+   #:curve-tangent #:curve-tangent-value #:curve-tangent-from-value
+   #:all-curve-tangent
    #:containment-type #:containment-type-value #:containment-type-from-value
    #:all-containment-type
    #:plane-intersection-type #:plane-intersection-type-value

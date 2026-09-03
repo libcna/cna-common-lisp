@@ -154,7 +154,7 @@ One place translates a result code, and the code is not a public reader. A
 callback's condition is preserved as an object and re-signalled on the Lisp side
 after control leaves C.
 
-## 5. Selected profile — Foundation 1
+## 5. Selected profile — Foundation 1 and the managed closures
 
 The first qualified foundation is the dependency closure of a real textured
 sprite game:
@@ -166,6 +166,20 @@ sprite game:
 
 `GameWindow` is not implemented as a type; only the window title is reachable,
 on `game`, and that is recorded as a deliberate absence.
+
+The selection then grows one **dependency-complete closure** at a time, in the
+order `NEXT.md` records, and never by a member here and a member there. A closure
+is added only when every member of it can be finished, tested and measured
+together, because a half-implemented family reports its own cross-product members
+as missing anyway and hides which absences are real. The closures added so far
+are pure managed and touch no native route:
+
+* the 3D transform types -- `Vector3`, `Vector4`, `Quaternion`, `Matrix`,
+  `Plane`, `MathHelper`;
+* the bounding volumes -- `Ray`, `BoundingBox`, `BoundingSphere`,
+  `BoundingFrustum`, `ContainmentType`, `PlaneIntersectionType`;
+* the `Curve` family -- `Curve`, `CurveKey`, `CurveKeyCollection`,
+  `CurveContinuity`, `CurveLoopType`, `CurveTangent`.
 
 ## 6. Measured status
 
@@ -183,25 +197,25 @@ which refuses any figure in the prose that the reports do not produce.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=33 -->
-<!-- generated:selected members=1196 -->
-<!-- generated:complete types=26 -->
+<!-- generated:selected types=39 -->
+<!-- generated:selected members=1248 -->
+<!-- generated:complete types=32 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=842 -->
+<!-- generated:complete members=888 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=234 -->
+<!-- generated:not-applicable members=240 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1**: 33 types, 1196 members.
+Selection **Foundation 1 and the managed closures**: 39 types, 1248 members.
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **26 / 6 / 1** |
-| Members complete | **842** |
+| Types complete / partial / missing | **32 / 6 / 1** |
+| Members complete | **888** |
 | Members missing | **119** |
-| Members not applicable | **234** |
+| Members not applicable | **240** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
 

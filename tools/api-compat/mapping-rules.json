@@ -2299,6 +2299,166 @@
     "Contains(Vector3&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Contains(BoundingSphere&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    }
+  },
+  "Microsoft.Xna.Framework.CurveContinuity": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "curve-continuity",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.CurveLoopType": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "curve-loop-type",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.CurveTangent": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "curve-tangent",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.CurveKey": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "curve-key",
+   "lisp_kind": "class",
+   "reference_type_reason": "CurveKey is a class in XNA and a collection holds references to it: mutating a key through one collection is visible through every other that holds it, and Curve.Clone depends on that. A structure would make each collection hold copies and quietly break the sharing.",
+   "constructors": {
+    "new(Single,Single)": "make-instance",
+    "new(Single,Single,Single,Single)": "make-instance",
+    "new(Single,Single,Single,Single,CurveContinuity)": "make-instance"
+   },
+   "member_overrides": {
+    "Clone()": {
+     "lisp": "curve-key-clone"
+    },
+    "Equals(CurveKey)": {
+     "lisp": "curve-key-equal"
+    },
+    "op_Equality(CurveKey,CurveKey)": {
+     "lisp": "curve-key-equal"
+    },
+    "CompareTo(CurveKey)": {
+     "lisp": "curve-key-compare-to",
+     "reason": "IComparable answers a negative, zero or positive integer, and this projects it as -1, 0 or 1. It orders by Position alone, so it disagrees with CURVE-KEY-EQUAL on purpose."
+    },
+    "Position": {
+     "lisp": "curve-key-position",
+     "setf": false,
+     "reason": "Position is read-only in XNA because a key's place in its collection depends on it."
+    },
+    "Value": {
+     "lisp": "curve-key-value"
+    },
+    "TangentIn": {
+     "lisp": "curve-key-tangent-in"
+    },
+    "TangentOut": {
+     "lisp": "curve-key-tangent-out"
+    },
+    "Continuity": {
+     "lisp": "curve-key-continuity"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.CurveKeyCollection": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "curve-key-collection",
+   "lisp_kind": "class",
+   "reference_type_reason": "A Curve's Keys property answers the collection the curve evaluates, not a copy, so adding to it changes the curve. That is reference semantics and it is why this is a class.",
+   "constructors": {
+    "new()": "make-instance"
+   },
+   "member_overrides": {
+    "IndexOf(CurveKey)": {
+     "lisp": "curve-key-collection-index-of",
+     "reason": "A class's members project to bare names by default. `add', `count', `item' and `clear' would collide with everything, so every member of this type is named `curve-key-collection-<member>'."
+    },
+    "RemoveAt(Int32)": {
+     "lisp": "curve-key-collection-remove-at"
+    },
+    "Add(CurveKey)": {
+     "lisp": "curve-key-collection-add"
+    },
+    "Clear()": {
+     "lisp": "curve-key-collection-clear"
+    },
+    "Contains(CurveKey)": {
+     "lisp": "curve-key-collection-contains"
+    },
+    "CopyTo(CurveKey[],Int32)": {
+     "lisp": "curve-key-collection-copy-to"
+    },
+    "Remove(CurveKey)": {
+     "lisp": "curve-key-collection-remove"
+    },
+    "GetEnumerator()": {
+     "lisp": "curve-key-collection-keys",
+     "reason": "Common Lisp has no enumerator object, and a Lisp caller iterates a sequence. This answers a fresh vector of the keys -- the same key objects, in a sequence that does not change when the collection does."
+    },
+    "Clone()": {
+     "lisp": "curve-key-collection-clone"
+    },
+    "Item": {
+     "lisp": "curve-key-collection-item",
+     "setf": true
+    },
+    "Count": {
+     "lisp": "curve-key-collection-count"
+    },
+    "IsReadOnly": {
+     "lisp": "curve-key-collection-is-read-only"
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Curve": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "curve",
+   "lisp_kind": "class",
+   "reference_type_reason": "Curve is a class in XNA, its Keys property answers the live collection, and Clone is the way to get a separate one. A value type would make every assignment a copy and the collection unreachable for mutation.",
+   "constructors": {
+    "new()": "make-instance"
+   },
+   "member_overrides": {
+    "Clone()": {
+     "lisp": "curve-clone",
+     "reason": "A class's members would project to bare names -- `clone', `evaluate', `keys' -- which would collide with CurveKeyCollection's, so each is named `curve-<member>'."
+    },
+    "ComputeTangent(Int32,CurveTangent)": {
+     "lisp": "curve-compute-tangent",
+     "distinguished_by": "arity"
+    },
+    "ComputeTangent(Int32,CurveTangent,CurveTangent)": {
+     "lisp": "curve-compute-tangent",
+     "distinguished_by": "arity"
+    },
+    "ComputeTangents(CurveTangent)": {
+     "lisp": "curve-compute-tangents",
+     "distinguished_by": "arity"
+    },
+    "ComputeTangents(CurveTangent,CurveTangent)": {
+     "lisp": "curve-compute-tangents",
+     "distinguished_by": "arity"
+    },
+    "Evaluate(Single)": {
+     "lisp": "curve-evaluate"
+    },
+    "PreLoop": {
+     "lisp": "curve-pre-loop",
+     "setf": true
+    },
+    "PostLoop": {
+     "lisp": "curve-post-loop",
+     "setf": true
+    },
+    "Keys": {
+     "lisp": "curve-keys",
+     "setf": false
+    },
+    "IsConstant": {
+     "lisp": "curve-is-constant"
+    }
+   }
   }
  }
 }

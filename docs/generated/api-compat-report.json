@@ -3,10 +3,10 @@
  "implementation": "SBCL 2.5.2.debian",
  "profile": "XNA 4.0 Windows runtime",
  "selection": {
-  "name": "Foundation 1",
-  "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
-  "type_count": 33,
-  "member_count": 1196
+  "name": "Foundation 1 and the managed closures",
+  "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. The closures added so far are pure managed and touch no native route: the 3D transform types, the bounding volumes, and the Curve family.",
+  "type_count": 39,
+  "member_count": 1248
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 33,
-  "members": 1196,
+  "types": 39,
+  "members": 1248,
   "types_by_status": {
    "partial": 6,
-   "complete": 26,
+   "complete": 32,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 842,
+   "complete": 888,
    "missing": 119,
-   "not-applicable": 234,
+   "not-applicable": 240,
    "partial": 1
   },
   "diagnostics": 120,
@@ -1048,6 +1048,100 @@
     "CornerCount": "complete"
    },
    "lisp": "microsoft.xna.framework:bounding-frustum"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Curve",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Clone()": "complete",
+    "ComputeTangent(Int32,CurveTangent)": "complete",
+    "ComputeTangent(Int32,CurveTangent,CurveTangent)": "complete",
+    "ComputeTangents(CurveTangent)": "complete",
+    "ComputeTangents(CurveTangent,CurveTangent)": "complete",
+    "Evaluate(Single)": "complete",
+    "PreLoop": "complete",
+    "PostLoop": "complete",
+    "Keys": "complete",
+    "IsConstant": "complete"
+   },
+   "lisp": "microsoft.xna.framework:curve"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.CurveKey",
+   "status": "complete",
+   "members": {
+    "new(Single,Single)": "complete",
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Single,Single,Single,Single,CurveContinuity)": "complete",
+    "Clone()": "complete",
+    "Equals(CurveKey)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "op_Equality(CurveKey,CurveKey)": "complete",
+    "op_Inequality(CurveKey,CurveKey)": "not-applicable",
+    "CompareTo(CurveKey)": "complete",
+    "Position": "complete",
+    "Value": "complete",
+    "TangentIn": "complete",
+    "TangentOut": "complete",
+    "Continuity": "complete"
+   },
+   "lisp": "microsoft.xna.framework:curve-key"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.CurveKeyCollection",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "IndexOf(CurveKey)": "complete",
+    "RemoveAt(Int32)": "complete",
+    "Add(CurveKey)": "complete",
+    "Clear()": "complete",
+    "Contains(CurveKey)": "complete",
+    "CopyTo(CurveKey[],Int32)": "complete",
+    "Remove(CurveKey)": "complete",
+    "GetEnumerator()": "complete",
+    "Clone()": "complete",
+    "Item": "complete",
+    "Count": "complete",
+    "IsReadOnly": "complete"
+   },
+   "lisp": "microsoft.xna.framework:curve-key-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.CurveContinuity",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Smooth": "complete",
+    "Step": "complete"
+   },
+   "lisp": "microsoft.xna.framework:curve-continuity"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.CurveLoopType",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Constant": "complete",
+    "Cycle": "complete",
+    "CycleOffset": "complete",
+    "Oscillate": "complete",
+    "Linear": "complete"
+   },
+   "lisp": "microsoft.xna.framework:curve-loop-type"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.CurveTangent",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Flat": "complete",
+    "Linear": "complete",
+    "Smooth": "complete"
+   },
+   "lisp": "microsoft.xna.framework:curve-tangent"
   },
   {
    "name": "Microsoft.Xna.Framework.PlayerIndex",

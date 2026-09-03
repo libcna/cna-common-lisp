@@ -56,25 +56,26 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=33 -->
-<!-- generated:selected members=1196 -->
-<!-- generated:complete types=26 -->
+<!-- generated:selected types=39 -->
+<!-- generated:selected members=1248 -->
+<!-- generated:complete types=32 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=842 -->
+<!-- generated:complete members=888 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=234 -->
+<!-- generated:not-applicable members=240 -->
 <!-- generated:disagreement total=0 -->
 
-33 selected types, 1196 members: **26 complete, 6 partial, 1 missing**;
-**842 members complete, 119 missing**, 234 not applicable, 1 partial.
+39 selected types, 1248 members: **32 complete, 6 partial, 1 missing**;
+**888 members complete, 119 missing**, 240 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
-**Every selected math type is complete.** `Vector2`, `Vector3`, `Vector4`,
-`Quaternion`, `Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`,
-`BoundingFrustum`, `MathHelper`, `Color`, `Point`, `Rectangle` and the three
-enumerations answer every member of the selected contract. What is left is
+**Every pure-managed type in the selection is complete.** The math types
+-- `Vector2`, `Vector3`, `Vector4`, `Quaternion`, `Matrix`, `Plane`, `Ray`,
+`BoundingBox`, `BoundingSphere`, `BoundingFrustum`, `MathHelper`, `Color`,
+`Point`, `Rectangle` -- the `Curve` family, and all six enumerations answer every
+member of the selected contract. Everything still missing is native-facing:
 graphics, input beyond the keyboard, content, and the event projection.
 
 ## GLOBAL_ACTIONABLE_LOCAL
@@ -96,32 +97,24 @@ is a packaging limit, not a blocker.
 The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts.
 
-1. **`Matrix.Decompose` and `Matrix.CreateConstrainedBillboard`**, the two
-   deferred members. Both are real work rather than transcription: `Decompose` is
-   540 IL instructions over a private pointer basis with a degenerate-scale
-   fallback, and the constrained billboard has a three-deep threshold chain. Read
-   them properly or leave them absent; do not approximate either.
-2. **The `Curve` family**: `Curve`, `CurveKey`, `CurveKeyCollection`,
-   `CurveContinuity`, `CurveLoopType`, `CurveTangent`. Pure managed, CNA has the
-   routes for cross-checking.
-3. **Packed vectors**: the 19-type `Graphics.PackedVector` family. Pure managed.
-4. **Vertex descriptors and vertex value types**: `VertexElement`,
+1. **Packed vectors**: the 19-type `Graphics.PackedVector` family. Pure managed.
+2. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-5. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
+3. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
    `Input.Touch`. `Mouse.GetState` becomes `mouse-get-state`, which is the whole
    reason the static-class rule exists.
-6. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+4. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`, and the
    **event projection** the four `Game` events and six `GraphicsDevice` events
    need. That one decision unblocks `GraphicsResource` and 21 of
    `GraphicsDeviceManager`'s 30 members.
-7. **`System.IO.Stream` and `TitleContainer`**, which unblock
+5. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-8. **Graphics state objects** (`BlendState`, `DepthStencilState`,
+6. **Graphics state objects** (`BlendState`, `DepthStencilState`,
    `RasterizerState`, `SamplerState`), which unblock `SpriteBatch.Begin`'s four
    state-bearing overloads.
-9. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-10. **Audio, effects, models, media, storage, gamer services, networking.**
+7. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
+8. **Audio, effects, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 

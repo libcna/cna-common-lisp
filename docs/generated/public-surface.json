@@ -270,7 +270,64 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Every CONTAINMENT-TYPE member, in value order."
+          "documentation": "Every member of CONTAINMENT-TYPE, as keywords, in value order."
+        },
+        {
+          "name": "all-curve-continuity",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of CURVE-CONTINUITY, as keywords, in value order."
+        },
+        {
+          "name": "all-curve-loop-type",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of CURVE-LOOP-TYPE, as keywords, in value order."
+        },
+        {
+          "name": "all-curve-tangent",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of CURVE-TANGENT, as keywords, in value order."
         },
         {
           "name": "all-plane-intersection-type",
@@ -289,7 +346,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Every PLANE-INTERSECTION-TYPE member, in value order."
+          "documentation": "Every member of PLANE-INTERSECTION-TYPE, as keywords, in value order."
         },
         {
           "name": "apply-changes",
@@ -2361,7 +2418,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [
-            "integer"
+            "value"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -2374,7 +2431,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The CONTAINMENT-TYPE member an ABI value names."
+          "documentation": "The CONTAINMENT-TYPE member a value names."
         },
         {
           "name": "containment-type-value",
@@ -2395,7 +2452,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The exact ABI value of a CONTAINMENT-TYPE member."
+          "documentation": "The exact value of a CONTAINMENT-TYPE member."
         },
         {
           "name": "copy-bounding-box",
@@ -2667,6 +2724,889 @@
           "constant": false,
           "value": null,
           "documentation": "Color.Cornflower Blue: a fresh Color each call."
+        },
+        {
+          "name": "curve",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:curve",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Curve: a Hermite spline over a sorted key collection.\n\n    (let ((c (make-instance 'curve)))\n      (curve-key-collection-add (curve-keys c)\n                                (make-instance 'curve-key :position 0.0 :value 0.0))\n      (curve-key-collection-add (curve-keys c)\n                                (make-instance 'curve-key :position 1.0 :value 1.0))\n      (curve-compute-tangents c :smooth)\n      (curve-evaluate c 0.5))"
+        },
+        {
+          "name": "curve-clone",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "curve"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Curve.Clone: the loop settings, and a shallow copy of the key collection."
+        },
+        {
+          "name": "curve-compute-tangent",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "curve",
+            "key-index",
+            "tangent-in-type",
+            "&optional",
+            "(tangent-out-type tangent-in-type)"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Curve.ComputeTangent, in both its two- and three-type forms.\n\nThe one-type overload is the same call with the two types equal, so it is a\ntrailing optional argument here rather than a second function."
+        },
+        {
+          "name": "curve-compute-tangents",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "curve",
+            "tangent-in-type",
+            "&optional",
+            "(tangent-out-type tangent-in-type)"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Curve.ComputeTangents: COMPUTE-TANGENT over every key."
+        },
+        {
+          "name": "curve-continuity",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.CurveContinuity."
+        },
+        {
+          "name": "curve-continuity-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The CURVE-CONTINUITY member a value names."
+        },
+        {
+          "name": "curve-continuity-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a CURVE-CONTINUITY member."
+        },
+        {
+          "name": "curve-evaluate",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "curve",
+            "position"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Curve.Evaluate.\n\nZero for an empty curve and the single key's value for a one-key curve; outside\nthe key range the PreLoop and PostLoop rules decide, and inside it a cubic\nHermite segment does."
+        },
+        {
+          "name": "curve-is-constant",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "curve"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Curve.IsConstant: true for a curve with fewer than two keys."
+        },
+        {
+          "name": "curve-key",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:curve-key",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.CurveKey: one control point of a Curve.\n\n    (make-instance 'curve-key :position 0.0 :value 1.0)\n\nPOSITION is read-only, as it is in XNA: a key's place in its collection depends\non it, so it cannot change under the collection. The other four are settable."
+        },
+        {
+          "name": "curve-key-clone",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "key"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKey.Clone."
+        },
+        {
+          "name": "curve-key-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:curve-key-collection",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.CurveKeyCollection: a Curve's keys, sorted by\nposition.\n\nDuplicate positions are allowed, and a key added at a position that is already\npresent goes after the ones already there. The collection is not a set: adding\nthe same key object twice adds it twice."
+        },
+        {
+          "name": "curve-key-collection-add",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection",
+            "key"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.Add: insert in position order, after any equal positions."
+        },
+        {
+          "name": "curve-key-collection-clear",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.Clear."
+        },
+        {
+          "name": "curve-key-collection-clone",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.Clone.\n\nA shallow copy: the new collection holds the *same* key objects, so mutating a\nkey through one collection is visible through the other. That is what the\noriginal does, and it is what makes CURVE-CLONE shallow too."
+        },
+        {
+          "name": "curve-key-collection-contains",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection",
+            "key"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.Contains."
+        },
+        {
+          "name": "curve-key-collection-copy-to",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection",
+            "array",
+            "index"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.CopyTo."
+        },
+        {
+          "name": "curve-key-collection-count",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.Count."
+        },
+        {
+          "name": "curve-key-collection-index-of",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection",
+            "key"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.IndexOf, or NIL when the key is not in the collection.\n\nNot identity: List<T>.IndexOf uses the element type's own equality, and\nCurveKey's compares fields, so this finds the first key that *equals* the one\ngiven rather than the one that is it. NIL rather than -1, because NIL is what a\nLisp caller tests and -1 is a valid-looking index."
+        },
+        {
+          "name": "curve-key-collection-is-read-only",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.IsReadOnly, which is always false."
+        },
+        {
+          "name": "curve-key-collection-item",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection",
+            "index"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "key",
+            "collection",
+            "index"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.Item."
+        },
+        {
+          "name": "curve-key-collection-keys",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.GetEnumerator, as a fresh vector of the keys.\n\nCommon Lisp has no enumerator object, and a Lisp caller iterates a sequence. The\nsequence is a copy: the keys in it are the collection's own key objects, but\nadding to or removing from the collection afterwards does not change it."
+        },
+        {
+          "name": "curve-key-collection-remove",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection",
+            "key"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.Remove: removes the first equal key and answers whether it\nfound one."
+        },
+        {
+          "name": "curve-key-collection-remove-at",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "collection",
+            "index"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKeyCollection.RemoveAt."
+        },
+        {
+          "name": "curve-key-compare-to",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "key",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKey.CompareTo: -1, 0 or 1 by POSITION alone.\n\nOrdering ignores every other field, which is why a collection can hold two keys\nat the same position and why equality and ordering disagree."
+        },
+        {
+          "name": "curve-key-continuity",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "curve-key-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "CurveKey.Equals and op_Equality: every field, not identity."
+        },
+        {
+          "name": "curve-key-position",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "curve-key-tangent-in",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "curve-key-tangent-out",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "curve-key-value",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "curve-keys",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "curve-loop-type",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.CurveLoopType."
+        },
+        {
+          "name": "curve-loop-type-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The CURVE-LOOP-TYPE member a value names."
+        },
+        {
+          "name": "curve-loop-type-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a CURVE-LOOP-TYPE member."
+        },
+        {
+          "name": "curve-post-loop",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "curve-pre-loop",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "curve-tangent",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.CurveTangent."
+        },
+        {
+          "name": "curve-tangent-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The CURVE-TANGENT member a value names."
+        },
+        {
+          "name": "curve-tangent-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a CURVE-TANGENT member."
         },
         {
           "name": "cyan",
@@ -5504,7 +6444,7 @@
           "macro": false,
           "generic": false,
           "lambda_list": [
-            "integer"
+            "value"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -5517,7 +6457,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The PLANE-INTERSECTION-TYPE member an ABI value names."
+          "documentation": "The PLANE-INTERSECTION-TYPE member a value names."
         },
         {
           "name": "plane-intersection-type-value",
@@ -5538,7 +6478,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The exact ABI value of a PLANE-INTERSECTION-TYPE member."
+          "documentation": "The exact value of a PLANE-INTERSECTION-TYPE member."
         },
         {
           "name": "plane-intersects",
@@ -10103,7 +11043,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Every member of SPRITE-EFFECTS, as keywords, in ABI value order."
+          "documentation": "Every member of SPRITE-EFFECTS, as keywords, in value order."
         },
         {
           "name": "all-sprite-sort-mode",
@@ -10122,7 +11062,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Every member of SPRITE-SORT-MODE, as keywords, in ABI value order."
+          "documentation": "Every member of SPRITE-SORT-MODE, as keywords, in value order."
         },
         {
           "name": "all-surface-format",
@@ -10141,7 +11081,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Every member of SURFACE-FORMAT, as keywords, in ABI value order."
+          "documentation": "Every member of SURFACE-FORMAT, as keywords, in value order."
         },
         {
           "name": "begin",
@@ -10511,7 +11451,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The SPRITE-EFFECTS member list an ABI value names."
+          "documentation": "The SPRITE-EFFECTS member list a value names."
         },
         {
           "name": "sprite-effects-value",
@@ -10532,7 +11472,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The exact ABI value of a SPRITE-EFFECTS member. A list of members combines their bits."
+          "documentation": "The exact value of a SPRITE-EFFECTS member. A list of members combines their bits."
         },
         {
           "name": "sprite-sort-mode",
@@ -10572,7 +11512,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The SPRITE-SORT-MODE member an ABI value names."
+          "documentation": "The SPRITE-SORT-MODE member a value names."
         },
         {
           "name": "sprite-sort-mode-value",
@@ -10593,7 +11533,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The exact ABI value of a SPRITE-SORT-MODE member."
+          "documentation": "The exact value of a SPRITE-SORT-MODE member."
         },
         {
           "name": "surface-format",
@@ -10633,7 +11573,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The SURFACE-FORMAT member an ABI value names."
+          "documentation": "The SURFACE-FORMAT member a value names."
         },
         {
           "name": "surface-format-value",
@@ -10654,7 +11594,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The exact ABI value of a SURFACE-FORMAT member."
+          "documentation": "The exact value of a SURFACE-FORMAT member."
         },
         {
           "name": "texture",
@@ -11666,6 +12606,22 @@
       "front": 0,
       "back": 1,
       "intersecting": 2
+    },
+    "curve-continuity": {
+      "smooth": 0,
+      "step": 1
+    },
+    "curve-loop-type": {
+      "constant": 0,
+      "cycle": 1,
+      "cycle-offset": 2,
+      "oscillate": 3,
+      "linear": 4
+    },
+    "curve-tangent": {
+      "flat": 0,
+      "linear": 1,
+      "smooth": 2
     }
   },
   "predefined_colors": [

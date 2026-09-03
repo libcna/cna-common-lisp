@@ -43,6 +43,12 @@ SELECTED = [
     "Microsoft.Xna.Framework.BoundingBox",
     "Microsoft.Xna.Framework.BoundingSphere",
     "Microsoft.Xna.Framework.BoundingFrustum",
+    "Microsoft.Xna.Framework.Curve",
+    "Microsoft.Xna.Framework.CurveKey",
+    "Microsoft.Xna.Framework.CurveKeyCollection",
+    "Microsoft.Xna.Framework.CurveContinuity",
+    "Microsoft.Xna.Framework.CurveLoopType",
+    "Microsoft.Xna.Framework.CurveTangent",
     "Microsoft.Xna.Framework.PlayerIndex",
     "Microsoft.Xna.Framework.Graphics.GraphicsResource",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -101,11 +107,15 @@ def main(argv):
                     "tools/api-compat/import-contract.py and a snapshot of the pinned hash.",
         },
         "selection": {
-            "name": "Foundation 1",
-            "rationale": "The dependency closure of a real textured sprite game: create a "
-                         "native game, receive its lifecycle, expose its graphics device, "
-                         "clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, "
-                         "read the keyboard, exit and destroy deterministically.",
+            "name": "Foundation 1 and the managed closures",
+            "rationale": "Foundation 1 is the dependency closure of a real textured sprite "
+                         "game: create a native game, receive its lifecycle, expose its "
+                         "graphics device, clear, decode a PNG into a Texture2D, submit a "
+                         "SpriteBatch draw, read the keyboard, exit and destroy "
+                         "deterministically. The selection then grows one dependency-complete "
+                         "closure at a time, in the order NEXT.md records. The closures "
+                         "added so far are pure managed and touch no native route: the 3D "
+                         "transform types, the bounding volumes, and the Curve family.",
             "type_count": len(types),
             "member_count": members,
         },
