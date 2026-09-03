@@ -99,6 +99,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "unit/mouse-state")
    (:file "unit/game-pad")
    (:file "unit/touch")
+   (:file "unit/viewport-projection")
    (:file "unit/game-time")
    (:file "unit/keys")
    (:file "unit/conditions")

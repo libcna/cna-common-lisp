@@ -84,12 +84,12 @@ genuine absence.
 
 <!-- generated:selected types=77 -->
 <!-- generated:selected members=1632 -->
-<!-- generated:complete types=71 -->
-<!-- generated:partial types=6 -->
+<!-- generated:complete types=72 -->
+<!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1182 -->
+<!-- generated:complete members=1185 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=101 -->
+<!-- generated:missing members=98 -->
 <!-- generated:not-applicable members=348 -->
 <!-- generated:disagreement total=0 -->
 
@@ -97,12 +97,12 @@ Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
 
 | | |
 | --- | --- |
-| Types complete | **71** |
-| Types partial | **6** |
+| Types complete | **72** |
+| Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1182** |
+| Members complete | **1185** |
 | Members partial | **1** |
-| Members missing | **101** |
+| Members missing | **98** |
 | Members not applicable | **348** |
 | **Disagreement diagnostics** | **0** |
 
@@ -142,7 +142,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 2 | 1 | 52 | 2 |
-| `M.X.F.Graphics.Viewport` | **partial** | 10 | 0 | 3 | 1 |
+| `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
 | `M.X.F.Graphics.SpriteBatch` | **partial** | 10 | 0 | 10 | 1 |

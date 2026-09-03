@@ -703,6 +703,39 @@
        (= 2 (xna:display-orientation-value :landscape-right))
        (= 4 (xna:display-orientation-value :portrait))))
 
+(defobservation "viewport.project-flips-the-y-axis" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.Viewport"
+  "Project maps clip space to screen coordinates with Y inverted -- a point above
+   the camera's centre projects to a smaller screen Y -- and maps depth into the
+   viewport's own MinDepth..MaxDepth rather than leaving it in 0 to 1."
+  (let ((viewport (gfx:make-viewport 0 0 800 480 0.25 0.75))
+        (projection (xna:matrix-create-perspective-field-of-view
+                     xna:+math-helper-pi-over4+ (/ 800.0 480.0) 1.0 100.0))
+        (view (xna:matrix-create-look-at (xna:make-vector3 0 0 10)
+                                         (xna:make-vector3 0 0 0)
+                                         (xna:make-vector3 0 1 0)))
+        (world (xna:matrix-identity)))
+    (let ((up (gfx:viewport-project viewport (xna:make-vector3 0 1 0)
+                                    projection view world))
+          (centre (gfx:viewport-project viewport (xna:make-vector3 0 0 0)
+                                        projection view world)))
+      (and (< (xna:vector3-y up) (xna:vector3-y centre))
+           (< 0.25f0 (xna:vector3-z centre) 0.75f0)))))
+
+(defobservation "viewport.within-epsilon-is-exact-equality" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.Viewport"
+  "Project skips the perspective divide only when the homogeneous w is exactly
+   one: WithinEpsilon compares against 1.401298e-45, the smallest positive
+   subnormal, which for any ordinary number is exact equality. Under an identity
+   transform the arithmetic is therefore exact."
+  (let ((screen (gfx:viewport-project (gfx:make-viewport 0 0 2 2)
+                                      (xna:make-vector3 0.5 0.25 0.75)
+                                      (xna:matrix-identity) (xna:matrix-identity)
+                                      (xna:matrix-identity))))
+    (and (= 1.5f0 (xna:vector3-x screen))
+         (= 0.75f0 (xna:vector3-y screen))
+         (= 0.75f0 (xna:vector3-z screen)))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

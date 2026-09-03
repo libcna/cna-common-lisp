@@ -11892,6 +11892,27 @@
           "documentation": null
         },
         {
+          "name": "make-viewport-from-bounds",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "bounds"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Viewport(Rectangle): the rectangle's position and size, depth 0 to 1.\n\nA separate name from MAKE-VIEWPORT, as MAKE-PLANE-FROM-VECTOR4 is: one function\ntaking either four integers or one rectangle would be telling two constructors\napart by the run-time type of an argument."
+        },
+        {
           "name": "present",
           "fbound": true,
           "macro": false,
@@ -12475,6 +12496,31 @@
           "documentation": null
         },
         {
+          "name": "viewport-project",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "viewport",
+            "source",
+            "projection",
+            "view",
+            "world"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Viewport.Project: a world-space point to screen coordinates.\n\nThe Y axis is flipped -- screen Y grows downwards where clip-space Y grows up --\nand the depth is mapped into MIN-DEPTH..MAX-DEPTH rather than left in 0..1."
+        },
+        {
           "name": "viewport-title-safe-area",
           "fbound": true,
           "macro": false,
@@ -12494,6 +12540,31 @@
           "constant": false,
           "value": null,
           "documentation": "Viewport.TitleSafeArea.\n\nXNA insets by one twentieth on each axis only once the viewport is at least\n640x480; below that the whole viewport is title safe. The arithmetic is the\noriginal's integer arithmetic."
+        },
+        {
+          "name": "viewport-unproject",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "viewport",
+            "source",
+            "projection",
+            "view",
+            "world"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Viewport.Unproject: a screen-space point back to world coordinates.\n\nThe homogeneous divisor is computed from the *normalised* source -- the point\nafter it has been mapped back into clip space -- not from the screen coordinates\nthe caller passed, which is easy to get backwards."
         },
         {
           "name": "viewport-width",

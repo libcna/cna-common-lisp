@@ -18,19 +18,19 @@
   "types": 77,
   "members": 1632,
   "types_by_status": {
-   "partial": 6,
-   "complete": 71
+   "partial": 5,
+   "complete": 72
   },
   "members_by_status": {
-   "complete": 1182,
-   "missing": 101,
+   "complete": 1185,
+   "missing": 98,
    "not-applicable": 348,
    "partial": 1
   },
-  "diagnostics": 101,
+  "diagnostics": 98,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 101,
+   "missing_member": 98,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1248,13 +1248,13 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.Viewport",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(Int32,Int32,Int32,Int32)": "complete",
-    "new(Rectangle)": "missing",
+    "new(Rectangle)": "complete",
     "ToString()": "not-applicable",
-    "Project(Vector3,Matrix,Matrix,Matrix)": "missing",
-    "Unproject(Vector3,Matrix,Matrix,Matrix)": "missing",
+    "Project(Vector3,Matrix,Matrix,Matrix)": "complete",
+    "Unproject(Vector3,Matrix,Matrix,Matrix)": "complete",
     "X": "complete",
     "Y": "complete",
     "Width": "complete",
@@ -2601,21 +2601,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceResetting",
    "detail": "no event projection is declared"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Viewport.new(Rectangle)",
-   "detail": "The rectangle constructor is not projected; the four-integer one is."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Viewport.Project(Vector3,Matrix,Matrix,Matrix)",
-   "detail": "Needs Vector3 and Matrix."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Viewport.Unproject(Vector3,Matrix,Matrix,Matrix)",
-   "detail": "Needs Vector3 and Matrix."
   },
   {
    "category": "missing_member",

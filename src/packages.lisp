@@ -241,7 +241,8 @@
    #:viewport-x #:viewport-y #:viewport-width #:viewport-height
    #:viewport-min-depth #:viewport-max-depth
    #:viewport-aspect-ratio #:viewport-bounds #:viewport-title-safe-area
-   #:viewport-equal
+   #:viewport-equal #:make-viewport-from-bounds
+   #:viewport-project #:viewport-unproject
    ;; --- enums -------------------------------------------------------------
    #:sprite-sort-mode #:sprite-sort-mode-value #:sprite-sort-mode-from-value
    #:all-sprite-sort-mode

@@ -621,12 +621,23 @@
    "lisp_name": "viewport",
    "lisp_kind": "structure",
    "constructors": {
-    "new(Int32,Int32,Int32,Int32)": "make-viewport"
+    "new(Int32,Int32,Int32,Int32)": "make-viewport",
+    "new(Rectangle)": "make-viewport-from-bounds"
    },
-   "unimplemented": {
-    "new(Rectangle)": "The rectangle constructor is not projected; the four-integer one is.",
-    "Project(Vector3,Matrix,Matrix,Matrix)": "Needs Vector3 and Matrix.",
-    "Unproject(Vector3,Matrix,Matrix,Matrix)": "Needs Vector3 and Matrix."
+   "member_overrides": {
+    "Project(Vector3,Matrix,Matrix,Matrix)": {
+     "lisp": "viewport-project",
+     "reason": "The perspective divide is skipped only when the homogeneous w is exactly one: XNA's WithinEpsilon compares against 1.401298e-45, the smallest positive subnormal, which for any ordinary number is exact equality. Reproduced."
+    },
+    "Unproject(Vector3,Matrix,Matrix,Matrix)": {
+     "lisp": "viewport-unproject"
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-viewport and make-viewport-from-bounds",
+     "reason": "One function taking either four integers or one rectangle would be telling two constructors apart by the run-time type of an argument. The rectangle form also fixes the depth range at 0 to 1, which the four-integer form leaves to the caller."
+    }
    }
   },
   "Microsoft.Xna.Framework.Graphics.Texture": {

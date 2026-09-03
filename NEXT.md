@@ -58,17 +58,17 @@ and nothing in this repository says otherwise.
 
 <!-- generated:selected types=77 -->
 <!-- generated:selected members=1632 -->
-<!-- generated:complete types=71 -->
-<!-- generated:partial types=6 -->
+<!-- generated:complete types=72 -->
+<!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1182 -->
+<!-- generated:complete members=1185 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=101 -->
+<!-- generated:missing members=98 -->
 <!-- generated:not-applicable members=348 -->
 <!-- generated:disagreement total=0 -->
 
-77 selected types, 1632 members: **71 complete, 6 partial, 0 missing**;
-**1182 members complete, 101 missing**, 348 not applicable, 1 partial.
+77 selected types, 1632 members: **72 complete, 5 partial, 0 missing**;
+**1185 members complete, 98 missing**, 348 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 **Every pure-managed type in the selection is complete.** The math types
@@ -79,7 +79,7 @@ enumerations answer every member of the selected contract, and **so does the
 whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 `GamePad` family and the touch panel.
 
-**No selected type is missing any more.** Six are partial, and everything absent
+**No selected type is missing any more.** Five are partial, and everything absent
 in them is graphics or content: the graphics state objects, `System.IO.Stream`,
 `SpriteFont`, and the parts of `Game` and `GraphicsDeviceManager` that need a
 component engine or a device-settings type.

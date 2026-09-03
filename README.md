@@ -90,12 +90,12 @@ placeholder methods that answer a default and claim success.
 
 <!-- generated:selected types=77 -->
 <!-- generated:selected members=1632 -->
-<!-- generated:complete types=71 -->
-<!-- generated:partial types=6 -->
+<!-- generated:complete types=72 -->
+<!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1182 -->
+<!-- generated:complete members=1185 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=101 -->
+<!-- generated:missing members=98 -->
 <!-- generated:not-applicable members=348 -->
 <!-- generated:disagreement total=0 -->
 <!-- generated:bound native functions=100 -->
@@ -105,8 +105,8 @@ The generated scoreboard, over a selection of **77 XNA types and 1632 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **71 / 6 / 0** |
-| Members complete / missing | **1182 / 101** |
+| Types complete / partial / missing | **72 / 5 / 0** |
+| Members complete / missing | **1185 / 98** |
 | Members not applicable | **348** |
 | **Disagreement diagnostics** | **0** |
 
@@ -114,7 +114,7 @@ Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, every exported symbol is accounted for, no
 mapping rule names a member that does not exist, and every overload family that
 collapses onto one function says how each overload is expressed. It does **not**
-mean the binding is finished: 101 members are missing and are reported as
+mean the binding is finished: 98 members are missing and are reported as
 missing — but **no selected type is missing entirely** any more.
 `docs/compatibility.md` is the authority.
 
