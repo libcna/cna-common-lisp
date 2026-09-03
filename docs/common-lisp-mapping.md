@@ -92,9 +92,24 @@ answered.
 
 Pure value arithmetic is implemented in Lisp, not routed through the C ABI, even
 where CNA has a route for it. The route would be slower and would make the
-binding's arithmetic CNA's arithmetic rather than XNA's.
+binding's arithmetic CNA's arithmetic rather than XNA's -- and would leave
+nothing to cross-check.
+
+Every arithmetic method in the projected value types was written by reading the
+corresponding method body in the disassembled IL of the hash-pinned
+`Microsoft.Xna.Framework.dll`, instruction by instruction. See
+`tools/api-compat/reference/XNA_IL_PROVENANCE.md` for the hash and the procedure,
+and for the list of things that reading caught which a reimplementation from
+first principles gets wrong.
 
 ### Binary32
+
+XNA computes in IEEE 754 binary32, under the CLR's floating-point rules, which
+are IEEE's **default** rules: an overflow answers an infinity, an invalid
+operation answers a NaN, and nothing is signalled. SBCL traps overflow, invalid
+and divide-by-zero by default, so every projected arithmetic operation runs
+inside `cna-lisp.internal:with-binary32-semantics`, which masks them. Without it,
+`(vector2-length (make-vector2 1f20 1f20))` would signal where XNA answers +Inf.
 
 XNA computes in IEEE 754 binary32. Every arithmetic step in a projected value
 type is performed in `single-float`, in the order the original performs it. Where
@@ -155,6 +170,36 @@ from `cl:initialize-instance`, and a subclass that wants to build its own state
 at construction time uses `initialize-instance :after` as any CLOS program does;
 `initialize` is the game-loop hook and runs later, on the game's own thread.
 
+### Static and instance members with the same name
+
+XNA often has both an instance method that mutates the receiver and a static one
+that answers a new value, under one name: `Vector3.Normalize()` and
+`Vector3.Normalize(Vector3)`, `Quaternion.Conjugate()` and
+`Quaternion.Conjugate(Quaternion)`, `Plane.Normalize()` and
+`Plane.Normalize(Plane)`.
+
+One Lisp function cannot be both without the caller having to know which it got,
+so the pair splits: the **verb** mutates and answers the receiver, and the
+**adjective** answers a new value.
+
+| XNA | Common Lisp |
+| --- | --- |
+| `Vector3.Normalize()` | `vector3-normalize` — mutates |
+| `Vector3.Normalize(Vector3)` | `vector3-normalized` — answers a new value |
+| `Quaternion.Conjugate()` | `quaternion-conjugate` |
+| `Quaternion.Conjugate(Quaternion)` | `quaternion-conjugated` |
+
+### Constant fields of a static class
+
+A constant field projects to a Common Lisp constant, which by convention wears
+earmuffs: `MathHelper.Pi` is `+math-helper-pi+`, not `math-helper-pi`.
+
+### The M<row><column> fields
+
+`Matrix`'s sixteen fields keep their digits together: `matrix-m11`, not
+`matrix-m-1-1`. The identifier rule would split at the digit boundary, and for
+the one type where the indices *are* the name that is unreadable.
+
 ## 7. Overloads
 
 An overload family maps by this order of preference.
@@ -179,6 +224,29 @@ Never done: one `&rest` sink; accepting everything and guessing; answering
 success for a shape that is not supported; dropping an overload silently; adding
 a default that changes behaviour.
 
+### By-reference overloads
+
+XNA pairs almost every value-type computation with a by-reference form:
+`Vector3.Add(Vector3, Vector3)` and
+`Vector3.Add(ref Vector3, ref Vector3, out Vector3)`. The second exists so a C#
+caller can avoid copying a value type into a call and can write the answer into
+storage it already has. **The value it computes is the by-value overload's.**
+
+Common Lisp passes a reference already, so the by-value form *is* the whole
+contract, and projecting the ref form would be a second name for one operation.
+Those members are classified **not applicable**, not missing, with the reason
+recorded per type in `tools/api-compat/mapping-rules.json`. Calling them missing
+would imply work that is never going to be done.
+
+### Array overloads
+
+`Transform(Vector3[], ref Matrix, Vector3[])` and
+`Transform(Vector3[], int, ref Matrix, Vector3[], int, int)` differ only by
+trailing parameters, so one function with `:source-index`, `:destination-index`
+and `:length` expresses both — `vector3-transform-array`. It is a distinct
+function from the single-value `vector3-transform`, because a rule that let one
+stand for the other would be a rule that could claim either without doing it.
+
 ## 8. Enumerations and flags
 
 **An enum member is a keyword.** Each enum gets a Common Lisp type of the enum's
@@ -201,7 +269,9 @@ own identities, and are reachable only through the conversion functions. A raw
 ABI integer is never the public representation of an enum.
 
 `define-xna-enum` in `src/graphics/enums.lisp` is the single place this shape is
-defined, so no enum can drift into a different one.
+defined, so no enum can drift into a different one. `ContainmentType` and
+`PlaneIntersectionType` follow the same shape from `src/framework/plane.lisp`,
+because they are needed before the graphics package exists.
 
 ## 9. Conditions
 
@@ -211,6 +281,7 @@ Every failure a consumer can see is a Lisp condition. The hierarchy is
 error
 └── cna-error                        operation, native-message, object-type
     ├── cna-usage-error              the program broke a contract
+    │   ├── cna-argument-out-of-range-error   parameter-name
     │   ├── cna-disposed-error
     │   ├── cna-ownership-error
     │   ├── cna-scope-error
@@ -232,6 +303,19 @@ condition class is the public fact. The code and CNA's error category are kept i
 private slots so diagnostics and tests can still see exactly what the ABI said.
 
 A native failure is never swallowed, printed, or turned into a default answer.
+
+### The one BCL exception
+
+`System.ArgumentOutOfRangeException` is the only base-class-library exception the
+selected surface throws at a caller: `Matrix.CreatePerspectiveFieldOfView` and
+its neighbours check their arguments and throw. It projects to
+`cna-argument-out-of-range-error`, whose `cna-error-parameter-name` reader names
+the argument. Projecting it -- rather than letting the checks disappear -- is
+what keeps `(matrix-create-perspective-field-of-view 0 ...)` refusing here as it
+refuses there.
+
+No other BCL exception type is projected, because the selected surface reaches no
+other.
 
 ## 10. `ref`, `out`, nullable, and collections
 

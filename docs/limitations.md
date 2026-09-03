@@ -93,12 +93,33 @@ These are absent, and measured as absent, not faked:
 * `SpriteBatch.Begin`'s state-bearing overloads, and the four graphics state
   objects they need;
 * `Mouse`, `GamePad`, `TouchPanel`;
-* everything 3D: `Matrix`, `Effect`, `Model`, vertex and index buffers;
+* `Effect`, `Model`, vertex and index buffers, and everything else that draws in
+  three dimensions;
 * audio, media, storage, gamer services and networking;
-* `Vector3`, `Vector4`, `Quaternion`, `Plane`, the bounding volumes, and the
-  `Curve` family.
+* the bounding volumes -- `Ray`, `BoundingBox`, `BoundingSphere`,
+  `BoundingFrustum` -- and the `Curve` family.
 
-`Vector2` is present because Foundation 1's `SpriteBatch.Draw` needs it.
+The value types are present: `Vector2`, `Vector3`, `Vector4`, `Quaternion`,
+`Matrix`, `Plane`, `MathHelper`, `ContainmentType` and `PlaneIntersectionType`.
+They are pure Lisp and touch no native route.
+
+### Three members of Matrix, and three of Plane
+
+| Member | Why |
+| --- | --- |
+| `Matrix.Decompose` | 540 IL instructions over a private `CanonicalBasis`/`VectorBasis` pair using unsafe pointer arithmetic, with a fallback path for degenerate scales. An implementation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than the absence. |
+| `Matrix.CreateConstrainedBillboard` (both overloads) | A three-deep threshold chain over two optional vectors. Same reason. |
+| `Plane.Intersects(BoundingBox / BoundingSphere / BoundingFrustum)` | Needs the bounding volumes. |
+
+## The bounding volumes are one closure, not four
+
+`Ray`, `BoundingBox`, `BoundingSphere` and `BoundingFrustum` intersect and
+contain each other in every combination -- roughly ninety members whose behaviour
+is dominated by branch conditions and small epsilons (`1E-05f` in
+`Ray.Intersects(Plane)`, `1E-06f` in `BoundingBox.Intersects(Ray)`), and
+`BoundingFrustum` computes its corners by intersecting three planes at a time.
+Implementing three of the four would leave every cross-product member missing
+anyway, so they are deferred together rather than started.
 
 ## Foreign-thread callbacks
 

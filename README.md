@@ -175,8 +175,14 @@ the exact path attempted.
         (xna:dispose game)))))
 ```
 
-A complete, runnable consumer lives in the separate `cna-common-lisp-template`
-repository.
+`examples/hello-cna.lisp` is the same program as a runnable file:
+
+```sh
+CNA_NATIVE_LIBRARY=/absolute/path/to/libcna_c_api.so CL_SOURCE_REGISTRY="$PWD//"   sbcl --non-interactive        --eval '(asdf:load-system "cna-common-lisp")'        --load examples/hello-cna.lisp        --eval '(hello-cna:main 60)'
+```
+
+A complete, runnable consumer -- with a canary that checks its own frame counts
+-- lives in the separate `cna-common-lisp-template` repository.
 
 ## Testing
 

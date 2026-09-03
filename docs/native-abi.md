@@ -167,3 +167,20 @@ compiler.
 The header-based generation and the compiler-backed gate are maintenance and
 qualification activities. They run in this repository and in CI, against a CNA
 source checkout, and never in a consumer's image.
+
+## What is deliberately *not* bound
+
+CNA has native routes for most of the projected value-type arithmetic --
+`cna_vector3_normalize`, `cna_matrix_invert` and their neighbours. None of them
+is bound, and that is a decision rather than an omission.
+
+Two reasons, and the second is the one that matters:
+
+1. A foreign call per vector addition would be slower than the arithmetic.
+2. It would make the binding's arithmetic **CNA's** arithmetic rather than XNA's,
+   and would leave nothing to cross-check. A binding that computes a dot product
+   by asking CNA cannot then be evidence that CNA computes it the way XNA does.
+
+So the value types are pure Lisp, written from the pinned XNA IL, and CNA's
+routes remain available as an independent second opinion. See
+`tools/api-compat/reference/XNA_IL_PROVENANCE.md`.
