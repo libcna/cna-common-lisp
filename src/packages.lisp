@@ -129,6 +129,14 @@
    #:bounding-sphere-create-merged #:bounding-sphere-create-from-bounding-box
    #:bounding-sphere-create-from-points #:bounding-sphere-transform
    #:bounding-sphere-intersects #:bounding-sphere-contains #:bounding-sphere-equal
+   #:bounding-sphere-create-from-frustum
+   #:bounding-frustum #:bounding-frustum-matrix #:bounding-frustum-equal
+   #:bounding-frustum-near #:bounding-frustum-far
+   #:bounding-frustum-left #:bounding-frustum-right
+   #:bounding-frustum-top #:bounding-frustum-bottom
+   #:bounding-frustum-get-corners
+   #:bounding-frustum-intersects #:bounding-frustum-contains
+   #:+bounding-frustum-corner-count+ #:+bounding-frustum-plane-count+
    #:plane-intersects
    ;; --- transforms --------------------------------------------------------
    #:vector2-transform #:vector2-transform-normal

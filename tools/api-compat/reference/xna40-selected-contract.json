@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1",
   "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
-  "type_count": 32,
-  "member_count": 1163
+  "type_count": 33,
+  "member_count": 1196
  },
  "types": [
   {
@@ -18212,6 +18212,603 @@
      "static": false,
      "constant": false,
      "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.BoundingFrustum",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.BoundingFrustum]"
+   ],
+   "directInterfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.BoundingFrustum]"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value",
+       "type": "Microsoft.Xna.Framework.Matrix",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetCorners",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Vector3[]",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "GetCorners",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "corners",
+       "type": "Microsoft.Xna.Framework.Vector3[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "other",
+       "type": "Microsoft.Xna.Framework.BoundingFrustum",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "obj",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetHashCode",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "ToString",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "box",
+       "type": "Microsoft.Xna.Framework.BoundingBox",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "box",
+       "type": "Microsoft.Xna.Framework.BoundingBox&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "System.Boolean&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "frustum",
+       "type": "Microsoft.Xna.Framework.BoundingFrustum",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.PlaneIntersectionType",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "plane",
+       "type": "Microsoft.Xna.Framework.Plane",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "plane",
+       "type": "Microsoft.Xna.Framework.Plane&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.PlaneIntersectionType&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Nullable`1[System.Single]",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "ray",
+       "type": "Microsoft.Xna.Framework.Ray",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "ray",
+       "type": "Microsoft.Xna.Framework.Ray&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "System.Nullable`1[System.Single]&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sphere",
+       "type": "Microsoft.Xna.Framework.BoundingSphere",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Intersects",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sphere",
+       "type": "Microsoft.Xna.Framework.BoundingSphere&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "System.Boolean&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Contains",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.ContainmentType",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "box",
+       "type": "Microsoft.Xna.Framework.BoundingBox",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Contains",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "box",
+       "type": "Microsoft.Xna.Framework.BoundingBox&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.ContainmentType&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Contains",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.ContainmentType",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "frustum",
+       "type": "Microsoft.Xna.Framework.BoundingFrustum",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Contains",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.ContainmentType",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "point",
+       "type": "Microsoft.Xna.Framework.Vector3",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Contains",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "point",
+       "type": "Microsoft.Xna.Framework.Vector3&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.ContainmentType&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Contains",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.ContainmentType",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sphere",
+       "type": "Microsoft.Xna.Framework.BoundingSphere",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Contains",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sphere",
+       "type": "Microsoft.Xna.Framework.BoundingSphere&",
+       "ref": true,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "result",
+       "type": "Microsoft.Xna.Framework.ContainmentType&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Equality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "a",
+       "type": "Microsoft.Xna.Framework.BoundingFrustum",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "b",
+       "type": "Microsoft.Xna.Framework.BoundingFrustum",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Inequality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "a",
+       "type": "Microsoft.Xna.Framework.BoundingFrustum",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "b",
+       "type": "Microsoft.Xna.Framework.BoundingFrustum",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Near",
+     "type": "Microsoft.Xna.Framework.Plane",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Far",
+     "type": "Microsoft.Xna.Framework.Plane",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Left",
+     "type": "Microsoft.Xna.Framework.Plane",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Right",
+     "type": "Microsoft.Xna.Framework.Plane",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Top",
+     "type": "Microsoft.Xna.Framework.Plane",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Bottom",
+     "type": "Microsoft.Xna.Framework.Plane",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Matrix",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "field",
+     "name": "CornerCount",
+     "type": "System.Int32",
+     "static": true,
+     "constant": true,
+     "value": "8"
     }
    ]
   },

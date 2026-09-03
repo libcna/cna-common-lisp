@@ -52,11 +52,14 @@ stubs:
   what it should do;
 * the 3D transform types on the same footing: `Quaternion`, `Matrix` and
   `Plane`, including the projection, view, billboard and reflection builders;
-* the bounding volumes `Ray`, `BoundingBox` and `BoundingSphere` with the whole
-  intersection and containment lattice between them, `ContainmentType` and
-  `PlaneIntersectionType` — down to which comparison is strict, which epsilon
-  the framework chose, and one arithmetic defect it shipped, each recorded
-  where it is reproduced;
+* the whole bounding-volume family — `Ray`, `BoundingBox`, `BoundingSphere` and
+  `BoundingFrustum`, with every intersection and containment between them,
+  `ContainmentType` and `PlaneIntersectionType` — down to which comparison is
+  strict, which epsilon the framework chose, and one arithmetic defect it
+  shipped, each recorded where it is reproduced. The frustum's convex tests are
+  XNA's own Gilbert-Johnson-Keerthi solver, transcribed rather than
+  reimplemented, and cross-checked against a separating-axis test over 3956
+  random box placements and 985 exact sphere placements;
 * `Texture2D` decoded from a real PNG into a real native texture;
 * `SpriteBatch` with a real textured draw, with rotation, scale, origin, tint,
   source rectangle, effects and layer depth;
@@ -67,33 +70,33 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=32 -->
-<!-- generated:selected members=1163 -->
-<!-- generated:complete types=18 -->
-<!-- generated:partial types=13 -->
+<!-- generated:selected types=33 -->
+<!-- generated:selected members=1196 -->
+<!-- generated:complete types=23 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=800 -->
+<!-- generated:complete members=829 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=140 -->
-<!-- generated:not-applicable members=222 -->
+<!-- generated:missing members=133 -->
+<!-- generated:not-applicable members=233 -->
 <!-- generated:disagreement total=0 -->
 <!-- generated:bound native functions=69 -->
 <!-- generated:bound native structs=20 -->
 
-The generated scoreboard, over a selection of **32 XNA types and 1163 members**:
+The generated scoreboard, over a selection of **33 XNA types and 1196 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **18 / 13 / 1** |
-| Members complete / missing | **800 / 140** |
-| Members not applicable | **222** |
+| Types complete / partial / missing | **23 / 9 / 1** |
+| Members complete / missing | **829 / 133** |
+| Members not applicable | **233** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, every exported symbol is accounted for, no
 mapping rule names a member that does not exist, and every overload family that
 collapses onto one function says how each overload is expressed. It does **not**
-mean the binding is finished: 140 members are missing and are reported as
+mean the binding is finished: 133 members are missing and are reported as
 missing. `docs/compatibility.md` is the authority.
 
 The private foreign layer binds **69 native routes** and **20 native structs**,

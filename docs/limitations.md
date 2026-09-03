@@ -103,32 +103,50 @@ These are absent, and measured as absent, not faked:
 * `Effect`, `Model`, vertex and index buffers, and everything else that draws in
   three dimensions;
 * audio, media, storage, gamer services and networking;
-* `BoundingFrustum`, and the `Curve` family.
+* the `Curve` family.
 
-The value types are present: `Vector2`, `Vector3`, `Vector4`, `Quaternion`,
-`Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`, `MathHelper`,
-`ContainmentType` and `PlaneIntersectionType`. They are pure Lisp and touch no
-native route.
+The math types are present: `Vector2`, `Vector3`, `Vector4`, `Quaternion`,
+`Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum`,
+`MathHelper`, `ContainmentType` and `PlaneIntersectionType`. They are pure Lisp
+and touch no native route.
 
-### Three members of Matrix, and the frustum members
+### Three members of Matrix
 
 | Member | Why |
 | --- | --- |
 | `Matrix.Decompose` | 540 IL instructions over a private `CanonicalBasis`/`VectorBasis` pair using unsafe pointer arithmetic, with a fallback path for degenerate scales. An implementation that agreed on well-conditioned matrices and diverged on degenerate ones would be worse than the absence. |
 | `Matrix.CreateConstrainedBillboard` (both overloads) | A three-deep threshold chain over two optional vectors. Same reason. |
-| `Plane.Intersects(BoundingFrustum)`, `Ray.Intersects(BoundingFrustum)`, `BoundingBox.Intersects/Contains(BoundingFrustum)`, `BoundingSphere.CreateFromFrustum/Intersects/Contains(BoundingFrustum)` | Needs `BoundingFrustum`, which is the next closure. |
 
-## BoundingFrustum is what is left of the bounding volumes
+## What BoundingFrustum's answers are, and are not
 
-`Ray`, `BoundingBox` and `BoundingSphere` are implemented, including every
-intersection and containment between them and with `Plane`. What remains is
-`BoundingFrustum`, which is a different kind of work: it derives six planes from
-a matrix, computes its eight corners by intersecting three planes at a time, and
-tests convex bodies with a Gilbert-Johnson-Keerthi solver over a private
-`Gjk` type. The seven members above are the cross-product members that need it;
-they are absent rather than approximated.
+The bounding volumes are closed: every intersection and containment between
+`Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum` and `Plane` is
+answered. Two limits are worth stating rather than discovering.
 
-The three implemented volumes are read from the IL branch by branch, down to the
+**`Contains` and `Intersects` do not answer the same question about a box.**
+`BoundingFrustum.Contains(BoundingBox)` tests the box against the six planes one
+at a time, which reports `Intersects` for a box that sits in a corner region and
+touches nothing. `BoundingFrustum.Intersects(BoundingBox)` runs XNA's GJK solver,
+which is geometrically exact but accepts once the squared closest distance falls
+under `4E-05` of the largest support length seen -- about a tenth of a world unit
+for a frustum twenty units deep. So the two disagree in **both** directions on
+bodies near the boundary. That is XNA's behaviour, it is reproduced, and
+`tests/unit/bounding-frustum.lisp` pins one case of each direction.
+
+**The corners are derived, not stored.** They come out of intersecting three
+normalised planes, which costs about a part in 10^6 of the far distance: a
+frustum whose far plane is at `z = -15` answers `-14.999987`. And a frustum built
+from a singular matrix answers corners full of infinities and NaNs rather than
+signalling, because the arithmetic is IEEE 754's and XNA lets it run.
+
+The GJK transcription was cross-checked against an independent separating-axis
+test over the two convex hulls: 3956 random box placements and 985 sphere
+placements whose exact distance to the frustum could be computed from a single
+plane, with the ambiguous band set to XNA's own acceptance tolerance. No
+disagreement. That is evidence, not proof, and it is evidence about this
+transcription rather than about XNA.
+
+The other three volumes are read from the IL branch by branch, down to the
 epsilons (`1E-05f` in `Ray.Intersects(Plane)`, `1E-06f` in
 `BoundingBox.Intersects(Ray)`), the strict `<` that makes a point exactly on a
 `BoundingSphere`'s surface *Disjoint*, and one arithmetic defect XNA shipped:

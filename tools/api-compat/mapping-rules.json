@@ -1833,6 +1833,11 @@
      "lisp": "plane-intersects",
      "generic": true,
      "distinguished_by": "dispatch"
+    },
+    "Intersects(BoundingFrustum)": {
+     "lisp": "plane-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
     }
    },
    "not_applicable": {
@@ -1845,9 +1850,6 @@
     "Dot(Vector4&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "DotCoordinate(Vector3&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "DotNormal(Vector3&,Single&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
-   },
-   "unimplemented": {
-    "Intersects(BoundingFrustum)": "Needs the bounding volumes, which are the next closure."
    },
    "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
    "overload_families": {
@@ -1908,6 +1910,11 @@
     },
     "Direction": {
      "lisp": "ray-direction"
+    },
+    "Intersects(BoundingFrustum)": {
+     "lisp": "ray-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
     }
    },
    "not_applicable": {
@@ -1915,9 +1922,6 @@
     "Intersects(BoundingBox&,Nullable`1)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Intersects(Plane&,Nullable`1)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Intersects(BoundingSphere&,Nullable`1)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
-   },
-   "unimplemented": {
-    "Intersects(BoundingFrustum)": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
    },
    "overload_families": {
     "Equals": {
@@ -2006,6 +2010,16 @@
     },
     "Max": {
      "lisp": "bounding-box-max"
+    },
+    "Intersects(BoundingFrustum)": {
+     "lisp": "bounding-box-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Contains(BoundingFrustum)": {
+     "lisp": "bounding-box-contains",
+     "generic": true,
+     "distinguished_by": "dispatch"
     }
    },
    "not_applicable": {
@@ -2019,10 +2033,6 @@
     "Contains(BoundingBox&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Contains(Vector3&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Contains(BoundingSphere&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
-   },
-   "unimplemented": {
-    "Intersects(BoundingFrustum)": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent.",
-    "Contains(BoundingFrustum)": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
    },
    "overload_families": {
     "Equals": {
@@ -2110,6 +2120,19 @@
     },
     "Radius": {
      "lisp": "bounding-sphere-radius"
+    },
+    "Intersects(BoundingFrustum)": {
+     "lisp": "bounding-sphere-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Contains(BoundingFrustum)": {
+     "lisp": "bounding-sphere-contains",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "CreateFromFrustum(BoundingFrustum)": {
+     "lisp": "bounding-sphere-create-from-frustum"
     }
    },
    "not_applicable": {
@@ -2125,11 +2148,6 @@
     "Contains(BoundingSphere&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
     "Transform(Matrix&,BoundingSphere&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    },
-   "unimplemented": {
-    "Intersects(BoundingFrustum)": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent.",
-    "Contains(BoundingFrustum)": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent.",
-    "CreateFromFrustum(BoundingFrustum)": "Needs BoundingFrustum, which is the next closure: implementing three of the four bounding types would leave every cross-product member wrong rather than absent."
-   },
    "overload_families": {
     "Equals": {
      "lisp": "bounding-sphere-equal",
@@ -2143,6 +2161,115 @@
      "lisp": "bounding-sphere-contains",
      "reason": "As Intersects."
     }
+   }
+  },
+  "Microsoft.Xna.Framework.BoundingFrustum": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "bounding-frustum",
+   "lisp_kind": "class",
+   "by_reference_reason": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+   "reference_type_reason": "BoundingFrustum is the one bounding volume XNA makes a class rather than a value type: two names for one frustum see one another's changes and assigning Matrix rebuilds its planes and corners in place. So it is a CLOS class, and the first one in the framework package with no native handle behind it -- there is no NATIVE-OBJECT superclass to expect, because there is no native resource to own.",
+   "constructors": {
+    "new(Matrix)": "make-instance"
+   },
+   "member_overrides": {
+    "GetCorners()": {
+     "lisp": "bounding-frustum-get-corners",
+     "distinguished_by": "arity",
+     "reason": "A class's members project to bare names by default -- `contains', `intersects', `matrix'. Those would collide with the other bounding volumes and with the MATRIX structure, so every member of this type is named `bounding-frustum-<member>', the way the value-type volumes are."
+    },
+    "GetCorners(Vector3[])": {
+     "lisp": "bounding-frustum-get-corners",
+     "distinguished_by": "arity"
+    },
+    "Equals(BoundingFrustum)": {
+     "lisp": "bounding-frustum-equal"
+    },
+    "op_Equality(BoundingFrustum,BoundingFrustum)": {
+     "lisp": "bounding-frustum-equal"
+    },
+    "Intersects(BoundingBox)": {
+     "lisp": "bounding-frustum-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Intersects(BoundingFrustum)": {
+     "lisp": "bounding-frustum-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Intersects(Plane)": {
+     "lisp": "bounding-frustum-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Intersects(Ray)": {
+     "lisp": "bounding-frustum-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Intersects(BoundingSphere)": {
+     "lisp": "bounding-frustum-intersects",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Contains(BoundingBox)": {
+     "lisp": "bounding-frustum-contains",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Contains(BoundingFrustum)": {
+     "lisp": "bounding-frustum-contains",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Contains(Vector3)": {
+     "lisp": "bounding-frustum-contains",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Contains(BoundingSphere)": {
+     "lisp": "bounding-frustum-contains",
+     "generic": true,
+     "distinguished_by": "dispatch"
+    },
+    "Near": {
+     "lisp": "bounding-frustum-near"
+    },
+    "Far": {
+     "lisp": "bounding-frustum-far"
+    },
+    "Left": {
+     "lisp": "bounding-frustum-left"
+    },
+    "Right": {
+     "lisp": "bounding-frustum-right"
+    },
+    "Top": {
+     "lisp": "bounding-frustum-top"
+    },
+    "Bottom": {
+     "lisp": "bounding-frustum-bottom"
+    },
+    "Matrix": {
+     "lisp": "bounding-frustum-matrix",
+     "setf": true,
+     "reason": "XNA's Matrix property is settable and its setter is what rebuilds the frustum, so the projection is a reader with a (setf ...) that does the same work."
+    },
+    "CornerCount": {
+     "lisp": "+bounding-frustum-corner-count+",
+     "kind": "constant"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against.",
+    "Intersects(BoundingBox&,Boolean&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Intersects(Plane&,PlaneIntersectionType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Intersects(Ray&,Nullable`1)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Intersects(BoundingSphere&,Boolean&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Contains(BoundingBox&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Contains(Vector3&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation.",
+    "Contains(BoundingSphere&,ContainmentType&)": "A by-reference overload of a pure computation. It exists in XNA so a caller can avoid copying a value type into a call and can write the answer into storage it already has; the value it computes is the by-value overload's. Common Lisp passes a reference already, so the by-value form is the whole contract, and projecting the ref form would be a second name for one operation."
    }
   }
  }

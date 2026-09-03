@@ -42,6 +42,7 @@ SELECTED = [
     "Microsoft.Xna.Framework.Ray",
     "Microsoft.Xna.Framework.BoundingBox",
     "Microsoft.Xna.Framework.BoundingSphere",
+    "Microsoft.Xna.Framework.BoundingFrustum",
     "Microsoft.Xna.Framework.PlayerIndex",
     "Microsoft.Xna.Framework.Graphics.GraphicsResource",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",

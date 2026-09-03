@@ -74,6 +74,19 @@ category, the owner, the owner's generation, the owning thread and the disposed
 flag. **None of those slots is publicly readable**, and none of their accessors
 is exported from any public package.
 
+Not every XNA class is native-backed. `BoundingFrustum` is a class in XNA -- two
+names for one frustum see each other's changes, and assigning its `Matrix`
+rebuilds its planes and corners in place -- and it is a CLOS class here for that
+reason alone. It owns no native resource, so it has no `native-object`
+superclass, nothing to dispose, and no thread affinity. A class in this
+projection means *reference semantics*; it does not mean *holds a handle*.
+
+A class's members would otherwise project to bare names -- `contains`,
+`intersects`, `matrix` -- so where those would collide, as every member of
+`BoundingFrustum` would, the mapping rules name each one explicitly and the
+verifier checks the names it declares rather than the default it would have
+produced.
+
 ## 4. Value types
 
 An XNA struct becomes a Common Lisp structure (`defstruct`), because that is what

@@ -364,6 +364,101 @@
     (and (xna:bounding-sphere-equal (xna:bounding-sphere-create-merged big small) big)
          (xna:bounding-sphere-equal (xna:bounding-sphere-create-merged small big) big))))
 
+(defobservation "boundingfrustum.is-a-reference-type" :xna-derived
+    "Microsoft.Xna.Framework.BoundingFrustum"
+  "BoundingFrustum is a class, not a value type: two names for one frustum see
+   one another's changes, and assigning Matrix rebuilds its planes and corners."
+  (let* ((frustum (make-instance 'xna:bounding-frustum
+                                 :matrix (xna:matrix-create-perspective-field-of-view
+                                          xna:+math-helper-pi-over4+ 1.0 1.0 20.0)))
+         (alias frustum)
+         (before (xna:vector3-z (aref (xna:bounding-frustum-get-corners frustum) 4))))
+    (setf (xna:bounding-frustum-matrix alias)
+          (xna:matrix-create-perspective-field-of-view
+           xna:+math-helper-pi-over4+ 1.0 1.0 40.0))
+    (/= before (xna:vector3-z (aref (xna:bounding-frustum-get-corners frustum) 4)))))
+
+(defobservation "boundingfrustum.corner-order" :xna-derived
+    "Microsoft.Xna.Framework.BoundingFrustum"
+  "GetCorners answers the near face first (0-3) and the far face second (4-7),
+   each running top-left, top-right, bottom-right, bottom-left."
+  (let* ((frustum (make-instance 'xna:bounding-frustum
+                                 :matrix (xna:matrix-multiply
+                                          (xna:matrix-create-look-at
+                                           (xna:make-vector3 0 0 5)
+                                           (xna:make-vector3 0 0 0)
+                                           (xna:make-vector3 0 1 0))
+                                          (xna:matrix-create-perspective-field-of-view
+                                           xna:+math-helper-pi-over4+ 1.0 1.0 20.0))))
+         (c (xna:bounding-frustum-get-corners frustum)))
+    (and (= 8 (length c))
+         (< (abs (- 4.0f0 (xna:vector3-z (aref c 0)))) 1.0e-4)
+         (< (abs (- -15.0f0 (xna:vector3-z (aref c 4)))) 1.0e-3)
+         (< (xna:vector3-x (aref c 0)) 0) (> (xna:vector3-y (aref c 0)) 0)
+         (> (xna:vector3-x (aref c 2)) 0) (< (xna:vector3-y (aref c 2)) 0))))
+
+(defobservation "boundingfrustum.planes-are-normalised-and-outward" :xna-derived
+    "Microsoft.Xna.Framework.BoundingFrustum"
+  "The six planes are normalised as the frustum is built, and they face
+   outwards: a point inside is on the negative side of every one."
+  (let ((frustum (make-instance 'xna:bounding-frustum
+                                :matrix (xna:matrix-multiply
+                                         (xna:matrix-create-look-at
+                                          (xna:make-vector3 0 0 5)
+                                          (xna:make-vector3 0 0 0)
+                                          (xna:make-vector3 0 1 0))
+                                         (xna:matrix-create-perspective-field-of-view
+                                          xna:+math-helper-pi-over4+ 1.0 1.0 20.0)))))
+    (every (lambda (reader)
+             (let ((plane (funcall reader frustum)))
+               (and (< (abs (- 1.0f0 (xna:vector3-length (xna:plane-normal plane))))
+                       1.0e-5)
+                    (< (+ (xna:vector3-dot (xna:plane-normal plane)
+                                           (xna:make-vector3 0 0 0))
+                          (xna:plane-d plane))
+                       0.0f0))))
+           (list #'xna:bounding-frustum-near #'xna:bounding-frustum-far
+                 #'xna:bounding-frustum-left #'xna:bounding-frustum-right
+                 #'xna:bounding-frustum-top #'xna:bounding-frustum-bottom))))
+
+(defobservation "boundingfrustum.contains-and-intersects-disagree" :xna-derived
+    "Microsoft.Xna.Framework.BoundingFrustum"
+  "Contains(BoundingBox) is a plane-by-plane test and Intersects(BoundingBox) is
+   a GJK iteration with a relative tolerance, so the two answer different
+   questions and disagree in both directions on boxes near the boundary."
+  (let ((frustum (make-instance 'xna:bounding-frustum
+                                :matrix (xna:matrix-multiply
+                                         (xna:matrix-create-look-at
+                                          (xna:make-vector3 0 0 5)
+                                          (xna:make-vector3 0 0 0)
+                                          (xna:make-vector3 0 1 0))
+                                         (xna:matrix-create-perspective-field-of-view
+                                          xna:+math-helper-pi-over4+ 1.0 1.0 20.0))))
+        (corner-box (xna:make-bounding-box (xna:make-vector3 -7.3 -12.3 -17.8)
+                                           (xna:make-vector3 -3.7 -8.7 -14.2))))
+    (and (eq :intersects (xna:bounding-frustum-contains frustum corner-box))
+         (not (xna:bounding-frustum-intersects frustum corner-box)))))
+
+(defobservation "boundingfrustum.ray-inside-answers-zero" :xna-derived
+    "Microsoft.Xna.Framework.BoundingFrustum"
+  "Intersects(Ray) answers 0 for a ray whose position the frustum Contains, and
+   otherwise the distance to the entry plane."
+  (let ((frustum (make-instance 'xna:bounding-frustum
+                                :matrix (xna:matrix-multiply
+                                         (xna:matrix-create-look-at
+                                          (xna:make-vector3 0 0 5)
+                                          (xna:make-vector3 0 0 0)
+                                          (xna:make-vector3 0 1 0))
+                                         (xna:matrix-create-perspective-field-of-view
+                                          xna:+math-helper-pi-over4+ 1.0 1.0 20.0)))))
+    (and (eql 0.0f0 (xna:bounding-frustum-intersects
+                     frustum (xna:make-ray (xna:make-vector3 0 0 0)
+                                           (xna:make-vector3 0 0 -1))))
+         (< (abs (- 196.0f0 (xna:bounding-frustum-intersects
+                             frustum (xna:make-ray (xna:make-vector3 0 0 200)
+                                                   (xna:make-vector3 0 0 -1)))))
+            1.0e-3))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

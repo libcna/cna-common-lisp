@@ -27,6 +27,13 @@
     (microsoft.xna.framework point-equal rectangle-equal vector2-equal color-equal
      "Value equality as functions. Common Lisp has no operator overloading, so
       the == and Equals members project to named predicates.")
+    (microsoft.xna.framework +bounding-frustum-plane-count+
+     "The number of planes a frustum has. XNA keeps its own NumPlanes constant
+      private, but the six plane readers are public, so a caller iterating them
+      needs the count from somewhere other than a literal 6.")
+    (microsoft.xna.framework bounding-frustum-equal
+     "BoundingFrustum.Equals and op_Equality as a named predicate, for the same
+      reason the value types have one: Common Lisp has no operator overloading.")
     (microsoft.xna.framework rectangle-contains-coordinates
      "Rectangle.Contains(int, int). Its three arguments cannot share a congruent
       generic function with the two-argument overloads.")

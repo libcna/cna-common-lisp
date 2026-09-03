@@ -26,6 +26,44 @@
           "documentation": "BoundingBox.CornerCount."
         },
         {
+          "name": "+bounding-frustum-corner-count+",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": true,
+          "value": 8,
+          "documentation": "BoundingFrustum.CornerCount."
+        },
+        {
+          "name": "+bounding-frustum-plane-count+",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": true,
+          "value": 6,
+          "documentation": "The number of planes a frustum has. XNA keeps the equivalent constant\nprivate; CNA-Lisp exports it as a declared extension because the plane readers\nare public and a caller iterating them needs the count."
+        },
+        {
           "name": "+default-target-elapsed-time-ticks+",
           "fbound": false,
           "macro": false,
@@ -601,6 +639,269 @@
           "documentation": null
         },
         {
+          "name": "bounding-frustum",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:bounding-frustum",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.BoundingFrustum: the six planes of a view volume.\n\nConstructed from a view-projection matrix:\n\n    (make-instance 'bounding-frustum :matrix (matrix-multiply view projection))\n\nSetting BOUNDING-FRUSTUM-MATRIX recomputes the planes and corners, as XNA's\nMatrix property setter does."
+        },
+        {
+          "name": "bounding-frustum-bottom",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Bottom."
+        },
+        {
+          "name": "bounding-frustum-contains",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "frustum",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Contains: a CONTAINMENT-TYPE for a point, a box, a sphere or\nanother frustum."
+        },
+        {
+          "name": "bounding-frustum-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "left",
+            "right"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Equals: two frustums are equal when their matrices are."
+        },
+        {
+          "name": "bounding-frustum-far",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Far."
+        },
+        {
+          "name": "bounding-frustum-get-corners",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum",
+            "&optional",
+            "destination"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.GetCorners.\n\nWith no DESTINATION, answers a fresh eight-element array, as XNA's no-argument\noverload does by cloning. With one, fills it and answers it; it must hold at\nleast eight elements."
+        },
+        {
+          "name": "bounding-frustum-intersects",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "frustum",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Intersects: a Boolean for a box, a sphere or another\nfrustum, a PLANE-INTERSECTION-TYPE for a plane, and a distance or NIL for a\nray."
+        },
+        {
+          "name": "bounding-frustum-left",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Left."
+        },
+        {
+          "name": "bounding-frustum-matrix",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "frustum"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Matrix."
+        },
+        {
+          "name": "bounding-frustum-near",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Near."
+        },
+        {
+          "name": "bounding-frustum-right",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Right."
+        },
+        {
+          "name": "bounding-frustum-top",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingFrustum.Top."
+        },
+        {
           "name": "bounding-sphere",
           "fbound": false,
           "macro": false,
@@ -690,6 +991,27 @@
           "constant": false,
           "value": null,
           "documentation": "BoundingSphere.CreateFromBoundingBox: the sphere around a box's diagonal."
+        },
+        {
+          "name": "bounding-sphere-create-from-frustum",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "frustum"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BoundingSphere.CreateFromFrustum: the sphere over the frustum's eight corners."
         },
         {
           "name": "bounding-sphere-create-from-points",
@@ -11265,6 +11587,20 @@
         "color-equal"
       ],
       "reason": "Value equality as functions. Common Lisp has no operator overloading, so\n      the == and Equals members project to named predicates."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "+bounding-frustum-plane-count+"
+      ],
+      "reason": "The number of planes a frustum has. XNA keeps its own NumPlanes constant\n      private, but the six plane readers are public, so a caller iterating them\n      needs the count from somewhere other than a literal 6."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "bounding-frustum-equal"
+      ],
+      "reason": "BoundingFrustum.Equals and op_Equality as a named predicate, for the same\n      reason the value types have one: Common Lisp has no operator overloading."
     },
     {
       "package": "microsoft.xna.framework",

@@ -56,25 +56,25 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=32 -->
-<!-- generated:selected members=1163 -->
-<!-- generated:complete types=18 -->
-<!-- generated:partial types=13 -->
+<!-- generated:selected types=33 -->
+<!-- generated:selected members=1196 -->
+<!-- generated:complete types=23 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=800 -->
+<!-- generated:complete members=829 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=140 -->
-<!-- generated:not-applicable members=222 -->
+<!-- generated:missing members=133 -->
+<!-- generated:not-applicable members=233 -->
 <!-- generated:disagreement total=0 -->
 
-32 selected types, 1163 members: **18 complete, 13 partial, 1 missing**;
-**800 members complete, 140 missing**, 222 not applicable, 1 partial.
+33 selected types, 1196 members: **23 complete, 9 partial, 1 missing**;
+**829 members complete, 133 missing**, 233 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
-`MathHelper`, `Vector2`, `Vector3`, `Vector4` and `Quaternion` are complete.
-`Matrix` has three members left; `Plane`, `Ray`, `BoundingBox` and
-`BoundingSphere` have between one and three each, and every one of those is
-`BoundingFrustum` — the next closure, and the only thing they are waiting for.
+Every math type is complete except `Matrix`, which has three members left:
+`Decompose` and the two `CreateConstrainedBillboard` overloads. The bounding
+volumes are closed -- `Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum`
+and `Plane` answer every member of the cross product between them.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
