@@ -669,6 +669,40 @@
   (input:game-pad-buttons-equal (input:make-game-pad-buttons '(:a :dpad-up))
                                 (input:make-game-pad-buttons '(:a))))
 
+(defobservation "touch.collection-is-a-mutable-value" :xna-derived
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection"
+  "TouchCollection is a value type that also implements IList<TouchLocation>, so
+   a caller may add to and remove from a copy of what the panel reported, and a
+   copy is a copy rather than an alias."
+  (let* ((original (touch:make-touch-collection
+                    (list (touch:make-touch-location 1 :pressed (xna:make-vector2)))))
+         (copy (touch:copy-touch-collection original)))
+    (touch:touch-collection-add
+     copy (touch:make-touch-location 2 :pressed (xna:make-vector2)))
+    (and (= 1 (touch:touch-collection-count original))
+         (= 2 (touch:touch-collection-count copy))
+         (not (touch:touch-collection-is-read-only original)))))
+
+(defobservation "touch.location-equality-ignores-the-previous-location" :xna-derived
+    "Microsoft.Xna.Framework.Input.Touch.TouchLocation"
+  "TouchLocation compares its id, its state and its position, so two snapshots of
+   one finger differ only when the finger did -- the previous location it carries
+   is not part of the comparison."
+  (touch:touch-location-equal
+   (touch:make-touch-location 1 :moved (xna:make-vector2 5.0 5.0))
+   (touch:make-touch-location 1 :moved (xna:make-vector2 5.0 5.0)
+                              :pressed (xna:make-vector2 0.0 0.0))))
+
+(defobservation "displayorientation.portrait-is-four" :xna-derived
+    "Microsoft.Xna.Framework.DisplayOrientation"
+  "DisplayOrientation is a flags enum: Default 0, LandscapeLeft 1,
+   LandscapeRight 2 and Portrait 4 -- not the consecutive 3 a plain enum would
+   give it."
+  (and (= 0 (xna:display-orientation-value :default))
+       (= 1 (xna:display-orientation-value :landscape-left))
+       (= 2 (xna:display-orientation-value :landscape-right))
+       (= 4 (xna:display-orientation-value :portrait))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

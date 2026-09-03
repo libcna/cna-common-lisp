@@ -367,6 +367,74 @@ _Static_assert(sizeof(((CNA_GamePadCapabilities *)0)->has_accelerometer_ext) == 
 _Static_assert(offsetof(CNA_GamePadCapabilities, reserved) == 47, "CNA_GamePadCapabilities.reserved offset");
 _Static_assert(sizeof(((CNA_GamePadCapabilities *)0)->reserved) == 1, "CNA_GamePadCapabilities.reserved size");
 
+_Static_assert(sizeof(CNA_TouchLocation) == 32, "CNA_TouchLocation size");
+_Static_assert(_Alignof(CNA_TouchLocation) == 4, "CNA_TouchLocation alignment");
+_Static_assert(offsetof(CNA_TouchLocation, id) == 0, "CNA_TouchLocation.id offset");
+_Static_assert(sizeof(((CNA_TouchLocation *)0)->id) == 4, "CNA_TouchLocation.id size");
+_Static_assert(offsetof(CNA_TouchLocation, state) == 4, "CNA_TouchLocation.state offset");
+_Static_assert(sizeof(((CNA_TouchLocation *)0)->state) == 4, "CNA_TouchLocation.state size");
+_Static_assert(offsetof(CNA_TouchLocation, position) == 8, "CNA_TouchLocation.position offset");
+_Static_assert(sizeof(((CNA_TouchLocation *)0)->position) == 8, "CNA_TouchLocation.position size");
+_Static_assert(offsetof(CNA_TouchLocation, previous_state) == 16, "CNA_TouchLocation.previous_state offset");
+_Static_assert(sizeof(((CNA_TouchLocation *)0)->previous_state) == 4, "CNA_TouchLocation.previous_state size");
+_Static_assert(offsetof(CNA_TouchLocation, previous_position) == 20, "CNA_TouchLocation.previous_position offset");
+_Static_assert(sizeof(((CNA_TouchLocation *)0)->previous_position) == 8, "CNA_TouchLocation.previous_position size");
+_Static_assert(offsetof(CNA_TouchLocation, pressure) == 28, "CNA_TouchLocation.pressure offset");
+_Static_assert(sizeof(((CNA_TouchLocation *)0)->pressure) == 4, "CNA_TouchLocation.pressure size");
+
+_Static_assert(sizeof(CNA_TouchState) == 272, "CNA_TouchState size");
+_Static_assert(_Alignof(CNA_TouchState) == 4, "CNA_TouchState alignment");
+_Static_assert(offsetof(CNA_TouchState, struct_size) == 0, "CNA_TouchState.struct_size offset");
+_Static_assert(sizeof(((CNA_TouchState *)0)->struct_size) == 4, "CNA_TouchState.struct_size size");
+_Static_assert(offsetof(CNA_TouchState, struct_version) == 4, "CNA_TouchState.struct_version offset");
+_Static_assert(sizeof(((CNA_TouchState *)0)->struct_version) == 4, "CNA_TouchState.struct_version size");
+_Static_assert(offsetof(CNA_TouchState, is_connected) == 8, "CNA_TouchState.is_connected offset");
+_Static_assert(sizeof(((CNA_TouchState *)0)->is_connected) == 1, "CNA_TouchState.is_connected size");
+_Static_assert(offsetof(CNA_TouchState, reserved) == 9, "CNA_TouchState.reserved offset");
+_Static_assert(sizeof(((CNA_TouchState *)0)->reserved) == 3, "CNA_TouchState.reserved size");
+_Static_assert(offsetof(CNA_TouchState, touch_count) == 12, "CNA_TouchState.touch_count offset");
+_Static_assert(sizeof(((CNA_TouchState *)0)->touch_count) == 4, "CNA_TouchState.touch_count size");
+_Static_assert(offsetof(CNA_TouchState, touches) == 16, "CNA_TouchState.touches offset");
+_Static_assert(sizeof(((CNA_TouchState *)0)->touches) == 256, "CNA_TouchState.touches size");
+
+_Static_assert(sizeof(CNA_TouchCapabilities) == 16, "CNA_TouchCapabilities size");
+_Static_assert(_Alignof(CNA_TouchCapabilities) == 4, "CNA_TouchCapabilities alignment");
+_Static_assert(offsetof(CNA_TouchCapabilities, struct_size) == 0, "CNA_TouchCapabilities.struct_size offset");
+_Static_assert(sizeof(((CNA_TouchCapabilities *)0)->struct_size) == 4, "CNA_TouchCapabilities.struct_size size");
+_Static_assert(offsetof(CNA_TouchCapabilities, struct_version) == 4, "CNA_TouchCapabilities.struct_version offset");
+_Static_assert(sizeof(((CNA_TouchCapabilities *)0)->struct_version) == 4, "CNA_TouchCapabilities.struct_version size");
+_Static_assert(offsetof(CNA_TouchCapabilities, is_connected) == 8, "CNA_TouchCapabilities.is_connected offset");
+_Static_assert(sizeof(((CNA_TouchCapabilities *)0)->is_connected) == 1, "CNA_TouchCapabilities.is_connected size");
+_Static_assert(offsetof(CNA_TouchCapabilities, reserved) == 9, "CNA_TouchCapabilities.reserved offset");
+_Static_assert(sizeof(((CNA_TouchCapabilities *)0)->reserved) == 3, "CNA_TouchCapabilities.reserved size");
+_Static_assert(offsetof(CNA_TouchCapabilities, maximum_touch_count) == 12, "CNA_TouchCapabilities.maximum_touch_count offset");
+_Static_assert(sizeof(((CNA_TouchCapabilities *)0)->maximum_touch_count) == 4, "CNA_TouchCapabilities.maximum_touch_count size");
+
+_Static_assert(sizeof(CNA_GestureSample) == 64, "CNA_GestureSample size");
+_Static_assert(_Alignof(CNA_GestureSample) == 8, "CNA_GestureSample alignment");
+_Static_assert(offsetof(CNA_GestureSample, struct_size) == 0, "CNA_GestureSample.struct_size offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->struct_size) == 4, "CNA_GestureSample.struct_size size");
+_Static_assert(offsetof(CNA_GestureSample, struct_version) == 4, "CNA_GestureSample.struct_version offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->struct_version) == 4, "CNA_GestureSample.struct_version size");
+_Static_assert(offsetof(CNA_GestureSample, gesture_type) == 8, "CNA_GestureSample.gesture_type offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->gesture_type) == 4, "CNA_GestureSample.gesture_type size");
+_Static_assert(offsetof(CNA_GestureSample, finger_id_ext) == 12, "CNA_GestureSample.finger_id_ext offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->finger_id_ext) == 4, "CNA_GestureSample.finger_id_ext size");
+_Static_assert(offsetof(CNA_GestureSample, finger_id2_ext) == 16, "CNA_GestureSample.finger_id2_ext offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->finger_id2_ext) == 4, "CNA_GestureSample.finger_id2_ext size");
+_Static_assert(offsetof(CNA_GestureSample, reserved) == 20, "CNA_GestureSample.reserved offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->reserved) == 4, "CNA_GestureSample.reserved size");
+_Static_assert(offsetof(CNA_GestureSample, timestamp_ticks) == 24, "CNA_GestureSample.timestamp_ticks offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->timestamp_ticks) == 8, "CNA_GestureSample.timestamp_ticks size");
+_Static_assert(offsetof(CNA_GestureSample, position) == 32, "CNA_GestureSample.position offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->position) == 8, "CNA_GestureSample.position size");
+_Static_assert(offsetof(CNA_GestureSample, position2) == 40, "CNA_GestureSample.position2 offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->position2) == 8, "CNA_GestureSample.position2 size");
+_Static_assert(offsetof(CNA_GestureSample, delta) == 48, "CNA_GestureSample.delta offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->delta) == 8, "CNA_GestureSample.delta size");
+_Static_assert(offsetof(CNA_GestureSample, delta2) == 56, "CNA_GestureSample.delta2 offset");
+_Static_assert(sizeof(((CNA_GestureSample *)0)->delta2) == 8, "CNA_GestureSample.delta2 size");
+
 _Static_assert(sizeof(CNA_RendererInfo) == 32, "CNA_RendererInfo size");
 _Static_assert(_Alignof(CNA_RendererInfo) == 8, "CNA_RendererInfo alignment");
 _Static_assert(offsetof(CNA_RendererInfo, struct_size) == 0, "CNA_RendererInfo.struct_size offset");
@@ -487,6 +555,18 @@ CNA_Result (*const cna_lisp_probe_cna_gamepad_get_state)(CNA_Handle, CNA_PlayerI
 CNA_Result (*const cna_lisp_probe_cna_gamepad_get_state_with_dead_zone)(CNA_Handle, CNA_PlayerIndex, CNA_GamePadDeadZone, CNA_GamePadState*) = cna_gamepad_get_state_with_dead_zone;
 CNA_Result (*const cna_lisp_probe_cna_gamepad_get_capabilities)(CNA_Handle, CNA_PlayerIndex, CNA_GamePadCapabilities*) = cna_gamepad_get_capabilities;
 CNA_Result (*const cna_lisp_probe_cna_gamepad_set_vibration)(CNA_Handle, CNA_PlayerIndex, float, float, CNA_Bool*) = cna_gamepad_set_vibration;
+CNA_Result (*const cna_lisp_probe_cna_touch_get_state)(CNA_Handle, CNA_TouchState*) = cna_touch_get_state;
+CNA_Result (*const cna_lisp_probe_cna_touch_get_capabilities)(CNA_Handle, CNA_TouchCapabilities*) = cna_touch_get_capabilities;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_get_enabled_gestures)(CNA_Handle, CNA_GestureType*) = cna_touch_panel_get_enabled_gestures;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_set_enabled_gestures)(CNA_Handle, CNA_GestureType) = cna_touch_panel_set_enabled_gestures;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_get_is_gesture_available)(CNA_Handle, CNA_Bool*) = cna_touch_panel_get_is_gesture_available;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_read_gesture)(CNA_Handle, CNA_GestureSample*) = cna_touch_panel_read_gesture;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_get_display_width)(CNA_Handle, int32_t*) = cna_touch_panel_get_display_width;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_set_display_width)(CNA_Handle, int32_t) = cna_touch_panel_set_display_width;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_get_display_height)(CNA_Handle, int32_t*) = cna_touch_panel_get_display_height;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_set_display_height)(CNA_Handle, int32_t) = cna_touch_panel_set_display_height;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_get_display_orientation)(CNA_Handle, CNA_DisplayOrientation*) = cna_touch_panel_get_display_orientation;
+CNA_Result (*const cna_lisp_probe_cna_touch_panel_set_display_orientation)(CNA_Handle, CNA_DisplayOrientation) = cna_touch_panel_set_display_orientation;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -497,6 +577,10 @@ _Static_assert((int64_t)(CNA_ABI_VERSION) == INT64_C(5376), "CNA_ABI_VERSION val
 _Static_assert((int64_t)(CNA_ABI_VERSION_MAJOR) == INT64_C(0), "CNA_ABI_VERSION_MAJOR value");
 _Static_assert((int64_t)(CNA_ABI_VERSION_MINOR) == INT64_C(21), "CNA_ABI_VERSION_MINOR value");
 _Static_assert((int64_t)(CNA_ABI_VERSION_PATCH) == INT64_C(0), "CNA_ABI_VERSION_PATCH value");
+_Static_assert((int64_t)(CNA_DISPLAY_ORIENTATION_DEFAULT) == INT64_C(0), "CNA_DISPLAY_ORIENTATION_DEFAULT value");
+_Static_assert((int64_t)(CNA_DISPLAY_ORIENTATION_LANDSCAPE_LEFT) == INT64_C(1), "CNA_DISPLAY_ORIENTATION_LANDSCAPE_LEFT value");
+_Static_assert((int64_t)(CNA_DISPLAY_ORIENTATION_LANDSCAPE_RIGHT) == INT64_C(2), "CNA_DISPLAY_ORIENTATION_LANDSCAPE_RIGHT value");
+_Static_assert((int64_t)(CNA_DISPLAY_ORIENTATION_PORTRAIT) == INT64_C(4), "CNA_DISPLAY_ORIENTATION_PORTRAIT value");
 _Static_assert((int64_t)(CNA_ERROR_CATEGORY_ARGUMENT) == INT64_C(1), "CNA_ERROR_CATEGORY_ARGUMENT value");
 _Static_assert((int64_t)(CNA_ERROR_CATEGORY_CALLBACK) == INT64_C(9), "CNA_ERROR_CATEGORY_CALLBACK value");
 _Static_assert((int64_t)(CNA_ERROR_CATEGORY_ENCODING) == INT64_C(11), "CNA_ERROR_CATEGORY_ENCODING value");
@@ -551,6 +635,17 @@ _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_GAMEPAD) == INT64_C(1), "CNA_GAMEPAD_T
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_GUITAR) == INT64_C(6), "CNA_GAMEPAD_TYPE_GUITAR value");
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_UNKNOWN) == INT64_C(0), "CNA_GAMEPAD_TYPE_UNKNOWN value");
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_WHEEL) == INT64_C(2), "CNA_GAMEPAD_TYPE_WHEEL value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_DOUBLE_TAP) == INT64_C(2), "CNA_GESTURE_TYPE_DOUBLE_TAP value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_DRAG_COMPLETE) == INT64_C(256), "CNA_GESTURE_TYPE_DRAG_COMPLETE value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_FLICK) == INT64_C(128), "CNA_GESTURE_TYPE_FLICK value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_FREE_DRAG) == INT64_C(32), "CNA_GESTURE_TYPE_FREE_DRAG value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_HOLD) == INT64_C(4), "CNA_GESTURE_TYPE_HOLD value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_HORIZONTAL_DRAG) == INT64_C(8), "CNA_GESTURE_TYPE_HORIZONTAL_DRAG value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_NONE) == INT64_C(0), "CNA_GESTURE_TYPE_NONE value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_PINCH) == INT64_C(64), "CNA_GESTURE_TYPE_PINCH value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_PINCH_COMPLETE) == INT64_C(512), "CNA_GESTURE_TYPE_PINCH_COMPLETE value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_TAP) == INT64_C(1), "CNA_GESTURE_TYPE_TAP value");
+_Static_assert((int64_t)(CNA_GESTURE_TYPE_VERTICAL_DRAG) == INT64_C(16), "CNA_GESTURE_TYPE_VERTICAL_DRAG value");
 _Static_assert((int64_t)(CNA_INVALID_HANDLE) == INT64_C(0), "CNA_INVALID_HANDLE value");
 _Static_assert((int64_t)(CNA_KEY_A) == INT64_C(65), "CNA_KEY_A value");
 _Static_assert((int64_t)(CNA_KEY_ADD) == INT64_C(107), "CNA_KEY_ADD value");
@@ -774,6 +869,11 @@ _Static_assert((int64_t)(CNA_SURFACE_FORMAT_SINGLE) == INT64_C(13), "CNA_SURFACE
 _Static_assert((int64_t)(CNA_SURFACE_FORMAT_USHORT_EXT) == INT64_C(26), "CNA_SURFACE_FORMAT_USHORT_EXT value");
 _Static_assert((int64_t)(CNA_SURFACE_FORMAT_VECTOR2) == INT64_C(14), "CNA_SURFACE_FORMAT_VECTOR2 value");
 _Static_assert((int64_t)(CNA_SURFACE_FORMAT_VECTOR4) == INT64_C(15), "CNA_SURFACE_FORMAT_VECTOR4 value");
+_Static_assert((int64_t)(CNA_TOUCH_LOCATION_INVALID) == INT64_C(0), "CNA_TOUCH_LOCATION_INVALID value");
+_Static_assert((int64_t)(CNA_TOUCH_LOCATION_MOVED) == INT64_C(3), "CNA_TOUCH_LOCATION_MOVED value");
+_Static_assert((int64_t)(CNA_TOUCH_LOCATION_PRESSED) == INT64_C(2), "CNA_TOUCH_LOCATION_PRESSED value");
+_Static_assert((int64_t)(CNA_TOUCH_LOCATION_RELEASED) == INT64_C(1), "CNA_TOUCH_LOCATION_RELEASED value");
+_Static_assert((int64_t)(CNA_TOUCH_MAX_TOUCHES) == INT64_C(8), "CNA_TOUCH_MAX_TOUCHES value");
 _Static_assert((int64_t)(CNA_TRUE) == INT64_C(1), "CNA_TRUE value");
 
 int cna_lisp_probe_ok(void) { return 1; }

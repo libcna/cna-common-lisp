@@ -25,7 +25,8 @@
   '("MICROSOFT.XNA.FRAMEWORK"
     "MICROSOFT.XNA.FRAMEWORK.GRAPHICS"
     "MICROSOFT.XNA.FRAMEWORK.GRAPHICS.PACKED-VECTOR"
-    "MICROSOFT.XNA.FRAMEWORK.INPUT"))
+    "MICROSOFT.XNA.FRAMEWORK.INPUT"
+    "MICROSOFT.XNA.FRAMEWORK.INPUT.TOUCH"))
 
 ;;; --- a very small JSON writer -------------------------------------------
 ;;; CNA-Lisp has no JSON dependency and does not need one for this.
@@ -190,6 +191,12 @@ that a keyword-taking projection accepts no keywords at all."
    "game-pad-type" (alist-object microsoft.xna.framework.input::*game-pad-type-table*)
    "game-pad-dead-zone"
    (alist-object microsoft.xna.framework.input::*game-pad-dead-zone-table*)
+   "display-orientation"
+   (alist-object microsoft.xna.framework::*display-orientation-table*)
+   "touch-location-state"
+   (alist-object microsoft.xna.framework.input.touch::*touch-location-state-table*)
+   "gesture-type"
+   (alist-object microsoft.xna.framework.input.touch::*gesture-type-table*)
    "sprite-sort-mode" (alist-object microsoft.xna.framework.graphics::*sprite-sort-mode-table*)
    "sprite-effects" (alist-object microsoft.xna.framework.graphics::*sprite-effects-table*)
    "surface-format" (alist-object microsoft.xna.framework.graphics::*surface-format-table*)

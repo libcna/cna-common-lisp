@@ -30,3 +30,4 @@
 (microsoft.xna.framework::define-xna-enum surface-format
   (copy-alist cna-lisp.internal.ffi:*surface-format-table*)
   :documentation "Microsoft.Xna.Framework.Graphics.SurfaceFormat.")
+

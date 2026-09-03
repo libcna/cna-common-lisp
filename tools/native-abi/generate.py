@@ -370,11 +370,32 @@ def build(abi, manifest):
         if sname not in abi.struct_fields:
             raise Error("struct %s is absent from the supplied headers" % sname)
         layout = abi.baseline["structs"][sname]
+        # A field CNA's own baseline does not record. The baseline is a JSON
+        # summary; the C compiler is the real authority, and every field offset
+        # and size below is asserted in the generated probe either way. Declaring
+        # one here says "the baseline omits this, check it against the compiler
+        # instead" -- it does not skip a check, it names the one that applies.
+        declared = spec.get("fields_absent_from_baseline", {})
+        for fname in declared:
+            if fname in layout["fields"]:
+                raise Error("field %s.%s is declared absent from the ABI baseline "
+                            "but the baseline records it" % (sname, fname))
         fields = []
         for ctype, fname, count in abi.struct_fields[sname]:
-            if fname not in layout["fields"]:
+            if isinstance(count, str):
+                # An array whose length is a macro. Resolve it through the same
+                # constant table the rest of the generator reads, so the count in
+                # the generated declaration is the header's own number.
+                if count not in abi.constants:
+                    raise Error("array length %s of %s.%s is not a known constant"
+                                % (count, sname, fname))
+                count = int(abi.constants[count])
+            if fname in declared:
+                off, fsize = declared[fname]["offset"], declared[fname]["size"]
+            elif fname not in layout["fields"]:
                 raise Error("field %s.%s is absent from the ABI baseline" % (sname, fname))
-            off, fsize = layout["fields"][fname]
+            else:
+                off, fsize = layout["fields"][fname]
             kind, detail = abi.resolve(ctype)
             fields.append({
                 "name": fname, "c_type": ctype, "offset": off, "size": fsize,
@@ -388,6 +409,9 @@ def build(abi, manifest):
             "fields": fields, "header": abi.struct_header[sname],
             "direction": spec["direction"], "versioned": spec["versioned"],
         }
+        if declared:
+            entry["fields_absent_from_baseline"] = {
+                name: dict(value) for name, value in declared.items()}
         if spec.get("by_value"):
             entry["by_value_flattening"] = flatten_aggregate(sname, abi)
             entry["eightbyte_classes"] = abi.eightbyte_classes(sname)

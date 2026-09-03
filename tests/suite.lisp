@@ -20,6 +20,7 @@
                     (#:gfx   #:microsoft.xna.framework.graphics)
                     (#:pv    #:microsoft.xna.framework.graphics.packed-vector)
                     (#:input #:microsoft.xna.framework.input)
+                    (#:touch #:microsoft.xna.framework.input.touch)
                     (#:int   #:cna-lisp.internal)
                     (#:ffi   #:cna-lisp.internal.ffi))
   (:shadow #:run-all-tests)

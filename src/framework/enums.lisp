@@ -69,3 +69,13 @@ an alist of (KEYWORD . INTEGER) and is also bound to *NAME-TABLE*."
                           :format-control "~d is not a ~a value."
                           :format-arguments (list value ,sname)))))
        ',name)))
+
+(define-xna-enum display-orientation
+  '((:default . 0) (:landscape-left . 1) (:landscape-right . 2) (:portrait . 4))
+  :documentation
+  "Microsoft.Xna.Framework.DisplayOrientation, a flags enum.
+
+It lives here rather than in the graphics package because that is the namespace
+it is in, even though the only member of the selected surface that reaches it is
+TouchPanel.DisplayOrientation."
+  :flags t)

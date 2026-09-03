@@ -103,6 +103,26 @@
       "CNA_GAMEPAD_DEAD_ZONE_NONE",
       "CNA_GAMEPAD_DEAD_ZONE_INDEPENDENT_AXES",
       "CNA_GAMEPAD_DEAD_ZONE_CIRCULAR",
+      "CNA_TOUCH_MAX_TOUCHES",
+      "CNA_TOUCH_LOCATION_INVALID",
+      "CNA_TOUCH_LOCATION_RELEASED",
+      "CNA_TOUCH_LOCATION_PRESSED",
+      "CNA_TOUCH_LOCATION_MOVED",
+      "CNA_GESTURE_TYPE_NONE",
+      "CNA_GESTURE_TYPE_TAP",
+      "CNA_GESTURE_TYPE_DOUBLE_TAP",
+      "CNA_GESTURE_TYPE_HOLD",
+      "CNA_GESTURE_TYPE_HORIZONTAL_DRAG",
+      "CNA_GESTURE_TYPE_VERTICAL_DRAG",
+      "CNA_GESTURE_TYPE_FREE_DRAG",
+      "CNA_GESTURE_TYPE_PINCH",
+      "CNA_GESTURE_TYPE_FLICK",
+      "CNA_GESTURE_TYPE_DRAG_COMPLETE",
+      "CNA_GESTURE_TYPE_PINCH_COMPLETE",
+      "CNA_DISPLAY_ORIENTATION_DEFAULT",
+      "CNA_DISPLAY_ORIENTATION_LANDSCAPE_LEFT",
+      "CNA_DISPLAY_ORIENTATION_LANDSCAPE_RIGHT",
+      "CNA_DISPLAY_ORIENTATION_PORTRAIT",
       "CNA_SPRITE_SORT_MODE_DEFERRED",
       "CNA_SPRITE_SORT_MODE_IMMEDIATE",
       "CNA_SPRITE_SORT_MODE_TEXTURE",
@@ -241,6 +261,33 @@
     },
     {
       "name": "CNA_GamePadCapabilities",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_TouchLocation",
+      "direction": "out",
+      "versioned": false
+    },
+    {
+      "name": "CNA_TouchState",
+      "direction": "inout",
+      "versioned": true,
+      "fields_absent_from_baseline": {
+        "touches": {
+          "offset": 16,
+          "size": 256,
+          "reason": "CNA's own tools/c-api/abi_baseline.json records CNA_TouchState's scalar fields and its total size of 272 bytes, but not the eight-element array of CNA_TouchLocation that accounts for the remaining 256. The offset and size here are asserted against the real compiler in the generated probe, which is the stronger of the two checks; nothing is taken on trust."
+        }
+      }
+    },
+    {
+      "name": "CNA_TouchCapabilities",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GestureSample",
       "direction": "inout",
       "versioned": true
     },
@@ -737,6 +784,78 @@
     {
       "name": "cna_gamepad_set_vibration",
       "header": "input_gamepad.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_get_state",
+      "header": "input.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_get_capabilities",
+      "header": "input.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_get_enabled_gestures",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_set_enabled_gestures",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_get_is_gesture_available",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_read_gesture",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_get_display_width",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_set_display_width",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_get_display_height",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_set_display_height",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_get_display_orientation",
+      "header": "input_touch.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_touch_panel_set_display_orientation",
+      "header": "input_touch.h",
       "thread": "owner",
       "ownership": "none"
     }

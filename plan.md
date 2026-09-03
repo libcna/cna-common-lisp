@@ -180,7 +180,9 @@ are pure managed and touch no native route:
   `BoundingFrustum`, `ContainmentType`, `PlaneIntersectionType`;
 * the `Curve` family -- `Curve`, `CurveKey`, `CurveKeyCollection`,
   `CurveContinuity`, `CurveLoopType`, `CurveTangent`;
-* the seventeen `Graphics.PackedVector` types, in their own package.
+* the seventeen `Graphics.PackedVector` types, in their own package;
+* the rest of `Microsoft.Xna.Framework.Input`: `Mouse`, the `GamePad` family and
+  the `Input.Touch` namespace, each over CNA's own routes.
 
 ## 6. Measured status
 
@@ -198,25 +200,25 @@ which refuses any figure in the prose that the reports do not produce.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=69 -->
-<!-- generated:selected members=1565 -->
-<!-- generated:complete types=62 -->
+<!-- generated:selected types=77 -->
+<!-- generated:selected members=1632 -->
+<!-- generated:complete types=70 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1108 -->
+<!-- generated:complete members=1167 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=337 -->
+<!-- generated:not-applicable members=345 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1 and the managed closures**: 69 types, 1565 members.
+Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **62 / 6 / 1** |
-| Members complete | **1108** |
+| Types complete / partial / missing | **70 / 6 / 1** |
+| Members complete | **1167** |
 | Members missing | **119** |
-| Members not applicable | **337** |
+| Members not applicable | **345** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
 

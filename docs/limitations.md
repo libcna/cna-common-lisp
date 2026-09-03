@@ -167,6 +167,14 @@ because the contract is what the framework answers, and it is marked as a defect
 wherever it is reproduced -- in the source, in the unit test and in the
 behaviour corpus.
 
+## TouchCollection's nested enumerator is not projected
+
+`TouchCollection+Enumerator` is a nested value type that exists to implement
+`IEnumerator<TouchLocation>`. Common Lisp has no enumerator protocol for it to
+satisfy, and `touch-collection-locations-vector` answers the sequence a Lisp
+caller iterates, so the nested type is absent from the measured selection rather
+than reported as a missing type -- reporting it would claim it should be there.
+
 ## The two IPackedVector interfaces are not projected
 
 `IPackedVector` and `IPackedVector<TPacked>` are interfaces, and Common Lisp has
@@ -179,15 +187,24 @@ Lisp caller writes that function over the operations instead.
 They are absent from the measured selection rather than reported as missing
 types, because reporting a type as missing would claim it *should* be projected.
 
-## No controller was attached when the gamepad tests ran
+## No controller and no touch device were attached when those tests ran
 
-The `GamePad` family is bound to CNA's own routes and the native tests exercise
-all four of them -- state, state with an explicit dead zone, capabilities and
-vibration -- inside a running game. What they check is that the routes work and
-that a **disconnected** slot answers a well-formed snapshot with every button up,
-rather than failing or returning rubbish. No controller was attached to the
-machine that ran them, so nothing here claims that a pressed button reads as
-pressed, that a thumbstick reads its position, or that vibration was felt.
+The `GamePad` family and the `Input.Touch` namespace are bound to CNA's own
+routes and the native tests exercise every one of them inside a running game.
+What they check is that the routes work and that a device that is not there
+answers a well-formed empty answer -- a disconnected gamepad slot with every
+button up, a touch collection with no touches -- rather than failing or returning
+rubbish. No controller and no touch device were attached to the machine that ran
+them, so nothing here claims that a pressed button reads as pressed, that a
+thumbstick reads its position, that a finger produces a touch location, or that
+vibration was felt.
+
+The touch panel's *settable* properties are a partial exception: the tests write
+`EnabledGestures`, `DisplayWidth` and `DisplayOrientation` and read back what
+they wrote, so those four routes are shown to round-trip through CNA rather than
+merely to return without error.
+
+
 
 Two related things this binding does not do:
 

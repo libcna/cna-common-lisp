@@ -82,28 +82,28 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=69 -->
-<!-- generated:selected members=1565 -->
-<!-- generated:complete types=62 -->
+<!-- generated:selected types=77 -->
+<!-- generated:selected members=1632 -->
+<!-- generated:complete types=70 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1108 -->
+<!-- generated:complete members=1167 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=337 -->
+<!-- generated:not-applicable members=345 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1 and the managed closures**: 69 types, 1565 members.
+Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
 
 | | |
 | --- | --- |
-| Types complete | **62** |
+| Types complete | **70** |
 | Types partial | **6** |
 | Types missing | **1** |
-| Members complete | **1108** |
+| Members complete | **1167** |
 | Members partial | **1** |
 | Members missing | **119** |
-| Members not applicable | **337** |
+| Members not applicable | **345** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -139,6 +139,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.CurveLoopType` | **complete** | 5 | 0 | 0 | 1 |
 | `M.X.F.CurveTangent` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
+| `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **missing** | 0 | 0 | 9 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 2 | 1 | 52 | 2 |
 | `M.X.F.Graphics.Viewport` | **partial** | 10 | 0 | 3 | 1 |
@@ -169,6 +170,13 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Input.KeyboardState` | **complete** | 6 | 0 | 0 | 3 |
 | `M.X.F.Input.KeyState` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Input.Keys` | **complete** | 160 | 0 | 0 | 1 |
+| `M.X.F.Input.Touch.TouchPanel` | **complete** | 8 | 0 | 0 | 1 |
+| `M.X.F.Input.Touch.TouchCollection` | **complete** | 15 | 0 | 0 | 0 |
+| `M.X.F.Input.Touch.TouchLocation` | **complete** | 8 | 0 | 0 | 4 |
+| `M.X.F.Input.Touch.TouchLocationState` | **complete** | 4 | 0 | 0 | 1 |
+| `M.X.F.Input.Touch.TouchPanelCapabilities` | **complete** | 2 | 0 | 0 | 0 |
+| `M.X.F.Input.Touch.GestureSample` | **complete** | 7 | 0 | 0 | 0 |
+| `M.X.F.Input.Touch.GestureType` | **complete** | 11 | 0 | 0 | 1 |
 | `M.X.F.Input.GamePad` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.Input.GamePadState` | **complete** | 11 | 0 | 0 | 4 |
 | `M.X.F.Input.GamePadButtons` | **complete** | 13 | 0 | 0 | 4 |
@@ -185,7 +193,7 @@ collapsed overload family says how each of its overloads is expressed.
 
 ### Not applicable, and why so many
 
-337 members are classified not applicable, and most of them are one thing: the
+345 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value
@@ -231,10 +239,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=78 -->
-<!-- generated:bound native structs=24 -->
-<!-- generated:bound native struct fields=163 -->
-<!-- generated:bound native constants=282 -->
+<!-- generated:bound native functions=90 -->
+<!-- generated:bound native structs=28 -->
+<!-- generated:bound native struct fields=191 -->
+<!-- generated:bound native constants=302 -->
 <!-- generated:bound native callbacks=2 -->
 <!-- generated:by-value aggregates=2 -->
 <!-- generated:shimmed routes=1 -->

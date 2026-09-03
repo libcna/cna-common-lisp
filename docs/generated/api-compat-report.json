@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. The closures added so far are pure managed and touch no native route: the 3D transform types, the bounding volumes, and the Curve family.",
-  "type_count": 69,
-  "member_count": 1565
+  "type_count": 77,
+  "member_count": 1632
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 69,
-  "members": 1565,
+  "types": 77,
+  "members": 1632,
   "types_by_status": {
    "partial": 6,
-   "complete": 62,
+   "complete": 70,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 1108,
+   "complete": 1167,
    "missing": 119,
-   "not-applicable": 337,
+   "not-applicable": 345,
    "partial": 1
   },
   "diagnostics": 120,
@@ -1156,6 +1156,18 @@
    "lisp": "microsoft.xna.framework:player-index"
   },
   {
+   "name": "Microsoft.Xna.Framework.DisplayOrientation",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Default": "complete",
+    "LandscapeLeft": "complete",
+    "LandscapeRight": "complete",
+    "Portrait": "complete"
+   },
+   "lisp": "microsoft.xna.framework:display-orientation"
+  },
+  {
    "name": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
    "status": "missing",
    "reason": "GraphicsResource's disposal contract, its Name, Tag and Disposing event need the event projection and the GraphicsDevice back-reference, neither of which is in Foundation 1. Texture2D and SpriteBatch carry CNA-Lisp's own disposal instead.",
@@ -1857,6 +1869,117 @@
     "ChatPadOrange": "complete"
    },
    "lisp": "microsoft.xna.framework.input:keys"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
+   "status": "complete",
+   "members": {
+    "GetCapabilities()": "complete",
+    "ReadGesture()": "complete",
+    "GetState()": "complete",
+    "EnabledGestures": "complete",
+    "IsGestureAvailable": "complete",
+    "WindowHandle": "not-applicable",
+    "DisplayOrientation": "complete",
+    "DisplayWidth": "complete",
+    "DisplayHeight": "complete"
+   },
+   "projection": "static class: microsoft.xna.framework.input.touch:touch-panel-<member>"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
+   "status": "complete",
+   "members": {
+    "new(TouchLocation[])": "complete",
+    "FindById(Int32,TouchLocation&)": "complete",
+    "IndexOf(TouchLocation)": "complete",
+    "Insert(Int32,TouchLocation)": "complete",
+    "RemoveAt(Int32)": "complete",
+    "Add(TouchLocation)": "complete",
+    "Clear()": "complete",
+    "Contains(TouchLocation)": "complete",
+    "CopyTo(TouchLocation[],Int32)": "complete",
+    "Remove(TouchLocation)": "complete",
+    "GetEnumerator()": "complete",
+    "IsConnected": "complete",
+    "Item": "complete",
+    "Count": "complete",
+    "IsReadOnly": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input.touch:touch-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+   "status": "complete",
+   "members": {
+    "new(Int32,TouchLocationState,Vector2)": "complete",
+    "new(Int32,TouchLocationState,Vector2,TouchLocationState,Vector2)": "complete",
+    "TryGetPreviousLocation(TouchLocation&)": "complete",
+    "ToString()": "not-applicable",
+    "Equals(TouchLocation)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "op_Equality(TouchLocation,TouchLocation)": "complete",
+    "op_Inequality(TouchLocation,TouchLocation)": "not-applicable",
+    "State": "complete",
+    "Id": "complete",
+    "Position": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input.touch:touch-location"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Invalid": "complete",
+    "Released": "complete",
+    "Pressed": "complete",
+    "Moved": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input.touch:touch-location-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities",
+   "status": "complete",
+   "members": {
+    "IsConnected": "complete",
+    "MaximumTouchCount": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input.touch:touch-panel-capabilities"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.GestureSample",
+   "status": "complete",
+   "members": {
+    "new(GestureType,TimeSpan,Vector2,Vector2,Vector2,Vector2)": "complete",
+    "GestureType": "complete",
+    "Timestamp": "complete",
+    "Position": "complete",
+    "Position2": "complete",
+    "Delta": "complete",
+    "Delta2": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input.touch:gesture-sample"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "None": "complete",
+    "Tap": "complete",
+    "DoubleTap": "complete",
+    "Hold": "complete",
+    "HorizontalDrag": "complete",
+    "VerticalDrag": "complete",
+    "FreeDrag": "complete",
+    "Pinch": "complete",
+    "Flick": "complete",
+    "DragComplete": "complete",
+    "PinchComplete": "complete"
+   },
+   "lisp": "microsoft.xna.framework.input.touch:gesture-type"
   },
   {
    "name": "Microsoft.Xna.Framework.Input.GamePad",

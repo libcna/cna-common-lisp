@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. The closures added so far are pure managed and touch no native route: the 3D transform types, the bounding volumes, and the Curve family.",
-  "type_count": 69,
-  "member_count": 1565
+  "type_count": 77,
+  "member_count": 1632
  },
  "types": [
   {
@@ -19751,6 +19751,63 @@
    ]
   },
   {
+   "name": "Microsoft.Xna.Framework.DisplayOrientation",
+   "kind": "enum",
+   "flags": true,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Default",
+     "type": "Microsoft.Xna.Framework.DisplayOrientation",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "LandscapeLeft",
+     "type": "Microsoft.Xna.Framework.DisplayOrientation",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "LandscapeRight",
+     "type": "Microsoft.Xna.Framework.DisplayOrientation",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "Portrait",
+     "type": "Microsoft.Xna.Framework.DisplayOrientation",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    }
+   ]
+  },
+  {
    "name": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
    "kind": "class",
    "flags": false,
@@ -28389,6 +28446,989 @@
      "static": true,
      "constant": true,
      "value": "203"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "GetCapabilities",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "ReadGesture",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Input.Touch.GestureSample",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "GetState",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "EnabledGestures",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "IsGestureAvailable",
+     "type": "System.Boolean",
+     "static": true,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "WindowHandle",
+     "type": "System.IntPtr",
+     "static": true,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DisplayOrientation",
+     "type": "Microsoft.Xna.Framework.DisplayOrientation",
+     "static": true,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DisplayWidth",
+     "type": "System.Int32",
+     "static": true,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DisplayHeight",
+     "type": "System.Int32",
+     "static": true,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
+   "kind": "struct",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.ValueType",
+   "interfaces": [
+    "System.Collections.Generic.ICollection`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]",
+    "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]",
+    "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]",
+    "System.Collections.IEnumerable"
+   ],
+   "directInterfaces": [
+    "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "touches",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "FindById",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "id",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "touchLocation",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "IndexOf",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "item",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Insert",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "index",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "item",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "RemoveAt",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "index",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Add",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "item",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Clear",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Contains",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "item",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CopyTo",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "array",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "arrayIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Remove",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "item",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetEnumerator",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "IsConnected",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Item",
+     "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": [
+      {
+       "name": "index",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Count",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "IsReadOnly",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+   "kind": "struct",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.ValueType",
+   "interfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+   ],
+   "directInterfaces": [
+    "System.IEquatable`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "id",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "state",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "position",
+       "type": "Microsoft.Xna.Framework.Vector2",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "id",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "state",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "position",
+       "type": "Microsoft.Xna.Framework.Vector2",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "previousState",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "previousPosition",
+       "type": "Microsoft.Xna.Framework.Vector2",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "TryGetPreviousLocation",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "previousLocation",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation&",
+       "ref": true,
+       "out": true,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "ToString",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "other",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "obj",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetHashCode",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "op_Equality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value1",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "value2",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Inequality",
+     "static": true,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "value1",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "value2",
+       "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "State",
+     "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Id",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Position",
+     "type": "Microsoft.Xna.Framework.Vector2",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Invalid",
+     "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Released",
+     "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Pressed",
+     "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "Moved",
+     "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+     "static": true,
+     "constant": true,
+     "value": "3"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities",
+   "kind": "struct",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.ValueType",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "property",
+     "name": "IsConnected",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "MaximumTouchCount",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.GestureSample",
+   "kind": "struct",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.ValueType",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "gestureType",
+       "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "timestamp",
+       "type": "System.TimeSpan",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "position",
+       "type": "Microsoft.Xna.Framework.Vector2",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "position2",
+       "type": "Microsoft.Xna.Framework.Vector2",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "delta",
+       "type": "Microsoft.Xna.Framework.Vector2",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "delta2",
+       "type": "Microsoft.Xna.Framework.Vector2",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "GestureType",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Timestamp",
+     "type": "System.TimeSpan",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Position",
+     "type": "Microsoft.Xna.Framework.Vector2",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Position2",
+     "type": "Microsoft.Xna.Framework.Vector2",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Delta",
+     "type": "Microsoft.Xna.Framework.Vector2",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Delta2",
+     "type": "Microsoft.Xna.Framework.Vector2",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+   "kind": "enum",
+   "flags": true,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "None",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Tap",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "DoubleTap",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "Hold",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    },
+    {
+     "kind": "field",
+     "name": "HorizontalDrag",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "8"
+    },
+    {
+     "kind": "field",
+     "name": "VerticalDrag",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "16"
+    },
+    {
+     "kind": "field",
+     "name": "FreeDrag",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "32"
+    },
+    {
+     "kind": "field",
+     "name": "Pinch",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "64"
+    },
+    {
+     "kind": "field",
+     "name": "Flick",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "128"
+    },
+    {
+     "kind": "field",
+     "name": "DragComplete",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "256"
+    },
+    {
+     "kind": "field",
+     "name": "PinchComplete",
+     "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+     "static": true,
+     "constant": true,
+     "value": "512"
     }
    ]
   },

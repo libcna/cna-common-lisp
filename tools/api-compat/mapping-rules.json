@@ -13,7 +13,8 @@
   "Microsoft.Xna.Framework": "microsoft.xna.framework",
   "Microsoft.Xna.Framework.Graphics": "microsoft.xna.framework.graphics",
   "Microsoft.Xna.Framework.Input": "microsoft.xna.framework.input",
-  "Microsoft.Xna.Framework.Graphics.PackedVector": "microsoft.xna.framework.graphics.packed-vector"
+  "Microsoft.Xna.Framework.Graphics.PackedVector": "microsoft.xna.framework.graphics.packed-vector",
+  "Microsoft.Xna.Framework.Input.Touch": "microsoft.xna.framework.input.touch"
  },
  "universal_not_applicable": [
   {
@@ -3368,6 +3369,197 @@
     "SetVibration(PlayerIndex,Single,Single)": {
      "lisp": "game-pad-set-vibration"
     }
+   }
+  },
+  "Microsoft.Xna.Framework.DisplayOrientation": {
+   "lisp_package": "microsoft.xna.framework",
+   "lisp_name": "display-orientation",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Input.Touch.TouchLocationState": {
+   "lisp_package": "microsoft.xna.framework.input.touch",
+   "lisp_name": "touch-location-state",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Input.Touch.GestureType": {
+   "lisp_package": "microsoft.xna.framework.input.touch",
+   "lisp_name": "gesture-type",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Input.Touch.TouchLocation": {
+   "lisp_package": "microsoft.xna.framework.input.touch",
+   "lisp_name": "touch-location",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Int32,TouchLocationState,Vector2)": "make-touch-location",
+    "new(Int32,TouchLocationState,Vector2,TouchLocationState,Vector2)": "make-touch-location"
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-touch-location",
+     "reason": "The two constructors differ only by a trailing previous state and position, so they are trailing optional arguments rather than two functions."
+    }
+   },
+   "member_overrides": {
+    "TryGetPreviousLocation(TouchLocation&)": {
+     "lisp": "touch-location-try-get-previous-location",
+     "reason": "A Boolean and an out parameter, so two values with the Boolean first. A caller who takes only the second gets an invalid location rather than being told there is none."
+    },
+    "Equals(TouchLocation)": {
+     "lisp": "touch-location-equal"
+    },
+    "op_Equality(TouchLocation,TouchLocation)": {
+     "lisp": "touch-location-equal"
+    },
+    "Id": {
+     "lisp": "touch-location-id"
+    },
+    "State": {
+     "lisp": "touch-location-state"
+    },
+    "Position": {
+     "lisp": "touch-location-position"
+    }
+   },
+   "not_applicable": {
+    "Equals(Object)": "There is no universal Object to compare against."
+   }
+  },
+  "Microsoft.Xna.Framework.Input.Touch.TouchCollection": {
+   "lisp_package": "microsoft.xna.framework.input.touch",
+   "lisp_name": "touch-collection",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(TouchLocation[])": "make-touch-collection"
+   },
+   "member_overrides": {
+    "FindById(Int32,TouchLocation&)": {
+     "lisp": "touch-collection-find-by-id",
+     "reason": "A Boolean and an out parameter, so two values with the Boolean first."
+    },
+    "IndexOf(TouchLocation)": {
+     "lisp": "touch-collection-index-of"
+    },
+    "Insert(Int32,TouchLocation)": {
+     "lisp": "touch-collection-insert"
+    },
+    "RemoveAt(Int32)": {
+     "lisp": "touch-collection-remove-at"
+    },
+    "Add(TouchLocation)": {
+     "lisp": "touch-collection-add"
+    },
+    "Clear()": {
+     "lisp": "touch-collection-clear"
+    },
+    "Contains(TouchLocation)": {
+     "lisp": "touch-collection-contains"
+    },
+    "CopyTo(TouchLocation[],Int32)": {
+     "lisp": "touch-collection-copy-to"
+    },
+    "Remove(TouchLocation)": {
+     "lisp": "touch-collection-remove"
+    },
+    "GetEnumerator()": {
+     "lisp": "touch-collection-locations-vector",
+     "reason": "Common Lisp has no enumerator object; this answers a fresh vector of the locations, as CurveKeyCollection does."
+    },
+    "IsConnected": {
+     "lisp": "touch-collection-is-connected"
+    },
+    "Item": {
+     "lisp": "touch-collection-item",
+     "setf": true
+    },
+    "Count": {
+     "lisp": "touch-collection-count"
+    },
+    "IsReadOnly": {
+     "lisp": "touch-collection-is-read-only"
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities": {
+   "lisp_package": "microsoft.xna.framework.input.touch",
+   "lisp_name": "touch-panel-capabilities",
+   "lisp_kind": "structure",
+   "constructors": {},
+   "member_overrides": {
+    "IsConnected": {
+     "lisp": "touch-panel-capabilities-is-connected",
+     "reason": "XNA gives this type no public constructor: TOUCH-PANEL-GET-CAPABILITIES is the only way to obtain one, and this projection keeps it that way."
+    },
+    "MaximumTouchCount": {
+     "lisp": "touch-panel-capabilities-maximum-touch-count"
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Input.Touch.GestureSample": {
+   "lisp_package": "microsoft.xna.framework.input.touch",
+   "lisp_name": "gesture-sample",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(GestureType,TimeSpan,Vector2,Vector2,Vector2,Vector2)": "make-gesture-sample"
+   },
+   "member_overrides": {
+    "GestureType": {
+     "lisp": "gesture-sample-gesture-type"
+    },
+    "Timestamp": {
+     "lisp": "gesture-sample-timestamp",
+     "reason": "A TimeSpan, carried as an integer count of 100-nanosecond ticks, as GameTime carries its own."
+    },
+    "Position": {
+     "lisp": "gesture-sample-position"
+    },
+    "Position2": {
+     "lisp": "gesture-sample-position-2"
+    },
+    "Delta": {
+     "lisp": "gesture-sample-delta"
+    },
+    "Delta2": {
+     "lisp": "gesture-sample-delta-2"
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Input.Touch.TouchPanel": {
+   "lisp_package": "microsoft.xna.framework.input.touch",
+   "lisp_name": "touch-panel",
+   "lisp_kind": "static",
+   "member_overrides": {
+    "GetCapabilities()": {
+     "lisp": "touch-panel-get-capabilities"
+    },
+    "ReadGesture()": {
+     "lisp": "touch-panel-read-gesture"
+    },
+    "GetState()": {
+     "lisp": "touch-panel-get-state"
+    },
+    "EnabledGestures": {
+     "lisp": "touch-panel-enabled-gestures",
+     "setf": true
+    },
+    "IsGestureAvailable": {
+     "lisp": "touch-panel-is-gesture-available"
+    },
+    "DisplayOrientation": {
+     "lisp": "touch-panel-display-orientation",
+     "setf": true
+    },
+    "DisplayWidth": {
+     "lisp": "touch-panel-display-width",
+     "setf": true
+    },
+    "DisplayHeight": {
+     "lisp": "touch-panel-display-height",
+     "setf": true
+    }
+   },
+   "not_applicable": {
+    "WindowHandle": "An IntPtr naming a native platform window, exactly as Mouse.WindowHandle is, and not applicable for the same reason: a raw platform pointer is not something this projection puts in the public API, and CNA owns the game's window."
    }
   }
  }

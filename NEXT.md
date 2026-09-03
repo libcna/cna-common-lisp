@@ -56,29 +56,29 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=69 -->
-<!-- generated:selected members=1565 -->
-<!-- generated:complete types=62 -->
+<!-- generated:selected types=77 -->
+<!-- generated:selected members=1632 -->
+<!-- generated:complete types=70 -->
 <!-- generated:partial types=6 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=1108 -->
+<!-- generated:complete members=1167 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=119 -->
-<!-- generated:not-applicable members=337 -->
+<!-- generated:not-applicable members=345 -->
 <!-- generated:disagreement total=0 -->
 
-69 selected types, 1565 members: **62 complete, 6 partial, 1 missing**;
-**1108 members complete, 119 missing**, 337 not applicable, 1 partial.
+77 selected types, 1632 members: **70 complete, 6 partial, 1 missing**;
+**1167 members complete, 119 missing**, 345 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 **Every pure-managed type in the selection is complete.** The math types
 -- `Vector2`, `Vector3`, `Vector4`, `Quaternion`, `Matrix`, `Plane`, `Ray`,
 `BoundingBox`, `BoundingSphere`, `BoundingFrustum`, `MathHelper`, `Color`,
 `Point`, `Rectangle` -- the `Curve` family, the seventeen packed vector types and all six
-enumerations answer every member of the selected contract, and so does the whole
-input surface except the touch panel -- the keyboard, the mouse and the `GamePad`
-family. Everything still missing is native-facing: graphics, the touch panel,
-content, and the event projection.
+enumerations answer every member of the selected contract, and **so does the
+whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
+`GamePad` family and the touch panel. Everything still missing is graphics,
+content, or the event projection.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -104,22 +104,18 @@ listed after.
 
 1. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-2. **`Input.Touch`**, the last of the input namespace: `TouchPanel`,
-   `TouchCollection`, `TouchLocation`, `GestureSample` and the three touch
-   enumerations, over `cna_touch_get_state`. `TouchCollection` is a collection
-   type, so it will want the same treatment `CurveKeyCollection` got.
-3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+2. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`, and the
    **event projection** the four `Game` events and six `GraphicsDevice` events
    need. That one decision unblocks `GraphicsResource` and 21 of
    `GraphicsDeviceManager`'s 30 members.
-4. **`System.IO.Stream` and `TitleContainer`**, which unblock
+3. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-5. **Graphics state objects** (`BlendState`, `DepthStencilState`,
+4. **Graphics state objects** (`BlendState`, `DepthStencilState`,
    `RasterizerState`, `SamplerState`), which unblock `SpriteBatch.Begin`'s four
    state-bearing overloads.
-6. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-7. **Audio, effects, models, media, storage, gamer services, networking.**
+5. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
+6. **Audio, effects, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 

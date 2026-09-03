@@ -21,10 +21,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 78,
-    "structs": 24,
-    "struct_fields": 163,
-    "constants": 282,
+    "functions": 90,
+    "structs": 28,
+    "struct_fields": 191,
+    "constants": 302,
     "callbacks": 2,
     "by_value_aggregates": 2,
     "shimmed_routes": 1
@@ -1876,6 +1876,270 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_gamepad_set_vibration(CNA_Handle game, CNA_PlayerIndex player_index, float left_motor, float right_motor, CNA_Bool* out_applied)"
+    },
+    {
+      "name": "cna_touch_get_state",
+      "header": "input.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_TouchState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_get_state(CNA_Handle game, CNA_TouchState* out_state)"
+    },
+    {
+      "name": "cna_touch_get_capabilities",
+      "header": "input.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_capabilities",
+          "c_type": "CNA_TouchCapabilities*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_get_capabilities(CNA_Handle game, CNA_TouchCapabilities* out_capabilities)"
+    },
+    {
+      "name": "cna_touch_panel_get_enabled_gestures",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_gestures",
+          "c_type": "CNA_GestureType*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_get_enabled_gestures(CNA_Handle game, CNA_GestureType* out_gestures)"
+    },
+    {
+      "name": "cna_touch_panel_set_enabled_gestures",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "gestures",
+          "c_type": "CNA_GestureType",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_set_enabled_gestures(CNA_Handle game, CNA_GestureType gestures)"
+    },
+    {
+      "name": "cna_touch_panel_get_is_gesture_available",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_available",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_get_is_gesture_available(CNA_Handle game, CNA_Bool* out_available)"
+    },
+    {
+      "name": "cna_touch_panel_read_gesture",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_sample",
+          "c_type": "CNA_GestureSample*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_read_gesture(CNA_Handle game, CNA_GestureSample* out_sample)"
+    },
+    {
+      "name": "cna_touch_panel_get_display_width",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_width",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_get_display_width(CNA_Handle game, int32_t* out_width)"
+    },
+    {
+      "name": "cna_touch_panel_set_display_width",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "width",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_set_display_width(CNA_Handle game, int32_t width)"
+    },
+    {
+      "name": "cna_touch_panel_get_display_height",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_height",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_get_display_height(CNA_Handle game, int32_t* out_height)"
+    },
+    {
+      "name": "cna_touch_panel_set_display_height",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "height",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_set_display_height(CNA_Handle game, int32_t height)"
+    },
+    {
+      "name": "cna_touch_panel_get_display_orientation",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_orientation",
+          "c_type": "CNA_DisplayOrientation*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_get_display_orientation(CNA_Handle game, CNA_DisplayOrientation* out_orientation)"
+    },
+    {
+      "name": "cna_touch_panel_set_display_orientation",
+      "header": "input_touch.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "orientation",
+          "c_type": "CNA_DisplayOrientation",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_touch_panel_set_display_orientation(CNA_Handle game, CNA_DisplayOrientation orientation)"
     }
   ],
   "structs": [
@@ -3428,6 +3692,305 @@
       "versioned": true
     },
     {
+      "name": "CNA_TouchLocation",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "id",
+          "c_type": "int32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "state",
+          "c_type": "CNA_TouchLocationState",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "position",
+          "c_type": "CNA_Vector2",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "previous_state",
+          "c_type": "CNA_TouchLocationState",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "previous_position",
+          "c_type": "CNA_Vector2",
+          "offset": 20,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "pressure",
+          "c_type": "float",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "input.h",
+      "direction": "out",
+      "versioned": false
+    },
+    {
+      "name": "CNA_TouchState",
+      "size": 272,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_connected",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 9,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "touch_count",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "touches",
+          "c_type": "CNA_TouchLocation",
+          "offset": 16,
+          "size": 256,
+          "count": 8,
+          "cffi_type": "AGGREGATE:CNA_TouchLocation",
+          "kind": "aggregate"
+        }
+      ],
+      "header": "input.h",
+      "direction": "inout",
+      "versioned": true,
+      "fields_absent_from_baseline": {
+        "touches": {
+          "offset": 16,
+          "size": 256,
+          "reason": "CNA's own tools/c-api/abi_baseline.json records CNA_TouchState's scalar fields and its total size of 272 bytes, but not the eight-element array of CNA_TouchLocation that accounts for the remaining 256. The offset and size here are asserted against the real compiler in the generated probe, which is the stronger of the two checks; nothing is taken on trust."
+        }
+      }
+    },
+    {
+      "name": "CNA_TouchCapabilities",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_connected",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 9,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "maximum_touch_count",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "input.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GestureSample",
+      "size": 64,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "gesture_type",
+          "c_type": "CNA_GestureType",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "finger_id_ext",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "finger_id2_ext",
+          "c_type": "int32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "timestamp_ticks",
+          "c_type": "int64_t",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":int64",
+          "kind": "scalar"
+        },
+        {
+          "name": "position",
+          "c_type": "CNA_Vector2",
+          "offset": 32,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "position2",
+          "c_type": "CNA_Vector2",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "delta",
+          "c_type": "CNA_Vector2",
+          "offset": 48,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        },
+        {
+          "name": "delta2",
+          "c_type": "CNA_Vector2",
+          "offset": 56,
+          "size": 8,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector2",
+          "kind": "aggregate"
+        }
+      ],
+      "header": "input_touch.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
       "name": "CNA_RendererInfo",
       "size": 32,
       "align": 8,
@@ -3667,6 +4230,10 @@
     "CNA_ABI_VERSION_MAJOR": 0,
     "CNA_ABI_VERSION_MINOR": 21,
     "CNA_ABI_VERSION_PATCH": 0,
+    "CNA_DISPLAY_ORIENTATION_DEFAULT": 0,
+    "CNA_DISPLAY_ORIENTATION_LANDSCAPE_LEFT": 1,
+    "CNA_DISPLAY_ORIENTATION_LANDSCAPE_RIGHT": 2,
+    "CNA_DISPLAY_ORIENTATION_PORTRAIT": 4,
     "CNA_ERROR_CATEGORY_ARGUMENT": 1,
     "CNA_ERROR_CATEGORY_CALLBACK": 9,
     "CNA_ERROR_CATEGORY_ENCODING": 11,
@@ -3721,6 +4288,17 @@
     "CNA_GAMEPAD_TYPE_GUITAR": 6,
     "CNA_GAMEPAD_TYPE_UNKNOWN": 0,
     "CNA_GAMEPAD_TYPE_WHEEL": 2,
+    "CNA_GESTURE_TYPE_DOUBLE_TAP": 2,
+    "CNA_GESTURE_TYPE_DRAG_COMPLETE": 256,
+    "CNA_GESTURE_TYPE_FLICK": 128,
+    "CNA_GESTURE_TYPE_FREE_DRAG": 32,
+    "CNA_GESTURE_TYPE_HOLD": 4,
+    "CNA_GESTURE_TYPE_HORIZONTAL_DRAG": 8,
+    "CNA_GESTURE_TYPE_NONE": 0,
+    "CNA_GESTURE_TYPE_PINCH": 64,
+    "CNA_GESTURE_TYPE_PINCH_COMPLETE": 512,
+    "CNA_GESTURE_TYPE_TAP": 1,
+    "CNA_GESTURE_TYPE_VERTICAL_DRAG": 16,
     "CNA_INVALID_HANDLE": 0,
     "CNA_KEY_A": 65,
     "CNA_KEY_ADD": 107,
@@ -3944,6 +4522,11 @@
     "CNA_SURFACE_FORMAT_USHORT_EXT": 26,
     "CNA_SURFACE_FORMAT_VECTOR2": 14,
     "CNA_SURFACE_FORMAT_VECTOR4": 15,
+    "CNA_TOUCH_LOCATION_INVALID": 0,
+    "CNA_TOUCH_LOCATION_MOVED": 3,
+    "CNA_TOUCH_LOCATION_PRESSED": 2,
+    "CNA_TOUCH_LOCATION_RELEASED": 1,
+    "CNA_TOUCH_MAX_TOUCHES": 8,
     "CNA_TRUE": 1
   }
 }

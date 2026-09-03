@@ -130,6 +130,8 @@
    #:all-curve-loop-type
    #:curve-tangent #:curve-tangent-value #:curve-tangent-from-value
    #:all-curve-tangent
+   #:display-orientation #:display-orientation-value
+   #:display-orientation-from-value #:all-display-orientation
    #:containment-type #:containment-type-value #:containment-type-from-value
    #:all-containment-type
    #:plane-intersection-type #:plane-intersection-type-value
@@ -299,6 +301,42 @@ namespace: seventeen packed value types and nothing else.")
    #:short4 #:make-short4 #:short4-p #:copy-short4
    #:short4-packed-value #:short4-to-vector4 #:short4-equal
    #:make-short4-from-vector))
+
+(defpackage #:microsoft.xna.framework.input.touch
+  (:documentation
+   "Common Lisp projection of the Microsoft.Xna.Framework.Input.Touch namespace.")
+  (:use #:cl)
+  (:local-nicknames (#:xna #:microsoft.xna.framework))
+  (:export
+   ;; --- enumerations ------------------------------------------------------
+   #:touch-location-state #:touch-location-state-value
+   #:touch-location-state-from-value #:all-touch-location-state
+   #:gesture-type #:gesture-type-value #:gesture-type-from-value #:all-gesture-type
+   ;; --- TouchLocation -----------------------------------------------------
+   #:touch-location #:make-touch-location #:touch-location-p #:copy-touch-location
+   #:touch-location-id #:touch-location-state #:touch-location-position
+   #:touch-location-try-get-previous-location #:touch-location-equal
+   ;; --- TouchCollection ---------------------------------------------------
+   #:touch-collection #:make-touch-collection #:touch-collection-p
+   #:copy-touch-collection #:touch-collection-count #:touch-collection-is-connected
+   #:touch-collection-is-read-only #:touch-collection-item
+   #:touch-collection-index-of #:touch-collection-contains #:touch-collection-add
+   #:touch-collection-insert #:touch-collection-remove-at #:touch-collection-remove
+   #:touch-collection-clear #:touch-collection-copy-to
+   #:touch-collection-locations-vector #:touch-collection-find-by-id
+   ;; --- TouchPanelCapabilities and GestureSample --------------------------
+   #:touch-panel-capabilities #:touch-panel-capabilities-p
+   #:copy-touch-panel-capabilities #:touch-panel-capabilities-is-connected
+   #:touch-panel-capabilities-maximum-touch-count
+   #:gesture-sample #:make-gesture-sample #:gesture-sample-p #:copy-gesture-sample
+   #:gesture-sample-gesture-type #:gesture-sample-timestamp
+   #:gesture-sample-position #:gesture-sample-position-2
+   #:gesture-sample-delta #:gesture-sample-delta-2
+   ;; --- TouchPanel --------------------------------------------------------
+   #:touch-panel-get-state #:touch-panel-get-capabilities
+   #:touch-panel-read-gesture #:touch-panel-is-gesture-available
+   #:touch-panel-enabled-gestures #:touch-panel-display-width
+   #:touch-panel-display-height #:touch-panel-display-orientation))
 
 (defpackage #:microsoft.xna.framework.input
   (:documentation "Common Lisp projection of the Microsoft.Xna.Framework.Input namespace.")

@@ -326,6 +326,54 @@
 (defcfun ("cna_gamepad_set_vibration" %gamepad-set-vibration) :uint32
   (game :uint64) (player-index :uint32) (left-motor :float) (right-motor :float) (out-applied :pointer))
 
+;;; CNA_Result cna_touch_get_state(CNA_Handle game, CNA_TouchState* out_state)
+(defcfun ("cna_touch_get_state" %touch-get-state) :uint32
+  (game :uint64) (out-state :pointer))
+
+;;; CNA_Result cna_touch_get_capabilities(CNA_Handle game, CNA_TouchCapabilities* out_capabilities)
+(defcfun ("cna_touch_get_capabilities" %touch-get-capabilities) :uint32
+  (game :uint64) (out-capabilities :pointer))
+
+;;; CNA_Result cna_touch_panel_get_enabled_gestures(CNA_Handle game, CNA_GestureType* out_gestures)
+(defcfun ("cna_touch_panel_get_enabled_gestures" %touch-panel-get-enabled-gestures) :uint32
+  (game :uint64) (out-gestures :pointer))
+
+;;; CNA_Result cna_touch_panel_set_enabled_gestures(CNA_Handle game, CNA_GestureType gestures)
+(defcfun ("cna_touch_panel_set_enabled_gestures" %touch-panel-set-enabled-gestures) :uint32
+  (game :uint64) (gestures :uint32))
+
+;;; CNA_Result cna_touch_panel_get_is_gesture_available(CNA_Handle game, CNA_Bool* out_available)
+(defcfun ("cna_touch_panel_get_is_gesture_available" %touch-panel-get-is-gesture-available) :uint32
+  (game :uint64) (out-available :pointer))
+
+;;; CNA_Result cna_touch_panel_read_gesture(CNA_Handle game, CNA_GestureSample* out_sample)
+(defcfun ("cna_touch_panel_read_gesture" %touch-panel-read-gesture) :uint32
+  (game :uint64) (out-sample :pointer))
+
+;;; CNA_Result cna_touch_panel_get_display_width(CNA_Handle game, int32_t* out_width)
+(defcfun ("cna_touch_panel_get_display_width" %touch-panel-get-display-width) :uint32
+  (game :uint64) (out-width :pointer))
+
+;;; CNA_Result cna_touch_panel_set_display_width(CNA_Handle game, int32_t width)
+(defcfun ("cna_touch_panel_set_display_width" %touch-panel-set-display-width) :uint32
+  (game :uint64) (width :int32))
+
+;;; CNA_Result cna_touch_panel_get_display_height(CNA_Handle game, int32_t* out_height)
+(defcfun ("cna_touch_panel_get_display_height" %touch-panel-get-display-height) :uint32
+  (game :uint64) (out-height :pointer))
+
+;;; CNA_Result cna_touch_panel_set_display_height(CNA_Handle game, int32_t height)
+(defcfun ("cna_touch_panel_set_display_height" %touch-panel-set-display-height) :uint32
+  (game :uint64) (height :int32))
+
+;;; CNA_Result cna_touch_panel_get_display_orientation(CNA_Handle game, CNA_DisplayOrientation* out_orientation)
+(defcfun ("cna_touch_panel_get_display_orientation" %touch-panel-get-display-orientation) :uint32
+  (game :uint64) (out-orientation :pointer))
+
+;;; CNA_Result cna_touch_panel_set_display_orientation(CNA_Handle game, CNA_DisplayOrientation orientation)
+(defcfun ("cna_touch_panel_set_display_orientation" %touch-panel-set-display-orientation) :uint32
+  (game :uint64) (orientation :uint32))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -404,6 +452,18 @@
     ("cna_gamepad_get_state" %gamepad-get-state :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
     ("cna_gamepad_get_state_with_dead_zone" %gamepad-get-state-with-dead-zone :uint32 (:uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
     ("cna_gamepad_get_capabilities" %gamepad-get-capabilities :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
-    ("cna_gamepad_set_vibration" %gamepad-set-vibration :uint32 (:uint64 :uint32 :float :float :pointer) :thread :owner :ownership "none"))
+    ("cna_gamepad_set_vibration" %gamepad-set-vibration :uint32 (:uint64 :uint32 :float :float :pointer) :thread :owner :ownership "none")
+    ("cna_touch_get_state" %touch-get-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_touch_get_capabilities" %touch-get-capabilities :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_touch_panel_get_enabled_gestures" %touch-panel-get-enabled-gestures :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_touch_panel_set_enabled_gestures" %touch-panel-set-enabled-gestures :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_touch_panel_get_is_gesture_available" %touch-panel-get-is-gesture-available :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_touch_panel_read_gesture" %touch-panel-read-gesture :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_touch_panel_get_display_width" %touch-panel-get-display-width :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_touch_panel_set_display_width" %touch-panel-set-display-width :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_touch_panel_get_display_height" %touch-panel-get-display-height :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_touch_panel_set_display_height" %touch-panel-set-display-height :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_touch_panel_get_display_orientation" %touch-panel-get-display-orientation :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_touch_panel_set_display_orientation" %touch-panel-set-display-orientation :uint32 (:uint64 :uint32) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

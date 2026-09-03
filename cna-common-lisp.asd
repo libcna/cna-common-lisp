@@ -65,6 +65,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "input/keyboard")
    (:file "input/mouse")
    (:file "input/game-pad")
+   (:file "input/touch")
    ;; --- Game and the graphics device manager ------------------------------
    (:file "runtime/game")
    (:file "runtime/graphics-device-manager")
@@ -91,6 +92,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "unit/packed-vector")
    (:file "unit/mouse-state")
    (:file "unit/game-pad")
+   (:file "unit/touch")
    (:file "unit/game-time")
    (:file "unit/keys")
    (:file "unit/conditions")
@@ -105,6 +107,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/keyboard")
    (:file "native/mouse")
    (:file "native/game-pad")
+   (:file "native/touch")
    (:file "native/ownership")
    (:file "native/stress")
    (:file "runner"))

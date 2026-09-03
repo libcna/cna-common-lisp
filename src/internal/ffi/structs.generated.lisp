@@ -290,6 +290,58 @@
 (defconstant +sizeof-cna-game-pad-capabilities+ 48)
 (defconstant +alignof-cna-game-pad-capabilities+ 4)
 
+;;; CNA_TouchLocation -- 32 bytes, 4-byte aligned, from input.h.
+(defcstruct (cna-touch-location :size 32)
+  (id :int32 :offset 0)
+  (state :uint32 :offset 4)
+  (position (:struct cna-vector-2) :offset 8)
+  (previous-state :uint32 :offset 16)
+  (previous-position (:struct cna-vector-2) :offset 20)
+  (pressure :float :offset 28))
+
+(defconstant +sizeof-cna-touch-location+ 32)
+(defconstant +alignof-cna-touch-location+ 4)
+
+;;; CNA_TouchState -- 272 bytes, 4-byte aligned, from input.h.
+(defcstruct (cna-touch-state :size 272)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (is-connected :uint8 :offset 8)
+  (reserved :uint8 :offset 9 :count 3)
+  (touch-count :uint32 :offset 12)
+  (touches (:struct cna-touch-location) :offset 16 :count 8))
+
+(defconstant +sizeof-cna-touch-state+ 272)
+(defconstant +alignof-cna-touch-state+ 4)
+
+;;; CNA_TouchCapabilities -- 16 bytes, 4-byte aligned, from input.h.
+(defcstruct (cna-touch-capabilities :size 16)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (is-connected :uint8 :offset 8)
+  (reserved :uint8 :offset 9 :count 3)
+  (maximum-touch-count :uint32 :offset 12))
+
+(defconstant +sizeof-cna-touch-capabilities+ 16)
+(defconstant +alignof-cna-touch-capabilities+ 4)
+
+;;; CNA_GestureSample -- 64 bytes, 8-byte aligned, from input_touch.h.
+(defcstruct (cna-gesture-sample :size 64)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (gesture-type :uint32 :offset 8)
+  (finger-id-ext :int32 :offset 12)
+  (finger-id-2-ext :int32 :offset 16)
+  (reserved :uint32 :offset 20)
+  (timestamp-ticks :int64 :offset 24)
+  (position (:struct cna-vector-2) :offset 32)
+  (position-2 (:struct cna-vector-2) :offset 40)
+  (delta (:struct cna-vector-2) :offset 48)
+  (delta-2 (:struct cna-vector-2) :offset 56))
+
+(defconstant +sizeof-cna-gesture-sample+ 64)
+(defconstant +alignof-cna-gesture-sample+ 8)
+
 ;;; CNA_RendererInfo -- 32 bytes, 8-byte aligned, from graphics.h.
 (defcstruct (cna-renderer-info :size 32)
   (struct-size :uint32 :offset 0)
@@ -344,6 +396,10 @@
     (cna-game-pad-analog-state 24 4 ((left-thumb-stick 0 8) (right-thumb-stick 8 8) (left-trigger 16 4) (right-trigger 20 4)))
     (cna-game-pad-state 48 4 ((struct-size 0 4) (struct-version 4 4) (is-connected 8 1) (reserved-0 9 3) (packet-number 12 4) (pressed-buttons 16 4) (reserved-1 20 4) (analog 24 24)))
     (cna-game-pad-capabilities 48 4 ((struct-size 0 4) (struct-version 4 4) (gamepad-type 8 4) (is-connected 12 1) (has-a-button 13 1) (has-b-button 14 1) (has-x-button 15 1) (has-y-button 16 1) (has-back-button 17 1) (has-start-button 18 1) (has-big-button 19 1) (has-dpad-up-button 20 1) (has-dpad-down-button 21 1) (has-dpad-left-button 22 1) (has-dpad-right-button 23 1) (has-left-shoulder-button 24 1) (has-right-shoulder-button 25 1) (has-left-stick-button 26 1) (has-right-stick-button 27 1) (has-left-x-thumb-stick 28 1) (has-left-y-thumb-stick 29 1) (has-right-x-thumb-stick 30 1) (has-right-y-thumb-stick 31 1) (has-left-trigger 32 1) (has-right-trigger 33 1) (has-left-vibration-motor 34 1) (has-right-vibration-motor 35 1) (has-voice-support 36 1) (has-light-bar-ext 37 1) (has-trigger-vibration-motors-ext 38 1) (has-misc-1-ext 39 1) (has-paddle-1-ext 40 1) (has-paddle-2-ext 41 1) (has-paddle-3-ext 42 1) (has-paddle-4-ext 43 1) (has-touchpad-ext 44 1) (has-gyro-ext 45 1) (has-accelerometer-ext 46 1) (reserved 47 1)))
+    (cna-touch-location 32 4 ((id 0 4) (state 4 4) (position 8 8) (previous-state 16 4) (previous-position 20 8) (pressure 28 4)))
+    (cna-touch-state 272 4 ((struct-size 0 4) (struct-version 4 4) (is-connected 8 1) (reserved 9 3) (touch-count 12 4) (touches 16 256)))
+    (cna-touch-capabilities 16 4 ((struct-size 0 4) (struct-version 4 4) (is-connected 8 1) (reserved 9 3) (maximum-touch-count 12 4)))
+    (cna-gesture-sample 64 8 ((struct-size 0 4) (struct-version 4 4) (gesture-type 8 4) (finger-id-ext 12 4) (finger-id-2-ext 16 4) (reserved 20 4) (timestamp-ticks 24 8) (position 32 8) (position-2 40 8) (delta 48 8) (delta-2 56 8)))
     (cna-renderer-info 32 8 ((struct-size 0 4) (struct-version 4 4) (renderer-name-byte-length 8 8) (capability-flags 16 8) (renderer-type 24 4) (max-texture-dimension 28 4)))
     (cna-sprite-scaled-command 72 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (position 16 8) (source 24 16) (color 40 4) (rotation 44 4) (origin 48 8) (scale 56 8) (effects 64 4) (layer-depth 68 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
