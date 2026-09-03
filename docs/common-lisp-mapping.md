@@ -266,6 +266,28 @@ the real method lambda lists in the image. A family that collapses without
 declaring how each overload is distinguished — by CLOS dispatch, by a trailing
 optional argument, or by keywords — is a `wrong_overload_shape` diagnostic.
 
+### When two overloads are two operations
+
+`Color`'s constructors take either three integers or three floats, and XNA tells
+them apart by static type. Common Lisp would have to tell `1` from `1.0` at run
+time to do the same -- and those two mean almost opposite colours, since
+`(make-color 1 1 1)` is very nearly black where
+`(make-color-from-floats 1.0 1.0 1.0)` is white. A projection that dispatched on
+`integer` versus `single-float` would be correct and unreadable: the bug it
+invites is a literal written without its decimal point, and nothing would catch
+it. So the two are separate names.
+
+`Color.FromNonPremultiplied` is the stronger case. Its integer overload
+multiplies the unclamped channel by the unclamped alpha and truncates an integer
+quotient; its `Vector4` overload multiplies in floats and packs through
+`PackUNorm`. They disagree by a level on ordinary inputs. Collapsing them onto
+one name would be claiming they are one operation reached two ways, which they
+are not.
+
+Every such split is declared in `overload_families` in the mapping rules with
+the reason, and the verifier reports an `overload_mapping_mismatch` for a family
+that maps to several symbols without one.
+
 ### One generic function, three return types
 
 `BoundingSphere.Intersects` has four overloads, and three different return types

@@ -18,20 +18,20 @@
   "types": 33,
   "members": 1196,
   "types_by_status": {
-   "partial": 9,
-   "complete": 23,
+   "partial": 7,
+   "complete": 25,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 829,
-   "missing": 133,
+   "complete": 840,
+   "missing": 122,
    "not-applicable": 233,
    "partial": 1
   },
-  "diagnostics": 134,
+  "diagnostics": 123,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 133,
+   "missing_member": 122,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -147,19 +147,19 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Color",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(Int32,Int32,Int32)": "complete",
     "new(Int32,Int32,Int32,Int32)": "complete",
-    "new(Single,Single,Single)": "missing",
-    "new(Single,Single,Single,Single)": "missing",
-    "new(Vector3)": "missing",
-    "new(Vector4)": "missing",
-    "FromNonPremultiplied(Vector4)": "missing",
+    "new(Single,Single,Single)": "complete",
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector3)": "complete",
+    "new(Vector4)": "complete",
+    "FromNonPremultiplied(Vector4)": "complete",
     "FromNonPremultiplied(Int32,Int32,Int32,Int32)": "complete",
-    "ToVector3()": "missing",
-    "ToVector4()": "missing",
-    "Lerp(Color,Color,Single)": "missing",
+    "ToVector3()": "complete",
+    "ToVector4()": "complete",
+    "Lerp(Color,Color,Single)": "complete",
     "Multiply(Color,Single)": "complete",
     "op_Multiply(Color,Single)": "complete",
     "ToString()": "not-applicable",
@@ -336,10 +336,10 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Rectangle",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(Int32,Int32,Int32,Int32)": "complete",
-    "Offset(Point)": "missing",
+    "Offset(Point)": "complete",
     "Offset(Int32,Int32)": "complete",
     "Inflate(Int32,Int32)": "complete",
     "Contains(Int32,Int32)": "complete",
@@ -349,9 +349,9 @@
     "Contains(Rectangle&,Boolean&)": "not-applicable",
     "Intersects(Rectangle)": "complete",
     "Intersects(Rectangle&,Boolean&)": "not-applicable",
-    "Intersect(Rectangle,Rectangle)": "missing",
+    "Intersect(Rectangle,Rectangle)": "complete",
     "Intersect(Rectangle&,Rectangle&,Rectangle&)": "not-applicable",
-    "Union(Rectangle,Rectangle)": "missing",
+    "Union(Rectangle,Rectangle)": "complete",
     "Union(Rectangle&,Rectangle&,Rectangle&)": "not-applicable",
     "Equals(Rectangle)": "complete",
     "Equals(Object)": "not-applicable",
@@ -1643,61 +1643,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DefaultBackBufferHeight",
    "detail": "no exported 'default-back-buffer-height' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Color.new(Single,Single,Single)",
-   "detail": "The float constructors need Vector3/Vector4 clamping semantics that are not projected yet."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Color.new(Single,Single,Single,Single)",
-   "detail": "See the three-float constructor."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Color.new(Vector3)",
-   "detail": "Vector3 is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Color.new(Vector4)",
-   "detail": "Vector4 is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Color.FromNonPremultiplied(Vector4)",
-   "detail": "Vector4 is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Color.ToVector3()",
-   "detail": "Vector3 is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Color.ToVector4()",
-   "detail": "Vector4 is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Color.Lerp(Color,Color,Single)",
-   "detail": "Not implemented."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Rectangle.Offset(Point)",
-   "detail": "The Point overload is not projected; the coordinate one is."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Rectangle.Intersect(Rectangle,Rectangle)",
-   "detail": "Not implemented."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Rectangle.Union(Rectangle,Rectangle)",
-   "detail": "Not implemented."
   },
   {
    "category": "missing_member",

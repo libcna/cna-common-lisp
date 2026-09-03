@@ -459,6 +459,56 @@
                                                    (xna:make-vector3 0 0 -1)))))
             1.0e-3))))
 
+(defobservation "color.float-constructors-round-half-to-even" :xna-derived
+    "Microsoft.Xna.Framework.Color"
+  "The float constructors pack through PackUNorm, which multiplies by 255 and
+   rounds with Math.Round(double) -- half to even. So 0.5/255 packs to 0 and
+   1.5/255 packs to 2."
+  (and (= 0 (xna:color-r (xna:make-color-from-floats (/ 0.5 255.0) 0.0 0.0)))
+       (= 2 (xna:color-r (xna:make-color-from-floats (/ 1.5 255.0) 0.0 0.0)))
+       (= 2 (xna:color-r (xna:make-color-from-floats (/ 2.5 255.0) 0.0 0.0)))))
+
+(defobservation "color.multiply-is-fixed-point" :xna-derived
+    "Microsoft.Xna.Framework.Color"
+  "Multiply truncates the scale into a 16.16 fixed-point factor and shifts the
+   integer product right by 16, so half of white is 127 rather than 128."
+  (= 127 (xna:color-r (xna:color-multiply (xna:white) 0.5))))
+
+(defobservation "color.from-non-premultiplied-truncates" :xna-derived
+    "Microsoft.Xna.Framework.Color"
+  "FromNonPremultiplied(int, int, int, int) multiplies the unclamped channel by
+   the unclamped alpha, divides by 255 with integer truncation, and clamps only
+   the quotient."
+  (and (= 3 (xna:color-r (xna:color-from-non-premultiplied 5 0 0 200)))
+       (= 117 (xna:color-r (xna:color-from-non-premultiplied 300 0 0 100)))))
+
+(defobservation "color.lerp-shift-floors" :xna-derived
+    "Microsoft.Xna.Framework.Color"
+  "Lerp interpolates in integer arithmetic with an arithmetic right shift, which
+   floors: a thousandth of the way from white to black already costs a level,
+   while the same step up from black costs nothing."
+  (and (= 254 (xna:color-r (xna:color-lerp (xna:white) (xna:black) 0.001)))
+       (= 0 (xna:color-r (xna:color-lerp (xna:black) (xna:white) 0.001)))))
+
+(defobservation "rectangle.intersect-loses-its-position" :xna-derived
+    "Microsoft.Xna.Framework.Rectangle"
+  "Intersect answers Rectangle(0, 0, 0, 0) when the two do not overlap, so an
+   empty intersection has no position -- and touching edges do not overlap."
+  (let ((none (xna:rectangle-intersect (xna:make-rectangle 100 100 10 10)
+                                       (xna:make-rectangle 500 500 10 10))))
+    (and (xna:rectangle-equal (xna:make-rectangle 0 0 0 0) none)
+         (xna:rectangle-is-empty
+          (xna:rectangle-intersect (xna:make-rectangle 0 0 10 10)
+                                   (xna:make-rectangle 10 0 10 10))))))
+
+(defobservation "rectangle.union-has-no-empty-case" :xna-derived
+    "Microsoft.Xna.Framework.Rectangle"
+  "Union computes over the four edges with no special case, so a union with the
+   all-zero rectangle stretches the answer to the origin."
+  (xna:rectangle-equal (xna:make-rectangle 0 0 110 110)
+                       (xna:rectangle-union (xna:make-rectangle 100 100 10 10)
+                                            (xna:make-rectangle 0 0 0 0))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

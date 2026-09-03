@@ -294,3 +294,40 @@ itself -- which is what the original answers too."
              :operation "player-index-from-value"
              :format-control "~d is not a PlayerIndex value."
              :format-arguments (list value))))
+
+(defun rectangle-offset-by-point (rectangle amount)
+  "Rectangle.Offset(Point). Mutates RECTANGLE, exactly as XNA's does.
+
+A separate name from RECTANGLE-OFFSET because the two overloads differ only in
+arity once a point is one argument rather than two, and a two-or-three-argument
+optional would let `(rectangle-offset r point)' and `(rectangle-offset r dx dy)'
+be told apart only at run time by the type of one argument."
+  (incf (rectangle-x rectangle) (point-x amount))
+  (incf (rectangle-y rectangle) (point-y amount))
+  rectangle)
+
+(defun rectangle-intersect (value1 value2)
+  "Rectangle.Intersect: the overlap, or an all-zero rectangle when there is none.
+
+The empty answer is `Rectangle(0, 0, 0, 0)' and not a zero-sized rectangle at
+the near corner, so an empty intersection loses its position -- which is why
+RECTANGLE-IS-EMPTY tests all four components."
+  (let ((x (max (rectangle-x value1) (rectangle-x value2)))
+        (y (max (rectangle-y value1) (rectangle-y value2)))
+        (right (min (rectangle-right value1) (rectangle-right value2)))
+        (bottom (min (rectangle-bottom value1) (rectangle-bottom value2))))
+    (if (and (> right x) (> bottom y))
+        (make-rectangle x y (- right x) (- bottom y))
+        (make-rectangle 0 0 0 0))))
+
+(defun rectangle-union (value1 value2)
+  "Rectangle.Union: the smallest rectangle covering both.
+
+No special case for an empty argument: a union with `Rectangle(0, 0, 0, 0)'
+stretches the answer to the origin, because the original computes over the four
+edges and nothing else."
+  (let ((x (min (rectangle-x value1) (rectangle-x value2)))
+        (y (min (rectangle-y value1) (rectangle-y value2)))
+        (right (max (rectangle-right value1) (rectangle-right value2)))
+        (bottom (max (rectangle-bottom value1) (rectangle-bottom value2))))
+    (make-rectangle x y (- right x) (- bottom y))))

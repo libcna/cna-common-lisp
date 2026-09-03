@@ -45,7 +45,8 @@ stubs:
 * `GraphicsDevice` as a parent-owned facade that borrows a valid handle per
   operation, because that is the only thing CNA's callback-scoped device lending
   permits;
-* `Viewport`, `Color` with all 141 predefined XNA colours, `Point`, `Rectangle`,
+* `Viewport`, `Color` with all 141 predefined XNA colours and its packed,
+  float and vector forms, `Point`, `Rectangle`,
   `Vector2`, `Vector3`, `Vector4` and the whole of `MathHelper` — computed in
   binary32, in XNA's own order of operations, each method written from the
   disassembled IL of the hash-pinned assembly rather than from a description of
@@ -72,12 +73,12 @@ placeholder methods that answer a default and claim success.
 
 <!-- generated:selected types=33 -->
 <!-- generated:selected members=1196 -->
-<!-- generated:complete types=23 -->
-<!-- generated:partial types=9 -->
+<!-- generated:complete types=25 -->
+<!-- generated:partial types=7 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=829 -->
+<!-- generated:complete members=840 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=133 -->
+<!-- generated:missing members=122 -->
 <!-- generated:not-applicable members=233 -->
 <!-- generated:disagreement total=0 -->
 <!-- generated:bound native functions=69 -->
@@ -87,8 +88,8 @@ The generated scoreboard, over a selection of **33 XNA types and 1196 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **23 / 9 / 1** |
-| Members complete / missing | **829 / 133** |
+| Types complete / partial / missing | **25 / 7 / 1** |
+| Members complete / missing | **840 / 122** |
 | Members not applicable | **233** |
 | **Disagreement diagnostics** | **0** |
 
@@ -96,7 +97,7 @@ Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, every exported symbol is accounted for, no
 mapping rule names a member that does not exist, and every overload family that
 collapses onto one function says how each overload is expressed. It does **not**
-mean the binding is finished: 133 members are missing and are reported as
+mean the binding is finished: 122 members are missing and are reported as
 missing. `docs/compatibility.md` is the authority.
 
 The private foreign layer binds **69 native routes** and **20 native structs**,

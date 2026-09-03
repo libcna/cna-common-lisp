@@ -2112,7 +2112,28 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Color.FromNonPremultiplied(int, int, int, int).\n\nXNA multiplies each channel by the alpha *after* clamping the channel, using\ninteger arithmetic on the clamped values."
+          "documentation": "Color.FromNonPremultiplied(int, int, int, int).\n\nEach colour channel is multiplied by the *unclamped* alpha and divided by 255 in\ninteger arithmetic -- truncating, not rounding -- and only the quotient is\nclamped. Alpha is clamped on its own. Both details are visible: 5 at alpha 200\nanswers 3 and not 4, and 300 at alpha 100 answers 117 and not 100."
+        },
+        {
+          "name": "color-from-non-premultiplied-vector4",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "vector"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Color.FromNonPremultiplied(Vector4): multiply RGB by alpha, then pack.\n\nA separate name from COLOR-FROM-NON-PREMULTIPLIED because the two overloads do\nnot agree beyond their name: the integer one truncates an integer quotient and\nthis one packs unit floats through PackUNorm."
         },
         {
           "name": "color-from-packed-value",
@@ -2160,6 +2181,29 @@
           "documentation": null
         },
         {
+          "name": "color-lerp",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value1",
+            "value2",
+            "amount"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Color.Lerp.\n\nNot a float interpolation rounded back to bytes: the original converts AMOUNT to\na 16.16 fixed-point weight with PackUNorm(65536, amount) and interpolates each\nchannel in integer arithmetic, shifting right by 16. That shift is *arithmetic*,\nso it floors, and a channel that is falling interpolates a half-step lower than\na channel that is rising. Reproduced, because a float version would disagree by\none on a large fraction of the inputs."
+        },
+        {
           "name": "color-multiply",
           "fbound": true,
           "macro": false,
@@ -2179,7 +2223,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Color.Multiply(Color, float): every channel scaled and clamped."
+          "documentation": "Color.Multiply(Color, float).\n\nNot a float scale rounded back to bytes: the original converts SCALE to a 16.16\nfixed-point factor by truncation, multiplies each channel in integer arithmetic,\nshifts right by 16 -- which floors -- and only then clamps at 255. So scaling\nwhite by 0.5 answers 127, where rounding the float would answer 128.\n\nA NaN scale is left unspecified by the original, which converts it to an\nunsigned integer without a defined result; this projection answers a scale of\nzero rather than inventing one."
         },
         {
           "name": "color-p",
@@ -2249,6 +2293,48 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "color-to-vector3",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "color"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Color.ToVector3: R, G and B as unit floats. Alpha is dropped, not carried."
+        },
+        {
+          "name": "color-to-vector4",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "color"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Color.ToVector4: all four channels as unit floats."
         },
         {
           "name": "containment-type",
@@ -3173,7 +3259,74 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Color(byte, byte, byte, byte) with A defaulting to fully opaque.\n\nReal arguments outside 0-255 are clamped, which is what XNA's float constructors\ndo; the byte constructors take bytes and cannot be out of range at all."
+          "documentation": "Color(int, int, int, int) with A defaulting to fully opaque.\n\nArguments outside 0-255 are clamped, which is what the original does: it checks\nwhether any argument has a bit above the low byte and, if so, clamps each one\nthrough a 64-bit range check before packing. For the float constructors, see\nMAKE-COLOR-FROM-FLOATS -- they are a different overload with a different scale,\nand `(make-color 1 1 1)' is very nearly black where\n`(make-color-from-floats 1.0 1.0 1.0)' is white."
+        },
+        {
+          "name": "make-color-from-floats",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "r",
+            "g",
+            "b",
+            "&optional",
+            "(a 1.0)"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Color(float, float, float) and Color(float, float, float, float).\n\nA separate constructor from MAKE-COLOR rather than a type-dispatching one: XNA\ntells the two apart by static type, and Common Lisp would have to tell `1' from\n`1.0' at run time to do the same. Those two mean almost opposite colours, so the\ndistinction is a name here rather than a numeric type nobody can see."
+        },
+        {
+          "name": "make-color-from-vector3",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "vector"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Color(Vector3), with alpha fully opaque."
+        },
+        {
+          "name": "make-color-from-vector4",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "vector"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Color(Vector4)."
         },
         {
           "name": "make-matrix",
@@ -6704,6 +6857,28 @@
           "documentation": "Rectangle.Inflate(int, int). Mutates RECTANGLE, exactly as XNA's does."
         },
         {
+          "name": "rectangle-intersect",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value1",
+            "value2"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Rectangle.Intersect: the overlap, or an all-zero rectangle when there is none.\n\nThe empty answer is `Rectangle(0, 0, 0, 0)' and not a zero-sized rectangle at\nthe near corner, so an empty intersection loses its position -- which is why\nRECTANGLE-IS-EMPTY tests all four components."
+        },
+        {
           "name": "rectangle-intersects",
           "fbound": true,
           "macro": false,
@@ -6815,6 +6990,28 @@
           "documentation": "Rectangle.Offset(int, int). Mutates RECTANGLE, exactly as XNA's does."
         },
         {
+          "name": "rectangle-offset-by-point",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "rectangle",
+            "amount"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Rectangle.Offset(Point). Mutates RECTANGLE, exactly as XNA's does.\n\nA separate name from RECTANGLE-OFFSET because the two overloads differ only in\narity once a point is one argument rather than two, and a two-or-three-argument\noptional would let `(rectangle-offset r point)' and `(rectangle-offset r dx dy)'\nbe told apart only at run time by the type of one argument."
+        },
+        {
           "name": "rectangle-p",
           "fbound": true,
           "macro": false,
@@ -6876,6 +7073,28 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "rectangle-union",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value1",
+            "value2"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Rectangle.Union: the smallest rectangle covering both.\n\nNo special case for an empty argument: a union with `Rectangle(0, 0, 0, 0)'\nstretches the answer to the origin, because the original computes over the four\nedges and nothing else."
         },
         {
           "name": "rectangle-width",

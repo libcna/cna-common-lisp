@@ -149,3 +149,37 @@
   (let ((one (xna:vector2-one)))
     (setf (xna:vector2-x one) 99.0f0)
     (is (= 1.0f0 (xna:vector2-x (xna:vector2-one))))))
+
+(test rectangle-offset-by-a-point-mutates
+  (let ((r (xna:make-rectangle 10 20 30 40)))
+    (is (eq r (xna:rectangle-offset-by-point r (xna:make-point 5 -5))))
+    (is (= 15 (xna:rectangle-x r)))
+    (is (= 15 (xna:rectangle-y r)))
+    (is (= 30 (xna:rectangle-width r)) "the size does not move")))
+
+(test rectangle-intersect-loses-the-position-when-there-is-no-overlap
+  (let ((overlap (xna:rectangle-intersect (xna:make-rectangle 0 0 10 10)
+                                          (xna:make-rectangle 5 5 10 10))))
+    (is (xna:rectangle-equal (xna:make-rectangle 5 5 5 5) overlap)))
+  ;; Touching edges do not overlap: the test is on > and not >=.
+  (is (xna:rectangle-is-empty (xna:rectangle-intersect (xna:make-rectangle 0 0 10 10)
+                                                       (xna:make-rectangle 10 0 10 10))))
+  ;; The empty answer is Rectangle(0, 0, 0, 0), so it loses where it was --
+  ;; which is why IS-EMPTY tests all four components and not just the area.
+  (let ((none (xna:rectangle-intersect (xna:make-rectangle 100 100 10 10)
+                                       (xna:make-rectangle 500 500 10 10))))
+    (is (xna:rectangle-equal (xna:make-rectangle 0 0 0 0) none))
+    (is (xna:rectangle-is-empty none))))
+
+(test rectangle-union-has-no-special-case-for-an-empty-argument
+  (is (xna:rectangle-equal (xna:make-rectangle 0 0 15 15)
+                           (xna:rectangle-union (xna:make-rectangle 0 0 10 10)
+                                                (xna:make-rectangle 5 5 10 10))))
+  (is (xna:rectangle-equal (xna:make-rectangle -5 -5 15 15)
+                           (xna:rectangle-union (xna:make-rectangle 0 0 10 10)
+                                                (xna:make-rectangle -5 -5 1 1))))
+  ;; A union with the all-zero rectangle stretches to the origin rather than
+  ;; answering the other argument.
+  (is (xna:rectangle-equal (xna:make-rectangle 0 0 110 110)
+                           (xna:rectangle-union (xna:make-rectangle 100 100 10 10)
+                                                (xna:make-rectangle 0 0 0 0)))))

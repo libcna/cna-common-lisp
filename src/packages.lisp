@@ -31,7 +31,8 @@
    #:rectangle-left #:rectangle-right #:rectangle-top #:rectangle-bottom
    #:rectangle-center #:rectangle-location #:rectangle-is-empty #:rectangle-empty
    #:rectangle-contains #:rectangle-contains-coordinates #:rectangle-intersects
-   #:rectangle-offset #:rectangle-inflate #:rectangle-equal
+   #:rectangle-offset #:rectangle-offset-by-point #:rectangle-inflate
+   #:rectangle-intersect #:rectangle-union #:rectangle-equal
    ;; --- Vector2 -----------------------------------------------------------
    #:vector2 #:make-vector2 #:vector2-p #:copy-vector2 #:vector2-x #:vector2-y
    #:vector2-zero #:vector2-one #:vector2-unit-x #:vector2-unit-y
@@ -154,6 +155,9 @@
    #:math-helper-catmull-rom #:math-helper-hermite #:math-helper-wrap-angle
    ;; --- Color -------------------------------------------------------------
    #:color #:make-color #:color-p #:copy-color #:color-from-packed-value
+   #:make-color-from-floats #:make-color-from-vector3 #:make-color-from-vector4
+   #:color-from-non-premultiplied-vector4 #:color-to-vector3 #:color-to-vector4
+   #:color-lerp
    #:color-r #:color-g #:color-b #:color-a #:color-packed-value
    #:color-equal #:color-from-non-premultiplied #:color-multiply
    #:predefined-color #:predefined-color-names

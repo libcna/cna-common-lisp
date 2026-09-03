@@ -58,23 +58,25 @@ and nothing in this repository says otherwise.
 
 <!-- generated:selected types=33 -->
 <!-- generated:selected members=1196 -->
-<!-- generated:complete types=23 -->
-<!-- generated:partial types=9 -->
+<!-- generated:complete types=25 -->
+<!-- generated:partial types=7 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=829 -->
+<!-- generated:complete members=840 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=133 -->
+<!-- generated:missing members=122 -->
 <!-- generated:not-applicable members=233 -->
 <!-- generated:disagreement total=0 -->
 
-33 selected types, 1196 members: **23 complete, 9 partial, 1 missing**;
-**829 members complete, 133 missing**, 233 not applicable, 1 partial.
+33 selected types, 1196 members: **25 complete, 7 partial, 1 missing**;
+**840 members complete, 122 missing**, 233 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 Every math type is complete except `Matrix`, which has three members left:
 `Decompose` and the two `CreateConstrainedBillboard` overloads. The bounding
 volumes are closed -- `Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum`
-and `Plane` answer every member of the cross product between them.
+and `Plane` answer every member of the cross product between them -- and so are
+`Color` and `Rectangle`. What is left is graphics, input beyond the keyboard,
+content, and the event projection.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -95,44 +97,32 @@ is a packaging limit, not a blocker.
 The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts.
 
-1. **The bounding volumes**: `Ray`, `BoundingBox`, `BoundingSphere` and
-   `BoundingFrustum`. `Plane`, `ContainmentType` and `PlaneIntersectionType` are
-   done and `Plane`'s three remaining members are the ones that need these. The
-   four types intersect and contain each other in every combination, so they are
-   one closure and not four: implement them together or the cross-products stay
-   missing anyway. `BoundingFrustum` is the hard one -- its corners come from
-   intersecting three planes at a time, and its frustum-frustum test is not the
-   naive one.
-2. **Complete `Rectangle`** (`Intersect`, `Union`, the `Point` overload of
-   `Offset`) and **`Color`** (the float and vector constructors, `ToVector3`,
-   `ToVector4`, `Lerp`) -- `Color`'s vector members are unblocked now that
-   `Vector3` and `Vector4` exist.
-3. **`Matrix.Decompose` and `Matrix.CreateConstrainedBillboard`**, the two
+1. **`Matrix.Decompose` and `Matrix.CreateConstrainedBillboard`**, the two
    deferred members. Both are real work rather than transcription: `Decompose` is
    540 IL instructions over a private pointer basis with a degenerate-scale
    fallback, and the constrained billboard has a three-deep threshold chain. Read
    them properly or leave them absent; do not approximate either.
-4. **The `Curve` family**: `Curve`, `CurveKey`, `CurveKeyCollection`,
+2. **The `Curve` family**: `Curve`, `CurveKey`, `CurveKeyCollection`,
    `CurveContinuity`, `CurveLoopType`, `CurveTangent`. Pure managed, CNA has the
    routes for cross-checking.
-5. **Packed vectors**: the 19-type `Graphics.PackedVector` family. Pure managed.
-6. **Vertex descriptors and vertex value types**: `VertexElement`,
+3. **Packed vectors**: the 19-type `Graphics.PackedVector` family. Pure managed.
+4. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-7. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
+5. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
    `Input.Touch`. `Mouse.GetState` becomes `mouse-get-state`, which is the whole
    reason the static-class rule exists.
-8. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+6. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`, and the
    **event projection** the four `Game` events and six `GraphicsDevice` events
    need. That one decision unblocks `GraphicsResource` and 21 of
    `GraphicsDeviceManager`'s 30 members.
-9. **`System.IO.Stream` and `TitleContainer`**, which unblock
+7. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-10. **Graphics state objects** (`BlendState`, `DepthStencilState`,
+8. **Graphics state objects** (`BlendState`, `DepthStencilState`,
    `RasterizerState`, `SamplerState`), which unblock `SpriteBatch.Begin`'s four
    state-bearing overloads.
-11. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-12. **Audio, effects, models, media, storage, gamer services, networking.**
+9. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
+10. **Audio, effects, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 

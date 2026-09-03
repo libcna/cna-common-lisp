@@ -84,12 +84,12 @@ genuine absence.
 
 <!-- generated:selected types=33 -->
 <!-- generated:selected members=1196 -->
-<!-- generated:complete types=23 -->
-<!-- generated:partial types=9 -->
+<!-- generated:complete types=25 -->
+<!-- generated:partial types=7 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=829 -->
+<!-- generated:complete members=840 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=133 -->
+<!-- generated:missing members=122 -->
 <!-- generated:not-applicable members=233 -->
 <!-- generated:disagreement total=0 -->
 
@@ -97,12 +97,12 @@ Selection **Foundation 1**: 33 types, 1196 members.
 
 | | |
 | --- | --- |
-| Types complete | **23** |
-| Types partial | **9** |
+| Types complete | **25** |
+| Types partial | **7** |
 | Types missing | **1** |
-| Members complete | **829** |
+| Members complete | **840** |
 | Members partial | **1** |
-| Members missing | **133** |
+| Members missing | **122** |
 | Members not applicable | **233** |
 | **Disagreement diagnostics** | **0** |
 
@@ -116,9 +116,9 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Game` | **partial** | 24 | 0 | 12 | 2 |
 | `M.X.F.GameTime` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 8 | 0 | 21 | 1 |
-| `M.X.F.Color` | **partial** | 153 | 0 | 8 | 4 |
+| `M.X.F.Color` | **complete** | 161 | 0 | 0 | 4 |
 | `M.X.F.Point` | **complete** | 6 | 0 | 0 | 4 |
-| `M.X.F.Rectangle` | **partial** | 21 | 0 | 3 | 9 |
+| `M.X.F.Rectangle` | **complete** | 24 | 0 | 0 | 9 |
 | `M.X.F.Vector2` | **complete** | 50 | 0 | 0 | 27 |
 | `M.X.F.Vector3` | **complete** | 60 | 0 | 0 | 28 |
 | `M.X.F.Vector4` | **complete** | 56 | 0 | 0 | 29 |
