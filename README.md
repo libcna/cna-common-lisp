@@ -46,7 +46,10 @@ stubs:
   operation, because that is the only thing CNA's callback-scoped device lending
   permits;
 * `Viewport`, `Color` with all 141 predefined XNA colours, `Point`, `Rectangle`,
-  `Vector2` — computed in binary32, in XNA's own order of operations;
+  `Vector2`, `Vector3`, `Vector4` and the whole of `MathHelper` — computed in
+  binary32, in XNA's own order of operations, each method written from the
+  disassembled IL of the hash-pinned assembly rather than from a description of
+  what it should do;
 * `Texture2D` decoded from a real PNG into a real native texture;
 * `SpriteBatch` with a real textured draw, with rotation, scale, origin, tint,
   source rectangle, effects and layer depth;
@@ -57,28 +60,30 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=21 -->
-<!-- generated:selected members=689 -->
-<!-- generated:complete types=11 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=24 -->
+<!-- generated:selected members=881 -->
+<!-- generated:complete types=12 -->
+<!-- generated:partial types=11 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=474 -->
-<!-- generated:missing members=181 -->
+<!-- generated:complete members=609 -->
+<!-- generated:missing members=165 -->
+<!-- generated:not-applicable members=106 -->
 <!-- generated:disagreement total=0 -->
 <!-- generated:bound native functions=68 -->
 <!-- generated:bound native structs=19 -->
 
-The generated scoreboard, over a selection of **21 XNA types and 689 members**:
+The generated scoreboard, over a selection of **24 XNA types and 881 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **11 / 9 / 1** |
-| Members complete / missing | **474 / 181** |
+| Types complete / partial / missing | **12 / 11 / 1** |
+| Members complete / missing | **609 / 165** |
+| Members not applicable | **106** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, and every exported symbol is accounted
-for. It does **not** mean the binding is finished: 181 members are missing and
+for. It does **not** mean the binding is finished: 165 members are missing and
 are reported as missing. `docs/compatibility.md` is the authority.
 
 The private foreign layer binds **68 native routes** and **19 native structs**,

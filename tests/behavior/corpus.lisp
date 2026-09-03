@@ -118,6 +118,91 @@
   "A duplicate key in the set-taking constructor contributes once."
   (equal '(:a) (input:get-pressed-keys (input:make-keyboard-state '(:a :a)))))
 
+;;; --- XNA-derived, read from the pinned IL --------------------------------
+;;;
+;;; Each of these was read out of the disassembled Microsoft.Xna.Framework.dll
+;;; pinned in tools/api-compat/reference/XNA_IL_PROVENANCE.md, and each is a fact
+;;; a plausible-looking reimplementation gets wrong.
+
+(defobservation "mathhelper.pi-is-binary32" :xna-derived "Microsoft.Xna.Framework.MathHelper"
+  "Pi is the binary32 3.14159274f, not a narrowed binary64 pi."
+  (= 3.14159274f0 xna:+math-helper-pi+))
+
+(defobservation "mathhelper.to-radians-multiplies" :xna-derived
+    "Microsoft.Xna.Framework.MathHelper"
+  "ToRadians multiplies by the binary32 constant 0.0174532924f; it does not divide
+   by 180."
+  (= (* 90.0f0 0.0174532924f0) (xna:math-helper-to-radians 90)))
+
+(defobservation "mathhelper.lerp-shape" :xna-derived "Microsoft.Xna.Framework.MathHelper"
+  "Lerp is value1 + (value2 - value1) * amount."
+  (= (+ 1.0f0 (* (- 3.0f0 1.0f0) 0.1f0)) (xna:math-helper-lerp 1.0 3.0 0.1)))
+
+(defobservation "mathhelper.clamp-nan" :xna-derived "Microsoft.Xna.Framework.MathHelper"
+  "Clamp compares against the maximum first with ordered comparisons, so a NaN
+   fails both and passes through unchanged."
+  (sb-int:with-float-traps-masked (:invalid)
+    (sb-ext:float-nan-p (xna:math-helper-clamp (sb-kernel:make-single-float -1) 0.0 1.0))))
+
+(defobservation "mathhelper.clamp-inverted-range" :xna-derived
+    "Microsoft.Xna.Framework.MathHelper"
+  "With an inverted range the minimum wins, because it is applied second."
+  (= 10.0f0 (xna:math-helper-clamp 3.0 10.0 0.0)))
+
+(defobservation "bcl.math-min-is-not-ieee-min-num" :xna-derived "System.Math"
+  "Math.Min(Single,Single) in .NET 4 answers the second argument when neither the
+   less-than test nor the NaN test on the first holds, which makes
+   Max(+0.0, -0.0) answer -0.0."
+  (minusp (float-sign (xna:math-helper-max 0.0f0 -0.0f0))))
+
+(defobservation "vector3.forward-is-negative-z" :xna-derived
+    "Microsoft.Xna.Framework.Vector3"
+  "Vector3.Forward is (0, 0, -1) and Backward is (0, 0, 1): XNA is right-handed."
+  (and (xna:vector3-equal (xna:vector3-forward) (xna:make-vector3 0 0 -1))
+       (xna:vector3-equal (xna:vector3-backward) (xna:make-vector3 0 0 1))))
+
+(defobservation "vector3.normalize-reciprocal" :xna-derived
+    "Microsoft.Xna.Framework.Vector3"
+  "Normalize takes the reciprocal of the *binary32* square root and multiplies;
+   it does not divide each component by a binary64 root."
+  (let* ((v (xna:make-vector3 1 2 3))
+         (scale (/ 1.0f0 (coerce (sqrt (coerce (xna:vector3-length-squared v)
+                                               'double-float))
+                                 'single-float)))
+         (n (xna:vector3-normalized v)))
+    (and (= (* 1.0f0 scale) (xna:vector3-x n))
+         (= (* 3.0f0 scale) (xna:vector3-z n)))))
+
+(defobservation "vector3.normalize-instance-mutates" :xna-derived
+    "Microsoft.Xna.Framework.Vector3"
+  "The instance Normalize mutates the receiver; the static one answers a new
+   vector and leaves its argument alone."
+  (let ((v (xna:make-vector3 3 4 0)))
+    (xna:vector3-normalize v)
+    (and (= 0.6f0 (xna:vector3-x v))
+         (let ((w (xna:make-vector3 3 4 0)))
+           (xna:vector3-normalized w)
+           (= 3.0f0 (xna:vector3-x w))))))
+
+(defobservation "vector3.cross-right-handed" :xna-derived "Microsoft.Xna.Framework.Vector3"
+  "UnitX cross UnitY is UnitZ."
+  (xna:vector3-equal (xna:vector3-cross (xna:vector3-unit-x) (xna:vector3-unit-y))
+                     (xna:vector3-unit-z)))
+
+(defobservation "vector3.reflect-shape" :xna-derived "Microsoft.Xna.Framework.Vector3"
+  "Reflect doubles the dot product before scaling the normal: v - (2 * d) * n."
+  (let* ((v (xna:make-vector3 0.3 0.7 0.11))
+         (n (xna:make-vector3 0.5 0.25 0.125))
+         (d (xna:vector3-dot v n)))
+    (= (- (xna:vector3-x v) (* (* 2.0f0 d) (xna:vector3-x n)))
+       (xna:vector3-x (xna:vector3-reflect v n)))))
+
+(defobservation "vector.divide-scalar-reciprocal" :xna-derived
+    "Microsoft.Xna.Framework.Vector3"
+  "Divide by a scalar takes one reciprocal and multiplies."
+  (= (* 1.0f0 (/ 1.0f0 3.0f0))
+     (xna:vector3-x (xna:vector3-divide (xna:make-vector3 1 1 1) 3.0f0))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"

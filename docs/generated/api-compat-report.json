@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1",
   "rationale": "The dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically.",
-  "type_count": 21,
-  "member_count": 689
+  "type_count": 24,
+  "member_count": 881
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,23 +15,23 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 21,
-  "members": 689,
+  "types": 24,
+  "members": 881,
   "types_by_status": {
-   "partial": 9,
-   "complete": 11,
+   "partial": 11,
+   "complete": 12,
    "missing": 1
   },
   "members_by_status": {
-   "complete": 474,
-   "missing": 181,
-   "not-applicable": 33,
+   "complete": 609,
+   "missing": 165,
+   "not-applicable": 106,
    "partial": 1
   },
-  "diagnostics": 182,
+  "diagnostics": 166,
   "diagnostics_by_category": {
    "missing_type": 1,
-   "missing_member": 181,
+   "missing_member": 165,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -342,15 +342,15 @@
     "Inflate(Int32,Int32)": "complete",
     "Contains(Int32,Int32)": "complete",
     "Contains(Point)": "complete",
-    "Contains(Point&,Boolean&)": "missing",
+    "Contains(Point&,Boolean&)": "not-applicable",
     "Contains(Rectangle)": "complete",
-    "Contains(Rectangle&,Boolean&)": "missing",
+    "Contains(Rectangle&,Boolean&)": "not-applicable",
     "Intersects(Rectangle)": "complete",
-    "Intersects(Rectangle&,Boolean&)": "missing",
+    "Intersects(Rectangle&,Boolean&)": "not-applicable",
     "Intersect(Rectangle,Rectangle)": "missing",
-    "Intersect(Rectangle&,Rectangle&,Rectangle&)": "missing",
+    "Intersect(Rectangle&,Rectangle&,Rectangle&)": "not-applicable",
     "Union(Rectangle,Rectangle)": "missing",
-    "Union(Rectangle&,Rectangle&,Rectangle&)": "missing",
+    "Union(Rectangle&,Rectangle&,Rectangle&)": "not-applicable",
     "Equals(Rectangle)": "complete",
     "Equals(Object)": "not-applicable",
     "ToString()": "not-applicable",
@@ -385,32 +385,32 @@
     "Length()": "complete",
     "LengthSquared()": "complete",
     "Distance(Vector2,Vector2)": "complete",
-    "Distance(Vector2&,Vector2&,Single&)": "missing",
+    "Distance(Vector2&,Vector2&,Single&)": "not-applicable",
     "DistanceSquared(Vector2,Vector2)": "complete",
-    "DistanceSquared(Vector2&,Vector2&,Single&)": "missing",
+    "DistanceSquared(Vector2&,Vector2&,Single&)": "not-applicable",
     "Dot(Vector2,Vector2)": "complete",
-    "Dot(Vector2&,Vector2&,Single&)": "missing",
+    "Dot(Vector2&,Vector2&,Single&)": "not-applicable",
     "Normalize()": "complete",
-    "Normalize(Vector2)": "missing",
-    "Normalize(Vector2&,Vector2&)": "missing",
-    "Reflect(Vector2,Vector2)": "missing",
-    "Reflect(Vector2&,Vector2&,Vector2&)": "missing",
-    "Min(Vector2,Vector2)": "missing",
-    "Min(Vector2&,Vector2&,Vector2&)": "missing",
-    "Max(Vector2,Vector2)": "missing",
-    "Max(Vector2&,Vector2&,Vector2&)": "missing",
-    "Clamp(Vector2,Vector2,Vector2)": "missing",
-    "Clamp(Vector2&,Vector2&,Vector2&,Vector2&)": "missing",
-    "Lerp(Vector2,Vector2,Single)": "missing",
-    "Lerp(Vector2&,Vector2&,Single,Vector2&)": "missing",
-    "Barycentric(Vector2,Vector2,Vector2,Single,Single)": "missing",
-    "Barycentric(Vector2&,Vector2&,Vector2&,Single,Single,Vector2&)": "missing",
-    "SmoothStep(Vector2,Vector2,Single)": "missing",
-    "SmoothStep(Vector2&,Vector2&,Single,Vector2&)": "missing",
-    "CatmullRom(Vector2,Vector2,Vector2,Vector2,Single)": "missing",
-    "CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "missing",
-    "Hermite(Vector2,Vector2,Vector2,Vector2,Single)": "missing",
-    "Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "missing",
+    "Normalize(Vector2)": "complete",
+    "Normalize(Vector2&,Vector2&)": "not-applicable",
+    "Reflect(Vector2,Vector2)": "complete",
+    "Reflect(Vector2&,Vector2&,Vector2&)": "complete",
+    "Min(Vector2,Vector2)": "complete",
+    "Min(Vector2&,Vector2&,Vector2&)": "complete",
+    "Max(Vector2,Vector2)": "complete",
+    "Max(Vector2&,Vector2&,Vector2&)": "complete",
+    "Clamp(Vector2,Vector2,Vector2)": "complete",
+    "Clamp(Vector2&,Vector2&,Vector2&,Vector2&)": "complete",
+    "Lerp(Vector2,Vector2,Single)": "complete",
+    "Lerp(Vector2&,Vector2&,Single,Vector2&)": "complete",
+    "Barycentric(Vector2,Vector2,Vector2,Single,Single)": "complete",
+    "Barycentric(Vector2&,Vector2&,Vector2&,Single,Single,Vector2&)": "complete",
+    "SmoothStep(Vector2,Vector2,Single)": "complete",
+    "SmoothStep(Vector2&,Vector2&,Single,Vector2&)": "complete",
+    "CatmullRom(Vector2,Vector2,Vector2,Vector2,Single)": "complete",
+    "CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "complete",
+    "Hermite(Vector2,Vector2,Vector2,Vector2,Single)": "complete",
+    "Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)": "complete",
     "Transform(Vector2,Matrix)": "missing",
     "Transform(Vector2&,Matrix&,Vector2&)": "missing",
     "TransformNormal(Vector2,Matrix)": "missing",
@@ -424,19 +424,19 @@
     "Transform(Vector2,Quaternion&,Vector2)": "missing",
     "Transform(Vector2,Int32,Quaternion&,Vector2,Int32,Int32)": "missing",
     "Negate(Vector2)": "complete",
-    "Negate(Vector2&,Vector2&)": "missing",
+    "Negate(Vector2&,Vector2&)": "not-applicable",
     "Add(Vector2,Vector2)": "complete",
-    "Add(Vector2&,Vector2&,Vector2&)": "missing",
+    "Add(Vector2&,Vector2&,Vector2&)": "not-applicable",
     "Subtract(Vector2,Vector2)": "complete",
-    "Subtract(Vector2&,Vector2&,Vector2&)": "missing",
+    "Subtract(Vector2&,Vector2&,Vector2&)": "not-applicable",
     "Multiply(Vector2,Vector2)": "complete",
-    "Multiply(Vector2&,Vector2&,Vector2&)": "missing",
+    "Multiply(Vector2&,Vector2&,Vector2&)": "not-applicable",
     "Multiply(Vector2,Single)": "complete",
-    "Multiply(Vector2&,Single,Vector2&)": "missing",
+    "Multiply(Vector2&,Single,Vector2&)": "not-applicable",
     "Divide(Vector2,Vector2)": "complete",
-    "Divide(Vector2&,Vector2&,Vector2&)": "missing",
+    "Divide(Vector2&,Vector2&,Vector2&)": "not-applicable",
     "Divide(Vector2,Single)": "complete",
-    "Divide(Vector2&,Single,Vector2&)": "missing",
+    "Divide(Vector2&,Single,Vector2&)": "not-applicable",
     "op_UnaryNegation(Vector2)": "complete",
     "op_Equality(Vector2,Vector2)": "complete",
     "op_Inequality(Vector2,Vector2)": "not-applicable",
@@ -455,6 +455,219 @@
     "Y": "complete"
    },
    "lisp": "microsoft.xna.framework:vector2"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Vector3",
+   "status": "partial",
+   "members": {
+    "new(Single,Single,Single)": "complete",
+    "new(Single)": "complete",
+    "new(Vector2,Single)": "complete",
+    "ToString()": "not-applicable",
+    "Equals(Vector3)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Length()": "complete",
+    "LengthSquared()": "complete",
+    "Distance(Vector3,Vector3)": "complete",
+    "Distance(Vector3&,Vector3&,Single&)": "not-applicable",
+    "DistanceSquared(Vector3,Vector3)": "complete",
+    "DistanceSquared(Vector3&,Vector3&,Single&)": "not-applicable",
+    "Dot(Vector3,Vector3)": "complete",
+    "Dot(Vector3&,Vector3&,Single&)": "not-applicable",
+    "Normalize()": "complete",
+    "Normalize(Vector3)": "complete",
+    "Normalize(Vector3&,Vector3&)": "not-applicable",
+    "Cross(Vector3,Vector3)": "complete",
+    "Cross(Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Reflect(Vector3,Vector3)": "complete",
+    "Reflect(Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Min(Vector3,Vector3)": "complete",
+    "Min(Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Max(Vector3,Vector3)": "complete",
+    "Max(Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Clamp(Vector3,Vector3,Vector3)": "complete",
+    "Clamp(Vector3&,Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Lerp(Vector3,Vector3,Single)": "complete",
+    "Lerp(Vector3&,Vector3&,Single,Vector3&)": "not-applicable",
+    "Barycentric(Vector3,Vector3,Vector3,Single,Single)": "complete",
+    "Barycentric(Vector3&,Vector3&,Vector3&,Single,Single,Vector3&)": "not-applicable",
+    "SmoothStep(Vector3,Vector3,Single)": "complete",
+    "SmoothStep(Vector3&,Vector3&,Single,Vector3&)": "not-applicable",
+    "CatmullRom(Vector3,Vector3,Vector3,Vector3,Single)": "complete",
+    "CatmullRom(Vector3&,Vector3&,Vector3&,Vector3&,Single,Vector3&)": "not-applicable",
+    "Hermite(Vector3,Vector3,Vector3,Vector3,Single)": "complete",
+    "Hermite(Vector3&,Vector3&,Vector3&,Vector3&,Single,Vector3&)": "not-applicable",
+    "Transform(Vector3,Matrix)": "missing",
+    "Transform(Vector3&,Matrix&,Vector3&)": "not-applicable",
+    "TransformNormal(Vector3,Matrix)": "missing",
+    "TransformNormal(Vector3&,Matrix&,Vector3&)": "not-applicable",
+    "Transform(Vector3,Quaternion)": "missing",
+    "Transform(Vector3&,Quaternion&,Vector3&)": "not-applicable",
+    "Transform(Vector3,Matrix&,Vector3)": "missing",
+    "Transform(Vector3,Int32,Matrix&,Vector3,Int32,Int32)": "missing",
+    "TransformNormal(Vector3,Matrix&,Vector3)": "missing",
+    "TransformNormal(Vector3,Int32,Matrix&,Vector3,Int32,Int32)": "missing",
+    "Transform(Vector3,Quaternion&,Vector3)": "missing",
+    "Transform(Vector3,Int32,Quaternion&,Vector3,Int32,Int32)": "missing",
+    "Negate(Vector3)": "complete",
+    "Negate(Vector3&,Vector3&)": "not-applicable",
+    "Add(Vector3,Vector3)": "complete",
+    "Add(Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Subtract(Vector3,Vector3)": "complete",
+    "Subtract(Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Multiply(Vector3,Vector3)": "complete",
+    "Multiply(Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Multiply(Vector3,Single)": "complete",
+    "Multiply(Vector3&,Single,Vector3&)": "not-applicable",
+    "Divide(Vector3,Vector3)": "complete",
+    "Divide(Vector3&,Vector3&,Vector3&)": "not-applicable",
+    "Divide(Vector3,Single)": "complete",
+    "Divide(Vector3&,Single,Vector3&)": "not-applicable",
+    "op_UnaryNegation(Vector3)": "complete",
+    "op_Equality(Vector3,Vector3)": "complete",
+    "op_Inequality(Vector3,Vector3)": "not-applicable",
+    "op_Addition(Vector3,Vector3)": "complete",
+    "op_Subtraction(Vector3,Vector3)": "complete",
+    "op_Multiply(Vector3,Vector3)": "complete",
+    "op_Multiply(Vector3,Single)": "complete",
+    "op_Multiply(Single,Vector3)": "complete",
+    "op_Division(Vector3,Vector3)": "complete",
+    "op_Division(Vector3,Single)": "complete",
+    "Zero": "complete",
+    "One": "complete",
+    "UnitX": "complete",
+    "UnitY": "complete",
+    "UnitZ": "complete",
+    "Up": "complete",
+    "Down": "complete",
+    "Right": "complete",
+    "Left": "complete",
+    "Forward": "complete",
+    "Backward": "complete",
+    "X": "complete",
+    "Y": "complete",
+    "Z": "complete"
+   },
+   "lisp": "microsoft.xna.framework:vector3"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Vector4",
+   "status": "partial",
+   "members": {
+    "new(Single,Single,Single,Single)": "complete",
+    "new(Vector2,Single,Single)": "complete",
+    "new(Vector3,Single)": "complete",
+    "new(Single)": "complete",
+    "ToString()": "not-applicable",
+    "Equals(Vector4)": "complete",
+    "Equals(Object)": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Length()": "complete",
+    "LengthSquared()": "complete",
+    "Distance(Vector4,Vector4)": "complete",
+    "Distance(Vector4&,Vector4&,Single&)": "not-applicable",
+    "DistanceSquared(Vector4,Vector4)": "complete",
+    "DistanceSquared(Vector4&,Vector4&,Single&)": "not-applicable",
+    "Dot(Vector4,Vector4)": "complete",
+    "Dot(Vector4&,Vector4&,Single&)": "not-applicable",
+    "Normalize()": "complete",
+    "Normalize(Vector4)": "complete",
+    "Normalize(Vector4&,Vector4&)": "not-applicable",
+    "Min(Vector4,Vector4)": "complete",
+    "Min(Vector4&,Vector4&,Vector4&)": "not-applicable",
+    "Max(Vector4,Vector4)": "complete",
+    "Max(Vector4&,Vector4&,Vector4&)": "not-applicable",
+    "Clamp(Vector4,Vector4,Vector4)": "complete",
+    "Clamp(Vector4&,Vector4&,Vector4&,Vector4&)": "not-applicable",
+    "Lerp(Vector4,Vector4,Single)": "complete",
+    "Lerp(Vector4&,Vector4&,Single,Vector4&)": "not-applicable",
+    "Barycentric(Vector4,Vector4,Vector4,Single,Single)": "complete",
+    "Barycentric(Vector4&,Vector4&,Vector4&,Single,Single,Vector4&)": "not-applicable",
+    "SmoothStep(Vector4,Vector4,Single)": "complete",
+    "SmoothStep(Vector4&,Vector4&,Single,Vector4&)": "not-applicable",
+    "CatmullRom(Vector4,Vector4,Vector4,Vector4,Single)": "complete",
+    "CatmullRom(Vector4&,Vector4&,Vector4&,Vector4&,Single,Vector4&)": "not-applicable",
+    "Hermite(Vector4,Vector4,Vector4,Vector4,Single)": "complete",
+    "Hermite(Vector4&,Vector4&,Vector4&,Vector4&,Single,Vector4&)": "not-applicable",
+    "Transform(Vector2,Matrix)": "missing",
+    "Transform(Vector2&,Matrix&,Vector4&)": "not-applicable",
+    "Transform(Vector3,Matrix)": "missing",
+    "Transform(Vector3&,Matrix&,Vector4&)": "not-applicable",
+    "Transform(Vector4,Matrix)": "missing",
+    "Transform(Vector4&,Matrix&,Vector4&)": "not-applicable",
+    "Transform(Vector2,Quaternion)": "missing",
+    "Transform(Vector2&,Quaternion&,Vector4&)": "not-applicable",
+    "Transform(Vector3,Quaternion)": "missing",
+    "Transform(Vector3&,Quaternion&,Vector4&)": "not-applicable",
+    "Transform(Vector4,Quaternion)": "missing",
+    "Transform(Vector4&,Quaternion&,Vector4&)": "not-applicable",
+    "Transform(Vector4,Matrix&,Vector4)": "missing",
+    "Transform(Vector4,Int32,Matrix&,Vector4,Int32,Int32)": "missing",
+    "Transform(Vector4,Quaternion&,Vector4)": "missing",
+    "Transform(Vector4,Int32,Quaternion&,Vector4,Int32,Int32)": "missing",
+    "Negate(Vector4)": "complete",
+    "Negate(Vector4&,Vector4&)": "not-applicable",
+    "Add(Vector4,Vector4)": "complete",
+    "Add(Vector4&,Vector4&,Vector4&)": "not-applicable",
+    "Subtract(Vector4,Vector4)": "complete",
+    "Subtract(Vector4&,Vector4&,Vector4&)": "not-applicable",
+    "Multiply(Vector4,Vector4)": "complete",
+    "Multiply(Vector4&,Vector4&,Vector4&)": "not-applicable",
+    "Multiply(Vector4,Single)": "complete",
+    "Multiply(Vector4&,Single,Vector4&)": "not-applicable",
+    "Divide(Vector4,Vector4)": "complete",
+    "Divide(Vector4&,Vector4&,Vector4&)": "not-applicable",
+    "Divide(Vector4,Single)": "complete",
+    "Divide(Vector4&,Single,Vector4&)": "not-applicable",
+    "op_UnaryNegation(Vector4)": "complete",
+    "op_Equality(Vector4,Vector4)": "complete",
+    "op_Inequality(Vector4,Vector4)": "not-applicable",
+    "op_Addition(Vector4,Vector4)": "complete",
+    "op_Subtraction(Vector4,Vector4)": "complete",
+    "op_Multiply(Vector4,Vector4)": "complete",
+    "op_Multiply(Vector4,Single)": "complete",
+    "op_Multiply(Single,Vector4)": "complete",
+    "op_Division(Vector4,Vector4)": "complete",
+    "op_Division(Vector4,Single)": "complete",
+    "Zero": "complete",
+    "One": "complete",
+    "UnitX": "complete",
+    "UnitY": "complete",
+    "UnitZ": "complete",
+    "UnitW": "complete",
+    "X": "complete",
+    "Y": "complete",
+    "Z": "complete",
+    "W": "complete"
+   },
+   "lisp": "microsoft.xna.framework:vector4"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.MathHelper",
+   "status": "complete",
+   "members": {
+    "ToRadians(Single)": "complete",
+    "ToDegrees(Single)": "complete",
+    "Distance(Single,Single)": "complete",
+    "Min(Single,Single)": "complete",
+    "Max(Single,Single)": "complete",
+    "Clamp(Single,Single,Single)": "complete",
+    "Lerp(Single,Single,Single)": "complete",
+    "Barycentric(Single,Single,Single,Single,Single)": "complete",
+    "SmoothStep(Single,Single,Single)": "complete",
+    "CatmullRom(Single,Single,Single,Single,Single)": "complete",
+    "Hermite(Single,Single,Single,Single,Single)": "complete",
+    "WrapAngle(Single)": "complete",
+    "E": "complete",
+    "Log2E": "complete",
+    "Log10E": "complete",
+    "Pi": "complete",
+    "TwoPi": "complete",
+    "PiOver2": "complete",
+    "PiOver4": "complete"
+   },
+   "projection": "static class: microsoft.xna.framework:math-helper-<member>"
   },
   {
    "name": "Microsoft.Xna.Framework.PlayerIndex",
@@ -1098,153 +1311,13 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Rectangle.Contains(Point&,Boolean&)",
-   "detail": "The by-reference overloads exist in XNA to avoid copying a value type into a call. Common Lisp passes a reference already, so the by-value overload is the whole contract; projecting the ref form would be a second name for one operation."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Rectangle.Contains(Rectangle&,Boolean&)",
-   "detail": "See Contains(Point&,Boolean&)."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Rectangle.Intersects(Rectangle&,Boolean&)",
-   "detail": "See Contains(Point&,Boolean&)."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Rectangle.Intersect(Rectangle,Rectangle)",
-   "detail": "Not implemented."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Rectangle.Intersect(Rectangle&,Rectangle&,Rectangle&)",
    "detail": "Not implemented."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Rectangle.Union(Rectangle,Rectangle)",
    "detail": "Not implemented."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Rectangle.Union(Rectangle&,Rectangle&,Rectangle&)",
-   "detail": "Not implemented."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Distance(Vector2&,Vector2&,Single&)",
-   "detail": "A by-reference overload."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.DistanceSquared(Vector2&,Vector2&,Single&)",
-   "detail": "A by-reference overload."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Dot(Vector2&,Vector2&,Single&)",
-   "detail": "A by-reference overload."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Normalize(Vector2)",
-   "detail": "The static Normalize answers a new vector; only the mutating instance method is projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Normalize(Vector2&,Vector2&)",
-   "detail": "A by-reference overload."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Reflect(Vector2,Vector2)",
-   "detail": "no exported 'vector2-reflect' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Reflect(Vector2&,Vector2&,Vector2&)",
-   "detail": "no exported 'vector2-reflect' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Min(Vector2,Vector2)",
-   "detail": "no exported 'vector2-min' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Min(Vector2&,Vector2&,Vector2&)",
-   "detail": "no exported 'vector2-min' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Max(Vector2,Vector2)",
-   "detail": "no exported 'vector2-max' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Max(Vector2&,Vector2&,Vector2&)",
-   "detail": "no exported 'vector2-max' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Clamp(Vector2,Vector2,Vector2)",
-   "detail": "no exported 'vector2-clamp' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Clamp(Vector2&,Vector2&,Vector2&,Vector2&)",
-   "detail": "no exported 'vector2-clamp' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Lerp(Vector2,Vector2,Single)",
-   "detail": "no exported 'vector2-lerp' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Lerp(Vector2&,Vector2&,Single,Vector2&)",
-   "detail": "no exported 'vector2-lerp' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Barycentric(Vector2,Vector2,Vector2,Single,Single)",
-   "detail": "no exported 'vector2-barycentric' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Barycentric(Vector2&,Vector2&,Vector2&,Single,Single,Vector2&)",
-   "detail": "no exported 'vector2-barycentric' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.SmoothStep(Vector2,Vector2,Single)",
-   "detail": "no exported 'vector2-smooth-step' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.SmoothStep(Vector2&,Vector2&,Single,Vector2&)",
-   "detail": "no exported 'vector2-smooth-step' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.CatmullRom(Vector2,Vector2,Vector2,Vector2,Single)",
-   "detail": "no exported 'vector2-catmull-rom' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.CatmullRom(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)",
-   "detail": "no exported 'vector2-catmull-rom' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Hermite(Vector2,Vector2,Vector2,Vector2,Single)",
-   "detail": "no exported 'vector2-hermite' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Hermite(Vector2&,Vector2&,Vector2&,Vector2&,Single,Vector2&)",
-   "detail": "no exported 'vector2-hermite' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",
@@ -1308,38 +1381,98 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Negate(Vector2&,Vector2&)",
-   "detail": "A by-reference overload."
+   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Matrix)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Add(Vector2&,Vector2&,Vector2&)",
-   "detail": "A by-reference overload; see Rectangle.Contains(Point&,Boolean&)."
+   "subject": "Microsoft.Xna.Framework.Vector3.TransformNormal(Vector3,Matrix)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Subtract(Vector2&,Vector2&,Vector2&)",
-   "detail": "A by-reference overload."
+   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Quaternion)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Multiply(Vector2&,Vector2&,Vector2&)",
-   "detail": "A by-reference overload."
+   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Matrix&,Vector3)",
+   "detail": "no exported 'vector3-transform' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Multiply(Vector2&,Single,Vector2&)",
-   "detail": "A by-reference overload."
+   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Int32,Matrix&,Vector3,Int32,Int32)",
+   "detail": "no exported 'vector3-transform' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Divide(Vector2&,Vector2&,Vector2&)",
-   "detail": "A by-reference overload."
+   "subject": "Microsoft.Xna.Framework.Vector3.TransformNormal(Vector3,Matrix&,Vector3)",
+   "detail": "no exported 'vector3-transform-normal' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Vector2.Divide(Vector2&,Single,Vector2&)",
-   "detail": "A by-reference overload."
+   "subject": "Microsoft.Xna.Framework.Vector3.TransformNormal(Vector3,Int32,Matrix&,Vector3,Int32,Int32)",
+   "detail": "no exported 'vector3-transform-normal' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Quaternion&,Vector3)",
+   "detail": "no exported 'vector3-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector3.Transform(Vector3,Int32,Quaternion&,Vector3,Int32,Int32)",
+   "detail": "no exported 'vector3-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector2,Matrix)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector3,Matrix)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Matrix)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector2,Quaternion)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector3,Quaternion)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Quaternion)",
+   "detail": "Needs Matrix or Quaternion, neither of which is projected yet."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Matrix&,Vector4)",
+   "detail": "no exported 'vector4-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Int32,Matrix&,Vector4,Int32,Int32)",
+   "detail": "no exported 'vector4-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Quaternion&,Vector4)",
+   "detail": "no exported 'vector4-transform' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Vector4.Transform(Vector4,Int32,Quaternion&,Vector4,Int32,Int32)",
+   "detail": "no exported 'vector4-transform' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",

@@ -58,7 +58,12 @@ jobs:
           (load (merge-pathnames "quicklisp/setup.lisp" (user-homedir-pathname)))
           (push (truename ".") asdf:*central-registry*)
           (defvar *problems* '())
-          (handler-bind ((warning (lambda (c)
+          ;; A macro defined in a file that is compiled and then loaded into the
+          ;; same image is defined twice, and SBCL says so. That is an artefact of
+          ;; compiling and loading in one process, not a defect in the code, so it
+          ;; is the one warning class this gate ignores.
+          (handler-bind ((sb-kernel:redefinition-warning #'muffle-warning)
+                         (warning (lambda (c)
                                     (push (format nil "~a: ~a" (type-of c) c) *problems*))))
             (asdf:load-system "cna-common-lisp"))
           (when *problems*

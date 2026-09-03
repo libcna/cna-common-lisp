@@ -66,28 +66,28 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=21 -->
-<!-- generated:selected members=689 -->
-<!-- generated:complete types=11 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=24 -->
+<!-- generated:selected members=881 -->
+<!-- generated:complete types=12 -->
+<!-- generated:partial types=11 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=474 -->
+<!-- generated:complete members=609 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=181 -->
-<!-- generated:not-applicable members=33 -->
+<!-- generated:missing members=165 -->
+<!-- generated:not-applicable members=106 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1**: 21 types, 689 members.
+Selection **Foundation 1**: 24 types, 881 members.
 
 | | |
 | --- | --- |
-| Types complete | **11** |
-| Types partial | **9** |
+| Types complete | **12** |
+| Types partial | **11** |
 | Types missing | **1** |
-| Members complete | **474** |
+| Members complete | **609** |
 | Members partial | **1** |
-| Members missing | **181** |
-| Members not applicable | **33** |
+| Members missing | **165** |
+| Members not applicable | **106** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -101,8 +101,11 @@ symbol is unaccounted for.
 | `M.X.F.GraphicsDeviceManager` | **partial** | 8 | 0 | 21 | 1 |
 | `M.X.F.Color` | **partial** | 153 | 0 | 8 | 4 |
 | `M.X.F.Point` | **complete** | 6 | 0 | 0 | 4 |
-| `M.X.F.Rectangle` | **partial** | 21 | 0 | 8 | 4 |
-| `M.X.F.Vector2` | **partial** | 31 | 0 | 42 | 4 |
+| `M.X.F.Rectangle` | **partial** | 21 | 0 | 3 | 9 |
+| `M.X.F.Vector2` | **partial** | 50 | 0 | 12 | 15 |
+| `M.X.F.Vector3` | **partial** | 51 | 0 | 9 | 28 |
+| `M.X.F.Vector4` | **partial** | 46 | 0 | 10 | 29 |
+| `M.X.F.MathHelper` | **complete** | 19 | 0 | 0 | 0 |
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **missing** | 0 | 0 | 9 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 3 | 1 | 51 | 2 |
@@ -117,6 +120,20 @@ symbol is unaccounted for.
 | `M.X.F.Input.KeyboardState` | **complete** | 6 | 0 | 0 | 3 |
 | `M.X.F.Input.KeyState` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Input.Keys` | **complete** | 160 | 0 | 0 | 1 |
+
+### Not applicable, and why so many
+
+106 members are classified not applicable, and 75 of those are one thing: the
+**by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
+exists in XNA so a caller can avoid copying a value type into a call and can
+write into storage it already has. The value it computes is the by-value
+overload's. Common Lisp passes a reference already, so `vector3-add` *is* that
+contract, and projecting the ref form would be a second name for one operation.
+
+The rest are the CLR universals -- `ToString`, `GetHashCode`, `Equals(Object)`,
+`op_Inequality`, `Finalize` -- and the protected `Dispose(bool)` pattern, which
+exists to tell a finalizer call from an explicit one and has nothing to
+distinguish in a binding with no finalizers.
 
 ### The one partial member
 

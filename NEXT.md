@@ -38,8 +38,8 @@ would go stale the moment the next commit lands.
 | Gate | Result |
 | --- | --- |
 | ASDF load from a fresh image | no warnings |
-| `asdf:test-system` with a native library | **1168 checks, 0 failures, 0 not run** |
-| `asdf:test-system` without one | 766 checks, 0 failures, **59 not run** and reported as such |
+| `asdf:test-system` with a native library | **1317 checks, 0 failures, 0 not run** |
+| `asdf:test-system` without one | 956 checks, 0 failures, **61 not run** and reported as such |
 | Compiler-backed ABI probe | compiles clean at `-Wall -Wextra -Werror -Wpedantic` |
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
@@ -54,18 +54,23 @@ and nothing in this repository says otherwise.
 
 ## The measured frontier
 
-<!-- generated:selected types=21 -->
-<!-- generated:selected members=689 -->
-<!-- generated:complete types=11 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=24 -->
+<!-- generated:selected members=881 -->
+<!-- generated:complete types=12 -->
+<!-- generated:partial types=11 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=474 -->
-<!-- generated:missing members=181 -->
+<!-- generated:complete members=609 -->
+<!-- generated:missing members=165 -->
+<!-- generated:not-applicable members=106 -->
 <!-- generated:disagreement total=0 -->
 
-21 selected types, 689 members: **11 complete, 9 partial, 1 missing**;
-**474 members complete, 181 missing**, 33 not applicable, 1 partial.
+24 selected types, 881 members: **12 complete, 11 partial, 1 missing**;
+**609 members complete, 165 missing**, 106 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
+
+Every remaining missing member of `Vector2`, `Vector3` and `Vector4` is a
+`Transform` or `TransformNormal` overload. All of them need `Matrix` or
+`Quaternion`, which is why those two are the next thing to build.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -88,37 +93,37 @@ released CNA-Lisp may require a C toolchain, which it currently may not.
 The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts.
 
-1. **Finish the math and geometry values.** `Vector3`, `Vector4`, `Quaternion`,
-   `Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum`,
-   `MathHelper`. All pure Lisp, all binary32, no native routes needed, and
-   `Vector2`'s 42 missing members mostly fall out with them (the `Transform`
-   family needs `Matrix` and `Quaternion`). Note that these are the types the
-   by-value flattening cannot pass, so keeping them out of the C ABI is not a
-   compromise here -- it is the right implementation anyway.
+1. **`Quaternion` and `Matrix`**, from the same pinned IL. They are the only
+   thing standing between the three vector types and completion: every one of
+   their remaining missing members is a `Transform` or `TransformNormal`
+   overload. `MathHelper`, `Vector3` and `Vector4` are done.
 2. **Complete `Rectangle`** (`Intersect`, `Union`, the `Point` overload of
    `Offset`) and **`Color`** (the float and vector constructors, `ToVector3`,
-   `ToVector4`, `Lerp`) once `Vector3`/`Vector4` exist.
-3. **The `Curve` family**: `Curve`, `CurveKey`, `CurveKeyCollection`,
+   `ToVector4`, `Lerp`) -- `Color`'s vector members are unblocked now that
+   `Vector3` and `Vector4` exist.
+3. **`Plane`, `Ray`, `BoundingBox`, `BoundingSphere`, `BoundingFrustum`,
+   `ContainmentType`, `PlaneIntersectionType`** once `Matrix` is there.
+4. **The `Curve` family**: `Curve`, `CurveKey`, `CurveKeyCollection`,
    `CurveContinuity`, `CurveLoopType`, `CurveTangent`. Pure managed, CNA has the
    routes for cross-checking.
-4. **Packed vectors**: the 19-type `Graphics.PackedVector` family. Pure managed.
-5. **Vertex descriptors and vertex value types**: `VertexElement`,
+5. **Packed vectors**: the 19-type `Graphics.PackedVector` family. Pure managed.
+6. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-6. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
+7. **The rest of input**: `Mouse`/`MouseState`, the `GamePad` family,
    `Input.Touch`. `Mouse.GetState` becomes `mouse-get-state`, which is the whole
    reason the static-class rule exists.
-7. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+8. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`, and the
    **event projection** the four `Game` events and six `GraphicsDevice` events
    need. That one decision unblocks `GraphicsResource` and 21 of
    `GraphicsDeviceManager`'s 30 members.
-8. **`System.IO.Stream` and `TitleContainer`**, which unblock
+9. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-9. **Graphics state objects** (`BlendState`, `DepthStencilState`,
+10. **Graphics state objects** (`BlendState`, `DepthStencilState`,
    `RasterizerState`, `SamplerState`), which unblock `SpriteBatch.Begin`'s four
    state-bearing overloads.
-10. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-11. **Audio, effects, models, media, storage, gamer services, networking.**
+11. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
+12. **Audio, effects, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 
@@ -135,6 +140,17 @@ that can be finished, tested and measured before the next one starts.
   duration. `graphics-device` resolves a fresh borrowed handle per operation, and
   a device operation outside a callback is refused before anything reaches the
   ABI.
+* **Behaviour comes from the IL, not from a description of the behaviour.** The
+  pinned assembly is recorded by SHA-256 in
+  `tools/api-compat/reference/XNA_IL_PROVENANCE.md`. Reading it is what caught
+  that `Math.Min(+0.0f, -0.0f)` answers `-0.0f`, that `Clamp` passes a NaN
+  through, and that `ToRadians` multiplies by a constant rather than dividing by
+  180 -- three things a reimplementation from first principles gets wrong.
+* **A by-reference overload of a pure computation is not applicable, not
+  missing.** It exists in XNA to avoid copying a value type; the value it computes
+  is the by-value overload's, and Common Lisp passes a reference already. 75
+  members are classified that way, each with the reason recorded in the mapping
+  rules.
 * **An exported symbol that is neither a mapped member nor a declared extension
   is a diagnostic.** Adding a convenience function means adding an entry to
   `cna-lisp.internal::*binding-extensions*` with the reason it exists. That is the

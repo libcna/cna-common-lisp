@@ -315,6 +315,11 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
                        "%r exists but CNA-Lisp has no event projection" % expected)
             statuses[sig] = "missing"
             continue
+        if override.get("kind") == "constant":
+            if not entry["constant"]:
+                report.add("wrong_kind", subject, "%r is not a constant" % expected)
+                statuses[sig] = "missing"
+            continue
         if not entry["fbound"] and not entry["class"]:
             report.add("wrong_kind", subject, "%r is not a function" % expected)
             statuses[sig] = "missing"
@@ -345,6 +350,7 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
     for family, members in families.items():
         if len(members) < 2:
             continue
+        family = ".ctor" if members[0]["kind"] == "constructor" else family
         mapped = set()
         for member in members:
             sig = signature(member)

@@ -65,7 +65,7 @@ registry. Private; not part of the published API.")
    #:take-pending-callback-condition #:release-callback-error-buffer
    #:call-native-frame
    ;; floating point ---------------------------------------------------------
-   #:with-binary32-semantics))
+   #:with-binary32-semantics #:nan-p #:infinity-p #:negative-zero-p))
 
 (defpackage #:cna-lisp.internal.framework
   (:documentation "Private tables and helpers for the Microsoft.Xna.Framework projection.")

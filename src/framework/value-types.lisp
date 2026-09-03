@@ -124,15 +124,7 @@ generic function can express the family."
        (= (rectangle-height left) (rectangle-height right))))
 
 ;;; ---------------------------------------------------------------- Vector2
-
-(deftype xna-float ()
-  "The floating-point type XNA computes in: IEEE 754 binary32."
-  'single-float)
-
-(declaim (inline f))
-(defun f (number)
-  "NUMBER as the binary32 value XNA would hold."
-  (coerce number 'single-float))
+;;; The shared binary32 helpers F, XNA-FLOAT and %SQRT-AS-XNA live in binary32.lisp.
 
 (defstruct (vector2 (:constructor %make-vector2 (x y)) (:copier copy-vector2))
   "Microsoft.Xna.Framework.Vector2: a two-component binary32 vector."
@@ -200,15 +192,6 @@ generic function can express the family."
     (+ (* (vector2-x vector) (vector2-x vector))
        (* (vector2-y vector) (vector2-y vector)))))
 
-(defun %sqrt-as-xna (single)
-  "Math.Sqrt on a binary32 argument, cast back to binary32.
-
-The square root itself is computed in binary64 because that is the only overload
-the original calls; the result is then narrowed. Doing the whole computation in
-binary64 would answer different bits."
-  (cna-lisp.internal:with-binary32-semantics
-    (f (sqrt (coerce single 'double-float)))))
-
 (defun vector2-length (vector)
   (%sqrt-as-xna (vector2-length-squared vector)))
 
@@ -228,6 +211,57 @@ binary64 would answer different bits."
       (setf (vector2-x vector) (* (vector2-x vector) scale)
             (vector2-y vector) (* (vector2-y vector) scale))
       vector)))
+
+(defun vector2-reflect (vector normal)
+  "Vector2.Reflect: v - (2 * (v . n)) * n, with the doubling done before the
+multiplication by the normal, as the IL does it."
+  (cna-lisp.internal:with-binary32-semantics
+    (let ((dot (vector2-dot vector normal)))
+      (%make-vector2 (- (vector2-x vector) (* (* 2.0f0 dot) (vector2-x normal)))
+                     (- (vector2-y vector) (* (* 2.0f0 dot) (vector2-y normal)))))))
+
+(macrolet ((component-wise (name documentation operation)
+             `(defun ,name (left right)
+                ,documentation
+                (cna-lisp.internal:with-binary32-semantics
+                  (%make-vector2 (,operation (vector2-x left) (vector2-x right))
+                                 (,operation (vector2-y left) (vector2-y right)))))))
+  (component-wise vector2-min "Vector2.Min, component by component." math-helper-min)
+  (component-wise vector2-max "Vector2.Max, component by component." math-helper-max))
+
+(defun vector2-clamp (value min max)
+  "Vector2.Clamp, component by component."
+  (%make-vector2 (math-helper-clamp (vector2-x value) (vector2-x min) (vector2-x max))
+                 (math-helper-clamp (vector2-y value) (vector2-y min) (vector2-y max))))
+
+(macrolet ((per-component (name documentation scalar arguments)
+             (flet ((axis (reader)
+                      `(,scalar ,@(loop for argument in arguments
+                                        collect (if (member argument
+                                                            '(amount amount1 amount2))
+                                                    argument
+                                                    `(,reader ,argument))))))
+               `(defun ,name (,@arguments)
+                  ,documentation
+                  (%make-vector2 ,(axis 'vector2-x) ,(axis 'vector2-y))))))
+  (per-component vector2-lerp "Vector2.Lerp." math-helper-lerp (value1 value2 amount))
+  (per-component vector2-smooth-step "Vector2.SmoothStep." math-helper-smooth-step
+                 (value1 value2 amount))
+  (per-component vector2-barycentric "Vector2.Barycentric." math-helper-barycentric
+                 (value1 value2 value3 amount1 amount2))
+  (per-component vector2-catmull-rom "Vector2.CatmullRom." math-helper-catmull-rom
+                 (value1 value2 value3 value4 amount))
+  (per-component vector2-hermite "Vector2.Hermite." math-helper-hermite
+                 (value1 tangent1 value2 tangent2 amount)))
+
+(defun vector2-normalized (vector)
+  "Vector2.Normalize(Vector2), the static method: answers a new vector and leaves
+VECTOR alone.
+
+A separate name from VECTOR2-NORMALIZE because the instance method mutates and
+the static one does not; one Lisp function cannot be both without the caller
+having to know which it got."
+  (vector2-normalize (copy-vector2 vector)))
 
 (defun vector2-equal (left right)
   "Vector2.Equals. Uses = on binary32, so a NaN component is never equal to

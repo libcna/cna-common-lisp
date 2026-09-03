@@ -163,24 +163,24 @@ which refuses any figure in the prose that the reports do not produce.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=21 -->
-<!-- generated:selected members=689 -->
-<!-- generated:complete types=11 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=24 -->
+<!-- generated:selected members=881 -->
+<!-- generated:complete types=12 -->
+<!-- generated:partial types=11 -->
 <!-- generated:missing types=1 -->
-<!-- generated:complete members=474 -->
-<!-- generated:missing members=181 -->
-<!-- generated:not-applicable members=33 -->
+<!-- generated:complete members=609 -->
+<!-- generated:missing members=165 -->
+<!-- generated:not-applicable members=106 -->
 <!-- generated:disagreement total=0 -->
 
-Selection **Foundation 1**: 21 types, 689 members.
+Selection **Foundation 1**: 24 types, 881 members.
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **11 / 9 / 1** |
-| Members complete | **474** |
-| Members missing | **181** |
-| Members not applicable | **33** |
+| Types complete / partial / missing | **12 / 11 / 1** |
+| Members complete | **609** |
+| Members missing | **165** |
+| Members not applicable | **106** |
 | Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
 
@@ -188,38 +188,13 @@ Every remaining diagnostic is an absence. Nothing implemented disagrees with the
 contract, nothing private has leaked into a public package, and no exported
 symbol is unaccounted for. `docs/compatibility.md` has the per-type table.
 
-### Native ABI, as generated
+### Behaviour authority
 
-| | |
-| --- | --- |
-<!-- generated:bound native functions=68 -->
-<!-- generated:bound native structs=19 -->
-<!-- generated:bound native struct fields=93 -->
-<!-- generated:bound native constants=237 -->
-<!-- generated:bound native callbacks=2 -->
-<!-- generated:by-value aggregates=2 -->
-<!-- generated:blocked routes=1 -->
-
-| Bound functions | 68 |
-| Bound structs | 19 |
-| Bound struct fields | 93 |
-| Bound constants | 237 |
-| Bound callback typedefs | 2 |
-| By-value aggregates admitted | 2 (`CNA_Color`, `CNA_StringView`) |
-| Routes proved blocked | 1 (`cna_graphics_device_set_viewport`) |
-
-### Qualified against
-
-| | |
-| --- | --- |
-| SBCL | 2.5.2 (Debian), Linux x86-64 |
-| CNA C ABI | 0.21.0, encoded 5376 |
-| CNA build | `SDL3` platform, `SDL3` audio, `HEADLESS` renderer |
-| Renderer reported by the device | `HEADLESS` |
-| Viewport reported by the device | 800x480 |
-
-HEADLESS proves lifecycle and command submission. It proves nothing about
-pixels, and no visible-rendering claim is made anywhere in this repository.
+Structure comes from the hash-pinned public metadata. **Behaviour comes from the
+hash-pinned assembly**: `tools/api-compat/reference/XNA_IL_PROVENANCE.md` records
+`Microsoft.Xna.Framework.dll` 4.0.0.0 by SHA-256, and every arithmetic method in
+the projected value types was written by reading its IL body instruction by
+instruction. No Microsoft binary or disassembly is stored here.
 
 ## 7. Rules this project keeps
 

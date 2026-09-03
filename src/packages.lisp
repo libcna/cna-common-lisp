@@ -38,7 +38,46 @@
    #:vector2-add #:vector2-subtract #:vector2-multiply #:vector2-divide
    #:vector2-negate #:vector2-length #:vector2-length-squared
    #:vector2-distance #:vector2-distance-squared #:vector2-dot
-   #:vector2-normalize #:vector2-equal
+   #:vector2-normalize #:vector2-normalized #:vector2-equal #:vector2-reflect
+   #:vector2-min #:vector2-max #:vector2-clamp
+   #:vector2-lerp #:vector2-smooth-step #:vector2-barycentric
+   #:vector2-catmull-rom #:vector2-hermite
+   ;; --- Vector3 -----------------------------------------------------------
+   #:vector3 #:make-vector3 #:vector3-p #:copy-vector3 #:make-vector3-from-vector2
+   #:vector3-x #:vector3-y #:vector3-z
+   #:vector3-zero #:vector3-one #:vector3-unit-x #:vector3-unit-y #:vector3-unit-z
+   #:vector3-up #:vector3-down #:vector3-right #:vector3-left
+   #:vector3-forward #:vector3-backward
+   #:vector3-length #:vector3-length-squared
+   #:vector3-distance #:vector3-distance-squared #:vector3-dot #:vector3-cross
+   #:vector3-normalize #:vector3-normalized #:vector3-reflect
+   #:vector3-add #:vector3-subtract #:vector3-negate
+   #:vector3-multiply #:vector3-divide
+   #:vector3-min #:vector3-max #:vector3-clamp
+   #:vector3-lerp #:vector3-smooth-step #:vector3-barycentric
+   #:vector3-catmull-rom #:vector3-hermite #:vector3-equal
+   ;; --- Vector4 -----------------------------------------------------------
+   #:vector4 #:make-vector4 #:vector4-p #:copy-vector4
+   #:make-vector4-from-vector2 #:make-vector4-from-vector3
+   #:vector4-x #:vector4-y #:vector4-z #:vector4-w
+   #:vector4-zero #:vector4-one
+   #:vector4-unit-x #:vector4-unit-y #:vector4-unit-z #:vector4-unit-w
+   #:vector4-length #:vector4-length-squared
+   #:vector4-distance #:vector4-distance-squared #:vector4-dot
+   #:vector4-normalize #:vector4-normalized
+   #:vector4-add #:vector4-subtract #:vector4-negate
+   #:vector4-multiply #:vector4-divide
+   #:vector4-min #:vector4-max #:vector4-clamp
+   #:vector4-lerp #:vector4-smooth-step #:vector4-barycentric
+   #:vector4-catmull-rom #:vector4-hermite #:vector4-equal
+   ;; --- MathHelper --------------------------------------------------------
+   #:+math-helper-e+ #:+math-helper-log2e+ #:+math-helper-log10e+
+   #:+math-helper-pi+ #:+math-helper-two-pi+
+   #:+math-helper-pi-over2+ #:+math-helper-pi-over4+
+   #:math-helper-to-radians #:math-helper-to-degrees
+   #:math-helper-distance #:math-helper-min #:math-helper-max #:math-helper-clamp
+   #:math-helper-lerp #:math-helper-barycentric #:math-helper-smooth-step
+   #:math-helper-catmull-rom #:math-helper-hermite #:math-helper-wrap-angle
    ;; --- Color -------------------------------------------------------------
    #:color #:make-color #:color-p #:copy-color #:color-from-packed-value
    #:color-r #:color-g #:color-b #:color-a #:color-packed-value
