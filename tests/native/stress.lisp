@@ -17,7 +17,13 @@
       (unwind-protect
            (progn
              (xna:run game)
-             (is (= 3 (updates game)) "cycle ~d ran ~d updates" cycle (updates game))
+             ;; At least three, not exactly three. The default time step is
+             ;; fixed, so a frame that overran its target is followed by
+             ;; catch-up updates, and one of those can land after the third
+             ;; update has asked the game to exit. This assertion held for a
+             ;; long time and then failed once on a busier machine, which is
+             ;; exactly how a timing assumption fails.
+             (is (>= (updates game) 3) "cycle ~d ran ~d updates" cycle (updates game))
              (is (= 1 (begin-runs game)))
              (is (= 1 (end-runs game)))
              (sb-ext:gc :full t))

@@ -53,9 +53,13 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "framework/named-colors")
    (:file "framework/game-time")
    ;; --- Microsoft.Xna.Framework.Graphics ----------------------------------
+   ;; The event mechanism knows about no class, so it loads before the two
+   ;; namespaces whose types raise events.
+   (:file "runtime/event-machinery")
    (:file "graphics/enums")
    (:file "graphics/packed-vector")
    (:file "graphics/viewport")
+   (:file "graphics/graphics-resource")
    (:file "graphics/graphics-device")
    (:file "graphics/texture-2d")
    (:file "graphics/sprite-batch")
@@ -67,7 +71,6 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "input/game-pad")
    (:file "input/touch")
    ;; --- Game and the graphics device manager ------------------------------
-   (:file "runtime/event-machinery")
    (:file "runtime/game")
    (:file "runtime/game-events")
    (:file "runtime/graphics-device-manager")
@@ -108,6 +111,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/game-lifecycle")
    (:file "native/events")
    (:file "native/graphics")
+   (:file "native/graphics-resource")
    (:file "native/keyboard")
    (:file "native/mouse")
    (:file "native/game-pad")

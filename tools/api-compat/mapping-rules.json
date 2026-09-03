@@ -534,8 +534,43 @@
    "lisp_package": "microsoft.xna.framework.graphics",
    "lisp_name": "graphics-resource",
    "lisp_kind": "class",
-   "status": "missing",
-   "reason": "GraphicsResource's disposal contract, its Name, Tag and Disposing event need the event projection and the GraphicsDevice back-reference, neither of which is in Foundation 1. Texture2D and SpriteBatch carry CNA-Lisp's own disposal instead."
+   "expected_superclass": "cna-lisp.internal:native-object",
+   "constructors": {},
+   "member_overrides": {
+    "Name": {
+     "lisp": "graphics-resource-name",
+     "setf": true,
+     "reason": "A member whose bare projected name would collide across the package takes the type prefix, as Texture.Format does. NAME alone would meet every other named thing in the graphics package."
+    },
+    "IsDisposed": {
+     "lisp": "graphics-resource-is-disposed",
+     "reason": "Asks CNA rather than the CLOS object, so a resource CNA disposed underneath the binding reports disposed even before the Lisp side notices. DISPOSED-P is the CNA-Lisp question and answers the same thing for every live object."
+    },
+    "Tag": {
+     "lisp": "tag",
+     "setf": true,
+     "reason": "XNA's Tag is System.Object -- arbitrary consumer data the framework never reads. CNA's is a uint64 token, which cannot hold a Lisp object and could only hold a pointer to one, and putting a pointer to a moving object into C is the thing this binding never does. So the tag is a Lisp slot and is not round-tripped through the C ABI."
+    },
+    "GraphicsDevice": {
+     "lisp": "graphics-resource-graphics-device",
+     "reason": "Answers the game's GRAPHICS-DEVICE facade. There is one device in a CNA-Lisp program and two objects for it would be one too many; the C handle CNA answers here is a borrowed, callback-scoped one like every other."
+    },
+    "Dispose()": {
+     "lisp": "dispose",
+     "reason": "Every native object in this binding already carries deterministic disposal. GraphicsResource does not introduce a second mechanism: Dispose() is DISPOSE, which is a declared extension because XNA spells disposal differently on each type that has it.",
+     "package": "microsoft.xna.framework"
+    }
+   },
+   "events": {
+    "Disposing": {
+     "add": "add-disposing-handler",
+     "remove": "remove-disposing-handler",
+     "reason": "The same projection the other events use. A resource registration is its own handle type with its own release route, unlike the game's and the manager's, which share one."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. CNA-Lisp has no finalizer that touches a native resource, so there is nothing for the flag to distinguish."
+   }
   },
   "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
    "lisp_package": "microsoft.xna.framework.graphics",
@@ -603,13 +638,14 @@
      "lisp": "format-of",
      "reason": "A member whose projected name would be a Common Lisp standard symbol takes an -of suffix: cl:format is inherited into this package."
     }
-   }
+   },
+   "expected_superclass": "microsoft.xna.framework.graphics:graphics-resource"
   },
   "Microsoft.Xna.Framework.Graphics.Texture2D": {
    "lisp_package": "microsoft.xna.framework.graphics",
    "lisp_name": "texture-2d",
    "lisp_kind": "class",
-   "expected_superclass": "microsoft.xna.framework.graphics:texture",
+   "expected_superclass": "microsoft.xna.framework.graphics:graphics-resource",
    "constructors": {},
    "not_applicable": {
     "Dispose(Boolean)": "The protected dispose(bool) pattern."
@@ -753,7 +789,8 @@
      "lisp": "draw-texture",
      "reason": "All seven texture overloads are one generic function whose keyword combination selects the overload, and only those seven combinations are accepted: :COLOR is required, exactly one of :POSITION and :DESTINATION must be given, the transform group is all-or-nothing, and :SCALE belongs to the position family alone. The two placements take CNA's two different submission routes, because a position and a destination rectangle are not interchangeable."
     }
-   }
+   },
+   "expected_superclass": "microsoft.xna.framework.graphics:graphics-resource"
   },
   "Microsoft.Xna.Framework.Graphics.SpriteSortMode": {
    "lisp_package": "microsoft.xna.framework.graphics",

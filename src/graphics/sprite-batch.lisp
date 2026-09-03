@@ -10,7 +10,7 @@
 
 (in-package #:microsoft.xna.framework.graphics)
 
-(defclass sprite-batch (cna-lisp.internal:native-object)
+(defclass sprite-batch (graphics-resource)
   ((begun :initform nil :accessor %begun-p))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.SpriteBatch.

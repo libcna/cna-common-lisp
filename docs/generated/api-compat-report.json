@@ -19,19 +19,18 @@
   "members": 1632,
   "types_by_status": {
    "partial": 6,
-   "complete": 70,
-   "missing": 1
+   "complete": 71
   },
   "members_by_status": {
-   "complete": 1176,
-   "missing": 110,
-   "not-applicable": 345,
+   "complete": 1182,
+   "missing": 101,
+   "not-applicable": 348,
    "partial": 1
   },
-  "diagnostics": 111,
+  "diagnostics": 101,
   "diagnostics_by_category": {
-   "missing_type": 1,
-   "missing_member": 110,
+   "missing_type": 0,
+   "missing_member": 101,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1169,19 +1168,19 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-   "status": "missing",
-   "reason": "GraphicsResource's disposal contract, its Name, Tag and Disposing event need the event projection and the GraphicsDevice back-reference, neither of which is in Foundation 1. Texture2D and SpriteBatch carry CNA-Lisp's own disposal instead.",
+   "status": "complete",
    "members": {
-    "ToString()": "missing",
-    "Dispose(Boolean)": "missing",
-    "Dispose()": "missing",
-    "Finalize()": "missing",
-    "IsDisposed": "missing",
-    "Tag": "missing",
-    "Name": "missing",
-    "GraphicsDevice": "missing",
-    "Disposing": "missing"
-   }
+    "ToString()": "not-applicable",
+    "Dispose(Boolean)": "not-applicable",
+    "Dispose()": "complete",
+    "Finalize()": "not-applicable",
+    "IsDisposed": "complete",
+    "Tag": "complete",
+    "Name": "complete",
+    "GraphicsDevice": "complete",
+    "Disposing": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:graphics-resource"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -2342,56 +2341,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DefaultBackBufferHeight",
    "detail": "no exported 'default-back-buffer-height' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.ToString",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Dispose",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Dispose",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Finalize",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.IsDisposed",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Tag",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Name",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.GraphicsDevice",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource.Disposing",
-   "detail": "the type itself is not projected"
-  },
-  {
-   "category": "missing_type",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-   "detail": "GraphicsResource's disposal contract, its Name, Tag and Disposing event need the event projection and the GraphicsDevice back-reference, neither of which is in Foundation 1. Texture2D and SpriteBatch carry CNA-Lisp's own disposal instead."
   },
   {
    "category": "missing_member",

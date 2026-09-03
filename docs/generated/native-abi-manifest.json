@@ -21,11 +21,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 93,
+    "functions": 100,
     "structs": 28,
     "struct_fields": 191,
     "constants": 311,
-    "callbacks": 3,
+    "callbacks": 4,
     "by_value_aggregates": 2,
     "shimmed_routes": 1
   },
@@ -1171,6 +1171,184 @@
       "ownership": "creates",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_manager_subscribe(CNA_GraphicsDeviceManagerHandle manager, CNA_GraphicsDeviceManagerEvent event, CNA_GameEventCallback callback, void* context, CNA_GameEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_graphics_resource_get_is_disposed",
+      "header": "graphics_resource.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "resource",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_is_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_resource_get_is_disposed(CNA_Handle resource, CNA_Bool* out_is_disposed)"
+    },
+    {
+      "name": "cna_graphics_resource_get_name_byte_count",
+      "header": "graphics_resource.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "resource",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_resource_get_name_byte_count(CNA_Handle resource, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_graphics_resource_copy_name",
+      "header": "graphics_resource.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "resource",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_resource_copy_name(CNA_Handle resource, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_graphics_resource_set_name",
+      "header": "graphics_resource.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "resource",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_resource_set_name(CNA_Handle resource, CNA_StringView name)"
+    },
+    {
+      "name": "cna_graphics_resource_get_graphics_device",
+      "header": "graphics_resource.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "resource",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_graphics_device",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_resource_get_graphics_device(CNA_Handle resource, CNA_Handle* out_graphics_device)"
+    },
+    {
+      "name": "cna_graphics_resource_subscribe_disposing",
+      "header": "graphics_resource.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "resource",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_GraphicsResourceDisposingCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GraphicsResourceEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_resource_subscribe_disposing(CNA_Handle resource, CNA_GraphicsResourceDisposingCallback callback, void* context, CNA_GraphicsResourceEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_graphics_resource_unsubscribe_disposing",
+      "header": "graphics_resource.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_GraphicsResourceEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_resource_unsubscribe_disposing(CNA_GraphicsResourceEventRegistrationHandle registration)"
     },
     {
       "name": "cna_texture2d_create_from_encoded_memory",
@@ -4320,6 +4498,23 @@
       "returns": ":void",
       "c_returns": "void",
       "params": [
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
+      "name": "CNA_GraphicsResourceDisposingCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "resource",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
         {
           "name": "context",
           "c_type": "void*",

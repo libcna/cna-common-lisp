@@ -58,17 +58,17 @@ and nothing in this repository says otherwise.
 
 <!-- generated:selected types=77 -->
 <!-- generated:selected members=1632 -->
-<!-- generated:complete types=70 -->
+<!-- generated:complete types=71 -->
 <!-- generated:partial types=6 -->
-<!-- generated:missing types=1 -->
-<!-- generated:complete members=1176 -->
+<!-- generated:missing types=0 -->
+<!-- generated:complete members=1182 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=110 -->
-<!-- generated:not-applicable members=345 -->
+<!-- generated:missing members=101 -->
+<!-- generated:not-applicable members=348 -->
 <!-- generated:disagreement total=0 -->
 
-77 selected types, 1632 members: **70 complete, 6 partial, 1 missing**;
-**1176 members complete, 110 missing**, 345 not applicable, 1 partial.
+77 selected types, 1632 members: **71 complete, 6 partial, 0 missing**;
+**1182 members complete, 101 missing**, 348 not applicable, 1 partial.
 `docs/compatibility.md` has the per-type table.
 
 **Every pure-managed type in the selection is complete.** The math types
@@ -77,8 +77,12 @@ and nothing in this repository says otherwise.
 `Point`, `Rectangle` -- the `Curve` family, the seventeen packed vector types and all six
 enumerations answer every member of the selected contract, and **so does the
 whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
-`GamePad` family and the touch panel. Everything still missing is graphics,
-content, or the event projection.
+`GamePad` family and the touch panel.
+
+**No selected type is missing any more.** Six are partial, and everything absent
+in them is graphics or content: the graphics state objects, `System.IO.Stream`,
+`SpriteFont`, and the parts of `Game` and `GraphicsDeviceManager` that need a
+component engine or a device-settings type.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -104,20 +108,16 @@ listed after.
 
 1. **Vertex descriptors and vertex value types**: `VertexElement`,
    `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-2. **`GraphicsResource`.** Its `Disposing` event now has a projection to use,
-   and CNA has the whole surface -- `Name`, `Tag`, `IsDisposed`, the device
-   back-reference and `cna_graphics_resource_subscribe_disposing`. Making it the
-   real base class of `texture-2d` and `sprite-batch` is what turns the last
-   `missing` type into a `complete` one.
-3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+
+2. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
-4. **`System.IO.Stream` and `TitleContainer`**, which unblock
+3. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-5. **Graphics state objects** (`BlendState`, `DepthStencilState`,
+4. **Graphics state objects** (`BlendState`, `DepthStencilState`,
    `RasterizerState`, `SamplerState`), which unblock `SpriteBatch.Begin`'s four
    state-bearing overloads.
-6. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-7. **Audio, effects, models, media, storage, gamer services, networking.**
+5. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
+6. **Audio, effects, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 

@@ -11,9 +11,9 @@
   "files": {
     "src/internal/ffi/constants.generated.lisp": "d8d0b5a8127fc66561fc21b9e57155db49765a0b0c034633bb1f173f9aa25ea1",
     "src/internal/ffi/structs.generated.lisp": "b347421559f4df36f24c6727973b7ab039e263c696fd8ff41f63268e99bdc28d",
-    "src/internal/ffi/functions.generated.lisp": "7d56db457629fdb23287be9efd32e5032b3accdc37207e115351fb7dd32c1490",
+    "src/internal/ffi/functions.generated.lisp": "124b975d91fe84ead9ae47710d22e46228c451ca73b64054765c3213dd63a675",
     "src/framework/predefined-colors.generated.lisp": "5be663877e30a59cb49eb8e11cc7a4b174ccfa65a2c22df52eec1cc5240b6cb0",
-    "tools/native-abi/probe.generated.c": "d95671d4acb676ceb5dd204b363efe56c0e120b6045d5e2357795482bfaf4a6f",
+    "tools/native-abi/probe.generated.c": "348166d8362428c711143dab3b94db1c0e3b57e269556466e055cd074c2b8ddb",
     "tools/native-abi/valueprobe.generated.c": "0ac806fabba5543060e954facfca5e79bcca7ea5cc7ebe4e2e82a36e6e7b4e4f",
     "tools/native-abi/shim.generated.c": "0a928d721aaebd09f18a7654e7d944668aad410992e85841625e5577b8bc0537"
   }

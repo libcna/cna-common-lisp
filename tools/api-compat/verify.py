@@ -286,7 +286,8 @@ def verify_type(report, rules, contract_type, surface, packages, claimed):
                                "%r is not in the class precedence list %s"
                                % (expected_super, entry["precedence"]))
         statuses = verify_members(report, rules, type_rule, contract_type, symbols,
-                                  package, claimed, surface["predefined_colors"])
+                                  package, claimed, surface["predefined_colors"],
+                                  all_packages=packages)
 
     values = list(statuses.values())
     if all(v in ("complete", "not-applicable") for v in values):
@@ -340,8 +341,9 @@ def verify_event(report, type_rule, member, subject, symbols, package, claimed):
 
 
 def verify_members(report, rules, type_rule, contract_type, symbols, package, claimed,
-                   surface_predefined=()):
+                   surface_predefined=(), all_packages=None):
     statuses = {}
+    all_packages = all_packages if all_packages is not None else {package: symbols}
     universal = {n["name"]: n["reason"] for n in rules["universal_not_applicable"]}
     for member in contract_type["members"]:
         sig = signature(member)
@@ -396,13 +398,24 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
             # is the class itself plus its initargs.
             statuses[sig] = "complete"
             continue
-        entry = symbols.get(expected)
+        # A member may project onto a symbol in another package -- GraphicsResource's
+        # Dispose() is MICROSOFT.XNA.FRAMEWORK:DISPOSE, because disposal is one
+        # operation for every native object rather than one per graphics type. The
+        # rule has to say so, so that the symbol is claimed where it really lives
+        # and does not look unexpected there.
+        home = override.get("package", package)
+        home_symbols = all_packages.get(home)
+        if home_symbols is None:
+            report.add("wrong_package", subject, "no such package %r" % home)
+            statuses[sig] = "missing"
+            continue
+        entry = home_symbols.get(expected)
         if entry is None:
             statuses[sig] = "missing"
             report.add("missing_member", subject, "no exported %r in %s"
-                       % (expected, package))
+                       % (expected, home))
             continue
-        claimed.setdefault(package, set()).add(expected)
+        claimed.setdefault(home, set()).add(expected)
         statuses[sig] = "complete"
 
         if override.get("kind") == "constant":

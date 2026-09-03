@@ -527,6 +527,13 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_synchronize_wi
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_synchronize_with_vertical_retrace)(CNA_GraphicsDeviceManagerHandle, CNA_Bool) = cna_graphics_device_manager_set_synchronize_with_vertical_retrace;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_graphics_device)(CNA_GraphicsDeviceManagerHandle, CNA_Handle*) = cna_graphics_device_manager_get_graphics_device;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_subscribe)(CNA_GraphicsDeviceManagerHandle, CNA_GraphicsDeviceManagerEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*) = cna_graphics_device_manager_subscribe;
+CNA_Result (*const cna_lisp_probe_cna_graphics_resource_get_is_disposed)(CNA_Handle, CNA_Bool*) = cna_graphics_resource_get_is_disposed;
+CNA_Result (*const cna_lisp_probe_cna_graphics_resource_get_name_byte_count)(CNA_Handle, uint64_t*) = cna_graphics_resource_get_name_byte_count;
+CNA_Result (*const cna_lisp_probe_cna_graphics_resource_copy_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_graphics_resource_copy_name;
+CNA_Result (*const cna_lisp_probe_cna_graphics_resource_set_name)(CNA_Handle, CNA_StringView) = cna_graphics_resource_set_name;
+CNA_Result (*const cna_lisp_probe_cna_graphics_resource_get_graphics_device)(CNA_Handle, CNA_Handle*) = cna_graphics_resource_get_graphics_device;
+CNA_Result (*const cna_lisp_probe_cna_graphics_resource_subscribe_disposing)(CNA_Handle, CNA_GraphicsResourceDisposingCallback, void*, CNA_GraphicsResourceEventRegistrationHandle*) = cna_graphics_resource_subscribe_disposing;
+CNA_Result (*const cna_lisp_probe_cna_graphics_resource_unsubscribe_disposing)(CNA_GraphicsResourceEventRegistrationHandle) = cna_graphics_resource_unsubscribe_disposing;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_create_from_encoded_memory)(CNA_Handle, const uint8_t*, uint64_t, const CNA_Texture2DDecodeInfo*, CNA_Handle*) = cna_texture2d_create_from_encoded_memory;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_create_from_file_with_device)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_texture2d_create_from_file_with_device;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_destroy)(CNA_Handle) = cna_texture2d_destroy;
@@ -575,6 +582,7 @@ CNA_Result (*const cna_lisp_probe_cna_touch_panel_set_display_orientation)(CNA_H
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
 _Static_assert(sizeof(CNA_GameBeginDrawCallback) == sizeof(void (*)(void)), "CNA_GameBeginDrawCallback size");
 _Static_assert(sizeof(CNA_GameEventCallback) == sizeof(void (*)(void)), "CNA_GameEventCallback size");
+_Static_assert(sizeof(CNA_GraphicsResourceDisposingCallback) == sizeof(void (*)(void)), "CNA_GraphicsResourceDisposingCallback size");
 
 /* --- constants --- */
 _Static_assert((int64_t)(CNA_ABI_VERSION) == INT64_C(5376), "CNA_ABI_VERSION value");

@@ -167,6 +167,20 @@ because the contract is what the framework answers, and it is marked as a defect
 wherever it is reproduced -- in the source, in the unit test and in the
 behaviour corpus.
 
+## A graphics resource's Tag is a Lisp slot, not a round trip
+
+XNA's `GraphicsResource.Tag` is `System.Object`: arbitrary consumer data the
+framework never reads. CNA's is a `uint64` token, which cannot hold a Lisp object
+and could only hold a pointer to one -- and putting a pointer to a moving object
+into C is the single thing this binding never does. So the tag is a slot on the
+Lisp object, it holds any Lisp value, and it is **not** carried through the C ABI.
+
+The consequence is narrow and worth stating: a program that shared one native
+resource between CNA-Lisp and another CNA binding would not see that binding's
+tag through `gfx:tag`, and vice versa. Nothing in CNA-Lisp shares resources that
+way, and the alternative -- a raw pointer in the public API -- is the one this
+projection exists to avoid.
+
 ## TouchCollection's nested enumerator is not projected
 
 `TouchCollection+Enumerator` is a nested value type that exists to implement

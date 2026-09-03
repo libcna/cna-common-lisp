@@ -110,6 +110,16 @@ are the only things that differ, and both are generic functions on the object."
         (cna-lisp.internal:unregister-callback-target token)
         (error condition)))))
 
+(defgeneric %unsubscribe-natively (object registration)
+  (:documentation
+   "Release one of OBJECT's registrations. The default is the game's route, which
+CNA also uses for the graphics device manager's; a type whose registrations are a
+different handle type overrides it."))
+
+(defmethod %unsubscribe-natively (object registration)
+  (declare (ignore object))
+  (cna-lisp.internal.ffi::%game-unsubscribe registration))
+
 (defun %unsubscribe-event (object event function)
   "Release OBJECT's subscription of FUNCTION to EVENT, if it has one."
   (let ((entry (find-if (lambda (row)
@@ -118,11 +128,8 @@ are the only things that differ, and both are generic functions on the object."
     (when entry
       (setf (%event-handlers object) (remove entry (%event-handlers object)))
       (cna-lisp.internal:unregister-callback-target (third entry))
-      ;; Every registration, whoever raised the event, is released by
-      ;; `cna_game_unsubscribe': the C ABI gives them one handle type and one
-      ;; release route.
       (cna-lisp.internal:check-result
-       (cna-lisp.internal.ffi::%game-unsubscribe (cdddr entry))
+       (%unsubscribe-natively object (cdddr entry))
        "remove-event-handler")
       t)))
 
@@ -132,7 +139,7 @@ are the only things that differ, and both are generic functions on the object."
 Nothing here may signal: it runs on the teardown path, where a condition would
 leave the rest of the object undestroyed."
   (dolist (entry (%event-handlers object))
-    (ignore-errors (cna-lisp.internal.ffi::%game-unsubscribe (cdddr entry)))
+    (ignore-errors (%unsubscribe-natively object (cdddr entry)))
     (ignore-errors (cna-lisp.internal:unregister-callback-target (third entry))))
   (setf (%event-handlers object) '())
   nil)

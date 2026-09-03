@@ -11459,6 +11459,28 @@
       "package": "microsoft.xna.framework.graphics",
       "symbols": [
         {
+          "name": "add-disposing-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsResource.Disposing: the resource is being disposed.\n\nHANDLER is called with the resource. It runs *inside* the disposal, so the\nresource is still addressable but must not be used for new work."
+        },
+        {
           "name": "all-sprite-effects",
           "fbound": true,
           "macro": false,
@@ -11710,6 +11732,97 @@
           "documentation": "The game's graphics device. Instances are produced by the runtime and reached\nthrough MICROSOFT.XNA.FRAMEWORK:GRAPHICS-DEVICE; a consumer does not create one.\n\nEvery operation on a graphics device is legal only inside a game lifecycle\nmethod -- LOAD-CONTENT, UPDATE, DRAW and their neighbours -- because that is the\nonly time CNA lends the device out."
         },
         {
+          "name": "graphics-resource",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.GraphicsResource: the base of the graphics\nobjects a device owns.\n\nAbstract: CNA-Lisp creates TEXTURE-2D and SPRITE-BATCH, never a bare resource."
+        },
+        {
+          "name": "graphics-resource-graphics-device",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "resource"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsResource.GraphicsDevice: the device this resource belongs to.\n\nAnswers the game's GRAPHICS-DEVICE facade, which is the only device a CNA-Lisp\nprogram has. The C handle CNA answers here is a *borrowed* device handle with the\nsame callback-scoped lifetime as every other one, so it is checked against the\nfacade rather than wrapped in a second device object -- there is exactly one\ndevice and two objects for it would be one too many."
+        },
+        {
+          "name": "graphics-resource-is-disposed",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "resource"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsResource.IsDisposed.\n\nThe same question DISPOSED-P answers, asked of CNA rather than of the CLOS\nobject -- so a resource CNA disposed underneath the binding reports disposed\nhere even before the Lisp side notices."
+        },
+        {
+          "name": "graphics-resource-name",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "resource"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "name",
+            "resource"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsResource.Name."
+        },
+        {
           "name": "height",
           "fbound": true,
           "macro": false,
@@ -11800,6 +11913,28 @@
           "documentation": "GraphicsDevice.Present()."
         },
         {
+          "name": "remove-disposing-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-disposing-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
           "name": "renderer-name",
           "fbound": true,
           "macro": false,
@@ -11835,6 +11970,7 @@
           "metaclass": "standard-class",
           "precedence": [
             "microsoft.xna.framework.graphics:sprite-batch",
+            "microsoft.xna.framework.graphics:graphics-resource",
             "cna-lisp.internal:native-object",
             "common-lisp:standard-object",
             "sb-pcl:slot-object",
@@ -12029,6 +12165,30 @@
           "documentation": "The exact value of a SURFACE-FORMAT member."
         },
         {
+          "name": "tag",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "texture",
           "fbound": false,
           "macro": false,
@@ -12043,6 +12203,7 @@
           "metaclass": "standard-class",
           "precedence": [
             "microsoft.xna.framework.graphics:texture",
+            "microsoft.xna.framework.graphics:graphics-resource",
             "cna-lisp.internal:native-object",
             "common-lisp:standard-object",
             "sb-pcl:slot-object",
@@ -12069,6 +12230,7 @@
           "precedence": [
             "microsoft.xna.framework.graphics:texture-2d",
             "microsoft.xna.framework.graphics:texture",
+            "microsoft.xna.framework.graphics:graphics-resource",
             "cna-lisp.internal:native-object",
             "common-lisp:standard-object",
             "sb-pcl:slot-object",

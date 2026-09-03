@@ -214,6 +214,34 @@
 (defcfun ("cna_graphics_device_manager_subscribe" %graphics-device-manager-subscribe) :uint32
   (manager :uint64) (event :uint32) (callback :pointer) (context :pointer) (out-registration :pointer))
 
+;;; CNA_Result cna_graphics_resource_get_is_disposed(CNA_Handle resource, CNA_Bool* out_is_disposed)
+(defcfun ("cna_graphics_resource_get_is_disposed" %graphics-resource-get-is-disposed) :uint32
+  (resource :uint64) (out-is-disposed :pointer))
+
+;;; CNA_Result cna_graphics_resource_get_name_byte_count(CNA_Handle resource, uint64_t* out_byte_count)
+(defcfun ("cna_graphics_resource_get_name_byte_count" %graphics-resource-get-name-byte-count) :uint32
+  (resource :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_graphics_resource_copy_name(CNA_Handle resource, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_graphics_resource_copy_name" %graphics-resource-copy-name) :uint32
+  (resource :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_graphics_resource_set_name(CNA_Handle resource, CNA_StringView name)
+(defcfun ("cna_graphics_resource_set_name" %graphics-resource-set-name) :uint32
+  (resource :uint64) (name-0 :pointer) (name-1 :uint64))
+
+;;; CNA_Result cna_graphics_resource_get_graphics_device(CNA_Handle resource, CNA_Handle* out_graphics_device)
+(defcfun ("cna_graphics_resource_get_graphics_device" %graphics-resource-get-graphics-device) :uint32
+  (resource :uint64) (out-graphics-device :pointer))
+
+;;; CNA_Result cna_graphics_resource_subscribe_disposing(CNA_Handle resource, CNA_GraphicsResourceDisposingCallback callback, void* context, CNA_GraphicsResourceEventRegistrationHandle* out_registration)
+(defcfun ("cna_graphics_resource_subscribe_disposing" %graphics-resource-subscribe-disposing) :uint32
+  (resource :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_graphics_resource_unsubscribe_disposing(CNA_GraphicsResourceEventRegistrationHandle registration)
+(defcfun ("cna_graphics_resource_unsubscribe_disposing" %graphics-resource-unsubscribe-disposing) :uint32
+  (registration :uint64))
+
 ;;; CNA_Result cna_texture2d_create_from_encoded_memory(CNA_Handle graphics_device, const uint8_t* encoded_data, uint64_t encoded_byte_count, const CNA_Texture2DDecodeInfo* decode_info, CNA_Handle* out_texture)
 (defcfun ("cna_texture2d_create_from_encoded_memory" %texture-2d-create-from-encoded-memory) :uint32
   (graphics-device :uint64) (encoded-data :pointer) (encoded-byte-count :uint64) (decode-info :pointer) (out-texture :pointer))
@@ -437,6 +465,13 @@
     ("cna_graphics_device_manager_set_synchronize_with_vertical_retrace" %graphics-device-manager-set-synchronize-with-vertical-retrace :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
     ("cna_graphics_device_manager_get_graphics_device" %graphics-device-manager-get-graphics-device :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows-callback-scoped:graphics-device")
     ("cna_graphics_device_manager_subscribe" %graphics-device-manager-subscribe :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_graphics_resource_get_is_disposed" %graphics-resource-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_resource_get_name_byte_count" %graphics-resource-get-name-byte-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_resource_copy_name" %graphics-resource-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_resource_set_name" %graphics-resource-set-name :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_graphics_resource_get_graphics_device" %graphics-resource-get-graphics-device :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_resource_subscribe_disposing" %graphics-resource-subscribe-disposing :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_graphics_resource_unsubscribe_disposing" %graphics-resource-unsubscribe-disposing :uint32 (:uint64) :thread :owner :ownership "destroys")
     ("cna_texture2d_create_from_encoded_memory" %texture-2d-create-from-encoded-memory :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-2d:child-of-game")
     ("cna_texture2d_create_from_file_with_device" %texture-2d-create-from-file-with-device :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:texture-2d:child-of-game")
     ("cna_texture2d_destroy" %texture-2d-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:texture-2d")

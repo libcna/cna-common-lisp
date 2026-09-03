@@ -232,6 +232,10 @@
   (:documentation "Common Lisp projection of the Microsoft.Xna.Framework.Graphics namespace.")
   (:use #:cl)
   (:export
+   ;; --- GraphicsResource --------------------------------------------------
+   #:graphics-resource #:graphics-resource-name #:graphics-resource-is-disposed
+   #:graphics-resource-graphics-device #:tag
+   #:add-disposing-handler #:remove-disposing-handler
    ;; --- Viewport ----------------------------------------------------------
    #:viewport #:make-viewport #:viewport-p #:copy-viewport
    #:viewport-x #:viewport-y #:viewport-width #:viewport-height

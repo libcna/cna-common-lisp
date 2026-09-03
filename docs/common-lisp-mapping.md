@@ -74,6 +74,17 @@ category, the owner, the owner's generation, the owning thread and the disposed
 flag. **None of those slots is publicly readable**, and none of their accessors
 is exported from any public package.
 
+The public inheritance the contract gives a class is kept too:
+`graphics-resource` is the base of `texture` and `sprite-batch`, as it is in XNA,
+and the mapping rules declare each type's `expected_superclass` so the verifier
+checks the class precedence list rather than taking the hierarchy on trust.
+
+A member may project onto a symbol in **another package** when the operation is
+one thing rather than one thing per type. `GraphicsResource.Dispose()` is
+`microsoft.xna.framework:dispose`, because deterministic disposal is one
+operation every native object in this binding has, not one per graphics type. The
+rule says which package, so the symbol is accounted for where it really lives.
+
 Not every XNA class is native-backed. `BoundingFrustum` is a class in XNA -- two
 names for one frustum see each other's changes, and assigning its `Matrix`
 rebuilds its planes and corners in place -- and it is a CLOS class here for that

@@ -64,6 +64,24 @@ answer normally. See docs/callbacks-and-threading.md.")
     (when dispatcher
       (ignore-errors (funcall dispatcher (pointer-address context))))))
 
+(defvar *resource-disposing-dispatcher* nil
+  "Function of one integer token, called when CNA raises a graphics resource's
+Disposing event. Void-returning, like the game event dispatcher.")
+
+(defcallback resource-disposing-callback :void ((resource :uint64) (context :pointer))
+  (declare (ignore resource))
+  (let ((dispatcher *resource-disposing-dispatcher*))
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context))))))
+
+(defun resource-disposing-callback-pointer ()
+  "The one top-level callback CNA is given for every Disposing subscription.
+
+The resource handle CNA passes is ignored: the token already names the CLOS
+object, and resolving a handle back to an object would be a second, weaker way
+of doing what the registry does exactly."
+  (callback resource-disposing-callback))
+
 (defun game-event-callback-pointer ()
   "The one top-level callback CNA is given for every game event subscription."
   (callback game-event-callback))

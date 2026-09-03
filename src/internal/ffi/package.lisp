@@ -24,8 +24,10 @@ by tools/native-abi/generate.py.")
    ;; callbacks
    #:lifecycle-callback-pointer
    #:game-event-callback-pointer
+   #:resource-disposing-callback-pointer
    #:*lifecycle-dispatcher*
    #:*game-event-dispatcher*
+   #:*resource-disposing-dispatcher*
    #:*begin-draw-dispatcher*
    ;; constants the runtime reads by name
    #:+mouse-button-left+ #:+mouse-button-middle+ #:+mouse-button-right+

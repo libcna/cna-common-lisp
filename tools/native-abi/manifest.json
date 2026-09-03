@@ -320,6 +320,9 @@
     },
     {
       "name": "CNA_GameEventCallback"
+    },
+    {
+      "name": "CNA_GraphicsResourceDisposingCallback"
     }
   ],
   "functions": [
@@ -627,6 +630,48 @@
       "header": "runtime_graphics_manager.h",
       "thread": "owner",
       "ownership": "creates"
+    },
+    {
+      "name": "cna_graphics_resource_get_is_disposed",
+      "header": "graphics_resource.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_resource_get_name_byte_count",
+      "header": "graphics_resource.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_resource_copy_name",
+      "header": "graphics_resource.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_resource_set_name",
+      "header": "graphics_resource.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_resource_get_graphics_device",
+      "header": "graphics_resource.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_resource_subscribe_disposing",
+      "header": "graphics_resource.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_graphics_resource_unsubscribe_disposing",
+      "header": "graphics_resource.h",
+      "thread": "owner",
+      "ownership": "destroys"
     },
     {
       "name": "cna_texture2d_create_from_encoded_memory",

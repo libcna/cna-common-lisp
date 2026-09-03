@@ -84,26 +84,26 @@ genuine absence.
 
 <!-- generated:selected types=77 -->
 <!-- generated:selected members=1632 -->
-<!-- generated:complete types=70 -->
+<!-- generated:complete types=71 -->
 <!-- generated:partial types=6 -->
-<!-- generated:missing types=1 -->
-<!-- generated:complete members=1176 -->
+<!-- generated:missing types=0 -->
+<!-- generated:complete members=1182 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=110 -->
-<!-- generated:not-applicable members=345 -->
+<!-- generated:missing members=101 -->
+<!-- generated:not-applicable members=348 -->
 <!-- generated:disagreement total=0 -->
 
 Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
 
 | | |
 | --- | --- |
-| Types complete | **70** |
+| Types complete | **71** |
 | Types partial | **6** |
-| Types missing | **1** |
-| Members complete | **1176** |
+| Types missing | **0** |
+| Members complete | **1182** |
 | Members partial | **1** |
-| Members missing | **110** |
-| Members not applicable | **345** |
+| Members missing | **101** |
+| Members not applicable | **348** |
 | **Disagreement diagnostics** | **0** |
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
@@ -140,7 +140,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.CurveTangent` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
-| `M.X.F.Graphics.GraphicsResource` | **missing** | 0 | 0 | 9 | 0 |
+| `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 2 | 1 | 52 | 2 |
 | `M.X.F.Graphics.Viewport` | **partial** | 10 | 0 | 3 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
@@ -193,7 +193,7 @@ collapsed overload family says how each of its overloads is expressed.
 
 ### Not applicable, and why so many
 
-345 members are classified not applicable, and most of them are one thing: the
+348 members are classified not applicable, and most of them are one thing: the
 **by-reference overloads** of the value types. `Vector3.Add(ref a, ref b, out r)`
 exists in XNA so a caller can avoid copying a value type into a call and can
 write into storage it already has. The value it computes is the by-value
@@ -239,11 +239,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=93 -->
+<!-- generated:bound native functions=100 -->
 <!-- generated:bound native structs=28 -->
 <!-- generated:bound native struct fields=191 -->
 <!-- generated:bound native constants=311 -->
-<!-- generated:bound native callbacks=3 -->
+<!-- generated:bound native callbacks=4 -->
 <!-- generated:by-value aggregates=2 -->
 <!-- generated:shimmed routes=1 -->
 <!-- generated:abi version encoded=5376 -->

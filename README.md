@@ -67,6 +67,9 @@ stubs:
   XNA's own Gilbert-Johnson-Keerthi solver, transcribed rather than
   reimplemented, and cross-checked against a separating-axis test over 3956
   random box placements and 985 exact sphere placements;
+* `GraphicsResource` as the real base class the contract gives `Texture` and
+  `SpriteBatch` — its name, its `Disposing` event, its device back-reference and
+  the disposal every native object in this binding already had;
 * `Texture2D` decoded from a real PNG into a real native texture;
 * `SpriteBatch` with a real textured draw, with rotation, scale, origin, tint,
   source rectangle, effects and layer depth;
@@ -87,34 +90,35 @@ placeholder methods that answer a default and claim success.
 
 <!-- generated:selected types=77 -->
 <!-- generated:selected members=1632 -->
-<!-- generated:complete types=70 -->
+<!-- generated:complete types=71 -->
 <!-- generated:partial types=6 -->
-<!-- generated:missing types=1 -->
-<!-- generated:complete members=1176 -->
+<!-- generated:missing types=0 -->
+<!-- generated:complete members=1182 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=110 -->
-<!-- generated:not-applicable members=345 -->
+<!-- generated:missing members=101 -->
+<!-- generated:not-applicable members=348 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=93 -->
+<!-- generated:bound native functions=100 -->
 <!-- generated:bound native structs=28 -->
 
 The generated scoreboard, over a selection of **77 XNA types and 1632 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **70 / 6 / 1** |
-| Members complete / missing | **1176 / 110** |
-| Members not applicable | **345** |
+| Types complete / partial / missing | **71 / 6 / 0** |
+| Members complete / missing | **1182 / 101** |
+| Members not applicable | **348** |
 | **Disagreement diagnostics** | **0** |
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, every exported symbol is accounted for, no
 mapping rule names a member that does not exist, and every overload family that
 collapses onto one function says how each overload is expressed. It does **not**
-mean the binding is finished: 110 members are missing and are reported as
-missing. `docs/compatibility.md` is the authority.
+mean the binding is finished: 101 members are missing and are reported as
+missing — but **no selected type is missing entirely** any more.
+`docs/compatibility.md` is the authority.
 
-The private foreign layer binds **93 native routes** and **28 native structs**,
+The private foreign layer binds **100 native routes** and **28 native structs**,
 all of them generated from the canonical CNA headers and checked by a C
 compiler.
 
