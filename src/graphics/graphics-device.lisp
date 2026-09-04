@@ -41,6 +41,24 @@ Every operation on a graphics device is legal only inside a game lifecycle
 method -- LOAD-CONTENT, UPDATE, DRAW and their neighbours -- because that is the
 only time CNA lends the device out."))
 
+(defmethod microsoft.xna.framework::%check-disposable ((device graphics-device))
+  "A game's graphics device is lent, not owned, and disposing it is refused.
+
+XNA's `GraphicsDevice.Dispose' is reported *missing* by the compatibility report
+for the same reason this refuses: a CNA-Lisp program never constructs a device,
+so it never has one to dispose. Without this method the refusal was a
+NO-APPLICABLE-METHOD on DESTROY-NATIVE raised from inside DISPOSE's
+UNWIND-PROTECT, which invalidated the facade on the way out and left the game
+with a device it could no longer draw through."
+  (declare (ignorable device))
+  (error 'microsoft.xna.framework:cna-ownership-error
+         :operation "dispose" :object-type 'graphics-device
+         :format-control
+         "a game's graphics device is lent by CNA for the duration of a callback and is ~
+          released with its game; there is no handle here to dispose. Dispose the game ~
+          instead. This device is untouched and remains usable."
+         :format-arguments '()))
+
 (defun %resolve-device-handle (device operation)
   "The borrowed native handle of DEVICE, valid for this operation only."
   (cna-lisp.internal:check-live device operation)

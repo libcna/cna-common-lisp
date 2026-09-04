@@ -286,3 +286,72 @@ dispose all four. docs/limitations.md."
         (when (texture game) (ignore-errors (xna:dispose (texture game))))
         (when (manager game) (ignore-errors (xna:dispose (manager game))))
         (xna:dispose game)))))
+
+;;; --- a refused disposal must cost the object nothing -------------------------
+;;;
+;;; DISPOSE invalidates through an UNWIND-PROTECT, so a refusal raised from inside
+;;; the destruction still ran the invalidation on the way out: `Game.Content' came
+;;; back marked disposed and holding no handle, over a native manager that was
+;;; -- correctly -- never destroyed. The refusal now happens in %CHECK-DISPOSABLE,
+;;; before anything is touched. These tests are what says so.
+
+(defclass refused-dispose-game (content-game)
+  ((refusal :initform nil :accessor refusal)
+   (same-object :initform nil :accessor same-object)
+   (still-works :initform nil :accessor still-works)
+   (device-refusal :initform nil :accessor device-refusal)
+   (device-still-works :initform nil :accessor device-still-works))
+  (:documentation "Disposes the two parent-owned facades and then keeps using them."))
+
+(defmethod xna:load-content ((game refused-dispose-game))
+  (call-next-method)
+  (let ((content (xna:content game)))
+    (handler-case (xna:dispose content)
+      (error (condition) (setf (refusal game) condition)))
+    (setf (same-object game) (eq content (xna:content game)))
+    ;; A legal operation, through the facade that was just refused. It has to
+    ;; reach CNA -- reading the root directory back is a real ABI round trip.
+    (handler-case
+        (progn (setf (xna.content:root-directory content) (%content-root))
+               (setf (still-works game)
+                     (string= (%content-root) (xna.content:root-directory content))))
+      (error (condition) (setf (still-works game) condition))))
+  (let ((device (xna:graphics-device game)))
+    (handler-case (xna:dispose device)
+      (error (condition) (setf (device-refusal game) condition)))
+    (handler-case (setf (device-still-works game) (gfx:renderer-name device))
+      (error (condition) (setf (device-still-works game) condition)))))
+
+(define-native-test a-refused-disposal-leaves-the-facade-completely-usable
+  "Game.Content refuses to be disposed and is untouched by refusing.
+
+The refusal is right -- CNA lends the game's manager and releases it with the
+game. What must not happen is the object paying for it: a caller who wraps a
+refusal in HANDLER-CASE, which is the reasonable thing to do, must be left with
+the same working facade they started with."
+  (let ((game (make-instance 'refused-dispose-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (typep (refusal game) 'xna:cna-ownership-error)
+               "disposing Game.Content gave ~a" (type-of (refusal game)))
+           (is-false (xna:disposed-p (xna:content game))
+                     "the refused facade was marked disposed anyway")
+           (is-true (same-object game)
+                    "Game.Content answered a different object after the refusal")
+           (is (eq t (still-works game))
+               "the refused facade could no longer be used: ~a" (still-works game))
+           ;; and the same for the other parent-owned facade
+           (is (typep (device-refusal game) 'xna:cna-ownership-error)
+               "disposing the graphics device gave ~a" (type-of (device-refusal game)))
+           (is-false (xna:disposed-p (xna:graphics-device game))
+                     "the refused device was marked disposed anyway")
+           (is (stringp (device-still-works game))
+               "the refused device could no longer be used: ~a" (device-still-works game)))
+      (progn
+        (when (loaded-font game) (ignore-errors (xna:dispose (loaded-font game))))
+        (when (loaded-atlas game) (ignore-errors (xna:dispose (loaded-atlas game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (xna:dispose game)))))

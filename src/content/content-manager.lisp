@@ -150,15 +150,23 @@ CNA offers, named as such."
                                  'cna-lisp.internal.ffi::byte-length)
         length))
 
-(defmethod cna-lisp.internal:destroy-native ((manager content-manager))
+(defmethod microsoft.xna.framework::%check-disposable ((manager content-manager))
+  "Refuse a game's own manager here, where a refusal costs the object nothing.
+
+Not in DESTROY-NATIVE, which is where this refusal used to live: DISPOSE
+invalidates through an UNWIND-PROTECT, so refusing there marked the facade
+disposed on the way out and `Game.Content' came back unusable -- over a native
+manager that was, correctly, never destroyed. See %CHECK-DISPOSABLE."
   (when (eq (cna-lisp.internal:ownership-of manager) :parent-owned)
     (error 'microsoft.xna.framework:cna-ownership-error
            :operation "dispose" :object-type 'content-manager
            :format-control
            "a game's own content manager is released with its game and cannot be disposed. ~
             CNA lends it as a borrowed handle and refuses `cna_content_manager_destroy' on ~
-            one. Dispose the game instead."
-           :format-arguments '()))
+            one. Dispose the game instead. This manager is untouched and remains usable."
+           :format-arguments '())))
+
+(defmethod cna-lisp.internal:destroy-native ((manager content-manager))
   (cna-lisp.internal:check-result
    (cna-lisp.internal.ffi::%content-manager-destroy (cna-lisp.internal:handle-of manager))
    "dispose" :object-type 'content-manager))
