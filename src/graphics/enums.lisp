@@ -108,3 +108,29 @@ XNA's.")
     (:depth . 8) (:fog . 9) (:point-size . 10) (:sample . 11)
     (:tessellate-factor . 12))
   :documentation "Microsoft.Xna.Framework.Graphics.VertexElementUsage.")
+
+;;; --- the buffer and drawing enumerations ---------------------------------------
+
+(microsoft.xna.framework::define-xna-enum buffer-usage
+  '((:none . 0) (:write-only . 1))
+  :documentation
+  "Microsoft.Xna.Framework.Graphics.BufferUsage.
+
+Not a flags enum, despite the None: XNA declares no FlagsAttribute on it and its
+two members are 0 and 1.")
+
+(microsoft.xna.framework::define-xna-enum index-element-size
+  '((:sixteen-bits . 0) (:thirty-two-bits . 1))
+  :documentation "Microsoft.Xna.Framework.Graphics.IndexElementSize.")
+
+(microsoft.xna.framework::define-xna-enum set-data-options
+  '((:none . 0) (:discard . 1) (:no-overwrite . 2))
+  :documentation "Microsoft.Xna.Framework.Graphics.SetDataOptions.")
+
+(microsoft.xna.framework::define-xna-enum primitive-type
+  '((:triangle-list . 0) (:triangle-strip . 1) (:line-list . 2) (:line-strip . 3))
+  :documentation
+  "Microsoft.Xna.Framework.Graphics.PrimitiveType.
+
+Four members. CNA has a fifth, CNA_PRIMITIVE_POINT_LIST_EXT, which is a CNA
+extension with no XNA counterpart and is deliberately not projected.")

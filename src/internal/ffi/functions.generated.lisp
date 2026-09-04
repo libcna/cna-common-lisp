@@ -514,6 +514,138 @@
 (defcfun ("cna_graphics_device_get_backbuffer_data_window" %graphics-device-get-backbuffer-data-window) :uint32
   (graphics-device :uint64) (readback :pointer) (destination :pointer) (capacity :uint64))
 
+;;; CNA_Result cna_vertex_declaration_create(const CNA_VertexElement* elements, uint64_t element_count, CNA_VertexDeclarationHandle* out_declaration)
+(defcfun ("cna_vertex_declaration_create" %vertex-declaration-create) :uint32
+  (elements :pointer) (element-count :uint64) (out-declaration :pointer))
+
+;;; CNA_Result cna_vertex_declaration_create_with_stride(int32_t vertex_stride, const CNA_VertexElement* elements, uint64_t element_count, CNA_VertexDeclarationHandle* out_declaration)
+(defcfun ("cna_vertex_declaration_create_with_stride" %vertex-declaration-create-with-stride) :uint32
+  (vertex-stride :int32) (elements :pointer) (element-count :uint64) (out-declaration :pointer))
+
+;;; CNA_Result cna_vertex_declaration_destroy(CNA_VertexDeclarationHandle declaration)
+(defcfun ("cna_vertex_declaration_destroy" %vertex-declaration-destroy) :uint32
+  (declaration :uint64))
+
+;;; CNA_Result cna_vertex_buffer_create(CNA_Handle graphics_device, const CNA_VertexBufferCreateInfo* create_info, CNA_VertexBufferHandle* out_vertex_buffer)
+(defcfun ("cna_vertex_buffer_create" %vertex-buffer-create) :uint32
+  (graphics-device :uint64) (create-info :pointer) (out-vertex-buffer :pointer))
+
+;;; CNA_Result cna_vertex_buffer_destroy(CNA_VertexBufferHandle vertex_buffer)
+(defcfun ("cna_vertex_buffer_destroy" %vertex-buffer-destroy) :uint32
+  (vertex-buffer :uint64))
+
+;;; CNA_Result cna_vertex_buffer_get_info(CNA_VertexBufferHandle vertex_buffer, CNA_VertexBufferInfo* out_info)
+(defcfun ("cna_vertex_buffer_get_info" %vertex-buffer-get-info) :uint32
+  (vertex-buffer :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_vertex_buffer_copy_declaration_elements(CNA_VertexBufferHandle vertex_buffer, CNA_VertexElement* destination, uint64_t capacity, uint64_t* out_element_count)
+(defcfun ("cna_vertex_buffer_copy_declaration_elements" %vertex-buffer-copy-declaration-elements) :uint32
+  (vertex-buffer :uint64) (destination :pointer) (capacity :uint64) (out-element-count :pointer))
+
+;;; CNA_Result cna_vertex_buffer_set_data_raw(CNA_VertexBufferHandle vertex_buffer, const void* data, uint64_t data_byte_count, uint64_t vertex_count, uint32_t vertex_stride)
+(defcfun ("cna_vertex_buffer_set_data_raw" %vertex-buffer-set-data-raw) :uint32
+  (vertex-buffer :uint64) (data :pointer) (data-byte-count :uint64) (vertex-count :uint64) (vertex-stride :uint32))
+
+;;; CNA_Result cna_vertex_buffer_set_data_raw_at(CNA_VertexBufferHandle vertex_buffer, uint64_t buffer_offset_in_bytes, const void* data, uint64_t data_byte_count, uint64_t vertex_count, uint32_t vertex_stride)
+(defcfun ("cna_vertex_buffer_set_data_raw_at" %vertex-buffer-set-data-raw-at) :uint32
+  (vertex-buffer :uint64) (buffer-offset-in-bytes :uint64) (data :pointer) (data-byte-count :uint64) (vertex-count :uint64) (vertex-stride :uint32))
+
+;;; CNA_Result cna_vertex_buffer_set_data_raw_with_options(CNA_VertexBufferHandle vertex_buffer, const void* data, uint64_t data_byte_count, uint64_t vertex_count, uint32_t vertex_stride, CNA_SetDataOptions options)
+(defcfun ("cna_vertex_buffer_set_data_raw_with_options" %vertex-buffer-set-data-raw-with-options) :uint32
+  (vertex-buffer :uint64) (data :pointer) (data-byte-count :uint64) (vertex-count :uint64) (vertex-stride :uint32) (options :uint32))
+
+;;; CNA_Result cna_vertex_buffer_set_data_raw_at_with_options(CNA_VertexBufferHandle vertex_buffer, uint64_t buffer_offset_in_bytes, const void* data, uint64_t data_byte_count, uint64_t vertex_count, uint32_t vertex_stride, CNA_SetDataOptions options)
+(defcfun ("cna_vertex_buffer_set_data_raw_at_with_options" %vertex-buffer-set-data-raw-at-with-options) :uint32
+  (vertex-buffer :uint64) (buffer-offset-in-bytes :uint64) (data :pointer) (data-byte-count :uint64) (vertex-count :uint64) (vertex-stride :uint32) (options :uint32))
+
+;;; CNA_Result cna_vertex_buffer_get_data_raw(CNA_VertexBufferHandle vertex_buffer, uint64_t buffer_offset_in_bytes, void* destination, uint64_t destination_byte_count, uint64_t vertex_count, uint32_t vertex_stride)
+(defcfun ("cna_vertex_buffer_get_data_raw" %vertex-buffer-get-data-raw) :uint32
+  (vertex-buffer :uint64) (buffer-offset-in-bytes :uint64) (destination :pointer) (destination-byte-count :uint64) (vertex-count :uint64) (vertex-stride :uint32))
+
+;;; CNA_Result cna_index_buffer_create(CNA_Handle graphics_device, const CNA_IndexBufferCreateInfo* create_info, CNA_IndexBufferHandle* out_index_buffer)
+(defcfun ("cna_index_buffer_create" %index-buffer-create) :uint32
+  (graphics-device :uint64) (create-info :pointer) (out-index-buffer :pointer))
+
+;;; CNA_Result cna_index_buffer_destroy(CNA_IndexBufferHandle index_buffer)
+(defcfun ("cna_index_buffer_destroy" %index-buffer-destroy) :uint32
+  (index-buffer :uint64))
+
+;;; CNA_Result cna_index_buffer_get_info(CNA_IndexBufferHandle index_buffer, CNA_IndexBufferInfo* out_info)
+(defcfun ("cna_index_buffer_get_info" %index-buffer-get-info) :uint32
+  (index-buffer :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_index_buffer_set_data(CNA_IndexBufferHandle index_buffer, const CNA_IndexBufferTransfer* transfer, const void* data, uint64_t capacity)
+(defcfun ("cna_index_buffer_set_data" %index-buffer-set-data) :uint32
+  (index-buffer :uint64) (transfer :pointer) (data :pointer) (capacity :uint64))
+
+;;; CNA_Result cna_index_buffer_set_data_at(CNA_IndexBufferHandle index_buffer, uint64_t buffer_offset_in_bytes, const CNA_IndexBufferTransfer* transfer, const void* data, uint64_t capacity)
+(defcfun ("cna_index_buffer_set_data_at" %index-buffer-set-data-at) :uint32
+  (index-buffer :uint64) (buffer-offset-in-bytes :uint64) (transfer :pointer) (data :pointer) (capacity :uint64))
+
+;;; CNA_Result cna_index_buffer_get_data(CNA_IndexBufferHandle index_buffer, const CNA_IndexBufferTransfer* transfer, void* destination, uint64_t capacity, uint64_t* out_element_count)
+(defcfun ("cna_index_buffer_get_data" %index-buffer-get-data) :uint32
+  (index-buffer :uint64) (transfer :pointer) (destination :pointer) (capacity :uint64) (out-element-count :pointer))
+
+;;; CNA_Result cna_graphics_device_set_vertex_buffer(CNA_Handle graphics_device, CNA_VertexBufferHandle vertex_buffer)
+(defcfun ("cna_graphics_device_set_vertex_buffer" %graphics-device-set-vertex-buffer) :uint32
+  (graphics-device :uint64) (vertex-buffer :uint64))
+
+;;; CNA_Result cna_graphics_device_set_vertex_buffer_offset(CNA_Handle graphics_device, CNA_VertexBufferHandle vertex_buffer, int32_t vertex_offset)
+(defcfun ("cna_graphics_device_set_vertex_buffer_offset" %graphics-device-set-vertex-buffer-offset) :uint32
+  (graphics-device :uint64) (vertex-buffer :uint64) (vertex-offset :int32))
+
+;;; CNA_Result cna_graphics_device_set_vertex_buffers(CNA_Handle graphics_device, const CNA_VertexBufferBinding* bindings, uint64_t binding_count)
+(defcfun ("cna_graphics_device_set_vertex_buffers" %graphics-device-set-vertex-buffers) :uint32
+  (graphics-device :uint64) (bindings :pointer) (binding-count :uint64))
+
+;;; CNA_Result cna_graphics_device_get_vertex_buffer_count(CNA_Handle graphics_device, uint64_t* out_count)
+(defcfun ("cna_graphics_device_get_vertex_buffer_count" %graphics-device-get-vertex-buffer-count) :uint32
+  (graphics-device :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_graphics_device_copy_vertex_buffers(CNA_Handle graphics_device, CNA_VertexBufferBinding* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_graphics_device_copy_vertex_buffers" %graphics-device-copy-vertex-buffers) :uint32
+  (graphics-device :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_graphics_device_set_index_buffer(CNA_Handle graphics_device, CNA_IndexBufferHandle index_buffer)
+(defcfun ("cna_graphics_device_set_index_buffer" %graphics-device-set-index-buffer) :uint32
+  (graphics-device :uint64) (index-buffer :uint64))
+
+;;; CNA_Result cna_graphics_device_get_index_buffer(CNA_Handle graphics_device, CNA_IndexBufferHandle* out_index_buffer)
+(defcfun ("cna_graphics_device_get_index_buffer" %graphics-device-get-index-buffer) :uint32
+  (graphics-device :uint64) (out-index-buffer :pointer))
+
+;;; CNA_Result cna_graphics_device_draw_primitives(CNA_Handle graphics_device, CNA_PrimitiveType primitive_type, int32_t vertex_start, int32_t primitive_count)
+(defcfun ("cna_graphics_device_draw_primitives" %graphics-device-draw-primitives) :uint32
+  (graphics-device :uint64) (primitive-type :uint32) (vertex-start :int32) (primitive-count :int32))
+
+;;; CNA_Result cna_graphics_device_draw_indexed_primitives(CNA_Handle graphics_device, CNA_PrimitiveType primitive_type, int32_t base_vertex, int32_t min_vertex_index, int32_t num_vertices, int32_t start_index, int32_t primitive_count)
+(defcfun ("cna_graphics_device_draw_indexed_primitives" %graphics-device-draw-indexed-primitives) :uint32
+  (graphics-device :uint64) (primitive-type :uint32) (base-vertex :int32) (min-vertex-index :int32) (num-vertices :int32) (start-index :int32) (primitive-count :int32))
+
+;;; CNA_Result cna_graphics_device_draw_user_primitives(CNA_Handle graphics_device, const CNA_UserPrimitives* primitives)
+(defcfun ("cna_graphics_device_draw_user_primitives" %graphics-device-draw-user-primitives) :uint32
+  (graphics-device :uint64) (primitives :pointer))
+
+;;; CNA_Result cna_graphics_device_draw_user_indexed_primitives(CNA_Handle graphics_device, const CNA_UserPrimitives* primitives, const CNA_UserIndices* indices)
+(defcfun ("cna_graphics_device_draw_user_indexed_primitives" %graphics-device-draw-user-indexed-primitives) :uint32
+  (graphics-device :uint64) (primitives :pointer) (indices :pointer))
+
+;;; CNA_Result cna_vertex_buffer_subscribe_content_lost(CNA_VertexBufferHandle vertex_buffer, CNA_VertexBufferContentLostCallback callback, void* context, CNA_VertexBufferEventRegistrationHandle* out_registration)
+(defcfun ("cna_vertex_buffer_subscribe_content_lost" %vertex-buffer-subscribe-content-lost) :uint32
+  (vertex-buffer :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_vertex_buffer_unsubscribe_content_lost(CNA_VertexBufferEventRegistrationHandle registration)
+(defcfun ("cna_vertex_buffer_unsubscribe_content_lost" %vertex-buffer-unsubscribe-content-lost) :uint32
+  (registration :uint64))
+
+;;; CNA_Result cna_index_buffer_subscribe_content_lost(CNA_IndexBufferHandle index_buffer, CNA_IndexBufferContentLostCallback callback, void* context, CNA_IndexBufferEventRegistrationHandle* out_registration)
+(defcfun ("cna_index_buffer_subscribe_content_lost" %index-buffer-subscribe-content-lost) :uint32
+  (index-buffer :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_index_buffer_unsubscribe_content_lost(CNA_IndexBufferEventRegistrationHandle registration)
+(defcfun ("cna_index_buffer_unsubscribe_content_lost" %index-buffer-unsubscribe-content-lost) :uint32
+  (registration :uint64))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -639,6 +771,39 @@
     ("cna_graphics_device_set_texture" %graphics-device-set-texture :uint32 (:uint64 :uint32 :uint32 :uint64) :thread :owner :ownership "none")
     ("cna_vertex_type_get_stride" %vertex-type-get-stride :uint32 (:uint32 :pointer) :thread :any :ownership "none")
     ("cna_vertex_type_copy_elements" %vertex-type-copy-elements :uint32 (:uint32 :pointer :uint64 :pointer) :thread :any :ownership "none")
-    ("cna_graphics_device_get_backbuffer_data_window" %graphics-device-get-backbuffer-data-window :uint32 (:uint64 :pointer :pointer :uint64) :thread :owner :ownership "none"))
+    ("cna_graphics_device_get_backbuffer_data_window" %graphics-device-get-backbuffer-data-window :uint32 (:uint64 :pointer :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_vertex_declaration_create" %vertex-declaration-create :uint32 (:pointer :uint64 :pointer) :thread :any :ownership "creates-owned:vertex-declaration:rootless")
+    ("cna_vertex_declaration_create_with_stride" %vertex-declaration-create-with-stride :uint32 (:int32 :pointer :uint64 :pointer) :thread :any :ownership "creates-owned:vertex-declaration:rootless")
+    ("cna_vertex_declaration_destroy" %vertex-declaration-destroy :uint32 (:uint64) :thread :any :ownership "destroys:vertex-declaration")
+    ("cna_vertex_buffer_create" %vertex-buffer-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:vertex-buffer:child-of-game")
+    ("cna_vertex_buffer_destroy" %vertex-buffer-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:vertex-buffer")
+    ("cna_vertex_buffer_get_info" %vertex-buffer-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_vertex_buffer_copy_declaration_elements" %vertex-buffer-copy-declaration-elements :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_vertex_buffer_set_data_raw" %vertex-buffer-set-data-raw :uint32 (:uint64 :pointer :uint64 :uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_vertex_buffer_set_data_raw_at" %vertex-buffer-set-data-raw-at :uint32 (:uint64 :uint64 :pointer :uint64 :uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_vertex_buffer_set_data_raw_with_options" %vertex-buffer-set-data-raw-with-options :uint32 (:uint64 :pointer :uint64 :uint64 :uint32 :uint32) :thread :owner :ownership "none")
+    ("cna_vertex_buffer_set_data_raw_at_with_options" %vertex-buffer-set-data-raw-at-with-options :uint32 (:uint64 :uint64 :pointer :uint64 :uint64 :uint32 :uint32) :thread :owner :ownership "none")
+    ("cna_vertex_buffer_get_data_raw" %vertex-buffer-get-data-raw :uint32 (:uint64 :uint64 :pointer :uint64 :uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_index_buffer_create" %index-buffer-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:index-buffer:child-of-game")
+    ("cna_index_buffer_destroy" %index-buffer-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:index-buffer")
+    ("cna_index_buffer_get_info" %index-buffer-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_index_buffer_set_data" %index-buffer-set-data :uint32 (:uint64 :pointer :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_index_buffer_set_data_at" %index-buffer-set-data-at :uint32 (:uint64 :uint64 :pointer :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_index_buffer_get_data" %index-buffer-get-data :uint32 (:uint64 :pointer :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_vertex_buffer" %graphics-device-set-vertex-buffer :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_vertex_buffer_offset" %graphics-device-set-vertex-buffer-offset :uint32 (:uint64 :uint64 :int32) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_vertex_buffers" %graphics-device-set-vertex-buffers :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_vertex_buffer_count" %graphics-device-get-vertex-buffer-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_copy_vertex_buffers" %graphics-device-copy-vertex-buffers :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_index_buffer" %graphics-device-set-index-buffer :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_index_buffer" %graphics-device-get-index-buffer :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_draw_primitives" %graphics-device-draw-primitives :uint32 (:uint64 :uint32 :int32 :int32) :thread :owner :ownership "none")
+    ("cna_graphics_device_draw_indexed_primitives" %graphics-device-draw-indexed-primitives :uint32 (:uint64 :uint32 :int32 :int32 :int32 :int32 :int32) :thread :owner :ownership "none")
+    ("cna_graphics_device_draw_user_primitives" %graphics-device-draw-user-primitives :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_draw_user_indexed_primitives" %graphics-device-draw-user-indexed-primitives :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_vertex_buffer_subscribe_content_lost" %vertex-buffer-subscribe-content-lost :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_vertex_buffer_unsubscribe_content_lost" %vertex-buffer-unsubscribe-content-lost :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_index_buffer_subscribe_content_lost" %index-buffer-subscribe-content-lost :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_index_buffer_unsubscribe_content_lost" %index-buffer-unsubscribe-content-lost :uint32 (:uint64) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

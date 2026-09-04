@@ -74,6 +74,25 @@ Disposing event. Void-returning, like the game event dispatcher.")
     (when dispatcher
       (ignore-errors (funcall dispatcher (pointer-address context))))))
 
+(defvar *buffer-content-lost-dispatcher* nil
+  "Function of one integer token, called when CNA raises a buffer's ContentLost
+event. Void-returning, like the other event dispatchers.")
+
+(defcallback buffer-content-lost-callback :void ((buffer :uint64) (context :pointer))
+  (declare (ignore buffer))
+  (let ((dispatcher *buffer-content-lost-dispatcher*))
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context))))))
+
+(defun buffer-content-lost-callback-pointer ()
+  "The one top-level callback CNA is given for every ContentLost subscription.
+
+The buffer handle CNA passes is ignored: the token already names the CLOS object,
+and a handle would have to be looked up to reach the same place. Both the vertex
+and the index route have the same shape -- (handle, context) returning void -- so
+one callback serves both."
+  (callback buffer-content-lost-callback))
+
 (defun resource-disposing-callback-pointer ()
   "The one top-level callback CNA is given for every Disposing subscription.
 

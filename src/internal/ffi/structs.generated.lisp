@@ -472,6 +472,111 @@
 (defconstant +sizeof-cna-back-buffer-readback+ 48)
 (defconstant +alignof-cna-back-buffer-readback+ 8)
 
+;;; CNA_VertexBufferCreateInfo -- 32 bytes, 8-byte aligned, from vertex_resources.h.
+(defcstruct (cna-vertex-buffer-create-info :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (vertex-declaration :uint64 :offset 8)
+  (vertex-count :int32 :offset 16)
+  (buffer-usage :uint32 :offset 20)
+  (dynamic :uint8 :offset 24)
+  (reserved :uint8 :offset 25 :count 7))
+
+(defconstant +sizeof-cna-vertex-buffer-create-info+ 32)
+(defconstant +alignof-cna-vertex-buffer-create-info+ 8)
+
+;;; CNA_VertexBufferInfo -- 32 bytes, 8-byte aligned, from vertex_resources.h.
+(defcstruct (cna-vertex-buffer-info :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (vertex-count :int32 :offset 8)
+  (buffer-usage :uint32 :offset 12)
+  (dynamic :uint8 :offset 16)
+  (is-content-lost :uint8 :offset 17)
+  (has-renderer :uint8 :offset 18)
+  (reserved-0 :uint8 :offset 19)
+  (vertex-stride :int32 :offset 20)
+  (vertex-element-count :uint64 :offset 24))
+
+(defconstant +sizeof-cna-vertex-buffer-info+ 32)
+(defconstant +alignof-cna-vertex-buffer-info+ 8)
+
+;;; CNA_VertexBufferBinding -- 16 bytes, 8-byte aligned, from vertex_resources.h.
+(defcstruct (cna-vertex-buffer-binding :size 16)
+  (vertex-buffer :uint64 :offset 0)
+  (vertex-offset :int32 :offset 8)
+  (instance-frequency :int32 :offset 12))
+
+(defconstant +sizeof-cna-vertex-buffer-binding+ 16)
+(defconstant +alignof-cna-vertex-buffer-binding+ 8)
+
+;;; CNA_IndexBufferCreateInfo -- 24 bytes, 4-byte aligned, from index_resources.h.
+(defcstruct (cna-index-buffer-create-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (index-count :int32 :offset 8)
+  (index-element-size :uint32 :offset 12)
+  (buffer-usage :uint32 :offset 16)
+  (dynamic :uint8 :offset 20)
+  (reserved :uint8 :offset 21 :count 3))
+
+(defconstant +sizeof-cna-index-buffer-create-info+ 24)
+(defconstant +alignof-cna-index-buffer-create-info+ 4)
+
+;;; CNA_IndexBufferInfo -- 24 bytes, 4-byte aligned, from index_resources.h.
+(defcstruct (cna-index-buffer-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (index-count :int32 :offset 8)
+  (index-element-size :uint32 :offset 12)
+  (buffer-usage :uint32 :offset 16)
+  (dynamic :uint8 :offset 20)
+  (is-content-lost :uint8 :offset 21)
+  (has-renderer :uint8 :offset 22)
+  (reserved :uint8 :offset 23))
+
+(defconstant +sizeof-cna-index-buffer-info+ 24)
+(defconstant +alignof-cna-index-buffer-info+ 4)
+
+;;; CNA_IndexBufferTransfer -- 32 bytes, 8-byte aligned, from index_resources.h.
+(defcstruct (cna-index-buffer-transfer :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (index-element-size :uint32 :offset 8)
+  (options :uint32 :offset 12)
+  (start-index :uint64 :offset 16)
+  (element-count :uint64 :offset 24))
+
+(defconstant +sizeof-cna-index-buffer-transfer+ 32)
+(defconstant +alignof-cna-index-buffer-transfer+ 8)
+
+;;; CNA_UserPrimitives -- 48 bytes, 8-byte aligned, from graphics_device.h.
+(defcstruct (cna-user-primitives :size 48)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (primitive-type :uint32 :offset 8)
+  (vertex-source :uint32 :offset 12)
+  (vertex-data :pointer :offset 16)
+  (vertex-declaration :uint64 :offset 24)
+  (vertex-offset :int32 :offset 32)
+  (num-vertices :int32 :offset 36)
+  (primitive-count :int32 :offset 40)
+  (reserved :uint32 :offset 44))
+
+(defconstant +sizeof-cna-user-primitives+ 48)
+(defconstant +alignof-cna-user-primitives+ 8)
+
+;;; CNA_UserIndices -- 24 bytes, 8-byte aligned, from graphics_device.h.
+(defcstruct (cna-user-indices :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (index-element-size :uint32 :offset 8)
+  (index-offset :int32 :offset 12)
+  (index-data :pointer :offset 16))
+
+(defconstant +sizeof-cna-user-indices+ 24)
+(defconstant +alignof-cna-user-indices+ 8)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -508,6 +613,14 @@
     (cna-sampler-state 40 4 ((struct-size 0 4) (struct-version 4 4) (address-u 8 4) (address-v 12 4) (address-w 16 4) (filter 20 4) (max-anisotropy 24 4) (max-mip-level 28 4) (mip-map-level-of-detail-bias 32 4) (reserved 36 4)))
     (cna-texture-slot-info 24 8 ((struct-size 0 4) (struct-version 4 4) (bound 8 1) (reserved 9 7) (texture 16 8)))
     (cna-vertex-element 16 4 ((offset 0 4) (format 4 4) (usage 8 4) (usage-index 12 4)))
-    (cna-back-buffer-readback 48 8 ((struct-size 0 4) (struct-version 4 4) (has-source-rectangle 8 1) (reserved 9 3) (source-rectangle 12 16) (start-index 32 8) (element-count 40 8))))
+    (cna-back-buffer-readback 48 8 ((struct-size 0 4) (struct-version 4 4) (has-source-rectangle 8 1) (reserved 9 3) (source-rectangle 12 16) (start-index 32 8) (element-count 40 8)))
+    (cna-vertex-buffer-create-info 32 8 ((struct-size 0 4) (struct-version 4 4) (vertex-declaration 8 8) (vertex-count 16 4) (buffer-usage 20 4) (dynamic 24 1) (reserved 25 7)))
+    (cna-vertex-buffer-info 32 8 ((struct-size 0 4) (struct-version 4 4) (vertex-count 8 4) (buffer-usage 12 4) (dynamic 16 1) (is-content-lost 17 1) (has-renderer 18 1) (reserved-0 19 1) (vertex-stride 20 4) (vertex-element-count 24 8)))
+    (cna-vertex-buffer-binding 16 8 ((vertex-buffer 0 8) (vertex-offset 8 4) (instance-frequency 12 4)))
+    (cna-index-buffer-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (index-count 8 4) (index-element-size 12 4) (buffer-usage 16 4) (dynamic 20 1) (reserved 21 3)))
+    (cna-index-buffer-info 24 4 ((struct-size 0 4) (struct-version 4 4) (index-count 8 4) (index-element-size 12 4) (buffer-usage 16 4) (dynamic 20 1) (is-content-lost 21 1) (has-renderer 22 1) (reserved 23 1)))
+    (cna-index-buffer-transfer 32 8 ((struct-size 0 4) (struct-version 4 4) (index-element-size 8 4) (options 12 4) (start-index 16 8) (element-count 24 8)))
+    (cna-user-primitives 48 8 ((struct-size 0 4) (struct-version 4 4) (primitive-type 8 4) (vertex-source 12 4) (vertex-data 16 8) (vertex-declaration 24 8) (vertex-offset 32 4) (num-vertices 36 4) (primitive-count 40 4) (reserved 44 4)))
+    (cna-user-indices 24 8 ((struct-size 0 4) (struct-version 4 4) (index-element-size 8 4) (index-offset 12 4) (index-data 16 8))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

@@ -252,7 +252,19 @@
    "CNA_VERTEX_ELEMENT_USAGE_FOG",
    "CNA_VERTEX_ELEMENT_USAGE_POINT_SIZE",
    "CNA_VERTEX_ELEMENT_USAGE_SAMPLE",
-   "CNA_VERTEX_ELEMENT_USAGE_TESSELLATE_FACTOR"
+   "CNA_VERTEX_ELEMENT_USAGE_TESSELLATE_FACTOR",
+   "CNA_BUFFER_USAGE_NONE",
+   "CNA_BUFFER_USAGE_WRITE_ONLY",
+   "CNA_INDEX_ELEMENT_SIZE_SIXTEEN_BITS",
+   "CNA_INDEX_ELEMENT_SIZE_THIRTY_TWO_BITS",
+   "CNA_SET_DATA_NONE",
+   "CNA_SET_DATA_DISCARD",
+   "CNA_SET_DATA_NO_OVERWRITE",
+   "CNA_PRIMITIVE_TRIANGLE_LIST",
+   "CNA_PRIMITIVE_TRIANGLE_STRIP",
+   "CNA_PRIMITIVE_LINE_LIST",
+   "CNA_PRIMITIVE_LINE_STRIP",
+   "CNA_USER_VERTEX_SOURCE_RAW_STREAM"
   ],
   "prefix_families": [
    {
@@ -449,6 +461,46 @@
    "name": "CNA_BackBufferReadback",
    "direction": "in",
    "versioned": true
+  },
+  {
+   "name": "CNA_VertexBufferCreateInfo",
+   "direction": "in",
+   "versioned": true
+  },
+  {
+   "name": "CNA_VertexBufferInfo",
+   "direction": "out",
+   "versioned": true
+  },
+  {
+   "name": "CNA_VertexBufferBinding",
+   "direction": "inout",
+   "versioned": false
+  },
+  {
+   "name": "CNA_IndexBufferCreateInfo",
+   "direction": "in",
+   "versioned": true
+  },
+  {
+   "name": "CNA_IndexBufferInfo",
+   "direction": "out",
+   "versioned": true
+  },
+  {
+   "name": "CNA_IndexBufferTransfer",
+   "direction": "in",
+   "versioned": true
+  },
+  {
+   "name": "CNA_UserPrimitives",
+   "direction": "in",
+   "versioned": true
+  },
+  {
+   "name": "CNA_UserIndices",
+   "direction": "in",
+   "versioned": true
   }
  ],
  "callbacks": [
@@ -463,6 +515,12 @@
   },
   {
    "name": "CNA_GraphicsResourceDisposingCallback"
+  },
+  {
+   "name": "CNA_VertexBufferContentLostCallback"
+  },
+  {
+   "name": "CNA_IndexBufferContentLostCallback"
   }
  ],
  "functions": [
@@ -1221,6 +1279,204 @@
   {
    "name": "cna_graphics_device_get_backbuffer_data_window",
    "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_declaration_create",
+   "header": "vertex_resources.h",
+   "thread": "any",
+   "ownership": "creates-owned:vertex-declaration:rootless"
+  },
+  {
+   "name": "cna_vertex_declaration_create_with_stride",
+   "header": "vertex_resources.h",
+   "thread": "any",
+   "ownership": "creates-owned:vertex-declaration:rootless"
+  },
+  {
+   "name": "cna_vertex_declaration_destroy",
+   "header": "vertex_resources.h",
+   "thread": "any",
+   "ownership": "destroys:vertex-declaration"
+  },
+  {
+   "name": "cna_vertex_buffer_create",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "creates-owned:vertex-buffer:child-of-game"
+  },
+  {
+   "name": "cna_vertex_buffer_destroy",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "destroys:vertex-buffer"
+  },
+  {
+   "name": "cna_vertex_buffer_get_info",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_buffer_copy_declaration_elements",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_buffer_set_data_raw",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_buffer_set_data_raw_at",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_buffer_set_data_raw_with_options",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_buffer_set_data_raw_at_with_options",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_buffer_get_data_raw",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_index_buffer_create",
+   "header": "index_resources.h",
+   "thread": "owner",
+   "ownership": "creates-owned:index-buffer:child-of-game"
+  },
+  {
+   "name": "cna_index_buffer_destroy",
+   "header": "index_resources.h",
+   "thread": "owner",
+   "ownership": "destroys:index-buffer"
+  },
+  {
+   "name": "cna_index_buffer_get_info",
+   "header": "index_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_index_buffer_set_data",
+   "header": "index_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_index_buffer_set_data_at",
+   "header": "index_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_index_buffer_get_data",
+   "header": "index_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_set_vertex_buffer",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_set_vertex_buffer_offset",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_set_vertex_buffers",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_get_vertex_buffer_count",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_copy_vertex_buffers",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_set_index_buffer",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_get_index_buffer",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_draw_primitives",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_draw_indexed_primitives",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_draw_user_primitives",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_draw_user_indexed_primitives",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_buffer_subscribe_content_lost",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_buffer_unsubscribe_content_lost",
+   "header": "vertex_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_index_buffer_subscribe_content_lost",
+   "header": "index_resources.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_index_buffer_unsubscribe_content_lost",
+   "header": "index_resources.h",
    "thread": "owner",
    "ownership": "none"
   }
