@@ -410,3 +410,174 @@ an 800x480 viewport, the vertices land at (200,360), (200,120) and (600,360)."
         (when (texture game) (ignore-errors (xna:dispose (texture game))))
         (when (manager game) (ignore-errors (xna:dispose (manager game))))
         (ignore-errors (xna:dispose game))))))
+
+;;; --- does DrawString reach pixels, and is it laying text out? -------------------
+;;;
+;;; The sprite proof above shows that one texture's texels can reach the back
+;;; buffer. Text is a different claim, and closing the gap with one glyph would
+;;; not close it: a projection that drew the first glyph and stopped, or drew
+;;; every glyph at the same place, or used the wrong glyph's atlas rectangle,
+;;; would all pass a one-glyph test.
+;;;
+;;; So the atlas is two glyphs in two **different colours** -- 'A' opaque red,
+;;; 'B' opaque green -- and the two proofs below read pixels that only the right
+;;; layout can produce:
+;;;
+;;;   "AB"    a pixel inside the second glyph must be **green**. That is the
+;;;           advance (B starts exactly 8 pixels right of A, which is A's kerning
+;;;           width plus its right bearing plus the zero spacing) *and* the
+;;;           per-glyph source rectangle (B is cut from the atlas's right half)
+;;;           in one assertion.
+;;;
+;;;   "A\nA"  a pixel on the second line must be red, twelve rows below the
+;;;           first, and the four rows between the two eight-row glyphs must
+;;;           still be the clear colour. That is the newline advancing by
+;;;           LineSpacing rather than by the glyph height.
+;;;
+;;; Everything else is pinned the way the sprite proof pins it: PointClamp,
+;;; BlendState.Opaque, Color.White, unit scale, no rotation, no origin, integer
+;;; placement well inside the viewport, and every sampled pixel at least two
+;;; pixels from any glyph edge.
+
+(defclass text-pixel-game (sprite-font-game)
+  ((text :initarg :text :accessor text)
+   (origin-position :initarg :origin-position :accessor origin-position)
+   (samples :initform nil :accessor samples)
+   (sample-error :initform nil :accessor sample-error)
+   (sampled :initform nil :accessor sampled))
+  (:documentation
+   "Clears, draws one string with the fixture font, and reads the back buffer."))
+
+(defmethod xna:draw ((game text-pixel-game) game-time)
+  (declare (ignore game-time))
+  (incf (draws game))
+  (unless (or (sampled game) (build-error game))
+    (setf (sampled game) t)
+    (handler-case
+        (let ((device (xna:graphics-device game)))
+          (gfx:clear device (xna:cornflower-blue))
+          (gfx:begin (batch game)
+                     :sort-mode :deferred
+                     :blend-state (gfx:blend-state-opaque)
+                     :sampler-state (gfx:sampler-state-point-clamp)
+                     :depth-stencil-state (gfx:depth-stencil-state-none)
+                     :rasterizer-state (gfx:rasterizer-state-cull-none))
+          (gfx:draw-string (batch game) (font game) (text game)
+                           :position (origin-position game)
+                           :color (xna:white))
+          (gfx:end (batch game))
+          (let* ((viewport (gfx:viewport device))
+                 (width (gfx:viewport-width viewport))
+                 (pixels (gfx:get-back-buffer-data device)))
+            (setf (samples game)
+                  (lambda (x y) (aref pixels (+ x (* y width)))))))
+      (error (condition) (setf (sample-error game) condition)))))
+
+(defmacro with-text-pixel-game ((variable text position) &body body)
+  `(let ((,variable (make-instance 'text-pixel-game :exit-after 2
+                                   :text ,text :origin-position ,position)))
+     (unwind-protect
+          (progn
+            (xna:run ,variable)
+            (when (build-error ,variable) (error (build-error ,variable)))
+            (is (sampled ,variable) "the draw callback never ran")
+            (when (and (sample-error ,variable)
+                       (rasterizing-renderer-p (renderer ,variable)))
+              (error (sample-error ,variable)))
+            ,@body)
+       (progn
+         (when (font ,variable) (ignore-errors (xna:dispose (font ,variable))))
+         (when (atlas ,variable) (ignore-errors (xna:dispose (atlas ,variable))))
+         (when (batch ,variable) (ignore-errors (xna:dispose (batch ,variable))))
+         (when (texture ,variable) (ignore-errors (xna:dispose (texture ,variable))))
+         (when (manager ,variable) (ignore-errors (xna:dispose (manager ,variable))))
+         (ignore-errors (xna:dispose ,variable))))))
+
+(defun assert-no-readback (game renderer)
+  "The honest branch: the draw was submitted and the renderer has no pixels."
+  (is (null (samples game))
+      "~a has no back-buffer readback but answered pixels" renderer)
+  (is (typep (sample-error game) 'xna:cna-not-supported-error)
+      "~a should refuse the readback with CNA-NOT-SUPPORTED-ERROR; it signalled ~a"
+      renderer (type-of (sample-error game))))
+
+(define-native-test drawing-a-string-puts-each-glyph-where-the-layout-says
+  ;; "AB" at (16,16): 'A' covers x 16..23 and 'B' covers x 24..31, both y 16..23.
+  (with-text-pixel-game (game "AB" (xna:make-vector2 16.0 16.0))
+    (let ((renderer (renderer game)))
+      (if (not (rasterizing-renderer-p renderer))
+          (assert-no-readback game renderer)
+          (let ((red (xna:make-color 255 0 0 255))
+                (green (xna:make-color 0 255 0 255))
+                (background (xna:cornflower-blue)))
+            (flet ((at (x y) (funcall (samples game) x y)))
+              ;; Inside the first glyph: its own colour, two pixels in from every edge.
+              (dolist (point '((18 18) (21 21) (18 21)))
+                (is (xna:color-equal red (at (first point) (second point)))
+                    "(~d,~d) should be inside 'A' and red; it is ~a"
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              ;; Inside the second glyph: **green**, which only the right advance
+              ;; and the right source rectangle together can produce.
+              (dolist (point '((26 18) (29 21) (26 21)))
+                (is (xna:color-equal green (at (first point) (second point)))
+                    "(~d,~d) should be inside 'B' and green; it is ~a. Red here would ~
+                     mean the second glyph was cut from the first one's atlas cell; ~
+                     CornflowerBlue would mean it was never advanced to."
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              ;; Outside the run on every side.
+              (dolist (point '((14 18) (34 18) (18 13) (18 26) (0 0)))
+                (is (xna:color-equal background (at (first point) (second point)))
+                    "(~d,~d) should still be the CornflowerBlue that was cleared; it is ~a"
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              (note-rasterization
+               :text "~a: SpriteFont metrics and DrawString layout put 'AB' on the back ~
+                      buffer with each glyph's own atlas cell at its own advanced ~
+                      position -- the second glyph reads green, eight pixels right of ~
+                      the first"
+               renderer)))))))
+
+(define-native-test a-newline-advances-a-drawn-string-by-the-line-spacing
+  ;; "A\nA" at (16,16): the first line covers y 16..23 and the second, twelve
+  ;; rows down, covers y 28..35. The four rows between them are nobody's.
+  (with-text-pixel-game (game (format nil "A~cA" #\Newline) (xna:make-vector2 16.0 16.0))
+    (let ((renderer (renderer game)))
+      (if (not (rasterizing-renderer-p renderer))
+          (assert-no-readback game renderer)
+          (let ((red (xna:make-color 255 0 0 255))
+                (background (xna:cornflower-blue)))
+            (flet ((at (x y) (funcall (samples game) x y)))
+              (dolist (point '((18 18) (21 21)))
+                (is (xna:color-equal red (at (first point) (second point)))
+                    "(~d,~d) should be inside the first line's 'A'; it is ~a"
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              ;; The second line, exactly LineSpacing below the first.
+              (dolist (point '((18 30) (21 33)))
+                (is (xna:color-equal red (at (first point) (second point)))
+                    "(~d,~d) should be inside the second line's 'A'; it is ~a. The line ~
+                     advance is LineSpacing (12), not the glyph height (8)."
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              ;; The gap between them: LineSpacing is four more than the glyphs are
+              ;; tall, and a line advance of 8 would have filled these rows.
+              (dolist (point '((18 25) (18 26) (21 25)))
+                (is (xna:color-equal background (at (first point) (second point)))
+                    "(~d,~d) is between the two lines and should still be ~
+                     CornflowerBlue; it is ~a"
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              ;; And the second line did not drift sideways.
+              (dolist (point '((26 30) (14 30)))
+                (is (xna:color-equal background (at (first point) (second point)))
+                    "(~d,~d) should be outside the second line's single glyph; it is ~a"
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              (note-rasterization
+               :text "~a: a newline in a drawn string advanced the pen by LineSpacing ~
+                      (12) and not by the glyph height (8) -- the second line's glyph ~
+                      reads red twelve rows down, and the four rows between the two ~
+                      remain the clear colour"
+               renderer)))))))

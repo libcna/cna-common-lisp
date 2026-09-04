@@ -8,17 +8,23 @@
 # run silently took the no-readback branch, which is the way a lane like this
 # quietly stops proving anything.
 #
-# It requires three separate proofs, because they are three separate claims:
+# It requires four separate proofs, because they are four separate claims:
 #
 #   clear      GraphicsDevice.Clear reached the back buffer and read back
 #   sprite     a SpriteBatch draw put a known texture's own texels on exactly the
 #              pixels its destination rectangle names, and on none outside it
 #   primitive  a DrawUserPrimitives triangle, through a BasicEffect pass, covered
 #              exactly the pixels its geometry covers and none outside them
+#   text       SpriteFont's metrics and SpriteBatch.DrawString's layout put each
+#              glyph of a string at its own advanced position, from its own atlas
+#              cell -- proved with a two-colour atlas, so a pixel says which
+#              glyph reached it, and across a line break, so the line advance is
+#              LineSpacing and not the glyph height
 #
 # A clear reaching the back buffer says nothing about whether SpriteBatch
-# rasterises, and neither says anything about the primitive pipeline, which is a
-# different path through the renderer. This script used to accept the first as
+# rasterises, neither says anything about the primitive pipeline, and none of the
+# three says anything about text layout -- a font atlas texel arriving is not the
+# same claim as a string being laid out. This script used to accept the first as
 # though it were all of them.
 #
 #   CNA_NATIVE_LIBRARY=/abs/path/libcna_c_api.so \
@@ -60,7 +66,7 @@ if ! grep -q '^rasterization : ' "$log"; then
     echo "FAIL the runner printed no rasterization line at all" >&2
     exit 1
 fi
-for kind in clear sprite primitive; do
+for kind in clear sprite primitive text; do
     if ! grep -q "^rasterization : $kind -- " "$log"; then
         echo "FAIL this lane requires a '$kind' proof and the run did not produce one:" >&2
         grep '^rasterization : ' "$log" >&2 || true
@@ -75,8 +81,10 @@ grep '^rasterization : ' "$log" | sed 's/^/  /'
 echo "  log $log"
 echo
 echo "  Proved: Clear reached the back buffer; a SpriteBatch draw put a known"
-echo "  texture's own texels on exactly the pixels its destination named; and a"
+echo "  texture's own texels on exactly the pixels its destination named; a"
 echo "  DrawUserPrimitives triangle drawn through a BasicEffect pass covered"
-echo "  exactly the pixels its geometry covers."
+echo "  exactly the pixels its geometry covers; and DrawString laid a string out"
+echo "  glyph by glyph, each from its own atlas cell at its own advanced"
+echo "  position, across a line break."
 echo "  Not proved, and not claimed: anything about a physical monitor, and"
 echo "  anything about a GPU renderer -- SOFTWARE rasterises on the CPU."
