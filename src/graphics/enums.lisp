@@ -134,3 +134,20 @@ two members are 0 and 1.")
 
 Four members. CNA has a fifth, CNA_PRIMITIVE_POINT_LIST_EXT, which is a CNA
 extension with no XNA counterpart and is deliberately not projected.")
+
+;;; --- the two effect-parameter enumerations ----------------------------------
+;;;
+;;; Values from the pinned contract. CNA agrees with XNA on both, member for
+;;; member, which is worth stating because it is not true of BlendFunction just
+;;; above; tests/unit/effects.lisp pins the agreement rather than assuming it
+;;; will hold.
+
+(microsoft.xna.framework::define-xna-enum effect-parameter-class
+  '((:scalar . 0) (:vector . 1) (:matrix . 2) (:object . 3) (:struct . 4))
+  :documentation "Microsoft.Xna.Framework.Graphics.EffectParameterClass.")
+
+(microsoft.xna.framework::define-xna-enum effect-parameter-type
+  '((:void . 0) (:bool . 1) (:int32 . 2) (:single . 3) (:string . 4)
+    (:texture . 5) (:texture-1d . 6) (:texture-2d . 7) (:texture-3d . 8)
+    (:texture-cube . 9))
+  :documentation "Microsoft.Xna.Framework.Graphics.EffectParameterType.")

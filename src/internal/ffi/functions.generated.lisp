@@ -1094,6 +1094,18 @@
 (defcfun ("cna_sprite_batch_begin_with_effect" %sprite-batch-begin-with-effect) :uint32
   (sprite-batch :uint64) (sort-mode :uint32) (blend-state :pointer) (sampler-state :pointer) (depth-stencil-state :pointer) (rasterizer-state :pointer) (effect :uint64) (transform-matrix :pointer))
 
+;;; CNA_Result cna_effect_parameter_create(const CNA_EffectParameterCreateInfo* create_info, CNA_EffectParameterHandle* out_parameter)
+(defcfun ("cna_effect_parameter_create" %effect-parameter-create) :uint32
+  (create-info :pointer) (out-parameter :pointer))
+
+;;; CNA_Result cna_effect_parameter_collection_create(CNA_EffectParameterCollectionHandle* out_collection)
+(defcfun ("cna_effect_parameter_collection_create" %effect-parameter-collection-create) :uint32
+  (out-collection :pointer))
+
+;;; CNA_Result cna_effect_parameter_collection_add_create(CNA_EffectParameterCollectionHandle collection, const CNA_EffectParameterCreateInfo* create_info, CNA_EffectParameterHandle* out_parameter)
+(defcfun ("cna_effect_parameter_collection_add_create" %effect-parameter-collection-add-create) :uint32
+  (collection :uint64) (create-info :pointer) (out-parameter :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -1364,6 +1376,9 @@
     ("cna_basic_effect_set_vertex_color_enabled" %basic-effect-set-vertex-color-enabled :uint32 (:uint64 :uint8) :thread :game :ownership "none")
     ("cna_basic_effect_get_prefer_per_pixel_lighting" %basic-effect-get-prefer-per-pixel-lighting :uint32 (:uint64 :pointer) :thread :game :ownership "none")
     ("cna_basic_effect_set_prefer_per_pixel_lighting" %basic-effect-set-prefer-per-pixel-lighting :uint32 (:uint64 :uint8) :thread :game :ownership "none")
-    ("cna_sprite_batch_begin_with_effect" %sprite-batch-begin-with-effect :uint32 (:uint64 :uint32 :pointer :pointer :pointer :pointer :uint64 :pointer) :thread :game :ownership "none"))
+    ("cna_sprite_batch_begin_with_effect" %sprite-batch-begin-with-effect :uint32 (:uint64 :uint32 :pointer :pointer :pointer :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_create" %effect-parameter-create :uint32 (:pointer :pointer) :thread :any :ownership "owns")
+    ("cna_effect_parameter_collection_create" %effect-parameter-collection-create :uint32 (:pointer) :thread :any :ownership "owns")
+    ("cna_effect_parameter_collection_add_create" %effect-parameter-collection-add-create :uint32 (:uint64 :pointer :pointer) :thread :any :ownership "owns"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

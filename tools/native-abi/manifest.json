@@ -555,6 +555,21 @@
       "direction": "inout",
       "versioned": false,
       "by_value": true
+    },
+    {
+      "name": "CNA_Matrix",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_EffectParameterCreateInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Quaternion",
+      "direction": "inout",
+      "versioned": false
     }
   ],
   "callbacks": [
@@ -2205,6 +2220,27 @@
       "header": "graphics_state.h",
       "thread": "game",
       "ownership": "none"
+    },
+    {
+      "name": "cna_effect_parameter_create",
+      "header": "effects.h",
+      "thread": "any",
+      "ownership": "owns",
+      "note": "Bound so the EffectParameter value surface can be exercised against CNA itself. XNA has no public EffectParameter constructor, so nothing in src/ calls these: a reflected parameter graph comes from compiled effect bytecode, which needs CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS and which no qualification renderer here has. Rather than leave fifty-one members written and never executed, the test suite builds a standalone parameter collection through these routes and round-trips every value type through the real marshalling. See docs/limitations.md."
+    },
+    {
+      "name": "cna_effect_parameter_collection_create",
+      "header": "effects.h",
+      "thread": "any",
+      "ownership": "owns",
+      "note": "Bound so the EffectParameter value surface can be exercised against CNA itself. XNA has no public EffectParameter constructor, so nothing in src/ calls these: a reflected parameter graph comes from compiled effect bytecode, which needs CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS and which no qualification renderer here has. Rather than leave fifty-one members written and never executed, the test suite builds a standalone parameter collection through these routes and round-trips every value type through the real marshalling. See docs/limitations.md."
+    },
+    {
+      "name": "cna_effect_parameter_collection_add_create",
+      "header": "effects.h",
+      "thread": "any",
+      "ownership": "owns",
+      "note": "Bound so the EffectParameter value surface can be exercised against CNA itself. XNA has no public EffectParameter constructor, so nothing in src/ calls these: a reflected parameter graph comes from compiled effect bytecode, which needs CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS and which no qualification renderer here has. Rather than leave fifty-one members written and never executed, the test suite builds a standalone parameter collection through these routes and round-trips every value type through the real marshalling. See docs/limitations.md."
     }
   ],
   "shimmed_routes": [

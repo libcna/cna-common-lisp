@@ -343,6 +343,45 @@
    #:set-vertex-buffer #:set-vertex-buffers #:get-vertex-buffers #:indices
    #:draw-primitives #:draw-indexed-primitives
    #:draw-user-primitives #:draw-user-indexed-primitives
+   ;; --- Effect and its object graph ----------------------------------------
+   #:effect #:basic-effect #:effect-techniques #:effect-parameters
+   #:effect-current-technique #:clone-effect
+   #:effect-technique #:effect-technique-name #:effect-technique-passes
+   #:effect-technique-annotations
+   #:effect-pass #:effect-pass-name #:effect-pass-annotations #:apply-effect-pass
+   #:effect-technique-collection #:effect-pass-collection
+   #:effect-parameter-collection #:effect-annotation-collection
+   #:collection-count #:collection-item #:collection-elements
+   #:collection-parameter-by-semantic
+   #:effect-annotation #:effect-annotation-name #:effect-annotation-semantic
+   #:effect-annotation-row-count #:effect-annotation-column-count
+   #:effect-annotation-parameter-class #:effect-annotation-parameter-type
+   #:effect-annotation-value-boolean #:effect-annotation-value-int32
+   #:effect-annotation-value-single #:effect-annotation-value-vector2
+   #:effect-annotation-value-vector3 #:effect-annotation-value-vector4
+   #:effect-annotation-value-matrix #:effect-annotation-value-string
+   #:effect-parameter #:effect-parameter-name #:effect-parameter-semantic
+   #:effect-parameter-row-count #:effect-parameter-column-count
+   #:effect-parameter-parameter-class #:effect-parameter-parameter-type
+   #:effect-parameter-elements #:effect-parameter-structure-members
+   #:effect-parameter-annotations
+   #:effect-parameter-value #:effect-parameter-values
+   #:effect-parameter-value-string #:effect-parameter-value-texture
+   #:effect-parameter-class #:effect-parameter-class-value
+   #:effect-parameter-class-from-value #:all-effect-parameter-class
+   #:effect-parameter-type #:effect-parameter-type-value
+   #:effect-parameter-type-from-value #:all-effect-parameter-type
+   ;; --- IEffectMatrices, IEffectLights, IEffectFog and DirectionalLight -----
+   #:effect-world #:effect-view #:effect-projection
+   #:effect-fog-enabled #:effect-fog-start #:effect-fog-end #:effect-fog-color
+   #:effect-lighting-enabled #:effect-ambient-light-color #:enable-default-lighting
+   #:directional-light-0 #:directional-light-1 #:directional-light-2
+   #:directional-light #:directional-light-enabled #:directional-light-direction
+   #:directional-light-diffuse-color #:directional-light-specular-color
+   #:effect-alpha #:effect-diffuse-color #:effect-emissive-color
+   #:effect-specular-color #:effect-specular-power #:effect-texture
+   #:effect-texture-enabled #:effect-vertex-color-enabled
+   #:effect-prefer-per-pixel-lighting
    ;; --- the device's state and texture collections -------------------------
    #:sampler-state-collection #:texture-collection #:item
    #:sampler-states #:vertex-sampler-states #:textures #:vertex-textures

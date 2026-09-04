@@ -71,6 +71,11 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "graphics/texture-2d")
    (:file "graphics/buffers")
    (:file "graphics/drawing")
+   ;; Effect is a GraphicsResource, and the four view kinds hanging off it are
+   ;; not; both halves are here, and BasicEffect after them.
+   (:file "graphics/effect")
+   (:file "graphics/effect-parameter")
+   (:file "graphics/basic-effect")
    (:file "graphics/state-collections")
    (:file "graphics/sprite-batch")
    ;; --- Microsoft.Xna.Framework.Input -------------------------------------
@@ -129,6 +134,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/graphics-state")
    (:file "native/vertex-types")
    (:file "native/buffers")
+   (:file "native/effects")
    (:file "native/rasterization")
    (:file "native/graphics-resource")
    (:file "native/keyboard")

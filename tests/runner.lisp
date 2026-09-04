@@ -33,7 +33,8 @@
     ;; that never reached a rasterising renderer has proved nothing about pixels,
     ;; and the only way to stop that being read as though it had is to say so.
     ;; The kinds are kept apart because they are different claims: Clear reaching
-    ;; the back buffer says nothing about whether SpriteBatch rasterises.
+    ;; the back buffer says nothing about whether SpriteBatch rasterises, and
+    ;; neither says anything about the primitive pipeline.
     (when (native-library-requested-p)
       (if *rasterization-evidence*
           (dolist (entry (reverse *rasterization-evidence*))
@@ -43,9 +44,12 @@
         (format t "Nothing above is evidence that anything reached actual pixels.~%")
         (format t "Run again against a CNA built with a rasterising renderer --~%")
         (format t "-DCNA_GRAPHICS_RENDERER=SOFTWARE needs no display -- for that.~%"))
-      (when (and (rasterization-proved-p :clear)
-                 (not (rasterization-proved-p :sprite)))
-        (format t "A clear reached the back buffer; no SpriteBatch draw was proved.~%")))
+      (when (rasterization-proved-p :clear)
+        (unless (rasterization-proved-p :sprite)
+          (format t "A clear reached the back buffer; no SpriteBatch draw was proved.~%"))
+        (unless (rasterization-proved-p :primitive)
+          (format t "No primitive draw was proved: the sprite path and the primitive ~
+                     path~%are different paths through the renderer.~%"))))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))

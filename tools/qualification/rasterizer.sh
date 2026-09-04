@@ -8,14 +8,18 @@
 # run silently took the no-readback branch, which is the way a lane like this
 # quietly stops proving anything.
 #
-# It requires two separate proofs, because they are two separate claims:
+# It requires three separate proofs, because they are three separate claims:
 #
-#   clear    GraphicsDevice.Clear reached the back buffer and read back
-#   sprite   a SpriteBatch draw put a known texture's own texels on exactly the
-#            pixels its destination rectangle names, and on none outside it
+#   clear      GraphicsDevice.Clear reached the back buffer and read back
+#   sprite     a SpriteBatch draw put a known texture's own texels on exactly the
+#              pixels its destination rectangle names, and on none outside it
+#   primitive  a DrawUserPrimitives triangle, through a BasicEffect pass, covered
+#              exactly the pixels its geometry covers and none outside them
 #
 # A clear reaching the back buffer says nothing about whether SpriteBatch
-# rasterises. This script used to accept the first as though it were both.
+# rasterises, and neither says anything about the primitive pipeline, which is a
+# different path through the renderer. This script used to accept the first as
+# though it were all of them.
 #
 #   CNA_NATIVE_LIBRARY=/abs/path/libcna_c_api.so \
 #     tools/qualification/rasterizer.sh
@@ -56,7 +60,7 @@ if ! grep -q '^rasterization : ' "$log"; then
     echo "FAIL the runner printed no rasterization line at all" >&2
     exit 1
 fi
-for kind in clear sprite; do
+for kind in clear sprite primitive; do
     if ! grep -q "^rasterization : $kind -- " "$log"; then
         echo "FAIL this lane requires a '$kind' proof and the run did not produce one:" >&2
         grep '^rasterization : ' "$log" >&2 || true
@@ -70,7 +74,9 @@ echo "rasterizer qualification passed"
 grep '^rasterization : ' "$log" | sed 's/^/  /'
 echo "  log $log"
 echo
-echo "  Proved: Clear reached the back buffer, and a SpriteBatch draw put a known"
-echo "  texture's own texels on exactly the pixels its destination named."
+echo "  Proved: Clear reached the back buffer; a SpriteBatch draw put a known"
+echo "  texture's own texels on exactly the pixels its destination named; and a"
+echo "  DrawUserPrimitives triangle drawn through a BasicEffect pass covered"
+echo "  exactly the pixels its geometry covers."
 echo "  Not proved, and not claimed: anything about a physical monitor, and"
 echo "  anything about a GPU renderer -- SOFTWARE rasterises on the CPU."

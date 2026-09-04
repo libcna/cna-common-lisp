@@ -36,6 +36,8 @@ A list of (KIND . DESCRIPTION). KIND is one of:
   :none      a renderer with no back-buffer readback; it refused, honestly
   :clear     GraphicsDevice.Clear reached the back buffer and read back
   :sprite    a SpriteBatch draw put the texture's own texels on the right pixels
+  :primitive a DrawUserPrimitives triangle, through a BasicEffect pass, covered
+             exactly the pixels its geometry covers
 
 Kept apart on purpose. `Clear' reaching the back buffer says nothing about
 whether `SpriteBatch.Draw' rasterises, and for a while the prose here claimed the
@@ -294,3 +296,117 @@ reads the back buffer straight back."))
                     its own pixels -- orientation and sampling are right, not only ~
                     placement"
            renderer))))))
+
+;;; --- a primitive, rasterised ---------------------------------------------------------
+;;;
+;;; The third claim, and the one the buffer closure had to leave open: a
+;;; *primitive* draw -- not a sprite -- reaching pixels. It needed an Effect,
+;;; because CNA refuses a draw with none current, exactly as XNA's own
+;;; `VerifyCanDraw' does.
+;;;
+;;; The geometry is chosen so nothing about it is approximate:
+;;;
+;;;   * BasicEffect's World, View and Projection are left at their defaults,
+;;;     which CNA reports as identity, so the vertices *are* clip-space
+;;;     coordinates and no matrix setter -- and therefore no optional shim -- is
+;;;     involved in the proof;
+;;;   * the triangle is a right triangle on half the viewport, wound so the
+;;;     default CullCounterClockwise keeps it, and every sampled point is well
+;;;     away from its edges, where a rasteriser's fill rule is entitled to
+;;;     differ;
+;;;   * VertexColorEnabled is on and lighting off, so the colour is the vertex
+;;;     colour and not a shading result;
+;;;   * the sampled points are read from a back buffer cleared to CornflowerBlue,
+;;;     so "inside is red" and "outside is still the clear colour" are two
+;;;     different assertions.
+
+(defclass primitive-pixel-game (graphics-game)
+  ((effect :initform nil :accessor primitive-effect)
+   (samples :initform nil :accessor samples)
+   (sample-error :initform nil :accessor sample-error)
+   (sampled :initform nil :accessor sampled))
+  (:documentation
+   "Clears, applies a BasicEffect pass, draws one triangle in clip space and
+reads the back buffer straight back."))
+
+(defun clip-space-triangle ()
+  "A right triangle over the lower-left half of clip space.
+
+Wound clockwise in clip space, which is front-facing once the viewport transform
+has flipped Y -- so the default CullCounterClockwise keeps it. Screen-space, on
+an 800x480 viewport, the vertices land at (200,360), (200,120) and (600,360)."
+  (vector (gfx:make-vertex-position-color (v3 -0.5 -0.5 0) (xna:make-color 255 0 0 255))
+          (gfx:make-vertex-position-color (v3 -0.5 0.5 0) (xna:make-color 255 0 0 255))
+          (gfx:make-vertex-position-color (v3 0.5 -0.5 0) (xna:make-color 255 0 0 255))))
+
+(defmethod xna:draw ((game primitive-pixel-game) game-time)
+  (declare (ignore game-time))
+  (incf (draws game))
+  (unless (sampled game)
+    (setf (sampled game) t)
+    (handler-case
+        (let ((device (xna:graphics-device game)))
+          (gfx:clear device (xna:cornflower-blue))
+          (let ((effect (make-instance 'gfx:basic-effect :graphics-device device)))
+            (setf (primitive-effect game) effect
+                  (gfx:effect-vertex-color-enabled effect) t
+                  (gfx:effect-lighting-enabled effect) nil)
+            (dolist (pass (gfx:collection-elements
+                           (gfx:effect-technique-passes
+                            (gfx:effect-current-technique effect))))
+              (gfx:apply-effect-pass pass))
+            (gfx:draw-user-primitives device :triangle-list (clip-space-triangle)
+                                      :primitive-count 1))
+          (let* ((viewport (gfx:viewport device))
+                 (width (gfx:viewport-width viewport))
+                 (pixels (gfx:get-back-buffer-data device)))
+            (setf (samples game)
+                  (lambda (x y) (aref pixels (+ x (* y width)))))))
+      (error (condition) (setf (sample-error game) condition)))))
+
+(define-native-test a-primitive-draw-through-an-effect-reaches-the-back-buffer
+  (let ((game (make-instance 'primitive-pixel-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (sampled game) "the draw callback never ran")
+           (let ((renderer (renderer game)))
+             (if (not (rasterizing-renderer-p renderer))
+                 (progn
+                   (is (null (samples game))
+                       "~a has no back-buffer readback but answered pixels" renderer)
+                   (is (typep (sample-error game) 'xna:cna-not-supported-error)
+                       "~a should refuse the readback with CNA-NOT-SUPPORTED-ERROR; ~
+                        it signalled ~a"
+                       renderer (type-of (sample-error game))))
+                 (progn
+                   (when (sample-error game) (error (sample-error game)))
+                   (let ((red (xna:make-color 255 0 0 255))
+                         (background (xna:cornflower-blue)))
+                     (flet ((at (x y) (funcall (samples game) x y)))
+                       ;; Well inside the triangle, on both sides of its middle.
+                       (dolist (point '((260 340) (210 350) (300 250) (560 355)))
+                         (is (xna:color-equal red (at (first point) (second point)))
+                             "(~d,~d) should be inside the triangle; it is ~a"
+                             (first point) (second point)
+                             (pixel-list (at (first point) (second point)))))
+                       ;; Outside it, on the other side of each of the three edges,
+                       ;; and far away.
+                       (dolist (point '((150 240) (300 100) (500 200) (700 400) (0 0)))
+                         (is (xna:color-equal background
+                                              (at (first point) (second point)))
+                             "(~d,~d) should still be the CornflowerBlue that was ~
+                              cleared; it is ~a"
+                             (first point) (second point)
+                             (pixel-list (at (first point) (second point)))))
+                       (note-rasterization
+                        :primitive "~a: a BasicEffect pass and one DrawUserPrimitives ~
+                                    put a triangle's own vertex colour on the pixels ~
+                                    its geometry covers, and on none outside it"
+                        renderer)))))))
+      (progn
+        (when (primitive-effect game) (ignore-errors (xna:dispose (primitive-effect game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))

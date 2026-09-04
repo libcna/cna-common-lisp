@@ -623,6 +623,52 @@
 (defconstant +sizeof-cna-vector-4+ 16)
 (defconstant +alignof-cna-vector-4+ 4)
 
+;;; CNA_Matrix -- 64 bytes, 4-byte aligned, from math_values.h.
+(defcstruct (cna-matrix :size 64)
+  (m-11 :float :offset 0)
+  (m-12 :float :offset 4)
+  (m-13 :float :offset 8)
+  (m-14 :float :offset 12)
+  (m-21 :float :offset 16)
+  (m-22 :float :offset 20)
+  (m-23 :float :offset 24)
+  (m-24 :float :offset 28)
+  (m-31 :float :offset 32)
+  (m-32 :float :offset 36)
+  (m-33 :float :offset 40)
+  (m-34 :float :offset 44)
+  (m-41 :float :offset 48)
+  (m-42 :float :offset 52)
+  (m-43 :float :offset 56)
+  (m-44 :float :offset 60))
+
+(defconstant +sizeof-cna-matrix+ 64)
+(defconstant +alignof-cna-matrix+ 4)
+
+;;; CNA_EffectParameterCreateInfo -- 56 bytes, 8-byte aligned, from effects.h.
+(defcstruct (cna-effect-parameter-create-info :size 56)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (name (:struct cna-string-view) :offset 8)
+  (semantic (:struct cna-string-view) :offset 24)
+  (row-count :int32 :offset 40)
+  (column-count :int32 :offset 44)
+  (parameter-class :uint32 :offset 48)
+  (parameter-type :uint32 :offset 52))
+
+(defconstant +sizeof-cna-effect-parameter-create-info+ 56)
+(defconstant +alignof-cna-effect-parameter-create-info+ 8)
+
+;;; CNA_Quaternion -- 16 bytes, 4-byte aligned, from math_values.h.
+(defcstruct (cna-quaternion :size 16)
+  (x :float :offset 0)
+  (y :float :offset 4)
+  (z :float :offset 8)
+  (w :float :offset 12))
+
+(defconstant +sizeof-cna-quaternion+ 16)
+(defconstant +alignof-cna-quaternion+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -671,6 +717,9 @@
     (cna-effect-parameter-info 24 4 ((struct-size 0 4) (struct-version 4 4) (row-count 8 4) (column-count 12 4) (parameter-class 16 4) (parameter-type 20 4)))
     (cna-effect-annotation-info 24 4 ((struct-size 0 4) (struct-version 4 4) (row-count 8 4) (column-count 12 4) (parameter-class 16 4) (parameter-type 20 4)))
     (cna-vector-3 12 4 ((x 0 4) (y 4 4) (z 8 4)))
-    (cna-vector-4 16 4 ((x 0 4) (y 4 4) (z 8 4) (w 12 4))))
+    (cna-vector-4 16 4 ((x 0 4) (y 4 4) (z 8 4) (w 12 4)))
+    (cna-matrix 64 4 ((m-11 0 4) (m-12 4 4) (m-13 8 4) (m-14 12 4) (m-21 16 4) (m-22 20 4) (m-23 24 4) (m-24 28 4) (m-31 32 4) (m-32 36 4) (m-33 40 4) (m-34 44 4) (m-41 48 4) (m-42 52 4) (m-43 56 4) (m-44 60 4)))
+    (cna-effect-parameter-create-info 56 8 ((struct-size 0 4) (struct-version 4 4) (name 8 16) (semantic 24 16) (row-count 40 4) (column-count 44 4) (parameter-class 48 4) (parameter-type 52 4)))
+    (cna-quaternion 16 4 ((x 0 4) (y 4 4) (z 8 4) (w 12 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

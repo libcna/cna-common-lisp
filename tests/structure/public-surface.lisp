@@ -62,12 +62,19 @@
                            "INT32" "INT64" "VOID" "RESULT"))
         (forbidden-prefixes '("CNA-GAME-" "CNA_" "%CNA"))
         (forbidden-pairs '(("STRUCT" "SIZE") ("STRUCT" "VERSION") ("CALLBACK" "TABLE")))
+        ;; A word on this list is forbidden because it belongs to the ABI and not
+        ;; to XNA. Where XNA itself uses one, the exemption is named here with
+        ;; the member it comes from, rather than dropped from the list -- deleting
+        ;; a forbidden word to silence one symbol would stop it catching the
+        ;; leaks it is for.
+        (xna-spelled '(("EFFECT-ANNOTATION-VALUE-INT32" . "INT32")))
         (leaks '()))
     (dolist (symbol (all-public-symbols))
       (let* ((name (symbol-name symbol))
              (words (hyphen-words name)))
         (dolist (bad forbidden-words)
-          (when (member bad words :test #'string=)
+          (when (and (member bad words :test #'string=)
+                     (not (equal bad (cdr (assoc name xna-spelled :test #'string=)))))
             (push (list symbol bad) leaks)))
         (dolist (bad forbidden-prefixes)
           (when (eql 0 (search bad name))

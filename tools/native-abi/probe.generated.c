@@ -809,6 +809,71 @@ _Static_assert(sizeof(((CNA_Vector4 *)0)->z) == 4, "CNA_Vector4.z size");
 _Static_assert(offsetof(CNA_Vector4, w) == 12, "CNA_Vector4.w offset");
 _Static_assert(sizeof(((CNA_Vector4 *)0)->w) == 4, "CNA_Vector4.w size");
 
+_Static_assert(sizeof(CNA_Matrix) == 64, "CNA_Matrix size");
+_Static_assert(_Alignof(CNA_Matrix) == 4, "CNA_Matrix alignment");
+_Static_assert(offsetof(CNA_Matrix, m11) == 0, "CNA_Matrix.m11 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m11) == 4, "CNA_Matrix.m11 size");
+_Static_assert(offsetof(CNA_Matrix, m12) == 4, "CNA_Matrix.m12 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m12) == 4, "CNA_Matrix.m12 size");
+_Static_assert(offsetof(CNA_Matrix, m13) == 8, "CNA_Matrix.m13 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m13) == 4, "CNA_Matrix.m13 size");
+_Static_assert(offsetof(CNA_Matrix, m14) == 12, "CNA_Matrix.m14 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m14) == 4, "CNA_Matrix.m14 size");
+_Static_assert(offsetof(CNA_Matrix, m21) == 16, "CNA_Matrix.m21 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m21) == 4, "CNA_Matrix.m21 size");
+_Static_assert(offsetof(CNA_Matrix, m22) == 20, "CNA_Matrix.m22 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m22) == 4, "CNA_Matrix.m22 size");
+_Static_assert(offsetof(CNA_Matrix, m23) == 24, "CNA_Matrix.m23 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m23) == 4, "CNA_Matrix.m23 size");
+_Static_assert(offsetof(CNA_Matrix, m24) == 28, "CNA_Matrix.m24 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m24) == 4, "CNA_Matrix.m24 size");
+_Static_assert(offsetof(CNA_Matrix, m31) == 32, "CNA_Matrix.m31 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m31) == 4, "CNA_Matrix.m31 size");
+_Static_assert(offsetof(CNA_Matrix, m32) == 36, "CNA_Matrix.m32 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m32) == 4, "CNA_Matrix.m32 size");
+_Static_assert(offsetof(CNA_Matrix, m33) == 40, "CNA_Matrix.m33 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m33) == 4, "CNA_Matrix.m33 size");
+_Static_assert(offsetof(CNA_Matrix, m34) == 44, "CNA_Matrix.m34 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m34) == 4, "CNA_Matrix.m34 size");
+_Static_assert(offsetof(CNA_Matrix, m41) == 48, "CNA_Matrix.m41 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m41) == 4, "CNA_Matrix.m41 size");
+_Static_assert(offsetof(CNA_Matrix, m42) == 52, "CNA_Matrix.m42 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m42) == 4, "CNA_Matrix.m42 size");
+_Static_assert(offsetof(CNA_Matrix, m43) == 56, "CNA_Matrix.m43 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m43) == 4, "CNA_Matrix.m43 size");
+_Static_assert(offsetof(CNA_Matrix, m44) == 60, "CNA_Matrix.m44 offset");
+_Static_assert(sizeof(((CNA_Matrix *)0)->m44) == 4, "CNA_Matrix.m44 size");
+
+_Static_assert(sizeof(CNA_EffectParameterCreateInfo) == 56, "CNA_EffectParameterCreateInfo size");
+_Static_assert(_Alignof(CNA_EffectParameterCreateInfo) == 8, "CNA_EffectParameterCreateInfo alignment");
+_Static_assert(offsetof(CNA_EffectParameterCreateInfo, struct_size) == 0, "CNA_EffectParameterCreateInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_EffectParameterCreateInfo *)0)->struct_size) == 4, "CNA_EffectParameterCreateInfo.struct_size size");
+_Static_assert(offsetof(CNA_EffectParameterCreateInfo, struct_version) == 4, "CNA_EffectParameterCreateInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_EffectParameterCreateInfo *)0)->struct_version) == 4, "CNA_EffectParameterCreateInfo.struct_version size");
+_Static_assert(offsetof(CNA_EffectParameterCreateInfo, name) == 8, "CNA_EffectParameterCreateInfo.name offset");
+_Static_assert(sizeof(((CNA_EffectParameterCreateInfo *)0)->name) == 16, "CNA_EffectParameterCreateInfo.name size");
+_Static_assert(offsetof(CNA_EffectParameterCreateInfo, semantic) == 24, "CNA_EffectParameterCreateInfo.semantic offset");
+_Static_assert(sizeof(((CNA_EffectParameterCreateInfo *)0)->semantic) == 16, "CNA_EffectParameterCreateInfo.semantic size");
+_Static_assert(offsetof(CNA_EffectParameterCreateInfo, row_count) == 40, "CNA_EffectParameterCreateInfo.row_count offset");
+_Static_assert(sizeof(((CNA_EffectParameterCreateInfo *)0)->row_count) == 4, "CNA_EffectParameterCreateInfo.row_count size");
+_Static_assert(offsetof(CNA_EffectParameterCreateInfo, column_count) == 44, "CNA_EffectParameterCreateInfo.column_count offset");
+_Static_assert(sizeof(((CNA_EffectParameterCreateInfo *)0)->column_count) == 4, "CNA_EffectParameterCreateInfo.column_count size");
+_Static_assert(offsetof(CNA_EffectParameterCreateInfo, parameter_class) == 48, "CNA_EffectParameterCreateInfo.parameter_class offset");
+_Static_assert(sizeof(((CNA_EffectParameterCreateInfo *)0)->parameter_class) == 4, "CNA_EffectParameterCreateInfo.parameter_class size");
+_Static_assert(offsetof(CNA_EffectParameterCreateInfo, parameter_type) == 52, "CNA_EffectParameterCreateInfo.parameter_type offset");
+_Static_assert(sizeof(((CNA_EffectParameterCreateInfo *)0)->parameter_type) == 4, "CNA_EffectParameterCreateInfo.parameter_type size");
+
+_Static_assert(sizeof(CNA_Quaternion) == 16, "CNA_Quaternion size");
+_Static_assert(_Alignof(CNA_Quaternion) == 4, "CNA_Quaternion alignment");
+_Static_assert(offsetof(CNA_Quaternion, x) == 0, "CNA_Quaternion.x offset");
+_Static_assert(sizeof(((CNA_Quaternion *)0)->x) == 4, "CNA_Quaternion.x size");
+_Static_assert(offsetof(CNA_Quaternion, y) == 4, "CNA_Quaternion.y offset");
+_Static_assert(sizeof(((CNA_Quaternion *)0)->y) == 4, "CNA_Quaternion.y size");
+_Static_assert(offsetof(CNA_Quaternion, z) == 8, "CNA_Quaternion.z offset");
+_Static_assert(sizeof(((CNA_Quaternion *)0)->z) == 4, "CNA_Quaternion.z size");
+_Static_assert(offsetof(CNA_Quaternion, w) == 12, "CNA_Quaternion.w offset");
+_Static_assert(sizeof(((CNA_Quaternion *)0)->w) == 4, "CNA_Quaternion.w size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1081,6 +1146,9 @@ CNA_Result (*const cna_lisp_probe_cna_basic_effect_set_vertex_color_enabled)(CNA
 CNA_Result (*const cna_lisp_probe_cna_basic_effect_get_prefer_per_pixel_lighting)(CNA_EffectHandle, CNA_Bool*) = cna_basic_effect_get_prefer_per_pixel_lighting;
 CNA_Result (*const cna_lisp_probe_cna_basic_effect_set_prefer_per_pixel_lighting)(CNA_EffectHandle, CNA_Bool) = cna_basic_effect_set_prefer_per_pixel_lighting;
 CNA_Result (*const cna_lisp_probe_cna_sprite_batch_begin_with_effect)(CNA_Handle, CNA_SpriteSortMode, const CNA_BlendState*, const CNA_SamplerState*, const CNA_DepthStencilState*, const CNA_RasterizerState*, CNA_Handle, const CNA_Matrix*) = cna_sprite_batch_begin_with_effect;
+CNA_Result (*const cna_lisp_probe_cna_effect_parameter_create)(const CNA_EffectParameterCreateInfo*, CNA_EffectParameterHandle*) = cna_effect_parameter_create;
+CNA_Result (*const cna_lisp_probe_cna_effect_parameter_collection_create)(CNA_EffectParameterCollectionHandle*) = cna_effect_parameter_collection_create;
+CNA_Result (*const cna_lisp_probe_cna_effect_parameter_collection_add_create)(CNA_EffectParameterCollectionHandle, const CNA_EffectParameterCreateInfo*, CNA_EffectParameterHandle*) = cna_effect_parameter_collection_add_create;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");

@@ -341,16 +341,16 @@
       (signals xna:cna-usage-error
         (gfx:draw-user-primitives device :triangle-list vertices)))))
 
-;;; --- where primitive drawing currently stops, exactly --------------------------------
+;;; --- no draw happens without a current effect ---------------------------------------
 ;;;
 ;;; Every argument check above is CNA-Lisp's own and happens before the ABI is
-;;; touched. Past them, CNA refuses the draw itself, and the reason is XNA's own
-;;; rule rather than a CNA limitation: `GraphicsDevice.VerifyCanDraw' requires a
-;;; current Effect, and there is no Effect in this milestone.
+;;; touched. Past them, CNA refuses the draw itself unless an effect pass has been
+;;; applied, and that is XNA's own rule rather than a CNA limitation:
+;;; `GraphicsDevice.VerifyCanDraw' requires a current Effect.
 ;;;
-;;; This test pins that boundary rather than describing it. When the Effect
-;;; closure lands it will fail -- and the primitive pixel proof it is standing in
-;;; for can replace it.
+;;; This test covers all four draw entry points with nothing applied.
+;;; tests/native/effects.lisp has the other half -- that applying a pass is what
+;;; changes the answer -- and tests/native/rasterization.lisp has the pixels.
 
 (define-native-test a-primitive-draw-needs-an-effect-and-says-so
   (with-buffer-game (game)
@@ -364,10 +364,7 @@
       (gfx:set-vertex-buffer device buffer)
       (flet ((refusal (thunk what)
                (handler-case (progn (funcall thunk)
-                                    (fail "~a was accepted with no effect applied; ~
-                                           if Effect now exists, this test has done ~
-                                           its job and a pixel proof should replace it"
-                                          what))
+                                    (fail "~a was accepted with no effect applied" what))
                  (xna:cna-error (condition)
                    (let ((text (string-downcase (princ-to-string condition))))
                      (is (search "effect" text)

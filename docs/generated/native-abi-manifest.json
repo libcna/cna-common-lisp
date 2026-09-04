@@ -15,19 +15,22 @@
     }
   ],
   "by_value_aggregate_rule": {
-    "admitted_classification": "INTEGER",
+    "admitted_classification": [
+      "INTEGER",
+      "SSE"
+    ],
     "max_size_bytes": 16,
-    "rule": "A by-value aggregate parameter is bound only when the System V AMD64 ABI classifies every one of its eightbytes as INTEGER and its size is at most 16 bytes. Such a parameter is passed as one scalar argument per eightbyte, which occupies exactly the argument registers or stack slots the aggregate itself would occupy. An aggregate with any floating-point eightbyte (SSE class) or larger than 16 bytes is refused by the generator and the route that needs it is left unbound and reported as blocked.",
-    "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
+    "rule": "A by-value aggregate parameter is bound only when its size is at most 16 bytes, so the System V AMD64 ABI passes it in registers rather than in memory. Each of its eightbytes is then passed as one scalar argument of the same class: an INTEGER eightbyte as an integer of its width (or as :pointer when the eightbyte is exactly one pointer field), and an SSE eightbyte as a C double, or a C float for a trailing four-byte one -- which is the register half the ABI gives a lone float argument. Those scalars occupy exactly the registers the aggregate itself would occupy, because the ABI assigns integer and SSE arguments from two independent sequences of registers. An aggregate larger than 16 bytes is MEMORY class, is refused by the generator, and its route is either shimmed or left unbound and reported as blocked.",
+    "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 158,
-    "structs": 42,
-    "struct_fields": 312,
-    "constants": 432,
+    "functions": 273,
+    "structs": 49,
+    "struct_fields": 359,
+    "constants": 460,
     "callbacks": 6,
-    "by_value_aggregates": 3,
-    "shimmed_routes": 1
+    "by_value_aggregates": 6,
+    "shimmed_routes": 4
   },
   "shim_policy": "A shim exists only for a route the generator has *proved* it cannot bind, it does nothing but reconstruct an aggregate and call through a caller-supplied function pointer, and it is never linked against CNA -- so it cannot drift from the library it forwards to. It is not shipped prebuilt: CNA_LISP_SHIM names it when a maintainer has built it, and the members that need it refuse with an actionable condition when it is absent.",
   "shimmed_routes": [
@@ -59,6 +62,93 @@
       ],
       "reason": "Takes CNA_Viewport (24 bytes) by value. The System V AMD64 ABI classifies it MEMORY, and CFFI cannot pass a MEMORY-class aggregate without cffi-libffi, which a released CNA-Lisp must not require. The generator proves that refusal, and then emits the smallest thing that gets past it: a wrapper that takes the aggregate by pointer and the real route by function pointer, and does nothing but the one ABI transition. It is private, optional, never the public API, and the binding works without it in every other respect.",
       "generator_proof": "CNA_Viewport is 24 bytes: the System V AMD64 ABI classifies it MEMORY, which CFFI cannot express without cffi-libffi. Route left unbound."
+    },
+    {
+      "name": "cna_effect_matrices_set_world",
+      "header": "effects.h",
+      "c_prototype": "CNA_Result cna_effect_matrices_set_world(CNA_EffectHandle effect, CNA_Matrix value)",
+      "shim_name": "cna_lisp_shim_cna_effect_matrices_set_world",
+      "returns": ":uint32",
+      "c_returns": "CNA_Result",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "kind": "scalar",
+          "detail": null
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Matrix",
+          "kind": "aggregate",
+          "detail": "CNA_Matrix"
+        }
+      ],
+      "cffi_params": [
+        ":pointer",
+        ":uint64",
+        ":pointer"
+      ],
+      "reason": "Takes CNA_Matrix (64 bytes) by value. The System V AMD64 ABI classifies it MEMORY, so it travels on the stack and no sequence of scalar arguments occupies the same place; CFFI cannot express that without cffi-libffi, which a released CNA-Lisp must not require. The generator proves that refusal, and then emits the smallest thing that gets past it: a wrapper that takes the aggregate by pointer and the real route by function pointer, and does nothing but the one ABI transition. It is private, optional and never the public API. This is BasicEffect's World, View or Projection setter; the getters take CNA_Matrix* and need no shim, and every other member of the effect surface binds directly.",
+      "generator_proof": "CNA_Matrix is 64 bytes: the System V AMD64 ABI classifies it MEMORY, which CFFI cannot express without cffi-libffi. Route left unbound."
+    },
+    {
+      "name": "cna_effect_matrices_set_view",
+      "header": "effects.h",
+      "c_prototype": "CNA_Result cna_effect_matrices_set_view(CNA_EffectHandle effect, CNA_Matrix value)",
+      "shim_name": "cna_lisp_shim_cna_effect_matrices_set_view",
+      "returns": ":uint32",
+      "c_returns": "CNA_Result",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "kind": "scalar",
+          "detail": null
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Matrix",
+          "kind": "aggregate",
+          "detail": "CNA_Matrix"
+        }
+      ],
+      "cffi_params": [
+        ":pointer",
+        ":uint64",
+        ":pointer"
+      ],
+      "reason": "Takes CNA_Matrix (64 bytes) by value. The System V AMD64 ABI classifies it MEMORY, so it travels on the stack and no sequence of scalar arguments occupies the same place; CFFI cannot express that without cffi-libffi, which a released CNA-Lisp must not require. The generator proves that refusal, and then emits the smallest thing that gets past it: a wrapper that takes the aggregate by pointer and the real route by function pointer, and does nothing but the one ABI transition. It is private, optional and never the public API. This is BasicEffect's World, View or Projection setter; the getters take CNA_Matrix* and need no shim, and every other member of the effect surface binds directly.",
+      "generator_proof": "CNA_Matrix is 64 bytes: the System V AMD64 ABI classifies it MEMORY, which CFFI cannot express without cffi-libffi. Route left unbound."
+    },
+    {
+      "name": "cna_effect_matrices_set_projection",
+      "header": "effects.h",
+      "c_prototype": "CNA_Result cna_effect_matrices_set_projection(CNA_EffectHandle effect, CNA_Matrix value)",
+      "shim_name": "cna_lisp_shim_cna_effect_matrices_set_projection",
+      "returns": ":uint32",
+      "c_returns": "CNA_Result",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "kind": "scalar",
+          "detail": null
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Matrix",
+          "kind": "aggregate",
+          "detail": "CNA_Matrix"
+        }
+      ],
+      "cffi_params": [
+        ":pointer",
+        ":uint64",
+        ":pointer"
+      ],
+      "reason": "Takes CNA_Matrix (64 bytes) by value. The System V AMD64 ABI classifies it MEMORY, so it travels on the stack and no sequence of scalar arguments occupies the same place; CFFI cannot express that without cffi-libffi, which a released CNA-Lisp must not require. The generator proves that refusal, and then emits the smallest thing that gets past it: a wrapper that takes the aggregate by pointer and the real route by function pointer, and does nothing but the one ABI transition. It is private, optional and never the public API. This is BasicEffect's World, View or Projection setter; the getters take CNA_Matrix* and need no shim, and every other member of the effect surface binds directly.",
+      "generator_proof": "CNA_Matrix is 64 bytes: the System V AMD64 ABI classifies it MEMORY, which CFFI cannot express without cffi-libffi. Route left unbound."
     }
   ],
   "functions": [
@@ -4006,6 +4096,2790 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_index_buffer_unsubscribe_content_lost(CNA_IndexBufferEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_basic_effect_create",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)"
+    },
+    {
+      "name": "cna_effect_create_compiled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "effect_code",
+          "c_type": "const uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "effect_code_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_create_compiled(CNA_Handle graphics_device, const uint8_t* effect_code, uint64_t effect_code_count, CNA_EffectHandle* out_effect)"
+    },
+    {
+      "name": "cna_effect_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_destroy(CNA_EffectHandle effect)"
+    },
+    {
+      "name": "cna_effect_dispose",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_dispose(CNA_EffectHandle effect)"
+    },
+    {
+      "name": "cna_effect_clone",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_clone",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_clone(CNA_EffectHandle effect, CNA_EffectHandle* out_clone)"
+    },
+    {
+      "name": "cna_effect_get_parameters",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectParameterCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_get_parameters(CNA_EffectHandle effect, CNA_EffectParameterCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_get_techniques",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectTechniqueCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_get_techniques(CNA_EffectHandle effect, CNA_EffectTechniqueCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_get_current_technique",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_technique",
+          "c_type": "CNA_EffectTechniqueHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_get_current_technique(CNA_EffectHandle effect, CNA_EffectTechniqueHandle* out_technique)"
+    },
+    {
+      "name": "cna_effect_set_current_technique",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "technique",
+          "c_type": "CNA_EffectTechniqueHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_set_current_technique(CNA_EffectHandle effect, CNA_EffectTechniqueHandle technique)"
+    },
+    {
+      "name": "cna_effect_technique_collection_get_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectTechniqueCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_collection_get_count(CNA_EffectTechniqueCollectionHandle collection, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_effect_technique_collection_get_at",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectTechniqueCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_technique",
+          "c_type": "CNA_EffectTechniqueHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_collection_get_at(CNA_EffectTechniqueCollectionHandle collection, uint64_t index, CNA_EffectTechniqueHandle* out_technique)"
+    },
+    {
+      "name": "cna_effect_technique_collection_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectTechniqueCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_collection_destroy(CNA_EffectTechniqueCollectionHandle collection)"
+    },
+    {
+      "name": "cna_effect_technique_get_name_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "technique",
+          "c_type": "CNA_EffectTechniqueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_get_name_byte_count(CNA_EffectTechniqueHandle technique, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_technique_copy_name",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "technique",
+          "c_type": "CNA_EffectTechniqueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_copy_name(CNA_EffectTechniqueHandle technique, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_technique_get_identity",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "technique",
+          "c_type": "CNA_EffectTechniqueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_identity",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_get_identity(CNA_EffectTechniqueHandle technique, uint64_t* out_identity)"
+    },
+    {
+      "name": "cna_effect_technique_get_passes",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "technique",
+          "c_type": "CNA_EffectTechniqueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectPassCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_get_passes(CNA_EffectTechniqueHandle technique, CNA_EffectPassCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_technique_get_annotations",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "technique",
+          "c_type": "CNA_EffectTechniqueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectAnnotationCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_get_annotations(CNA_EffectTechniqueHandle technique, CNA_EffectAnnotationCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_technique_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "technique",
+          "c_type": "CNA_EffectTechniqueHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_technique_destroy(CNA_EffectTechniqueHandle technique)"
+    },
+    {
+      "name": "cna_effect_pass_collection_get_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectPassCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_pass_collection_get_count(CNA_EffectPassCollectionHandle collection, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_effect_pass_collection_get_at",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectPassCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_pass",
+          "c_type": "CNA_EffectPassHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_pass_collection_get_at(CNA_EffectPassCollectionHandle collection, uint64_t index, CNA_EffectPassHandle* out_pass)"
+    },
+    {
+      "name": "cna_effect_pass_collection_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectPassCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_pass_collection_destroy(CNA_EffectPassCollectionHandle collection)"
+    },
+    {
+      "name": "cna_effect_pass_get_name_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "pass",
+          "c_type": "CNA_EffectPassHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_pass_get_name_byte_count(CNA_EffectPassHandle pass, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_pass_copy_name",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "pass",
+          "c_type": "CNA_EffectPassHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_pass_copy_name(CNA_EffectPassHandle pass, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_pass_get_annotations",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "pass",
+          "c_type": "CNA_EffectPassHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectAnnotationCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_pass_get_annotations(CNA_EffectPassHandle pass, CNA_EffectAnnotationCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_pass_apply",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "pass",
+          "c_type": "CNA_EffectPassHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_pass_apply(CNA_EffectPassHandle pass)"
+    },
+    {
+      "name": "cna_effect_pass_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "pass",
+          "c_type": "CNA_EffectPassHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_pass_destroy(CNA_EffectPassHandle pass)"
+    },
+    {
+      "name": "cna_effect_annotation_collection_get_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectAnnotationCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_collection_get_count(CNA_EffectAnnotationCollectionHandle collection, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_effect_annotation_collection_get_at",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectAnnotationCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_annotation",
+          "c_type": "CNA_EffectAnnotationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_collection_get_at(CNA_EffectAnnotationCollectionHandle collection, uint64_t index, CNA_EffectAnnotationHandle* out_annotation)"
+    },
+    {
+      "name": "cna_effect_annotation_collection_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectAnnotationCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_collection_destroy(CNA_EffectAnnotationCollectionHandle collection)"
+    },
+    {
+      "name": "cna_effect_annotation_get_info",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_EffectAnnotationInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_info(CNA_EffectAnnotationHandle annotation, CNA_EffectAnnotationInfo* out_info)"
+    },
+    {
+      "name": "cna_effect_annotation_get_name_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_name_byte_count(CNA_EffectAnnotationHandle annotation, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_annotation_copy_name",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_copy_name(CNA_EffectAnnotationHandle annotation, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_annotation_get_semantic_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_semantic_byte_count(CNA_EffectAnnotationHandle annotation, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_annotation_copy_semantic",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_copy_semantic(CNA_EffectAnnotationHandle annotation, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_annotation_get_value_string_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_value_string_byte_count(CNA_EffectAnnotationHandle annotation, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_annotation_copy_value_string",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_copy_value_string(CNA_EffectAnnotationHandle annotation, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_annotation_get_value_boolean",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_value_boolean(CNA_EffectAnnotationHandle annotation, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_effect_annotation_get_value_int32",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_value_int32(CNA_EffectAnnotationHandle annotation, int32_t* out_value)"
+    },
+    {
+      "name": "cna_effect_annotation_get_value_single",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_value_single(CNA_EffectAnnotationHandle annotation, float* out_value)"
+    },
+    {
+      "name": "cna_effect_annotation_get_value_vector2",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector2*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_value_vector2(CNA_EffectAnnotationHandle annotation, CNA_Vector2* out_value)"
+    },
+    {
+      "name": "cna_effect_annotation_get_value_vector3",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_value_vector3(CNA_EffectAnnotationHandle annotation, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_effect_annotation_get_value_vector4",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector4*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_value_vector4(CNA_EffectAnnotationHandle annotation, CNA_Vector4* out_value)"
+    },
+    {
+      "name": "cna_effect_annotation_get_value_matrix",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Matrix*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_get_value_matrix(CNA_EffectAnnotationHandle annotation, CNA_Matrix* out_value)"
+    },
+    {
+      "name": "cna_effect_annotation_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "annotation",
+          "c_type": "CNA_EffectAnnotationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_annotation_destroy(CNA_EffectAnnotationHandle annotation)"
+    },
+    {
+      "name": "cna_effect_parameter_collection_get_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectParameterCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_collection_get_count(CNA_EffectParameterCollectionHandle collection, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_effect_parameter_collection_get_at",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectParameterCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_parameter",
+          "c_type": "CNA_EffectParameterHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_collection_get_at(CNA_EffectParameterCollectionHandle collection, uint64_t index, CNA_EffectParameterHandle* out_parameter)"
+    },
+    {
+      "name": "cna_effect_parameter_collection_find_name",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectParameterCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_found",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_parameter",
+          "c_type": "CNA_EffectParameterHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_collection_find_name(CNA_EffectParameterCollectionHandle collection, CNA_StringView name, CNA_Bool* out_found, CNA_EffectParameterHandle* out_parameter)"
+    },
+    {
+      "name": "cna_effect_parameter_collection_find_semantic",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectParameterCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "semantic-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "semantic-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_found",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_parameter",
+          "c_type": "CNA_EffectParameterHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_collection_find_semantic(CNA_EffectParameterCollectionHandle collection, CNA_StringView semantic, CNA_Bool* out_found, CNA_EffectParameterHandle* out_parameter)"
+    },
+    {
+      "name": "cna_effect_parameter_collection_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectParameterCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_collection_destroy(CNA_EffectParameterCollectionHandle collection)"
+    },
+    {
+      "name": "cna_effect_parameter_get_info",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_EffectParameterInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_info(CNA_EffectParameterHandle parameter, CNA_EffectParameterInfo* out_info)"
+    },
+    {
+      "name": "cna_effect_parameter_get_name_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_name_byte_count(CNA_EffectParameterHandle parameter, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_parameter_copy_name",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_copy_name(CNA_EffectParameterHandle parameter, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_parameter_get_semantic_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_semantic_byte_count(CNA_EffectParameterHandle parameter, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_parameter_copy_semantic",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_copy_semantic(CNA_EffectParameterHandle parameter, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_parameter_get_elements",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectParameterCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_elements(CNA_EffectParameterHandle parameter, CNA_EffectParameterCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_parameter_get_structure_members",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectParameterCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_structure_members(CNA_EffectParameterHandle parameter, CNA_EffectParameterCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_parameter_get_annotations",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectAnnotationCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_annotations(CNA_EffectParameterHandle parameter, CNA_EffectAnnotationCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_parameter_get_value",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value_type",
+          "c_type": "CNA_EffectValueType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_value",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_value(CNA_EffectParameterHandle parameter, CNA_EffectValueType value_type, void* out_value)"
+    },
+    {
+      "name": "cna_effect_parameter_set_value",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value_type",
+          "c_type": "CNA_EffectValueType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "value",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_set_value(CNA_EffectParameterHandle parameter, CNA_EffectValueType value_type, const void* value)"
+    },
+    {
+      "name": "cna_effect_parameter_get_values",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value_type",
+          "c_type": "CNA_EffectValueType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "requested_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_values(CNA_EffectParameterHandle parameter, CNA_EffectValueType value_type, uint64_t requested_count, void* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_effect_parameter_set_values",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value_type",
+          "c_type": "CNA_EffectValueType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "values",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_set_values(CNA_EffectParameterHandle parameter, CNA_EffectValueType value_type, const void* values, uint64_t count)"
+    },
+    {
+      "name": "cna_effect_parameter_get_value_string_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_value_string_byte_count(CNA_EffectParameterHandle parameter, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_parameter_copy_value_string",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_copy_value_string(CNA_EffectParameterHandle parameter, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_parameter_set_value_string",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_set_value_string(CNA_EffectParameterHandle parameter, CNA_StringView value)"
+    },
+    {
+      "name": "cna_effect_parameter_get_value_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "texture_type",
+          "c_type": "CNA_EffectTextureType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_get_value_texture(CNA_EffectParameterHandle parameter, CNA_EffectTextureType texture_type, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_effect_parameter_set_value_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "texture_type",
+          "c_type": "CNA_EffectTextureType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_set_value_texture(CNA_EffectParameterHandle parameter, CNA_EffectTextureType texture_type, CNA_Handle texture)"
+    },
+    {
+      "name": "cna_effect_parameter_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameter",
+          "c_type": "CNA_EffectParameterHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_destroy(CNA_EffectParameterHandle parameter)"
+    },
+    {
+      "name": "cna_effect_matrices_get_world",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Matrix*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_matrices_get_world(CNA_EffectHandle effect, CNA_Matrix* out_value)"
+    },
+    {
+      "name": "cna_effect_matrices_get_view",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Matrix*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_matrices_get_view(CNA_EffectHandle effect, CNA_Matrix* out_value)"
+    },
+    {
+      "name": "cna_effect_matrices_get_projection",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Matrix*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_matrices_get_projection(CNA_EffectHandle effect, CNA_Matrix* out_value)"
+    },
+    {
+      "name": "cna_effect_fog_get_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_fog_get_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_effect_fog_set_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_fog_set_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_effect_fog_get_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_fog_get_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_effect_fog_set_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_fog_set_enabled(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_effect_fog_get_start",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_fog_get_start(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_effect_fog_set_start",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_fog_set_start(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_effect_fog_get_end",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_fog_get_end(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_effect_fog_set_end",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_fog_set_end(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_effect_lights_get_ambient_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_lights_get_ambient_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_effect_lights_set_ambient_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_lights_set_ambient_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_effect_lights_get_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_lights_get_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_effect_lights_set_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_lights_set_enabled(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_effect_lights_get_directional_light",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_light",
+          "c_type": "CNA_DirectionalLightHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_lights_get_directional_light(CNA_EffectHandle effect, uint32_t index, CNA_DirectionalLightHandle* out_light)"
+    },
+    {
+      "name": "cna_effect_lights_enable_default",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_lights_enable_default(CNA_EffectHandle effect)"
+    },
+    {
+      "name": "cna_directional_light_destroy",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_destroy(CNA_DirectionalLightHandle light)"
+    },
+    {
+      "name": "cna_directional_light_get_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_get_diffuse_color(CNA_DirectionalLightHandle light, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_directional_light_set_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_set_diffuse_color(CNA_DirectionalLightHandle light, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_directional_light_get_direction",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_get_direction(CNA_DirectionalLightHandle light, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_directional_light_set_direction",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_set_direction(CNA_DirectionalLightHandle light, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_directional_light_get_specular_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_get_specular_color(CNA_DirectionalLightHandle light, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_directional_light_set_specular_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_set_specular_color(CNA_DirectionalLightHandle light, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_directional_light_get_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_get_enabled(CNA_DirectionalLightHandle light, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_directional_light_set_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "light",
+          "c_type": "CNA_DirectionalLightHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_directional_light_set_enabled(CNA_DirectionalLightHandle light, CNA_Bool value)"
+    },
+    {
+      "name": "cna_basic_effect_get_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_alpha(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_basic_effect_set_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_alpha(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_basic_effect_get_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_basic_effect_set_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_basic_effect_get_emissive_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_emissive_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_basic_effect_set_emissive_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_emissive_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_basic_effect_get_specular_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_specular_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_basic_effect_set_specular_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_specular_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_basic_effect_get_specular_power",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_specular_power(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_basic_effect_set_specular_power",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_specular_power(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_basic_effect_get_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_texture",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_texture(CNA_EffectHandle effect, CNA_Bool* out_has_texture, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_basic_effect_set_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)"
+    },
+    {
+      "name": "cna_basic_effect_get_texture_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_texture_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_basic_effect_set_texture_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_texture_enabled(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_basic_effect_get_vertex_color_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_basic_effect_set_vertex_color_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_basic_effect_get_prefer_per_pixel_lighting",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_get_prefer_per_pixel_lighting(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_basic_effect_set_prefer_per_pixel_lighting",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_basic_effect_set_prefer_per_pixel_lighting(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_sprite_batch_begin_with_effect",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "sort_mode",
+          "c_type": "CNA_SpriteSortMode",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "blend_state",
+          "c_type": "const CNA_BlendState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "sampler_state",
+          "c_type": "const CNA_SamplerState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "depth_stencil_state",
+          "c_type": "const CNA_DepthStencilState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "rasterizer_state",
+          "c_type": "const CNA_RasterizerState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transform_matrix",
+          "c_type": "const CNA_Matrix*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_begin_with_effect(CNA_Handle sprite_batch, CNA_SpriteSortMode sort_mode, const CNA_BlendState* blend_state, const CNA_SamplerState* sampler_state, const CNA_DepthStencilState* depth_stencil_state, const CNA_RasterizerState* rasterizer_state, CNA_Handle effect, const CNA_Matrix* transform_matrix)"
+    },
+    {
+      "name": "cna_effect_parameter_create",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "create_info",
+          "c_type": "const CNA_EffectParameterCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_parameter",
+          "c_type": "CNA_EffectParameterHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_create(const CNA_EffectParameterCreateInfo* create_info, CNA_EffectParameterHandle* out_parameter)"
+    },
+    {
+      "name": "cna_effect_parameter_collection_create",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_collection",
+          "c_type": "CNA_EffectParameterCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_collection_create(CNA_EffectParameterCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_effect_parameter_collection_add_create",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_EffectParameterCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_EffectParameterCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_parameter",
+          "c_type": "CNA_EffectParameterHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "owns",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_parameter_collection_add_create(CNA_EffectParameterCollectionHandle collection, const CNA_EffectParameterCreateInfo* create_info, CNA_EffectParameterHandle* out_parameter)"
     }
   ],
   "structs": [
@@ -4260,7 +7134,13 @@
       ],
       "header": "core.h",
       "direction": "inout",
-      "versioned": false
+      "versioned": false,
+      "by_value_flattening": [
+        ":double"
+      ],
+      "eightbyte_classes": [
+        "SSE"
+      ]
     },
     {
       "name": "CNA_Viewport",
@@ -7265,6 +10145,515 @@
       "header": "graphics_device.h",
       "direction": "in",
       "versioned": true
+    },
+    {
+      "name": "CNA_EffectParameterInfo",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "row_count",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "column_count",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "parameter_class",
+          "c_type": "CNA_EffectParameterClass",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "parameter_type",
+          "c_type": "CNA_EffectParameterType",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "effects.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_EffectAnnotationInfo",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "row_count",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "column_count",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "parameter_class",
+          "c_type": "CNA_EffectParameterClass",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "parameter_type",
+          "c_type": "CNA_EffectParameterType",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "effects.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Vector3",
+      "size": 12,
+      "align": 4,
+      "fields": [
+        {
+          "name": "x",
+          "c_type": "float",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "y",
+          "c_type": "float",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "z",
+          "c_type": "float",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "core.h",
+      "direction": "inout",
+      "versioned": false,
+      "by_value_flattening": [
+        ":double",
+        ":float"
+      ],
+      "eightbyte_classes": [
+        "SSE",
+        "SSE"
+      ]
+    },
+    {
+      "name": "CNA_Vector4",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "x",
+          "c_type": "float",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "y",
+          "c_type": "float",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "z",
+          "c_type": "float",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "w",
+          "c_type": "float",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "math_values.h",
+      "direction": "inout",
+      "versioned": false,
+      "by_value_flattening": [
+        ":double",
+        ":double"
+      ],
+      "eightbyte_classes": [
+        "SSE",
+        "SSE"
+      ]
+    },
+    {
+      "name": "CNA_Matrix",
+      "size": 64,
+      "align": 4,
+      "fields": [
+        {
+          "name": "m11",
+          "c_type": "float",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m12",
+          "c_type": "float",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m13",
+          "c_type": "float",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m14",
+          "c_type": "float",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m21",
+          "c_type": "float",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m22",
+          "c_type": "float",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m23",
+          "c_type": "float",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m24",
+          "c_type": "float",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m31",
+          "c_type": "float",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m32",
+          "c_type": "float",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m33",
+          "c_type": "float",
+          "offset": 40,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m34",
+          "c_type": "float",
+          "offset": 44,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m41",
+          "c_type": "float",
+          "offset": 48,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m42",
+          "c_type": "float",
+          "offset": 52,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m43",
+          "c_type": "float",
+          "offset": 56,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "m44",
+          "c_type": "float",
+          "offset": 60,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "math_values.h",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_EffectParameterCreateInfo",
+      "size": 56,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "name",
+          "c_type": "CNA_StringView",
+          "offset": 8,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_StringView",
+          "kind": "aggregate"
+        },
+        {
+          "name": "semantic",
+          "c_type": "CNA_StringView",
+          "offset": 24,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_StringView",
+          "kind": "aggregate"
+        },
+        {
+          "name": "row_count",
+          "c_type": "int32_t",
+          "offset": 40,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "column_count",
+          "c_type": "int32_t",
+          "offset": 44,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "parameter_class",
+          "c_type": "CNA_EffectParameterClass",
+          "offset": 48,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "parameter_type",
+          "c_type": "CNA_EffectParameterType",
+          "offset": 52,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "effects.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Quaternion",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "x",
+          "c_type": "float",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "y",
+          "c_type": "float",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "z",
+          "c_type": "float",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "w",
+          "c_type": "float",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "math_values.h",
+      "direction": "inout",
+      "versioned": false
     }
   ],
   "callbacks": [
@@ -7445,6 +10834,34 @@
     "CNA_DISPLAY_ORIENTATION_LANDSCAPE_LEFT": 1,
     "CNA_DISPLAY_ORIENTATION_LANDSCAPE_RIGHT": 2,
     "CNA_DISPLAY_ORIENTATION_PORTRAIT": 4,
+    "CNA_EFFECT_PARAMETER_CLASS_MATRIX": 2,
+    "CNA_EFFECT_PARAMETER_CLASS_OBJECT": 3,
+    "CNA_EFFECT_PARAMETER_CLASS_SCALAR": 0,
+    "CNA_EFFECT_PARAMETER_CLASS_STRUCT": 4,
+    "CNA_EFFECT_PARAMETER_CLASS_VECTOR": 1,
+    "CNA_EFFECT_PARAMETER_TYPE_BOOL": 1,
+    "CNA_EFFECT_PARAMETER_TYPE_INT32": 2,
+    "CNA_EFFECT_PARAMETER_TYPE_SINGLE": 3,
+    "CNA_EFFECT_PARAMETER_TYPE_STRING": 4,
+    "CNA_EFFECT_PARAMETER_TYPE_TEXTURE": 5,
+    "CNA_EFFECT_PARAMETER_TYPE_TEXTURE1D": 6,
+    "CNA_EFFECT_PARAMETER_TYPE_TEXTURE2D": 7,
+    "CNA_EFFECT_PARAMETER_TYPE_TEXTURE3D": 8,
+    "CNA_EFFECT_PARAMETER_TYPE_TEXTURE_CUBE": 9,
+    "CNA_EFFECT_PARAMETER_TYPE_VOID": 0,
+    "CNA_EFFECT_TEXTURE_2D": 1,
+    "CNA_EFFECT_TEXTURE_3D": 2,
+    "CNA_EFFECT_TEXTURE_BASE": 0,
+    "CNA_EFFECT_TEXTURE_CUBE": 3,
+    "CNA_EFFECT_VALUE_BOOLEAN": 0,
+    "CNA_EFFECT_VALUE_INT32": 1,
+    "CNA_EFFECT_VALUE_MATRIX": 3,
+    "CNA_EFFECT_VALUE_MATRIX_TRANSPOSE": 4,
+    "CNA_EFFECT_VALUE_QUATERNION": 5,
+    "CNA_EFFECT_VALUE_SINGLE": 2,
+    "CNA_EFFECT_VALUE_VECTOR2": 6,
+    "CNA_EFFECT_VALUE_VECTOR3": 7,
+    "CNA_EFFECT_VALUE_VECTOR4": 8,
     "CNA_ERROR_CATEGORY_ARGUMENT": 1,
     "CNA_ERROR_CATEGORY_CALLBACK": 9,
     "CNA_ERROR_CATEGORY_ENCODING": 11,
