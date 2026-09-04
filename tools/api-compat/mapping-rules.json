@@ -425,12 +425,15 @@
         },
         "Unload()": {
           "lisp": "unload",
-          "generic": true
+          "generic": true,
+          "reason": "**Partial, and read from the pinned IL rather than from a description of it.** XNA's Unload() is where a program frees what it loaded: it disposes every IDisposable in disposableAssets, then clears loadedAssets and disposableAssets in a finally, and throws ObjectDisposedException when loadedAssets is already null. CNA-Lisp's calls cna_content_manager_unload, whose own documentation says \"independently owned resource handles returned by the manager are not destroyed by this call\". So the manager's cache is dropped, exactly as in XNA, and the assets are not -- which is the opposite of XNA on the half a program actually notices: in XNA an Unload releases the textures and fonts, and here the caller still owns and must still dispose every one of them. The disposal half is what is missing, and saying so is better than a complete that means half of it. docs/limitations.md.",
+          "status": "partial"
         },
         "Dispose()": {
           "lisp": "dispose",
           "generic": true,
-          "reason": "IDisposable.Dispose, this binding's one deterministic disposal. A game's own manager refuses it, because CNA lends that one as a borrowed handle released with its game.",
+          "reason": "**Partial, and for two separate reasons.** XNA's Dispose() is Dispose(true) followed by GC.SuppressFinalize; Dispose(bool) calls Unload() and then nulls loadedAssets and disposableAssets, so disposing a manager frees the assets it loaded and leaves the manager unusable. Neither half is reproduced. This projection's DISPOSE destroys the *native manager* and never touches what that manager loaded, because a loaded asset here is an owned child of the game rather than of the manager -- so Unload()'s gap above is Dispose()'s gap too. And a game's own manager, which is the instance an XNA program actually has, refuses DISPOSE outright: CNA lends it as a borrowed handle that \"cannot be destroyed\" and is released with its game, so there is nothing here for a destroy route to take back. That refusal is a diagnosable CNA-OWNERSHIP-ERROR raised before the object is touched, and the manager stays fully usable afterwards -- but XNA's Dispose() on Game.Content does not refuse, and a complete here would be claiming it does not. docs/limitations.md.",
+          "status": "partial",
           "package": "microsoft.xna.framework"
         },
         "RootDirectory": {

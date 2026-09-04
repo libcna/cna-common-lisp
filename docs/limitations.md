@@ -182,7 +182,7 @@ claiming a face. `MAKE-RENDER-TARGET-BINDING` enforces the same distinction from
 the other side: a cube requires a face and a 2D target refuses one, because those
 are exactly XNA's two constructors.
 
-## Content: what loads, and the four things that do not follow XNA
+## Content: what loads, and the five things that do not follow XNA
 
 `ContentManager` is projected, `Game.Content` with it, and that is what makes a
 `SpriteFont` obtainable at all — before it, the only producer in this binding was
@@ -230,10 +230,53 @@ XNA's `ContentManager` caches by asset name: `Load<T>("x")` twice answers the
 same instance, and `Unload()` releases it. CNA's ABI has one create-shaped route
 per asset type with no cache in front, so **each call builds a new native
 object**. A program that loads the same font twice owns two fonts and two atlases
-and must dispose all four. `Unload()` is projected and does what CNA's does — it
-drops the manager's own cache and, in CNA's words, "independently owned resource
-handles returned by the manager are not destroyed by this call". Pinned by a
-test, so a CNA that grew a cache would fail rather than pass quietly.
+and must dispose all four. Pinned by a test, so a CNA that grew a cache would
+fail rather than pass quietly.
+
+### `Unload()` and `Dispose()` are **partial**, and the IL is why
+
+Both were reported complete. Re-read against the pinned assembly, neither is.
+
+`ContentManager.Unload()` in XNA is where a program frees what it loaded. The IL
+is unambiguous: it throws `ObjectDisposedException` when `loadedAssets` is
+already null, then walks `disposableAssets` calling `IDisposable.Dispose()` on
+every entry, and clears both collections in a `finally`.
+
+```
+IL_002c:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+...
+IL_0052:  callvirt   instance void ...Dictionary`2<string,object>::Clear()
+IL_005d:  callvirt   instance void ...List`1<[mscorlib]System.IDisposable>::Clear()
+```
+
+`UNLOAD` here calls `cna_content_manager_unload`, whose own documentation says
+"independently owned resource handles returned by the manager are not destroyed
+by this call". So the cache is dropped exactly as XNA drops it, and **the assets
+are not** — the half a program actually notices. In XNA an `Unload` releases the
+textures and fonts; here the caller still owns and must still dispose every one
+of them.
+
+`ContentManager.Dispose()` is `Dispose(true)` followed by `GC.SuppressFinalize`,
+and `Dispose(bool)` calls `Unload()` and then nulls both collections — so
+disposing a manager in XNA frees the assets it loaded and leaves the manager
+unusable. Neither half is reproduced here, and for two separate reasons:
+
+* `DISPOSE` destroys the **native manager** and never touches what that manager
+  loaded, because a loaded asset here is an owned child of the *game* rather than
+  of the manager. `Unload()`'s gap is `Dispose()`'s gap too.
+* A game's own manager — the instance an XNA program actually has — **refuses**
+  `DISPOSE` outright. CNA lends it as a borrowed handle that "answers the same
+  handle every time, cannot be destroyed, and is released with its game", so
+  there is nothing for a destroy route to take back. The refusal is a
+  diagnosable `CNA-OWNERSHIP-ERROR` raised *before* the object is touched, and
+  the manager stays completely usable afterwards. XNA's `Dispose()` on
+  `Game.Content` does not refuse, and reporting complete would have been claiming
+  it does not.
+
+Closing either needs the manager to keep XNA's two collections — the
+name-to-asset cache and the disposable list — and to own what it loaded. That is
+one closure with the load-identity behaviour above, and until it lands both
+members stay partial.
 
 ### A loaded `Texture2D` cannot report its size
 
@@ -291,7 +334,28 @@ this needs a CNA route, not a cleverer caller.
 A game's own manager is also not disposable: CNA lends it as a borrowed handle
 that "answers the same handle every time, cannot be destroyed, and is released
 with its game". `DISPOSE` on it is refused here with a condition that says so,
-one step before CNA would refuse it.
+one step before CNA would refuse it — see `Dispose()` above for why that makes
+the member partial rather than complete.
+
+**A refused disposal costs the object nothing, and that took fixing.** `DISPOSE`
+invalidates through an `UNWIND-PROTECT`, and this refusal used to be raised from
+inside it, in `DESTROY-NATIVE`. The refusal was right and the facade paid for it
+anyway: it came back marked disposed and holding no handle, over a native manager
+that had — correctly — never been destroyed. A caller who wrapped the refusal in
+`HANDLER-CASE`, which is the reasonable thing to do with a refusal, was left with
+a poisoned `Game.Content`. The refusal is now `%CHECK-DISPOSABLE`, called before
+`DISPOSE` touches anything, and `GRAPHICS-DEVICE` — the other parent-owned facade
+— had the same bug and worse: with no `DESTROY-NATIVE` method at all, disposing
+it was a `NO-APPLICABLE-METHOD` raised from inside the same `UNWIND-PROTECT`,
+which then invalidated the device the game draws through.
+
+**A `ContentManager` is built one of exactly two ways, and neither of them is
+"partly".** `(make-instance 'content-manager)` used to succeed and answer a
+zombie: a zero handle, no owner, no registered loaders, and a failure deferred to
+whichever operation happened first. An owned manager now refuses to exist without
+the graphics device `cna_content_manager_create` takes; a game's own manager is a
+facade built by `MICROSOFT.XNA.FRAMEWORK:CONTENT` and by nothing else, and
+refuses both that device and a root directory at construction.
 
 ## The component engine runs, and two things around it do not
 
@@ -515,21 +579,20 @@ the storage must refuse *by name*.
 `GraphicsDevice`'s `SetRenderTarget(RenderTargetCube, CubeMapFace)`,
 `SetRenderTargets` and `GetRenderTargets`.
 
-## SpriteFont is projected, and cannot yet be obtained
+## SpriteFont has no constructor, and that is XNA's shape
 
-Every member of `SpriteFont` is implemented and measured. No public route
-produces one, and that is XNA's shape rather than an omission: XNA's constructor
-is `assembly`-visible, a consumer obtains a SpriteFont from
-`ContentManager.Load<SpriteFont>`, and the content closure is not part of this
-milestone.
+Every member of `SpriteFont` is implemented and measured, and **a program obtains
+one through `ContentManager.Load<SpriteFont>`** — which is the only way XNA offers
+either. XNA's constructor is `assembly`-visible; a consumer never calls it.
 
 CNA does have `cna_sprite_font_create`, and projecting it as a public constructor
 would invent a member XNA has not got, so it is not projected as one.
 `%MAKE-SPRITE-FONT-FROM-GLYPHS` is unexported, exists so that measurement, the
 default-character fallback and `DrawString` could be qualified before
-`ContentManager` lands, and is not part of the API. The template does not use it
+`ContentManager` landed, and is not part of the API. The template does not use it
 and must not: a template that reached into the binding's internals to show text
-would stop being a consumer.
+would stop being a consumer. It draws text through the public content path
+instead, and the SOFTWARE lane asserts the pixels.
 
 ### System.Char is an integer here, not a character
 
@@ -615,9 +678,10 @@ destroyed until this SpriteFont is destroyed" — so disposing them in the wrong
 order is a refusal naming both types instead of a native failure later. The game
 still refuses while the texture lives, so CNA's ordering holds transitively.
 
-When `ContentManager` arrives, `Unload` will be the thing that disposes both, in
-that order. No public `Texture2D` atlas is exposed for a SpriteFont, because XNA
-exposes none.
+`ContentManager` has arrived, and `Unload` is **not** yet the thing that disposes
+both: CNA's unload does not destroy what it handed out, which is why `Unload()`
+and `Dispose()` are reported partial above. Disposal is the caller's, font first.
+No public `Texture2D` atlas is exposed for a SpriteFont, because XNA exposes none.
 
 ## The foreign layer is qualified for one host, and refuses the others
 

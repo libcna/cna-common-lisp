@@ -234,7 +234,14 @@ and says so instead of answering a plausible zero."
 (define-native-test unload-drops-the-cache-and-not-what-was-handed-out
   "CNA: `independently owned resource handles returned by the manager are not
 destroyed by this call'. So a font stays usable across an Unload, and disposing
-it afterwards is still the caller's job."
+it afterwards is still the caller's job.
+
+**This is the divergence that makes `Unload()` and `Dispose()` partial.** XNA's
+Unload walks `disposableAssets' calling Dispose on every entry and then clears
+both collections; read from the pinned IL, not from a description of it. Here the
+cache is dropped and the assets are not. The test asserts what this binding
+actually does, so a CNA that grew XNA's behaviour would fail here rather than
+pass quietly -- and closing the gap means failing this test on purpose."
   (with-content-game (game)
     (is (null (load-error game)) "loading failed: ~a" (load-error game))
     (xna.content:unload (xna:content game))
