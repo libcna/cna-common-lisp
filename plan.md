@@ -189,7 +189,11 @@ are pure managed and touch no native route:
   collections, and `SpriteBatch.Begin`'s state-bearing overloads;
 * the vertex declaration types -- `VertexElement`, `VertexDeclaration`,
   `IVertexType` and the four standard vertex value types -- computed from the
-  pinned assembly and cross-checked against CNA's own built-in declarations. Their values come from the pinned `Microsoft.Xna.Framework.Graphics`
+  pinned assembly and cross-checked against CNA's own built-in declarations;
+* the vertex and index buffers, their dynamic subclasses, `VertexBufferBinding`,
+  the device's stream and index state, and the four primitive draw calls. The
+  draws are submitted and argument-checked; they are not rasterised, because CNA
+  requires a current `Effect` and `Effect` is the next closure. Their values come from the pinned `Microsoft.Xna.Framework.Graphics`
   assembly; CNA's own presets are cross-checked against them and disagree on two
   fields, which `docs/limitations.md` records as an upstream defect.
 
@@ -214,31 +218,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=101 -->
-<!-- generated:selected members=1846 -->
-<!-- generated:complete types=96 -->
+<!-- generated:selected types=110 -->
+<!-- generated:selected members=1904 -->
+<!-- generated:complete types=105 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1384 -->
+<!-- generated:complete members=1449 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=82 -->
-<!-- generated:not-applicable members=379 -->
+<!-- generated:missing members=69 -->
+<!-- generated:not-applicable members=385 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 101 types, 1846 members.
+Selection **Foundation 1 and the managed closures**: 110 types, 1904 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **96** |
+| Types complete | **105** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1384** |
+| Members complete | **1449** |
 | Members partial | **1** |
-| Members missing | **82** |
-| Members not applicable | **379** |
+| Members missing | **69** |
+| Members not applicable | **385** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 101,
-  "member_count": 1846
+  "type_count": 110,
+  "member_count": 1904
  },
  "types": [
   {
@@ -26259,6 +26259,1630 @@
      "static": true,
      "constant": false,
      "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+   "kind": "enum",
+   "flags": true,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "None",
+     "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "WriteOnly",
+     "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "SixteenBits",
+     "type": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "ThirtyTwoBits",
+     "type": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+   "kind": "enum",
+   "flags": true,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "None",
+     "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Discard",
+     "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "NoOverwrite",
+     "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "TriangleList",
+     "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "TriangleStrip",
+     "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "LineList",
+     "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "LineStrip",
+     "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+     "static": true,
+     "constant": true,
+     "value": "3"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexType",
+       "type": "System.Type",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexDeclaration",
+       "type": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "offsetInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexStride",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "offsetInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexStride",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "VertexDeclaration",
+     "type": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "VertexCount",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "BufferUsage",
+     "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IDynamicGraphicsResource",
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IDynamicGraphicsResource"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexType",
+       "type": "System.Type",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexDeclaration",
+       "type": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "options",
+       "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "offsetInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexStride",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "options",
+       "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "IsContentLost",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "ContentLost",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IndexBuffer",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "indexType",
+       "type": "System.Type",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "indexCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "indexElementSize",
+       "type": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "indexCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "offsetInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "offsetInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "IndexCount",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "IndexElementSize",
+     "type": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "BufferUsage",
+     "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.IndexBuffer",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IDynamicGraphicsResource",
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IDynamicGraphicsResource"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "indexType",
+       "type": "System.Type",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "indexCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "indexElementSize",
+       "type": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "indexCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "options",
+       "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "offsetInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "options",
+       "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "IsContentLost",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "ContentLost",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexBufferBinding",
+   "kind": "struct",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.ValueType",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "vertexBuffer",
+       "type": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexOffset",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "instanceFrequency",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "vertexBuffer",
+       "type": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "vertexOffset",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "vertexBuffer",
+       "type": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "op_Implicit",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Graphics.VertexBufferBinding",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "vertexBuffer",
+       "type": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "InstanceFrequency",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "VertexOffset",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "VertexBuffer",
+     "type": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
     }
    ]
   },

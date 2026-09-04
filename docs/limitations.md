@@ -324,6 +324,50 @@ unusable. XNA's setters are guarded by `ThrowIfBound` and by nothing else, so a
 disposed but unapplied state object can still be mutated there, and it can here.
 That is XNA's behaviour reproduced, not an oversight.
 
+## Primitive drawing is submitted; its pixels are not proved yet
+
+`DrawPrimitives`, `DrawIndexedPrimitives`, `DrawUserPrimitives` and
+`DrawUserIndexedPrimitives` are implemented, and their arguments are validated
+here before anything reaches CNA -- a non-positive `primitiveCount`, a
+non-positive `numVertices`, a short vertex or index array, a vertex offset
+outside its buffer, and a non-instanced draw while a stream carries a non-zero
+instance frequency are each refused with the condition and the parameter name XNA
+uses.
+
+Past those checks CNA refuses the draw itself:
+
+    GraphicsDevice::DrawUserPrimitives: no effect has been applied
+
+That is **XNA's own rule**, not a CNA limitation: `GraphicsDevice.VerifyCanDraw`
+requires a current `Effect`, and `Effect` is not in this milestone. So:
+
+* the vertex and index buffer surface is exercised for real -- creation, both
+  index widths, data round-trips through the proven layouts, windows, the device's
+  stream and index state, and disposal;
+* the draw calls' *argument* behaviour is exercised for real;
+* **no primitive has been rasterised**, and the qualification matrix says so.
+
+`tests/native/buffers.lisp` pins that boundary with a test that requires the
+refusal and requires it to name the effect. When the `Effect` closure lands, that
+test fails -- which is the signal to replace it with the primitive pixel proof it
+is standing in for. CNA already has `cna_basic_effect_create`, so the dependency
+is a closure of work in this repository and not an external blocker.
+
+## CNA never reports buffer content loss
+
+`DynamicVertexBuffer.IsContentLost` and `DynamicIndexBuffer.IsContentLost` read
+CNA's own `is_content_lost` field rather than returning a literal. CNA's headers
+document that field as **"currently always false"**, for both buffer kinds, so
+the answer is always `NIL` today.
+
+The `ContentLost` event is wired to CNA's real subscription routes -- a handler is
+registered, held and released like any other -- and CNA never raises it, because
+nothing in it reports loss. That is a runtime capability CNA does not have yet.
+
+Neither is faked. `tests/native/buffers.lisp` asserts today's answer and says, in
+the failure message, that a CNA which starts reporting loss should retire the
+limitation rather than the test.
+
 ## A graphics resource's Tag is a Lisp slot, not a round trip
 
 XNA's `GraphicsResource.Tag` is `System.Object`: arbitrary consumer data the

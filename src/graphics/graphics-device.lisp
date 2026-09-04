@@ -20,7 +20,13 @@
    (sampler-states :initform nil)
    (vertex-sampler-states :initform nil)
    (textures :initform nil)
-   (vertex-textures :initform nil))
+   (vertex-textures :initform nil)
+   ;; What this binding bound into the device's vertex streams and index slot.
+   ;; CNA's ABI has no route from a native buffer back to the handle that names
+   ;; it, so the getters answer from here and cross-check the count CNA reports
+   ;; rather than inventing an object. See src/graphics/drawing.lisp.
+   (bound-vertex-buffers :initform '() :accessor %bound-vertex-buffers)
+   (bound-index-buffer :initform nil :accessor %bound-index-buffer))
   (:default-initargs :ownership :parent-owned)
   (:documentation
    "The game's graphics device. Instances are produced by the runtime and reached

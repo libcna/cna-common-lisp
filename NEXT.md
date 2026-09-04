@@ -92,31 +92,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=101 -->
-<!-- generated:selected members=1846 -->
-<!-- generated:complete types=96 -->
+<!-- generated:selected types=110 -->
+<!-- generated:selected members=1904 -->
+<!-- generated:complete types=105 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1384 -->
+<!-- generated:complete members=1449 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=82 -->
-<!-- generated:not-applicable members=379 -->
+<!-- generated:missing members=69 -->
+<!-- generated:not-applicable members=385 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 101 types, 1846 members.
+Selection **Foundation 1 and the managed closures**: 110 types, 1904 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **96** |
+| Types complete | **105** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1384** |
+| Members complete | **1449** |
 | Members partial | **1** |
-| Members missing | **82** |
-| Members not applicable | **379** |
+| Members missing | **69** |
+| Members not applicable | **385** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -137,7 +137,7 @@ remaining members actually are:
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 38 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 25 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -155,7 +155,7 @@ one.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 38 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 25 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -188,13 +188,16 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **Vertex and index buffers**: `VertexBuffer`, `DynamicVertexBuffer`,
-   `IndexBuffer`, `DynamicIndexBuffer`, `PrimitiveType`, `IndexElementSize`,
-   `SetDataOptions` and `VertexBufferBinding`, which the vertex declarations now
-   in place are the descriptor half of. With them comes the largest single block
-   left in `GraphicsDevice`: `DrawPrimitives`, `DrawIndexedPrimitives`, the four
-   `DrawUserIndexedPrimitives` overloads, the two `DrawUserPrimitives`, and
-   `SetVertexBuffer`/`Indices`.
+1. **`Effect` and the stock effects.** This is now the highest-value closure and
+   the only thing standing between the binding and a rasterised primitive:
+   `GraphicsDevice.VerifyCanDraw` requires a current Effect, so every primitive
+   draw is refused with "no effect has been applied" until one exists. CNA has
+   `cna_basic_effect_create` and a full effect surface, so this is local work.
+   The closure is `Effect`, `EffectTechnique`, `EffectPass`, `EffectParameter`,
+   their collections and `BasicEffect`. When it lands,
+   `A-PRIMITIVE-DRAW-NEEDS-AN-EFFECT-AND-SAYS-SO` fails -- that is the signal to
+   replace it with the primitive pixel proof, and to add
+   `SpriteBatch.Begin`'s two remaining overloads.
 2. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
 3. **`System.IO.Stream` and `TitleContainer`**, which unblock

@@ -158,6 +158,14 @@ renderer that is actually present and asserts the truth for it, the runner print
 one line per proof that was obtained, and `rasterizer.sh` fails when a required
 proof is absent.
 
+### What is not in the rasterizer lane
+
+**Primitive drawing.** `DrawPrimitives` and the `DrawUser*` family are
+implemented and their arguments are validated, but CNA refuses the draw itself
+until an `Effect` is current -- which is XNA's own `VerifyCanDraw` rule. No
+primitive has been rasterised, and `docs/limitations.md` records the boundary
+with the test that pins it.
+
 **No claim is made about a physical monitor.** Pixels in a back buffer are pixels
 in a back buffer. Nothing here has been displayed to anyone.
 

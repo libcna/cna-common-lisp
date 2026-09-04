@@ -618,6 +618,112 @@
       "element-count"
      ],
      "reason": "XNA's GetBackBufferData is generic over the element type. Common Lisp has no type parameter to instantiate, and CNA's route (cna_graphics_device_get_backbuffer_data_window) produces RGBA8 pixels and nothing else, so this answers a vector of COLOR. XNA's other element types are the same bytes read differently, which a caller does with COLOR-PACKED-VALUE."
+    },
+    "SetVertexBuffer(VertexBuffer)": {
+     "lisp": "set-vertex-buffer",
+     "generic": true,
+     "distinguished_by": "arity",
+     "positional": 2,
+     "reason": "Two overloads differing by one trailing argument, which is an &optional vertex offset."
+    },
+    "SetVertexBuffer(VertexBuffer,Int32)": {
+     "lisp": "set-vertex-buffer",
+     "generic": true,
+     "distinguished_by": "arity",
+     "reason": "The same function with the optional vertex offset supplied."
+    },
+    "SetVertexBuffers(VertexBufferBinding[])": {
+     "lisp": "set-vertex-buffers",
+     "generic": true
+    },
+    "GetVertexBuffers()": {
+     "lisp": "get-vertex-buffers",
+     "generic": true
+    },
+    "DrawPrimitives(PrimitiveType,Int32,Int32)": {
+     "lisp": "draw-primitives",
+     "generic": true
+    },
+    "DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)": {
+     "lisp": "draw-indexed-primitives",
+     "generic": true
+    },
+    "Indices": {
+     "lisp": "indices",
+     "generic": true,
+     "setf": true,
+     "reason": "The getter answers what this binding bound, cross-checked against whether CNA has an index buffer bound at all -- CNA's ABI has no route from a native buffer back to the handle that names it, the same reason TextureCollection keeps a cache."
+    },
+    "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32)": {
+     "lisp": "draw-user-primitives",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "vertex-offset",
+      "primitive-count"
+     ],
+     "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+    },
+    "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32,VertexDeclaration)": {
+     "lisp": "draw-user-primitives",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "vertex-offset",
+      "primitive-count",
+      "vertex-declaration"
+     ],
+     "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+    },
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32)": {
+     "lisp": "draw-user-indexed-primitives",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "vertex-offset",
+      "num-vertices",
+      "index-offset",
+      "primitive-count"
+     ],
+     "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+    },
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32)": {
+     "lisp": "draw-user-indexed-primitives",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "vertex-offset",
+      "num-vertices",
+      "index-offset",
+      "primitive-count"
+     ],
+     "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+    },
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32,VertexDeclaration)": {
+     "lisp": "draw-user-indexed-primitives",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "vertex-offset",
+      "num-vertices",
+      "index-offset",
+      "primitive-count",
+      "vertex-declaration"
+     ],
+     "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+    },
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32,VertexDeclaration)": {
+     "lisp": "draw-user-indexed-primitives",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "vertex-offset",
+      "num-vertices",
+      "index-offset",
+      "primitive-count",
+      "vertex-declaration"
+     ],
+     "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
     }
    },
    "not_applicable": {
@@ -643,6 +749,18 @@
     "GetBackBufferData": {
      "lisp": "get-back-buffer-data",
      "reason": "One generic function whose supplied keywords select the overload: none reads the whole back buffer, :START-INDEX with :ELEMENT-COUNT reads a window of it, and :SOURCE may be given with them. The two are one group, because XNA has no overload carrying one without the other."
+    },
+    "SetVertexBuffer": {
+     "lisp": "set-vertex-buffer",
+     "reason": "Two overloads, one optional argument."
+    },
+    "DrawUserPrimitives": {
+     "lisp": "draw-user-primitives",
+     "reason": "Two overloads, told apart by whether :VERTEX-DECLARATION is supplied."
+    },
+    "DrawUserIndexedPrimitives": {
+     "lisp": "draw-user-indexed-primitives",
+     "reason": "Four overloads. Two axes: whether a VertexDeclaration is supplied, and whether the indices are Int16 or Int32 -- and the second is the index array's own element type here, which is what tells them apart in C# too."
     }
    }
   },
@@ -4076,6 +4194,329 @@
     "Equals": {
      "lisp": "vertex-position-normal-texture-equal",
      "reason": "One predicate for Equals(Object) and op_Equality."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.BufferUsage": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "buffer-usage",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.IndexElementSize": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "index-element-size",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.SetDataOptions": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "set-data-options",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.PrimitiveType": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "primitive-type",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexBuffer": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-buffer",
+   "lisp_kind": "class",
+   "constructors": {
+    "new(GraphicsDevice,VertexDeclaration,Int32,BufferUsage)": "make-instance",
+    "new(GraphicsDevice,Type,Int32,BufferUsage)": "make-instance"
+   },
+   "member_overrides": {
+    "SetData(!!0[])": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "no-keywords",
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "SetData(!!0[],Int32,Int32)": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "start-index",
+      "element-count"
+     ],
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "SetData(Int32,!!0[],Int32,Int32,Int32)": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "offset-in-bytes",
+      "start-index",
+      "element-count",
+      "vertex-stride"
+     ],
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "GetData(!!0[])": {
+     "lisp": "get-data",
+     "generic": true,
+     "distinguished_by": "no-keywords",
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "GetData(!!0[],Int32,Int32)": {
+     "lisp": "get-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "start-index",
+      "element-count"
+     ],
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "GetData(Int32,!!0[],Int32,Int32,Int32)": {
+     "lisp": "get-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "offset-in-bytes",
+      "start-index",
+      "element-count",
+      "vertex-stride"
+     ],
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected Dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. CNA-Lisp has no finalizer that touches a native resource, so there is nothing for the flag to distinguish."
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-instance",
+     "reason": "XNA's two constructors differ only in how the layout is named: one takes the descriptor and one takes a `Type' whose descriptor is found through IVertexType. Common Lisp has no typeof, so MAKE-INSTANCE takes either :VERTEX-DECLARATION or :VERTEX-TYPE and refuses both together -- which is the same choice, expressed as the supplied-p test it actually is."
+    },
+    "SetData": {
+     "lisp": "set-data",
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "GetData": {
+     "lisp": "get-data",
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.IndexBuffer": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "index-buffer",
+   "lisp_kind": "class",
+   "constructors": {
+    "new(GraphicsDevice,IndexElementSize,Int32,BufferUsage)": "make-instance",
+    "new(GraphicsDevice,Type,Int32,BufferUsage)": "make-instance"
+   },
+   "member_overrides": {
+    "SetData(!!0[])": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "no-keywords",
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "SetData(!!0[],Int32,Int32)": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "start-index",
+      "element-count"
+     ],
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "SetData(Int32,!!0[],Int32,Int32)": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "offset-in-bytes",
+      "start-index",
+      "element-count"
+     ],
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "GetData(!!0[])": {
+     "lisp": "get-data",
+     "generic": true,
+     "distinguished_by": "no-keywords",
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "GetData(!!0[],Int32,Int32)": {
+     "lisp": "get-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "start-index",
+      "element-count"
+     ],
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "GetData(Int32,!!0[],Int32,Int32)": {
+     "lisp": "get-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "offset-in-bytes",
+      "start-index",
+      "element-count"
+     ],
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected Dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. CNA-Lisp has no finalizer that touches a native resource, so there is nothing for the flag to distinguish."
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-instance",
+     "reason": "XNA's two constructors differ only in how the layout is named: one takes the descriptor and one takes a `Type' whose descriptor is found through IVertexType. Common Lisp has no typeof, so MAKE-INSTANCE takes either :VERTEX-DECLARATION or :VERTEX-TYPE and refuses both together -- which is the same choice, expressed as the supplied-p test it actually is."
+    },
+    "SetData": {
+     "lisp": "set-data",
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    },
+    "GetData": {
+     "lisp": "get-data",
+     "reason": "One generic function whose supplied keywords select the overload: none is the whole array, :START-INDEX with :ELEMENT-COUNT is a window, :OFFSET-IN-BYTES adds the byte destination and :VERTEX-STRIDE the stride, and :OPTIONS is the dynamic subclass's. The groups are refused apart, because XNA has no overload carrying half of one. What may be transferred is decided by proven binary layout rather than by a generic parameter: src/graphics/buffer-data.lisp writes only element types it can lay out and refuses the rest by name."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "dynamic-vertex-buffer",
+   "lisp_kind": "class",
+   "constructors": {
+    "new(GraphicsDevice,VertexDeclaration,Int32,BufferUsage)": "make-instance",
+    "new(GraphicsDevice,Type,Int32,BufferUsage)": "make-instance"
+   },
+   "member_overrides": {
+    "IsContentLost": {
+     "lisp": "is-content-lost",
+     "generic": true,
+     "setf": false,
+     "reason": "Reads CNA's own is_content_lost field rather than returning a literal. CNA documents that field as currently always false, so the answer is always NIL today and ContentLost never fires; docs/limitations.md records that as a runtime capability CNA does not have yet, and a CNA that starts reporting loss is reported here without a change."
+    },
+    "SetData(!!0[],Int32,Int32,SetDataOptions)": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "start-index",
+      "element-count",
+      "options"
+     ],
+     "reason": "The SetDataOptions overloads are the same SET-DATA with :OPTIONS supplied, which the base class refuses -- XNA has no such overload on VertexBuffer or IndexBuffer, and CNA refuses a non-None option on a buffer that is not dynamic."
+    },
+    "SetData(Int32,!!0[],Int32,Int32,Int32,SetDataOptions)": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "offset-in-bytes",
+      "start-index",
+      "element-count",
+      "vertex-stride",
+      "options"
+     ],
+     "reason": "The SetDataOptions overloads are the same SET-DATA with :OPTIONS supplied, which the base class refuses -- XNA has no such overload on VertexBuffer or IndexBuffer, and CNA refuses a non-None option on a buffer that is not dynamic."
+    }
+   },
+   "events": {
+    "ContentLost": {
+     "add": "add-content-lost-handler",
+     "remove": "remove-content-lost-handler",
+     "reason": "The same event projection every other type uses."
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-instance",
+     "reason": "XNA's two constructors differ only in how the layout is named: one takes the descriptor and one takes a `Type' whose descriptor is found through IVertexType. Common Lisp has no typeof, so MAKE-INSTANCE takes either :VERTEX-DECLARATION or :VERTEX-TYPE and refuses both together -- which is the same choice, expressed as the supplied-p test it actually is."
+    },
+    "SetData": {
+     "lisp": "set-data",
+     "reason": "The SetDataOptions overloads are the same SET-DATA with :OPTIONS supplied, which the base class refuses -- XNA has no such overload on VertexBuffer or IndexBuffer, and CNA refuses a non-None option on a buffer that is not dynamic."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "dynamic-index-buffer",
+   "lisp_kind": "class",
+   "constructors": {
+    "new(GraphicsDevice,IndexElementSize,Int32,BufferUsage)": "make-instance",
+    "new(GraphicsDevice,Type,Int32,BufferUsage)": "make-instance"
+   },
+   "member_overrides": {
+    "IsContentLost": {
+     "lisp": "is-content-lost",
+     "generic": true,
+     "setf": false,
+     "reason": "Reads CNA's own is_content_lost field rather than returning a literal. CNA documents that field as currently always false, so the answer is always NIL today and ContentLost never fires; docs/limitations.md records that as a runtime capability CNA does not have yet, and a CNA that starts reporting loss is reported here without a change."
+    },
+    "SetData(!!0[],Int32,Int32,SetDataOptions)": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "start-index",
+      "element-count",
+      "options"
+     ],
+     "reason": "The SetDataOptions overloads are the same SET-DATA with :OPTIONS supplied, which the base class refuses -- XNA has no such overload on VertexBuffer or IndexBuffer, and CNA refuses a non-None option on a buffer that is not dynamic."
+    },
+    "SetData(Int32,!!0[],Int32,Int32,SetDataOptions)": {
+     "lisp": "set-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "offset-in-bytes",
+      "start-index",
+      "element-count",
+      "options"
+     ],
+     "reason": "The SetDataOptions overloads are the same SET-DATA with :OPTIONS supplied, which the base class refuses -- XNA has no such overload on VertexBuffer or IndexBuffer, and CNA refuses a non-None option on a buffer that is not dynamic."
+    }
+   },
+   "events": {
+    "ContentLost": {
+     "add": "add-content-lost-handler",
+     "remove": "remove-content-lost-handler",
+     "reason": "The same event projection every other type uses."
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-instance",
+     "reason": "XNA's two constructors differ only in how the layout is named: one takes the descriptor and one takes a `Type' whose descriptor is found through IVertexType. Common Lisp has no typeof, so MAKE-INSTANCE takes either :VERTEX-DECLARATION or :VERTEX-TYPE and refuses both together -- which is the same choice, expressed as the supplied-p test it actually is."
+    },
+    "SetData": {
+     "lisp": "set-data",
+     "reason": "The SetDataOptions overloads are the same SET-DATA with :OPTIONS supplied, which the base class refuses -- XNA has no such overload on VertexBuffer or IndexBuffer, and CNA refuses a non-None option on a buffer that is not dynamic."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexBufferBinding": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-buffer-binding",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(VertexBuffer)": "make-vertex-buffer-binding",
+    "new(VertexBuffer,Int32)": "make-vertex-buffer-binding",
+    "new(VertexBuffer,Int32,Int32)": "make-vertex-buffer-binding"
+   },
+   "member_overrides": {
+    "op_Implicit(VertexBuffer)": {
+     "lisp": "make-vertex-buffer-binding",
+     "reason": "The implicit conversion from a VertexBuffer is the one-argument constructor: C# spells it as a conversion so a buffer can be passed where a binding is expected, and Common Lisp has no implicit conversions, so it is the constructor it already was."
+    }
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-vertex-buffer-binding",
+     "reason": "One function with two optional arguments. The three constructors differ only in what they default -- vertexOffset to 0 and instanceFrequency to 0 -- and optional arguments are exactly that."
     }
    }
   }

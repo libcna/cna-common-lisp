@@ -99,6 +99,17 @@ stubs:
   `SamplerStates`, `VertexSamplerStates`, `Textures` and `VertexTextures`, each
   answering the same collection object every time and remembering what was bound
   into it, as XNA's do;
+* **vertex and index buffers**: `VertexBuffer`, `IndexBuffer` and both dynamic
+  subclasses, with both index widths, `BufferUsage`, `SetDataOptions`,
+  `VertexBufferBinding`, the device's stream and index state, and `SetData` /
+  `GetData` over a layout system that writes only element types whose binary
+  layout it can prove and refuses the rest by name;
+* the **primitive draw calls** — `DrawPrimitives`, `DrawIndexedPrimitives`,
+  `DrawUserPrimitives`, `DrawUserIndexedPrimitives` — with XNA's own argument
+  validation reproduced from the IL. They are submitted, not yet rasterised: CNA
+  refuses a draw until an `Effect` is current, which is XNA's rule, and `Effect`
+  is the next closure. `docs/limitations.md` has the boundary and the test that
+  pins it;
 * the **vertex declaration** surface: `VertexElement`, `VertexDeclaration` with
   XNA's own five-stage validator in its own refusal order, `IVertexType` as a
   generic function, and the four standard vertex value types with the exact
@@ -119,27 +130,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=101 -->
-<!-- generated:selected members=1846 -->
-<!-- generated:complete types=96 -->
+<!-- generated:selected types=110 -->
+<!-- generated:selected members=1904 -->
+<!-- generated:complete types=105 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1384 -->
+<!-- generated:complete members=1449 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=82 -->
-<!-- generated:not-applicable members=379 -->
+<!-- generated:missing members=69 -->
+<!-- generated:not-applicable members=385 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=125 -->
-<!-- generated:bound native structs=34 -->
+<!-- generated:bound native functions=158 -->
+<!-- generated:bound native structs=42 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **101 XNA types and 1846 members**:
+The generated scoreboard, over a selection of **110 XNA types and 1904 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **96 / 5 / 0** |
-| Members complete / missing | **1384 / 82** |
-| Members not applicable | **379** |
+| Types complete / partial / missing | **105 / 5 / 0** |
+| Members complete / missing | **1449 / 69** |
+| Members not applicable | **385** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -152,7 +163,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **125 native routes** and **34 native structs**,
+The private foreign layer binds **158 native routes** and **42 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

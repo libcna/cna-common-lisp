@@ -223,7 +223,14 @@ that a keyword-taking projection accepts no keywords at all."
    "vertex-element-format"
    (alist-object microsoft.xna.framework.graphics::*vertex-element-format-table*)
    "vertex-element-usage"
-   (alist-object microsoft.xna.framework.graphics::*vertex-element-usage-table*)))
+   (alist-object microsoft.xna.framework.graphics::*vertex-element-usage-table*)
+   "buffer-usage" (alist-object microsoft.xna.framework.graphics::*buffer-usage-table*)
+   "index-element-size"
+   (alist-object microsoft.xna.framework.graphics::*index-element-size-table*)
+   "set-data-options"
+   (alist-object microsoft.xna.framework.graphics::*set-data-options-table*)
+   "primitive-type"
+   (alist-object microsoft.xna.framework.graphics::*primitive-type-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

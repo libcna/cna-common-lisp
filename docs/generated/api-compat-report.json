@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 101,
-  "member_count": 1846
+  "type_count": 110,
+  "member_count": 1904
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 101,
-  "members": 1846,
+  "types": 110,
+  "members": 1904,
   "types_by_status": {
    "partial": 5,
-   "complete": 96
+   "complete": 105
   },
   "members_by_status": {
-   "complete": 1384,
-   "missing": 82,
-   "not-applicable": 379,
+   "complete": 1449,
+   "missing": 69,
+   "not-applicable": 385,
    "partial": 1
   },
-  "diagnostics": 82,
+  "diagnostics": 69,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 82,
+   "missing_member": 69,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1192,15 +1192,15 @@
     "Reset()": "missing",
     "Reset(PresentationParameters)": "missing",
     "Reset(PresentationParameters,GraphicsAdapter)": "missing",
-    "DrawPrimitives(PrimitiveType,Int32,Int32)": "missing",
-    "DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)": "missing",
+    "DrawPrimitives(PrimitiveType,Int32,Int32)": "complete",
+    "DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)": "complete",
     "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": "missing",
-    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32)": "missing",
-    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32)": "missing",
-    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32,VertexDeclaration)": "missing",
-    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32,VertexDeclaration)": "missing",
-    "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32)": "missing",
-    "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32,VertexDeclaration)": "missing",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32)": "complete",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32)": "complete",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32,VertexDeclaration)": "complete",
+    "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32,VertexDeclaration)": "complete",
+    "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32)": "complete",
+    "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32,VertexDeclaration)": "complete",
     "Clear(ClearOptions,Vector4,Single,Int32)": "missing",
     "Clear(ClearOptions,Color,Single,Int32)": "missing",
     "Clear(Color)": "complete",
@@ -1211,16 +1211,16 @@
     "GetBackBufferData(Nullable`1,!!0[],Int32,Int32)": "complete",
     "GetBackBufferData(!!0[],Int32,Int32)": "complete",
     "GetBackBufferData(!!0[])": "complete",
-    "GetVertexBuffers()": "missing",
-    "SetVertexBuffer(VertexBuffer,Int32)": "missing",
-    "SetVertexBuffer(VertexBuffer)": "missing",
-    "SetVertexBuffers(VertexBufferBinding[])": "missing",
+    "GetVertexBuffers()": "complete",
+    "SetVertexBuffer(VertexBuffer,Int32)": "complete",
+    "SetVertexBuffer(VertexBuffer)": "complete",
+    "SetVertexBuffers(VertexBufferBinding[])": "complete",
     "Dispose(Boolean)": "not-applicable",
     "Dispose()": "missing",
     "Finalize()": "not-applicable",
     "IsDisposed": "missing",
     "ScissorRectangle": "complete",
-    "Indices": "missing",
+    "Indices": "complete",
     "Viewport": "partial",
     "DisplayMode": "missing",
     "GraphicsDeviceStatus": "missing",
@@ -1760,6 +1760,127 @@
     "VertexDeclaration": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:vertex-position-normal-texture"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "None": "complete",
+    "WriteOnly": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:buffer-usage"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "SixteenBits": "complete",
+    "ThirtyTwoBits": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:index-element-size"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "None": "complete",
+    "Discard": "complete",
+    "NoOverwrite": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:set-data-options"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "TriangleList": "complete",
+    "TriangleStrip": "complete",
+    "LineList": "complete",
+    "LineStrip": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:primitive-type"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice,Type,Int32,BufferUsage)": "complete",
+    "new(GraphicsDevice,VertexDeclaration,Int32,BufferUsage)": "complete",
+    "SetData(!!0[])": "complete",
+    "SetData(!!0[],Int32,Int32)": "complete",
+    "SetData(Int32,!!0[],Int32,Int32,Int32)": "complete",
+    "GetData(!!0[])": "complete",
+    "GetData(!!0[],Int32,Int32)": "complete",
+    "GetData(Int32,!!0[],Int32,Int32,Int32)": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "VertexDeclaration": "complete",
+    "VertexCount": "complete",
+    "BufferUsage": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-buffer"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice,Type,Int32,BufferUsage)": "complete",
+    "new(GraphicsDevice,VertexDeclaration,Int32,BufferUsage)": "complete",
+    "SetData(!!0[],Int32,Int32,SetDataOptions)": "complete",
+    "SetData(Int32,!!0[],Int32,Int32,Int32,SetDataOptions)": "complete",
+    "IsContentLost": "complete",
+    "ContentLost": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:dynamic-vertex-buffer"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IndexBuffer",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice,Type,Int32,BufferUsage)": "complete",
+    "new(GraphicsDevice,IndexElementSize,Int32,BufferUsage)": "complete",
+    "SetData(!!0[])": "complete",
+    "SetData(!!0[],Int32,Int32)": "complete",
+    "SetData(Int32,!!0[],Int32,Int32)": "complete",
+    "GetData(!!0[])": "complete",
+    "GetData(!!0[],Int32,Int32)": "complete",
+    "GetData(Int32,!!0[],Int32,Int32)": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "IndexCount": "complete",
+    "IndexElementSize": "complete",
+    "BufferUsage": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:index-buffer"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice,Type,Int32,BufferUsage)": "complete",
+    "new(GraphicsDevice,IndexElementSize,Int32,BufferUsage)": "complete",
+    "SetData(!!0[],Int32,Int32,SetDataOptions)": "complete",
+    "SetData(Int32,!!0[],Int32,Int32,SetDataOptions)": "complete",
+    "IsContentLost": "complete",
+    "ContentLost": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:dynamic-index-buffer"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexBufferBinding",
+   "status": "complete",
+   "members": {
+    "new(VertexBuffer,Int32,Int32)": "complete",
+    "new(VertexBuffer,Int32)": "complete",
+    "new(VertexBuffer)": "complete",
+    "op_Implicit(VertexBuffer)": "complete",
+    "InstanceFrequency": "complete",
+    "VertexOffset": "complete",
+    "VertexBuffer": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-buffer-binding"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
@@ -2751,48 +2872,8 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawPrimitives(PrimitiveType,Int32,Int32)",
-   "detail": "no exported 'draw-primitives' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)",
-   "detail": "no exported 'draw-indexed-primitives' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)",
    "detail": "no exported 'draw-instanced-primitives' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32)",
-   "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32)",
-   "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32,VertexDeclaration)",
-   "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32,VertexDeclaration)",
-   "detail": "no exported 'draw-user-indexed-primitives' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32)",
-   "detail": "no exported 'draw-user-primitives' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32,VertexDeclaration)",
-   "detail": "no exported 'draw-user-primitives' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
@@ -2826,26 +2907,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetVertexBuffers()",
-   "detail": "no exported 'get-vertex-buffers' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetVertexBuffer(VertexBuffer,Int32)",
-   "detail": "no exported 'set-vertex-buffer' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetVertexBuffer(VertexBuffer)",
-   "detail": "no exported 'set-vertex-buffer' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetVertexBuffers(VertexBufferBinding[])",
-   "detail": "no exported 'set-vertex-buffers' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Dispose()",
    "detail": "no exported 'dispose' in microsoft.xna.framework.graphics"
   },
@@ -2853,11 +2914,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.IsDisposed",
    "detail": "no exported 'is-disposed' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Indices",
-   "detail": "no exported 'indices' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",

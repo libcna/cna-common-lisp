@@ -11459,6 +11459,28 @@
       "package": "microsoft.xna.framework.graphics",
       "symbols": [
         {
+          "name": "add-content-lost-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DynamicVertexBuffer.ContentLost and DynamicIndexBuffer.ContentLost.\n\nHANDLER is called with the buffer. **CNA does not raise this today**: its buffer\ninfo reports content loss as always false, so a subscription is accepted, held\nand released correctly and is never invoked. See docs/limitations.md."
+        },
+        {
           "name": "add-disposing-handler",
           "fbound": true,
           "macro": false,
@@ -11591,6 +11613,25 @@
           "documentation": "Every member of BLEND-FUNCTION, as keywords, in value order."
         },
         {
+          "name": "all-buffer-usage",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of BUFFER-USAGE, as keywords, in value order."
+        },
+        {
           "name": "all-color-write-channels",
           "fbound": true,
           "macro": false,
@@ -11665,6 +11706,63 @@
           "constant": false,
           "value": null,
           "documentation": "Every member of FILL-MODE, as keywords, in value order."
+        },
+        {
+          "name": "all-index-element-size",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of INDEX-ELEMENT-SIZE, as keywords, in value order."
+        },
+        {
+          "name": "all-primitive-type",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of PRIMITIVE-TYPE, as keywords, in value order."
+        },
+        {
+          "name": "all-set-data-options",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of SET-DATA-OPTIONS, as keywords, in value order."
         },
         {
           "name": "all-sprite-effects",
@@ -12199,6 +12297,69 @@
           "documentation": "Texture2D.Bounds."
         },
         {
+          "name": "buffer-usage",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.BufferUsage.\n\nNot a flags enum, despite the None: XNA declares no FlagsAttribute on it and its\ntwo members are 0 and 1."
+        },
+        {
+          "name": "buffer-usage-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The BUFFER-USAGE member a value names."
+        },
+        {
+          "name": "buffer-usage-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a BUFFER-USAGE member."
+        },
+        {
           "name": "clear",
           "fbound": true,
           "macro": false,
@@ -12490,6 +12651,27 @@
           "constant": false,
           "value": null,
           "documentation": "The exact value of a COMPARE-FUNCTION member."
+        },
+        {
+          "name": "copy-vertex-buffer-binding",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "copy-vertex-element",
@@ -12965,6 +13147,57 @@
           "documentation": "DepthStencilState.None: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
         },
         {
+          "name": "draw-indexed-primitives",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "primitive-type",
+            "base-vertex",
+            "min-vertex-index",
+            "num-vertices",
+            "start-index",
+            "primitive-count"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DrawIndexedPrimitives(PrimitiveType, Int32, Int32, Int32, Int32, Int32)."
+        },
+        {
+          "name": "draw-primitives",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "primitive-type",
+            "vertex-start",
+            "primitive-count"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DrawPrimitives(PrimitiveType, Int32, Int32)."
+        },
+        {
           "name": "draw-texture",
           "fbound": true,
           "macro": false,
@@ -13005,6 +13238,131 @@
           "constant": false,
           "value": null,
           "documentation": "SpriteBatch.Draw for a texture: all seven of XNA's texture overloads.\n\nThey differ in whether the sprite is placed by a **position** or by a\n**destination rectangle**, and in whether the transform group is present. The\nkeyword combination selects the overload, and only the seven combinations XNA\nactually has are accepted:\n\n    :position :color                                          Draw(t, Vector2, Color)\n    :position :source :color                                  Draw(t, Vector2, Rectangle?, Color)\n    :position [:source] :color :rotation :origin :scale\n              :effects :layer-depth                           the two scaled overloads\n    :destination :color                                       Draw(t, Rectangle, Color)\n    :destination :source :color                               Draw(t, Rectangle, Rectangle?, Color)\n    :destination [:source] :color :rotation :origin\n                 :effects :layer-depth                        Draw(t, Rectangle, Rectangle?, ...)\n\n:COLOR is required, because every one of the seven takes one. Exactly one of\n:POSITION and :DESTINATION must be given. :ROTATION, :ORIGIN, :EFFECTS and\n:LAYER-DEPTH are all-or-nothing, because XNA has no overload carrying some of\nthem. :SCALE belongs to the position family only -- the destination overload has\nno scale parameter, and a destination rectangle already says how big the sprite\nis.\n\nA position and a destination rectangle are **not interchangeable**, and this does\nnot convert between them: with a position, the origin is measured in\nsource-texture pixels and the scale applies after that offset, which no computed\nrectangle reproduces. The two shapes take CNA's two different submission\nroutes."
+        },
+        {
+          "name": "draw-user-indexed-primitives",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "primitive-type",
+            "data",
+            "indices",
+            "&key",
+            "vertex-offset",
+            "num-vertices",
+            "index-offset",
+            "primitive-count",
+            "vertex-declaration"
+          ],
+          "keywords": [
+            "index-offset",
+            "num-vertices",
+            "primitive-count",
+            "vertex-declaration",
+            "vertex-offset"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DrawUserIndexedPrimitives, all four overloads.\n\nINDICES is a sequence of non-negative integers; a specialised (unsigned-byte 16)\nor (unsigned-byte 32) array chooses the index width, and an unspecialised one\ndefaults to sixteen bits, which is what XNA's Int16 overload uses.\n\n:NUM-VERTICES is XNA's numVertices and is required, as it is there."
+        },
+        {
+          "name": "draw-user-primitives",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "primitive-type",
+            "data",
+            "&key",
+            "vertex-offset",
+            "primitive-count",
+            "vertex-declaration"
+          ],
+          "keywords": [
+            "primitive-count",
+            "vertex-declaration",
+            "vertex-offset"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DrawUserPrimitives, both overloads.\n\n    (draw-user-primitives device :triangle-list vertices :primitive-count 1)\n    (draw-user-primitives device :triangle-list raw-bytes\n                          :primitive-count 1 :vertex-declaration declaration)\n\nDATA is a Lisp sequence whose layout this binding can prove -- see\nsrc/graphics/buffer-data.lisp. Without :VERTEX-DECLARATION the layout comes from\nthe elements' own declaration through VERTEX-DECLARATION-OF, which is XNA's\nIVertexType overload; with one it is used as given, which is XNA's other.\n\nNothing native outlives the call: the packed bytes are stack-allocated for its\nduration, which is what XNA's own user-primitive path does."
+        },
+        {
+          "name": "dynamic-index-buffer",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:dynamic-index-buffer",
+            "microsoft.xna.framework.graphics:index-buffer",
+            "microsoft.xna.framework.graphics:%buffer",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer."
+        },
+        {
+          "name": "dynamic-vertex-buffer",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:dynamic-vertex-buffer",
+            "microsoft.xna.framework.graphics:vertex-buffer",
+            "microsoft.xna.framework.graphics:%buffer",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer.\n\nAdds the SetDataOptions overloads, IsContentLost and the ContentLost event. See\ndocs/limitations.md for what CNA currently reports for content loss."
         },
         {
           "name": "end",
@@ -13168,6 +13526,59 @@
           "documentation": "GraphicsDevice.GetBackBufferData: the back buffer's pixels, as a vector of COLOR.\n\n    (get-back-buffer-data device)\n    (get-back-buffer-data device :start-index i :element-count n)\n    (get-back-buffer-data device :source rectangle :start-index i :element-count n)\n\nThose are XNA's three overloads. :START-INDEX and :ELEMENT-COUNT are one group,\nbecause XNA has no overload that carries one without the other; :SOURCE may be\ngiven with them or alone. With nothing supplied the whole back buffer is read.\n\n**Under a renderer with no honest readback this signals**\nCNA-NOT-SUPPORTED-ERROR rather than answering zeroes -- which is what makes the\nmember usable as evidence that pixels were produced. See docs/limitations.md."
         },
         {
+          "name": "get-data",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "buffer",
+            "into",
+            "&key",
+            "start-index",
+            "element-count",
+            "offset-in-bytes",
+            "vertex-stride"
+          ],
+          "keywords": [
+            "element-count",
+            "offset-in-bytes",
+            "start-index",
+            "vertex-stride"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "VertexBuffer.GetData and IndexBuffer.GetData, reading into INTO.\n\nXNA fills the caller's array, so this does too, and answers it. The element type\nof INTO decides what is read, by the same proven layouts SET-DATA writes."
+        },
+        {
+          "name": "get-vertex-buffers",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.GetVertexBuffers(): the bindings currently set, as a list.\n\nAnswered from what this binding bound, and checked against the count CNA\nreports. The same reason TextureCollection keeps a cache applies: CNA's ABI has\nno route from a native object back to a handle, so a binding CNA holds that this\nbinding did not set cannot be answered as an object. There is no way to set one\nexcept through this device, so the two agree in every reachable case; if the\ncounts ever disagree, this refuses rather than answering a list it cannot\nsubstantiate."
+        },
+        {
           "name": "get-vertex-elements",
           "fbound": true,
           "macro": false,
@@ -13325,6 +13736,163 @@
           "documentation": null
         },
         {
+          "name": "index-buffer",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:index-buffer",
+            "microsoft.xna.framework.graphics:%buffer",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.IndexBuffer.\n\n    (make-instance 'index-buffer :graphics-device device\n                                 :index-element-size :sixteen-bits\n                                 :index-count 3\n                                 :buffer-usage :none)\n\nXNA's second constructor takes a `Type' -- `typeof(short)' or `typeof(int)' --\nwhich is the same choice spelled differently; :INDEX-TYPE takes the Lisp type\nspecifier `(unsigned-byte 16)' or `(unsigned-byte 32)' for callers who would\nrather say it that way."
+        },
+        {
+          "name": "index-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "index-element-size",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.IndexElementSize."
+        },
+        {
+          "name": "index-element-size-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The INDEX-ELEMENT-SIZE member a value names."
+        },
+        {
+          "name": "index-element-size-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a INDEX-ELEMENT-SIZE member."
+        },
+        {
+          "name": "indices",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "index-buffer",
+            "graphics-device"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.Indices: the bound index buffer, or NIL."
+        },
+        {
+          "name": "is-content-lost",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "buffer"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DynamicVertexBuffer.IsContentLost and DynamicIndexBuffer.IsContentLost.\n\nReads the buffer's own state from CNA. CNA's header documents the field as\ncurrently always false, so this answers NIL today for every buffer; it is a read\nof the runtime rather than a literal, so a CNA that starts reporting loss is\nreported here without a change here."
+        },
+        {
           "name": "item",
           "fbound": true,
           "macro": false,
@@ -13370,6 +13938,30 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "make-vertex-buffer-binding",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "vertex-buffer",
+            "&optional",
+            "(vertex-offset 0)",
+            "(instance-frequency 0)"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "VertexBufferBinding's three constructors, which differ only in what they default.\n\nXNA validates in this order, and the order is reproduced because a call can fail\nmore than one check at once:\n\n  1. a null buffer is an ArgumentNullException;\n  2. a vertex offset below zero or **not below the buffer's VertexCount** is an\n     ArgumentOutOfRangeException -- note the bound is exclusive, so an offset\n     equal to the count is refused;\n  3. a negative instance frequency is an ArgumentOutOfRangeException."
         },
         {
           "name": "make-vertex-element",
@@ -13676,6 +14268,67 @@
           "documentation": "GraphicsDevice.Present()."
         },
         {
+          "name": "primitive-type",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.PrimitiveType.\n\nFour members. CNA has a fifth, CNA_PRIMITIVE_POINT_LIST_EXT, which is a CNA\nextension with no XNA counterpart and is deliberately not projected."
+        },
+        {
+          "name": "primitive-type-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The PRIMITIVE-TYPE member a value names."
+        },
+        {
+          "name": "primitive-type-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a PRIMITIVE-TYPE member."
+        },
+        {
           "name": "rasterizer-state",
           "fbound": true,
           "macro": false,
@@ -13787,6 +14440,28 @@
           "constant": false,
           "value": null,
           "documentation": "DEPTH-STENCIL-STATE.REFERENCE-STENCIL. Defaults to 0."
+        },
+        {
+          "name": "remove-content-lost-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-content-lost-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
           "name": "remove-disposing-handler",
@@ -14065,6 +14740,147 @@
           "constant": false,
           "value": null,
           "documentation": "RASTERIZER-STATE.SCISSOR-TEST-ENABLE. Defaults to NIL."
+        },
+        {
+          "name": "set-data",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "buffer",
+            "data",
+            "&key",
+            "start-index",
+            "element-count",
+            "offset-in-bytes",
+            "vertex-stride",
+            "options"
+          ],
+          "keywords": [
+            "element-count",
+            "offset-in-bytes",
+            "options",
+            "start-index",
+            "vertex-stride"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "VertexBuffer.SetData and IndexBuffer.SetData.\n\nDATA is a Lisp sequence whose element layout this binding can prove: an octet,\nsixteen-bit or thirty-two-bit integer vector, a vector of SINGLE-FLOATs, COLORs,\nVECTOR2/3/4s, or one of the standard vertex types. An element type with no proven\nlayout is refused by name rather than written into native memory. See\nsrc/graphics/buffer-data.lisp."
+        },
+        {
+          "name": "set-data-options",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.SetDataOptions."
+        },
+        {
+          "name": "set-data-options-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The SET-DATA-OPTIONS member a value names."
+        },
+        {
+          "name": "set-data-options-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a SET-DATA-OPTIONS member."
+        },
+        {
+          "name": "set-vertex-buffer",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "vertex-buffer",
+            "&optional",
+            "vertex-offset"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.SetVertexBuffer(VertexBuffer) and its (VertexBuffer, Int32) form.\n\nNIL unbinds every stream, which is what XNA's null does."
+        },
+        {
+          "name": "set-vertex-buffers",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "bindings"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.SetVertexBuffers(params VertexBufferBinding[]).\n\nAn empty list unbinds every stream, which is what XNA's empty array does."
         },
         {
           "name": "slope-scale-depth-bias",
@@ -14845,11 +15661,170 @@
           "documentation": "DEPTH-STENCIL-STATE.TWO-SIDED-STENCIL-MODE. Defaults to NIL."
         },
         {
-          "name": "vertex-declaration",
+          "name": "vertex-buffer",
           "fbound": false,
           "macro": false,
           "generic": false,
           "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:vertex-buffer",
+            "microsoft.xna.framework.graphics:%buffer",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.VertexBuffer.\n\n    (make-instance 'vertex-buffer :graphics-device device\n                                  :vertex-declaration declaration\n                                  :vertex-count 3\n                                  :buffer-usage :none)\n\nXNA has two constructors, one taking a VertexDeclaration and one taking a\n`Type' whose vertex declaration is looked up through IVertexType. Common Lisp has\nno `typeof', so the second is expressed by passing a vertex *type name* as\n:VERTEX-TYPE, which is resolved through the same VERTEX-DECLARATION-OF\nprojection IVertexType became."
+        },
+        {
+          "name": "vertex-buffer-binding",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:vertex-buffer-binding",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.VertexBufferBinding.\n\nBuilt with MAKE-VERTEX-BUFFER-BINDING, which validates as XNA's constructors do."
+        },
+        {
+          "name": "vertex-buffer-binding-instance-frequency",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "vertex-buffer-binding-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "vertex-buffer-binding-vertex-buffer",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "vertex-buffer-binding-vertex-offset",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "vertex-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "vertex-declaration",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
           "keywords": [],
           "setf_fbound": false,
           "setf_lambda_list": [],
@@ -23750,6 +24725,25 @@
       "point-size": 10,
       "sample": 11,
       "tessellate-factor": 12
+    },
+    "buffer-usage": {
+      "none": 0,
+      "write-only": 1
+    },
+    "index-element-size": {
+      "sixteen-bits": 0,
+      "thirty-two-bits": 1
+    },
+    "set-data-options": {
+      "none": 0,
+      "discard": 1,
+      "no-overwrite": 2
+    },
+    "primitive-type": {
+      "triangle-list": 0,
+      "triangle-strip": 1,
+      "line-list": 2,
+      "line-strip": 3
     }
   },
   "predefined_colors": [

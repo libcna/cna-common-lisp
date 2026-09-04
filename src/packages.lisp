@@ -325,6 +325,24 @@
    #:vertex-position-normal-texture-texture-coordinate
    #:vertex-position-normal-texture-equal
    #:vertex-position-normal-texture-vertex-declaration
+   ;; --- buffers, bindings and primitive drawing -----------------------------
+   #:buffer-usage #:buffer-usage-value #:buffer-usage-from-value #:all-buffer-usage
+   #:index-element-size #:index-element-size-value #:index-element-size-from-value
+   #:all-index-element-size
+   #:set-data-options #:set-data-options-value #:set-data-options-from-value
+   #:all-set-data-options
+   #:primitive-type #:primitive-type-value #:primitive-type-from-value
+   #:all-primitive-type
+   #:vertex-buffer #:dynamic-vertex-buffer #:vertex-count
+   #:index-buffer #:dynamic-index-buffer #:index-count
+   #:set-data #:get-data #:is-content-lost
+   #:add-content-lost-handler #:remove-content-lost-handler
+   #:vertex-buffer-binding #:make-vertex-buffer-binding #:vertex-buffer-binding-p
+   #:copy-vertex-buffer-binding #:vertex-buffer-binding-vertex-buffer
+   #:vertex-buffer-binding-vertex-offset #:vertex-buffer-binding-instance-frequency
+   #:set-vertex-buffer #:set-vertex-buffers #:get-vertex-buffers #:indices
+   #:draw-primitives #:draw-indexed-primitives
+   #:draw-user-primitives #:draw-user-indexed-primitives
    ;; --- the device's state and texture collections -------------------------
    #:sampler-state-collection #:texture-collection #:item
    #:sampler-states #:vertex-sampler-states #:textures #:vertex-textures

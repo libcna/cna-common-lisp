@@ -88,31 +88,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=101 -->
-<!-- generated:selected members=1846 -->
-<!-- generated:complete types=96 -->
+<!-- generated:selected types=110 -->
+<!-- generated:selected members=1904 -->
+<!-- generated:complete types=105 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1384 -->
+<!-- generated:complete members=1449 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=82 -->
-<!-- generated:not-applicable members=379 -->
+<!-- generated:missing members=69 -->
+<!-- generated:not-applicable members=385 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 101 types, 1846 members.
+Selection **Foundation 1 and the managed closures**: 110 types, 1904 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **96** |
+| Types complete | **105** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1384** |
+| Members complete | **1449** |
 | Members partial | **1** |
-| Members missing | **82** |
-| Members not applicable | **379** |
+| Members missing | **69** |
+| Members not applicable | **385** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -152,7 +152,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 16 | 1 | 38 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 29 | 1 | 25 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
@@ -184,6 +184,15 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.VertexPositionTexture` | **complete** | 6 | 0 | 0 | 3 |
 | `M.X.F.Graphics.VertexPositionColorTexture` | **complete** | 7 | 0 | 0 | 3 |
 | `M.X.F.Graphics.VertexPositionNormalTexture` | **complete** | 7 | 0 | 0 | 3 |
+| `M.X.F.Graphics.BufferUsage` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Graphics.IndexElementSize` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Graphics.SetDataOptions` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Graphics.PrimitiveType` | **complete** | 4 | 0 | 0 | 1 |
+| `M.X.F.Graphics.VertexBuffer` | **complete** | 11 | 0 | 0 | 1 |
+| `M.X.F.Graphics.DynamicVertexBuffer` | **complete** | 6 | 0 | 0 | 0 |
+| `M.X.F.Graphics.IndexBuffer` | **complete** | 11 | 0 | 0 | 1 |
+| `M.X.F.Graphics.DynamicIndexBuffer` | **complete** | 6 | 0 | 0 | 0 |
+| `M.X.F.Graphics.VertexBufferBinding` | **complete** | 7 | 0 | 0 | 0 |
 | `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
@@ -268,7 +277,7 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 38 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 25 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -300,11 +309,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=125 -->
-<!-- generated:bound native structs=34 -->
-<!-- generated:bound native struct fields=255 -->
-<!-- generated:bound native constants=420 -->
-<!-- generated:bound native callbacks=4 -->
+<!-- generated:bound native functions=158 -->
+<!-- generated:bound native structs=42 -->
+<!-- generated:bound native struct fields=312 -->
+<!-- generated:bound native constants=432 -->
+<!-- generated:bound native callbacks=6 -->
 <!-- generated:by-value aggregates=3 -->
 <!-- generated:shimmed routes=1 -->
 <!-- generated:abi version encoded=5376 -->
@@ -312,11 +321,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 125 |
-| Bound structs | 34 |
-| Bound struct fields | 255 |
-| Bound constants | 420 |
-| Bound callback typedefs | 4 |
+| Bound functions | 158 |
+| Bound structs | 42 |
+| Bound struct fields | 312 |
+| Bound constants | 432 |
+| Bound callback typedefs | 6 |
 | By-value aggregates admitted | 3 |
 | Routes proved unbindable, and shimmed | 1 |
 | Admitted ABI versions | 0.21.0 only (encoded 5376) |

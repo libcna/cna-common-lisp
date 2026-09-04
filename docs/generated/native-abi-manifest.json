@@ -21,11 +21,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 125,
-    "structs": 34,
-    "struct_fields": 255,
-    "constants": 420,
-    "callbacks": 4,
+    "functions": 158,
+    "structs": 42,
+    "struct_fields": 312,
+    "constants": 432,
+    "callbacks": 6,
     "by_value_aggregates": 3,
     "shimmed_routes": 1
   },
@@ -3050,6 +3050,962 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_get_backbuffer_data_window(CNA_Handle graphics_device, const CNA_BackBufferReadback* readback, CNA_Color* destination, uint64_t capacity)"
+    },
+    {
+      "name": "cna_vertex_declaration_create",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "elements",
+          "c_type": "const CNA_VertexElement*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "element_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_declaration",
+          "c_type": "CNA_VertexDeclarationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "creates-owned:vertex-declaration:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_declaration_create(const CNA_VertexElement* elements, uint64_t element_count, CNA_VertexDeclarationHandle* out_declaration)"
+    },
+    {
+      "name": "cna_vertex_declaration_create_with_stride",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_stride",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "elements",
+          "c_type": "const CNA_VertexElement*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "element_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_declaration",
+          "c_type": "CNA_VertexDeclarationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "creates-owned:vertex-declaration:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_declaration_create_with_stride(int32_t vertex_stride, const CNA_VertexElement* elements, uint64_t element_count, CNA_VertexDeclarationHandle* out_declaration)"
+    },
+    {
+      "name": "cna_vertex_declaration_destroy",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "declaration",
+          "c_type": "CNA_VertexDeclarationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "any",
+      "ownership": "destroys:vertex-declaration",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_declaration_destroy(CNA_VertexDeclarationHandle declaration)"
+    },
+    {
+      "name": "cna_vertex_buffer_create",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_VertexBufferCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:vertex-buffer:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_create(CNA_Handle graphics_device, const CNA_VertexBufferCreateInfo* create_info, CNA_VertexBufferHandle* out_vertex_buffer)"
+    },
+    {
+      "name": "cna_vertex_buffer_destroy",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:vertex-buffer",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_destroy(CNA_VertexBufferHandle vertex_buffer)"
+    },
+    {
+      "name": "cna_vertex_buffer_get_info",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_VertexBufferInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_get_info(CNA_VertexBufferHandle vertex_buffer, CNA_VertexBufferInfo* out_info)"
+    },
+    {
+      "name": "cna_vertex_buffer_copy_declaration_elements",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_VertexElement*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_element_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_copy_declaration_elements(CNA_VertexBufferHandle vertex_buffer, CNA_VertexElement* destination, uint64_t capacity, uint64_t* out_element_count)"
+    },
+    {
+      "name": "cna_vertex_buffer_set_data_raw",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "data",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data_byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_stride",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_set_data_raw(CNA_VertexBufferHandle vertex_buffer, const void* data, uint64_t data_byte_count, uint64_t vertex_count, uint32_t vertex_stride)"
+    },
+    {
+      "name": "cna_vertex_buffer_set_data_raw_at",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "buffer_offset_in_bytes",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "data",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data_byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_stride",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_set_data_raw_at(CNA_VertexBufferHandle vertex_buffer, uint64_t buffer_offset_in_bytes, const void* data, uint64_t data_byte_count, uint64_t vertex_count, uint32_t vertex_stride)"
+    },
+    {
+      "name": "cna_vertex_buffer_set_data_raw_with_options",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "data",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data_byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_stride",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "options",
+          "c_type": "CNA_SetDataOptions",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_set_data_raw_with_options(CNA_VertexBufferHandle vertex_buffer, const void* data, uint64_t data_byte_count, uint64_t vertex_count, uint32_t vertex_stride, CNA_SetDataOptions options)"
+    },
+    {
+      "name": "cna_vertex_buffer_set_data_raw_at_with_options",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "buffer_offset_in_bytes",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "data",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data_byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_stride",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "options",
+          "c_type": "CNA_SetDataOptions",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_set_data_raw_at_with_options(CNA_VertexBufferHandle vertex_buffer, uint64_t buffer_offset_in_bytes, const void* data, uint64_t data_byte_count, uint64_t vertex_count, uint32_t vertex_stride, CNA_SetDataOptions options)"
+    },
+    {
+      "name": "cna_vertex_buffer_get_data_raw",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "buffer_offset_in_bytes",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination_byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_stride",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_get_data_raw(CNA_VertexBufferHandle vertex_buffer, uint64_t buffer_offset_in_bytes, void* destination, uint64_t destination_byte_count, uint64_t vertex_count, uint32_t vertex_stride)"
+    },
+    {
+      "name": "cna_index_buffer_create",
+      "header": "index_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_IndexBufferCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_index_buffer",
+          "c_type": "CNA_IndexBufferHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:index-buffer:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_index_buffer_create(CNA_Handle graphics_device, const CNA_IndexBufferCreateInfo* create_info, CNA_IndexBufferHandle* out_index_buffer)"
+    },
+    {
+      "name": "cna_index_buffer_destroy",
+      "header": "index_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:index-buffer",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_index_buffer_destroy(CNA_IndexBufferHandle index_buffer)"
+    },
+    {
+      "name": "cna_index_buffer_get_info",
+      "header": "index_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_IndexBufferInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_index_buffer_get_info(CNA_IndexBufferHandle index_buffer, CNA_IndexBufferInfo* out_info)"
+    },
+    {
+      "name": "cna_index_buffer_set_data",
+      "header": "index_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_IndexBufferTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_index_buffer_set_data(CNA_IndexBufferHandle index_buffer, const CNA_IndexBufferTransfer* transfer, const void* data, uint64_t capacity)"
+    },
+    {
+      "name": "cna_index_buffer_set_data_at",
+      "header": "index_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "buffer_offset_in_bytes",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_IndexBufferTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_index_buffer_set_data_at(CNA_IndexBufferHandle index_buffer, uint64_t buffer_offset_in_bytes, const CNA_IndexBufferTransfer* transfer, const void* data, uint64_t capacity)"
+    },
+    {
+      "name": "cna_index_buffer_get_data",
+      "header": "index_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_IndexBufferTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_element_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_index_buffer_get_data(CNA_IndexBufferHandle index_buffer, const CNA_IndexBufferTransfer* transfer, void* destination, uint64_t capacity, uint64_t* out_element_count)"
+    },
+    {
+      "name": "cna_graphics_device_set_vertex_buffer",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_vertex_buffer(CNA_Handle graphics_device, CNA_VertexBufferHandle vertex_buffer)"
+    },
+    {
+      "name": "cna_graphics_device_set_vertex_buffer_offset",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_offset",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_vertex_buffer_offset(CNA_Handle graphics_device, CNA_VertexBufferHandle vertex_buffer, int32_t vertex_offset)"
+    },
+    {
+      "name": "cna_graphics_device_set_vertex_buffers",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "bindings",
+          "c_type": "const CNA_VertexBufferBinding*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "binding_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_vertex_buffers(CNA_Handle graphics_device, const CNA_VertexBufferBinding* bindings, uint64_t binding_count)"
+    },
+    {
+      "name": "cna_graphics_device_get_vertex_buffer_count",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_vertex_buffer_count(CNA_Handle graphics_device, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_graphics_device_copy_vertex_buffers",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_VertexBufferBinding*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_copy_vertex_buffers(CNA_Handle graphics_device, CNA_VertexBufferBinding* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_graphics_device_set_index_buffer",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_index_buffer(CNA_Handle graphics_device, CNA_IndexBufferHandle index_buffer)"
+    },
+    {
+      "name": "cna_graphics_device_get_index_buffer",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_index_buffer",
+          "c_type": "CNA_IndexBufferHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_index_buffer(CNA_Handle graphics_device, CNA_IndexBufferHandle* out_index_buffer)"
+    },
+    {
+      "name": "cna_graphics_device_draw_primitives",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "primitive_type",
+          "c_type": "CNA_PrimitiveType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "vertex_start",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "primitive_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_draw_primitives(CNA_Handle graphics_device, CNA_PrimitiveType primitive_type, int32_t vertex_start, int32_t primitive_count)"
+    },
+    {
+      "name": "cna_graphics_device_draw_indexed_primitives",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "primitive_type",
+          "c_type": "CNA_PrimitiveType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "base_vertex",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "min_vertex_index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "num_vertices",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "start_index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "primitive_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_draw_indexed_primitives(CNA_Handle graphics_device, CNA_PrimitiveType primitive_type, int32_t base_vertex, int32_t min_vertex_index, int32_t num_vertices, int32_t start_index, int32_t primitive_count)"
+    },
+    {
+      "name": "cna_graphics_device_draw_user_primitives",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "primitives",
+          "c_type": "const CNA_UserPrimitives*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_draw_user_primitives(CNA_Handle graphics_device, const CNA_UserPrimitives* primitives)"
+    },
+    {
+      "name": "cna_graphics_device_draw_user_indexed_primitives",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "primitives",
+          "c_type": "const CNA_UserPrimitives*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "indices",
+          "c_type": "const CNA_UserIndices*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_draw_user_indexed_primitives(CNA_Handle graphics_device, const CNA_UserPrimitives* primitives, const CNA_UserIndices* indices)"
+    },
+    {
+      "name": "cna_vertex_buffer_subscribe_content_lost",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_VertexBufferContentLostCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_VertexBufferEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_subscribe_content_lost(CNA_VertexBufferHandle vertex_buffer, CNA_VertexBufferContentLostCallback callback, void* context, CNA_VertexBufferEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_vertex_buffer_unsubscribe_content_lost",
+      "header": "vertex_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_VertexBufferEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_buffer_unsubscribe_content_lost(CNA_VertexBufferEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_index_buffer_subscribe_content_lost",
+      "header": "index_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_IndexBufferContentLostCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_IndexBufferEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_index_buffer_subscribe_content_lost(CNA_IndexBufferHandle index_buffer, CNA_IndexBufferContentLostCallback callback, void* context, CNA_IndexBufferEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_index_buffer_unsubscribe_content_lost",
+      "header": "index_resources.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_IndexBufferEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_index_buffer_unsubscribe_content_lost(CNA_IndexBufferEventRegistrationHandle registration)"
     }
   ],
   "structs": [
@@ -5716,6 +6672,599 @@
       "header": "graphics_device.h",
       "direction": "in",
       "versioned": true
+    },
+    {
+      "name": "CNA_VertexBufferCreateInfo",
+      "size": 32,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_declaration",
+          "c_type": "CNA_VertexDeclarationHandle",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_count",
+          "c_type": "int32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "buffer_usage",
+          "c_type": "CNA_BufferUsage",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "dynamic",
+          "c_type": "CNA_Bool",
+          "offset": 24,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 25,
+          "size": 7,
+          "count": 7,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "vertex_resources.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_VertexBufferInfo",
+      "size": 32,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_count",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "buffer_usage",
+          "c_type": "CNA_BufferUsage",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "dynamic",
+          "c_type": "CNA_Bool",
+          "offset": 16,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_content_lost",
+          "c_type": "CNA_Bool",
+          "offset": 17,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_renderer",
+          "c_type": "CNA_Bool",
+          "offset": 18,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved0",
+          "c_type": "uint8_t",
+          "offset": 19,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_stride",
+          "c_type": "int32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_element_count",
+          "c_type": "uint64_t",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "vertex_resources.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_VertexBufferBinding",
+      "size": 16,
+      "align": 8,
+      "fields": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "offset": 0,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_offset",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "instance_frequency",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "vertex_resources.h",
+      "direction": "inout",
+      "versioned": false
+    },
+    {
+      "name": "CNA_IndexBufferCreateInfo",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "index_count",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "index_element_size",
+          "c_type": "CNA_IndexElementSize",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "buffer_usage",
+          "c_type": "CNA_BufferUsage",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "dynamic",
+          "c_type": "CNA_Bool",
+          "offset": 20,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 21,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "index_resources.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_IndexBufferInfo",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "index_count",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "index_element_size",
+          "c_type": "CNA_IndexElementSize",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "buffer_usage",
+          "c_type": "CNA_BufferUsage",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "dynamic",
+          "c_type": "CNA_Bool",
+          "offset": 20,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_content_lost",
+          "c_type": "CNA_Bool",
+          "offset": 21,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_renderer",
+          "c_type": "CNA_Bool",
+          "offset": 22,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 23,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "index_resources.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_IndexBufferTransfer",
+      "size": 32,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "index_element_size",
+          "c_type": "CNA_IndexElementSize",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "options",
+          "c_type": "CNA_SetDataOptions",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "start_index",
+          "c_type": "uint64_t",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "element_count",
+          "c_type": "uint64_t",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "index_resources.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_UserPrimitives",
+      "size": 48,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "primitive_type",
+          "c_type": "CNA_PrimitiveType",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_source",
+          "c_type": "CNA_UserVertexSource",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_data",
+          "c_type": "const void*",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "vertex_declaration",
+          "c_type": "CNA_VertexDeclarationHandle",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "vertex_offset",
+          "c_type": "int32_t",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "num_vertices",
+          "c_type": "int32_t",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "primitive_count",
+          "c_type": "int32_t",
+          "offset": 40,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 44,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics_device.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_UserIndices",
+      "size": 24,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "index_element_size",
+          "c_type": "CNA_IndexElementSize",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "index_offset",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "index_data",
+          "c_type": "const void*",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        }
+      ],
+      "header": "graphics_device.h",
+      "direction": "in",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -5806,6 +7355,40 @@
           "cffi_type": ":pointer"
         }
       ]
+    },
+    {
+      "name": "CNA_VertexBufferContentLostCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
+      "name": "CNA_IndexBufferContentLostCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
     }
   ],
   "constants": {
@@ -5836,6 +7419,8 @@
     "CNA_BLEND_STATE_PRESET_NON_PREMULTIPLIED": 3,
     "CNA_BLEND_STATE_PRESET_OPAQUE": 4,
     "CNA_BLEND_ZERO": 1,
+    "CNA_BUFFER_USAGE_NONE": 0,
+    "CNA_BUFFER_USAGE_WRITE_ONLY": 1,
     "CNA_COLOR_WRITE_ALL": 15,
     "CNA_COLOR_WRITE_ALPHA": 8,
     "CNA_COLOR_WRITE_BLUE": 4,
@@ -5936,6 +7521,8 @@
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET": 3,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING": 4,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED": 0,
+    "CNA_INDEX_ELEMENT_SIZE_SIXTEEN_BITS": 0,
+    "CNA_INDEX_ELEMENT_SIZE_THIRTY_TWO_BITS": 1,
     "CNA_INVALID_HANDLE": 0,
     "CNA_KEY_A": 65,
     "CNA_KEY_ADD": 107,
@@ -6110,6 +7697,10 @@
     "CNA_PLAYER_INDEX_ONE": 0,
     "CNA_PLAYER_INDEX_THREE": 2,
     "CNA_PLAYER_INDEX_TWO": 1,
+    "CNA_PRIMITIVE_LINE_LIST": 2,
+    "CNA_PRIMITIVE_LINE_STRIP": 3,
+    "CNA_PRIMITIVE_TRIANGLE_LIST": 0,
+    "CNA_PRIMITIVE_TRIANGLE_STRIP": 1,
     "CNA_RASTERIZER_STATE_PRESET_CULL_CLOCKWISE": 1,
     "CNA_RASTERIZER_STATE_PRESET_CULL_COUNTER_CLOCKWISE": 2,
     "CNA_RASTERIZER_STATE_PRESET_CULL_NONE": 3,
@@ -6136,6 +7727,9 @@
     "CNA_SAMPLER_STATE_PRESET_LINEAR_WRAP": 4,
     "CNA_SAMPLER_STATE_PRESET_POINT_CLAMP": 5,
     "CNA_SAMPLER_STATE_PRESET_POINT_WRAP": 6,
+    "CNA_SET_DATA_DISCARD": 1,
+    "CNA_SET_DATA_NONE": 0,
+    "CNA_SET_DATA_NO_OVERWRITE": 2,
     "CNA_SHADER_STAGE_PIXEL": 0,
     "CNA_SHADER_STAGE_VERTEX": 1,
     "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY": 1,
@@ -6200,6 +7794,7 @@
     "CNA_TOUCH_LOCATION_RELEASED": 1,
     "CNA_TOUCH_MAX_TOUCHES": 8,
     "CNA_TRUE": 1,
+    "CNA_USER_VERTEX_SOURCE_RAW_STREAM": 0,
     "CNA_VERTEX_ELEMENT_FORMAT_BYTE4": 5,
     "CNA_VERTEX_ELEMENT_FORMAT_COLOR": 4,
     "CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR2": 10,
