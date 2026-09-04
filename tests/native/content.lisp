@@ -355,3 +355,103 @@ the same working facade they started with."
         (when (texture game) (ignore-errors (xna:dispose (texture game))))
         (when (manager game) (ignore-errors (xna:dispose (manager game))))
         (xna:dispose game)))))
+
+;;; --- construction is all-or-nothing here too --------------------------------
+
+(defclass constructing-game (content-game)
+  ((no-device :initform nil :accessor no-device-error)
+   (owned :initform nil :accessor owned-manager)
+   (owned-root :initform nil :accessor owned-root)
+   (owned-is-distinct :initform nil :accessor owned-is-distinct)
+   (owned-child-count :initform nil :accessor owned-child-count)
+   (facade-with-device :initform nil :accessor facade-with-device-error))
+  (:documentation "Builds content managers the two legal ways, and one illegal way."))
+
+(defmethod xna:load-content ((game constructing-game))
+  (call-next-method)
+  (let ((device (xna:graphics-device game)))
+    ;; 1. no graphics device: refused at construction, not at first load.
+    (handler-case (make-instance 'xna.content:content-manager)
+      (error (condition) (setf (no-device-error game) condition)))
+    ;; 2. the facade shape is not a public constructor either.
+    (handler-case (make-instance 'xna.content:content-manager
+                                 :ownership :parent-owned :owner game
+                                 :graphics-device device)
+      (error (condition) (setf (facade-with-device-error game) condition)))
+    ;; 3. an owned one, built the declared way, and usable immediately.
+    (let ((manager (make-instance 'xna.content:content-manager
+                                  :graphics-device device
+                                  :root-directory (%content-root))))
+      (setf (owned-manager game) manager
+            (owned-root game) (xna.content:root-directory manager)
+            (owned-is-distinct game) (not (eq manager (xna:content game)))
+            (owned-child-count game)
+            (count manager (int:children-of game))))))
+
+(define-native-test a-content-manager-refuses-to-exist-without-what-it-needs
+  "`(make-instance 'content-manager)' used to answer a zombie: no handle, no
+owner, and a failure deferred to whichever load happened first. There are two
+ways a manager comes into existence and neither of them is \"partly\"."
+  (let ((game (make-instance 'constructing-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (typep (no-device-error game) 'xna:cna-usage-error)
+               "a manager with no device was built anyway, or gave ~a"
+               (type-of (no-device-error game)))
+           (is (typep (facade-with-device-error game) 'xna:cna-usage-error)
+               "the facade shape accepted a graphics device: ~a"
+               (type-of (facade-with-device-error game)))
+           (let ((manager (owned-manager game)))
+             (is (typep manager 'xna.content:content-manager))
+             (is-false (xna:disposed-p manager))
+             (is (string= (%content-root) (owned-root game))
+                 "the owned manager's root directory read back as ~s" (owned-root game))
+             (is-true (owned-is-distinct game)
+                      "an owned manager and Game.Content answered the same object")
+             (is (= 1 (owned-child-count game))
+                 "the owned manager is registered as a child of the game ~d time(s)"
+                 (owned-child-count game))))
+      (progn
+        (when (owned-manager game) (ignore-errors (xna:dispose (owned-manager game))))
+        (when (loaded-font game) (ignore-errors (xna:dispose (loaded-font game))))
+        (when (loaded-atlas game) (ignore-errors (xna:dispose (loaded-atlas game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (xna:dispose game)))))
+
+(define-native-test an-owned-content-manager-is-disposed-like-any-other-child
+  "The other half of the ownership question: an owned manager *is* disposable,
+and the game refuses to shut down while it is alive. Everything else the fixture
+owns is released first, so the refusal can only be about the manager -- and the
+condition has to name it."
+  (let ((game (make-instance 'constructing-game :exit-after 2))
+        (refused nil))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (when (loaded-font game) (xna:dispose (loaded-font game)))
+           (when (loaded-atlas game) (xna:dispose (loaded-atlas game)))
+           (when (batch game) (xna:dispose (batch game)))
+           (when (texture game) (xna:dispose (texture game)))
+           (when (manager game) (xna:dispose (manager game)))
+           (handler-case (xna:dispose game)
+             (xna:cna-ownership-error (condition) (setf refused condition)))
+           (is-true refused
+                    "the game shut down with an owned content manager still alive")
+           (is (search "content-manager" (princ-to-string refused))
+               "the refusal did not name the manager: ~a" refused)
+           (xna:dispose (owned-manager game))
+           (is-true (xna:disposed-p (owned-manager game)))
+           ;; and now it shuts down
+           (xna:dispose game)
+           (is-true (xna:disposed-p game)))
+      (progn
+        (when (owned-manager game) (ignore-errors (xna:dispose (owned-manager game))))
+        (when (loaded-font game) (ignore-errors (xna:dispose (loaded-font game))))
+        (when (loaded-atlas game) (ignore-errors (xna:dispose (loaded-atlas game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))
