@@ -196,7 +196,12 @@ Generated reports are the authority:
 
 The counts in `README.md`, this file, `NEXT.md` and `docs/compatibility.md` are
 cross-checked against those reports by `tools/qualification/verify-numbers.py`,
-which refuses any figure in the prose that the reports do not produce.
+which refuses any figure in the prose that the reports do not produce. It checks
+three ways: `<!-- generated:name=N -->` facts, whole
+`<!-- generated-block:name -->` regions rendered straight from the reports, and
+outright refusals for the class of figure that belongs to a *run* rather than to
+the repository -- a suite's check count being the standing example, since it
+moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
@@ -211,16 +216,22 @@ which refuses any figure in the prose that the reports do not produce.
 <!-- generated:not-applicable members=348 -->
 <!-- generated:disagreement total=0 -->
 
+<!-- generated-block:selection -->
 Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
+<!-- /generated-block:selection -->
 
+<!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete / partial / missing | **72 / 5 / 0** |
+| Types complete | **72** |
+| Types partial | **5** |
+| Types missing | **0** |
 | Members complete | **1185** |
+| Members partial | **1** |
 | Members missing | **98** |
 | Members not applicable | **348** |
-| Members partial | **1** |
 | **Disagreement diagnostics** | **0** |
+<!-- /generated-block:scoreboard -->
 
 Every remaining diagnostic is an absence, and "zero disagreement" now means more
 than it used to: no mapping rule names a member that does not exist, and every
@@ -245,3 +256,6 @@ instruction. No Microsoft binary or disassembly is stored here.
   with a reason.
 * No number in prose that is not generated or cross-checked.
 * HEADLESS execution is never described as visible rendering.
+* `REFERENCE_QUALIFIED`, `CI_TESTED`, `HEADLESS` and `NOT RUN` are four different
+  claims and are never collapsed into one. `docs/qualification.md` defines them,
+  and says which runtime and which CNA commit each CI run actually used.

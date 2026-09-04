@@ -93,8 +93,11 @@ genuine absence.
 <!-- generated:not-applicable members=348 -->
 <!-- generated:disagreement total=0 -->
 
+<!-- generated-block:selection -->
 Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
+<!-- /generated-block:selection -->
 
+<!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **72** |
@@ -105,12 +108,14 @@ Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
 | Members missing | **98** |
 | Members not applicable | **348** |
 | **Disagreement diagnostics** | **0** |
+<!-- /generated-block:scoreboard -->
 
 Every remaining diagnostic is an absence. Nothing implemented disagrees with the
 contract, nothing private has leaked into a public package, no exported symbol is
 unaccounted for, no mapping rule names a member that does not exist, and every
 collapsed overload family says how each of its overloads is expressed.
 
+<!-- generated-block:per-type-table -->
 | Type | Status | complete | partial | missing | n/a |
 | --- | --- | ---: | ---: | ---: | ---: |
 | `M.X.F.Game` | **partial** | 28 | 0 | 8 | 2 |
@@ -190,6 +195,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Input.Mouse` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Input.MouseState` | **complete** | 10 | 0 | 0 | 4 |
 | `M.X.F.Input.ButtonState` | **complete** | 2 | 0 | 0 | 1 |
+<!-- /generated-block:per-type-table -->
 
 ### Not applicable, and why so many
 
@@ -207,19 +213,42 @@ distinguish in a binding with no finalizers.
 
 ### The one partial member
 
-`GraphicsDevice.Viewport`: the reader is present, the setter is externally
-blocked. `cna_graphics_device_set_viewport` takes `CNA_Viewport` (24 bytes) by
-value, which the System V AMD64 ABI classifies MEMORY, and CFFI cannot pass a
-MEMORY-class aggregate without `cffi-libffi`. The refusal is proved by
-`tools/native-abi/generate.py` rather than asserted; see `docs/native-abi.md`.
+`GraphicsDevice.Viewport`: the reader is unconditional, the setter needs a build
+of the private shim. `cna_graphics_device_set_viewport` takes `CNA_Viewport` (24
+bytes) by value, which the System V AMD64 ABI classifies MEMORY, and CFFI cannot
+pass a MEMORY-class aggregate without `cffi-libffi`. That refusal is proved by
+`tools/native-abi/generate.py` rather than asserted, and the generator emits the
+one-function shim that answers it; see `docs/native-abi.md`.
 
-### The one missing type
+The member is `partial` and not `complete` because a *released* CNA-Lisp must
+load with no C toolchain present, so the shim is optional. `CNA_LISP_SHIM` names
+a build of it; without one the setter refuses with a condition naming the
+variable, the command that builds the shim and the reason. That is a packaging
+limit, and it is not an external blocker: the remedy is in this repository and it
+is already written.
 
-`Graphics.GraphicsResource` is `Texture2D`'s and `SpriteBatch`'s base class in
-XNA. Its `Name`, `Tag`, `GraphicsDevice` and `Disposing` event need the event
-projection and a device back-reference, neither of which is in this milestone.
-`Texture2D` and `SpriteBatch` carry CNA-Lisp's own disposal instead, which is why
-they work without it.
+### No selected type is missing
+
+`types missing` is zero: every type in the selection is projected. Five are
+`partial`, which is a statement about members, not about the type existing.
+`Graphics.GraphicsResource` -- the last one that was wholly absent -- is the real
+base class now, with its name, its `Disposing` event and its device
+back-reference.
+
+<!-- generated-block:partial-frontier -->
+| Type | missing members | partial members |
+| --- | ---: | ---: |
+| `M.X.F.Graphics.GraphicsDevice` | 52 | 1 |
+| `M.X.F.GraphicsDeviceManager` | 16 | 0 |
+| `M.X.F.Graphics.Texture2D` | 12 | 0 |
+| `M.X.F.Graphics.SpriteBatch` | 10 | 0 |
+| `M.X.F.Game` | 8 | 0 |
+<!-- /generated-block:partial-frontier -->
+
+The counts in that table are the real remaining surface, and they are graphics
+and content: the state objects, the drawing and render-target surface of
+`GraphicsDevice`, `System.IO.Stream`, `SpriteFont`, and the parts of `Game` and
+`GraphicsDeviceManager` that need a component engine or a device-settings type.
 
 ## Behaviour, as distinct from structure
 
@@ -248,15 +277,17 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated:shimmed routes=1 -->
 <!-- generated:abi version encoded=5376 -->
 
+<!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 69 |
-| Bound structs | 20 |
-| Bound struct fields | 104 |
-| Bound constants | 237 |
-| Bound callback typedefs | 2 |
+| Bound functions | 100 |
+| Bound structs | 28 |
+| Bound struct fields | 191 |
+| Bound constants | 311 |
+| Bound callback typedefs | 4 |
 | By-value aggregates admitted | 2 |
 | Routes proved unbindable, and shimmed | 1 |
 | Admitted ABI versions | 0.21.0 only (encoded 5376) |
+<!-- /generated-block:native-abi-summary -->
 
 See `docs/native-abi.md` for what the C compiler proves about each of those.

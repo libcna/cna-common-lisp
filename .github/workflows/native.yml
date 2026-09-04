@@ -104,14 +104,37 @@ jobs:
             echo "| CNA-Lisp commit | \`${GITHUB_SHA}\` |"
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # CNA builds SDL3, SDL3_image and SDL3_mixer from its own vendored
+      # submodules, so SDL's Linux build dependencies are this job's
+      # dependencies too -- and SDL's CMake treats a missing one as a hard error
+      # rather than a disabled backend (X11 without XScrnSaver is what failed
+      # here first). The Wayland set is deliberately complete: CNA keys its
+      # persistent SDL install root on whether Wayland *could* be built, and
+      # then refuses a cache that promised Wayland and did not deliver it.
       - name: Install build and Lisp toolchains
         run: |
+          set -eu
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            cmake ninja-build build-essential ccache pkg-config python3 \
-            libasound2-dev libpulse-dev libx11-dev libxext-dev libxrandr-dev \
-            libxcursor-dev libxi-dev libxfixes-dev libwayland-dev libxkbcommon-dev \
-            libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libswscale-dev
+            cmake ninja-build build-essential ccache pkg-config python3
+          packages="libasound2-dev libpulse-dev libjack-dev libpipewire-0.3-dev
+                    libsamplerate0-dev libx11-dev libxext-dev libxrandr-dev
+                    libxcursor-dev libxi-dev libxfixes-dev libxss-dev libxtst-dev
+                    libxrender-dev libxkbcommon-dev libwayland-dev wayland-protocols
+                    libdecor-0-dev libegl-dev libgles-dev libgl-dev libdrm-dev
+                    libgbm-dev libdbus-1-dev libudev-dev libibus-1.0-dev
+                    libavcodec-dev libavformat-dev libavutil-dev libswresample-dev
+                    libswscale-dev"
+          # One transaction if every name resolves; otherwise one at a time, so a
+          # package a future runner image renames reports itself instead of
+          # failing the job before SDL's configure has had its say.
+          # shellcheck disable=SC2086
+          sudo apt-get install -y --no-install-recommends $packages || {
+            for package in $packages; do
+              sudo apt-get install -y --no-install-recommends "$package" \
+                || echo "note: $package is not available on this runner image"
+            done
+          }
           cc --version
 
       - name: Install the reference SBCL

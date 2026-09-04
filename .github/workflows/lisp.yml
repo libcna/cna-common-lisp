@@ -86,7 +86,7 @@ jobs:
 
       - name: Compile and load from a fresh image, with no warnings tolerated
         run: |
-          sbcl --script - <<'LISP'
+          sbcl --script /dev/stdin <<'LISP'
           (require :asdf)
           (load (merge-pathnames "quicklisp/setup.lisp" (user-homedir-pathname)))
           (push (truename ".") asdf:*central-registry*)
