@@ -124,6 +124,11 @@ def expected_symbol(rules, type_rule, type_name, member):
     base = kebab(member["name"])
     if kind in ("structure", "static"):
         return "%s-%s" % (lisp_type, base), override or {}
+    if kind == "interface":
+        # An interface member has no instance to prefix with, and the rules name
+        # it explicitly, so an interface with no override for a member is a
+        # missing projection rather than a guess.
+        return False, override or {}
     return base, override or {}
 
 
@@ -271,7 +276,12 @@ def verify_type(report, rules, contract_type, surface, packages, claimed):
         statuses = verify_enum(report, rules, type_rule, contract_type, surface)
     else:
         entry = symbols.get(lisp_name)
-        if kind == "static":
+        if kind in ("static", "interface"):
+            # Neither has a symbol of its own. A static class projects as package
+            # functions named <class>-<member>; a CLR interface projects as the
+            # generic functions its members become, because Common Lisp needs no
+            # type to hang a contract on -- a generic function *is* the contract,
+            # and CLOS dispatches it the same way the interface did.
             entry = entry or {"name": lisp_name}
         elif entry is None:
             report.add("missing_type", name, "no exported symbol %r in %s"
@@ -308,6 +318,9 @@ def verify_type(report, rules, contract_type, surface, packages, claimed):
         # A static class has no type symbol of its own: its members are package
         # functions named <class>-<member>.
         result["projection"] = "static class: %s:%s-<member>" % (package, lisp_name)
+    elif kind == "interface":
+        result["projection"] = ("interface: its members are generic functions in %s"
+                                % package)
     else:
         result["lisp"] = "%s:%s" % (package, lisp_name)
     return result

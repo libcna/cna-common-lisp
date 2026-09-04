@@ -21,10 +21,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 122,
-    "structs": 32,
-    "struct_fields": 244,
-    "constants": 391,
+    "functions": 124,
+    "structs": 33,
+    "struct_fields": 248,
+    "constants": 420,
     "callbacks": 4,
     "by_value_aggregates": 3,
     "shimmed_routes": 1
@@ -2964,6 +2964,60 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_set_texture(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, CNA_Handle texture)"
+    },
+    {
+      "name": "cna_vertex_type_get_stride",
+      "header": "vertex_values.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "type",
+          "c_type": "CNA_VertexType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_stride",
+          "c_type": "uint32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_type_get_stride(CNA_VertexType type, uint32_t* out_stride)"
+    },
+    {
+      "name": "cna_vertex_type_copy_elements",
+      "header": "vertex_values.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "type",
+          "c_type": "CNA_VertexType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_VertexElement*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_element_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_vertex_type_copy_elements(CNA_VertexType type, CNA_VertexElement* destination, uint64_t capacity, uint64_t* out_element_count)"
     }
   ],
   "structs": [
@@ -5511,6 +5565,52 @@
       "header": "graphics_device.h",
       "direction": "out",
       "versioned": true
+    },
+    {
+      "name": "CNA_VertexElement",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "offset",
+          "c_type": "int32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_VertexElementFormat",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "usage",
+          "c_type": "CNA_VertexElementUsage",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "usage_index",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics3d.h",
+      "direction": "out",
+      "versioned": false
     }
   ],
   "callbacks": [
@@ -5994,6 +6094,35 @@
     "CNA_TOUCH_LOCATION_PRESSED": 2,
     "CNA_TOUCH_LOCATION_RELEASED": 1,
     "CNA_TOUCH_MAX_TOUCHES": 8,
-    "CNA_TRUE": 1
+    "CNA_TRUE": 1,
+    "CNA_VERTEX_ELEMENT_FORMAT_BYTE4": 5,
+    "CNA_VERTEX_ELEMENT_FORMAT_COLOR": 4,
+    "CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR2": 10,
+    "CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR4": 11,
+    "CNA_VERTEX_ELEMENT_FORMAT_NORMALIZED_SHORT2": 8,
+    "CNA_VERTEX_ELEMENT_FORMAT_NORMALIZED_SHORT4": 9,
+    "CNA_VERTEX_ELEMENT_FORMAT_SHORT2": 6,
+    "CNA_VERTEX_ELEMENT_FORMAT_SHORT4": 7,
+    "CNA_VERTEX_ELEMENT_FORMAT_SINGLE": 0,
+    "CNA_VERTEX_ELEMENT_FORMAT_VECTOR2": 1,
+    "CNA_VERTEX_ELEMENT_FORMAT_VECTOR3": 2,
+    "CNA_VERTEX_ELEMENT_FORMAT_VECTOR4": 3,
+    "CNA_VERTEX_ELEMENT_USAGE_BINORMAL": 4,
+    "CNA_VERTEX_ELEMENT_USAGE_BLEND_INDICES": 6,
+    "CNA_VERTEX_ELEMENT_USAGE_BLEND_WEIGHT": 7,
+    "CNA_VERTEX_ELEMENT_USAGE_COLOR": 1,
+    "CNA_VERTEX_ELEMENT_USAGE_DEPTH": 8,
+    "CNA_VERTEX_ELEMENT_USAGE_FOG": 9,
+    "CNA_VERTEX_ELEMENT_USAGE_NORMAL": 3,
+    "CNA_VERTEX_ELEMENT_USAGE_POINT_SIZE": 10,
+    "CNA_VERTEX_ELEMENT_USAGE_POSITION": 0,
+    "CNA_VERTEX_ELEMENT_USAGE_SAMPLE": 11,
+    "CNA_VERTEX_ELEMENT_USAGE_TANGENT": 5,
+    "CNA_VERTEX_ELEMENT_USAGE_TESSELLATE_FACTOR": 12,
+    "CNA_VERTEX_ELEMENT_USAGE_TEXTURE_COORDINATE": 2,
+    "CNA_VERTEX_TYPE_POSITION_COLOR": 0,
+    "CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE": 1,
+    "CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE": 4,
+    "CNA_VERTEX_TYPE_POSITION_TEXTURE": 6
   }
 }

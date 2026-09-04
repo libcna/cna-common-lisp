@@ -93,3 +93,18 @@ XNA's.")
     (:min-linear-mag-point-mip-point . 6) (:min-point-mag-linear-mip-linear . 7)
     (:min-point-mag-linear-mip-point . 8))
   :documentation "Microsoft.Xna.Framework.Graphics.TextureFilter.")
+
+;;; --- the vertex declaration enumerations ---------------------------------------
+
+(microsoft.xna.framework::define-xna-enum vertex-element-format
+  '((:single . 0) (:vector2 . 1) (:vector3 . 2) (:vector4 . 3) (:color . 4)
+    (:byte4 . 5) (:short2 . 6) (:short4 . 7) (:normalized-short2 . 8)
+    (:normalized-short4 . 9) (:half-vector2 . 10) (:half-vector4 . 11))
+  :documentation "Microsoft.Xna.Framework.Graphics.VertexElementFormat.")
+
+(microsoft.xna.framework::define-xna-enum vertex-element-usage
+  '((:position . 0) (:color . 1) (:texture-coordinate . 2) (:normal . 3)
+    (:binormal . 4) (:tangent . 5) (:blend-indices . 6) (:blend-weight . 7)
+    (:depth . 8) (:fog . 9) (:point-size . 10) (:sample . 11)
+    (:tessellate-factor . 12))
+  :documentation "Microsoft.Xna.Framework.Graphics.VertexElementUsage.")

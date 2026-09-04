@@ -186,7 +186,10 @@ are pure managed and touch no native route:
 * the graphics state objects -- `BlendState`, `DepthStencilState`,
   `RasterizerState`, `SamplerState` and their nine enumerations -- with
   `GraphicsDevice`'s state surface, its four indexed state and texture
-  collections, and `SpriteBatch.Begin`'s state-bearing overloads. Their values come from the pinned `Microsoft.Xna.Framework.Graphics`
+  collections, and `SpriteBatch.Begin`'s state-bearing overloads;
+* the vertex declaration types -- `VertexElement`, `VertexDeclaration`,
+  `IVertexType` and the four standard vertex value types -- computed from the
+  pinned assembly and cross-checked against CNA's own built-in declarations. Their values come from the pinned `Microsoft.Xna.Framework.Graphics`
   assembly; CNA's own presets are cross-checked against them and disagree on two
   fields, which `docs/limitations.md` records as an upstream defect.
 
@@ -211,31 +214,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=92 -->
-<!-- generated:selected members=1765 -->
-<!-- generated:complete types=87 -->
+<!-- generated:selected types=101 -->
+<!-- generated:selected members=1846 -->
+<!-- generated:complete types=96 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1318 -->
+<!-- generated:complete members=1381 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=85 -->
-<!-- generated:not-applicable members=361 -->
+<!-- generated:not-applicable members=379 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 92 types, 1765 members.
+Selection **Foundation 1 and the managed closures**: 101 types, 1846 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **87** |
+| Types complete | **96** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1318** |
+| Members complete | **1381** |
 | Members partial | **1** |
 | Members missing | **85** |
-| Members not applicable | **361** |
+| Members not applicable | **379** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

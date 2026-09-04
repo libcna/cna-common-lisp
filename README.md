@@ -89,6 +89,11 @@ stubs:
   `SamplerStates`, `VertexSamplerStates`, `Textures` and `VertexTextures`, each
   answering the same collection object every time and remembering what was bound
   into it, as XNA's do;
+* the **vertex declaration** surface: `VertexElement`, `VertexDeclaration` with
+  XNA's own five-stage validator in its own refusal order, `IVertexType` as a
+  generic function, and the four standard vertex value types with the exact
+  declarations their class constructors build — strides 16, 20, 24 and 32,
+  cross-checked element for element against CNA's own;
 * `SpriteBatch.Begin`'s three state-bearing shapes, and only those three: the
   parameterless one, the sort-mode-and-blend-state one and the five-parameter
   one, with a null state meaning the framework default exactly as XNA's
@@ -104,27 +109,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=92 -->
-<!-- generated:selected members=1765 -->
-<!-- generated:complete types=87 -->
+<!-- generated:selected types=101 -->
+<!-- generated:selected members=1846 -->
+<!-- generated:complete types=96 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1318 -->
+<!-- generated:complete members=1381 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=85 -->
-<!-- generated:not-applicable members=361 -->
+<!-- generated:not-applicable members=379 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=122 -->
-<!-- generated:bound native structs=32 -->
+<!-- generated:bound native functions=124 -->
+<!-- generated:bound native structs=33 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **92 XNA types and 1765 members**:
+The generated scoreboard, over a selection of **101 XNA types and 1846 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **87 / 5 / 0** |
-| Members complete / missing | **1318 / 85** |
-| Members not applicable | **361** |
+| Types complete / partial / missing | **96 / 5 / 0** |
+| Members complete / missing | **1381 / 85** |
+| Members not applicable | **379** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -137,7 +142,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **122 native routes** and **32 native structs**,
+The private foreign layer binds **124 native routes** and **33 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

@@ -3868,6 +3868,191 @@
      "reason": "The same shape, and the CNA C ABI asks for it explicitly: cna_graphics_device_get_texture answers a bound flag and a handle, and the handle is invalid for a slot filled by canonical CNA code, because that ABI has no route from a native object back to a handle. Its header's advice is to cache what you bind and use the flag to tell 'something else owns this slot' from 'the slot is empty'. docs/limitations.md records the one case a cache cannot cover."
     }
    }
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexElementFormat": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-element-format",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexElementUsage": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-element-usage",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexElement": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-element",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Int32,VertexElementFormat,VertexElementUsage,Int32)": "make-vertex-element"
+   },
+   "member_overrides": {
+    "Equals(Object)": {
+     "lisp": "vertex-element-equal",
+     "reason": "Common Lisp has no universal Object, and no operator overloading; equality projects to a named predicate, as it does for every other projected value type."
+    },
+    "op_Equality(VertexElement,VertexElement)": {
+     "lisp": "vertex-element-equal"
+    }
+   },
+   "overload_families": {
+    "Equals": {
+     "lisp": "vertex-element-equal",
+     "reason": "One predicate. XNA's Equals(Object) and op_Equality compare the same four components."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexDeclaration": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-declaration",
+   "lisp_kind": "class",
+   "superclass_note": "XNA's VertexDeclaration derives from GraphicsResource; this one does not, for the reason src/capabilities.lisp records for the state objects -- CNA has no handle for a vertex declaration and one invented here would be a fake.",
+   "constructors": {
+    "new(VertexElement[])": "make-instance",
+    "new(Int32,VertexElement[])": "make-instance"
+   },
+   "member_overrides": {
+    "GetVertexElements()": {
+     "lisp": "get-vertex-elements",
+     "generic": true
+    },
+    "VertexStride": {
+     "lisp": "vertex-stride",
+     "generic": true,
+     "setf": false,
+     "reason": "Read-only, as XNA's is: the stride is settled by the constructor and validated against the elements there."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected Dispose(bool) pattern. A declaration holds no native handle here, so there is nothing to dispose and nothing for the flag to distinguish."
+   },
+   "overload_families": {
+    ".ctor": {
+     "lisp": "make-instance",
+     "reason": "One MAKE-INSTANCE with an optional :VERTEX-STRIDE. The two XNA constructors differ only in whether the stride is given or computed, and a supplied-p test is exactly that distinction."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.IVertexType": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "ivertex-type",
+   "lisp_kind": "interface",
+   "member_overrides": {
+    "VertexDeclaration": {
+     "lisp": "vertex-declaration-of",
+     "generic": true,
+     "setf": false,
+     "reason": "A one-member interface whose only purpose is to let a generic method ask a vertex value for its declaration. Common Lisp needs no type to hang that on: the generic function IS the contract and CLOS dispatches it the same way, with a method on each vertex type. The name carries -OF because VERTEX-DECLARATION is the class."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexPositionColor": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-position-color",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Vector3,Color)": "make-vertex-position-color"
+   },
+   "member_overrides": {
+    "Equals(Object)": {
+     "lisp": "vertex-position-color-equal",
+     "reason": "There is no universal Object to compare against, and no operator overloading; equality is a named predicate."
+    },
+    "op_Equality(VertexPositionColor,VertexPositionColor)": {
+     "lisp": "vertex-position-color-equal"
+    },
+    "VertexDeclaration": {
+     "lisp": "vertex-position-color-vertex-declaration",
+     "reason": "A `public static initonly' field of the type's own VertexDeclaration. It projects as a function taking no arguments and named <type>-VertexDeclaration, because the bare name is the class's, and it answers the same object every call, as a static readonly field does. VERTEX-DECLARATION-OF is the IVertexType projection and answers the same object for an instance."
+    }
+   },
+   "overload_families": {
+    "Equals": {
+     "lisp": "vertex-position-color-equal",
+     "reason": "One predicate for Equals(Object) and op_Equality."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexPositionTexture": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-position-texture",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Vector3,Vector2)": "make-vertex-position-texture"
+   },
+   "member_overrides": {
+    "Equals(Object)": {
+     "lisp": "vertex-position-texture-equal",
+     "reason": "There is no universal Object to compare against, and no operator overloading; equality is a named predicate."
+    },
+    "op_Equality(VertexPositionTexture,VertexPositionTexture)": {
+     "lisp": "vertex-position-texture-equal"
+    },
+    "VertexDeclaration": {
+     "lisp": "vertex-position-texture-vertex-declaration",
+     "reason": "A `public static initonly' field of the type's own VertexDeclaration. It projects as a function taking no arguments and named <type>-VertexDeclaration, because the bare name is the class's, and it answers the same object every call, as a static readonly field does. VERTEX-DECLARATION-OF is the IVertexType projection and answers the same object for an instance."
+    }
+   },
+   "overload_families": {
+    "Equals": {
+     "lisp": "vertex-position-texture-equal",
+     "reason": "One predicate for Equals(Object) and op_Equality."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-position-color-texture",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Vector3,Color,Vector2)": "make-vertex-position-color-texture"
+   },
+   "member_overrides": {
+    "Equals(Object)": {
+     "lisp": "vertex-position-color-texture-equal",
+     "reason": "There is no universal Object to compare against, and no operator overloading; equality is a named predicate."
+    },
+    "op_Equality(VertexPositionColorTexture,VertexPositionColorTexture)": {
+     "lisp": "vertex-position-color-texture-equal"
+    },
+    "VertexDeclaration": {
+     "lisp": "vertex-position-color-texture-vertex-declaration",
+     "reason": "A `public static initonly' field of the type's own VertexDeclaration. It projects as a function taking no arguments and named <type>-VertexDeclaration, because the bare name is the class's, and it answers the same object every call, as a static readonly field does. VERTEX-DECLARATION-OF is the IVertexType projection and answers the same object for an instance."
+    }
+   },
+   "overload_families": {
+    "Equals": {
+     "lisp": "vertex-position-color-texture-equal",
+     "reason": "One predicate for Equals(Object) and op_Equality."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "vertex-position-normal-texture",
+   "lisp_kind": "structure",
+   "constructors": {
+    "new(Vector3,Vector3,Vector2)": "make-vertex-position-normal-texture"
+   },
+   "member_overrides": {
+    "Equals(Object)": {
+     "lisp": "vertex-position-normal-texture-equal",
+     "reason": "There is no universal Object to compare against, and no operator overloading; equality is a named predicate."
+    },
+    "op_Equality(VertexPositionNormalTexture,VertexPositionNormalTexture)": {
+     "lisp": "vertex-position-normal-texture-equal"
+    },
+    "VertexDeclaration": {
+     "lisp": "vertex-position-normal-texture-vertex-declaration",
+     "reason": "A `public static initonly' field of the type's own VertexDeclaration. It projects as a function taking no arguments and named <type>-VertexDeclaration, because the bare name is the class's, and it answers the same object every call, as a static readonly field does. VERTEX-DECLARATION-OF is the IVertexType projection and answers the same object for an instance."
+    }
+   },
+   "overload_families": {
+    "Equals": {
+     "lisp": "vertex-position-normal-texture-equal",
+     "reason": "One predicate for Equals(Object) and op_Equality."
+    }
+   }
   }
  }
 }

@@ -449,6 +449,16 @@
 (defconstant +sizeof-cna-texture-slot-info+ 24)
 (defconstant +alignof-cna-texture-slot-info+ 8)
 
+;;; CNA_VertexElement -- 16 bytes, 4-byte aligned, from graphics3d.h.
+(defcstruct (cna-vertex-element :size 16)
+  (offset :int32 :offset 0)
+  (format :uint32 :offset 4)
+  (usage :uint32 :offset 8)
+  (usage-index :int32 :offset 12))
+
+(defconstant +sizeof-cna-vertex-element+ 16)
+(defconstant +alignof-cna-vertex-element+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -483,6 +493,7 @@
     (cna-depth-stencil-state 64 4 ((struct-size 0 4) (struct-version 4 4) (depth-buffer-enable 8 1) (depth-buffer-write-enable 9 1) (stencil-enable 10 1) (two-sided-stencil-mode 11 1) (depth-buffer-function 12 4) (stencil-function 16 4) (stencil-mask 20 4) (stencil-write-mask 24 4) (reference-stencil 28 4) (stencil-fail 32 4) (stencil-depth-buffer-fail 36 4) (stencil-pass 40 4) (counter-clockwise-stencil-function 44 4) (counter-clockwise-stencil-fail 48 4) (counter-clockwise-stencil-depth-buffer-fail 52 4) (counter-clockwise-stencil-pass 56 4) (reserved 60 4)))
     (cna-rasterizer-state 28 4 ((struct-size 0 4) (struct-version 4 4) (cull-mode 8 4) (fill-mode 12 4) (depth-bias 16 4) (slope-scale-depth-bias 20 4) (multi-sample-anti-alias 24 1) (scissor-test-enable 25 1) (reserved 26 2)))
     (cna-sampler-state 40 4 ((struct-size 0 4) (struct-version 4 4) (address-u 8 4) (address-v 12 4) (address-w 16 4) (filter 20 4) (max-anisotropy 24 4) (max-mip-level 28 4) (mip-map-level-of-detail-bias 32 4) (reserved 36 4)))
-    (cna-texture-slot-info 24 8 ((struct-size 0 4) (struct-version 4 4) (bound 8 1) (reserved 9 7) (texture 16 8))))
+    (cna-texture-slot-info 24 8 ((struct-size 0 4) (struct-version 4 4) (bound 8 1) (reserved 9 7) (texture 16 8)))
+    (cna-vertex-element 16 4 ((offset 0 4) (format 4 4) (usage 8 4) (usage-index 12 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

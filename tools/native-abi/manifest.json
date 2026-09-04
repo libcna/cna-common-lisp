@@ -223,7 +223,36 @@
    "CNA_SHADER_STAGE_PIXEL",
    "CNA_SHADER_STAGE_VERTEX",
    "CNA_MAX_SAMPLERS",
-   "CNA_TEXTURE_COLLECTION_MAX_TEXTURES"
+   "CNA_TEXTURE_COLLECTION_MAX_TEXTURES",
+   "CNA_VERTEX_TYPE_POSITION_COLOR",
+   "CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE",
+   "CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE",
+   "CNA_VERTEX_TYPE_POSITION_TEXTURE",
+   "CNA_VERTEX_ELEMENT_FORMAT_SINGLE",
+   "CNA_VERTEX_ELEMENT_FORMAT_VECTOR2",
+   "CNA_VERTEX_ELEMENT_FORMAT_VECTOR3",
+   "CNA_VERTEX_ELEMENT_FORMAT_VECTOR4",
+   "CNA_VERTEX_ELEMENT_FORMAT_COLOR",
+   "CNA_VERTEX_ELEMENT_FORMAT_BYTE4",
+   "CNA_VERTEX_ELEMENT_FORMAT_SHORT2",
+   "CNA_VERTEX_ELEMENT_FORMAT_SHORT4",
+   "CNA_VERTEX_ELEMENT_FORMAT_NORMALIZED_SHORT2",
+   "CNA_VERTEX_ELEMENT_FORMAT_NORMALIZED_SHORT4",
+   "CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR2",
+   "CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR4",
+   "CNA_VERTEX_ELEMENT_USAGE_POSITION",
+   "CNA_VERTEX_ELEMENT_USAGE_COLOR",
+   "CNA_VERTEX_ELEMENT_USAGE_TEXTURE_COORDINATE",
+   "CNA_VERTEX_ELEMENT_USAGE_NORMAL",
+   "CNA_VERTEX_ELEMENT_USAGE_BINORMAL",
+   "CNA_VERTEX_ELEMENT_USAGE_TANGENT",
+   "CNA_VERTEX_ELEMENT_USAGE_BLEND_INDICES",
+   "CNA_VERTEX_ELEMENT_USAGE_BLEND_WEIGHT",
+   "CNA_VERTEX_ELEMENT_USAGE_DEPTH",
+   "CNA_VERTEX_ELEMENT_USAGE_FOG",
+   "CNA_VERTEX_ELEMENT_USAGE_POINT_SIZE",
+   "CNA_VERTEX_ELEMENT_USAGE_SAMPLE",
+   "CNA_VERTEX_ELEMENT_USAGE_TESSELLATE_FACTOR"
   ],
   "prefix_families": [
    {
@@ -410,6 +439,11 @@
    "name": "CNA_TextureSlotInfo",
    "direction": "out",
    "versioned": true
+  },
+  {
+   "name": "CNA_VertexElement",
+   "direction": "out",
+   "versioned": false
   }
  ],
  "callbacks": [
@@ -1165,6 +1199,18 @@
    "name": "cna_graphics_device_set_texture",
    "header": "graphics_device.h",
    "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_type_get_stride",
+   "header": "vertex_values.h",
+   "thread": "any",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_vertex_type_copy_elements",
+   "header": "vertex_values.h",
+   "thread": "any",
    "ownership": "none"
   }
  ],

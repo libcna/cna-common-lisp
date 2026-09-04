@@ -78,6 +78,11 @@
     (microsoft.xna.framework.graphics viewport-equal
      "Structural equality for Viewport. The XNA struct has no Equals of its own,
       and a projected value type that cannot be compared is awkward to test.")
+    (microsoft.xna.framework.graphics vertex-element-format-size
+     "The size in bytes of one VertexElementFormat. XNA keeps the same table
+      private, in VertexElementValidator.GetTypeSize, but it is what decides
+      whether a VertexDeclaration is legal, so a caller laying out a vertex needs
+      it from somewhere other than a literal.")
     (microsoft.xna.framework.input keyboard-get-state
      "Keyboard.GetState. Static classes project as <class>-<member> so that
       Mouse and GamePad can join the namespace without colliding."))

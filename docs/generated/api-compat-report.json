@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 92,
-  "member_count": 1765
+  "type_count": 101,
+  "member_count": 1846
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,16 +15,16 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 92,
-  "members": 1765,
+  "types": 101,
+  "members": 1846,
   "types_by_status": {
    "partial": 5,
-   "complete": 87
+   "complete": 96
   },
   "members_by_status": {
-   "complete": 1318,
+   "complete": 1381,
    "missing": 85,
-   "not-applicable": 361,
+   "not-applicable": 379,
    "partial": 1
   },
   "diagnostics": 85,
@@ -1616,6 +1616,150 @@
     "Item": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:texture-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Single": "complete",
+    "Vector2": "complete",
+    "Vector3": "complete",
+    "Vector4": "complete",
+    "Color": "complete",
+    "Byte4": "complete",
+    "Short2": "complete",
+    "Short4": "complete",
+    "NormalizedShort2": "complete",
+    "NormalizedShort4": "complete",
+    "HalfVector2": "complete",
+    "HalfVector4": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-element-format"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Position": "complete",
+    "Color": "complete",
+    "TextureCoordinate": "complete",
+    "Normal": "complete",
+    "Binormal": "complete",
+    "Tangent": "complete",
+    "BlendIndices": "complete",
+    "BlendWeight": "complete",
+    "Depth": "complete",
+    "Fog": "complete",
+    "PointSize": "complete",
+    "Sample": "complete",
+    "TessellateFactor": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-element-usage"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexElement",
+   "status": "complete",
+   "members": {
+    "new(Int32,VertexElementFormat,VertexElementUsage,Int32)": "complete",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "Equals(Object)": "complete",
+    "op_Equality(VertexElement,VertexElement)": "complete",
+    "op_Inequality(VertexElement,VertexElement)": "not-applicable",
+    "Offset": "complete",
+    "VertexElementFormat": "complete",
+    "VertexElementUsage": "complete",
+    "UsageIndex": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-element"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+   "status": "complete",
+   "members": {
+    "new(Int32,VertexElement[])": "complete",
+    "new(VertexElement[])": "complete",
+    "GetVertexElements()": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "VertexStride": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-declaration"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IVertexType",
+   "status": "complete",
+   "members": {
+    "VertexDeclaration": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework.graphics"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+   "status": "complete",
+   "members": {
+    "new(Vector3,Color)": "complete",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(VertexPositionColor,VertexPositionColor)": "complete",
+    "op_Inequality(VertexPositionColor,VertexPositionColor)": "not-applicable",
+    "Equals(Object)": "complete",
+    "Position": "complete",
+    "Color": "complete",
+    "VertexDeclaration": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-position-color"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+   "status": "complete",
+   "members": {
+    "new(Vector3,Vector2)": "complete",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(VertexPositionTexture,VertexPositionTexture)": "complete",
+    "op_Inequality(VertexPositionTexture,VertexPositionTexture)": "not-applicable",
+    "Equals(Object)": "complete",
+    "Position": "complete",
+    "TextureCoordinate": "complete",
+    "VertexDeclaration": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-position-texture"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+   "status": "complete",
+   "members": {
+    "new(Vector3,Color,Vector2)": "complete",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(VertexPositionColorTexture,VertexPositionColorTexture)": "complete",
+    "op_Inequality(VertexPositionColorTexture,VertexPositionColorTexture)": "not-applicable",
+    "Equals(Object)": "complete",
+    "Position": "complete",
+    "Color": "complete",
+    "TextureCoordinate": "complete",
+    "VertexDeclaration": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-position-color-texture"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+   "status": "complete",
+   "members": {
+    "new(Vector3,Vector3,Vector2)": "complete",
+    "GetHashCode()": "not-applicable",
+    "ToString()": "not-applicable",
+    "op_Equality(VertexPositionNormalTexture,VertexPositionNormalTexture)": "complete",
+    "op_Inequality(VertexPositionNormalTexture,VertexPositionNormalTexture)": "not-applicable",
+    "Equals(Object)": "complete",
+    "Position": "complete",
+    "Normal": "complete",
+    "TextureCoordinate": "complete",
+    "VertexDeclaration": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:vertex-position-normal-texture"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",

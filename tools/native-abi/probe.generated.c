@@ -593,6 +593,17 @@ _Static_assert(sizeof(((CNA_TextureSlotInfo *)0)->reserved) == 7, "CNA_TextureSl
 _Static_assert(offsetof(CNA_TextureSlotInfo, texture) == 16, "CNA_TextureSlotInfo.texture offset");
 _Static_assert(sizeof(((CNA_TextureSlotInfo *)0)->texture) == 8, "CNA_TextureSlotInfo.texture size");
 
+_Static_assert(sizeof(CNA_VertexElement) == 16, "CNA_VertexElement size");
+_Static_assert(_Alignof(CNA_VertexElement) == 4, "CNA_VertexElement alignment");
+_Static_assert(offsetof(CNA_VertexElement, offset) == 0, "CNA_VertexElement.offset offset");
+_Static_assert(sizeof(((CNA_VertexElement *)0)->offset) == 4, "CNA_VertexElement.offset size");
+_Static_assert(offsetof(CNA_VertexElement, format) == 4, "CNA_VertexElement.format offset");
+_Static_assert(sizeof(((CNA_VertexElement *)0)->format) == 4, "CNA_VertexElement.format size");
+_Static_assert(offsetof(CNA_VertexElement, usage) == 8, "CNA_VertexElement.usage offset");
+_Static_assert(sizeof(((CNA_VertexElement *)0)->usage) == 4, "CNA_VertexElement.usage size");
+_Static_assert(offsetof(CNA_VertexElement, usage_index) == 12, "CNA_VertexElement.usage_index offset");
+_Static_assert(sizeof(((CNA_VertexElement *)0)->usage_index) == 4, "CNA_VertexElement.usage_index size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -717,6 +728,8 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_scissor_rectangle)(CNA
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_scissor_rectangle)(CNA_Handle, CNA_Rectangle) = cna_graphics_device_set_scissor_rectangle;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_texture)(CNA_Handle, CNA_ShaderStage, uint32_t, CNA_TextureSlotInfo*) = cna_graphics_device_get_texture;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_texture)(CNA_Handle, CNA_ShaderStage, uint32_t, CNA_Handle) = cna_graphics_device_set_texture;
+CNA_Result (*const cna_lisp_probe_cna_vertex_type_get_stride)(CNA_VertexType, uint32_t*) = cna_vertex_type_get_stride;
+CNA_Result (*const cna_lisp_probe_cna_vertex_type_copy_elements)(CNA_VertexType, CNA_VertexElement*, uint64_t, uint64_t*) = cna_vertex_type_copy_elements;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -1116,5 +1129,34 @@ _Static_assert((int64_t)(CNA_TOUCH_LOCATION_PRESSED) == INT64_C(2), "CNA_TOUCH_L
 _Static_assert((int64_t)(CNA_TOUCH_LOCATION_RELEASED) == INT64_C(1), "CNA_TOUCH_LOCATION_RELEASED value");
 _Static_assert((int64_t)(CNA_TOUCH_MAX_TOUCHES) == INT64_C(8), "CNA_TOUCH_MAX_TOUCHES value");
 _Static_assert((int64_t)(CNA_TRUE) == INT64_C(1), "CNA_TRUE value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_BYTE4) == INT64_C(5), "CNA_VERTEX_ELEMENT_FORMAT_BYTE4 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_COLOR) == INT64_C(4), "CNA_VERTEX_ELEMENT_FORMAT_COLOR value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR2) == INT64_C(10), "CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR2 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR4) == INT64_C(11), "CNA_VERTEX_ELEMENT_FORMAT_HALF_VECTOR4 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_NORMALIZED_SHORT2) == INT64_C(8), "CNA_VERTEX_ELEMENT_FORMAT_NORMALIZED_SHORT2 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_NORMALIZED_SHORT4) == INT64_C(9), "CNA_VERTEX_ELEMENT_FORMAT_NORMALIZED_SHORT4 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_SHORT2) == INT64_C(6), "CNA_VERTEX_ELEMENT_FORMAT_SHORT2 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_SHORT4) == INT64_C(7), "CNA_VERTEX_ELEMENT_FORMAT_SHORT4 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_SINGLE) == INT64_C(0), "CNA_VERTEX_ELEMENT_FORMAT_SINGLE value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_VECTOR2) == INT64_C(1), "CNA_VERTEX_ELEMENT_FORMAT_VECTOR2 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_VECTOR3) == INT64_C(2), "CNA_VERTEX_ELEMENT_FORMAT_VECTOR3 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_FORMAT_VECTOR4) == INT64_C(3), "CNA_VERTEX_ELEMENT_FORMAT_VECTOR4 value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_BINORMAL) == INT64_C(4), "CNA_VERTEX_ELEMENT_USAGE_BINORMAL value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_BLEND_INDICES) == INT64_C(6), "CNA_VERTEX_ELEMENT_USAGE_BLEND_INDICES value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_BLEND_WEIGHT) == INT64_C(7), "CNA_VERTEX_ELEMENT_USAGE_BLEND_WEIGHT value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_COLOR) == INT64_C(1), "CNA_VERTEX_ELEMENT_USAGE_COLOR value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_DEPTH) == INT64_C(8), "CNA_VERTEX_ELEMENT_USAGE_DEPTH value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_FOG) == INT64_C(9), "CNA_VERTEX_ELEMENT_USAGE_FOG value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_NORMAL) == INT64_C(3), "CNA_VERTEX_ELEMENT_USAGE_NORMAL value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_POINT_SIZE) == INT64_C(10), "CNA_VERTEX_ELEMENT_USAGE_POINT_SIZE value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_POSITION) == INT64_C(0), "CNA_VERTEX_ELEMENT_USAGE_POSITION value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_SAMPLE) == INT64_C(11), "CNA_VERTEX_ELEMENT_USAGE_SAMPLE value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_TANGENT) == INT64_C(5), "CNA_VERTEX_ELEMENT_USAGE_TANGENT value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_TESSELLATE_FACTOR) == INT64_C(12), "CNA_VERTEX_ELEMENT_USAGE_TESSELLATE_FACTOR value");
+_Static_assert((int64_t)(CNA_VERTEX_ELEMENT_USAGE_TEXTURE_COORDINATE) == INT64_C(2), "CNA_VERTEX_ELEMENT_USAGE_TEXTURE_COORDINATE value");
+_Static_assert((int64_t)(CNA_VERTEX_TYPE_POSITION_COLOR) == INT64_C(0), "CNA_VERTEX_TYPE_POSITION_COLOR value");
+_Static_assert((int64_t)(CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE) == INT64_C(1), "CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE value");
+_Static_assert((int64_t)(CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE) == INT64_C(4), "CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE value");
+_Static_assert((int64_t)(CNA_VERTEX_TYPE_POSITION_TEXTURE) == INT64_C(6), "CNA_VERTEX_TYPE_POSITION_TEXTURE value");
 
 int cna_lisp_probe_ok(void) { return 1; }

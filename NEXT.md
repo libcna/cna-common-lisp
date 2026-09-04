@@ -83,31 +83,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=92 -->
-<!-- generated:selected members=1765 -->
-<!-- generated:complete types=87 -->
+<!-- generated:selected types=101 -->
+<!-- generated:selected members=1846 -->
+<!-- generated:complete types=96 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1318 -->
+<!-- generated:complete members=1381 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=85 -->
-<!-- generated:not-applicable members=361 -->
+<!-- generated:not-applicable members=379 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 92 types, 1765 members.
+Selection **Foundation 1 and the managed closures**: 101 types, 1846 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **87** |
+| Types complete | **96** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1318** |
+| Members complete | **1381** |
 | Members partial | **1** |
 | Members missing | **85** |
-| Members not applicable | **361** |
+| Members not applicable | **379** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -161,10 +161,13 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **Vertex descriptors and vertex value types**: `VertexElement`,
-   `VertexDeclaration`, `IVertexType`, and the four vertex structs. These unblock
-   the `DrawUserPrimitives` family, which is the largest single block left in
-   `GraphicsDevice`.
+1. **Vertex and index buffers**: `VertexBuffer`, `DynamicVertexBuffer`,
+   `IndexBuffer`, `DynamicIndexBuffer`, `PrimitiveType`, `IndexElementSize`,
+   `SetDataOptions` and `VertexBufferBinding`, which the vertex declarations now
+   in place are the descriptor half of. With them comes the largest single block
+   left in `GraphicsDevice`: `DrawPrimitives`, `DrawIndexedPrimitives`, the four
+   `DrawUserIndexedPrimitives` overloads, the two `DrawUserPrimitives`, and
+   `SetVertexBuffer`/`Indices`.
 2. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
 3. **`System.IO.Stream` and `TitleContainer`**, which unblock

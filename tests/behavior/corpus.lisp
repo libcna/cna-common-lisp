@@ -817,6 +817,52 @@
          (null (gfx:depth-buffer-enable depth))
          (eq :cull-counter-clockwise-face (gfx:cull-mode rasterizer)))))
 
+(defobservation "vertex-element-format.color-is-four-bytes" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.VertexElementFormat"
+  "VertexElementValidator.GetTypeSize answers 4 for Color -- a packed BGRA, not
+   four floats -- and 8 for HalfVector4, because a half is two bytes."
+  (and (= 4 (gfx:vertex-element-format-size :color))
+       (= 8 (gfx:vertex-element-format-size :half-vector4))
+       (= 16 (gfx:vertex-element-format-size :vector4))))
+
+(defobservation "vertex-declaration.stride-is-a-maximum" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
+  "GetVertexStride is the largest offset + size over the elements, not their sum,
+   so a declaration may list its elements in any order."
+  (= 24 (gfx:vertex-stride
+         (make-instance 'gfx:vertex-declaration
+                        :elements (list (gfx:make-vertex-element
+                                         16 :vector2 :texture-coordinate 0)
+                                        (gfx:make-vertex-element 0 :vector3 :position 0))))))
+
+(defobservation "vertex-declaration.standard-strides" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.VertexPositionColor"
+  "The four standard vertex declarations have strides 16, 20, 24 and 32, and
+   VertexPositionNormalTexture puts its texture coordinate at 24."
+  (and (= 16 (gfx:vertex-stride (gfx:vertex-position-color-vertex-declaration)))
+       (= 20 (gfx:vertex-stride (gfx:vertex-position-texture-vertex-declaration)))
+       (= 24 (gfx:vertex-stride (gfx:vertex-position-color-texture-vertex-declaration)))
+       (= 32 (gfx:vertex-stride
+              (gfx:vertex-position-normal-texture-vertex-declaration)))
+       (= 24 (gfx:vertex-element-offset
+              (third (gfx:get-vertex-elements
+                      (gfx:vertex-position-normal-texture-vertex-declaration)))))))
+
+(defobservation "vertex-declaration.usage-and-index-together" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
+  "A usage may repeat when the usage index differs, and may not when it does not."
+  (and (make-instance 'gfx:vertex-declaration
+                      :elements (list (gfx:make-vertex-element 0 :vector2 :texture-coordinate 0)
+                                      (gfx:make-vertex-element 8 :vector2 :texture-coordinate 1)))
+       (handler-case
+           (progn (make-instance 'gfx:vertex-declaration
+                                 :elements (list (gfx:make-vertex-element
+                                                  0 :vector2 :texture-coordinate 0)
+                                                 (gfx:make-vertex-element
+                                                  8 :vector2 :texture-coordinate 0)))
+                  nil)
+         (xna:cna-usage-error () t))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
 
 (defobservation "abi.blend-function-min-and-max-are-swapped" :abi-derived

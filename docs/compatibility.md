@@ -82,31 +82,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=92 -->
-<!-- generated:selected members=1765 -->
-<!-- generated:complete types=87 -->
+<!-- generated:selected types=101 -->
+<!-- generated:selected members=1846 -->
+<!-- generated:complete types=96 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1318 -->
+<!-- generated:complete members=1381 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=85 -->
-<!-- generated:not-applicable members=361 -->
+<!-- generated:not-applicable members=379 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 92 types, 1765 members.
+Selection **Foundation 1 and the managed closures**: 101 types, 1846 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **87** |
+| Types complete | **96** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1318** |
+| Members complete | **1381** |
 | Members partial | **1** |
 | Members missing | **85** |
-| Members not applicable | **361** |
+| Members not applicable | **379** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -169,6 +169,15 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.SamplerState` | **complete** | 14 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SamplerStateCollection` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.Graphics.TextureCollection` | **complete** | 1 | 0 | 0 | 0 |
+| `M.X.F.Graphics.VertexElementFormat` | **complete** | 12 | 0 | 0 | 1 |
+| `M.X.F.Graphics.VertexElementUsage` | **complete** | 13 | 0 | 0 | 1 |
+| `M.X.F.Graphics.VertexElement` | **complete** | 7 | 0 | 0 | 3 |
+| `M.X.F.Graphics.VertexDeclaration` | **complete** | 4 | 0 | 0 | 1 |
+| `M.X.F.Graphics.IVertexType` | **complete** | 1 | 0 | 0 | 0 |
+| `M.X.F.Graphics.VertexPositionColor` | **complete** | 6 | 0 | 0 | 3 |
+| `M.X.F.Graphics.VertexPositionTexture` | **complete** | 6 | 0 | 0 | 3 |
+| `M.X.F.Graphics.VertexPositionColorTexture` | **complete** | 7 | 0 | 0 | 3 |
+| `M.X.F.Graphics.VertexPositionNormalTexture` | **complete** | 7 | 0 | 0 | 3 |
 | `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
@@ -285,10 +294,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=122 -->
-<!-- generated:bound native structs=32 -->
-<!-- generated:bound native struct fields=244 -->
-<!-- generated:bound native constants=391 -->
+<!-- generated:bound native functions=124 -->
+<!-- generated:bound native structs=33 -->
+<!-- generated:bound native struct fields=248 -->
+<!-- generated:bound native constants=420 -->
 <!-- generated:bound native callbacks=4 -->
 <!-- generated:by-value aggregates=3 -->
 <!-- generated:shimmed routes=1 -->
@@ -297,10 +306,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 122 |
-| Bound structs | 32 |
-| Bound struct fields | 244 |
-| Bound constants | 391 |
+| Bound functions | 124 |
+| Bound structs | 33 |
+| Bound struct fields | 248 |
+| Bound constants | 420 |
 | Bound callback typedefs | 4 |
 | By-value aggregates admitted | 3 |
 | Routes proved unbindable, and shimmed | 1 |

@@ -502,6 +502,14 @@
 (defcfun ("cna_graphics_device_set_texture" %graphics-device-set-texture) :uint32
   (graphics-device :uint64) (stage :uint32) (slot :uint32) (texture :uint64))
 
+;;; CNA_Result cna_vertex_type_get_stride(CNA_VertexType type, uint32_t* out_stride)
+(defcfun ("cna_vertex_type_get_stride" %vertex-type-get-stride) :uint32
+  (type :uint32) (out-stride :pointer))
+
+;;; CNA_Result cna_vertex_type_copy_elements(CNA_VertexType type, CNA_VertexElement* destination, uint64_t capacity, uint64_t* out_element_count)
+(defcfun ("cna_vertex_type_copy_elements" %vertex-type-copy-elements) :uint32
+  (type :uint32) (destination :pointer) (capacity :uint64) (out-element-count :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -624,6 +632,8 @@
     ("cna_graphics_device_get_scissor_rectangle" %graphics-device-get-scissor-rectangle :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_set_scissor_rectangle" %graphics-device-set-scissor-rectangle :uint32 (:uint64 :uint64 :uint64) :thread :owner :ownership "none")
     ("cna_graphics_device_get_texture" %graphics-device-get-texture :uint32 (:uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
-    ("cna_graphics_device_set_texture" %graphics-device-set-texture :uint32 (:uint64 :uint32 :uint32 :uint64) :thread :owner :ownership "none"))
+    ("cna_graphics_device_set_texture" %graphics-device-set-texture :uint32 (:uint64 :uint32 :uint32 :uint64) :thread :owner :ownership "none")
+    ("cna_vertex_type_get_stride" %vertex-type-get-stride :uint32 (:uint32 :pointer) :thread :any :ownership "none")
+    ("cna_vertex_type_copy_elements" %vertex-type-copy-elements :uint32 (:uint32 :pointer :uint64 :pointer) :thread :any :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

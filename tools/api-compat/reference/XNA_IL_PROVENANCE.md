@@ -113,8 +113,33 @@ it rather than out of a description:
 * **`GraphicsDevice`'s state setters throw `ArgumentNullException` for a null.**
   Only `SpriteBatch.Begin` treats a null as "use the default".
 
+`src/graphics/vertex-types.lisp` came out of the same assembly, and so did these:
+
+* **`VertexElementValidator.GetTypeSize` is not the obvious table.** `Color` is
+  **4** bytes, because it is a packed BGRA rather than four floats, and
+  `HalfVector4` is **8**, because a half is two bytes. Anything else in the switch
+  answers 0.
+* **`GetVertexStride` is a maximum, not a sum**: the largest `offset + size` over
+  the elements, which is what lets a declaration list them in any order.
+* **`Validate` refuses in a fixed order**, and an element can fail more than one
+  of its checks at once: a non-positive stride (`ArgumentOutOfRangeException`),
+  then a stride that is not a multiple of four, then per element a usage outside
+  the enumeration, an element that starts before zero or ends past the stride, an
+  offset that is not a multiple of four, an earlier element with the same usage
+  *and* usage index, and finally an overlap with any byte an earlier element
+  already claimed. The overlap check is per **byte**, tracked in an array as long
+  as the vertex, so two elements at different offsets still collide when the
+  first is long enough to reach the second.
+* **Both constructors clone the elements**, and `GetVertexElements` answers a
+  fresh array, so neither the caller's array nor the returned one can change the
+  declaration afterwards.
+* **The four standard declarations** are built by each type's own class
+  constructor, with strides 16, 20, 24 and 32. `VertexPositionNormalTexture` puts
+  its texture coordinate at 24, not 16, because a normal is a `Vector3`.
+
 Each of those is a `:xna-derived` observation in `tests/behavior/corpus.lisp` and
-is asserted in `tests/unit/graphics-state.lisp`. **CNA is not the oracle for any
+is asserted in `tests/unit/graphics-state.lisp` and
+`tests/unit/vertex-types.lisp`. **CNA is not the oracle for any
 of them**, and where CNA disagrees -- it does, on both stencil masks -- the
 divergence is recorded in `docs/limitations.md` and pinned by a test rather than
 adopted.

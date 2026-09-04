@@ -219,7 +219,11 @@ that a keyword-taking projection accepts no keywords at all."
    "texture-address-mode"
    (alist-object microsoft.xna.framework.graphics::*texture-address-mode-table*)
    "texture-filter"
-   (alist-object microsoft.xna.framework.graphics::*texture-filter-table*)))
+   (alist-object microsoft.xna.framework.graphics::*texture-filter-table*)
+   "vertex-element-format"
+   (alist-object microsoft.xna.framework.graphics::*vertex-element-format-table*)
+   "vertex-element-usage"
+   (alist-object microsoft.xna.framework.graphics::*vertex-element-usage-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

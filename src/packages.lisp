@@ -293,6 +293,38 @@
    #:sampler-state-point-wrap #:sampler-state-point-clamp
    #:sampler-state-linear-wrap #:sampler-state-linear-clamp
    #:sampler-state-anisotropic-wrap #:sampler-state-anisotropic-clamp
+   ;; --- vertex declarations and the standard vertex types -------------------
+   #:vertex-element-format #:vertex-element-format-value
+   #:vertex-element-format-from-value #:all-vertex-element-format
+   #:vertex-element-usage #:vertex-element-usage-value
+   #:vertex-element-usage-from-value #:all-vertex-element-usage
+   #:vertex-element #:make-vertex-element #:vertex-element-p #:copy-vertex-element
+   #:vertex-element-offset #:vertex-element-vertex-element-format
+   #:vertex-element-vertex-element-usage #:vertex-element-usage-index
+   #:vertex-element-equal #:vertex-element-format-size
+   #:vertex-declaration #:vertex-stride #:get-vertex-elements
+   #:vertex-declaration-of
+   #:vertex-position-color #:make-vertex-position-color #:vertex-position-color-p
+   #:copy-vertex-position-color #:vertex-position-color-position
+   #:vertex-position-color-color #:vertex-position-color-equal
+   #:vertex-position-color-vertex-declaration
+   #:vertex-position-texture #:make-vertex-position-texture
+   #:vertex-position-texture-p #:copy-vertex-position-texture
+   #:vertex-position-texture-position #:vertex-position-texture-texture-coordinate
+   #:vertex-position-texture-equal #:vertex-position-texture-vertex-declaration
+   #:vertex-position-color-texture #:make-vertex-position-color-texture
+   #:vertex-position-color-texture-p #:copy-vertex-position-color-texture
+   #:vertex-position-color-texture-position #:vertex-position-color-texture-color
+   #:vertex-position-color-texture-texture-coordinate
+   #:vertex-position-color-texture-equal
+   #:vertex-position-color-texture-vertex-declaration
+   #:vertex-position-normal-texture #:make-vertex-position-normal-texture
+   #:vertex-position-normal-texture-p #:copy-vertex-position-normal-texture
+   #:vertex-position-normal-texture-position
+   #:vertex-position-normal-texture-normal
+   #:vertex-position-normal-texture-texture-coordinate
+   #:vertex-position-normal-texture-equal
+   #:vertex-position-normal-texture-vertex-declaration
    ;; --- the device's state and texture collections -------------------------
    #:sampler-state-collection #:texture-collection #:item
    #:sampler-states #:vertex-sampler-states #:textures #:vertex-textures
