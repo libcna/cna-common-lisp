@@ -186,16 +186,17 @@ are pure managed and touch no native route:
 * the graphics state objects -- `BlendState`, `DepthStencilState`,
   `RasterizerState`, `SamplerState` and their nine enumerations -- with
   `GraphicsDevice`'s state surface, its four indexed state and texture
-  collections, and `SpriteBatch.Begin`'s state-bearing overloads;
+  collections, and `SpriteBatch.Begin`'s state-bearing overloads. Their values
+  come from the pinned `Microsoft.Xna.Framework.Graphics` assembly; CNA's own
+  presets are cross-checked against them and disagree on two fields, which
+  `docs/limitations.md` records as an upstream defect;
 * the vertex declaration types -- `VertexElement`, `VertexDeclaration`,
   `IVertexType` and the four standard vertex value types -- computed from the
   pinned assembly and cross-checked against CNA's own built-in declarations;
 * the vertex and index buffers, their dynamic subclasses, `VertexBufferBinding`,
   the device's stream and index state, and the four primitive draw calls. The
   draws are submitted and argument-checked; they are not rasterised, because CNA
-  requires a current `Effect` and `Effect` is the next closure. Their values come from the pinned `Microsoft.Xna.Framework.Graphics`
-  assembly; CNA's own presets are cross-checked against them and disagree on two
-  fields, which `docs/limitations.md` records as an upstream defect.
+  requires a current `Effect` and `Effect` is the next closure.
 
 ## 6. Measured status
 
