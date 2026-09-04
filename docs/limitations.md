@@ -213,6 +213,22 @@ A `TextureCube` has no such problem: `cna_texturecube_get_info` reports its edge
 size, so a loaded cube is as complete as a constructed one. The asymmetry is
 CNA's.
 
+Every route that might have closed this was checked against 0.21.0's headers, so
+that the search is not repeated:
+
+| Route | What it answers |
+| --- | --- |
+| `cna_texture_get_info` | level count and surface format |
+| `cna_texture2d_get_storage_info` | whether renderer and CPU-shadow storage are retained |
+| `cna_texture2d_get_encoded_byte_count`, `..._copy_encoded` | encode to a `target_width`/`target_height` the **caller** supplies — they take a size rather than reporting one |
+| `cna_texture2d_get_data` | `out_required_elements` for the requested region: with no rectangle at level 0 that is width × height, the *area*, which does not give back the two factors |
+| `cna_content_manager_get_manifest_entry` | whether an entry has an `.xnb` or a `.cnj`, its relative path and reader names |
+
+The closest miss is `get_data`'s required element count. A texture of 96×96 and
+one of 144×64 are both 9216 elements, so it cannot answer the question, and
+guessing a square from an area would be wrong exactly when it mattered. Closing
+this needs a CNA route, not a cleverer caller.
+
 ### Three members of `ContentManager`, and `Game.Content`'s setter
 
 * **Both constructors** take a `System.IServiceProvider`, which this binding
