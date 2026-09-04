@@ -519,10 +519,11 @@ jobs:
         working-directory: cna-common-lisp
         run: tools/qualification/rasterizer.sh
 
-      # The same consumer story, with pixels. The canary reports the colour it
-      # read back, and this checks it is the one that was cleared -- so the
-      # template is proved from a consumer's position against a renderer that
-      # really rasterises, not only against one that accepts commands.
+      # The same consumer story, with pixels. The canary reports the colours it
+      # read back, and this checks them: the one that was cleared, and the one
+      # its own BasicEffect-drawn triangle painted -- so the template is proved
+      # from a consumer's position against a renderer that really rasterises,
+      # not only against one that accepts commands.
       - name: Isolated consumer, with a pixel it can point at
         working-directory: cna-common-lisp
         run: |
@@ -534,7 +535,18 @@ jobs:
             grep '^CANARY pixels=' consumer.log >&2 || echo "  no pixels line at all" >&2
             exit 1
           }
-          echo "the consumer read the cleared colour back out of the back buffer"
+          # And the primitive it drew through a BasicEffect. A culled triangle
+          # still draws successfully and reads back as the clear colour, so this
+          # has to check the triangle's own colour and not merely that a pixel
+          # was read.
+          grep -q '^CANARY triangle_pixel=255,128,0,255$' consumer.log || {
+            echo "the canary did not read its own triangle back:" >&2
+            grep '^CANARY triangle_pixel=' consumer.log >&2 \
+              || echo "  no triangle_pixel line at all" >&2
+            exit 1
+          }
+          echo "the consumer read the cleared colour, and its own triangle, back out"
+          echo "of the back buffer""
 
       - name: Record what this lane proved
         if: always()
