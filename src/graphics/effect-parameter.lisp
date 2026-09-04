@@ -164,9 +164,6 @@
    (%elements :reader effect-parameter-elements)
    (%structure-members :reader effect-parameter-structure-members)
    (%annotations :reader effect-parameter-annotations)
-   (%elements-handle :initform 0 :accessor %parameter-elements-handle)
-   (%structure-members-handle :initform 0 :accessor %parameter-structure-members-handle)
-   (%annotations-handle :initform 0 :accessor %parameter-annotations-handle)
    (%texture :initform nil :accessor %parameter-texture
              :documentation
              "The TEXTURE-2D last set here, so the getter can answer the object
@@ -247,6 +244,7 @@ followed forever.")
             rather than followed."
            :format-arguments (list +effect-parameter-nesting-limit+)))
   (let ((parameter (make-instance 'effect-parameter :handle handle :effect effect)))
+    (%retain-native-part effect handle #'cna-lisp.internal.ffi::%effect-parameter-destroy)
     (%adopt-view parameter effect)
     (setf (slot-value parameter '%name)
           (cna-lisp.internal:count-then-copy-string
@@ -263,25 +261,26 @@ followed forever.")
              (cna-lisp.internal.ffi::%effect-parameter-copy-semantic handle buffer capacity out))
            "effect-parameter-semantic"))
     (%read-parameter-info handle parameter)
-    (macrolet ((sub-collection (route handle-accessor slot)
+    (macrolet ((sub-collection (route slot)
                  `(cffi:with-foreign-object (out :uint64)
                     (cna-lisp.internal:check-result
                      (,route handle out) "effect-parameter" :object-type 'effect-parameter)
-                    (let ((child (cffi:mem-ref out :uint64)))
-                      (setf (,handle-accessor parameter) child
-                            (slot-value parameter ',slot)
+                    (let ((child (%retain-native-part
+                                  effect (cffi:mem-ref out :uint64)
+                                  #'cna-lisp.internal.ffi::%effect-parameter-collection-destroy)))
+                      (setf (slot-value parameter ',slot)
                             (%build-parameter-collection child effect (1+ depth)))))))
-      (sub-collection cna-lisp.internal.ffi::%effect-parameter-get-elements
-                      %parameter-elements-handle %elements)
+      (sub-collection cna-lisp.internal.ffi::%effect-parameter-get-elements %elements)
       (sub-collection cna-lisp.internal.ffi::%effect-parameter-get-structure-members
-                      %parameter-structure-members-handle %structure-members))
+                      %structure-members))
     (cffi:with-foreign-object (out :uint64)
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%effect-parameter-get-annotations handle out)
        "effect-parameter-annotations" :object-type 'effect-parameter)
-      (let ((child (cffi:mem-ref out :uint64)))
-        (setf (%parameter-annotations-handle parameter) child
-              (slot-value parameter '%annotations)
+      (let ((child (%retain-native-part
+                    effect (cffi:mem-ref out :uint64)
+                    #'cna-lisp.internal.ffi::%effect-annotation-collection-destroy)))
+        (setf (slot-value parameter '%annotations)
               (%build-annotation-collection child effect))))
     parameter))
 
@@ -302,25 +301,6 @@ followed forever.")
           (setf (aref items index)
                 (%make-parameter (cffi:mem-ref out :uint64) effect depth))))
       (make-instance 'effect-parameter-collection :items items))))
-
-(defun %destroy-parameter-collection (collection)
-  "Give back every handle under a parameter collection, leaves first."
-  (when collection
-    (loop for parameter across (%collection-items collection)
-          do (loop for annotation across (%collection-items
-                                          (effect-parameter-annotations parameter))
-                   do (%destroy-view (cna-lisp.internal:handle-of annotation)
-                                     #'cna-lisp.internal.ffi::%effect-annotation-destroy))
-             (%destroy-view (%parameter-annotations-handle parameter)
-                            #'cna-lisp.internal.ffi::%effect-annotation-collection-destroy)
-             (%destroy-parameter-collection (effect-parameter-elements parameter))
-             (%destroy-view (%parameter-elements-handle parameter)
-                            #'cna-lisp.internal.ffi::%effect-parameter-collection-destroy)
-             (%destroy-parameter-collection (effect-parameter-structure-members parameter))
-             (%destroy-view (%parameter-structure-members-handle parameter)
-                            #'cna-lisp.internal.ffi::%effect-parameter-collection-destroy)
-             (%destroy-view (cna-lisp.internal:handle-of parameter)
-                            #'cna-lisp.internal.ffi::%effect-parameter-destroy))))
 
 ;;; --- the value surface -----------------------------------------------------
 

@@ -469,8 +469,10 @@
 (defmacro with-standalone-parameters ((collection effect &rest specs) &body body)
   "Build a CNA parameter collection by hand and project it, for BODY.
 
-Each SPEC is (name semantic class type). The handles are given back afterwards,
-in the order CNA expects."
+Each SPEC is (name semantic class type). The element views the projection takes
+go onto EFFECT's own ledger and are released when it is disposed, so the only
+handle this has to give back is the collection it created itself -- and it does
+that *after* the effect, because CNA wants the elements gone first."
   (let ((handle (gensym "HANDLE")))
     `(let ((,handle 0) (,collection nil))
        (unwind-protect
@@ -485,9 +487,10 @@ in the order CNA expects."
               (setf ,collection (gfx::%build-parameter-collection ,handle ,effect 0))
               ,@body)
          (progn
-           (when ,collection (gfx::%destroy-parameter-collection ,collection))
+           (xna:dispose ,effect)
            (unless (zerop ,handle)
-             (ffi::%effect-parameter-collection-destroy ,handle)))))))
+             (int:check-result (ffi::%effect-parameter-collection-destroy ,handle)
+                               "parameter collection")))))))
 
 (defun add-standalone-parameter (collection name semantic parameter-class parameter-type)
   "Add one parameter to a hand-built CNA collection, and give its handle back.
@@ -618,3 +621,51 @@ one CNA is still owed when the game shuts down."
                    (fail ":colour was accepted as an effect value type"))
           (xna:cna-usage-error (condition)
             (is (search "value type" (princ-to-string condition)))))))))
+
+;;; --- construction is all or nothing ---------------------------------------------------
+;;;
+;;; Adopting the effect's handle registers it as a child of the game, and
+;;; building its graph then takes a further handle for every technique, pass,
+;;; parameter, annotation and light. If one of those routes fails, MAKE-INSTANCE
+;;; signals and the caller never receives an object -- so anything already taken
+;;; has to be given back inside the constructor, because after it there is
+;;; nothing left that could.
+;;;
+;;; The failure is injected rather than waited for: %BUILD-EFFECT-EXTRAS is the
+;;; last step, so a subclass whose method signals leaves a fully built graph, an
+;;; adopted handle and a registered child behind -- the worst case, and the one
+;;; whose leak would only surface later, as a game that will not shut down.
+
+(defclass exploding-effect (gfx:basic-effect) ())
+
+(define-condition effect-construction-blew-up (error) ())
+
+(defmethod gfx::%build-effect-extras ((effect exploding-effect))
+  (call-next-method)
+  (error 'effect-construction-blew-up))
+
+(define-native-test a-failed-effect-construction-leaves-nothing-behind
+  ;; The assertion that matters is not in this test's body: it is that
+  ;; WITH-BUFFER-GAME can still dispose the game afterwards. CNA refuses to
+  ;; destroy a game while any child handle is alive, so a leak here would fail
+  ;; the fixture's teardown -- and, before the rollback existed, it did.
+  (let ((signalled nil) (children-after nil))
+    (with-buffer-game (game)
+      (let ((device (xna:graphics-device game)))
+        (handler-case (make-instance 'exploding-effect :graphics-device device)
+          (effect-construction-blew-up () (setf signalled t)))
+        ;; The game must not be left owning a live effect it was never handed.
+        (setf children-after
+              (count-if (lambda (child)
+                          (and (typep child 'gfx:effect)
+                               (not (xna:disposed-p child))))
+                        (int:children-of game)))
+        ;; And the device is still usable: a rollback that half-tore-down the
+        ;; native side would show up here rather than at teardown.
+        (let ((effect (keep game (make-instance 'gfx:basic-effect
+                                                :graphics-device device))))
+          (is (plusp (gfx:collection-count (gfx:effect-techniques effect)))))))
+    (is-true signalled "the constructor did not signal")
+    (is (= 0 children-after)
+        "the game was left owning ~d live effect(s) it never handed out"
+        children-after)))

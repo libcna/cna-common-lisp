@@ -308,6 +308,8 @@ generic functions those interfaces became answer for it.
         (let ((light (make-instance 'directional-light
                                     :handle (cffi:mem-ref out :uint64)
                                     :effect effect :index index)))
+          (%retain-native-part effect (cna-lisp.internal:handle-of light)
+                               #'cna-lisp.internal.ffi::%directional-light-destroy)
           (%adopt-view light effect)
           (setf (aref lights index) light))))
     (setf (%basic-effect-lights effect) lights)))
@@ -435,11 +437,8 @@ object that names it, so this remembers rather than invents."))
   (setf (%basic-effect-texture effect) texture))
 
 (defmethod cna-lisp.internal:destroy-native :before ((effect basic-effect))
-  ;; The three light views are owned handles like every other view, and CNA
-  ;; refuses to destroy the game while one is alive.
-  (loop for light across (%basic-effect-lights effect)
-        do (%destroy-view (cna-lisp.internal:handle-of light)
-                          #'cna-lisp.internal.ffi::%directional-light-destroy))
+  ;; The handles themselves are on the effect's ledger, released with everything
+  ;; else; this only drops the Lisp objects that named them.
   (setf (%basic-effect-lights effect) #()))
 
 (defmethod clone-effect ((effect basic-effect))

@@ -84,6 +84,40 @@ NATIVE-OBJECT so that using one after its effect is gone refuses rather than
 reaching a reissued handle, and none of them is disposable, because none of
 XNA's is."))
 
+(defun %retain-native-part (effect handle destroyer)
+  "Record an owned CNA handle EFFECT must give back, and answer it.
+
+Every handle the effect takes goes through here, newest first, and DESTROY-NATIVE
+walks the same list. That is the point: destruction used to be a second copy of
+the construction walk, and a view kind added to one and forgotten in the other
+would leak a handle CNA is still owed -- which shows up much later as a game that
+will not shut down, nowhere near the effect that leaked it.
+
+Newest-first is also leaf-first, because a collection handle is always taken
+before the elements read out of it."
+  (push (cons handle destroyer) (%effect-native-parts effect))
+  handle)
+
+(defun %release-native-parts (effect &key quietly)
+  "Give every recorded handle back, newest first.
+
+Answers the first native failure rather than the last, and keeps going after it:
+a handle that could not be released is bad news, but stopping would leave every
+handle behind it alive as well. QUIETLY is for the construction rollback, where a
+failure here must not mask the one that caused the rollback."
+  (let ((first-failure nil))
+    (dolist (part (%effect-native-parts effect))
+      (destructuring-bind (handle . destroyer) part
+        (unless (zerop handle)
+          (handler-case
+              (unless quietly
+                (cna-lisp.internal:check-result
+                 (funcall destroyer handle) "dispose" :object-type (type-of effect)))
+            (error (condition) (unless first-failure (setf first-failure condition))))
+          (when quietly (ignore-errors (funcall destroyer handle))))))
+    (setf (%effect-native-parts effect) '())
+    first-failure))
+
 (defun %adopt-view (view effect)
   "Give VIEW the effect's thread and generation without making it a child.
 
@@ -219,6 +253,7 @@ metadata is read once, when the effect's graph is built."))
 
 (defun %make-annotation (handle effect)
   (let ((annotation (make-instance 'effect-annotation :handle handle :effect effect)))
+    (%retain-native-part effect handle #'cna-lisp.internal.ffi::%effect-annotation-destroy)
     (%adopt-view annotation effect)
     (setf (slot-value annotation '%name)
           (cna-lisp.internal:count-then-copy-string
@@ -252,7 +287,7 @@ metadata is read once, when the effect's graph is built."))
             collection-handle index out)
            "effect annotations" :object-type 'effect-annotation-collection)
           (setf (aref items index) (%make-annotation (cffi:mem-ref out :uint64) effect))))
-      (values (make-instance 'effect-annotation-collection :items items) collection-handle))))
+      (make-instance 'effect-annotation-collection :items items))))
 
 ;;; The eight readers. Each is XNA's GetValue<T>() on an annotation; CNA has one
 ;;; route per type, so there is nothing to dispatch on and nothing to guess.
@@ -319,7 +354,7 @@ metadata is read once, when the effect's graph is built."))
 (defclass effect-pass (%effect-view)
   ((%name :reader effect-pass-name)
    (%annotations :reader effect-pass-annotations)
-   (%annotations-handle :initform 0 :accessor %pass-annotations-handle))
+   )
   (:documentation
    "Microsoft.Xna.Framework.Graphics.EffectPass.
 
@@ -354,6 +389,7 @@ hostile. See docs/naming.md."))
 
 (defun %make-pass (handle effect)
   (let ((pass (make-instance 'effect-pass :handle handle :effect effect)))
+    (%retain-native-part effect handle #'cna-lisp.internal.ffi::%effect-pass-destroy)
     (%adopt-view pass effect)
     (setf (slot-value pass '%name)
           (%view-name handle #'cna-lisp.internal.ffi::%effect-pass-get-name-byte-count
@@ -362,9 +398,11 @@ hostile. See docs/naming.md."))
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%effect-pass-get-annotations handle out)
        "effect-pass-annotations" :object-type 'effect-pass)
-      (let ((collection-handle (cffi:mem-ref out :uint64)))
-        (setf (%pass-annotations-handle pass) collection-handle
-              (slot-value pass '%annotations)
+      (let ((collection-handle
+              (%retain-native-part
+               effect (cffi:mem-ref out :uint64)
+               #'cna-lisp.internal.ffi::%effect-annotation-collection-destroy)))
+        (setf (slot-value pass '%annotations)
               (%build-annotation-collection collection-handle effect))))
     pass))
 
@@ -375,8 +413,7 @@ hostile. See docs/naming.md."))
    (%identity :reader %technique-identity)
    (%passes :reader effect-technique-passes)
    (%annotations :reader effect-technique-annotations)
-   (%passes-handle :initform 0 :accessor %technique-passes-handle)
-   (%annotations-handle :initform 0 :accessor %technique-annotations-handle))
+   )
   (:documentation
    "Microsoft.Xna.Framework.Graphics.EffectTechnique."))
 
@@ -400,6 +437,7 @@ object that already stands for it."
 
 (defun %make-technique (handle effect)
   (let ((technique (make-instance 'effect-technique :handle handle :effect effect)))
+    (%retain-native-part effect handle #'cna-lisp.internal.ffi::%effect-technique-destroy)
     (%adopt-view technique effect)
     (setf (slot-value technique '%name)
           (%view-name handle #'cna-lisp.internal.ffi::%effect-technique-get-name-byte-count
@@ -410,8 +448,10 @@ object that already stands for it."
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%effect-technique-get-passes handle out)
        "effect-technique-passes" :object-type 'effect-technique)
-      (let ((passes-handle (cffi:mem-ref out :uint64)))
-        (setf (%technique-passes-handle technique) passes-handle)
+      (let ((passes-handle
+              (%retain-native-part
+               effect (cffi:mem-ref out :uint64)
+               #'cna-lisp.internal.ffi::%effect-pass-collection-destroy)))
         (let ((count (cffi:with-foreign-object (n :uint64)
                        (cna-lisp.internal:check-result
                         (cna-lisp.internal.ffi::%effect-pass-collection-get-count
@@ -431,9 +471,11 @@ object that already stands for it."
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%effect-technique-get-annotations handle out)
        "effect-technique-annotations" :object-type 'effect-technique)
-      (let ((collection-handle (cffi:mem-ref out :uint64)))
-        (setf (%technique-annotations-handle technique) collection-handle
-              (slot-value technique '%annotations)
+      (let ((collection-handle
+              (%retain-native-part
+               effect (cffi:mem-ref out :uint64)
+               #'cna-lisp.internal.ffi::%effect-annotation-collection-destroy)))
+        (setf (slot-value technique '%annotations)
               (%build-annotation-collection collection-handle effect))))
     technique))
 
@@ -450,8 +492,10 @@ CNA_Matrix* and need nothing."
   ((%techniques :reader effect-techniques)
    (%parameters :reader effect-parameters)
    (%current-technique :initform nil)
-   (%techniques-handle :initform 0 :accessor %effect-techniques-handle)
-   (%parameters-handle :initform 0 :accessor %effect-parameters-handle))
+   (%native-parts :initform '() :accessor %effect-native-parts
+                  :documentation
+                  "Every owned CNA handle this effect must give back, newest
+first. See %RETAIN-NATIVE-PART."))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.Effect.
 
@@ -486,8 +530,10 @@ docs/limitations.md has the consequences, the largest of which is that no
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%effect-get-techniques handle out)
        "effect techniques" :object-type 'effect)
-      (let ((techniques-handle (cffi:mem-ref out :uint64)))
-        (setf (%effect-techniques-handle effect) techniques-handle)
+      (let ((techniques-handle
+              (%retain-native-part
+               effect (cffi:mem-ref out :uint64)
+               #'cna-lisp.internal.ffi::%effect-technique-collection-destroy)))
         (let ((count (cffi:with-foreign-object (n :uint64)
                        (cna-lisp.internal:check-result
                         (cna-lisp.internal.ffi::%effect-technique-collection-get-count
@@ -508,9 +554,11 @@ docs/limitations.md has the consequences, the largest of which is that no
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%effect-get-parameters handle out)
        "effect parameters" :object-type 'effect)
-      (let ((parameters-handle (cffi:mem-ref out :uint64)))
-        (setf (%effect-parameters-handle effect) parameters-handle
-              (slot-value effect '%parameters)
+      (let ((parameters-handle
+              (%retain-native-part
+               effect (cffi:mem-ref out :uint64)
+               #'cna-lisp.internal.ffi::%effect-parameter-collection-destroy)))
+        (setf (slot-value effect '%parameters)
               (%build-parameter-collection parameters-handle effect 0))))
     ;; XNA's Effect sets CurrentTechnique to the first technique when it builds
     ;; its graph; CNA has already done the same, so the object is looked up
@@ -533,8 +581,13 @@ docs/limitations.md has the consequences, the largest of which is that no
              (find identity (%collection-items (slot-value effect '%techniques))
                    :key #'%technique-identity))
         ;; The handle CNA just issued is a fresh owned view; the object that
-        ;; stands for the technique already exists, so this one is given back.
-        (cna-lisp.internal.ffi::%effect-technique-destroy handle)))))
+        ;; stands for the technique already exists, so this one is given straight
+        ;; back -- and the result is checked, because a view that could not be
+        ;; released is a handle CNA is still owed, and every one of those turns
+        ;; into a game that will not shut down.
+        (cna-lisp.internal:check-result
+         (cna-lisp.internal.ffi::%effect-technique-destroy handle)
+         "effect-current-technique" :object-type (type-of effect))))))
 
 (defgeneric effect-current-technique (effect)
   (:documentation "Effect.CurrentTechnique."))
@@ -662,19 +715,42 @@ ArgumentException, and the code is checked before the device is."
                                        &key graphics-device effect-code
                                             %adopted-handle %adopted-game
                                        &allow-other-keys)
-  (if %adopted-handle
-      ;; The clone path: the handle exists, and re-running a create route would
-      ;; make a second effect rather than adopt the one CNA just cloned.
-      (%effect-adopt effect %adopted-game %adopted-handle)
-      (progn
-        (%validate-effect-code effect effect-code graphics-device)
-        (multiple-value-bind (device-handle game)
-            (%effect-device-handle graphics-device "make-instance 'effect")
-          (%effect-adopt effect game
-                         (%create-effect-handle effect device-handle effect-code)))
-        (setf (%resource-device effect) graphics-device)))
-  (%build-effect-graph effect)
-  (%build-effect-extras effect))
+  ;; Construction is all-or-nothing. Adopting the handle registers the effect as
+  ;; a child of the game, and building the graph then takes a further handle for
+  ;; every technique, pass, parameter, annotation and light. If any of those
+  ;; routes fails, MAKE-INSTANCE signals and the caller never receives an object
+  ;; -- so without a rollback the effect would stay registered, and its views
+  ;; would stay alive, with nothing left that could dispose them. That is the
+  ;; failure the Game constructor already guards against, in the same shape.
+  (let ((adopted nil) (committed nil))
+    (unwind-protect
+         (progn
+           (if %adopted-handle
+               ;; The clone path: the handle exists, and re-running a create
+               ;; route would make a second effect rather than adopt the one CNA
+               ;; just cloned.
+               (%effect-adopt effect %adopted-game %adopted-handle)
+               (progn
+                 (%validate-effect-code effect effect-code graphics-device)
+                 (multiple-value-bind (device-handle game)
+                     (%effect-device-handle graphics-device "make-instance 'effect")
+                   (%effect-adopt effect game
+                                  (%create-effect-handle effect device-handle
+                                                         effect-code)))
+                 (setf (%resource-device effect) graphics-device)))
+           (setf adopted t)
+           (%build-effect-graph effect)
+           (%build-effect-extras effect)
+           (setf committed t))
+      (unless committed
+        ;; Give back whatever was taken, in the order CNA wants, and then the
+        ;; effect itself. Quietly: a failure here must not mask the one that
+        ;; caused the rollback.
+        (%release-native-parts effect :quietly t)
+        (when adopted
+          (ignore-errors
+           (cna-lisp.internal.ffi::%effect-destroy (cna-lisp.internal:handle-of effect)))
+          (cna-lisp.internal:invalidate effect))))))
 
 (defgeneric clone-effect (effect)
   (:documentation
@@ -698,38 +774,20 @@ consumers use unqualified."))
 
 ;;; --- destruction -----------------------------------------------------------
 
-(defun %destroy-view (handle route)
-  (unless (zerop handle)
-    (funcall route handle)))
-
 (defmethod cna-lisp.internal:destroy-native ((effect effect))
-  ;; Leaves first. Every one of these is an owned CNA handle, and CNA refuses to
-  ;; destroy the game while any of them is alive -- which is exactly the failure
-  ;; a consumer would see, on game shutdown, far from the effect that leaked it.
-  (flet ((views (collection) (if collection (%collection-items collection) #())))
-    (loop for technique across (views (slot-value effect '%techniques))
-          do (loop for pass across (views (effect-technique-passes technique))
-                   do (loop for annotation across (views (effect-pass-annotations pass))
-                            do (%destroy-view (cna-lisp.internal:handle-of annotation)
-                                              #'cna-lisp.internal.ffi::%effect-annotation-destroy))
-                      (%destroy-view (%pass-annotations-handle pass)
-                                     #'cna-lisp.internal.ffi::%effect-annotation-collection-destroy)
-                      (%destroy-view (cna-lisp.internal:handle-of pass)
-                                     #'cna-lisp.internal.ffi::%effect-pass-destroy))
-             (%destroy-view (%technique-passes-handle technique)
-                            #'cna-lisp.internal.ffi::%effect-pass-collection-destroy)
-             (loop for annotation across (views (effect-technique-annotations technique))
-                   do (%destroy-view (cna-lisp.internal:handle-of annotation)
-                                     #'cna-lisp.internal.ffi::%effect-annotation-destroy))
-             (%destroy-view (%technique-annotations-handle technique)
-                            #'cna-lisp.internal.ffi::%effect-annotation-collection-destroy)
-             (%destroy-view (cna-lisp.internal:handle-of technique)
-                            #'cna-lisp.internal.ffi::%effect-technique-destroy))
-    (%destroy-view (%effect-techniques-handle effect)
-                   #'cna-lisp.internal.ffi::%effect-technique-collection-destroy)
-    (%destroy-parameter-collection (slot-value effect '%parameters))
-    (%destroy-view (%effect-parameters-handle effect)
-                   #'cna-lisp.internal.ffi::%effect-parameter-collection-destroy))
-  (cna-lisp.internal:check-result
-   (cna-lisp.internal.ffi::%effect-destroy (cna-lisp.internal:handle-of effect))
-   "dispose" :object-type (type-of effect)))
+  ;; The ledger, newest first, which is leaf first. Every handle in it is one CNA
+  ;; is owed, and CNA refuses to destroy the game while any of them is alive --
+  ;; which is exactly the failure a consumer would otherwise see, on game
+  ;; shutdown, nowhere near the effect that leaked it.
+  ;;
+  ;; A native failure releasing one part is *reported*, not swallowed, and the
+  ;; rest are released anyway: stopping at the first would leave everything
+  ;; behind it alive too, and turn one diagnosable failure into a shutdown that
+  ;; fails for a different reason later.
+  (let ((failure (%release-native-parts effect)))
+    (handler-case
+        (cna-lisp.internal:check-result
+         (cna-lisp.internal.ffi::%effect-destroy (cna-lisp.internal:handle-of effect))
+         "dispose" :object-type (type-of effect))
+      (error (condition) (unless failure (setf failure condition))))
+    (when failure (error failure))))
