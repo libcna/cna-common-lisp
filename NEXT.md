@@ -61,6 +61,9 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
+| Construction atomicity | an exploding subclass of twelve resource families, plus `Game` and `GraphicsDeviceManager`, leaves no live child and lets the game shut down |
+| Content transaction | a load made to fail at the texture's storage query, the font's info, its glyph table, or the **cache insertion** gives every handle back exactly once |
+| Render-target cross-check | six ways a remembered binding can drift are each refused; an unmutated one is accepted first |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
 -- **the SOFTWARE lane is what does**, and it needs no display: a CPU rasteriser
@@ -68,7 +71,8 @@ clears to CornflowerBlue and the back buffer reads back (100, 149, 237, 255), a
 SpriteBatch draw lands a known texture's texels where its destination says, a
 BasicEffect pass followed by one DrawUserPrimitives triangle covers exactly the
 pixels its geometry covers, and `DrawString` lays a string out glyph by glyph --
-each from its own atlas cell at its own advanced position, across a line break.
+each from its own atlas cell at its own advanced position, across a line break,
+and a `SaveAsPng`/`FromStream` round trip returns every texel of a known texture.
 Neither lane is a claim about a physical monitor. `docs/qualification.md` defines
 `REFERENCE_QUALIFIED`, `CI_TESTED`, `HEADLESS` and `NOT RUN`, and no claim here
 may collapse two of them.
@@ -290,14 +294,21 @@ the graph after each closure instead of following this list once it has moved.
 
   What is missing is a library anybody can build. `cna:next` still calls
   `StoragePaths::SetIsolatedStorageRootOverride`; the sharp-runtime commit adding
-  it, `c419f477`, is on **no remote branch**; `sharp-runtime:next` is still
-  `bd282d101`. A 0.22.0 library exists on this machine only because the
-  unpublished commit is here, and qualifying against it would produce evidence CI
-  could not reproduce. **Do not admit 0.22.0 on local evidence.** The thing that
-  unblocks it is `sharp-runtime:next` catching up; re-measure with
-  `git branch -r --contains c419f477`, and if that is no longer empty, build a
-  HEADLESS and a SOFTWARE 0.22.0 and run the whole gate set before touching the
-  admitted set.
+  it, `c419f477`, is on **no remote branch**. A 0.22.0 library exists on this
+  machine only because the unpublished commit is here, and qualifying against it
+  would produce evidence CI could not reproduce. **Do not admit 0.22.0 on local
+  evidence.**
+
+  Re-measured after fetching both remotes, and **unchanged in every part that
+  matters**: `cna:next` has moved on to `34c5a9d4a` and *still* makes that call,
+  in `modules/storage/src/StorageDevice.cpp`, twice;
+  `sharp-runtime:next` is still `bd282d101`; and
+  `git branch -r --contains c419f477` is still **empty**. Those three commands are
+  the whole re-check, and the last one is the cheapest. If it ever prints a
+  branch, build a HEADLESS and a SOFTWARE 0.22.0 and run the whole gate set before
+  touching the admitted set -- which lives in `src/internal/abi-gate.lisp` for the
+  runtime and in the manifest's `admitted_abi_versions` for the generator, and both
+  have to move together.
 
   Two practical notes for reproducing the 0.21.0 gates in the meantime: point
   `CNA_ABI_BASELINE` at a 0.21.0 baseline -- `cnanext 2b0c374a1` is the last

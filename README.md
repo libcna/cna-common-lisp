@@ -125,7 +125,16 @@ stubs:
   `SpriteFont` obtainable -- `(load-asset content 'gfx:sprite-font "font")` is
   XNA's `Load<SpriteFont>`, with the type as an argument because Common Lisp can
   name one where C cannot. Texture2D, TextureCube and SpriteFont are the asset
-  types CNA has a route for, and `LOADABLE-ASSET-TYPES` says so;
+  types CNA has a route for, and `LOADABLE-ASSET-TYPES` says so. The manager
+  keeps XNA's two collections, so a name loaded twice answers the same object and
+  `Unload` disposes what it loaded -- in the order they have to go, a `SpriteFont`
+  before the atlas it draws from;
+* **`System.IO.Stream` as an ordinary Common Lisp binary stream**, which is what
+  a language with its own equivalent abstraction should do with a BCL type that is
+  not even in the profile's contract. `Texture2D.FromStream`, `SaveAsPng` and
+  `SaveAsJpeg` take one from `OPEN`, and `TitleContainer.OpenStream` answers one --
+  with XNA's own path validation, transcribed from the assembly down to the seven
+  characters its `badCharacters` array holds;
 * the **component engine**: `GameComponent`, `DrawableGameComponent`,
   `Game.Components` and the collection's two events. A component's behaviour is
   its CLOS methods on the same generic functions a `Game` overrides, and CNA's own
