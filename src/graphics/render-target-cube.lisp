@@ -93,38 +93,37 @@ and its seven-argument overload, distinguished by keywords rather than by arity.
            (cna-lisp.internal.ffi::%render-target-cube-create device-handle info out)
            "make-instance 'render-target-cube" :object-type 'render-target-cube)
           (let ((handle (cffi:mem-ref out :uint64)))
-            (cna-lisp.internal:with-native-rollback (record)
-              (funcall record
-                       (lambda () (cna-lisp.internal.ffi::%render-target-destroy handle)))
-              (multiple-value-bind (granted-width granted-height levels granted-format
-                                    granted-depth granted-samples granted-usage)
-                  (%render-target-info handle "make-instance 'render-target-cube")
-                ;; A cube is square by construction; CNA reports the face as a
-                ;; width and a height and they must agree, so this checks rather
-                ;; than picking one and hoping.
-                (unless (= granted-width granted-height)
-                  (error 'microsoft.xna.framework:cna-internal-error
-                         :operation "make-instance 'render-target-cube"
-                         :object-type 'render-target-cube
-                         :format-control
-                         "CNA granted a cube render target whose face is ~dx~d. A cube's ~
-                          faces are square by construction, so this binding will not ~
-                          guess which of the two is the edge."
-                         :format-arguments (list granted-width granted-height)))
-                (setf (cna-lisp.internal:handle-of target) handle
-                      (slot-value target 'cna-lisp.internal::owner) game
-                      (slot-value target 'cna-lisp.internal::owner-thread)
-                      (cna-lisp.internal:owner-thread-of game)
-                      (slot-value target '%size) granted-width
-                      (slot-value target '%level-count) levels
-                      (slot-value target '%format) granted-format
-                      (slot-value target '%depth-stencil-format) granted-depth
-                      (slot-value target '%multi-sample-count) granted-samples
-                      (slot-value target '%usage) granted-usage)
-                (cna-lisp.internal:register-child game target)
-                (funcall record
-                         (lambda () (cna-lisp.internal:unregister-child game target)))
-                target))))))))
+            (cna-lisp.internal:record-construction-undo
+             target (lambda () (cna-lisp.internal.ffi::%render-target-destroy handle)))
+            (multiple-value-bind (granted-width granted-height levels granted-format
+                                  granted-depth granted-samples granted-usage)
+                (%render-target-info handle "make-instance 'render-target-cube")
+              ;; A cube is square by construction; CNA reports the face as a
+              ;; width and a height and they must agree, so this checks rather
+              ;; than picking one and hoping.
+              (unless (= granted-width granted-height)
+                (error 'microsoft.xna.framework:cna-internal-error
+                       :operation "make-instance 'render-target-cube"
+                       :object-type 'render-target-cube
+                       :format-control
+                       "CNA granted a cube render target whose face is ~dx~d. A cube's ~
+                        faces are square by construction, so this binding will not ~
+                        guess which of the two is the edge."
+                       :format-arguments (list granted-width granted-height)))
+              (setf (cna-lisp.internal:handle-of target) handle
+                    (slot-value target 'cna-lisp.internal::owner) game
+                    (slot-value target 'cna-lisp.internal::owner-thread)
+                    (cna-lisp.internal:owner-thread-of game)
+                    (slot-value target '%size) granted-width
+                    (slot-value target '%level-count) levels
+                    (slot-value target '%format) granted-format
+                    (slot-value target '%depth-stencil-format) granted-depth
+                    (slot-value target '%multi-sample-count) granted-samples
+                    (slot-value target '%usage) granted-usage)
+              (cna-lisp.internal:register-child game target)
+              (cna-lisp.internal:record-construction-undo
+               target (lambda () (cna-lisp.internal:invalidate target)))
+              target)))))))
 
 (defmethod cna-lisp.internal:destroy-native ((target render-target-cube))
   ;; The render-target destroy, not TextureCube's: reaching the base class's would

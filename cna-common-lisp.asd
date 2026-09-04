@@ -167,6 +167,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/content")
    ;; The atomicity proofs need the content fixture's root and asset name.
    (:file "native/content-atomicity")
+   ;; A subclass initializer runs after every base one, including the one that
+   ;; took the handle; this proves that costs nothing.
+   (:file "native/construction-atomicity")
    (:file "native/rasterization")
    (:file "native/graphics-resource")
    (:file "native/keyboard")

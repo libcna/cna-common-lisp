@@ -145,48 +145,49 @@ its own, and therefore takes neither of these arguments."
           (microsoft.xna.framework.graphics::device-handle-for-child
            graphics-device "make-instance 'content-manager"))
         (game (cna-lisp.internal:owner-of graphics-device)))
-    (cna-lisp.internal:with-native-rollback (record)
-      (let ((handle
-              (cffi:with-foreign-object
-                  (info '(:struct cna-lisp.internal.ffi::cna-content-manager-create-info))
-                (cffi:foreign-funcall
-                 "memset" :pointer info :int 0
-                 :size cna-lisp.internal.ffi::+sizeof-cna-content-manager-create-info+ :void)
-                (macrolet ((slot (name)
-                             `(cffi:foreign-slot-value
-                               info
-                               '(:struct cna-lisp.internal.ffi::cna-content-manager-create-info)
-                               ',name)))
-                  (setf (slot cna-lisp.internal.ffi::struct-size)
-                        cna-lisp.internal.ffi::+sizeof-cna-content-manager-create-info+
-                        (slot cna-lisp.internal.ffi::struct-version) 1
-                        (slot cna-lisp.internal.ffi::reserved) 0))
-                (cna-lisp.internal:with-utf8-view (data length root-directory)
-                  (%write-string-view
-                   (cffi:foreign-slot-pointer
-                    info '(:struct cna-lisp.internal.ffi::cna-content-manager-create-info)
-                    'cna-lisp.internal.ffi::root-directory)
-                   data length)
-                  (cffi:with-foreign-object (out :uint64)
-                    (cna-lisp.internal:check-result
-                     (cna-lisp.internal.ffi::%content-manager-create device-handle info out)
-                     "make-instance 'content-manager" :object-type 'content-manager)
-                    (cffi:mem-ref out :uint64))))))
-        (funcall record
-                 (lambda () (cna-lisp.internal.ffi::%content-manager-destroy handle)))
-        (setf (cna-lisp.internal:handle-of manager) handle
-              (slot-value manager 'cna-lisp.internal::owner) game
-              (slot-value manager 'cna-lisp.internal::owner-thread)
-              (cna-lisp.internal:owner-thread-of game)
-              (slot-value manager '%graphics-device) graphics-device)
-        ;; The built-in loaders are what make Load<T> answer anything at all.
-        ;; CNA registers none by default, so a manager without this call
-        ;; refuses every asset with an IO failure that names nothing useful.
-        (cna-lisp.internal:check-result
-         (cna-lisp.internal.ffi::%content-manager-register-builtin-loaders handle)
-         "make-instance 'content-manager" :object-type 'content-manager)
-        (cna-lisp.internal:register-child game manager)
-        manager))))
+    (let ((handle
+            (cffi:with-foreign-object
+                (info '(:struct cna-lisp.internal.ffi::cna-content-manager-create-info))
+              (cffi:foreign-funcall
+               "memset" :pointer info :int 0
+               :size cna-lisp.internal.ffi::+sizeof-cna-content-manager-create-info+ :void)
+              (macrolet ((slot (name)
+                           `(cffi:foreign-slot-value
+                             info
+                             '(:struct cna-lisp.internal.ffi::cna-content-manager-create-info)
+                             ',name)))
+                (setf (slot cna-lisp.internal.ffi::struct-size)
+                      cna-lisp.internal.ffi::+sizeof-cna-content-manager-create-info+
+                      (slot cna-lisp.internal.ffi::struct-version) 1
+                      (slot cna-lisp.internal.ffi::reserved) 0))
+              (cna-lisp.internal:with-utf8-view (data length root-directory)
+                (%write-string-view
+                 (cffi:foreign-slot-pointer
+                  info '(:struct cna-lisp.internal.ffi::cna-content-manager-create-info)
+                  'cna-lisp.internal.ffi::root-directory)
+                 data length)
+                (cffi:with-foreign-object (out :uint64)
+                  (cna-lisp.internal:check-result
+                   (cna-lisp.internal.ffi::%content-manager-create device-handle info out)
+                   "make-instance 'content-manager" :object-type 'content-manager)
+                  (cffi:mem-ref out :uint64))))))
+      (cna-lisp.internal:record-construction-undo
+       manager (lambda () (cna-lisp.internal.ffi::%content-manager-destroy handle)))
+      (setf (cna-lisp.internal:handle-of manager) handle
+            (slot-value manager 'cna-lisp.internal::owner) game
+            (slot-value manager 'cna-lisp.internal::owner-thread)
+            (cna-lisp.internal:owner-thread-of game)
+            (slot-value manager '%graphics-device) graphics-device)
+      ;; The built-in loaders are what make Load<T> answer anything at all.
+      ;; CNA registers none by default, so a manager without this call
+      ;; refuses every asset with an IO failure that names nothing useful.
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%content-manager-register-builtin-loaders handle)
+       "make-instance 'content-manager" :object-type 'content-manager)
+      (cna-lisp.internal:register-child game manager)
+      (cna-lisp.internal:record-construction-undo
+       manager (lambda () (cna-lisp.internal:invalidate manager)))
+      manager)))
 
 (defun %write-string-view (pointer data length)
   "Fill the CNA_StringView at POINTER with DATA and LENGTH."

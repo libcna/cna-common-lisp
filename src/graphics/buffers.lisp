@@ -66,12 +66,23 @@
   (values (device-handle-for-child graphics-device operation)
           (cna-lisp.internal:owner-of graphics-device)))
 
-(defun %adopt-buffer (buffer game handle)
+(defun %adopt-buffer (buffer game handle destroy)
+  "Take ownership of HANDLE, recording both halves in the construction ledger.
+
+DESTROY is the route that gives HANDLE back -- a vertex buffer and an index
+buffer have different ones. Both undos are recorded here rather than at the call
+site so that neither constructor can take a handle and forget to say how it goes
+back; see RECORD-CONSTRUCTION-UNDO for why a subclass initializer makes that
+matter."
+  (cna-lisp.internal:record-construction-undo
+   buffer (lambda () (funcall destroy handle)))
   (setf (cna-lisp.internal:handle-of buffer) handle
         (slot-value buffer 'cna-lisp.internal::owner) game
         (slot-value buffer 'cna-lisp.internal::owner-thread)
         (cna-lisp.internal:owner-thread-of game))
   (cna-lisp.internal:register-child game buffer)
+  (cna-lisp.internal:record-construction-undo
+   buffer (lambda () (cna-lisp.internal:invalidate buffer)))
   buffer)
 
 ;;; --- VertexBuffer ----------------------------------------------------------------
@@ -243,7 +254,8 @@ it."
               (cna-lisp.internal:check-result
                (cna-lisp.internal.ffi::%vertex-buffer-create device-handle info out)
                operation :object-type (type-of buffer))
-              (%adopt-buffer buffer game (cffi:mem-ref out :uint64)))))
+              (%adopt-buffer buffer game (cffi:mem-ref out :uint64)
+                             #'cna-lisp.internal.ffi::%vertex-buffer-destroy))))
         (setf (slot-value buffer 'vertex-declaration) declaration
               (slot-value buffer 'vertex-count) vertex-count
               (slot-value buffer 'buffer-usage) buffer-usage
@@ -339,7 +351,8 @@ rather say it that way."))
             (cna-lisp.internal:check-result
              (cna-lisp.internal.ffi::%index-buffer-create device-handle info out)
              operation :object-type (type-of buffer))
-            (%adopt-buffer buffer game (cffi:mem-ref out :uint64))))
+            (%adopt-buffer buffer game (cffi:mem-ref out :uint64)
+                           #'cna-lisp.internal.ffi::%index-buffer-destroy)))
         (setf (slot-value buffer 'index-element-size) size
               (slot-value buffer 'index-count) index-count
               (slot-value buffer 'buffer-usage) buffer-usage

@@ -456,21 +456,19 @@ The three-argument overload is not `everything zero': XNA fills in no mip map an
           (cna-lisp.internal:check-result
            (cna-lisp.internal.ffi::%texture-2d-create device-handle info out)
            "make-instance 'texture-2d" :object-type 'texture-2d)
-          (let ((handle (cffi:mem-ref out :uint64))
-                (constructed nil))
-            (unwind-protect
-                 (multiple-value-bind (levels granted)
-                     (%texture-storage-dimensions handle)
-                   (setf (cna-lisp.internal:handle-of texture) handle
-                         (slot-value texture 'cna-lisp.internal::owner) game
-                         (slot-value texture 'cna-lisp.internal::owner-thread)
-                         (cna-lisp.internal:owner-thread-of game)
-                         (slot-value texture 'width) width
-                         (slot-value texture 'height) height
-                         (slot-value texture 'level-count) levels
-                         (slot-value texture 'format) granted)
-                   (cna-lisp.internal:register-child game texture)
-                   (setf constructed t))
-              (unless constructed
-                (ignore-errors
-                 (cna-lisp.internal.ffi::%texture-2d-destroy handle))))))))))
+          (let ((handle (cffi:mem-ref out :uint64)))
+            (cna-lisp.internal:record-construction-undo
+             texture (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
+            (multiple-value-bind (levels granted)
+                (%texture-storage-dimensions handle)
+              (setf (cna-lisp.internal:handle-of texture) handle
+                    (slot-value texture 'cna-lisp.internal::owner) game
+                    (slot-value texture 'cna-lisp.internal::owner-thread)
+                    (cna-lisp.internal:owner-thread-of game)
+                    (slot-value texture 'width) width
+                    (slot-value texture 'height) height
+                    (slot-value texture 'level-count) levels
+                    (slot-value texture 'format) granted)
+              (cna-lisp.internal:register-child game texture)
+              (cna-lisp.internal:record-construction-undo
+               texture (lambda () (cna-lisp.internal:invalidate texture))))))))))

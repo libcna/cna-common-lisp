@@ -26,11 +26,16 @@ and disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE before the game is."))
         (cna-lisp.internal:check-result
          (cna-lisp.internal.ffi::%sprite-batch-create device-handle out)
          "make sprite-batch" :object-type 'sprite-batch)
-        (setf (cna-lisp.internal:handle-of batch) (cffi:mem-ref out :uint64)
-              (slot-value batch 'cna-lisp.internal::owner) game
-              (slot-value batch 'cna-lisp.internal::owner-thread)
-              (cna-lisp.internal:owner-thread-of game)))
-      (cna-lisp.internal:register-child game batch))))
+        (let ((handle (cffi:mem-ref out :uint64)))
+          (cna-lisp.internal:record-construction-undo
+           batch (lambda () (cna-lisp.internal.ffi::%sprite-batch-destroy handle)))
+          (setf (cna-lisp.internal:handle-of batch) handle
+                (slot-value batch 'cna-lisp.internal::owner) game
+                (slot-value batch 'cna-lisp.internal::owner-thread)
+                (cna-lisp.internal:owner-thread-of game))))
+      (cna-lisp.internal:register-child game batch)
+      (cna-lisp.internal:record-construction-undo
+       batch (lambda () (cna-lisp.internal:invalidate batch))))))
 
 (defgeneric begin (sprite-batch &key sort-mode blend-state sampler-state
                                      depth-stencil-state rasterizer-state

@@ -721,37 +721,36 @@ ArgumentException, and the code is checked before the device is."
   ;; every technique, pass, parameter, annotation and light. If any of those
   ;; routes fails, MAKE-INSTANCE signals and the caller never receives an object
   ;; -- so without a rollback the effect would stay registered, and its views
-  ;; would stay alive, with nothing left that could dispose them. That is the
-  ;; failure the Game constructor already guards against, in the same shape.
-  (let ((adopted nil) (committed nil))
-    (unwind-protect
-         (progn
-           (if %adopted-handle
-               ;; The clone path: the handle exists, and re-running a create
-               ;; route would make a second effect rather than adopt the one CNA
-               ;; just cloned.
-               (%effect-adopt effect %adopted-game %adopted-handle)
-               (progn
-                 (%validate-effect-code effect effect-code graphics-device)
-                 (multiple-value-bind (device-handle game)
-                     (%effect-device-handle graphics-device "make-instance 'effect")
-                   (%effect-adopt effect game
-                                  (%create-effect-handle effect device-handle
-                                                         effect-code)))
-                 (setf (%resource-device effect) graphics-device)))
-           (setf adopted t)
-           (%build-effect-graph effect)
-           (%build-effect-extras effect)
-           (setf committed t))
-      (unless committed
-        ;; Give back whatever was taken, in the order CNA wants, and then the
-        ;; effect itself. Quietly: a failure here must not mask the one that
-        ;; caused the rollback.
-        (%release-native-parts effect :quietly t)
-        (when adopted
-          (ignore-errors
-           (cna-lisp.internal.ffi::%effect-destroy (cna-lisp.internal:handle-of effect)))
-          (cna-lisp.internal:invalidate effect))))))
+  ;; would stay alive, with nothing left that could dispose them.
+  ;;
+  ;; The undos go in NATIVE-OBJECT's construction ledger rather than in a local
+  ;; UNWIND-PROTECT, because a local one ends where this method ends and a
+  ;; subclass's own `:after' runs *after* that. A stock effect extends this
+  ;; through %BUILD-EFFECT-EXTRAS and is covered either way; a consumer subclass
+  ;; that writes an initializer was not.
+  (if %adopted-handle
+      ;; The clone path: the handle exists, and re-running a create route would
+      ;; make a second effect rather than adopt the one CNA just cloned.
+      (%effect-adopt effect %adopted-game %adopted-handle)
+      (progn
+        (%validate-effect-code effect effect-code graphics-device)
+        (multiple-value-bind (device-handle game)
+            (%effect-device-handle graphics-device "make-instance 'effect")
+          (%effect-adopt effect game
+                         (%create-effect-handle effect device-handle effect-code)))
+        (setf (%resource-device effect) graphics-device)))
+  ;; Recorded once the handle is adopted, and undone newest-first: the views
+  ;; first, in the order CNA wants, then the effect itself. Quietly, because a
+  ;; failure here must not mask the one that caused the rollback.
+  (cna-lisp.internal:record-construction-undo
+   effect (lambda ()
+            (let ((handle (cna-lisp.internal:handle-of effect)))
+              (ignore-errors (cna-lisp.internal.ffi::%effect-destroy handle))
+              (cna-lisp.internal:invalidate effect))))
+  (cna-lisp.internal:record-construction-undo
+   effect (lambda () (%release-native-parts effect :quietly t)))
+  (%build-effect-graph effect)
+  (%build-effect-extras effect))
 
 (defgeneric clone-effect (effect)
   (:documentation

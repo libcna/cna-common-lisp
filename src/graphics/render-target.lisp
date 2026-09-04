@@ -141,30 +141,30 @@ own constructor must not make a plain texture underneath it."
         (cna-lisp.internal:check-result
          (cna-lisp.internal.ffi::%render-target-2d-create device-handle info out)
          "make-instance 'render-target-2d" :object-type 'render-target-2d)
-        (let ((handle (cffi:mem-ref out :uint64))
-              (constructed nil))
-          (unwind-protect
-               ;; Everything that can still fail runs under the rollback, so a
-               ;; refused read-back cannot leave the game owning a target the
-               ;; caller never received.
-               (multiple-value-bind (w h levels granted-format granted-depth
-                                     granted-samples granted-usage)
-                   (%render-target-info handle "make-instance 'render-target-2d")
-                 (setf (cna-lisp.internal:handle-of target) handle
-                       (slot-value target 'cna-lisp.internal::owner) game
-                       (slot-value target 'cna-lisp.internal::owner-thread)
-                       (cna-lisp.internal:owner-thread-of game)
-                       (slot-value target 'width) w
-                       (slot-value target 'height) h
-                       (slot-value target 'level-count) levels
-                       (slot-value target 'format) granted-format
-                       (slot-value target '%depth-stencil-format) granted-depth
-                       (slot-value target '%multi-sample-count) granted-samples
-                       (slot-value target '%usage) granted-usage)
-                 (cna-lisp.internal:register-child game target)
-                 (setf constructed t))
-            (unless constructed
-              (ignore-errors (cna-lisp.internal.ffi::%render-target-destroy handle)))))))))
+        (let ((handle (cffi:mem-ref out :uint64)))
+          ;; Everything that can still fail runs under the construction ledger,
+          ;; so a refused read-back -- or a subclass initializer that signals
+          ;; after this method has returned -- cannot leave the game owning a
+          ;; target the caller never received.
+          (cna-lisp.internal:record-construction-undo
+           target (lambda () (cna-lisp.internal.ffi::%render-target-destroy handle)))
+          (multiple-value-bind (w h levels granted-format granted-depth
+                                granted-samples granted-usage)
+              (%render-target-info handle "make-instance 'render-target-2d")
+            (setf (cna-lisp.internal:handle-of target) handle
+                  (slot-value target 'cna-lisp.internal::owner) game
+                  (slot-value target 'cna-lisp.internal::owner-thread)
+                  (cna-lisp.internal:owner-thread-of game)
+                  (slot-value target 'width) w
+                  (slot-value target 'height) h
+                  (slot-value target 'level-count) levels
+                  (slot-value target 'format) granted-format
+                  (slot-value target '%depth-stencil-format) granted-depth
+                  (slot-value target '%multi-sample-count) granted-samples
+                  (slot-value target '%usage) granted-usage)
+            (cna-lisp.internal:register-child game target)
+            (cna-lisp.internal:record-construction-undo
+             target (lambda () (cna-lisp.internal:invalidate target)))))))))
 
 (defmethod cna-lisp.internal:destroy-native ((target render-target-2d))
   ;; Its own route, not Texture2D's: CNA gives a render target a destroy of its

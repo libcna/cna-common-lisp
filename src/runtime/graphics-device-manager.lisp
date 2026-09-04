@@ -44,11 +44,17 @@ Dispose it before the game it belongs to."))
      (cna-lisp.internal.ffi::%graphics-device-manager-create
       (cna-lisp.internal:handle-of game) out)
      "make-instance graphics-device-manager" :object-type 'graphics-device-manager)
-    (setf (cna-lisp.internal:handle-of manager) (cffi:mem-ref out :uint64)
-          (slot-value manager 'cna-lisp.internal::owner) game
-          (slot-value manager 'cna-lisp.internal::owner-thread)
-          (cna-lisp.internal:owner-thread-of game)))
-  (cna-lisp.internal:register-child game manager))
+    (let ((handle (cffi:mem-ref out :uint64)))
+      (cna-lisp.internal:record-construction-undo
+       manager
+       (lambda () (cna-lisp.internal.ffi::%graphics-device-manager-destroy handle)))
+      (setf (cna-lisp.internal:handle-of manager) handle
+            (slot-value manager 'cna-lisp.internal::owner) game
+            (slot-value manager 'cna-lisp.internal::owner-thread)
+            (cna-lisp.internal:owner-thread-of game))))
+  (cna-lisp.internal:register-child game manager)
+  (cna-lisp.internal:record-construction-undo
+   manager (lambda () (cna-lisp.internal:invalidate manager))))
 
 (defmethod graphics-device ((manager graphics-device-manager))
   "GraphicsDeviceManager.GraphicsDevice: the device the manager manages.

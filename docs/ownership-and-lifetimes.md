@@ -96,7 +96,50 @@ this binding where a disposal exists that XNA has no member for. XNA's
 `SpriteFont` extends `System.Object`, is sealed, and is **not** `IDisposable`.
 `dispose` on one is the binding's own deterministic disposal — the declared
 extension every native object carries — and is not counted as an XNA member of
-that type. When `ContentManager` arrives, `Unload` is what will call it.
+that type. `ContentManager.Unload` does **not** call it: CNA's unload does not
+destroy what it handed out, which is why that member and `Dispose()` are reported
+partial. `docs/limitations.md` has the audit.
+
+## Construction is all-or-nothing, and a subclass's share of it too
+
+A native-backed class takes its handle in an `initialize-instance :after` method.
+CLOS runs `:after` methods **least-specific-first**, so the last initializer to
+run is the most derived one — a consumer's. By then the handle exists, the object
+is registered as a child of its owner, and the base class's own local
+`unwind-protect` has already returned. A subclass initializer that signals used
+to leave CNA holding a resource the caller never received, with nothing left that
+could dispose it. The symptom is never at the constructor: it is the game
+refusing to shut down, later, because a child handle is still alive.
+
+Common Lisp has no `sealed`, so **every exported class here can be subclassed**.
+The remedy is therefore one mechanism on the private base rather than one per
+class:
+
+* `NATIVE-OBJECT` carries a `construction-undo` ledger;
+* each constructor calls `RECORD-CONSTRUCTION-UNDO` for the handle it takes and
+  again for the registration it makes;
+* one `initialize-instance :around` on `NATIVE-OBJECT` runs that ledger
+  newest-first when the construction does not finish, and drops it when it does.
+
+The `:around` is on the *least* specific class, which makes it the **innermost**
+one, and that is exactly what is wanted: `call-next-method` from there runs every
+`:before`, primary and `:after` method there is, a subclass's included.
+
+`tests/native/construction-atomicity.lisp` builds an ordinary exploding subclass
+of twelve resource families plus `Game` and `GraphicsDeviceManager`, and checks
+the four things that matter — the caller sees the subclass's own condition, the
+owner is left owning no live child, the callback registry is unmoved, and the
+game shuts down. Removing the `:around`'s undo turns 130 checks red.
+
+Two families are worth calling out because their evidence is indirect and
+stronger for it. CNA allows exactly **one live game per process**, so a native
+game left behind by a failed `Game` construction does not merely leak — it makes
+every later game in the image impossible; the proof is that the next one is not.
+XNA's `GraphicsDeviceManager` constructor refuses a second manager on one game,
+and so does this, so the proof there is that a second manager can still be made.
+
+Classes with no native resource of their own — `VertexDeclaration` and the four
+state objects — record nothing, because there is nothing to give back.
 
 ## Double disposal
 

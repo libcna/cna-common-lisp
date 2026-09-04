@@ -48,6 +48,10 @@ takes none here, because there is only ever one game it could mean.")
                :documentation "This object's own generation, for children to record.")
    (children :initform '() :accessor children-of
              :documentation "Live owned children, newest first.")
+   (construction-undo
+    :initform '() :accessor construction-undo-of
+    :documentation "Undo thunks for a construction still in progress, newest
+first. Emptied when the construction commits; see INITIALIZE-INSTANCE :around.")
    (disposed :initform nil :accessor disposed-state-of))
   (:documentation
    "Private base of every CNA-Lisp object with a native handle. None of its slots
@@ -58,6 +62,48 @@ generation."))
   (setf (generation-of object) (next-generation))
   (unless (owner-thread-of object)
     (setf (slot-value object 'owner-thread) (current-thread-token))))
+
+;;; --- construction is all-or-nothing, a subclass's share included -------------
+;;;
+;;; A native-backed class acquires its handle in an `initialize-instance :after'
+;;; method. CLOS runs `:after' methods least-specific-first, so **a subclass's
+;;; own `:after' runs last -- after the handle exists and after the object has
+;;; been registered as a child of its owner.** A subclass initializer that
+;;; signals therefore used to leave CNA holding a resource the caller never
+;;; received, with nothing left that could dispose it. The symptom is never at
+;;; the constructor: it is the game refusing to shut down, later, because a child
+;;; handle is still alive.
+;;;
+;;; Every exported class here can be subclassed -- CLOS has no `sealed' -- so
+;;; this is one `:around' on the private base rather than one per class. It is
+;;; the innermost `:around', because NATIVE-OBJECT is the least specific class,
+;;; which is exactly what is wanted: `call-next-method' from here runs every
+;;; `:before', primary and `:after' method there is, a subclass's included.
+
+(defun record-construction-undo (object thunk)
+  "Record THUNK as the undo for the construction step OBJECT has just completed.
+
+Answers THUNK. Steps are undone newest-first, which is leaf-first: a handle taken
+later is the child of one taken earlier, and a registration made later has to be
+withdrawn before the handle it registered goes back."
+  (push thunk (construction-undo-of object))
+  thunk)
+
+(defmethod initialize-instance :around ((object native-object) &key)
+  "Undo what a construction recorded when the construction does not finish.
+
+The undo is quiet: this runs on the way out of a failure, and a condition raised
+here would replace the one that caused it. A committed construction drops its
+ledger rather than keeping it, so nothing recorded can be run twice or reached
+after MAKE-INSTANCE has answered."
+  (let ((committed nil))
+    (unwind-protect
+         (multiple-value-prog1 (call-next-method)
+           (setf committed t))
+      (if committed
+          (setf (construction-undo-of object) '())
+          (dolist (thunk (construction-undo-of object))
+            (ignore-errors (funcall thunk)))))))
 
 ;;; --- parent/child bookkeeping ------------------------------------------
 

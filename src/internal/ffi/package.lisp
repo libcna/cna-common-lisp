@@ -74,6 +74,7 @@ registry. Private; not part of the published API.")
    #:owner-thread-of #:ownership-of #:disposed-state-of
    #:register-child #:unregister-child #:children-of
    #:check-live #:check-usable #:destroy-native #:invalidate
+   #:record-construction-undo #:construction-undo-of
    #:call-with-native-rollback #:with-native-rollback
    #:call-with-transient-native #:with-transient-native
    #:next-generation #:active-game #:stale-p #:generation-of

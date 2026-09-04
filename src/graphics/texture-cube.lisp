@@ -97,23 +97,21 @@ because the base class is what asks.")
           (cna-lisp.internal:check-result
            (cna-lisp.internal.ffi::%texturecube-create device-handle info out)
            "make-instance 'texture-cube" :object-type 'texture-cube)
-          (let ((handle (cffi:mem-ref out :uint64))
-                (constructed nil))
-            (unwind-protect
-                 (multiple-value-bind (granted-size levels granted-format)
-                     (%texture-cube-info handle "make-instance 'texture-cube")
-                   (setf (cna-lisp.internal:handle-of texture) handle
-                         (slot-value texture 'cna-lisp.internal::owner) game
-                         (slot-value texture 'cna-lisp.internal::owner-thread)
-                         (cna-lisp.internal:owner-thread-of game)
-                         (slot-value texture '%size) granted-size
-                         (slot-value texture '%level-count) levels
-                         (slot-value texture '%format) granted-format)
-                   (cna-lisp.internal:register-child game texture)
-                   (setf constructed t))
-              (unless constructed
-                (ignore-errors
-                 (cna-lisp.internal.ffi::%texturecube-destroy handle))))))))))
+          (let ((handle (cffi:mem-ref out :uint64)))
+            (cna-lisp.internal:record-construction-undo
+             texture (lambda () (cna-lisp.internal.ffi::%texturecube-destroy handle)))
+            (multiple-value-bind (granted-size levels granted-format)
+                (%texture-cube-info handle "make-instance 'texture-cube")
+              (setf (cna-lisp.internal:handle-of texture) handle
+                    (slot-value texture 'cna-lisp.internal::owner) game
+                    (slot-value texture 'cna-lisp.internal::owner-thread)
+                    (cna-lisp.internal:owner-thread-of game)
+                    (slot-value texture '%size) granted-size
+                    (slot-value texture '%level-count) levels
+                    (slot-value texture '%format) granted-format)
+              (cna-lisp.internal:register-child game texture)
+              (cna-lisp.internal:record-construction-undo
+               texture (lambda () (cna-lisp.internal:invalidate texture))))))))))
 
 (defun %adopt-loaded-texture-cube (game handle record)
   "Wrap a cube a ContentManager created, inside the caller's load transaction.
