@@ -1,0 +1,49 @@
+name: Install the reference SBCL
+description: >
+  Install the exact SBCL the local reference qualification uses -- 2.5.2 on
+  Linux x86-64 -- from the upstream binary release, verified by SHA-256.
+  Ubuntu 24.04's own package is SBCL 2.2.9, which is a different runtime, is
+  tested by a different job, and may not be described as this one.
+  docs/qualification.md says which claim each supports.
+
+runs:
+  using: composite
+  steps:
+    - name: Download, verify and install the pinned SBCL binary release
+      shell: bash
+      env:
+        # sbcl-2.5.2-x86-64-linux-binary.tar.bz2, upstream SourceForge release.
+        # A substituted tarball fails the checksum rather than silently becoming
+        # the runtime this repository calls REFERENCE_QUALIFIED.
+        SBCL_VERSION: '2.5.2'
+        SBCL_SHA256: '6330ebcd7ecaa4e5df8dfa145520473f090a449299e6675ad12eb48f2d4f5df1'
+      run: |
+        set -eu
+        unset SBCL_HOME || true
+        tarball="$RUNNER_TEMP/sbcl-${SBCL_VERSION}.tar.bz2"
+        root="$RUNNER_TEMP/sbcl-install"
+        curl -sSL --retry 3 --retry-delay 5 -o "$tarball" \
+          "https://downloads.sourceforge.net/project/sbcl/sbcl/${SBCL_VERSION}/sbcl-${SBCL_VERSION}-x86-64-linux-binary.tar.bz2"
+        echo "${SBCL_SHA256}  ${tarball}" | sha256sum -c -
+        tar -xjf "$tarball" -C "$RUNNER_TEMP"
+        # install.sh runs under `set -e` and its trailing documentation loops can
+        # fail on a missing optional file *after* the runtime, the core and the
+        # contribs are already in place. So the exit status is not the test --
+        # the installed files are, and they are checked here rather than assumed.
+        ( cd "$RUNNER_TEMP/sbcl-${SBCL_VERSION}-x86-64-linux" \
+            && INSTALL_ROOT="$root" sh install.sh ) || true
+        test -x "$root/bin/sbcl"          || { echo "no runtime at $root/bin/sbcl"; exit 1; }
+        test -f "$root/lib/sbcl/sbcl.core" || { echo "no core at $root/lib/sbcl/sbcl.core"; exit 1; }
+        test -d "$root/lib/sbcl/contrib"   || { echo "no contribs at $root/lib/sbcl/contrib"; exit 1; }
+        echo "$root/bin" >> "$GITHUB_PATH"
+        echo "SBCL_HOME=$root/lib/sbcl" >> "$GITHUB_ENV"
+
+    - name: The installed runtime is the reference one, and ASDF loads
+      shell: bash
+      run: |
+        set -eu
+        sbcl --version
+        sbcl --version | grep -q ' 2\.5\.2' \
+          || { echo "the reference runtime is SBCL 2.5.2; got: $(sbcl --version)"; exit 1; }
+        sbcl --non-interactive --eval '(require :asdf)' \
+             --eval '(format t "~&asdf ~a~%" (asdf:asdf-version))'

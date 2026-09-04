@@ -268,6 +268,7 @@ Read `plan.md` for the architecture and the current measured status, and
 | `docs/callbacks-and-threading.md` | containment, the registry, thread affinity |
 | `docs/compatibility.md` | what is complete, partial and missing |
 | `docs/limitations.md` | every measured limitation, with its reason |
+| `docs/qualification.md` | what REFERENCE_QUALIFIED, CI_TESTED and HEADLESS mean |
 
 ## Licence
 

@@ -1,0 +1,101 @@
+# Qualification: what each claim means, and what it does not
+
+"Tested" is not one thing. This document defines the words the rest of the
+repository uses, so that a green tick somewhere never gets read as a stronger
+claim than the run behind it supports.
+
+## The terms
+
+| Term | Meaning |
+| --- | --- |
+| `REFERENCE_QUALIFIED` | Run on the reference runtime — **SBCL 2.5.2, Linux x86-64** — against a qualified CNA C ABI shared library. This is the configuration the capability statement in `README.md` is about. |
+| `CI_TESTED` | Run by GitHub Actions on a runtime or a configuration that is *not* the reference one. Real evidence, and a weaker claim: a green `CI_TESTED` job says the code also works there, never that the reference qualification covers it. |
+| `HEADLESS` | Executed against a CNA build whose renderer is `HEADLESS`. Proves the lifecycle ran and that draw commands were submitted and accepted. Proves **nothing** about pixels. |
+| `NOT RUN` | A gate that did not execute, with the reason. Never written as a pass. |
+
+Nothing in this repository may collapse two of those into "fully tested".
+
+## The runtimes, and why there are two
+
+The reference runtime is SBCL **2.5.2** on Linux x86-64. Ubuntu 24.04 — the CI
+runner image — packages SBCL **2.2.9**. Those are different runtimes, three years
+apart, and a suite that passes on one has not been run on the other.
+
+So CI runs both, in jobs that say which is which:
+
+| Job | Runtime | Claim |
+| --- | --- | --- |
+| `Lisp` / reference | SBCL 2.5.2, installed from the upstream binary release and verified by SHA-256 | `REFERENCE_QUALIFIED` runtime, pure-Lisp gates |
+| `Lisp` / distro | whatever `ubuntu-24.04` packages; the job prints the exact version | `CI_TESTED` — a secondary compatibility test, not the reference qualification |
+| `Native` | SBCL 2.5.2, the same pinned binary release | the reference runtime, against a CNA C ABI built in the job |
+
+`.github/actions/reference-sbcl` is the one place the reference runtime is
+installed, and the version and its SHA-256 are pinned there. A substituted
+tarball fails the checksum rather than quietly becoming "the reference runtime".
+
+Locally, the reference runtime is Debian's build of the same upstream release
+(`SBCL 2.5.2.debian`). Same version, different packaging; both are 2.5.2.
+
+## The CNA source
+
+**Qualification deliberately follows a moving branch: `openeggbert/cna`, branch
+`next`.** That is the branch the CNA C ABI 0.21.0 lives on, and pinning a commit
+here would mean the binding stops noticing the day CNA's ABI moves — which is the
+one thing this qualification exists to notice.
+
+Following a moving branch is only honest if every run records where it actually
+landed. So the `Native` workflow:
+
+1. resolves `CNA_REF` to a commit immediately after checkout;
+2. writes the requested ref, the resolved CNA commit, the sharp-runtime commit,
+   the template commit and the CNA-Lisp commit into the run's step summary;
+3. writes the same facts, plus the runtime version and the CNA build
+   configuration, into `qualification-run.json` in the run's uploaded artifact.
+
+`workflow_dispatch` takes a `cna_ref` input, so a specific CNA commit or tag can
+be qualified on demand without editing the workflow.
+
+**An ABI artifact whose CNA commit was not recorded is not qualification
+evidence**, and no document here may describe one as qualified.
+
+## The CNA build this qualification uses
+
+| | |
+| --- | --- |
+| Platform backend | `SDL3` |
+| Audio backend | `SDL3` |
+| Renderer | `HEADLESS` |
+| C API | `CNA_BUILD_C_API=ON`, tests and examples off |
+| ABI version admitted | 0.21.0 only |
+
+CNA's vendored SDL submodules are initialised non-recursively and by name —
+`third_party/SDL`, `third_party/SDL_image`, `third_party/SDL_mixer`,
+`third_party/draco` — because CNA's own configure-time message says a recursive
+init only adds nested codec submodules this build disables anyway.
+`vendor/googletest` is not initialised, because `CNA_BUILD_TESTS` is off.
+
+## What HEADLESS does and does not prove
+
+A HEADLESS run proves:
+
+* the game loop ran, in CNA's own frame order, for exactly the frames requested;
+* every lifecycle callback was delivered, and conditions raised inside one were
+  contained rather than unwound through C;
+* draw commands were submitted through the real native routes and accepted;
+* handles were created and destroyed deterministically, and the callback registry
+  was empty afterwards.
+
+It proves nothing about rasterisation, blending, filtering, sampling or any other
+pixel-producing behaviour, and nothing about a physical display. Where a member's
+observable behaviour is pixels, the tests here assert command and state
+submission and say so; the limitation is recorded in `docs/limitations.md` rather
+than papered over.
+
+## Where the evidence is
+
+| Evidence | Where |
+| --- | --- |
+| Structural projection | `docs/generated/api-compat-report.json` |
+| Bound native surface | `docs/generated/native-abi-manifest.json` |
+| Public image of the loaded system | `docs/generated/public-surface.json` |
+| Per-run CI qualification facts | the `cna-lisp-reports` artifact of each `Native` run |

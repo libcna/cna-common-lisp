@@ -4,6 +4,16 @@
 # The stages are separate on purpose: a failure in the compiler-backed ABI check
 # means something different from a failure in the runtime tests, and neither means
 # what a failure in the isolated consumer run means.
+#
+# The runtime here is the reference one, SBCL 2.5.2 -- the same runtime the local
+# qualification uses. ubuntu-24.04's own SBCL is a different runtime and is
+# exercised by lisp.yml's distro job. docs/qualification.md says which claim each
+# one supports.
+#
+# The CNA source is a *moving branch* by policy (see docs/qualification.md), so
+# every run resolves it to a commit and records that commit in the step summary
+# and in the uploaded evidence. An ABI artifact whose CNA commit was not recorded
+# is not qualification evidence.
 
 name: Native
 
@@ -14,7 +24,7 @@ on:
   workflow_dispatch:
     inputs:
       cna_ref:
-        description: 'CNA branch or tag to build the C ABI from'
+        description: 'CNA branch, tag or commit to build the C ABI from'
         required: false
         default: 'next'
 
@@ -29,47 +39,120 @@ jobs:
   native:
     name: CNA C ABI, ABI gate, runtime tests, isolated consumer
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: 360
     steps:
       - name: Checkout CNA-Lisp
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: cna-common-lisp
 
       - name: Checkout the template
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: openeggbert/cna-common-lisp-template
           path: cna-common-lisp-template
 
       - name: Checkout CNA
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: openeggbert/cna
           ref: ${{ env.CNA_REF }}
           path: cna
 
       - name: Checkout sharp-runtime
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: openeggbert/sharp-runtime
           path: sharp-runtime
+
+      # CNA's own configure-time message says a non-recursive init is what it
+      # wants: this build disables every optional codec dependency under
+      # SDL_image's and SDL_mixer's nested submodules, so `--recursive` would
+      # only add a much slower, unnecessary fetch. Naming the paths keeps
+      # vendor/googletest out of it as well, since CNA_BUILD_TESTS is OFF below.
+      - name: Initialise exactly the CNA submodules this build needs
+        working-directory: cna
+        run: |
+          set -eu
+          # Full clones, not --depth 1: a shallow submodule fetch only reaches the
+          # default branch tip, and a pinned commit behind it leaves the checkout
+          # half-initialised and the recovery worse than the ~250 MB it saved.
+          paths="third_party/SDL third_party/SDL_image third_party/SDL_mixer third_party/draco"
+          # shellcheck disable=SC2086
+          git submodule update --init --jobs 4 $paths
+          # shellcheck disable=SC2086
+          git submodule status $paths
+
+      - name: Resolve and record the CNA source commit
+        id: cna_source
+        run: |
+          set -eu
+          sha=$(git -C cna rev-parse HEAD)
+          sharp=$(git -C sharp-runtime rev-parse HEAD)
+          template=$(git -C cna-common-lisp-template rev-parse HEAD)
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "CNA_SOURCE_SHA=$sha" >> "$GITHUB_ENV"
+          {
+            echo "### CNA source used for this qualification"
+            echo
+            echo "| what | value |"
+            echo "| --- | --- |"
+            echo "| CNA ref requested | \`${CNA_REF}\` |"
+            echo "| CNA commit resolved | \`${sha}\` |"
+            echo "| sharp-runtime commit | \`${sharp}\` |"
+            echo "| template commit | \`${template}\` |"
+            echo "| CNA-Lisp commit | \`${GITHUB_SHA}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Install build and Lisp toolchains
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            sbcl cmake ninja-build build-essential ccache pkg-config python3 \
+            cmake ninja-build build-essential ccache pkg-config python3 \
             libasound2-dev libpulse-dev libx11-dev libxext-dev libxrandr-dev \
             libxcursor-dev libxi-dev libxfixes-dev libwayland-dev libxkbcommon-dev \
             libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libswscale-dev
-          sbcl --version
           cc --version
 
+      - name: Install the reference SBCL
+        uses: ./cna-common-lisp/.github/actions/reference-sbcl
+
       # ---------------------------------------------------------------- stage 1
-      - name: Build a minimal HEADLESS CNA C API
+      # SDL3, SDL3_image and SDL3_mixer are built once into a persistent install
+      # root CNA owns and keys by platform; caching it on the exact submodule
+      # commits means a later run reuses that build and a bumped submodule does
+      # not. ccache is keyed loosely on purpose -- a stale hit is always safe
+      # there, because ccache decides reuse by content hash, not by key.
+      - name: Cache key for the vendored SDL install root
+        id: sdlkey
         working-directory: cna
         run: |
+          set -eu
+          key=$(git submodule status third_party/SDL third_party/SDL_image third_party/SDL_mixer \
+                  | awk '{print $1}' | tr -d ' -+U' | tr '\n' '-')
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+
+      - name: Cache the vendored SDL install root
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: cna/.sdl-prebuilt-*
+          key: cna-sdl-${{ runner.os }}-${{ steps.sdlkey.outputs.key }}
+
+      - name: Cache ccache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ccache
+          key: cna-ccache-${{ runner.os }}-${{ steps.cna_source.outputs.sha }}
+          restore-keys: |
+            cna-ccache-${{ runner.os }}-
+
+      - name: Build a minimal HEADLESS CNA C API
+        working-directory: cna
+        env:
+          CCACHE_MAXSIZE: 2G
+        run: |
+          set -eu
+          ccache --zero-stats
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
@@ -82,6 +165,7 @@ jobs:
             -DCNA_GRAPHICS_RENDERER=HEADLESS \
             -DCNA_SHARP_RUNTIME_ROOT="${GITHUB_WORKSPACE}/sharp-runtime"
           cmake --build build --target cna_c_api -j"$(nproc)"
+          ccache --show-stats || true
           echo "CNA_NATIVE_LIBRARY=$(readlink -f build/modules/c-api/libcna_c_api.so)" >> "$GITHUB_ENV"
           echo "CNA_HEADERS=$(readlink -f modules/c-api/include)" >> "$GITHUB_ENV"
           echo "CNA_ABI_BASELINE=$(readlink -f tools/c-api/abi_baseline.json)" >> "$GITHUB_ENV"
@@ -107,11 +191,22 @@ jobs:
         run: tools/native-abi/verify.sh "$CNA_HEADERS"
 
       # ---------------------------------------------------------------- stage 3
+      - name: Cache Quicklisp
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/quicklisp
+            ~/.cache/common-lisp
+          key: quicklisp-${{ runner.os }}-reference-2026-01-01-${{ hashFiles('cna-common-lisp/cna-common-lisp.asd') }}
+          restore-keys: quicklisp-${{ runner.os }}-reference-2026-01-01-
+
       - name: Install Quicklisp and the pinned dependencies
         run: |
-          curl -sSLo /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
-          sbcl --non-interactive --load /tmp/quicklisp.lisp \
-               --eval '(quicklisp-quickstart:install :path "~/quicklisp/")'
+          if [ ! -f "$HOME/quicklisp/setup.lisp" ]; then
+            curl -sSLo /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
+            sbcl --non-interactive --load /tmp/quicklisp.lisp \
+                 --eval '(quicklisp-quickstart:install :path "~/quicklisp/")'
+          fi
           sbcl --non-interactive --load ~/quicklisp/setup.lisp \
                --eval '(ql-dist:install-dist "http://beta.quicklisp.org/dist/quicklisp/2026-01-01/distinfo.txt" :replace t :prompt nil)' \
                --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :fiveam))'
@@ -146,9 +241,48 @@ jobs:
           tools/qualification/isolated-consumer.sh \
             "${GITHUB_WORKSPACE}/cna-common-lisp-template"
 
-      - name: Upload the generated reports
+      # ---------------------------------------------------------------- evidence
+      - name: Write the qualification evidence for this run
         if: always()
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        working-directory: cna-common-lisp
+        run: |
+          set -eu
+          mkdir -p "${RUNNER_TEMP}/evidence"
+          cp -r docs/generated "${RUNNER_TEMP}/evidence/reports"
+          python3 - <<'PY' > "${RUNNER_TEMP}/evidence/qualification-run.json"
+          import json, os, subprocess
+          def sh(*a):
+              return subprocess.run(a, capture_output=True, text=True).stdout.strip() or None
+          print(json.dumps({
+              "kind": "CI_TESTED",
+              "runtime": {"implementation": "SBCL", "version": sh("sbcl", "--version")},
+              "platform": "Linux x86-64 (ubuntu-24.04 runner)",
+              "cna": {
+                  "ref_requested": os.environ.get("CNA_REF"),
+                  "commit": os.environ.get("CNA_SOURCE_SHA"),
+                  "repository": "openeggbert/cna",
+                  "renderer": "HEADLESS",
+                  "platform_backend": "SDL3",
+                  "audio_backend": "SDL3",
+              },
+              "cna_lisp": {
+                  "repository": os.environ.get("GITHUB_REPOSITORY"),
+                  "commit": os.environ.get("GITHUB_SHA"),
+              },
+              "workflow_run": {
+                  "id": os.environ.get("GITHUB_RUN_ID"),
+                  "url": "%s/%s/actions/runs/%s" % (
+                      os.environ.get("GITHUB_SERVER_URL"),
+                      os.environ.get("GITHUB_REPOSITORY"),
+                      os.environ.get("GITHUB_RUN_ID")),
+              },
+          }, indent=2))
+          PY
+          cat "${RUNNER_TEMP}/evidence/qualification-run.json"
+
+      - name: Upload the generated reports and the run's qualification evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: cna-lisp-reports
-          path: cna-common-lisp/docs/generated/
+          path: ${{ runner.temp }}/evidence/

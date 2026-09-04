@@ -2,6 +2,12 @@
 # source checkout, and nothing here is evidence about the C ABI, the game loop,
 # graphics, input or ownership -- the runner prints that in so many words when the
 # native layer does not run. See native.yml for the gates that do.
+#
+# Two runtimes, and they are not the same claim. `reference` runs SBCL 2.5.2, the
+# runtime docs/qualification.md calls REFERENCE_QUALIFIED and the one the local
+# qualification uses. `distro` runs whatever SBCL ubuntu-24.04 packages -- 2.2.9
+# at the time of writing -- and is a secondary compatibility test, CI_TESTED.
+# Neither job may claim the other's result.
 
 name: Lisp
 
@@ -17,28 +23,55 @@ concurrency:
 
 jobs:
   pure-lisp:
-    name: Compile, load and test without a native library
+    name: ${{ matrix.label }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime: reference
+            label: 'REFERENCE_QUALIFIED runtime (SBCL 2.5.2): compile, load and test'
+          - runtime: distro
+            label: 'CI_TESTED runtime (ubuntu-24.04 SBCL): compile, load and test'
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Install SBCL
+      - name: Install the distro SBCL
+        if: matrix.runtime == 'distro'
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends sbcl
-          sbcl --version
+
+      - name: Install the reference SBCL
+        if: matrix.runtime == 'reference'
+        uses: ./.github/actions/reference-sbcl
+
+      - name: Record the runtime this job actually tested
+        run: |
+          set -eu
+          version=$(sbcl --version)
+          echo "SBCL_TESTED=$version" >> "$GITHUB_ENV"
+          {
+            echo "### ${{ matrix.runtime }} runtime"
+            echo
+            echo '```'
+            echo "$version"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       # A cache miss must never change the result: everything below is
       # reproducible from the pinned Quicklisp dist, and the cache only makes it
       # quicker.
       - name: Cache Quicklisp
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ~/quicklisp
-          key: quicklisp-${{ runner.os }}-2026-01-01-${{ hashFiles('cna-common-lisp.asd') }}
-          restore-keys: quicklisp-${{ runner.os }}-2026-01-01-
+          path: |
+            ~/quicklisp
+            ~/.cache/common-lisp
+          key: quicklisp-${{ runner.os }}-${{ matrix.runtime }}-2026-01-01-${{ hashFiles('cna-common-lisp.asd') }}
+          restore-keys: quicklisp-${{ runner.os }}-${{ matrix.runtime }}-2026-01-01-
 
       - name: Install Quicklisp and the pinned dependencies
         run: |
