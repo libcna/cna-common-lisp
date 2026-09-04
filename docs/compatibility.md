@@ -48,9 +48,10 @@ python3 tools/api-compat/verify.py --strict
 
 ## Diagnostic categories
 
-Fourteen categories are measured. Two of them mean *absence*; the other twelve
-mean **disagreement** -- the binding claiming something that is not so, or hiding
-something.
+<!-- generated:diagnostic categories=16 --> categories are measured.
+<!-- generated:absence categories=2 --> of them mean *absence*; the other
+<!-- generated:disagreement categories=14 --> mean **disagreement** -- the
+binding claiming something that is not so, or hiding something.
 
 | Absence | Disagreement |
 | --- | --- |
@@ -77,6 +78,24 @@ function does not actually accept. Both are checked against the real method
 lambda lists in the image, not against the generic function's, which says `&key`
 and stops.
 
+It also catches the subtler version, which the first form of the check did not:
+a mechanism that is *declared* and does not actually separate anything. Each
+declared mechanism is applied to the member's contract signature to produce a
+key — dispatch gives the parameter types, arity the count, keywords the keyword
+set — and two overloads on one symbol with the same key have been accounted for
+by nothing. Three real collapses were hiding behind that: `SpriteBatch.Draw`'s
+two scale overloads and `GraphicsDevice.DrawUserIndexedPrimitives`'s two index
+widths, each pair declaring identical keyword sets, and the sixteen
+array-transform overloads, which declared `arity` when there are two overloads of
+each arity. A rule may now declare a **discriminator** — an argument whose Lisp
+type selects the overload, which is what a scale's realness and an index array's
+element type do — or a **unified** collapse, for the case where nothing separates
+two overloads and that is correct because their parameter types share one Common
+Lisp representation and their bodies are identical.
+`SpriteFont.MeasureString(String)` and `MeasureString(StringBuilder)` are the
+worked example; `SpriteBatch.DrawString` needs both mechanisms at once.
+`tools/api-compat/overload-mutations.sh` proves each refusal.
+
 **Strict verification is allowed to be red while real surface is missing.** It is
 never allowed to be green because an allowlist hid something: a public symbol
 that is neither a mapped XNA member nor a declared extension is a diagnostic, and
@@ -88,30 +107,30 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=126 -->
-<!-- generated:selected members=2061 -->
-<!-- generated:complete types=117 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=127 -->
+<!-- generated:selected members=2067 -->
+<!-- generated:complete types=119 -->
+<!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1598 -->
+<!-- generated:complete members=1610 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=72 -->
+<!-- generated:missing members=66 -->
 <!-- generated:not-applicable members=390 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 126 types, 2061 members.
+Selection **Foundation 1 and the managed closures**: 127 types, 2067 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **117** |
-| Types partial | **9** |
+| Types complete | **119** |
+| Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1598** |
+| Members complete | **1610** |
 | Members partial | **1** |
-| Members missing | **72** |
+| Members missing | **66** |
 | Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -156,7 +175,8 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
-| `M.X.F.Graphics.SpriteBatch` | **partial** | 14 | 0 | 6 | 1 |
+| `M.X.F.Graphics.SpriteBatch` | **complete** | 20 | 0 | 0 | 1 |
+| `M.X.F.Graphics.SpriteFont` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.Graphics.SpriteSortMode` | **complete** | 5 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SpriteEffects` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SurfaceFormat` | **complete** | 20 | 0 | 0 | 1 |
@@ -297,7 +317,6 @@ back-reference.
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
-| `M.X.F.Graphics.SpriteBatch` | 6 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
@@ -305,11 +324,10 @@ back-reference.
 <!-- /generated-block:partial-frontier -->
 
 The counts in that table are the real remaining surface. The largest by far is
-`GraphicsDevice`'s own drawing, render-target, vertex- and index-buffer surface;
-the rest is `System.IO.Stream` and the `Texture2D` members that need it,
-`SpriteFont` and `SpriteBatch.DrawString`, the two `Effect`-bearing `Begin`
-overloads, and the parts of `Game` and `GraphicsDeviceManager` that need a
-component engine or a device-settings type.
+`GraphicsDevice`'s own render-target and remaining state surface; the rest is
+`System.IO.Stream` and the `Texture2D` members that need it, and the parts of
+`Game` and `GraphicsDeviceManager` that need a component engine, a content
+manager or a device-settings type.
 
 ## Behaviour, as distinct from structure
 
@@ -329,9 +347,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=273 -->
-<!-- generated:bound native structs=49 -->
-<!-- generated:bound native struct fields=359 -->
+<!-- generated:bound native functions=279 -->
+<!-- generated:bound native structs=52 -->
+<!-- generated:bound native struct fields=384 -->
 <!-- generated:bound native constants=460 -->
 <!-- generated:bound native callbacks=6 -->
 <!-- generated:by-value aggregates=6 -->
@@ -341,9 +359,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 273 |
-| Bound structs | 49 |
-| Bound struct fields | 359 |
+| Bound functions | 279 |
+| Bound structs | 52 |
+| Bound struct fields | 384 |
 | Bound constants | 460 |
 | Bound callback typedefs | 6 |
 | By-value aggregates admitted | 6 |

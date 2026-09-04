@@ -38,15 +38,19 @@ and another host ABI would be a different calling convention, not an untested
 one. Everything that touches no native route runs anywhere.
 
 HEADLESS qualifies command submission and the lifecycle. The SOFTWARE lane
-qualifies the three pixel paths it actually tests: a `Clear` reaches the back
+qualifies the four pixel paths it actually tests: a `Clear` reaches the back
 buffer and reads back; a `SpriteBatch` draw puts a generated opaque texture's own
 texels on exactly the pixels its destination rectangle names — checked at the
 rectangle's corners and at the pixels immediately outside it, with a second,
-four-colour texture proving orientation as well as placement; and a
+four-colour texture proving orientation as well as placement; a
 `DrawUserPrimitives` triangle drawn through a `BasicEffect` pass covers exactly
-the pixels its geometry covers and none outside them. It needs no display to do
-any of that. `docs/qualification.md` defines the claims and
-`docs/limitations.md` bounds them.
+the pixels its geometry covers and none outside them; and `DrawString` lays a
+string out glyph by glyph over a two-colour atlas, so the colour of a pixel says
+*which* glyph reached it — the second glyph of `"AB"` reads green eight pixels
+right of the first, and the second line of `"A\nA"` reads red twelve rows down,
+which is `LineSpacing` and not the glyph height. It needs no display to do any of
+that. `docs/qualification.md` defines the claims and `docs/limitations.md` bounds
+them.
 
 ## What is implemented
 
@@ -128,9 +132,15 @@ stubs:
 * `SpriteBatch.Begin`'s five shapes, and only those five: the parameterless one,
   the sort-mode-and-blend-state one, the five-parameter one and the two that add
   an `Effect` and a transform, with a null state meaning the framework default
-  exactly as XNA's
-  `SetRenderState` does. The two `Effect`-bearing overloads are **not** faked and
-  are measured as missing;
+  exactly as XNA's `SetRenderState` does;
+* **`SpriteFont` and all six `SpriteBatch.DrawString` overloads.**
+  `MeasureString` and the per-glyph layout are transcribed from the pinned
+  assembly and computed in Lisp over the glyph table CNA hands back — CNA has its
+  own `measure` and `draw_string` routes and they are deliberately not used for
+  the answer, because a runtime cannot be the oracle for its own compatibility
+  and because both take UTF-8, which cannot hold the unpaired surrogate a
+  `System.String` can. `System.Char` is projected as an integer in [0, 65535],
+  which is what a UTF-16 code unit is;
 * the CLR **event projection**: `game.Activated += handler` becomes
   `(add-activated-handler game handler)`, over CNA's own subscription routes,
   with the registrations released deterministically with the object. `Game`'s
@@ -141,26 +151,26 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=126 -->
-<!-- generated:selected members=2061 -->
-<!-- generated:complete types=117 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=127 -->
+<!-- generated:selected members=2067 -->
+<!-- generated:complete types=119 -->
+<!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1598 -->
+<!-- generated:complete members=1610 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=72 -->
+<!-- generated:missing members=66 -->
 <!-- generated:not-applicable members=390 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=273 -->
-<!-- generated:bound native structs=49 -->
+<!-- generated:bound native functions=279 -->
+<!-- generated:bound native structs=52 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **126 XNA types and 2061 members**:
+The generated scoreboard, over a selection of **127 XNA types and 2067 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **117 / 9 / 0** |
-| Members complete / missing | **1598 / 72** |
+| Types complete / partial / missing | **119 / 8 / 0** |
+| Members complete / missing | **1610 / 66** |
 | Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
@@ -174,7 +184,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **273 native routes** and **49 native structs**,
+The private foreign layer binds **279 native routes** and **52 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

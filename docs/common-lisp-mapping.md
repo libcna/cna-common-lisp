@@ -341,6 +341,34 @@ and `:length` expresses both — `vector3-transform-array`. It is a distinct
 function from the single-value `vector3-transform`, because a rule that let one
 stand for the other would be a rule that could claim either without doing it.
 
+### 7b. When one mechanism does not separate two overloads
+
+Declaring how an overload is told from its siblings is not the same as being told
+from them, and the verifier now computes the difference: each declared mechanism
+is applied to the member's contract signature to produce a key, and two overloads
+on one symbol with the same key have not been separated by anything.
+
+Two declarations exist for what is left over.
+
+* **A discriminator** names an argument whose *Lisp type* selects the overload.
+  `SpriteBatch.Draw`'s uniform-scale and per-axis-scale overloads take the same
+  keywords and differ only in whether `:scale` is a real or a `vector2`;
+  `GraphicsDevice.DrawUserIndexedPrimitives`'s two index widths differ only in
+  whether `indices` is an `(unsigned-byte 16)` or an `(unsigned-byte 32)` array.
+  The named argument has to be one the projection really accepts, every overload
+  in the partition has to name the same one, and no two of them may claim the
+  same type.
+
+* **A unified collapse** says that nothing separates them and that this is
+  correct — their parameter types share one Common Lisp representation and their
+  bodies are observably identical. `SpriteFont.MeasureString(String)` and
+  `MeasureString(StringBuilder)` are the case. Such a rule must name exactly the
+  siblings it is indistinguishable from, and give a reason.
+
+The two combine, and `SpriteBatch.DrawString` needs both: the scale's type tells
+the three placement shapes apart, and inside each shape the String and
+StringBuilder members are the same call.
+
 ## 8. Enumerations and flags
 
 **An enum member is a keyword.** Each enum gets a Common Lisp type of the enum's
@@ -424,6 +452,8 @@ other.
 | byte buffer | `(vector (unsigned-byte 8))` |
 | `IEnumerable<T>` | a Lisp list or vector, whichever the member's shape fits |
 | read-only collection | a fresh Lisp sequence; the projection copies rather than aliasing |
+| `System.Char` | an integer in `[0, 65535]`, one UTF-16 code unit. See below |
+| `System.String`, `System.Text.StringBuilder` | a Common Lisp `string`, converted to UTF-16 code units at the boundary. See below |
 | `TimeSpan` | an integer count of 100-nanosecond ticks |
 | `IntPtr` | not projected. `Mouse.WindowHandle` is the only member of the selection that has one, and it is classified not applicable: answering it would put a raw platform pointer in the public API, and setting it would need a window handle a CNA-Lisp program never has, because CNA owns the game's window |
 
@@ -439,6 +469,45 @@ extension.
 
 No fake .NET base class library is invented. Only the BCL surface the selected
 XNA profile actually reaches is projected, and each projection is recorded here.
+
+### 10a. `System.Char` is a code unit, and so is a string's element
+
+A CLR `char` is a **UTF-16 code unit**: sixteen bits, and all 65536 values are
+legal. It is not a Unicode scalar value, not a code point, and not a Common Lisp
+`character`. `(char)0xD800` is an unpaired high surrogate; it is an ordinary
+`System.Char`, it can sit inside a `System.String`, and `SpriteFont.Characters`
+can contain it.
+
+So `System.Char` projects onto **an integer in `[0, 65535]`**, and
+`Nullable<Char>` onto `nil` or one of those. Two measured facts decided it, and
+neither is about which reads better:
+
+* **A Common Lisp string is a sequence of code points; a CLR string is a sequence
+  of code units.** They agree across the whole BMP and disagree above it: U+1F600
+  is *one* `character` here and *two* `char`s there. XNA's `SpriteFont` looks
+  each of those two up in its glyph table separately, so a projection that
+  measured one `character` would answer a width XNA never answers. Text is
+  therefore converted to code units before it is measured or drawn — not as an
+  optimisation, but because that is what makes the projected text the same text.
+* **Whether a lone surrogate is representable as a `character` at all is
+  implementation-defined.** SBCL admits `(code-char #xD800)`; ANSI does not
+  require it. An integer is exact on every conforming implementation, which is
+  what a projection of a sixteen-bit value needs.
+
+`nil` is unambiguous for the empty `Nullable<Char>` precisely because a code unit
+is an integer: `0` is a real code unit and is not `nil`, which is the distinction
+`SpriteFont.DefaultCharacter` needs between "no fallback" and "fall back to
+U+0000".
+
+**`System.Text.StringBuilder` is not projected as a type.** The selected surface
+reaches one only through `Length` and `Chars` — XNA's own private `StringProxy`
+wraps a `String` or a `StringBuilder` and every method body after it is identical
+— and a Common Lisp string is already a mutable random-access sequence of
+characters. So both parameter types project onto `string`, and the two contract
+members stay two members: the mapping rules declare the collapse with
+`distinguished_by: "unified"`, each names the sibling it cannot be told from, and
+the verifier refuses a collapse that names nobody. Narrowing the projection is
+allowed; losing an overload behind it is not.
 
 ### 7a. Events
 

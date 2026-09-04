@@ -41,7 +41,7 @@ zeroes. Under `HEADLESS` it therefore refuses, by name.
 
 Under a rasterising renderer it answers. Measured against a CNA built with
 `-DCNA_GRAPHICS_RENDERER=SOFTWARE` — a CPU rasteriser, needing **no display and
-no Xvfb** — in three separate proofs, kept apart because they are three claims:
+no Xvfb** — in four separate proofs, kept apart because they are four claims:
 
 * **clear.** Clearing to `CornflowerBlue` reads back `(100, 149, 237, 255)` for
   every pixel of the window asked for.
@@ -61,20 +61,140 @@ no Xvfb** — in three separate proofs, kept apart because they are three claims
   clear colour. `VertexColorEnabled` is on and lighting off, so the colour read
   back is the vertex colour and not a shading result.
 
-`tools/qualification/rasterizer.sh` requires all three and fails when any is
+* **text.** A `SpriteFont` built over a generated 16×8 atlas whose two glyph
+  cells are **different colours** — `'A'` opaque red, `'B'` opaque green — so a
+  pixel's colour says which glyph reached it. Drawing `"AB"` at (16,16) with
+  `BlendState.Opaque`, `SamplerState.PointClamp`, `Color.White`, unit scale and
+  no rotation or origin puts red inside the first glyph and **green** inside the
+  second, eight pixels to its right: that is the advance and the per-glyph source
+  rectangle in one assertion, because red there would mean the second glyph was
+  cut from the first one's cell and the clear colour would mean the pen never
+  advanced. Drawing `"A\nA"` puts the second line's glyph twelve rows down —
+  `LineSpacing`, not the glyph height — and leaves the four rows between the two
+  eight-row glyphs at the clear colour, which a line advance of 8 would have
+  filled.
+
+`tools/qualification/rasterizer.sh` requires all four and fails when any is
 absent; a clear alone is not accepted as evidence about `SpriteBatch`, which it
-briefly was, and the sprite path is not accepted as evidence about the primitive
-path, which is a different path through the renderer.
+briefly was, the sprite path is not accepted as evidence about the primitive
+path, which is a different path through the renderer, and neither is accepted as
+evidence about text layout — a font atlas texel arriving is a smaller claim than
+a string being laid out.
 
 Three things this does *not* establish. It is not a claim about a physical
 monitor; a back buffer is a back buffer. It is one renderer: `SOFTWARE`
 rasterises on the CPU, and nothing here says a GPU renderer would produce the
 same pixels. And each proof is one shape: the sprite one is an axis-aligned,
-unrotated, unscaled, untinted, opaque blit, and the primitive one is a single
-untextured, unlit, unfogged triangle list with no transform. Rotation, scaling,
-tinting, blending, texturing, lighting, fog, indexed and buffer-backed draws and
-every non-identity transform are submitted and accepted, and their pixels are not
-asserted anywhere.
+unrotated, unscaled, untinted, opaque blit, the primitive one is a single
+untextured, unlit, unfogged triangle list with no transform, and the text one is
+unrotated, unscaled, untinted text with no origin and no `SpriteEffects`.
+Rotation, scaling, tinting, blending, texturing, lighting, fog, indexed and
+buffer-backed draws, flipped or rotated text and every non-identity transform are
+submitted and accepted, and their pixels are not asserted anywhere.
+
+## SpriteFont is projected, and cannot yet be obtained
+
+Every member of `SpriteFont` is implemented and measured. No public route
+produces one, and that is XNA's shape rather than an omission: XNA's constructor
+is `assembly`-visible, a consumer obtains a SpriteFont from
+`ContentManager.Load<SpriteFont>`, and the content closure is not part of this
+milestone.
+
+CNA does have `cna_sprite_font_create`, and projecting it as a public constructor
+would invent a member XNA has not got, so it is not projected as one.
+`%MAKE-SPRITE-FONT-FROM-GLYPHS` is unexported, exists so that measurement, the
+default-character fallback and `DrawString` could be qualified before
+`ContentManager` lands, and is not part of the API. The template does not use it
+and must not: a template that reached into the binding's internals to show text
+would stop being a consumer.
+
+### System.Char is an integer here, not a character
+
+A CLR `char` is a **UTF-16 code unit**: sixteen bits, all 65536 values legal,
+including an unpaired surrogate such as `0xD800`. It is not a Unicode scalar
+value, not a code point, and not a Common Lisp `character`. So `System.Char`
+projects onto **an integer in [0, 65535]**, and `Nullable<Char>` onto `NIL` or
+one — unambiguously, because `0` is a real code unit and is not `NIL`, which is
+the distinction `DefaultCharacter` needs between "no fallback" and "fall back to
+U+0000".
+
+The consequence for text is not cosmetic. A Common Lisp string is a sequence of
+code *points* and a `System.String` is a sequence of code *units*; they agree
+across the whole BMP and disagree above it, where `U+1F600` is one character here
+and two chars there. XNA looks each of those two up in the glyph table
+separately, so `MeasureString` and `DrawString` convert to code units first and
+measure the surrogate pair, which is what XNA measures.
+
+`StringBuilder` is not projected as a type. `SpriteFont` and `SpriteBatch` reach
+one only through `Length` and `Chars` — XNA's own private `StringProxy` wraps a
+`String` or a `StringBuilder` and the bodies that follow are identical — and a
+Common Lisp string is already a mutable random-access sequence, so both
+parameter types project onto `string`. The two contract members are still two
+members: the mapping rules declare the collapse and the verifier refuses a
+collapse that does not name what it collapses.
+
+### `Characters` keeps XNA's immutability and gives up its identity
+
+XNA answers a `ReadOnlyCollection<char>`, made lazily and then cached, so the
+*same instance* comes back every time and no caller can modify it. Common Lisp
+has no read-only vector, so a projection can have one of those properties or the
+other. This one answers a **fresh** `(unsigned-byte 16)` vector per call: what
+comes back cannot be used to modify the font, and reference identity is the
+property that cannot be relied on. The choice is the one that cannot be silently
+wrong — a cached vector a caller had mutated would disagree with the font's own
+lookups and say nothing about it.
+
+### Where CNA is stricter than XNA, and XNA wins
+
+XNA's `LineSpacing` and `Spacing` setters are a bare `stfld` with no validation
+at all: a negative or zero line spacing is accepted, and so is a `Spacing` of NaN
+or either infinity. CNA's `cna_sprite_font_set_spacing` documents *"Must be
+finite"* and would refuse those.
+
+No managed validation is added here to match CNA, because that would refuse
+programs XNA runs. Instead `LineSpacing`, `Spacing` and `DefaultCharacter` are
+managed fields — XNA's are too, and `InternalMeasure` and `InternalDraw` read
+them from the object — and since both algorithms are computed in Lisp, nothing
+native reads them. The three CNA setters are therefore **not bound at all**,
+rather than bound and worked around.
+
+What that costs is exact and worth stating: after `(setf (spacing font) x)` the
+native font still holds the spacing it was created with. Nothing in CNA-Lisp
+reads it, so nothing here is affected; a future member that handed the native
+font to CNA for its own layout would have to write the value through first, and
+would then have to decide what to do about the NaN.
+
+`cna_sprite_font_measure_utf8` has a narrower limitation of the same kind: it
+takes UTF-8, which cannot encode an unpaired surrogate, while a `System.String`
+can hold one and `MeasureString` here can measure one. It is bound and
+cross-checked against this implementation over the text where the two domains
+overlap — `tests/native/sprite-font.lisp` — as a comparison and never as an
+authority. It agrees.
+
+### SpriteFont is not IDisposable, and its handle is still released
+
+XNA's `SpriteFont` is `sealed` and extends `System.Object`. It is not a
+`GraphicsResource`: no `Name`, no `Tag`, no `GraphicsDevice`, no `Disposing`
+event, and no `Dispose`. CNA nevertheless hands out an owned handle that must be
+given back.
+
+Those are two questions and they are answered separately. The public shape is
+XNA's; the handle goes back through `MICROSOFT.XNA.FRAMEWORK:DISPOSE`, which is
+this binding's own deterministic disposal — a declared extension on every native
+object — and is **not** counted as an XNA member of this type. Nothing here
+claims `SpriteFont` implements an XNA `IDisposable` contract, because it does
+not.
+
+The font is registered as a child of its **atlas texture**, not of the game. CNA
+parents the native font to the game, but the resource whose destruction would
+invalidate the font is the texture — CNA's own header says it "cannot be
+destroyed until this SpriteFont is destroyed" — so disposing them in the wrong
+order is a refusal naming both types instead of a native failure later. The game
+still refuses while the texture lives, so CNA's ordering holds transitively.
+
+When `ContentManager` arrives, `Unload` will be the thing that disposes both, in
+that order. No public `Texture2D` atlas is exposed for a SpriteFont, because XNA
+exposes none.
 
 ## The foreign layer is qualified for one host, and refuses the others
 
@@ -175,7 +295,6 @@ These are absent, and measured as absent, not faked:
 * the game component engine (`GameComponent`, `Game.Components`, services);
 * `ContentManager` and the XNB pipeline;
 * `GameWindow` as a type -- only the window title is reachable, on `game`;
-* `SpriteFont` and `SpriteBatch.DrawString`;
 * `Model`, `RenderTarget2D`, `Texture3D`, `TextureCube` and the rest of the 3D
   resource surface;
 * the stock effects other than `BasicEffect` — `AlphaTestEffect`,

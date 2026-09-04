@@ -133,7 +133,7 @@ init only adds nested codec submodules this build disables anyway.
 | Lane | Renderer | What it proves |
 | --- | --- | --- |
 | `Native` | `HEADLESS` | the lifecycle ran, handles were valid, and draw commands were submitted and accepted. **Nothing about pixels**, and the back-buffer readback refuses by name rather than answering zeroes. |
-| `Rasterizer` | `SOFTWARE` | the same suite, plus two separate pixel proofs — see below. |
+| `Rasterizer` | `SOFTWARE` | the same suite, plus four separate kinds of pixel proof — see below. |
 
 The rasterizer lane's proofs are kept apart because they are different claims,
 and one of them used to be asserted on the strength of the other:
@@ -144,16 +144,19 @@ and one of them used to be asserted on the strength of the other:
 | `sprite` | clear, then draw a generated 8×8 fully opaque texture to an 8×8 destination at (16,16) with `BlendState.Opaque`, `SamplerState.PointClamp`, `Color.White`, no rotation/scale/origin — then read the corners of that rectangle *and* the pixels immediately outside it | **`SpriteBatch.Draw` rasterises**: the texture's own texels land on exactly the pixels its destination names, and on none outside them |
 | `sprite` | the same with a generated 4×4 texture of four differently-coloured 2×2 quadrants | orientation and sampling are right, not merely placement — a flipped or transposed sample would fail |
 | `primitive` | clear, make a `BasicEffect`, apply its one pass, then one `DrawUserPrimitives` triangle list in clip space — World, View and Projection left at the identity CNA reports as their default, `VertexColorEnabled` on and lighting off — then read four points inside the triangle and five outside it | **the primitive pipeline rasterises**: the vertices' own colour lands on the pixels the geometry covers and on none outside it, and no matrix setter and therefore no optional shim takes part in the proof |
+| `text` | clear, then `DrawString` of `"AB"` at (16,16) with a `SpriteFont` over a generated 16×8 atlas whose two glyph cells are **different colours** — `'A'` red, `'B'` green — under `BlendState.Opaque`, `SamplerState.PointClamp`, `Color.White`, unit scale, no rotation and no origin; then read inside both glyphs and outside the run | **`SpriteFont` metrics and `DrawString` layout reach pixels**: the second glyph reads **green** eight pixels right of the first, which is the advance *and* the per-glyph atlas rectangle in one assertion — red there would mean the second glyph was cut from the first one's cell, and the clear colour would mean the pen never advanced |
+| `text` | the same with `"A\nA"` | the line advance is `LineSpacing` (12) and not the glyph height (8): the second line's glyph reads red twelve rows down, and the four rows between the two eight-row glyphs stay the clear colour, which an advance of 8 would have filled |
 
 The textures are **generated**, not drawn:
 `tools/qualification/make-pixel-fixtures.py` states every texel in source, so the
 expected colours are checkable without opening an image editor.
 
-`tools/qualification/rasterizer.sh` requires **all three** kinds and fails if any
-is missing, so the lane cannot pass on a clear alone, and the sprite path cannot
-stand in for the primitive path — they are different paths through the renderer.
-Verified in both directions: it exits 1 against a `HEADLESS` library and 0
-against a `SOFTWARE` one.
+`tools/qualification/rasterizer.sh` requires **all four** kinds and fails if any
+is missing, so the lane cannot pass on a clear alone, the sprite path cannot
+stand in for the primitive path — they are different paths through the renderer —
+and neither stands in for text, because one font atlas texel arriving is a
+smaller claim than a string being laid out. Verified in both directions: it exits
+1 against a `HEADLESS` library and 0 against a `SOFTWARE` one.
 
 They are separate jobs on purpose. They support different claims, and a failure
 in one must not take down the other.
@@ -172,12 +175,22 @@ proof is absent.
 
 ### What is not in the rasterizer lane
 
-**Every draw shape but the three above.** Each proof is one shape. The sprite
+**Every draw shape but the ones above.** Each proof is one shape. The sprite
 ones are axis-aligned, unrotated, unscaled, untinted opaque blits; the primitive
-one is a single untextured, unlit, unfogged triangle list with no transform.
-Rotation, scaling, tinting, blending, texturing, lighting, fog, indexed draws,
-buffer-backed draws and every non-identity transform are submitted and accepted,
-and no pixel of any of them is asserted anywhere.
+one is a single untextured, unlit, unfogged triangle list with no transform; the
+text ones are unrotated, unscaled, untinted text with no origin and no
+`SpriteEffects`. Rotation, scaling, tinting, blending, texturing, lighting, fog,
+indexed draws, buffer-backed draws, flipped or rotated text and every
+non-identity transform are submitted and accepted, and no pixel of any of them is
+asserted anywhere.
+
+**A real font.** The text proof's atlas is generated: two flat opaque colour
+cells with no antialiasing, chosen so the expected back-buffer value is the texel
+itself. Nothing here says anything about a font produced by the content pipeline,
+about antialiased glyph edges, or about how a real typeface's bearings and
+kerning table would lay out — `MeasureString` computes those from whatever table
+it is given, and the arithmetic is pinned by the unit tests, but no
+pipeline-produced font has been through this.
 
 **Compiled effects.** `Effect(GraphicsDevice, byte[])` is implemented, and
 neither qualification renderer has `CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`, so

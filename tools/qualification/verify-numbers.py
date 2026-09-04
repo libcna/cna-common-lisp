@@ -100,6 +100,16 @@ def facts_of(abi, compat):
         "not-applicable members": compat["totals"]["members_by_status"].get(
             "not-applicable", 0),
         "disagreement total": compat["totals"]["disagreement_total"],
+        # The prose said "fourteen categories ... the other twelve" while the
+        # verifier measured sixteen. Same class of drift as the DrawString count,
+        # and derivable the same way.
+        "diagnostic categories": len(compat["totals"]["diagnostics_by_category"]),
+        "absence categories": sum(
+            1 for name in compat["totals"]["diagnostics_by_category"]
+            if name in ("missing_type", "missing_member")),
+        "disagreement categories": sum(
+            1 for name in compat["totals"]["diagnostics_by_category"]
+            if name not in ("missing_type", "missing_member")),
         "abi version encoded": abi["abi_version"]["encoded"],
     }
 

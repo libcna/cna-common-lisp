@@ -206,7 +206,22 @@ are pure managed and touch no native route:
   functions, `DirectionalLight` and `BasicEffect` -- which is what makes a
   primitive draw legal, and with it `SpriteBatch.Begin`'s last two overloads.
   With it the rasterizer lane gained its third proof: a triangle drawn through a
-  `BasicEffect` pass covering exactly the pixels its geometry covers.
+  `BasicEffect` pass covering exactly the pixels its geometry covers;
+* the text closure -- `SpriteFont` and the six `SpriteBatch.DrawString`
+  overloads. `MeasureString` and the per-glyph draw are transcribed from
+  `SpriteFont::InternalMeasure` and `InternalDraw` in the pinned Graphics
+  assembly and computed in Lisp over the glyph table CNA hands back, because
+  routing layout through CNA's own `measure` and `draw_string` routes would make
+  the layout CNA's and would narrow the input domain to what UTF-8 can encode.
+  `System.Char` projects onto an integer in [0, 65535] -- a UTF-16 code unit, all
+  65536 values legal -- and `String` and `StringBuilder` onto one Common Lisp
+  string, declared as a unified collapse so neither contract member can go
+  missing behind it. `SpriteFont` is not a `GraphicsResource` and not
+  `IDisposable`, because XNA's is neither, and it has no public constructor for
+  the same reason; the native handle it nevertheless owns goes back through the
+  binding's own disposal, and the font is a child of its atlas so the two cannot
+  be released in the wrong order. With it the rasterizer lane gained its fourth
+  proof.
 
 ## 6. Measured status
 
@@ -229,30 +244,30 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=126 -->
-<!-- generated:selected members=2061 -->
-<!-- generated:complete types=117 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=127 -->
+<!-- generated:selected members=2067 -->
+<!-- generated:complete types=119 -->
+<!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1598 -->
+<!-- generated:complete members=1610 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=72 -->
+<!-- generated:missing members=66 -->
 <!-- generated:not-applicable members=390 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 126 types, 2061 members.
+Selection **Foundation 1 and the managed closures**: 127 types, 2067 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **117** |
-| Types partial | **9** |
+| Types complete | **119** |
+| Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1598** |
+| Members complete | **1610** |
 | Members partial | **1** |
-| Members missing | **72** |
+| Members missing | **66** |
 | Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->

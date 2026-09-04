@@ -57,7 +57,7 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
 | Prose consistency | every generated fact and block matches the reports |
-| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all three proofs -- clear, sprite and primitive |
+| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all four proofs -- clear, sprite, primitive and text |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
@@ -65,9 +65,11 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
 -- **the SOFTWARE lane is what does**, and it needs no display: a CPU rasteriser
 clears to CornflowerBlue and the back buffer reads back (100, 149, 237, 255), a
-SpriteBatch draw lands a known texture's texels where its destination says, and a
+SpriteBatch draw lands a known texture's texels where its destination says, a
 BasicEffect pass followed by one DrawUserPrimitives triangle covers exactly the
-pixels its geometry covers. Neither lane is a claim about a physical monitor. `docs/qualification.md` defines
+pixels its geometry covers, and `DrawString` lays a string out glyph by glyph --
+each from its own atlas cell at its own advanced position, across a line break.
+Neither lane is a claim about a physical monitor. `docs/qualification.md` defines
 `REFERENCE_QUALIFIED`, `CI_TESTED`, `HEADLESS` and `NOT RUN`, and no claim here
 may collapse two of them.
 
@@ -81,7 +83,7 @@ they have never executed is stale.
 | `Lisp` / reference | pure gates on SBCL 2.5.2, installed from the upstream binary release and verified by SHA-256 |
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
-| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all three pixel proofs were obtained |
+| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all four kinds of pixel proof were obtained |
 
 The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
 `openeggbert/cna:next` does not currently build from published sources, because
@@ -94,30 +96,30 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=126 -->
-<!-- generated:selected members=2061 -->
-<!-- generated:complete types=117 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=127 -->
+<!-- generated:selected members=2067 -->
+<!-- generated:complete types=119 -->
+<!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1598 -->
+<!-- generated:complete members=1610 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=72 -->
+<!-- generated:missing members=66 -->
 <!-- generated:not-applicable members=390 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 126 types, 2061 members.
+Selection **Foundation 1 and the managed closures**: 127 types, 2067 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **117** |
-| Types partial | **9** |
+| Types complete | **119** |
+| Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1598** |
+| Members complete | **1610** |
 | Members partial | **1** |
-| Members missing | **72** |
+| Members missing | **66** |
 | Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -134,7 +136,7 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=9 --> are partial, and this is where the remaining
+<!-- generated:partial types=8 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
@@ -144,16 +146,14 @@ members actually are:
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
-| `M.X.F.Graphics.SpriteBatch` | 6 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 <!-- /generated-block:partial-frontier -->
 
-Do not describe that as "graphics state objects, `Stream` and `SpriteFont`". The
-largest single block is `GraphicsDevice`'s own drawing, render-target, buffer and
-state surface; the state objects are the entry to it, not the whole of it.
+Do not describe that as "graphics state objects, `Stream` and `SpriteFont`", and
+do not describe it as the drawing family either -- both of those closed.
 Regenerate this table after every closure rather than reasoning from the last
 one.
 
@@ -166,18 +166,37 @@ one.
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
-| `M.X.F.Graphics.SpriteBatch` | 6 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 <!-- /generated-block:partial-frontier -->
 
-`GraphicsDevice` is most of it, and most of *that* is one thing: the drawing
-family -- `DrawPrimitives`, `DrawIndexedPrimitives`, `DrawInstancedPrimitives`,
-the four `DrawUserIndexedPrimitives` and the two `DrawUserPrimitives` -- plus the
-vertex and index buffers they draw from, and the render-target surface. The
-vertex *descriptors* those need are done; the buffers are not.
+`GraphicsDevice` is still most of it, but the drawing family is no longer any of
+it. What is left there is four different things, and they belong to four
+different closures rather than one:
+
+* **render targets** -- `SetRenderTarget` (two), `SetRenderTargets`,
+  `GetRenderTargets`, and `RenderTarget2D`, `RenderTargetUsage` and `DepthFormat`
+  with them;
+* **the device-settings surface** -- `Adapter`, `DisplayMode`,
+  `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
+  `Reset` overloads, `Present` and the five device-lifetime events. That is one
+  closure with `GraphicsDeviceManager`'s sixteen, which are the same subject seen
+  from the other side;
+* **two `Clear` overloads and `DrawInstancedPrimitives`**, which need a
+  `ClearOptions` and an instanced vertex stream respectively;
+* **`new(...)` and `Dispose`/`IsDisposed`/`Disposing`**, which are the device as
+  an object a program constructs -- something a CNA-Lisp program never does,
+  since CNA lends the device.
+
+`Texture2D`'s twelve are `SetData`/`GetData` (three each), two constructors, and
+the four members that need `System.IO.Stream`: `FromStream` twice, `SaveAsPng`
+and `SaveAsJpeg`.
+
+`Game`'s eight are the component engine (`Components`, `Services`,
+`LaunchParameters`), `Content`, `Window` as a type, and three protected `On*`
+methods.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
@@ -199,27 +218,21 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **`SpriteFont` and `SpriteBatch.DrawString`.**
-   <!-- generated:missing M.X.F.Graphics.SpriteBatch.DrawString=6 --> of
-   `SpriteBatch`'s members are its `DrawString` family, and they are the whole of
-   what is missing from a type that is otherwise complete. CNA has a sprite font
-   surface and the CNB pipeline behind it, so this is local work. It brings
-   `SpriteFont`, `SpriteFont.MeasureString` and the glyph metadata with it.
-2. **The rest of the stock effects.** `AlphaTestEffect`, `DualTextureEffect`,
+1. **The rest of the stock effects.** `AlphaTestEffect`, `DualTextureEffect`,
    `EnvironmentMapEffect` and `SkinnedEffect` are the same shape `BasicEffect`
    already has -- the three `IEffect*` contracts are generic functions and a new
    stock effect implements them by inheriting -- over their own CNA routes. The
    Effect closure did the hard part; this is breadth.
-3. **Render targets.** `RenderTarget2D`, `RenderTargetUsage`, `DepthFormat` and
+2. **Render targets.** `RenderTarget2D`, `RenderTargetUsage`, `DepthFormat` and
    `GraphicsDevice.SetRenderTarget(s)`. This is the closure that would let the
    rasterizer lane prove things it currently cannot: a render target is readable
    on every renderer that can draw at all, so pixel evidence would stop depending
    on back-buffer readback.
-4. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
-5. **`System.IO.Stream` and `TitleContainer`**, which unblock
+4. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-6. **Audio, models, media, storage, gamer services, networking.**
+5. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 
@@ -236,6 +249,38 @@ the graph after each closure instead of following this list once it has moved.
   is discrete, local, actionable work: build its headers, run
   `tools/native-abi/generate.py` and `verify.sh` against them, and see what the
   270-odd bound routes say.
+
+* **`System.Char` is a UTF-16 code unit, and a Common Lisp string is not made of
+  them.** A CLR string is a sequence of code *units*; a Lisp string is a sequence
+  of code *points*. They agree across the BMP and disagree above it, where
+  U+1F600 is one character here and two `char`s there -- and XNA looks each of
+  those two up in the glyph table separately. So `System.Char` projects onto an
+  integer in [0, 65535] and text is converted to code units before it is measured
+  or drawn. Do not "simplify" that to iterating the string's characters.
+
+* **A projection may narrow, but it may not lose an overload.**
+  `MeasureString(String)` and `MeasureString(StringBuilder)` are one Lisp call,
+  because XNA's own `StringProxy` makes them one code path and a Lisp string
+  expresses both. That is declared with `distinguished_by: "unified"`, each names
+  the other, and the verifier refuses a collapse that names nobody. The same
+  question found three older collapses nothing had declared -- `SpriteBatch.Draw`'s
+  two scale overloads, `DrawUserIndexedPrimitives`'s two index widths, and the
+  sixteen array transforms that claimed `arity` when there are two of each arity.
+
+* **SpriteFont is projected and cannot be obtained.** XNA gives it no public
+  constructor: it comes from `ContentManager.Load<SpriteFont>`. CNA has
+  `cna_sprite_font_create`, and projecting that as a public constructor would
+  invent a member XNA has not got, so the producer is unexported and test-only.
+  The template therefore draws no text yet, and must not be given an internal
+  route to do so.
+
+* **CNA is stricter than XNA about a SpriteFont's spacing, and XNA wins.**
+  `cna_sprite_font_set_spacing` requires a finite value; XNA's setter is a bare
+  `stfld` and stores a NaN. LineSpacing, Spacing and DefaultCharacter are managed
+  fields here for that reason -- XNA's are too -- so the three CNA setters are
+  **not bound at all** rather than bound and worked around. The cost is exact and
+  is in `docs/limitations.md`: the native font keeps the values it was created
+  with, and nothing in CNA-Lisp reads them.
 
 * **A fixed time step does not make a frame count an update count.** Measured:
   catch-up updates follow a frame that overran its target, and a full collection

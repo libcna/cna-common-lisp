@@ -77,6 +77,27 @@ The order a Foundation 1 program uses is:
       (xna:dispose game))))
 ```
 
+### A parent that is not the native parent: SpriteFont and its atlas
+
+CNA makes a `SpriteFont` a child of the *game*. CNA-Lisp records it as a child of
+its **atlas texture** instead, and the difference is deliberate.
+
+The ordering that actually matters is not the game's. CNA's own header says the
+source texture "cannot be destroyed until this SpriteFont is destroyed", so the
+texture is the resource whose destruction would invalidate the font. Recording
+that as the parent/child relation is what turns disposing them in the wrong order
+into `cna-ownership-error` naming both types, instead of a native failure
+somewhere later. The game's own requirement still holds, transitively: the
+texture is a child of the game, so the game refuses while the texture lives and
+the texture refuses while the font does.
+
+The public consequence is worth stating plainly, because it is the one place in
+this binding where a disposal exists that XNA has no member for. XNA's
+`SpriteFont` extends `System.Object`, is sealed, and is **not** `IDisposable`.
+`dispose` on one is the binding's own deterministic disposal — the declared
+extension every native object carries — and is not counted as an XNA member of
+that type. When `ContentManager` arrives, `Unload` is what will call it.
+
 ## Double disposal
 
 `dispose` is idempotent, exactly as `IDisposable.Dispose` is. The second call
