@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 90,
-  "member_count": 1763
+  "type_count": 92,
+  "member_count": 1765
  },
  "types": [
   {
@@ -24983,6 +24983,72 @@
      "static": true,
      "constant": false,
      "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "property",
+     "name": "Item",
+     "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": [
+      {
+       "name": "index",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "property",
+     "name": "Item",
+     "type": "Microsoft.Xna.Framework.Graphics.Texture",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": [
+      {
+       "name": "index",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
     }
    ]
   },

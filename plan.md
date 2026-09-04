@@ -185,8 +185,8 @@ are pure managed and touch no native route:
   the `Input.Touch` namespace, each over CNA's own routes;
 * the graphics state objects -- `BlendState`, `DepthStencilState`,
   `RasterizerState`, `SamplerState` and their nine enumerations -- with
-  `GraphicsDevice`'s state surface and `SpriteBatch.Begin`'s state-bearing
-  overloads. Their values come from the pinned `Microsoft.Xna.Framework.Graphics`
+  `GraphicsDevice`'s state surface, its four indexed state and texture
+  collections, and `SpriteBatch.Begin`'s state-bearing overloads. Their values come from the pinned `Microsoft.Xna.Framework.Graphics`
   assembly; CNA's own presets are cross-checked against them and disagree on two
   fields, which `docs/limitations.md` records as an upstream defect.
 
@@ -211,30 +211,30 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=90 -->
-<!-- generated:selected members=1763 -->
-<!-- generated:complete types=85 -->
+<!-- generated:selected types=92 -->
+<!-- generated:selected members=1765 -->
+<!-- generated:complete types=87 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1312 -->
+<!-- generated:complete members=1318 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=89 -->
+<!-- generated:missing members=85 -->
 <!-- generated:not-applicable members=361 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 90 types, 1763 members.
+Selection **Foundation 1 and the managed closures**: 92 types, 1765 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **85** |
+| Types complete | **87** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1312** |
+| Members complete | **1318** |
 | Members partial | **1** |
-| Members missing | **89** |
+| Members missing | **85** |
 | Members not applicable | **361** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->

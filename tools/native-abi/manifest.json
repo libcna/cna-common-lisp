@@ -222,7 +222,8 @@
    "CNA_SAMPLER_STATE_PRESET_POINT_WRAP",
    "CNA_SHADER_STAGE_PIXEL",
    "CNA_SHADER_STAGE_VERTEX",
-   "CNA_MAX_SAMPLERS"
+   "CNA_MAX_SAMPLERS",
+   "CNA_TEXTURE_COLLECTION_MAX_TEXTURES"
   ],
   "prefix_families": [
    {
@@ -403,6 +404,11 @@
   {
    "name": "CNA_SamplerState",
    "direction": "inout",
+   "versioned": true
+  },
+  {
+   "name": "CNA_TextureSlotInfo",
+   "direction": "out",
    "versioned": true
   }
  ],
@@ -1145,6 +1151,18 @@
   },
   {
    "name": "cna_graphics_device_set_scissor_rectangle",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_get_texture",
+   "header": "graphics_device.h",
+   "thread": "owner",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_set_texture",
    "header": "graphics_device.h",
    "thread": "owner",
    "ownership": "none"

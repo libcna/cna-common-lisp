@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 90,
-  "member_count": 1763
+  "type_count": 92,
+  "member_count": 1765
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 90,
-  "members": 1763,
+  "types": 92,
+  "members": 1765,
   "types_by_status": {
    "partial": 5,
-   "complete": 85
+   "complete": 87
   },
   "members_by_status": {
-   "complete": 1312,
-   "missing": 89,
+   "complete": 1318,
+   "missing": 85,
    "not-applicable": 361,
    "partial": 1
   },
-  "diagnostics": 89,
+  "diagnostics": 85,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 89,
+   "missing_member": 85,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1233,10 +1233,10 @@
     "MultiSampleMask": "complete",
     "BlendFactor": "complete",
     "BlendState": "complete",
-    "VertexTextures": "missing",
-    "Textures": "missing",
-    "VertexSamplerStates": "missing",
-    "SamplerStates": "missing",
+    "VertexTextures": "complete",
+    "Textures": "complete",
+    "VertexSamplerStates": "complete",
+    "SamplerStates": "complete",
     "Disposing": "missing",
     "ResourceDestroyed": "missing",
     "ResourceCreated": "missing",
@@ -1600,6 +1600,22 @@
     "AnisotropicClamp": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:sampler-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
+   "status": "complete",
+   "members": {
+    "Item": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:sampler-state-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
+   "status": "complete",
+   "members": {
+    "Item": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:texture-collection"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
@@ -2738,26 +2754,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.PresentationParameters",
    "detail": "no exported 'presentation-parameters' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.VertexTextures",
-   "detail": "no exported 'vertex-textures' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Textures",
-   "detail": "no exported 'textures' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.VertexSamplerStates",
-   "detail": "no exported 'vertex-sampler-states' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SamplerStates",
-   "detail": "no exported 'sampler-states' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",

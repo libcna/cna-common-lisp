@@ -293,6 +293,9 @@
    #:sampler-state-point-wrap #:sampler-state-point-clamp
    #:sampler-state-linear-wrap #:sampler-state-linear-clamp
    #:sampler-state-anisotropic-wrap #:sampler-state-anisotropic-clamp
+   ;; --- the device's state and texture collections -------------------------
+   #:sampler-state-collection #:texture-collection #:item
+   #:sampler-states #:vertex-sampler-states #:textures #:vertex-textures
    ;; --- GraphicsDevice ----------------------------------------------------
    #:graphics-device #:clear #:present #:renderer-name #:scissor-rectangle
    ;; --- Texture and Texture2D ---------------------------------------------

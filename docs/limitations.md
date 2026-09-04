@@ -226,6 +226,34 @@ so an exact frame count taken across the warm-up measures the warm-up. Every
 deterministic frame claim in this repository uses variable timing, for exactly
 that reason; see the section above.
 
+## A texture slot filled by CNA itself reads back as empty
+
+`GraphicsDevice.Textures[i]` answers the texture that was *put* there, and in XNA
+that is always a texture the program itself bound, because XNA owns both sides.
+
+CNA's C ABI cannot always answer with an object, and its header says why in as
+many words: **there is deliberately no route from a native object back to a
+handle**, anywhere in that ABI. A handle is a record the ABI created for an
+object a C caller asked it to make; it is not an identity the object carries.
+`cna_graphics_device_get_texture` therefore answers a `bound` flag and a handle,
+and the handle is `CNA_INVALID_HANDLE` when the slot was filled by canonical CNA
+code -- a `SpriteBatch` flush, for instance -- rather than through the C ABI.
+
+The header's own advice is to cache what you bind and use `bound` to tell
+"something else owns this slot now" from "the slot is empty", and that is what
+`texture-collection` does. The consequence is one case:
+
+* a slot this binding filled reads back as the texture object it was given;
+* an empty slot reads back as `NIL`;
+* **a slot CNA filled from inside reads back as `NIL` as well**, because there is
+  nothing truthful to answer -- the binding has no texture bound there, and
+  inventing one would be worse than saying so.
+
+`sampler-state-collection` has no equivalent case: CNA answers a complete sampler
+descriptor for any slot, so a slot that was never set through the collection is
+read once from the device and then answered stably, as XNA's array-backed getter
+does.
+
 ## A graphics resource's Tag is a Lisp slot, not a round trip
 
 XNA's `GraphicsResource.Tag` is `System.Object`: arbitrary consumer data the

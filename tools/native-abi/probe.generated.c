@@ -580,6 +580,19 @@ _Static_assert(sizeof(((CNA_SamplerState *)0)->mip_map_level_of_detail_bias) == 
 _Static_assert(offsetof(CNA_SamplerState, reserved) == 36, "CNA_SamplerState.reserved offset");
 _Static_assert(sizeof(((CNA_SamplerState *)0)->reserved) == 4, "CNA_SamplerState.reserved size");
 
+_Static_assert(sizeof(CNA_TextureSlotInfo) == 24, "CNA_TextureSlotInfo size");
+_Static_assert(_Alignof(CNA_TextureSlotInfo) == 8, "CNA_TextureSlotInfo alignment");
+_Static_assert(offsetof(CNA_TextureSlotInfo, struct_size) == 0, "CNA_TextureSlotInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_TextureSlotInfo *)0)->struct_size) == 4, "CNA_TextureSlotInfo.struct_size size");
+_Static_assert(offsetof(CNA_TextureSlotInfo, struct_version) == 4, "CNA_TextureSlotInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_TextureSlotInfo *)0)->struct_version) == 4, "CNA_TextureSlotInfo.struct_version size");
+_Static_assert(offsetof(CNA_TextureSlotInfo, bound) == 8, "CNA_TextureSlotInfo.bound offset");
+_Static_assert(sizeof(((CNA_TextureSlotInfo *)0)->bound) == 1, "CNA_TextureSlotInfo.bound size");
+_Static_assert(offsetof(CNA_TextureSlotInfo, reserved) == 9, "CNA_TextureSlotInfo.reserved offset");
+_Static_assert(sizeof(((CNA_TextureSlotInfo *)0)->reserved) == 7, "CNA_TextureSlotInfo.reserved size");
+_Static_assert(offsetof(CNA_TextureSlotInfo, texture) == 16, "CNA_TextureSlotInfo.texture offset");
+_Static_assert(sizeof(((CNA_TextureSlotInfo *)0)->texture) == 8, "CNA_TextureSlotInfo.texture size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -702,6 +715,8 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_reference_stencil)(CNA
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_reference_stencil)(CNA_Handle, int32_t) = cna_graphics_device_set_reference_stencil;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_scissor_rectangle)(CNA_Handle, CNA_Rectangle*) = cna_graphics_device_get_scissor_rectangle;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_scissor_rectangle)(CNA_Handle, CNA_Rectangle) = cna_graphics_device_set_scissor_rectangle;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_texture)(CNA_Handle, CNA_ShaderStage, uint32_t, CNA_TextureSlotInfo*) = cna_graphics_device_get_texture;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_texture)(CNA_Handle, CNA_ShaderStage, uint32_t, CNA_Handle) = cna_graphics_device_set_texture;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -1085,6 +1100,7 @@ _Static_assert((int64_t)(CNA_SURFACE_FORMAT_VECTOR4) == INT64_C(15), "CNA_SURFAC
 _Static_assert((int64_t)(CNA_TEXTURE_ADDRESS_CLAMP) == INT64_C(1), "CNA_TEXTURE_ADDRESS_CLAMP value");
 _Static_assert((int64_t)(CNA_TEXTURE_ADDRESS_MIRROR) == INT64_C(2), "CNA_TEXTURE_ADDRESS_MIRROR value");
 _Static_assert((int64_t)(CNA_TEXTURE_ADDRESS_WRAP) == INT64_C(0), "CNA_TEXTURE_ADDRESS_WRAP value");
+_Static_assert((int64_t)(CNA_TEXTURE_COLLECTION_MAX_TEXTURES) == INT64_C(16), "CNA_TEXTURE_COLLECTION_MAX_TEXTURES value");
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_ANISOTROPIC) == INT64_C(2), "CNA_TEXTURE_FILTER_ANISOTROPIC value");
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_LINEAR) == INT64_C(0), "CNA_TEXTURE_FILTER_LINEAR value");
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_LINEAR_MIP_POINT) == INT64_C(3), "CNA_TEXTURE_FILTER_LINEAR_MIP_POINT value");

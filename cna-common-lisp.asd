@@ -64,6 +64,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "graphics/graphics-resource")
    (:file "graphics/graphics-device")
    (:file "graphics/texture-2d")
+   (:file "graphics/state-collections")
    (:file "graphics/sprite-batch")
    ;; --- Microsoft.Xna.Framework.Input -------------------------------------
    (:file "input/keys")

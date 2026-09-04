@@ -14,7 +14,13 @@
 (in-package #:microsoft.xna.framework.graphics)
 
 (defclass graphics-device (cna-lisp.internal:native-object)
-  ()
+  (;; The four collection properties answer the same object every time, as XNA's
+   ;; do, and each collection is the record of what this binding bound into its
+   ;; slots. See src/graphics/state-collections.lisp.
+   (sampler-states :initform nil)
+   (vertex-sampler-states :initform nil)
+   (textures :initform nil)
+   (vertex-textures :initform nil))
   (:default-initargs :ownership :parent-owned)
   (:documentation
    "The game's graphics device. Instances are produced by the runtime and reached

@@ -21,10 +21,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 120,
-    "structs": 31,
-    "struct_fields": 239,
-    "constants": 390,
+    "functions": 122,
+    "structs": 32,
+    "struct_fields": 244,
+    "constants": 391,
     "callbacks": 4,
     "by_value_aggregates": 3,
     "shimmed_routes": 1
@@ -2900,6 +2900,70 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_set_scissor_rectangle(CNA_Handle graphics_device, CNA_Rectangle scissor_rectangle)"
+    },
+    {
+      "name": "cna_graphics_device_get_texture",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "stage",
+          "c_type": "CNA_ShaderStage",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "slot",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_TextureSlotInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_texture(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, CNA_TextureSlotInfo* out_info)"
+    },
+    {
+      "name": "cna_graphics_device_set_texture",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "stage",
+          "c_type": "CNA_ShaderStage",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "slot",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_texture(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, CNA_Handle texture)"
     }
   ],
   "structs": [
@@ -5392,6 +5456,61 @@
       "header": "graphics_state.h",
       "direction": "inout",
       "versioned": true
+    },
+    {
+      "name": "CNA_TextureSlotInfo",
+      "size": 24,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "bound",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 9,
+          "size": 7,
+          "count": 7,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics_device.h",
+      "direction": "out",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -5860,6 +5979,7 @@
     "CNA_TEXTURE_ADDRESS_CLAMP": 1,
     "CNA_TEXTURE_ADDRESS_MIRROR": 2,
     "CNA_TEXTURE_ADDRESS_WRAP": 0,
+    "CNA_TEXTURE_COLLECTION_MAX_TEXTURES": 16,
     "CNA_TEXTURE_FILTER_ANISOTROPIC": 2,
     "CNA_TEXTURE_FILTER_LINEAR": 0,
     "CNA_TEXTURE_FILTER_LINEAR_MIP_POINT": 3,

@@ -429,3 +429,88 @@
                                          (gfx:blend-state-opaque)))
       (signals xna:cna-scope-error (gfx:scissor-rectangle device))
       (signals xna:cna-scope-error (gfx:multi-sample-mask device)))))
+
+;;; --- the device's sampler and texture collections --------------------------------
+
+(define-native-test the-collection-properties-answer-one-object-each
+  ;; XNA's properties answer the same collection every time, and the collection is
+  ;; where what was bound is remembered, so a fresh one per call would forget it.
+  (with-device-body (game)
+    (let ((device (xna:graphics-device game)))
+      (is (eq (gfx:sampler-states device) (gfx:sampler-states device)))
+      (is (eq (gfx:vertex-sampler-states device) (gfx:vertex-sampler-states device)))
+      (is (eq (gfx:textures device) (gfx:textures device)))
+      (is (eq (gfx:vertex-textures device) (gfx:vertex-textures device)))
+      ;; And the pixel and vertex collections are different objects for different
+      ;; shader stages.
+      (is (not (eq (gfx:sampler-states device) (gfx:vertex-sampler-states device))))
+      (is (not (eq (gfx:textures device) (gfx:vertex-textures device))))
+      (is (typep (gfx:sampler-states device) 'gfx:sampler-state-collection))
+      (is (typep (gfx:textures device) 'gfx:texture-collection)))))
+
+(define-native-test a-sampler-slot-answers-the-object-that-was-set
+  ;; The whole reason the collection keeps an array: XNA's indexer answers the
+  ;; object, not a fresh equivalent, and reference identity is observable.
+  (with-device-body (game)
+    (let* ((samplers (gfx:sampler-states (xna:graphics-device game)))
+           (state (make-instance 'gfx:sampler-state)))
+      (setf (gfx:filter state) :point
+            (gfx:address-u state) :mirror)
+      (setf (gfx:item samplers 3) state)
+      (is (eq state (gfx:item samplers 3)))
+      ;; Applying it latched it, exactly as the device setter does.
+      (signals xna:cna-invalid-state-error (setf (gfx:filter state) :linear))
+      ;; A slot that was never set still answers something, read from the device
+      ;; once and then stable.
+      (let ((untouched (gfx:item samplers 7)))
+        (is (typep untouched 'gfx:sampler-state))
+        (is (eq untouched (gfx:item samplers 7)))))))
+
+(define-native-test a-sampler-slot-refuses-nil-and-a-bad-index
+  (with-device-body (game)
+    (let ((samplers (gfx:sampler-states (xna:graphics-device game))))
+      ;; The range check comes first, before the null check, as XNA's does.
+      (signals xna:cna-argument-out-of-range-error (gfx:item samplers -1))
+      (signals xna:cna-argument-out-of-range-error (gfx:item samplers 16))
+      (signals xna:cna-argument-out-of-range-error (setf (gfx:item samplers 16) nil))
+      ;; Then the null check: a sampler slot does not take one.
+      (signals xna:cna-argument-out-of-range-error (setf (gfx:item samplers 0) nil))
+      (signals type-error (setf (gfx:item samplers 0) (make-instance 'gfx:blend-state))))))
+
+(define-native-test setting-a-sampler-slot-to-what-it-holds-applies-nothing
+  ;; XNA short-circuits on identity, and that is observable: a state object that
+  ;; the no-op assignment never applied must not be latched by it.
+  (with-device-body (game)
+    (let* ((samplers (gfx:sampler-states (xna:graphics-device game)))
+           (state (make-instance 'gfx:sampler-state)))
+      (setf (gfx:item samplers 1) state)
+      (is (eq state (gfx:item samplers 1)))
+      ;; Assigning it again changes nothing and raises nothing.
+      (finishes (setf (gfx:item samplers 1) state))
+      (is (eq state (gfx:item samplers 1))))))
+
+(define-native-test a-texture-slot-round-trips-the-texture-it-was-given
+  (with-device-body (game)
+    (let ((textures (gfx:textures (xna:graphics-device game)))
+          (texture (texture game)))
+      ;; Empty to begin with, and NIL is what an empty slot answers.
+      (is (null (gfx:item textures 5)))
+      (setf (gfx:item textures 5) texture)
+      (is (eq texture (gfx:item textures 5)))
+      ;; NIL is legal on this collection -- it is the empty slot -- unlike the
+      ;; sampler collection, whose null throws.
+      (setf (gfx:item textures 5) nil)
+      (is (null (gfx:item textures 5)))
+      (signals xna:cna-argument-out-of-range-error (gfx:item textures 16))
+      (signals type-error (setf (gfx:item textures 0) (make-instance 'gfx:sampler-state))))))
+
+(define-native-test a-texture-slot-refuses-a-disposed-texture
+  (with-graphics-game (game :exit-after 1)
+    (xna:run game)
+    (let ((texture (texture game)))
+      (xna:dispose texture)
+      (setf (texture game) nil)
+      ;; Outside a callback the device is refused first, which is the earlier of
+      ;; the two checks and the one that matters.
+      (signals xna:cna-error
+        (setf (gfx:item (gfx:textures (xna:graphics-device game)) 0) texture)))))

@@ -494,6 +494,14 @@
 (defcfun ("cna_graphics_device_set_scissor_rectangle" %graphics-device-set-scissor-rectangle) :uint32
   (graphics-device :uint64) (scissor-rectangle-0 :uint64) (scissor-rectangle-1 :uint64))
 
+;;; CNA_Result cna_graphics_device_get_texture(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, CNA_TextureSlotInfo* out_info)
+(defcfun ("cna_graphics_device_get_texture" %graphics-device-get-texture) :uint32
+  (graphics-device :uint64) (stage :uint32) (slot :uint32) (out-info :pointer))
+
+;;; CNA_Result cna_graphics_device_set_texture(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, CNA_Handle texture)
+(defcfun ("cna_graphics_device_set_texture" %graphics-device-set-texture) :uint32
+  (graphics-device :uint64) (stage :uint32) (slot :uint32) (texture :uint64))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -614,6 +622,8 @@
     ("cna_graphics_device_get_reference_stencil" %graphics-device-get-reference-stencil :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_set_reference_stencil" %graphics-device-set-reference-stencil :uint32 (:uint64 :int32) :thread :owner :ownership "none")
     ("cna_graphics_device_get_scissor_rectangle" %graphics-device-get-scissor-rectangle :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
-    ("cna_graphics_device_set_scissor_rectangle" %graphics-device-set-scissor-rectangle :uint32 (:uint64 :uint64 :uint64) :thread :owner :ownership "none"))
+    ("cna_graphics_device_set_scissor_rectangle" %graphics-device-set-scissor-rectangle :uint32 (:uint64 :uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_texture" %graphics-device-get-texture :uint32 (:uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_texture" %graphics-device-set-texture :uint32 (:uint64 :uint32 :uint32 :uint64) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

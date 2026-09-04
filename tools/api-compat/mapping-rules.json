@@ -3840,6 +3840,34 @@
    "not_applicable": {
     "Dispose(Boolean)": "The protected Dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. A state object holds no native handle -- CNA models it as a versioned C descriptor, not an object with a lifetime -- so there is nothing to dispose and nothing for the flag to distinguish."
    }
+  },
+  "Microsoft.Xna.Framework.Graphics.SamplerStateCollection": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "sampler-state-collection",
+   "lisp_kind": "class",
+   "constructors": {},
+   "member_overrides": {
+    "Item": {
+     "lisp": "item",
+     "generic": true,
+     "setf": true,
+     "reason": "XNA's indexer answers the object that was set, not a fresh equivalent, and its getter reads the collection's own private array rather than asking the device. The projection keeps that: the collection holds one entry per slot, the setter is the half that reaches CNA, and GraphicsDevice's property answers the same collection object every time."
+    }
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.TextureCollection": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "texture-collection",
+   "lisp_kind": "class",
+   "constructors": {},
+   "member_overrides": {
+    "Item": {
+     "lisp": "item",
+     "generic": true,
+     "setf": true,
+     "reason": "The same shape, and the CNA C ABI asks for it explicitly: cna_graphics_device_get_texture answers a bound flag and a handle, and the handle is invalid for a slot filled by canonical CNA code, because that ABI has no route from a native object back to a handle. Its header's advice is to cache what you bind and use the flag to tell 'something else owns this slot' from 'the slot is empty'. docs/limitations.md records the one case a cache cannot cover."
+    }
+   }
   }
  }
 }

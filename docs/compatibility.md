@@ -82,30 +82,30 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=90 -->
-<!-- generated:selected members=1763 -->
-<!-- generated:complete types=85 -->
+<!-- generated:selected types=92 -->
+<!-- generated:selected members=1765 -->
+<!-- generated:complete types=87 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1312 -->
+<!-- generated:complete members=1318 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=89 -->
+<!-- generated:missing members=85 -->
 <!-- generated:not-applicable members=361 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 90 types, 1763 members.
+Selection **Foundation 1 and the managed closures**: 92 types, 1765 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **85** |
+| Types complete | **87** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1312** |
+| Members complete | **1318** |
 | Members partial | **1** |
-| Members missing | **89** |
+| Members missing | **85** |
 | Members not applicable | **361** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -146,7 +146,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 9 | 1 | 45 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 13 | 1 | 41 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
@@ -167,6 +167,8 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.DepthStencilState` | **complete** | 20 | 0 | 0 | 1 |
 | `M.X.F.Graphics.RasterizerState` | **complete** | 10 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SamplerState` | **complete** | 14 | 0 | 0 | 1 |
+| `M.X.F.Graphics.SamplerStateCollection` | **complete** | 1 | 0 | 0 | 0 |
+| `M.X.F.Graphics.TextureCollection` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
@@ -251,7 +253,7 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 45 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 41 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -283,10 +285,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=120 -->
-<!-- generated:bound native structs=31 -->
-<!-- generated:bound native struct fields=239 -->
-<!-- generated:bound native constants=390 -->
+<!-- generated:bound native functions=122 -->
+<!-- generated:bound native structs=32 -->
+<!-- generated:bound native struct fields=244 -->
+<!-- generated:bound native constants=391 -->
 <!-- generated:bound native callbacks=4 -->
 <!-- generated:by-value aggregates=3 -->
 <!-- generated:shimmed routes=1 -->
@@ -295,10 +297,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 120 |
-| Bound structs | 31 |
-| Bound struct fields | 239 |
-| Bound constants | 390 |
+| Bound functions | 122 |
+| Bound structs | 32 |
+| Bound struct fields | 244 |
+| Bound constants | 391 |
 | Bound callback typedefs | 4 |
 | By-value aggregates admitted | 3 |
 | Routes proved unbindable, and shimmed | 1 |

@@ -438,6 +438,17 @@
 (defconstant +sizeof-cna-sampler-state+ 40)
 (defconstant +alignof-cna-sampler-state+ 4)
 
+;;; CNA_TextureSlotInfo -- 24 bytes, 8-byte aligned, from graphics_device.h.
+(defcstruct (cna-texture-slot-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (bound :uint8 :offset 8)
+  (reserved :uint8 :offset 9 :count 7)
+  (texture :uint64 :offset 16))
+
+(defconstant +sizeof-cna-texture-slot-info+ 24)
+(defconstant +alignof-cna-texture-slot-info+ 8)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -471,6 +482,7 @@
     (cna-blend-state 56 4 ((struct-size 0 4) (struct-version 4 4) (alpha-blend-function 8 4) (alpha-destination-blend 12 4) (alpha-source-blend 16 4) (color-blend-function 20 4) (color-destination-blend 24 4) (color-source-blend 28 4) (color-write-channels 32 4) (color-write-channels-1 36 4) (color-write-channels-2 40 4) (color-write-channels-3 44 4) (blend-factor 48 4) (multi-sample-mask 52 4)))
     (cna-depth-stencil-state 64 4 ((struct-size 0 4) (struct-version 4 4) (depth-buffer-enable 8 1) (depth-buffer-write-enable 9 1) (stencil-enable 10 1) (two-sided-stencil-mode 11 1) (depth-buffer-function 12 4) (stencil-function 16 4) (stencil-mask 20 4) (stencil-write-mask 24 4) (reference-stencil 28 4) (stencil-fail 32 4) (stencil-depth-buffer-fail 36 4) (stencil-pass 40 4) (counter-clockwise-stencil-function 44 4) (counter-clockwise-stencil-fail 48 4) (counter-clockwise-stencil-depth-buffer-fail 52 4) (counter-clockwise-stencil-pass 56 4) (reserved 60 4)))
     (cna-rasterizer-state 28 4 ((struct-size 0 4) (struct-version 4 4) (cull-mode 8 4) (fill-mode 12 4) (depth-bias 16 4) (slope-scale-depth-bias 20 4) (multi-sample-anti-alias 24 1) (scissor-test-enable 25 1) (reserved 26 2)))
-    (cna-sampler-state 40 4 ((struct-size 0 4) (struct-version 4 4) (address-u 8 4) (address-v 12 4) (address-w 16 4) (filter 20 4) (max-anisotropy 24 4) (max-mip-level 28 4) (mip-map-level-of-detail-bias 32 4) (reserved 36 4))))
+    (cna-sampler-state 40 4 ((struct-size 0 4) (struct-version 4 4) (address-u 8 4) (address-v 12 4) (address-w 16 4) (filter 20 4) (max-anisotropy 24 4) (max-mip-level 28 4) (mip-map-level-of-detail-bias 32 4) (reserved 36 4)))
+    (cna-texture-slot-info 24 8 ((struct-size 0 4) (struct-version 4 4) (bound 8 1) (reserved 9 7) (texture 16 8))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

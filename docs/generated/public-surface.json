@@ -13129,6 +13129,32 @@
           "documentation": null
         },
         {
+          "name": "item",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "index"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "collection",
+            "index"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The indexer of a graphics collection: SamplerStateCollection.Item and\nTextureCollection.Item.\n\nOne generic function, because the two are the same idea with different element\ntypes and Common Lisp dispatches on the collection. An index outside the\ncollection is a CNA-ARGUMENT-OUT-OF-RANGE-ERROR, which is the\nArgumentOutOfRangeException XNA's own range check throws, and it is checked\nfirst -- before the null check on a setter, as XNA does."
+        },
+        {
           "name": "level-count",
           "fbound": true,
           "macro": false,
@@ -13556,6 +13582,31 @@
           "documentation": "SamplerState.AnisotropicWrap: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
         },
         {
+          "name": "sampler-state-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:sampler-state-collection",
+            "microsoft.xna.framework.graphics:%state-collection",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection.\n\nReached through GRAPHICS-DEVICE's SAMPLER-STATES and VERTEX-SAMPLER-STATES, which\nanswer the same collection object every time, as XNA's properties do. A consumer\ndoes not construct one."
+        },
+        {
           "name": "sampler-state-linear-clamp",
           "fbound": true,
           "macro": false,
@@ -13630,6 +13681,27 @@
           "constant": false,
           "value": null,
           "documentation": "SamplerState.PointWrap: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "sampler-states",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.SamplerStates: the pixel-shader sampler collection."
         },
         {
           "name": "scissor-rectangle",
@@ -14324,6 +14396,31 @@
           "documentation": "The exact value of a TEXTURE-ADDRESS-MODE member."
         },
         {
+          "name": "texture-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:texture-collection",
+            "microsoft.xna.framework.graphics:%state-collection",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.TextureCollection.\n\nReached through GRAPHICS-DEVICE's TEXTURES and VERTEX-TEXTURES."
+        },
+        {
           "name": "texture-filter",
           "fbound": false,
           "macro": false,
@@ -14385,6 +14482,27 @@
           "documentation": "The exact value of a TEXTURE-FILTER member."
         },
         {
+          "name": "textures",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.Textures: the pixel-shader texture collection."
+        },
+        {
           "name": "two-sided-stencil-mode",
           "fbound": true,
           "macro": false,
@@ -14407,6 +14525,48 @@
           "constant": false,
           "value": null,
           "documentation": "DEPTH-STENCIL-STATE.TWO-SIDED-STENCIL-MODE. Defaults to NIL."
+        },
+        {
+          "name": "vertex-sampler-states",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.VertexSamplerStates: the vertex-shader sampler collection."
+        },
+        {
+          "name": "vertex-textures",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.VertexTextures: the vertex-shader texture collection."
         },
         {
           "name": "viewport",

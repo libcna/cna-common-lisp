@@ -73,6 +73,8 @@ SELECTED = [
     "Microsoft.Xna.Framework.Graphics.DepthStencilState",
     "Microsoft.Xna.Framework.Graphics.RasterizerState",
     "Microsoft.Xna.Framework.Graphics.SamplerState",
+    "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
+    "Microsoft.Xna.Framework.Graphics.TextureCollection",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",

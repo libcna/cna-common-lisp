@@ -388,6 +388,7 @@
 (defconstant +texture-address-clamp+ 1)
 (defconstant +texture-address-mirror+ 2)
 (defconstant +texture-address-wrap+ 0)
+(defconstant +texture-collection-max-textures+ 16)
 (defconstant +texture-filter-anisotropic+ 2)
 (defconstant +texture-filter-linear+ 0)
 (defconstant +texture-filter-linear-mip-point+ 3)
