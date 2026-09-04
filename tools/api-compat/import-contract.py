@@ -57,6 +57,7 @@ SELECTED = [
     "Microsoft.Xna.Framework.Graphics.Texture",
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch",
+    "Microsoft.Xna.Framework.Graphics.SpriteFont",
     "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
     "Microsoft.Xna.Framework.Graphics.SpriteEffects",
     "Microsoft.Xna.Framework.Graphics.SurfaceFormat",

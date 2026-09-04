@@ -1511,6 +1511,34 @@
           "documentation": "The loaded CNA library reports an ABI version this build has not qualified.\nThe CNA 0.x C ABI is experimental, so CNA-Lisp admits an explicit set of versions\nwhose whole bound surface a compiler has verified, and refuses every other."
         },
         {
+          "name": "cna-argument-error",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": true,
+          "metaclass": "condition-class",
+          "precedence": [
+            "microsoft.xna.framework:cna-argument-error",
+            "microsoft.xna.framework:cna-usage-error",
+            "microsoft.xna.framework:cna-error",
+            "common-lisp:error",
+            "common-lisp:serious-condition",
+            "common-lisp:condition",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "An argument is one the original refuses.\n\nCNA-Lisp's projection of System.ArgumentException. Two base-class-library\nexceptions reach a caller of the selected XNA surface, and .NET makes one a\nsubclass of the other, so this hierarchy is that hierarchy:\nArgumentOutOfRangeException is CNA-ARGUMENT-OUT-OF-RANGE-ERROR and is a subtype\nof this. Handling this one catches both, which is what a `catch\n(ArgumentException)' does there.\n\n`SpriteFont' is where the plain ArgumentException appears: setting a\nDefaultCharacter the font has no glyph for, and measuring or drawing a code unit\nit cannot resolve even through the fallback, both throw it."
+        },
+        {
           "name": "cna-argument-out-of-range-error",
           "fbound": false,
           "macro": false,
@@ -1525,6 +1553,7 @@
           "metaclass": "condition-class",
           "precedence": [
             "microsoft.xna.framework:cna-argument-out-of-range-error",
+            "microsoft.xna.framework:cna-argument-error",
             "microsoft.xna.framework:cna-usage-error",
             "microsoft.xna.framework:cna-error",
             "common-lisp:error",
@@ -1536,7 +1565,7 @@
           "type": true,
           "constant": false,
           "value": null,
-          "documentation": "An argument is outside the range the original accepts.\n\nThis is CNA-Lisp's projection of System.ArgumentOutOfRangeException, which is the\nonly base-class-library exception the selected XNA surface throws at a caller.\nProjecting it -- rather than letting the check disappear -- is what keeps\n`(matrix-create-perspective-field-of-view 0 ...)' refusing here as it refuses\nthere."
+          "documentation": "An argument is outside the range the original accepts.\n\nCNA-Lisp's projection of System.ArgumentOutOfRangeException. Projecting it --\nrather than letting the check disappear -- is what keeps\n`(matrix-create-perspective-field-of-view 0 ...)' refusing here as it refuses\nthere."
         },
         {
           "name": "cna-buffer-too-small-error",
@@ -12451,6 +12480,27 @@
           "documentation": "The exact value of a BUFFER-USAGE member."
         },
         {
+          "name": "characters",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "sprite-font"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SpriteFont.Characters: every code unit this font has a glyph for, ascending.\n\nXNA answers a `ReadOnlyCollection<char>' -- a read-only *view*, lazily made and\nthen cached, so the same instance comes back every time. Common Lisp has no\nread-only vector, so the projection cannot have both that identity and that\nimmutability, and it chooses immutability: a **fresh** (UNSIGNED-BYTE 16) vector\neach call, which a caller may do anything to without it meaning anything to the\nfont. Reference identity is the property that cannot be relied on here;\n`docs/limitations.md' records the divergence.\n\nThe elements are UTF-16 code units, not characters, because that is what\n`System.Char' is."
+        },
+        {
           "name": "clear",
           "fbound": true,
           "macro": false,
@@ -13158,6 +13208,30 @@
           "constant": false,
           "value": null,
           "documentation": "The exact value of a CULL-MODE member."
+        },
+        {
+          "name": "default-character",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "sprite-font"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "sprite-font"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SpriteFont.DefaultCharacter: the fallback code unit, or NIL for none.\n\nXNA's is a `Nullable<char>', and the binding's nullable rule makes the empty case\nNIL. A code unit of 0 is a real fallback and is not NIL."
         },
         {
           "name": "depth-bias",
@@ -15884,6 +15958,30 @@
           "documentation": null
         },
         {
+          "name": "line-spacing",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "sprite-font"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "sprite-font"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SpriteFont.LineSpacing: the vertical distance between baselines, in pixels."
+        },
+        {
           "name": "make-vertex-buffer-binding",
           "fbound": true,
           "macro": false,
@@ -16117,6 +16215,28 @@
           "constant": false,
           "value": null,
           "documentation": "SAMPLER-STATE.MAX-MIP-LEVEL. Defaults to 0."
+        },
+        {
+          "name": "measure-string",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "sprite-font",
+            "text"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SpriteFont.MeasureString: the extent this font would give TEXT.\n\nBoth of XNA's overloads. `MeasureString(String)' and\n`MeasureString(StringBuilder)' are two members of the contract and one call here,\nbecause after XNA's private `StringProxy' has wrapped either of them the two\nmethod bodies are identical -- a StringBuilder is reached only through `Length'\nand `Chars', which is what a Common Lisp string already is. The mapping rules\nrecord the collapse and the verifier proves both members are represented.\n\nTEXT is measured as the sequence of UTF-16 code units a `System.String' already\nis, so a character above U+FFFF is measured as its surrogate pair, which is what\nXNA looks up.\n\nA carriage return is skipped; a newline ends a line; a code unit the font has no\nglyph for falls back to `DefaultCharacter' and, failing that, signals."
         },
         {
           "name": "mip-map-level-of-detail-bias",
@@ -16851,6 +16971,30 @@
           "documentation": "RASTERIZER-STATE.SLOPE-SCALE-DEPTH-BIAS. Defaults to 0.0."
         },
         {
+          "name": "spacing",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "sprite-font"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "sprite-font"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SpriteFont.Spacing: extra horizontal space between characters, in pixels."
+        },
+        {
           "name": "sprite-batch",
           "fbound": false,
           "macro": false,
@@ -16937,6 +17081,31 @@
           "constant": false,
           "value": null,
           "documentation": "The exact value of a SPRITE-EFFECTS member. A list of members combines their bits."
+        },
+        {
+          "name": "sprite-font",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:sprite-font",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.SpriteFont: a glyph atlas and the metrics\nthat place text on it.\n\nSealed, and **not** a GraphicsResource -- XNA derives it straight from\nSystem.Object -- so it has no Name, no Tag, no GraphicsDevice and no Disposing\nevent, and it is not IDisposable. The native font CNA owns underneath it is\nreleased with MICROSOFT.XNA.FRAMEWORK:DISPOSE, which is this binding's own\ndeterministic disposal and not an XNA member of this type.\n\nXNA gives it no public constructor: a SpriteFont comes from\n`ContentManager.Load<SpriteFont>'. That content closure is not part of this\nmilestone, so no public route here produces one either."
         },
         {
           "name": "sprite-sort-mode",
@@ -26963,6 +27132,7 @@
         "cna-abi-admitted-versions",
         "cna-native-library-path",
         "cna-callback-underlying-condition",
+        "cna-argument-error",
         "cna-argument-out-of-range-error",
         "cna-error-parameter-name"
       ],

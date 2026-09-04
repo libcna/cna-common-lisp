@@ -570,6 +570,21 @@
       "name": "CNA_Quaternion",
       "direction": "inout",
       "versioned": false
+    },
+    {
+      "name": "CNA_SpriteFontGlyph",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteFontCreateInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteFontInfo",
+      "direction": "out",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -2241,6 +2256,42 @@
       "thread": "any",
       "ownership": "owns",
       "note": "Bound so the EffectParameter value surface can be exercised against CNA itself. XNA has no public EffectParameter constructor, so nothing in src/ calls these: a reflected parameter graph comes from compiled effect bytecode, which needs CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS and which no qualification renderer here has. Rather than leave fifty-one members written and never executed, the test suite builds a standalone parameter collection through these routes and round-trips every value type through the real marshalling. See docs/limitations.md."
+    },
+    {
+      "name": "cna_sprite_font_create",
+      "header": "sprite_font.h",
+      "thread": "owner",
+      "ownership": "creates-owned:sprite-font:child-of-game"
+    },
+    {
+      "name": "cna_sprite_font_destroy",
+      "header": "sprite_font.h",
+      "thread": "owner",
+      "ownership": "destroys:sprite-font"
+    },
+    {
+      "name": "cna_sprite_font_get_info",
+      "header": "sprite_font.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sprite_font_copy_characters",
+      "header": "sprite_font.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sprite_font_copy_glyphs",
+      "header": "sprite_font.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sprite_font_measure_utf8",
+      "header": "sprite_font.h",
+      "thread": "owner",
+      "ownership": "none"
     }
   ],
   "shimmed_routes": [

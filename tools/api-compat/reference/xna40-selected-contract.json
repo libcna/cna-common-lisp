@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 126,
-  "member_count": 2061
+  "type_count": 127,
+  "member_count": 2067
  },
  "types": [
   {
@@ -23256,6 +23256,99 @@
        "optional": false
       }
      ]
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "MeasureString",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Vector2",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "text",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "MeasureString",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Vector2",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "text",
+       "type": "System.Text.StringBuilder",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "LineSpacing",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Spacing",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DefaultCharacter",
+     "type": "System.Nullable`1[System.Char]",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Characters",
+     "type": "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Char]",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
     }
    ]
   },

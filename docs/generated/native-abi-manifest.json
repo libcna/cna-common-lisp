@@ -24,9 +24,9 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 273,
-    "structs": 49,
-    "struct_fields": 359,
+    "functions": 279,
+    "structs": 52,
+    "struct_fields": 384,
     "constants": 460,
     "callbacks": 6,
     "by_value_aggregates": 6,
@@ -6880,6 +6880,167 @@
       "ownership": "owns",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_effect_parameter_collection_add_create(CNA_EffectParameterCollectionHandle collection, const CNA_EffectParameterCreateInfo* create_info, CNA_EffectParameterHandle* out_parameter)"
+    },
+    {
+      "name": "cna_sprite_font_create",
+      "header": "sprite_font.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "create_info",
+          "c_type": "const CNA_SpriteFontCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_sprite_font",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:sprite-font:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_font_create(const CNA_SpriteFontCreateInfo* create_info, CNA_Handle* out_sprite_font)"
+    },
+    {
+      "name": "cna_sprite_font_destroy",
+      "header": "sprite_font.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_font",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:sprite-font",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_font_destroy(CNA_Handle sprite_font)"
+    },
+    {
+      "name": "cna_sprite_font_get_info",
+      "header": "sprite_font.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_font",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_SpriteFontInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_font_get_info(CNA_Handle sprite_font, CNA_SpriteFontInfo* out_info)"
+    },
+    {
+      "name": "cna_sprite_font_copy_characters",
+      "header": "sprite_font.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_font",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_Char16*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_font_copy_characters(CNA_Handle sprite_font, CNA_Char16* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_sprite_font_copy_glyphs",
+      "header": "sprite_font.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_font",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_SpriteFontGlyph*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_font_copy_glyphs(CNA_Handle sprite_font, CNA_SpriteFontGlyph* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_sprite_font_measure_utf8",
+      "header": "sprite_font.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_font",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "text-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "text-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_size",
+          "c_type": "CNA_Vector2*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_font_measure_utf8(CNA_Handle sprite_font, CNA_StringView text, CNA_Vector2* out_size)"
     }
   ],
   "structs": [
@@ -10654,6 +10815,261 @@
       "header": "math_values.h",
       "direction": "inout",
       "versioned": false
+    },
+    {
+      "name": "CNA_SpriteFontGlyph",
+      "size": 56,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "glyph_bounds",
+          "c_type": "CNA_Rectangle",
+          "offset": 8,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Rectangle",
+          "kind": "aggregate"
+        },
+        {
+          "name": "cropping",
+          "c_type": "CNA_Rectangle",
+          "offset": 24,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Rectangle",
+          "kind": "aggregate"
+        },
+        {
+          "name": "character",
+          "c_type": "CNA_Char16",
+          "offset": 40,
+          "size": 2,
+          "count": null,
+          "cffi_type": ":uint16",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint16_t",
+          "offset": 42,
+          "size": 2,
+          "count": null,
+          "cffi_type": ":uint16",
+          "kind": "scalar"
+        },
+        {
+          "name": "kerning",
+          "c_type": "CNA_Vector3",
+          "offset": 44,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        }
+      ],
+      "header": "sprite_font.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteFontCreateInfo",
+      "size": 48,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "glyphs",
+          "c_type": "const CNA_SpriteFontGlyph*",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "glyph_count",
+          "c_type": "uint64_t",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "line_spacing",
+          "c_type": "int32_t",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "spacing",
+          "c_type": "float",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "default_character",
+          "c_type": "CNA_Char16",
+          "offset": 40,
+          "size": 2,
+          "count": null,
+          "cffi_type": ":uint16",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_default_character",
+          "c_type": "CNA_Bool",
+          "offset": 42,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 43,
+          "size": 5,
+          "count": 5,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "sprite_font.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SpriteFontInfo",
+      "size": 32,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "character_count",
+          "c_type": "uint64_t",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "line_spacing",
+          "c_type": "int32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "spacing",
+          "c_type": "float",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "default_character",
+          "c_type": "CNA_Char16",
+          "offset": 24,
+          "size": 2,
+          "count": null,
+          "cffi_type": ":uint16",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_default_character",
+          "c_type": "CNA_Bool",
+          "offset": 26,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 27,
+          "size": 5,
+          "count": 5,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "sprite_font.h",
+      "direction": "out",
+      "versioned": true
     }
   ],
   "callbacks": [

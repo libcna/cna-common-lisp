@@ -221,7 +221,7 @@
    #:cna-not-supported-error #:cna-platform-error #:cna-thread-error
    #:cna-callback-error #:cna-overflow-error #:cna-encoding-error
    #:cna-internal-error #:cna-shutting-down-error #:cna-buffer-too-small-error
-   #:cna-argument-out-of-range-error #:cna-error-parameter-name
+   #:cna-argument-error #:cna-argument-out-of-range-error #:cna-error-parameter-name
    #:cna-disposed-error #:cna-ownership-error #:cna-scope-error
    #:cna-native-library-error #:cna-abi-rejected-error
    #:cna-error-operation #:cna-error-native-message #:cna-error-object-type
@@ -393,7 +393,10 @@
    #:texture-2d-from-png-file #:texture-2d-from-png-bytes
    #:width #:height #:level-count #:format-of #:bounds
    ;; --- SpriteBatch -------------------------------------------------------
-   #:sprite-batch #:begin #:end #:draw-texture))
+   #:sprite-batch #:begin #:end #:draw-texture
+   ;; --- SpriteFont --------------------------------------------------------
+   #:sprite-font #:line-spacing #:spacing #:default-character #:characters
+   #:measure-string))
 
 (defpackage #:microsoft.xna.framework.graphics.packed-vector
   (:documentation

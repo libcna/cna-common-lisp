@@ -1029,6 +1029,50 @@
         "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder."
       }
     },
+    "Microsoft.Xna.Framework.Graphics.SpriteFont": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "sprite-font",
+      "lisp_kind": "class",
+      "member_overrides": {
+        "MeasureString(String)": {
+          "lisp": "measure-string",
+          "generic": true,
+          "distinguished_by": "unified",
+          "unified_with": [
+            "MeasureString(StringBuilder)"
+          ],
+          "reason": "One Lisp call, and two contract members. XNA reaches a StringBuilder only through Length and Chars -- its private StringProxy wraps a String or a StringBuilder and the two method bodies that follow are identical -- and a Common Lisp string is already a mutable random-access sequence of characters, so both parameter types project onto STRING and nothing distinguishes the calls. Declared rather than hidden: the verifier checks that each member names the other, so neither can go missing behind the collapse."
+        },
+        "MeasureString(StringBuilder)": {
+          "lisp": "measure-string",
+          "generic": true,
+          "distinguished_by": "unified",
+          "unified_with": [
+            "MeasureString(String)"
+          ],
+          "reason": "One Lisp call, and two contract members. XNA reaches a StringBuilder only through Length and Chars -- its private StringProxy wraps a String or a StringBuilder and the two method bodies that follow are identical -- and a Common Lisp string is already a mutable random-access sequence of characters, so both parameter types project onto STRING and nothing distinguishes the calls. Declared rather than hidden: the verifier checks that each member names the other, so neither can go missing behind the collapse."
+        },
+        "Characters": {
+          "lisp": "characters",
+          "generic": true,
+          "setf": false,
+          "reason": "ReadOnlyCollection<char> as a fresh (UNSIGNED-BYTE 16) vector. The elements are UTF-16 code units, because System.Char is one and all 65536 of its values are legal. Common Lisp has no read-only vector, so the projection keeps XNA's immutability and gives up its reference identity: docs/limitations.md records that."
+        },
+        "DefaultCharacter": {
+          "lisp": "default-character",
+          "generic": true,
+          "reason": "Nullable<char> as NIL or a code unit in [0, 65535]. NIL is unambiguous because a code unit is an integer, so 0 is a real fallback and is not the absence of one."
+        },
+        "LineSpacing": {
+          "lisp": "line-spacing",
+          "generic": true
+        },
+        "Spacing": {
+          "lisp": "spacing",
+          "generic": true
+        }
+      }
+    },
     "Microsoft.Xna.Framework.Graphics.SpriteSortMode": {
       "lisp_package": "microsoft.xna.framework.graphics",
       "lisp_name": "sprite-sort-mode",

@@ -27,6 +27,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "internal/float-semantics")
    (:file "internal/results")
    (:file "internal/utf8")
+   (:file "internal/utf16")
    (:file "internal/native-library")
    (:file "internal/abi-gate")
    (:file "internal/threads")
@@ -77,6 +78,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "graphics/effect-parameter")
    (:file "graphics/basic-effect")
    (:file "graphics/state-collections")
+   ;; SpriteFont is not a GraphicsResource -- XNA derives it from Object --
+   ;; and SpriteBatch.DrawString specialises on it, so it loads first.
+   (:file "graphics/sprite-font")
    (:file "graphics/sprite-batch")
    ;; --- Microsoft.Xna.Framework.Input -------------------------------------
    (:file "input/keys")
@@ -122,6 +126,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "unit/game-time")
    (:file "unit/keys")
    (:file "unit/conditions")
+   (:file "unit/sprite-font")
    (:file "structure/public-surface")
    (:file "structure/generated-files")
    (:file "behavior/corpus")
@@ -135,6 +140,8 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/vertex-types")
    (:file "native/buffers")
    (:file "native/effects")
+   ;; The text pixel proofs build on the SpriteFont fixture game.
+   (:file "native/sprite-font")
    (:file "native/rasterization")
    (:file "native/graphics-resource")
    (:file "native/keyboard")

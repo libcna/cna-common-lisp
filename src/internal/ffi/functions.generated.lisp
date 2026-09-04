@@ -1106,6 +1106,30 @@
 (defcfun ("cna_effect_parameter_collection_add_create" %effect-parameter-collection-add-create) :uint32
   (collection :uint64) (create-info :pointer) (out-parameter :pointer))
 
+;;; CNA_Result cna_sprite_font_create(const CNA_SpriteFontCreateInfo* create_info, CNA_Handle* out_sprite_font)
+(defcfun ("cna_sprite_font_create" %sprite-font-create) :uint32
+  (create-info :pointer) (out-sprite-font :pointer))
+
+;;; CNA_Result cna_sprite_font_destroy(CNA_Handle sprite_font)
+(defcfun ("cna_sprite_font_destroy" %sprite-font-destroy) :uint32
+  (sprite-font :uint64))
+
+;;; CNA_Result cna_sprite_font_get_info(CNA_Handle sprite_font, CNA_SpriteFontInfo* out_info)
+(defcfun ("cna_sprite_font_get_info" %sprite-font-get-info) :uint32
+  (sprite-font :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_sprite_font_copy_characters(CNA_Handle sprite_font, CNA_Char16* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_sprite_font_copy_characters" %sprite-font-copy-characters) :uint32
+  (sprite-font :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_sprite_font_copy_glyphs(CNA_Handle sprite_font, CNA_SpriteFontGlyph* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_sprite_font_copy_glyphs" %sprite-font-copy-glyphs) :uint32
+  (sprite-font :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_sprite_font_measure_utf8(CNA_Handle sprite_font, CNA_StringView text, CNA_Vector2* out_size)
+(defcfun ("cna_sprite_font_measure_utf8" %sprite-font-measure-utf-8) :uint32
+  (sprite-font :uint64) (text-0 :pointer) (text-1 :uint64) (out-size :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -1379,6 +1403,12 @@
     ("cna_sprite_batch_begin_with_effect" %sprite-batch-begin-with-effect :uint32 (:uint64 :uint32 :pointer :pointer :pointer :pointer :uint64 :pointer) :thread :game :ownership "none")
     ("cna_effect_parameter_create" %effect-parameter-create :uint32 (:pointer :pointer) :thread :any :ownership "owns")
     ("cna_effect_parameter_collection_create" %effect-parameter-collection-create :uint32 (:pointer) :thread :any :ownership "owns")
-    ("cna_effect_parameter_collection_add_create" %effect-parameter-collection-add-create :uint32 (:uint64 :pointer :pointer) :thread :any :ownership "owns"))
+    ("cna_effect_parameter_collection_add_create" %effect-parameter-collection-add-create :uint32 (:uint64 :pointer :pointer) :thread :any :ownership "owns")
+    ("cna_sprite_font_create" %sprite-font-create :uint32 (:pointer :pointer) :thread :owner :ownership "creates-owned:sprite-font:child-of-game")
+    ("cna_sprite_font_destroy" %sprite-font-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:sprite-font")
+    ("cna_sprite_font_get_info" %sprite-font-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sprite_font_copy_characters" %sprite-font-copy-characters :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sprite_font_copy_glyphs" %sprite-font-copy-glyphs :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sprite_font_measure_utf8" %sprite-font-measure-utf-8 :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

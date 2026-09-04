@@ -874,6 +874,65 @@ _Static_assert(sizeof(((CNA_Quaternion *)0)->z) == 4, "CNA_Quaternion.z size");
 _Static_assert(offsetof(CNA_Quaternion, w) == 12, "CNA_Quaternion.w offset");
 _Static_assert(sizeof(((CNA_Quaternion *)0)->w) == 4, "CNA_Quaternion.w size");
 
+_Static_assert(sizeof(CNA_SpriteFontGlyph) == 56, "CNA_SpriteFontGlyph size");
+_Static_assert(_Alignof(CNA_SpriteFontGlyph) == 4, "CNA_SpriteFontGlyph alignment");
+_Static_assert(offsetof(CNA_SpriteFontGlyph, struct_size) == 0, "CNA_SpriteFontGlyph.struct_size offset");
+_Static_assert(sizeof(((CNA_SpriteFontGlyph *)0)->struct_size) == 4, "CNA_SpriteFontGlyph.struct_size size");
+_Static_assert(offsetof(CNA_SpriteFontGlyph, struct_version) == 4, "CNA_SpriteFontGlyph.struct_version offset");
+_Static_assert(sizeof(((CNA_SpriteFontGlyph *)0)->struct_version) == 4, "CNA_SpriteFontGlyph.struct_version size");
+_Static_assert(offsetof(CNA_SpriteFontGlyph, glyph_bounds) == 8, "CNA_SpriteFontGlyph.glyph_bounds offset");
+_Static_assert(sizeof(((CNA_SpriteFontGlyph *)0)->glyph_bounds) == 16, "CNA_SpriteFontGlyph.glyph_bounds size");
+_Static_assert(offsetof(CNA_SpriteFontGlyph, cropping) == 24, "CNA_SpriteFontGlyph.cropping offset");
+_Static_assert(sizeof(((CNA_SpriteFontGlyph *)0)->cropping) == 16, "CNA_SpriteFontGlyph.cropping size");
+_Static_assert(offsetof(CNA_SpriteFontGlyph, character) == 40, "CNA_SpriteFontGlyph.character offset");
+_Static_assert(sizeof(((CNA_SpriteFontGlyph *)0)->character) == 2, "CNA_SpriteFontGlyph.character size");
+_Static_assert(offsetof(CNA_SpriteFontGlyph, reserved) == 42, "CNA_SpriteFontGlyph.reserved offset");
+_Static_assert(sizeof(((CNA_SpriteFontGlyph *)0)->reserved) == 2, "CNA_SpriteFontGlyph.reserved size");
+_Static_assert(offsetof(CNA_SpriteFontGlyph, kerning) == 44, "CNA_SpriteFontGlyph.kerning offset");
+_Static_assert(sizeof(((CNA_SpriteFontGlyph *)0)->kerning) == 12, "CNA_SpriteFontGlyph.kerning size");
+
+_Static_assert(sizeof(CNA_SpriteFontCreateInfo) == 48, "CNA_SpriteFontCreateInfo size");
+_Static_assert(_Alignof(CNA_SpriteFontCreateInfo) == 8, "CNA_SpriteFontCreateInfo alignment");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, struct_size) == 0, "CNA_SpriteFontCreateInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->struct_size) == 4, "CNA_SpriteFontCreateInfo.struct_size size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, struct_version) == 4, "CNA_SpriteFontCreateInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->struct_version) == 4, "CNA_SpriteFontCreateInfo.struct_version size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, texture) == 8, "CNA_SpriteFontCreateInfo.texture offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->texture) == 8, "CNA_SpriteFontCreateInfo.texture size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, glyphs) == 16, "CNA_SpriteFontCreateInfo.glyphs offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->glyphs) == 8, "CNA_SpriteFontCreateInfo.glyphs size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, glyph_count) == 24, "CNA_SpriteFontCreateInfo.glyph_count offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->glyph_count) == 8, "CNA_SpriteFontCreateInfo.glyph_count size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, line_spacing) == 32, "CNA_SpriteFontCreateInfo.line_spacing offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->line_spacing) == 4, "CNA_SpriteFontCreateInfo.line_spacing size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, spacing) == 36, "CNA_SpriteFontCreateInfo.spacing offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->spacing) == 4, "CNA_SpriteFontCreateInfo.spacing size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, default_character) == 40, "CNA_SpriteFontCreateInfo.default_character offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->default_character) == 2, "CNA_SpriteFontCreateInfo.default_character size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, has_default_character) == 42, "CNA_SpriteFontCreateInfo.has_default_character offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->has_default_character) == 1, "CNA_SpriteFontCreateInfo.has_default_character size");
+_Static_assert(offsetof(CNA_SpriteFontCreateInfo, reserved) == 43, "CNA_SpriteFontCreateInfo.reserved offset");
+_Static_assert(sizeof(((CNA_SpriteFontCreateInfo *)0)->reserved) == 5, "CNA_SpriteFontCreateInfo.reserved size");
+
+_Static_assert(sizeof(CNA_SpriteFontInfo) == 32, "CNA_SpriteFontInfo size");
+_Static_assert(_Alignof(CNA_SpriteFontInfo) == 8, "CNA_SpriteFontInfo alignment");
+_Static_assert(offsetof(CNA_SpriteFontInfo, struct_size) == 0, "CNA_SpriteFontInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->struct_size) == 4, "CNA_SpriteFontInfo.struct_size size");
+_Static_assert(offsetof(CNA_SpriteFontInfo, struct_version) == 4, "CNA_SpriteFontInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->struct_version) == 4, "CNA_SpriteFontInfo.struct_version size");
+_Static_assert(offsetof(CNA_SpriteFontInfo, character_count) == 8, "CNA_SpriteFontInfo.character_count offset");
+_Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->character_count) == 8, "CNA_SpriteFontInfo.character_count size");
+_Static_assert(offsetof(CNA_SpriteFontInfo, line_spacing) == 16, "CNA_SpriteFontInfo.line_spacing offset");
+_Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->line_spacing) == 4, "CNA_SpriteFontInfo.line_spacing size");
+_Static_assert(offsetof(CNA_SpriteFontInfo, spacing) == 20, "CNA_SpriteFontInfo.spacing offset");
+_Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->spacing) == 4, "CNA_SpriteFontInfo.spacing size");
+_Static_assert(offsetof(CNA_SpriteFontInfo, default_character) == 24, "CNA_SpriteFontInfo.default_character offset");
+_Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->default_character) == 2, "CNA_SpriteFontInfo.default_character size");
+_Static_assert(offsetof(CNA_SpriteFontInfo, has_default_character) == 26, "CNA_SpriteFontInfo.has_default_character offset");
+_Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->has_default_character) == 1, "CNA_SpriteFontInfo.has_default_character size");
+_Static_assert(offsetof(CNA_SpriteFontInfo, reserved) == 27, "CNA_SpriteFontInfo.reserved offset");
+_Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->reserved) == 5, "CNA_SpriteFontInfo.reserved size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1149,6 +1208,12 @@ CNA_Result (*const cna_lisp_probe_cna_sprite_batch_begin_with_effect)(CNA_Handle
 CNA_Result (*const cna_lisp_probe_cna_effect_parameter_create)(const CNA_EffectParameterCreateInfo*, CNA_EffectParameterHandle*) = cna_effect_parameter_create;
 CNA_Result (*const cna_lisp_probe_cna_effect_parameter_collection_create)(CNA_EffectParameterCollectionHandle*) = cna_effect_parameter_collection_create;
 CNA_Result (*const cna_lisp_probe_cna_effect_parameter_collection_add_create)(CNA_EffectParameterCollectionHandle, const CNA_EffectParameterCreateInfo*, CNA_EffectParameterHandle*) = cna_effect_parameter_collection_add_create;
+CNA_Result (*const cna_lisp_probe_cna_sprite_font_create)(const CNA_SpriteFontCreateInfo*, CNA_Handle*) = cna_sprite_font_create;
+CNA_Result (*const cna_lisp_probe_cna_sprite_font_destroy)(CNA_Handle) = cna_sprite_font_destroy;
+CNA_Result (*const cna_lisp_probe_cna_sprite_font_get_info)(CNA_Handle, CNA_SpriteFontInfo*) = cna_sprite_font_get_info;
+CNA_Result (*const cna_lisp_probe_cna_sprite_font_copy_characters)(CNA_Handle, CNA_Char16*, uint64_t, uint64_t*) = cna_sprite_font_copy_characters;
+CNA_Result (*const cna_lisp_probe_cna_sprite_font_copy_glyphs)(CNA_Handle, CNA_SpriteFontGlyph*, uint64_t, uint64_t*) = cna_sprite_font_copy_glyphs;
+CNA_Result (*const cna_lisp_probe_cna_sprite_font_measure_utf8)(CNA_Handle, CNA_StringView, CNA_Vector2*) = cna_sprite_font_measure_utf8;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");

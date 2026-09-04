@@ -44,6 +44,15 @@ so one 32-bit store writes it."
 ;;; :double and a :float, which is a calling-convention matter and lives with the
 ;;; call sites that pass it.
 
+(defun %read-rectangle (pointer)
+  "Read a CNA_Rectangle out of an aggregate field."
+  (macrolet ((slot (name)
+               `(cffi:foreign-slot-value
+                 pointer '(:struct cna-lisp.internal.ffi::cna-rectangle) ',name)))
+    (microsoft.xna.framework:make-rectangle
+     (slot cna-lisp.internal.ffi::x) (slot cna-lisp.internal.ffi::y)
+     (slot cna-lisp.internal.ffi::width) (slot cna-lisp.internal.ffi::height))))
+
 (defun %read-vector2 (pointer)
   (macrolet ((slot (name)
                `(cffi:foreign-slot-value

@@ -104,16 +104,31 @@ call that entered the callback.")
 ;;; Conditions CNA-Lisp raises on its own behalf, before or instead of a native
 ;;; call. These are usage errors: the program did something the binding refuses.
 
-(define-condition cna-argument-out-of-range-error (cna-usage-error)
+(define-condition cna-argument-error (cna-usage-error)
   ((parameter-name :initarg :parameter-name :initform nil
                    :reader cna-error-parameter-name
                    :documentation "The name of the argument the original names."))
   (:documentation
+   "An argument is one the original refuses.
+
+CNA-Lisp's projection of System.ArgumentException. Two base-class-library
+exceptions reach a caller of the selected XNA surface, and .NET makes one a
+subclass of the other, so this hierarchy is that hierarchy:
+ArgumentOutOfRangeException is CNA-ARGUMENT-OUT-OF-RANGE-ERROR and is a subtype
+of this. Handling this one catches both, which is what a `catch
+(ArgumentException)' does there.
+
+`SpriteFont' is where the plain ArgumentException appears: setting a
+DefaultCharacter the font has no glyph for, and measuring or drawing a code unit
+it cannot resolve even through the fallback, both throw it."))
+
+(define-condition cna-argument-out-of-range-error (cna-argument-error)
+  ()
+  (:documentation
    "An argument is outside the range the original accepts.
 
-This is CNA-Lisp's projection of System.ArgumentOutOfRangeException, which is the
-only base-class-library exception the selected XNA surface throws at a caller.
-Projecting it -- rather than letting the check disappear -- is what keeps
+CNA-Lisp's projection of System.ArgumentOutOfRangeException. Projecting it --
+rather than letting the check disappear -- is what keeps
 `(matrix-create-perspective-field-of-view 0 ...)' refusing here as it refuses
 there."))
 

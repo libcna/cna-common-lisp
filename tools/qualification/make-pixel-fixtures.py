@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generate the two pixel-proof texture fixtures, byte for byte.
+"""Generate the pixel-proof texture fixtures, byte for byte.
 
-A rasterization proof is only as good as the texture it draws. These two are
+A rasterization proof is only as good as the texture it draws. These are
 generated rather than drawn, so every texel is stated here in source and a
 reviewer can check the claim without opening an image editor.
 
@@ -11,9 +11,23 @@ reviewer can check the claim without opening an image editor.
                           top-right green  (  0, 255,   0, 255)
                           bot-left  blue   (  0,   0, 255, 255)
                           bot-right yellow (255, 255,   0, 255)
+  glyph-atlas-16x8.png  16x8, two 8x8 opaque glyph cells:
+                          left  'A'  red    (255,   0,   0, 255)
+                          right 'B'  green  (  0, 255,   0, 255)
 
-Both are opaque, so no blending mode can change what a texel contributes, and
-both use colours no clear colour in these tests uses.
+All are opaque, so no blending mode can change what a texel contributes, and all
+use colours no clear colour in these tests uses.
+
+The glyph atlas is deliberately **two different colours** rather than two copies
+of one shape. A text proof whose glyphs looked alike could pass while drawing the
+first glyph twice, or while drawing the second one in the first one's place; with
+this atlas the colour of a pixel says *which glyph* reached it, so the advance
+between glyphs and the per-glyph source rectangle are both under test rather
+than merely the fact that some font texel arrived.
+
+There is no antialiasing anywhere in it: every texel is fully opaque and fully
+saturated, so the expected back-buffer value is the texel itself and no
+tolerance, blend or filter has to be reasoned about.
 
   python3 tools/qualification/make-pixel-fixtures.py tests/fixtures
 """
@@ -52,7 +66,10 @@ def main(argv):
                       (0, 255, 0, 255) if (x >= 2 and y < 2) else
                       (0, 0, 255, 255) if (x < 2 and y >= 2) else
                       (255, 255, 0, 255)))
-    for name in ("solid-magenta-8.png", "quadrant-4.png"):
+    # 'A' occupies texels x 0..7 and 'B' texels x 8..15, both 8 rows tall.
+    png(os.path.join(directory, "glyph-atlas-16x8.png"), 16, 8,
+        lambda x, y: (255, 0, 0, 255) if x < 8 else (0, 255, 0, 255))
+    for name in ("solid-magenta-8.png", "quadrant-4.png", "glyph-atlas-16x8.png"):
         path = os.path.join(directory, name)
         print("%-22s %d bytes" % (name, os.path.getsize(path)))
     return 0
