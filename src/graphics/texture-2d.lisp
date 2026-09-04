@@ -140,3 +140,244 @@ nothing."
     (format stream "~dx~d ~a~:[~; disposed~]"
             (width texture) (height texture) (format-of texture)
             (cna-lisp.internal:disposed-state-of texture))))
+
+;;; --- construction, and the data surface -------------------------------------
+;;;
+;;; XNA's `SetData<T>' and `GetData<T>' are generic over anything blittable, and
+;;; this projection is as narrow here as it is for a buffer: **a transfer is
+;;; accepted only when the binding can prove the binary layout of every element**.
+;;; `src/graphics/buffer-data.lisp' is where those layouts live and why, and this
+;;; reuses them rather than growing a second opinion about how a Color is packed.
+;;;
+;;; CNA's route takes the element type as an identity of its own -- a texel is
+;;; four bytes of Color or one byte of Alpha8 and the ABI has to be told which --
+;;; so the Lisp element type is translated **by name** into a
+;;; `CNA_TEXTURE_DATA_*' identity, the way every enumeration here is translated,
+;;; rather than passed through as a size.
+
+(defparameter %texture-data-types
+  `((microsoft.xna.framework:color . ,cna-lisp.internal.ffi::+texture-data-color+)
+    ((unsigned-byte 8) . ,cna-lisp.internal.ffi::+texture-data-byte+)
+    (single-float . ,cna-lisp.internal.ffi::+texture-data-single+)
+    (microsoft.xna.framework:vector2 . ,cna-lisp.internal.ffi::+texture-data-vector2+)
+    (microsoft.xna.framework:vector4 . ,cna-lisp.internal.ffi::+texture-data-vector4+))
+  "Lisp element type -> CNA texel identity, by name and not by size.
+
+CNA distinguishes texel *kinds* that happen to share a byte count -- an
+Alpha8 byte and a raw byte, a Color and an Rgba1010102 -- so the identity is
+chosen from the element's own type rather than computed from
+%ELEMENT-BYTE-SIZE.")
+
+(defun %texture-data-type-for (sample operation)
+  "The CNA texel identity SAMPLE's Lisp type stands for."
+  (let ((entry (find-if (lambda (row) (typep sample (car row))) %texture-data-types)))
+    (unless entry
+      (error 'microsoft.xna.framework:cna-usage-error
+             :operation operation
+             :format-control
+             "a texture transfer cannot take ~a elements. CNA names a texel kind ~
+              rather than a byte count, so this projects the kinds it can name: ~
+              COLOR, (UNSIGNED-BYTE 8), SINGLE-FLOAT, VECTOR2 and VECTOR4."
+             :format-arguments (list (type-of sample))))
+    (cdr entry)))
+
+(defmacro %with-texture-transfer ((pointer level rectangle start-index element-count)
+                                  &body body)
+  "Fill a CNA_Texture2DTransfer for the dynamic extent of BODY."
+  `(cffi:with-foreign-object (,pointer '(:struct cna-lisp.internal.ffi::cna-texture-2d-transfer))
+     (cffi:foreign-funcall "memset" :pointer ,pointer :int 0
+                           :size cna-lisp.internal.ffi::+sizeof-cna-texture-2d-transfer+
+                           :void)
+     (macrolet ((slot (name)
+                  `(cffi:foreign-slot-value
+                    ,',pointer '(:struct cna-lisp.internal.ffi::cna-texture-2d-transfer)
+                    ',name)))
+       (setf (slot cna-lisp.internal.ffi::struct-size)
+             cna-lisp.internal.ffi::+sizeof-cna-texture-2d-transfer+
+             (slot cna-lisp.internal.ffi::struct-version) 1
+             (slot cna-lisp.internal.ffi::level) ,level
+             (slot cna-lisp.internal.ffi::has-rectangle)
+             (cna-lisp.internal.ffi:cna-bool-of ,rectangle)
+             (slot cna-lisp.internal.ffi::start-index) ,start-index
+             (slot cna-lisp.internal.ffi::element-count) ,element-count))
+     (when ,rectangle
+       (%write-rectangle
+        (cffi:foreign-slot-pointer
+         ,pointer '(:struct cna-lisp.internal.ffi::cna-texture-2d-transfer)
+         'cna-lisp.internal.ffi::rectangle)
+        ,rectangle))
+     ,@body))
+
+(defun %check-texture-transfer-shape (operation level rectangle start-index element-count
+                                     buffer-keywords)
+  "Refuse every keyword combination XNA's three overloads do not have.
+
+    (data)                          SetData(T[])
+    (data :start-index i :element-count n)
+                                    SetData(T[], Int32, Int32)
+    (data :level l :source r :start-index i :element-count n)
+                                    SetData(Int32, Rectangle?, T[], Int32, Int32)
+
+`:LEVEL' and `:SOURCE' belong to the third overload only, and `:START-INDEX' and
+`:ELEMENT-COUNT' come as a pair: XNA has no overload carrying one without the
+other."
+  (declare (ignore rectangle))
+  (flet ((refuse (control &rest arguments)
+           (error 'microsoft.xna.framework:cna-usage-error
+                  :operation operation :format-control control
+                  :format-arguments arguments)))
+    ;; SET-DATA and GET-DATA are one generic function each, shared with the vertex
+    ;; and index buffers, so CLOS congruence makes every method accept every
+    ;; keyword any of them uses. Accepting is not the same as having: a buffer's
+    ;; keywords are refused here by name rather than ignored, because silently
+    ;; ignoring one would be inventing a texture overload XNA has not got.
+    (when buffer-keywords
+      (refuse "~{:~a~^, ~} belong~:[~;s~] to a *buffer* transfer, not a texture's. ~
+               XNA's Texture2D.SetData and GetData take a mip level and a source ~
+               rectangle; a byte offset, a vertex stride and SetDataOptions are ~
+               VertexBuffer's and IndexBuffer's."
+              (mapcar #'symbol-name buffer-keywords) (= 1 (length buffer-keywords))))
+    (when (and (or start-index element-count) (not (and start-index element-count)))
+      (refuse ":START-INDEX and :ELEMENT-COUNT are one pair: XNA has no transfer ~
+               overload that takes either without the other."))
+    (when (and level (not (and start-index element-count)))
+      (refuse ":LEVEL belongs to the overload that also takes :START-INDEX and ~
+               :ELEMENT-COUNT; XNA has no transfer that names a mip level and no ~
+               window into the caller's array."))))
+
+(defmethod set-data ((texture texture-2d) data
+                     &key level source start-index element-count
+                          (offset-in-bytes nil offset-p) (vertex-stride nil stride-p)
+                          (options nil options-p))
+  (declare (ignore offset-in-bytes vertex-stride options))
+  (%check-texture-transfer-shape
+   "set-data" level source start-index element-count
+   (append (when offset-p '(offset-in-bytes)) (when stride-p '(vertex-stride))
+           (when options-p '(options))))
+  (cna-lisp.internal:check-usable texture "set-data")
+  (let* ((start (or start-index 0))
+         (count (or element-count (length data))))
+    (when (zerop count)
+      (error 'microsoft.xna.framework:cna-argument-out-of-range-error
+             :operation "set-data" :parameter-name "element-count"
+             :format-control "a texture transfer of no elements writes nothing."))
+    (multiple-value-bind (bytes size sample)
+        (%pack-sequence data start count "set-data")
+      (declare (ignore size))
+      (let ((identity (%texture-data-type-for sample "set-data")))
+        (cffi:with-foreign-object (buffer :uint8 (max 1 (length bytes)))
+          (dotimes (index (length bytes))
+            (setf (cffi:mem-aref buffer :uint8 index) (aref bytes index)))
+          (%with-texture-transfer (transfer (or level 0) source 0 count)
+            (cna-lisp.internal:check-result
+             (cna-lisp.internal.ffi::%texture-2d-set-data
+              (cna-lisp.internal:handle-of texture) identity transfer
+              buffer (length bytes))
+             "set-data" :object-type 'texture-2d))))))
+  (values))
+
+(defmethod get-data ((texture texture-2d) into
+                     &key level source start-index element-count
+                          (offset-in-bytes nil offset-p) (vertex-stride nil stride-p)
+                          (options nil options-p))
+  (declare (ignore offset-in-bytes vertex-stride options))
+  (%check-texture-transfer-shape
+   "get-data" level source start-index element-count
+   (append (when offset-p '(offset-in-bytes)) (when stride-p '(vertex-stride))
+           (when options-p '(options))))
+  (cna-lisp.internal:check-usable texture "get-data")
+  (when (zerop (length into))
+    (error 'microsoft.xna.framework:cna-argument-out-of-range-error
+           :operation "get-data" :parameter-name "into"
+           :format-control
+           "GET-DATA fills a sequence and reads the texel kind from its first ~
+            element, so an empty one says nothing about what to read."))
+  (let* ((start (or start-index 0))
+         (count (or element-count (- (length into) start)))
+         (sample (elt into 0))
+         (identity (%texture-data-type-for sample "get-data"))
+         (stride (%element-byte-size sample)))
+    (unless (and (<= 0 start) (<= 0 count) (<= (+ start count) (length into)))
+      (error 'microsoft.xna.framework:cna-argument-out-of-range-error
+             :operation "get-data" :parameter-name "element-count"
+             :format-control "~d element(s) from index ~d is outside a sequence of ~d."
+             :format-arguments (list count start (length into))))
+    (cffi:with-foreign-object (buffer :uint8 (max 1 (* stride count)))
+      (cffi:foreign-funcall "memset" :pointer buffer :int 0
+                            :size (max 1 (* stride count)) :void)
+      (cffi:with-foreign-object (required :uint64)
+        (%with-texture-transfer (transfer (or level 0) source 0 count)
+          (cna-lisp.internal:check-result
+           (cna-lisp.internal.ffi::%texture-2d-get-data
+            (cna-lisp.internal:handle-of texture) identity transfer
+            buffer count required)
+           "get-data" :object-type 'texture-2d)))
+      (%unpack-into into start count buffer stride sample))
+    into))
+
+(defgeneric %texture-makes-own-storage-p (texture)
+  (:documentation
+   "True when this kind of texture creates its own native storage.
+
+RENDER-TARGET-2D is a TEXTURE-2D and makes its storage with
+`cna_render_target2d_create', so the base class's constructor must not make a
+plain texture underneath it first -- which is exactly what an inherited
+`initialize-instance :after' would do, and did. The same shape `Effect' uses for
+`%EFFECT-TAKES-CODE-P': the base asks, and a subclass that is different says so.")
+  (:method ((texture texture-2d)) nil))
+
+(defmethod initialize-instance :after ((texture texture-2d)
+                                       &key graphics-device width height
+                                            (mip-map nil) (format :color))
+  "Texture2D(GraphicsDevice, Int32, Int32) and its five-argument sibling.
+
+The three-argument overload is not `everything zero': XNA fills in no mip map and
+`SurfaceFormat.Color', which is what the defaults here are."
+  (when (and graphics-device
+             (not (%texture-makes-own-storage-p texture))
+             (zerop (cna-lisp.internal:handle-of texture)))
+    (check-type width (integer 1))
+    (check-type height (integer 1))
+    (check-type format surface-format)
+    (let ((device-handle (device-handle-for-child graphics-device
+                                                  "make-instance 'texture-2d"))
+          (game (cna-lisp.internal:owner-of graphics-device)))
+      (cffi:with-foreign-object
+          (info '(:struct cna-lisp.internal.ffi::cna-texture-2d-create-info))
+        (cffi:foreign-funcall
+         "memset" :pointer info :int 0
+         :size cna-lisp.internal.ffi::+sizeof-cna-texture-2d-create-info+ :void)
+        (macrolet ((slot (name)
+                     `(cffi:foreign-slot-value
+                       info '(:struct cna-lisp.internal.ffi::cna-texture-2d-create-info)
+                       ',name)))
+          (setf (slot cna-lisp.internal.ffi::struct-size)
+                cna-lisp.internal.ffi::+sizeof-cna-texture-2d-create-info+
+                (slot cna-lisp.internal.ffi::struct-version) 1
+                (slot cna-lisp.internal.ffi::width) width
+                (slot cna-lisp.internal.ffi::height) height
+                (slot cna-lisp.internal.ffi::mip-map)
+                (cna-lisp.internal.ffi:cna-bool-of mip-map)
+                (slot cna-lisp.internal.ffi::format) (surface-format-value format)))
+        (cffi:with-foreign-object (out :uint64)
+          (cna-lisp.internal:check-result
+           (cna-lisp.internal.ffi::%texture-2d-create device-handle info out)
+           "make-instance 'texture-2d" :object-type 'texture-2d)
+          (let ((handle (cffi:mem-ref out :uint64))
+                (constructed nil))
+            (unwind-protect
+                 (multiple-value-bind (levels granted)
+                     (%texture-storage-dimensions handle)
+                   (setf (cna-lisp.internal:handle-of texture) handle
+                         (slot-value texture 'cna-lisp.internal::owner) game
+                         (slot-value texture 'cna-lisp.internal::owner-thread)
+                         (cna-lisp.internal:owner-thread-of game)
+                         (slot-value texture 'width) width
+                         (slot-value texture 'height) height
+                         (slot-value texture 'level-count) levels
+                         (slot-value texture 'format) granted)
+                   (cna-lisp.internal:register-child game texture)
+                   (setf constructed t))
+              (unless constructed
+                (ignore-errors
+                 (cna-lisp.internal.ffi::%texture-2d-destroy handle))))))))))

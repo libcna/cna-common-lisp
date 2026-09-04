@@ -763,6 +763,33 @@
 (defconstant +sizeof-cna-game-component-callbacks+ 64)
 (defconstant +alignof-cna-game-component-callbacks+ 8)
 
+;;; CNA_Texture2DTransfer -- 48 bytes, 8-byte aligned, from texture.h.
+(defcstruct (cna-texture-2d-transfer :size 48)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (level :int32 :offset 8)
+  (has-rectangle :uint8 :offset 12)
+  (reserved :uint8 :offset 13 :count 3)
+  (rectangle (:struct cna-rectangle) :offset 16)
+  (start-index :uint64 :offset 32)
+  (element-count :uint64 :offset 40))
+
+(defconstant +sizeof-cna-texture-2d-transfer+ 48)
+(defconstant +alignof-cna-texture-2d-transfer+ 8)
+
+;;; CNA_Texture2DCreateInfo -- 24 bytes, 4-byte aligned, from graphics.h.
+(defcstruct (cna-texture-2d-create-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (width :uint32 :offset 8)
+  (height :uint32 :offset 12)
+  (mip-map :uint8 :offset 16)
+  (reserved :uint8 :offset 17 :count 3)
+  (format :uint32 :offset 20))
+
+(defconstant +sizeof-cna-texture-2d-create-info+ 24)
+(defconstant +alignof-cna-texture-2d-create-info+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -820,6 +847,8 @@
     (cna-sprite-font-info 32 8 ((struct-size 0 4) (struct-version 4 4) (character-count 8 8) (line-spacing 16 4) (spacing 20 4) (default-character 24 2) (has-default-character 26 1) (reserved 27 5)))
     (cna-render-target-2d-create-info 40 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (mip-map 16 1) (reserved-0 17 3) (format 20 4) (depth-format 24 4) (multi-sample-count 28 4) (usage 32 4) (reserved-1 36 4)))
     (cna-render-target-info 44 4 ((struct-size 0 4) (struct-version 4 4) (kind 8 4) (width 12 4) (height 16 4) (level-count 20 4) (format 24 4) (depth-format 28 4) (multi-sample-count 32 4) (usage 36 4) (is-content-lost 40 1) (renderer-available 41 1) (reserved 42 2)))
-    (cna-game-component-callbacks 64 8 ((struct-size 0 4) (struct-version 4 4) (initialize 8 8) (update 16 8) (draw 24 8) (load-content 32 8) (unload-content 40 8) (dispose 48 8) (context 56 8))))
+    (cna-game-component-callbacks 64 8 ((struct-size 0 4) (struct-version 4 4) (initialize 8 8) (update 16 8) (draw 24 8) (load-content 32 8) (unload-content 40 8) (dispose 48 8) (context 56 8)))
+    (cna-texture-2d-transfer 48 8 ((struct-size 0 4) (struct-version 4 4) (level 8 4) (has-rectangle 12 1) (reserved 13 3) (rectangle 16 16) (start-index 32 8) (element-count 40 8)))
+    (cna-texture-2d-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (mip-map 16 1) (reserved 17 3) (format 20 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

@@ -1008,6 +1008,42 @@ _Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->dispose) == 8, "CNA_Gam
 _Static_assert(offsetof(CNA_GameComponentCallbacks, context) == 56, "CNA_GameComponentCallbacks.context offset");
 _Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->context) == 8, "CNA_GameComponentCallbacks.context size");
 
+_Static_assert(sizeof(CNA_Texture2DTransfer) == 48, "CNA_Texture2DTransfer size");
+_Static_assert(_Alignof(CNA_Texture2DTransfer) == 8, "CNA_Texture2DTransfer alignment");
+_Static_assert(offsetof(CNA_Texture2DTransfer, struct_size) == 0, "CNA_Texture2DTransfer.struct_size offset");
+_Static_assert(sizeof(((CNA_Texture2DTransfer *)0)->struct_size) == 4, "CNA_Texture2DTransfer.struct_size size");
+_Static_assert(offsetof(CNA_Texture2DTransfer, struct_version) == 4, "CNA_Texture2DTransfer.struct_version offset");
+_Static_assert(sizeof(((CNA_Texture2DTransfer *)0)->struct_version) == 4, "CNA_Texture2DTransfer.struct_version size");
+_Static_assert(offsetof(CNA_Texture2DTransfer, level) == 8, "CNA_Texture2DTransfer.level offset");
+_Static_assert(sizeof(((CNA_Texture2DTransfer *)0)->level) == 4, "CNA_Texture2DTransfer.level size");
+_Static_assert(offsetof(CNA_Texture2DTransfer, has_rectangle) == 12, "CNA_Texture2DTransfer.has_rectangle offset");
+_Static_assert(sizeof(((CNA_Texture2DTransfer *)0)->has_rectangle) == 1, "CNA_Texture2DTransfer.has_rectangle size");
+_Static_assert(offsetof(CNA_Texture2DTransfer, reserved) == 13, "CNA_Texture2DTransfer.reserved offset");
+_Static_assert(sizeof(((CNA_Texture2DTransfer *)0)->reserved) == 3, "CNA_Texture2DTransfer.reserved size");
+_Static_assert(offsetof(CNA_Texture2DTransfer, rectangle) == 16, "CNA_Texture2DTransfer.rectangle offset");
+_Static_assert(sizeof(((CNA_Texture2DTransfer *)0)->rectangle) == 16, "CNA_Texture2DTransfer.rectangle size");
+_Static_assert(offsetof(CNA_Texture2DTransfer, start_index) == 32, "CNA_Texture2DTransfer.start_index offset");
+_Static_assert(sizeof(((CNA_Texture2DTransfer *)0)->start_index) == 8, "CNA_Texture2DTransfer.start_index size");
+_Static_assert(offsetof(CNA_Texture2DTransfer, element_count) == 40, "CNA_Texture2DTransfer.element_count offset");
+_Static_assert(sizeof(((CNA_Texture2DTransfer *)0)->element_count) == 8, "CNA_Texture2DTransfer.element_count size");
+
+_Static_assert(sizeof(CNA_Texture2DCreateInfo) == 24, "CNA_Texture2DCreateInfo size");
+_Static_assert(_Alignof(CNA_Texture2DCreateInfo) == 4, "CNA_Texture2DCreateInfo alignment");
+_Static_assert(offsetof(CNA_Texture2DCreateInfo, struct_size) == 0, "CNA_Texture2DCreateInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->struct_size) == 4, "CNA_Texture2DCreateInfo.struct_size size");
+_Static_assert(offsetof(CNA_Texture2DCreateInfo, struct_version) == 4, "CNA_Texture2DCreateInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->struct_version) == 4, "CNA_Texture2DCreateInfo.struct_version size");
+_Static_assert(offsetof(CNA_Texture2DCreateInfo, width) == 8, "CNA_Texture2DCreateInfo.width offset");
+_Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->width) == 4, "CNA_Texture2DCreateInfo.width size");
+_Static_assert(offsetof(CNA_Texture2DCreateInfo, height) == 12, "CNA_Texture2DCreateInfo.height offset");
+_Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->height) == 4, "CNA_Texture2DCreateInfo.height size");
+_Static_assert(offsetof(CNA_Texture2DCreateInfo, mip_map) == 16, "CNA_Texture2DCreateInfo.mip_map offset");
+_Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->mip_map) == 1, "CNA_Texture2DCreateInfo.mip_map size");
+_Static_assert(offsetof(CNA_Texture2DCreateInfo, reserved) == 17, "CNA_Texture2DCreateInfo.reserved offset");
+_Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->reserved) == 3, "CNA_Texture2DCreateInfo.reserved size");
+_Static_assert(offsetof(CNA_Texture2DCreateInfo, format) == 20, "CNA_Texture2DCreateInfo.format offset");
+_Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->format) == 4, "CNA_Texture2DCreateInfo.format size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1370,6 +1406,9 @@ CNA_Result (*const cna_lisp_probe_cna_game_components_contains)(CNA_Handle, CNA_
 CNA_Result (*const cna_lisp_probe_cna_game_components_index_of)(CNA_Handle, CNA_GameComponentHandle, int32_t*) = cna_game_components_index_of;
 CNA_Result (*const cna_lisp_probe_cna_game_components_subscribe_added)(CNA_Handle, CNA_GameComponentCollectionCallback, void*, CNA_GameComponentEventRegistrationHandle*) = cna_game_components_subscribe_added;
 CNA_Result (*const cna_lisp_probe_cna_game_components_subscribe_removed)(CNA_Handle, CNA_GameComponentCollectionCallback, void*, CNA_GameComponentEventRegistrationHandle*) = cna_game_components_subscribe_removed;
+CNA_Result (*const cna_lisp_probe_cna_texture2d_create)(CNA_Handle, const CNA_Texture2DCreateInfo*, CNA_Handle*) = cna_texture2d_create;
+CNA_Result (*const cna_lisp_probe_cna_texture2d_set_data)(CNA_Handle, CNA_TextureDataType, const CNA_Texture2DTransfer*, const void*, uint64_t) = cna_texture2d_set_data;
+CNA_Result (*const cna_lisp_probe_cna_texture2d_get_data)(CNA_Handle, CNA_TextureDataType, const CNA_Texture2DTransfer*, void*, uint64_t, uint64_t*) = cna_texture2d_get_data;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -1812,6 +1851,11 @@ _Static_assert((int64_t)(CNA_TEXTURE_ADDRESS_CLAMP) == INT64_C(1), "CNA_TEXTURE_
 _Static_assert((int64_t)(CNA_TEXTURE_ADDRESS_MIRROR) == INT64_C(2), "CNA_TEXTURE_ADDRESS_MIRROR value");
 _Static_assert((int64_t)(CNA_TEXTURE_ADDRESS_WRAP) == INT64_C(0), "CNA_TEXTURE_ADDRESS_WRAP value");
 _Static_assert((int64_t)(CNA_TEXTURE_COLLECTION_MAX_TEXTURES) == INT64_C(16), "CNA_TEXTURE_COLLECTION_MAX_TEXTURES value");
+_Static_assert((int64_t)(CNA_TEXTURE_DATA_BYTE) == INT64_C(4), "CNA_TEXTURE_DATA_BYTE value");
+_Static_assert((int64_t)(CNA_TEXTURE_DATA_COLOR) == INT64_C(0), "CNA_TEXTURE_DATA_COLOR value");
+_Static_assert((int64_t)(CNA_TEXTURE_DATA_SINGLE) == INT64_C(11), "CNA_TEXTURE_DATA_SINGLE value");
+_Static_assert((int64_t)(CNA_TEXTURE_DATA_VECTOR2) == INT64_C(12), "CNA_TEXTURE_DATA_VECTOR2 value");
+_Static_assert((int64_t)(CNA_TEXTURE_DATA_VECTOR4) == INT64_C(13), "CNA_TEXTURE_DATA_VECTOR4 value");
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_ANISOTROPIC) == INT64_C(2), "CNA_TEXTURE_FILTER_ANISOTROPIC value");
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_LINEAR) == INT64_C(0), "CNA_TEXTURE_FILTER_LINEAR value");
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_LINEAR_MIP_POINT) == INT64_C(3), "CNA_TEXTURE_FILTER_LINEAR_MIP_POINT value");

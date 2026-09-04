@@ -112,9 +112,9 @@ genuine absence.
 <!-- generated:complete types=132 -->
 <!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1720 -->
+<!-- generated:complete members=1728 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=64 -->
+<!-- generated:missing members=56 -->
 <!-- generated:not-applicable members=408 -->
 <!-- generated:disagreement total=0 -->
 
@@ -128,9 +128,9 @@ Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
 | Types complete | **132** |
 | Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1720** |
+| Members complete | **1728** |
 | Members partial | **1** |
-| Members missing | **64** |
+| Members missing | **56** |
 | Members not applicable | **408** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -182,7 +182,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 30 | 1 | 24 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
-| `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
+| `M.X.F.Graphics.Texture2D` | **partial** | 11 | 0 | 4 | 1 |
 | `M.X.F.Graphics.RenderTarget2D` | **complete** | 8 | 0 | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetUsage` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.DepthFormat` | **complete** | 4 | 0 | 0 | 1 |
@@ -329,8 +329,8 @@ back-reference.
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
-| `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 6 | 0 |
+| `M.X.F.Graphics.Texture2D` | 4 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
@@ -362,10 +362,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=360 -->
-<!-- generated:bound native structs=55 -->
-<!-- generated:bound native struct fields=417 -->
-<!-- generated:bound native constants=474 -->
+<!-- generated:bound native functions=363 -->
+<!-- generated:bound native structs=57 -->
+<!-- generated:bound native struct fields=432 -->
+<!-- generated:bound native constants=479 -->
 <!-- generated:bound native callbacks=9 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -374,10 +374,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 360 |
-| Bound structs | 55 |
-| Bound struct fields | 417 |
-| Bound constants | 474 |
+| Bound functions | 363 |
+| Bound structs | 57 |
+| Bound struct fields | 432 |
+| Bound constants | 479 |
 | Bound callback typedefs | 9 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |

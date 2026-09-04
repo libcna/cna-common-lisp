@@ -24,10 +24,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 360,
-    "structs": 55,
-    "struct_fields": 417,
-    "constants": 474,
+    "functions": 363,
+    "structs": 57,
+    "struct_fields": 432,
+    "constants": 479,
     "callbacks": 9,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -8958,6 +8958,112 @@
       "ownership": "creates",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_game_components_subscribe_removed(CNA_Handle game, CNA_GameComponentCollectionCallback callback, void* context, CNA_GameComponentEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_texture2d_create",
+      "header": "graphics.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_Texture2DCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:texture-2d:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_create(CNA_Handle graphics_device, const CNA_Texture2DCreateInfo* create_info, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_texture2d_set_data",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "data_type",
+          "c_type": "CNA_TextureDataType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_Texture2DTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data",
+          "c_type": "const void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data_capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_set_data(CNA_Handle texture, CNA_TextureDataType data_type, const CNA_Texture2DTransfer* transfer, const void* data, uint64_t data_capacity)"
+    },
+    {
+      "name": "cna_texture2d_get_data",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "data_type",
+          "c_type": "CNA_TextureDataType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_Texture2DTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination_capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_required_elements",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_get_data(CNA_Handle texture, CNA_TextureDataType data_type, const CNA_Texture2DTransfer* transfer, void* destination, uint64_t destination_capacity, uint64_t* out_required_elements)"
     }
   ],
   "structs": [
@@ -13340,6 +13446,161 @@
           "size": 8
         }
       }
+    },
+    {
+      "name": "CNA_Texture2DTransfer",
+      "size": 48,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "level",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_rectangle",
+          "c_type": "CNA_Bool",
+          "offset": 12,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 13,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "rectangle",
+          "c_type": "CNA_Rectangle",
+          "offset": 16,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Rectangle",
+          "kind": "aggregate"
+        },
+        {
+          "name": "start_index",
+          "c_type": "uint64_t",
+          "offset": 32,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "element_count",
+          "c_type": "uint64_t",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture2DCreateInfo",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "mip_map",
+          "c_type": "CNA_Bool",
+          "offset": 16,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 17,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics.h",
+      "direction": "in",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -13942,6 +14203,11 @@
     "CNA_TEXTURE_ADDRESS_MIRROR": 2,
     "CNA_TEXTURE_ADDRESS_WRAP": 0,
     "CNA_TEXTURE_COLLECTION_MAX_TEXTURES": 16,
+    "CNA_TEXTURE_DATA_BYTE": 4,
+    "CNA_TEXTURE_DATA_COLOR": 0,
+    "CNA_TEXTURE_DATA_SINGLE": 11,
+    "CNA_TEXTURE_DATA_VECTOR2": 12,
+    "CNA_TEXTURE_DATA_VECTOR4": 13,
     "CNA_TEXTURE_FILTER_ANISOTROPIC": 2,
     "CNA_TEXTURE_FILTER_LINEAR": 0,
     "CNA_TEXTURE_FILTER_LINEAR_MIP_POINT": 3,

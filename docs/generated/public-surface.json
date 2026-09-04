@@ -16736,17 +16736,23 @@
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "buffer",
+            "resource",
             "into",
             "&key",
             "start-index",
             "element-count",
             "offset-in-bytes",
-            "vertex-stride"
+            "vertex-stride",
+            "level",
+            "source",
+            "options"
           ],
           "keywords": [
             "element-count",
+            "level",
             "offset-in-bytes",
+            "options",
+            "source",
             "start-index",
             "vertex-stride"
           ],
@@ -16760,7 +16766,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "VertexBuffer.GetData and IndexBuffer.GetData, reading into INTO.\n\nXNA fills the caller's array, so this does too, and answers it. The element type\nof INTO decides what is read, by the same proven layouts SET-DATA writes."
+          "documentation": "GetData, on a vertex buffer, an index buffer or a Texture2D, reading into INTO.\n\nXNA fills the caller's array, so this does too, and answers it. The element type\nof INTO decides what is read, by the same proven layouts SET-DATA writes."
         },
         {
           "name": "get-vertex-buffers",
@@ -18133,19 +18139,23 @@
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "buffer",
+            "resource",
             "data",
             "&key",
             "start-index",
             "element-count",
             "offset-in-bytes",
             "vertex-stride",
-            "options"
+            "options",
+            "level",
+            "source"
           ],
           "keywords": [
             "element-count",
+            "level",
             "offset-in-bytes",
             "options",
+            "source",
             "start-index",
             "vertex-stride"
           ],
@@ -18159,7 +18169,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "VertexBuffer.SetData and IndexBuffer.SetData.\n\nDATA is a Lisp sequence whose element layout this binding can prove: an octet,\nsixteen-bit or thirty-two-bit integer vector, a vector of SINGLE-FLOATs, COLORs,\nVECTOR2/3/4s, or one of the standard vertex types. An element type with no proven\nlayout is refused by name rather than written into native memory. See\nsrc/graphics/buffer-data.lisp."
+          "documentation": "SetData, on a vertex buffer, an index buffer or a Texture2D.\n\nDATA is a Lisp sequence whose element layout this binding can prove: an octet,\nsixteen-bit or thirty-two-bit integer vector, a vector of SINGLE-FLOATs, COLORs,\nVECTOR2/3/4s, or one of the standard vertex types. An element type with no proven\nlayout is refused by name rather than written into native memory.\n\nWhich keywords are legal depends on the resource, because XNA's overloads do:\n`:OFFSET-IN-BYTES', `:VERTEX-STRIDE' and `:OPTIONS' are a buffer's, `:LEVEL' and\n`:SOURCE' are a texture's, and each method refuses the others."
         },
         {
           "name": "set-data-options",

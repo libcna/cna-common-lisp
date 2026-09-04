@@ -36,6 +36,34 @@
 (define-condition unsupported-element-type () ()
   (:documentation "Never signalled; see %REFUSE-ELEMENT-TYPE."))
 
+;;; The two transfer generics, defined here because two unrelated closures answer
+;;; them -- the vertex and index buffers, and Texture2D -- and a generic function
+;;; defined twice is a generic function whose lambda list depends on load order.
+;;; The keyword set is the union of what the two families' overloads need; each
+;;; method refuses the combinations its own type has no overload for.
+
+(defgeneric set-data (resource data &key start-index element-count offset-in-bytes
+                                         vertex-stride options level source)
+  (:documentation
+   "SetData, on a vertex buffer, an index buffer or a Texture2D.
+
+DATA is a Lisp sequence whose element layout this binding can prove: an octet,
+sixteen-bit or thirty-two-bit integer vector, a vector of SINGLE-FLOATs, COLORs,
+VECTOR2/3/4s, or one of the standard vertex types. An element type with no proven
+layout is refused by name rather than written into native memory.
+
+Which keywords are legal depends on the resource, because XNA's overloads do:
+`:OFFSET-IN-BYTES', `:VERTEX-STRIDE' and `:OPTIONS' are a buffer's, `:LEVEL' and
+`:SOURCE' are a texture's, and each method refuses the others."))
+
+(defgeneric get-data (resource into &key start-index element-count offset-in-bytes
+                                         vertex-stride level source)
+  (:documentation
+   "GetData, on a vertex buffer, an index buffer or a Texture2D, reading into INTO.
+
+XNA fills the caller's array, so this does too, and answers it. The element type
+of INTO decides what is read, by the same proven layouts SET-DATA writes."))
+
 (defun %refuse-element-type (operation element)
   (error 'microsoft.xna.framework:cna-usage-error
          :operation operation

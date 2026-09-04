@@ -309,7 +309,12 @@
       "CNA_GAME_COMPONENT_EVENT_UPDATE_ORDER_CHANGED",
       "CNA_GAME_COMPONENT_EVENT_DRAW_ORDER_CHANGED",
       "CNA_GAME_COMPONENT_EVENT_VISIBLE_CHANGED",
-      "CNA_GAME_COMPONENT_EVENT_DISPOSED"
+      "CNA_GAME_COMPONENT_EVENT_DISPOSED",
+      "CNA_TEXTURE_DATA_COLOR",
+      "CNA_TEXTURE_DATA_BYTE",
+      "CNA_TEXTURE_DATA_SINGLE",
+      "CNA_TEXTURE_DATA_VECTOR2",
+      "CNA_TEXTURE_DATA_VECTOR4"
     ],
     "prefix_families": [
       {
@@ -641,6 +646,16 @@
         }
       },
       "note": "CNA's abi_baseline.json omits function-pointer members, so the six handlers are declared absent from it and verified by the C compiler instead. struct_size, struct_version and context are in the baseline and are cross-checked against it as usual."
+    },
+    {
+      "name": "CNA_Texture2DTransfer",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture2DCreateInfo",
+      "direction": "in",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -2843,6 +2858,24 @@
       "header": "runtime_components.h",
       "thread": "owner",
       "ownership": "creates"
+    },
+    {
+      "name": "cna_texture2d_create",
+      "header": "graphics.h",
+      "thread": "owner",
+      "ownership": "creates-owned:texture-2d:child-of-game"
+    },
+    {
+      "name": "cna_texture2d_set_data",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture2d_get_data",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
     }
   ],
   "shimmed_routes": [

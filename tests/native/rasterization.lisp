@@ -765,6 +765,7 @@ fragment of an opaque triangle; here it draws it."
   ((rt :initform nil :accessor rt)
    (before :initform nil :accessor before)
    (after :initform nil :accessor after)
+   (target-texels :initform nil :accessor target-texels)
    (sample-error :initform nil :accessor sample-error)
    (sampled :initform nil :accessor sampled))
   (:documentation
@@ -787,6 +788,17 @@ untouched, then draws the target onto it and checks again."))
           (gfx:set-render-target device target)
           (gfx:clear device (xna:make-color 255 0 0 255))
           (gfx:set-render-target device nil)
+          ;; First, and deliberately before anything that needs a back buffer:
+          ;; read the target's own texels with GetData. This is the mechanism that
+          ;; works on a renderer whose back buffer cannot be read, so it is
+          ;; recorded separately and asserted on *both* branches.
+          (setf (target-texels game)
+                (handler-case
+                    (let ((texels (make-array (* 16 16)
+                                              :initial-element (xna:make-color 0 0 0 0))))
+                      (gfx:get-data target texels)
+                      texels)
+                  (error (condition) condition)))
           ;; Claim 1: nothing of that reached the back buffer.
           (let ((pixels (gfx:get-back-buffer-data device)))
             (setf (before game)
@@ -813,6 +825,29 @@ untouched, then draws the target onto it and checks again."))
          (progn
            (xna:run game)
            (is (sampled game) "the draw callback never ran")
+           ;; The render target's own texels, asserted on every renderer: GetData
+           ;; reads a texture and not a back buffer, so this is the one pixel claim
+           ;; in the suite that does not depend on GetBackBufferData at all. What
+           ;; the renderer decides is only whether the *rest* of the proof can run.
+           (let ((texels (target-texels game))
+                 (red (xna:make-color 255 0 0 255)))
+             (if (typep texels 'error)
+                 (is (typep texels 'xna:cna-not-supported-error)
+                     "~a refused GetData on a render target with ~a"
+                     (renderer game) (type-of texels))
+                 (progn
+                   (is (= (* 16 16) (length texels))
+                       "GetData on a 16x16 target answered ~d texel(s)" (length texels))
+                   (note-rasterization
+                    :render-target-data
+                    "~a: all ~d of a bound-and-cleared RenderTarget2D's own texels read ~
+                     back through GetData, which needs no back buffer"
+                    (renderer game) (length texels))
+                   (loop for texel across texels
+                         for index from 0
+                         do (is (xna:color-equal red texel)
+                                "texel ~d of the render target is ~a, not the red that ~
+                                 was cleared into it" index (pixel-list texel))))))
            (let ((renderer (renderer game)))
              (if (not (rasterizing-renderer-p renderer))
                  (progn
@@ -856,10 +891,8 @@ untouched, then draws the target onto it and checks again."))
                      (note-rasterization
                       :render-target
                       "~a: a clear into a bound RenderTarget2D left the back buffer ~
-                       untouched, and the target's own contents then drew onto the back ~
-                       buffer through the texture path -- so a render target's pixels ~
-                       are readable without the back-buffer readback being the only ~
-                       mechanism"
+                       untouched, and the target then drew onto the back buffer through ~
+                       the texture path"
                       renderer)))))
            (values))
       (progn

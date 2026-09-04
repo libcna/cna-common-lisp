@@ -22,15 +22,15 @@
    "complete": 132
   },
   "members_by_status": {
-   "complete": 1720,
-   "missing": 64,
+   "complete": 1728,
+   "missing": 56,
    "not-applicable": 408,
    "partial": 1
   },
-  "diagnostics": 64,
+  "diagnostics": 56,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 64,
+   "missing_member": 56,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1384,18 +1384,18 @@
    "name": "Microsoft.Xna.Framework.Graphics.Texture2D",
    "status": "partial",
    "members": {
-    "new(GraphicsDevice,Int32,Int32)": "missing",
-    "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)": "missing",
+    "new(GraphicsDevice,Int32,Int32)": "complete",
+    "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)": "complete",
     "FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "missing",
     "FromStream(GraphicsDevice,Stream)": "missing",
     "SaveAsJpeg(Stream,Int32,Int32)": "missing",
     "SaveAsPng(Stream,Int32,Int32)": "missing",
-    "SetData(!!0[])": "missing",
-    "SetData(!!0[],Int32,Int32)": "missing",
-    "SetData(Int32,Nullable`1,!!0[],Int32,Int32)": "missing",
-    "GetData(!!0[])": "missing",
-    "GetData(!!0[],Int32,Int32)": "missing",
-    "GetData(Int32,Nullable`1,!!0[],Int32,Int32)": "missing",
+    "SetData(!!0[])": "complete",
+    "SetData(!!0[],Int32,Int32)": "complete",
+    "SetData(Int32,Nullable`1,!!0[],Int32,Int32)": "complete",
+    "GetData(!!0[])": "complete",
+    "GetData(!!0[],Int32,Int32)": "complete",
+    "GetData(Int32,Nullable`1,!!0[],Int32,Int32)": "complete",
     "Dispose(Boolean)": "not-applicable",
     "Bounds": "complete",
     "Height": "complete",
@@ -3468,16 +3468,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.new(GraphicsDevice,Int32,Int32)",
-   "detail": "Creating an empty texture is not projected in this milestone."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)",
-   "detail": "See the three-argument constructor."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)",
    "detail": "Needs the System.IO.Stream projection. TEXTURE-2D-FROM-PNG-BYTES and TEXTURE-2D-FROM-PNG-FILE are CNA-Lisp additions over the same CNA route, and are declared as extensions rather than claimed as this member."
   },
@@ -3495,36 +3485,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SaveAsPng(Stream,Int32,Int32)",
    "detail": "Needs the Stream projection."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(!!0[])",
-   "detail": "Pixel access is not projected in this milestone."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(!!0[],Int32,Int32)",
-   "detail": "Pixel access is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SetData(Int32,Nullable`1,!!0[],Int32,Int32)",
-   "detail": "Pixel access is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(!!0[])",
-   "detail": "Pixel access is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(!!0[],Int32,Int32)",
-   "detail": "Pixel access is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(Int32,Nullable`1,!!0[],Int32,Int32)",
-   "detail": "Pixel access is not projected."
   },
   {
    "category": "missing_member",

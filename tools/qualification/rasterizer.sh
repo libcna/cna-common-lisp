@@ -15,6 +15,11 @@
 #              pixels its destination rectangle names, and on none outside it
 #   primitive  a DrawUserPrimitives triangle, through a BasicEffect pass, covered
 #              exactly the pixels its geometry covers and none outside them
+#   render-target-data
+#              every texel of a bound-and-cleared RenderTarget2D read back through
+#              Texture2D.GetData -- which reads a texture and not a back buffer,
+#              so it is the one pixel claim here that does not depend on
+#              GetBackBufferData at all
 #   render-target
 #              a clear into a bound RenderTarget2D left the back buffer untouched,
 #              and the target's own contents then reached the back buffer through
@@ -77,7 +82,7 @@ if ! grep -q '^rasterization : ' "$log"; then
     echo "FAIL the runner printed no rasterization line at all" >&2
     exit 1
 fi
-for kind in clear sprite primitive text stock-effect render-target; do
+for kind in clear sprite primitive text stock-effect render-target render-target-data; do
     if ! grep -q "^rasterization : $kind -- " "$log"; then
         echo "FAIL this lane requires a '$kind' proof and the run did not produce one:" >&2
         grep '^rasterization : ' "$log" >&2 || true

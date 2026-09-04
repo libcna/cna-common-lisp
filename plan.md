@@ -246,7 +246,12 @@ are pure managed and touch no native route:
   and a component's behaviour is its CLOS methods on the same generic functions a
   `Game` specialises. The tests assert counts taken inside CNA's own loop, so an
   engine that was exported and never wired would fail them. `GameServiceContainer`
-  is deliberately absent: its keys are two interfaces that are not projected.
+  is deliberately absent: its keys are two interfaces that are not projected;
+* `Texture2D`'s own construction and data surface -- both constructors and the
+  three `SetData` and three `GetData` overloads, as narrow as the buffers' and
+  over the same proven layouts. With it the rasterizer lane gained a seventh kind
+  of proof and the first that does not go through `GetBackBufferData` at all: a
+  render target's texels read straight out of it with `GetData`.
 
 ## 6. Measured status
 
@@ -274,9 +279,9 @@ moves with every test added and no report can pin it.
 <!-- generated:complete types=132 -->
 <!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1720 -->
+<!-- generated:complete members=1728 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=64 -->
+<!-- generated:missing members=56 -->
 <!-- generated:not-applicable members=408 -->
 <!-- generated:disagreement total=0 -->
 
@@ -290,9 +295,9 @@ Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
 | Types complete | **132** |
 | Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1720** |
+| Members complete | **1728** |
 | Members partial | **1** |
-| Members missing | **64** |
+| Members missing | **56** |
 | Members not applicable | **408** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->

@@ -376,31 +376,28 @@ rather say it that way."))
   (when options-p (check-type options set-data-options))
   (if options-p options :none))
 
-(defgeneric set-data (buffer data &key start-index element-count offset-in-bytes
-                                       vertex-stride options)
-  (:documentation
-   "VertexBuffer.SetData and IndexBuffer.SetData.
-
-DATA is a Lisp sequence whose element layout this binding can prove: an octet,
-sixteen-bit or thirty-two-bit integer vector, a vector of SINGLE-FLOATs, COLORs,
-VECTOR2/3/4s, or one of the standard vertex types. An element type with no proven
-layout is refused by name rather than written into native memory. See
-src/graphics/buffer-data.lisp."))
-
-(defgeneric get-data (buffer into &key start-index element-count offset-in-bytes
-                                       vertex-stride)
-  (:documentation
-   "VertexBuffer.GetData and IndexBuffer.GetData, reading into INTO.
-
-XNA fills the caller's array, so this does too, and answers it. The element type
-of INTO decides what is read, by the same proven layouts SET-DATA writes."))
+;;; SET-DATA and GET-DATA are defined in buffer-data.lisp: two unrelated
+;;; closures answer them, and a generic function defined twice is one whose
+;;; lambda list depends on load order.
 
 (defmethod set-data ((buffer vertex-buffer) data
                      &key (start-index nil start-index-p)
                           (element-count nil element-count-p)
                           (offset-in-bytes nil offset-p)
                           (vertex-stride nil stride-p)
-                          (options nil options-p))
+                          (options nil options-p)
+                          (level nil level-p) (source nil source-p))
+  (declare (ignore level source))
+  ;; SET-DATA and GET-DATA are shared with Texture2D, so CLOS congruence makes
+  ;; every method accept every keyword any of them uses. A texture's two are
+  ;; refused here by name rather than ignored: silently ignoring one would invent
+  ;; a buffer overload XNA has not got.
+  (when (or level-p source-p)
+    (error 'microsoft.xna.framework:cna-usage-error
+           :operation "set-data"
+           :format-control
+           ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
+            rectangle. A buffer has neither."))
   (let ((operation "set-data"))
     (%check-transfer-shape operation start-index-p element-count-p)
     (when (and stride-p (not offset-p))
@@ -449,8 +446,20 @@ of INTO decides what is read, by the same proven layouts SET-DATA writes."))
                      &key (start-index nil start-index-p)
                           (element-count nil element-count-p)
                           (offset-in-bytes nil offset-p)
-                          (vertex-stride nil stride-p))
+                          (vertex-stride nil stride-p)
+                          (level nil level-p) (source nil source-p))
   (declare (ignorable stride-p))
+  (declare (ignore level source))
+  ;; SET-DATA and GET-DATA are shared with Texture2D, so CLOS congruence makes
+  ;; every method accept every keyword any of them uses. A texture's two are
+  ;; refused here by name rather than ignored: silently ignoring one would invent
+  ;; a buffer overload XNA has not got.
+  (when (or level-p source-p)
+    (error 'microsoft.xna.framework:cna-usage-error
+           :operation "get-data"
+           :format-control
+           ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
+            rectangle. A buffer has neither."))
   (let ((operation "get-data"))
     (%check-transfer-shape operation start-index-p element-count-p)
     (cna-lisp.internal:check-usable buffer operation)
@@ -516,8 +525,20 @@ says nothing about its width, so it is taken as the buffer's."
                           (element-count nil element-count-p)
                           (offset-in-bytes nil offset-p)
                           (vertex-stride nil stride-p)
-                          (options nil options-p))
-  (declare (ignorable vertex-stride))
+                          (options nil options-p)
+                          (level nil level-p) (source nil source-p))
+  (declare (ignore level source) (ignorable vertex-stride))
+  ;; SET-DATA and GET-DATA are shared with Texture2D, so CLOS congruence makes
+  ;; every method accept every keyword any of them uses. A texture's two are
+  ;; refused here by name rather than ignored: silently ignoring one would invent
+  ;; a buffer overload XNA has not got.
+  (when (or level-p source-p)
+    (error 'microsoft.xna.framework:cna-usage-error
+           :operation "set-data"
+           :format-control
+           ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
+            rectangle. A buffer has neither."))
+
   (when stride-p
     (error 'microsoft.xna.framework:cna-usage-error
            :operation "set-data"
@@ -564,8 +585,20 @@ says nothing about its width, so it is taken as the buffer's."
                      &key (start-index nil start-index-p)
                           (element-count nil element-count-p)
                           (offset-in-bytes nil offset-p)
-                          (vertex-stride nil stride-p))
-  (declare (ignorable vertex-stride offset-in-bytes))
+                          (vertex-stride nil stride-p)
+                          (level nil level-p) (source nil source-p))
+  (declare (ignore level source) (ignorable vertex-stride offset-in-bytes))
+  ;; SET-DATA and GET-DATA are shared with Texture2D, so CLOS congruence makes
+  ;; every method accept every keyword any of them uses. A texture's two are
+  ;; refused here by name rather than ignored: silently ignoring one would invent
+  ;; a buffer overload XNA has not got.
+  (when (or level-p source-p)
+    (error 'microsoft.xna.framework:cna-usage-error
+           :operation "get-data"
+           :format-control
+           ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
+            rectangle. A buffer has neither."))
+
   (when (or stride-p offset-p)
     (error 'microsoft.xna.framework:cna-usage-error
            :operation "get-data"

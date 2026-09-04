@@ -1104,23 +1104,76 @@
       "lisp_name": "texture-2d",
       "lisp_kind": "class",
       "expected_superclass": "microsoft.xna.framework.graphics:graphics-resource",
-      "constructors": {},
+      "constructors": {
+        "new(GraphicsDevice,Int32,Int32)": "make-instance",
+        "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)": "make-instance"
+      },
       "not_applicable": {
         "Dispose(Boolean)": "The protected dispose(bool) pattern."
       },
       "unimplemented": {
-        "new(GraphicsDevice,Int32,Int32)": "Creating an empty texture is not projected in this milestone.",
-        "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)": "See the three-argument constructor.",
         "FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "Needs the System.IO.Stream projection. TEXTURE-2D-FROM-PNG-BYTES and TEXTURE-2D-FROM-PNG-FILE are CNA-Lisp additions over the same CNA route, and are declared as extensions rather than claimed as this member.",
         "FromStream(GraphicsDevice,Stream)": "See the five-argument overload.",
         "SaveAsJpeg(Stream,Int32,Int32)": "Needs the Stream projection.",
-        "SaveAsPng(Stream,Int32,Int32)": "Needs the Stream projection.",
-        "SetData(!!0[])": "Pixel access is not projected in this milestone.",
-        "SetData(!!0[],Int32,Int32)": "Pixel access is not projected.",
-        "GetData(!!0[])": "Pixel access is not projected.",
-        "GetData(!!0[],Int32,Int32)": "Pixel access is not projected.",
-        "SetData(Int32,Nullable`1,!!0[],Int32,Int32)": "Pixel access is not projected.",
-        "GetData(Int32,Nullable`1,!!0[],Int32,Int32)": "Pixel access is not projected."
+        "SaveAsPng(Stream,Int32,Int32)": "Needs the Stream projection."
+      },
+      "member_overrides": {
+        "SetData(!!0[])": {
+          "lisp": "set-data",
+          "generic": true,
+          "distinguished_by": "no-keywords",
+          "reason": "The whole-surface overload: the member of the family that supplies no keyword at all. XNA's SetData<T> and GetData<T> are generic over anything blittable. This projection is as narrow as the buffers': a transfer is accepted only for an element type whose binary layout the binding can prove, and the layouts come from src/graphics/buffer-data.lisp rather than a second opinion. CNA is told the texel *kind* by name, because it distinguishes kinds that share a byte count -- an Alpha8 byte and a raw byte, a Color and an Rgba1010102."
+        },
+        "SetData(!!0[],Int32,Int32)": {
+          "lisp": "set-data",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "start-index",
+            "element-count"
+          ],
+          "reason": "The windowed-array overload. XNA's SetData<T> and GetData<T> are generic over anything blittable. This projection is as narrow as the buffers': a transfer is accepted only for an element type whose binary layout the binding can prove, and the layouts come from src/graphics/buffer-data.lisp rather than a second opinion. CNA is told the texel *kind* by name, because it distinguishes kinds that share a byte count -- an Alpha8 byte and a raw byte, a Color and an Rgba1010102."
+        },
+        "GetData(!!0[])": {
+          "lisp": "get-data",
+          "generic": true,
+          "distinguished_by": "no-keywords",
+          "reason": "The whole-surface overload: the member of the family that supplies no keyword at all. XNA's SetData<T> and GetData<T> are generic over anything blittable. This projection is as narrow as the buffers': a transfer is accepted only for an element type whose binary layout the binding can prove, and the layouts come from src/graphics/buffer-data.lisp rather than a second opinion. CNA is told the texel *kind* by name, because it distinguishes kinds that share a byte count -- an Alpha8 byte and a raw byte, a Color and an Rgba1010102."
+        },
+        "GetData(!!0[],Int32,Int32)": {
+          "lisp": "get-data",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "start-index",
+            "element-count"
+          ],
+          "reason": "The windowed-array overload. XNA's SetData<T> and GetData<T> are generic over anything blittable. This projection is as narrow as the buffers': a transfer is accepted only for an element type whose binary layout the binding can prove, and the layouts come from src/graphics/buffer-data.lisp rather than a second opinion. CNA is told the texel *kind* by name, because it distinguishes kinds that share a byte count -- an Alpha8 byte and a raw byte, a Color and an Rgba1010102."
+        },
+        "SetData(Int32,Nullable`1,!!0[],Int32,Int32)": {
+          "lisp": "set-data",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "level",
+            "source",
+            "start-index",
+            "element-count"
+          ],
+          "reason": "The mip-level and texel-rectangle overload. :SOURCE is XNA's Nullable<Rectangle> and NIL is its null, meaning the whole level. XNA's SetData<T> and GetData<T> are generic over anything blittable. This projection is as narrow as the buffers': a transfer is accepted only for an element type whose binary layout the binding can prove, and the layouts come from src/graphics/buffer-data.lisp rather than a second opinion. CNA is told the texel *kind* by name, because it distinguishes kinds that share a byte count -- an Alpha8 byte and a raw byte, a Color and an Rgba1010102."
+        },
+        "GetData(Int32,Nullable`1,!!0[],Int32,Int32)": {
+          "lisp": "get-data",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "level",
+            "source",
+            "start-index",
+            "element-count"
+          ],
+          "reason": "The mip-level and texel-rectangle overload. :SOURCE is XNA's Nullable<Rectangle> and NIL is its null, meaning the whole level. XNA's SetData<T> and GetData<T> are generic over anything blittable. This projection is as narrow as the buffers': a transfer is accepted only for an element type whose binary layout the binding can prove, and the layouts come from src/graphics/buffer-data.lisp rather than a second opinion. CNA is told the texel *kind* by name, because it distinguishes kinds that share a byte count -- an Alpha8 byte and a raw byte, a Color and an Rgba1010102."
+        }
       }
     },
     "Microsoft.Xna.Framework.Graphics.RenderTarget2D": {

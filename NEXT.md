@@ -57,7 +57,7 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
 | Prose consistency | every generated fact and block matches the reports |
-| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all six kinds -- clear, sprite, primitive, text, stock-effect and render-target |
+| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all seven kinds -- clear, sprite, primitive, text, stock-effect, render-target and render-target-data |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
@@ -83,7 +83,7 @@ they have never executed is stale.
 | `Lisp` / reference | pure gates on SBCL 2.5.2, installed from the upstream binary release and verified by SHA-256 |
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
-| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all six kinds of pixel proof were obtained |
+| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all seven kinds of pixel proof were obtained |
 
 The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
 `openeggbert/cna:next` does not currently build from published sources, because
@@ -101,9 +101,9 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 <!-- generated:complete types=132 -->
 <!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1720 -->
+<!-- generated:complete members=1728 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=64 -->
+<!-- generated:missing members=56 -->
 <!-- generated:not-applicable members=408 -->
 <!-- generated:disagreement total=0 -->
 
@@ -117,9 +117,9 @@ Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
 | Types complete | **132** |
 | Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1720** |
+| Members complete | **1728** |
 | Members partial | **1** |
-| Members missing | **64** |
+| Members missing | **56** |
 | Members not applicable | **408** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -144,8 +144,8 @@ members actually are:
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
-| `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 6 | 0 |
+| `M.X.F.Graphics.Texture2D` | 4 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
@@ -165,8 +165,8 @@ one.
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
-| `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 6 | 0 |
+| `M.X.F.Graphics.Texture2D` | 4 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
@@ -237,8 +237,14 @@ the graph after each closure instead of following this list once it has moved.
    are the same subject seen from the other side. Doing it opens the container as
    a by-product.
 3. **`System.IO.Stream` and `TitleContainer`**, which unblock
-   `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-4. **Audio, models, media, storage, gamer services, networking.**
+   `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager` --
+   and with it the only public way to obtain a `SpriteFont`, which is the loop
+   this session opened and did not close.
+4. **`TextureCube` and `CubeMapFace`**, now that `Texture2D`'s data surface
+   exists to copy the shape from. They bring `RenderTargetCube`, and with it
+   `EnvironmentMapEffect` and the three `GraphicsDevice` render-target members
+   that need a `RenderTargetBinding`.
+5. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 

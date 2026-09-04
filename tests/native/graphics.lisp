@@ -327,3 +327,113 @@
       (if (and saved (string/= saved ""))
           (sb-posix:setenv "CNA_LISP_SHIM" saved 1)
           (sb-posix:unsetenv "CNA_LISP_SHIM")))))
+
+;;; --- Texture2D's own construction and data surface ------------------------------
+;;;
+;;; A texture made from nothing and filled by the program, rather than decoded
+;;; from an image. `SetData' and `GetData' are as narrow here as a buffer's: a
+;;; transfer is accepted only for an element type this binding can prove the
+;;; layout of, and CNA is told the texel *kind* by name rather than by byte count,
+;;; because it distinguishes kinds that share one -- an Alpha8 byte and a raw
+;;; byte, a Color and an Rgba1010102.
+
+(defclass texture-data-game (graphics-game)
+  ((made :initform nil :accessor made-texture)
+   (results :initform '() :accessor results)
+   (build-error :initform nil :accessor build-error))
+  (:documentation "Creates a blank Texture2D and round-trips data through it."))
+
+(defmethod xna:load-content ((game texture-data-game))
+  (call-next-method)
+  (handler-case
+      (let* ((device (xna:graphics-device game))
+             (texture (make-instance 'gfx:texture-2d :graphics-device device
+                                                     :width 4 :height 4)))
+        (setf (made-texture game) texture)
+        (let ((colours (make-array 16)))
+          (dotimes (i 16)
+            (setf (aref colours i) (xna:make-color i (* 2 i) (* 3 i) 255)))
+          (gfx:set-data texture colours)
+          (let ((back (make-array 16 :initial-element (xna:make-color 0 0 0 0))))
+            (gfx:get-data texture back)
+            (push (list :whole colours back) (results game)))
+          ;; A window: the second row only, as XNA's Rectangle overload takes.
+          (let ((row (make-array 4 :initial-element (xna:make-color 9 8 7 6))))
+            (gfx:set-data texture row
+                          :level 0 :source (xna:make-rectangle 0 1 4 1)
+                          :start-index 0 :element-count 4)
+            (let ((back (make-array 16 :initial-element (xna:make-color 0 0 0 0))))
+              (gfx:get-data texture back)
+              (push (list :window back) (results game))))))
+    (error (condition) (setf (build-error game) condition))))
+
+(defmacro with-texture-data-game ((game) &body body)
+  `(let ((,game (make-instance 'texture-data-game :exit-after 2)))
+     (unwind-protect
+          (progn (xna:run ,game)
+                 (when (build-error ,game) (error (build-error ,game)))
+                 ,@body)
+       (progn
+         (when (made-texture ,game) (ignore-errors (xna:dispose (made-texture ,game))))
+         (when (batch ,game) (ignore-errors (xna:dispose (batch ,game))))
+         (when (texture ,game) (ignore-errors (xna:dispose (texture ,game))))
+         (when (manager ,game) (ignore-errors (xna:dispose (manager ,game))))
+         (ignore-errors (xna:dispose ,game))))))
+
+(define-native-test a-texture-can-be-made-blank-and-filled
+  "Texture2D(GraphicsDevice, Int32, Int32) makes a texture with no image behind
+it, and SetData fills it. The three-argument overload is not `everything zero':
+XNA fills in no mip map and SurfaceFormat.Color, which is what comes back."
+  (with-texture-data-game (game)
+    (let ((texture (made-texture game)))
+      (is (= 4 (gfx:width texture)))
+      (is (= 4 (gfx:height texture)))
+      (is (eq :color (gfx:format-of texture)))
+      (is (= 1 (gfx:level-count texture))))))
+
+(define-native-test texture-data-round-trips-every-texel
+  (with-texture-data-game (game)
+    (let ((whole (find :whole (results game) :key #'first)))
+      (is (not (null whole)) "the whole-texture transfer did not run")
+      (destructuring-bind (tag written read-back) whole
+        (declare (ignore tag))
+        (dotimes (i 16)
+          (is (xna:color-equal (aref written i) (aref read-back i))
+              "texel ~d went in as ~a and came back as ~a" i
+              (pixel-list (aref written i)) (pixel-list (aref read-back i))))))))
+
+(define-native-test a-texture-window-writes-only-its-own-rows
+  "The Rectangle overload writes a sub-region, and the region it does not name
+must be untouched -- which is what tells a real window from a whole-surface write
+that happened to be the right size."
+  (with-texture-data-game (game)
+    (let ((window (find :window (results game) :key #'first)))
+      (is (not (null window)) "the windowed transfer did not run")
+      (let ((back (second window))
+            (written (xna:make-color 9 8 7 6)))
+        ;; Row 1 (texels 4..7) is the window.
+        (loop for i from 4 below 8
+              do (is (xna:color-equal written (aref back i))
+                     "texel ~d is in the window and reads ~a" i (pixel-list (aref back i))))
+        ;; Rows 0, 2 and 3 keep what the whole-surface write put there.
+        (dolist (i '(0 3 8 11 12 15))
+          (is (xna:color-equal (xna:make-color i (* 2 i) (* 3 i) 255) (aref back i))
+              "texel ~d is outside the window and should be unchanged; it reads ~a"
+              i (pixel-list (aref back i))))))))
+
+(define-native-test a-texture-transfer-refuses-a-shape-xna-does-not-have
+  (with-texture-data-game (game)
+    (let ((texture (made-texture game))
+          (data (make-array 4 :initial-element (xna:white))))
+      ;; :START-INDEX and :ELEMENT-COUNT are one pair.
+      (signals xna:cna-usage-error (gfx:set-data texture data :start-index 0))
+      (signals xna:cna-usage-error (gfx:set-data texture data :element-count 4))
+      ;; :LEVEL belongs to the overload that also takes the window pair.
+      (signals xna:cna-usage-error (gfx:set-data texture data :level 0))
+      ;; An element type with no proven layout is refused by name.
+      (signals xna:cna-usage-error
+        (gfx:set-data texture (vector "not a texel" "nor this")))
+      ;; And GET-DATA reads the texel kind from the sequence, so an empty one
+      ;; says nothing about what to read.
+      (signals xna:cna-argument-out-of-range-error
+        (gfx:get-data texture (make-array 0))))))

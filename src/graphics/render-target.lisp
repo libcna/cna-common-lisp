@@ -88,6 +88,11 @@ how a program comes to believe it has multisampling it has not got."))
               (cna-lisp.internal.ffi:cna-true-p
                (slot cna-lisp.internal.ffi::is-content-lost))))))
 
+(defmethod %texture-makes-own-storage-p ((target render-target-2d))
+  "A render target's storage comes from cna_render_target2d_create, so TEXTURE-2D's
+own constructor must not make a plain texture underneath it."
+  t)
+
 (defmethod initialize-instance :after
     ((target render-target-2d)
      &key graphics-device width height (mip-map nil) (format :color)

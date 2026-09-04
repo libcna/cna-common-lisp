@@ -1454,6 +1454,18 @@
 (defcfun ("cna_game_components_subscribe_removed" %game-components-subscribe-removed) :uint32
   (game :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
 
+;;; CNA_Result cna_texture2d_create(CNA_Handle graphics_device, const CNA_Texture2DCreateInfo* create_info, CNA_Handle* out_texture)
+(defcfun ("cna_texture2d_create" %texture-2d-create) :uint32
+  (graphics-device :uint64) (create-info :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_texture2d_set_data(CNA_Handle texture, CNA_TextureDataType data_type, const CNA_Texture2DTransfer* transfer, const void* data, uint64_t data_capacity)
+(defcfun ("cna_texture2d_set_data" %texture-2d-set-data) :uint32
+  (texture :uint64) (data-type :uint32) (transfer :pointer) (data :pointer) (data-capacity :uint64))
+
+;;; CNA_Result cna_texture2d_get_data(CNA_Handle texture, CNA_TextureDataType data_type, const CNA_Texture2DTransfer* transfer, void* destination, uint64_t destination_capacity, uint64_t* out_required_elements)
+(defcfun ("cna_texture2d_get_data" %texture-2d-get-data) :uint32
+  (texture :uint64) (data-type :uint32) (transfer :pointer) (destination :pointer) (destination-capacity :uint64) (out-required-elements :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -1814,6 +1826,9 @@
     ("cna_game_components_contains" %game-components-contains :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_game_components_index_of" %game-components-index-of :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_game_components_subscribe_added" %game-components-subscribe-added :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
-    ("cna_game_components_subscribe_removed" %game-components-subscribe-removed :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates"))
+    ("cna_game_components_subscribe_removed" %game-components-subscribe-removed :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_texture2d_create" %texture-2d-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-2d:child-of-game")
+    ("cna_texture2d_set_data" %texture-2d-set-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_texture2d_get_data" %texture-2d-get-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64 :pointer) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

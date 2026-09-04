@@ -41,7 +41,7 @@ zeroes. Under `HEADLESS` it therefore refuses, by name.
 
 Under a rasterising renderer it answers. Measured against a CNA built with
 `-DCNA_GRAPHICS_RENDERER=SOFTWARE` — a CPU rasteriser, needing **no display and
-no Xvfb** — in six separate kinds of proof, kept apart because they are
+no Xvfb** — in seven separate kinds of proof, kept apart because they are
 different claims:
 
 * **clear.** Clearing to `CornflowerBlue` reads back `(100, 149, 237, 255)` for
@@ -89,7 +89,14 @@ different claims:
   and nowhere else. Checked by mutation: a bind that silently does nothing turns
   fourteen of these assertions red.
 
-`tools/qualification/rasterizer.sh` requires all six and fails when any is
+* **render-target-data.** Every one of a bound-and-cleared `RenderTarget2D`'s 256
+  texels, read back through `Texture2D.GetData`. This is the one pixel claim in
+  the repository that does not go through `GetBackBufferData` at all: `GetData`
+  reads a *texture*. Asserted on every renderer rather than only the rasterising
+  ones — under `HEADLESS` CNA refuses it, and the refusal is asserted by name, so
+  the test says which happened instead of quietly proving nothing.
+
+`tools/qualification/rasterizer.sh` requires all seven and fails when any is
 absent; a clear alone is not accepted as evidence about `SpriteBatch`, which it
 briefly was, the sprite path is not accepted as evidence about the primitive
 path, which is a different path through the renderer, and neither is accepted as
@@ -106,6 +113,35 @@ unrotated, unscaled, untinted text with no origin and no `SpriteEffects`.
 Rotation, scaling, tinting, blending, texturing, lighting, fog, indexed and
 buffer-backed draws, flipped or rotated text and every non-identity transform are
 submitted and accepted, and their pixels are not asserted anywhere.
+
+## Texture data, and how narrow the transfer is
+
+`Texture2D`'s two constructors and its three `SetData` and three `GetData`
+overloads are complete. A texture can be made blank and filled by the program,
+and read back.
+
+**The transfer is as narrow as a buffer's**, and for the same reason: it is
+accepted only for an element type whose binary layout this binding can prove —
+`Color`, `(unsigned-byte 8)`, `single-float`, `Vector2`, `Vector4` — with the
+layouts coming from `src/graphics/buffer-data.lisp` rather than a second opinion
+about how a `Color` is packed. There is no vector-of-anything sink; an element
+type with no proven layout is refused by name.
+
+CNA is told the texel **kind** by name rather than by byte count, because it
+distinguishes kinds that share one: an `Alpha8` byte and a raw byte are both one
+byte, a `Color` and an `Rgba1010102` are both four. That is the same rule every
+enumeration in this binding follows.
+
+`SetData` and `GetData` are **one generic function each**, shared with the vertex
+and index buffers, so CLOS congruence makes every method accept every keyword any
+of them uses. Accepting is not having: a texture's method refuses
+`:OFFSET-IN-BYTES`, `:VERTEX-STRIDE` and `:OPTIONS` by name, and a buffer's
+refuses `:LEVEL` and `:SOURCE`, because silently ignoring one would invent an
+overload XNA has not got.
+
+`Texture2D.FromStream`, `SaveAsPng` and `SaveAsJpeg` remain absent: all four need
+the `System.IO.Stream` projection. `TEXTURE-2D-FROM-PNG-BYTES` and
+`TEXTURE-2D-FROM-PNG-FILE` stay declared extensions until then.
 
 ## The component engine runs, and two things around it do not
 
@@ -191,11 +227,13 @@ texture that `SpriteBatch` can draw and an effect can sample.
 
 That inheritance is what changes the qualification. Until now every pixel claim
 in this repository rested on `GraphicsDevice.GetBackBufferData`, which most
-renderers refuse. A render target's contents are readable on **any** renderer
-that can draw at all — by drawing the target — so the mechanism is no longer the
-only one. The `render-target` proof still uses the back-buffer readback to check
-itself, because that is what this renderer offers; what it establishes is that
-the evidence no longer has to arrive that way.
+renderers refuse. Two things replace it. A render target's contents can be drawn
+back onto the screen, because a target *is* a texture; and since `Texture2D`
+gained `GetData` they can be read **directly**, with no back buffer in the
+picture at all. The `render-target-data` proof does exactly that — all 256 texels
+of a cleared target — and is the first evidence here that a renderer with no
+readback could in principle produce. `HEADLESS` still refuses it, and the test
+asserts the refusal rather than skipping.
 
 Three properties are read back out of CNA at construction rather than echoed from
 the constructor's arguments: `RenderTargetUsage`, `MultiSampleCount` and

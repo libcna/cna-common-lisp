@@ -118,6 +118,9 @@ stubs:
   `DrawUserPrimitives`, `DrawUserIndexedPrimitives` — with XNA's own argument
   validation reproduced from the IL, and, since the effect closure landed, a
   rasterised triangle to show for it;
+* `Texture2D` **made blank and filled by the program**: both constructors and
+  the three `SetData` and three `GetData` overloads, accepted only for element
+  types whose binary layout the binding can prove;
 * the **component engine**: `GameComponent`, `DrawableGameComponent`,
   `Game.Components` and the collection's two events. A component's behaviour is
   its CLOS methods on the same generic functions a `Game` overrides, and CNA's own
@@ -170,13 +173,13 @@ placeholder methods that answer a default and claim success.
 <!-- generated:complete types=132 -->
 <!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1720 -->
+<!-- generated:complete members=1728 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=64 -->
+<!-- generated:missing members=56 -->
 <!-- generated:not-applicable members=408 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=360 -->
-<!-- generated:bound native structs=55 -->
+<!-- generated:bound native functions=363 -->
+<!-- generated:bound native structs=57 -->
 
 <!-- generated-block:scoreboard-headline -->
 The generated scoreboard, over a selection of **141 XNA types and 2193 members**:
@@ -184,7 +187,7 @@ The generated scoreboard, over a selection of **141 XNA types and 2193 members**
 | | |
 | --- | --- |
 | Types complete / partial / missing | **132 / 9 / 0** |
-| Members complete / missing | **1720 / 64** |
+| Members complete / missing | **1728 / 56** |
 | Members not applicable | **408** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
@@ -198,7 +201,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **360 native routes** and **55 native structs**,
+The private foreign layer binds **363 native routes** and **57 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 
