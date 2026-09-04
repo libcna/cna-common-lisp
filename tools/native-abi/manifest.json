@@ -444,6 +444,11 @@
    "name": "CNA_VertexElement",
    "direction": "out",
    "versioned": false
+  },
+  {
+   "name": "CNA_BackBufferReadback",
+   "direction": "in",
+   "versioned": true
   }
  ],
  "callbacks": [
@@ -1211,6 +1216,12 @@
    "name": "cna_vertex_type_copy_elements",
    "header": "vertex_values.h",
    "thread": "any",
+   "ownership": "none"
+  },
+  {
+   "name": "cna_graphics_device_get_backbuffer_data_window",
+   "header": "graphics_device.h",
+   "thread": "owner",
    "ownership": "none"
   }
  ],

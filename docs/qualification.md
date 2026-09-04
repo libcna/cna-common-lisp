@@ -119,6 +119,31 @@ CNA's vendored SDL submodules are initialised non-recursively and by name —
 init only adds nested codec submodules this build disables anyway.
 `vendor/googletest` is not initialised, because `CNA_BUILD_TESTS` is off.
 
+## The two native lanes
+
+| Lane | Renderer | What it proves |
+| --- | --- | --- |
+| `Native` | `HEADLESS` | the lifecycle ran, handles were valid, and draw commands were submitted and accepted. **Nothing about pixels.** |
+| `Rasterizer` | `SOFTWARE` | the same suite, plus: a clear to a known colour is read back out of the back buffer as those exact pixels. **Selected drawing reaches actual pixels.** |
+
+They are separate jobs on purpose. They support different claims, and a failure
+in one must not take down the other.
+
+**The rasterizer lane needs no display and no Xvfb.** `SOFTWARE` is a CPU
+rasteriser: a CNA configured with `-DCNA_GRAPHICS_RENDERER=SOFTWARE` runs
+headlessly in the ordinary sense of the word while still producing real pixels.
+That was measured before the lane was written, not assumed.
+
+The lane cannot degrade quietly. `GraphicsDevice.GetBackBufferData` is the member
+that reads pixels, and CNA answers `CNA_RESULT_NOT_SUPPORTED` for a renderer with
+no honest readback rather than a buffer of zeroes — so the test branches on the
+renderer that is actually present and asserts the truth for it, the runner prints
+which branch ran, and `tools/qualification/rasterizer.sh` **fails** if the run
+took the no-readback branch.
+
+**No claim is made about a physical monitor.** Pixels in a back buffer are pixels
+in a back buffer. Nothing here has been displayed to anyone.
+
 ## What HEADLESS does and does not prove
 
 A HEADLESS run proves:

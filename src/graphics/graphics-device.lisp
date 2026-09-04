@@ -367,3 +367,95 @@ applying a blend state is what copies its factor into the device."
         (cffi:mem-aref packed :uint64 1))
        "(setf scissor-rectangle)" :object-type 'graphics-device)))
   rectangle)
+
+;;; --- reading the back buffer -----------------------------------------------------
+;;;
+;;; This is the one member of the projection that can answer *pixels*, and it is
+;;; therefore the one that can prove a renderer rasterised anything. Under the
+;;; HEADLESS renderer CNA answers CNA_RESULT_NOT_SUPPORTED, in its own words
+;;; "when the active renderer has no honest back-buffer readback", and the
+;;; refusal is the honest answer rather than a buffer of zeroes. Under a
+;;; rasterising renderer -- SOFTWARE, say -- it answers what was drawn.
+;;;
+;;; XNA's GetBackBufferData is generic over the element type. There is no type
+;;; parameter to instantiate in Common Lisp, and CNA's route produces RGBA8
+;;; pixels and nothing else, so this answers a simple-vector of COLOR. XNA's
+;;; other element types are the same bytes read differently, which a caller does
+;;; with COLOR-PACKED-VALUE.
+
+(defgeneric get-back-buffer-data (graphics-device &key source start-index element-count)
+  (:documentation
+   "GraphicsDevice.GetBackBufferData: the back buffer's pixels, as a vector of COLOR.
+
+    (get-back-buffer-data device)
+    (get-back-buffer-data device :start-index i :element-count n)
+    (get-back-buffer-data device :source rectangle :start-index i :element-count n)
+
+Those are XNA's three overloads. :START-INDEX and :ELEMENT-COUNT are one group,
+because XNA has no overload that carries one without the other; :SOURCE may be
+given with them or alone. With nothing supplied the whole back buffer is read.
+
+**Under a renderer with no honest readback this signals**
+CNA-NOT-SUPPORTED-ERROR rather than answering zeroes -- which is what makes the
+member usable as evidence that pixels were produced. See docs/limitations.md."))
+
+(defmethod get-back-buffer-data ((device graphics-device)
+                                 &key source
+                                      (start-index nil start-index-p)
+                                      (element-count nil element-count-p))
+  (when (and (or start-index-p element-count-p)
+             (not (and start-index-p element-count-p)))
+    (error 'microsoft.xna.framework:cna-usage-error
+           :operation "get-back-buffer-data"
+           :format-control
+           ":START-INDEX and :ELEMENT-COUNT are one group: XNA has no ~
+            GetBackBufferData overload that carries one without the other."))
+  (when source (check-type source microsoft.xna.framework:rectangle))
+  (let* ((viewport (viewport device))
+         (pixels (if element-count-p
+                     (+ (or start-index 0) element-count)
+                     (if source
+                         (* (microsoft.xna.framework:rectangle-width source)
+                            (microsoft.xna.framework:rectangle-height source))
+                         (* (viewport-width viewport) (viewport-height viewport)))))
+         (start (if start-index-p start-index 0))
+         (count (if element-count-p element-count (- pixels start))))
+    (when (or (minusp start) (minusp count))
+      (error 'microsoft.xna.framework:cna-argument-out-of-range-error
+             :operation "get-back-buffer-data"
+             :parameter-name (if (minusp start) "start-index" "element-count")
+             :format-control "a back-buffer window cannot start at ~d and run for ~d."
+             :format-arguments (list start count)))
+    (let ((handle (%resolve-device-handle device "get-back-buffer-data"))
+          (result (make-array (+ start count))))
+      (cffi:with-foreign-object (readback '(:struct cna-lisp.internal.ffi::cna-back-buffer-readback))
+        (cffi:foreign-funcall
+         "memset" :pointer readback :int 0
+         :size cna-lisp.internal.ffi::+sizeof-cna-back-buffer-readback+ :void)
+        (macrolet ((slot (name)
+                     `(cffi:foreign-slot-value
+                       readback '(:struct cna-lisp.internal.ffi::cna-back-buffer-readback)
+                       ',name)))
+          (setf (slot cna-lisp.internal.ffi::struct-size)
+                cna-lisp.internal.ffi::+sizeof-cna-back-buffer-readback+
+                (slot cna-lisp.internal.ffi::struct-version) 1
+                (slot cna-lisp.internal.ffi::has-source-rectangle)
+                (cna-lisp.internal.ffi:cna-bool-of source)
+                (slot cna-lisp.internal.ffi::start-index) start
+                (slot cna-lisp.internal.ffi::element-count) count))
+        (when source
+          (%write-rectangle (cffi:foreign-slot-pointer
+                             readback
+                             '(:struct cna-lisp.internal.ffi::cna-back-buffer-readback)
+                             'cna-lisp.internal.ffi::source-rectangle)
+                            source))
+        (cffi:with-foreign-object (destination :uint32 (max 1 (length result)))
+          (cna-lisp.internal:check-result
+           (cna-lisp.internal.ffi::%graphics-device-get-backbuffer-data-window
+            handle readback destination (length result))
+           "get-back-buffer-data" :object-type 'graphics-device)
+          ;; CNA_Color is four bytes in R G B A order, which is the packed value.
+          (dotimes (index (length result) result)
+            (setf (aref result index)
+                  (microsoft.xna.framework:color-from-packed-value
+                   (cffi:mem-aref destination :uint32 index)))))))))

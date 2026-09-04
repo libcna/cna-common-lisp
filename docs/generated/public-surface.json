@@ -13135,6 +13135,35 @@
           "documentation": null
         },
         {
+          "name": "get-back-buffer-data",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "&key",
+            "source",
+            "start-index",
+            "element-count"
+          ],
+          "keywords": [
+            "element-count",
+            "source",
+            "start-index"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.GetBackBufferData: the back buffer's pixels, as a vector of COLOR.\n\n    (get-back-buffer-data device)\n    (get-back-buffer-data device :start-index i :element-count n)\n    (get-back-buffer-data device :source rectangle :start-index i :element-count n)\n\nThose are XNA's three overloads. :START-INDEX and :ELEMENT-COUNT are one group,\nbecause XNA has no overload that carries one without the other; :SOURCE may be\ngiven with them or alone. With nothing supplied the whole back buffer is read.\n\n**Under a renderer with no honest readback this signals**\nCNA-NOT-SUPPORTED-ERROR rather than answering zeroes -- which is what makes the\nmember usable as evidence that pixels were produced. See docs/limitations.md."
+        },
+        {
           "name": "get-vertex-elements",
           "fbound": true,
           "macro": false,

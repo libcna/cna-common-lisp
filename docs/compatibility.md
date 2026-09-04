@@ -87,9 +87,9 @@ genuine absence.
 <!-- generated:complete types=96 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1381 -->
+<!-- generated:complete members=1384 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=85 -->
+<!-- generated:missing members=82 -->
 <!-- generated:not-applicable members=379 -->
 <!-- generated:disagreement total=0 -->
 
@@ -103,9 +103,9 @@ Selection **Foundation 1 and the managed closures**: 101 types, 1846 members.
 | Types complete | **96** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1381** |
+| Members complete | **1384** |
 | Members partial | **1** |
-| Members missing | **85** |
+| Members missing | **82** |
 | Members not applicable | **379** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -146,7 +146,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 13 | 1 | 41 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 16 | 1 | 38 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
@@ -262,7 +262,7 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 41 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 38 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -294,9 +294,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=124 -->
-<!-- generated:bound native structs=33 -->
-<!-- generated:bound native struct fields=248 -->
+<!-- generated:bound native functions=125 -->
+<!-- generated:bound native structs=34 -->
+<!-- generated:bound native struct fields=255 -->
 <!-- generated:bound native constants=420 -->
 <!-- generated:bound native callbacks=4 -->
 <!-- generated:by-value aggregates=3 -->
@@ -306,9 +306,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 124 |
-| Bound structs | 33 |
-| Bound struct fields | 248 |
+| Bound functions | 125 |
+| Bound structs | 34 |
+| Bound struct fields | 255 |
 | Bound constants | 420 |
 | Bound callback typedefs | 4 |
 | By-value aggregates admitted | 3 |

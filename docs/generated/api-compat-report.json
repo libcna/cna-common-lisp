@@ -22,15 +22,15 @@
    "complete": 96
   },
   "members_by_status": {
-   "complete": 1381,
-   "missing": 85,
+   "complete": 1384,
+   "missing": 82,
    "not-applicable": 379,
    "partial": 1
   },
-  "diagnostics": 85,
+  "diagnostics": 82,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 85,
+   "missing_member": 82,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1208,9 +1208,9 @@
     "SetRenderTarget(RenderTargetCube,CubeMapFace)": "missing",
     "SetRenderTarget(RenderTarget2D)": "missing",
     "GetRenderTargets()": "missing",
-    "GetBackBufferData(Nullable`1,!!0[],Int32,Int32)": "missing",
-    "GetBackBufferData(!!0[],Int32,Int32)": "missing",
-    "GetBackBufferData(!!0[])": "missing",
+    "GetBackBufferData(Nullable`1,!!0[],Int32,Int32)": "complete",
+    "GetBackBufferData(!!0[],Int32,Int32)": "complete",
+    "GetBackBufferData(!!0[])": "complete",
     "GetVertexBuffers()": "missing",
     "SetVertexBuffer(VertexBuffer,Int32)": "missing",
     "SetVertexBuffer(VertexBuffer)": "missing",
@@ -2823,21 +2823,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetRenderTargets()",
    "detail": "no exported 'get-render-targets' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(Nullable`1,!!0[],Int32,Int32)",
-   "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(!!0[],Int32,Int32)",
-   "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetBackBufferData(!!0[])",
-   "detail": "no exported 'get-back-buffer-data' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",

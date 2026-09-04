@@ -120,6 +120,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/graphics")
    (:file "native/graphics-state")
    (:file "native/vertex-types")
+   (:file "native/rasterization")
    (:file "native/graphics-resource")
    (:file "native/keyboard")
    (:file "native/mouse")

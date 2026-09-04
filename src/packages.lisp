@@ -330,6 +330,7 @@
    #:sampler-states #:vertex-sampler-states #:textures #:vertex-textures
    ;; --- GraphicsDevice ----------------------------------------------------
    #:graphics-device #:clear #:present #:renderer-name #:scissor-rectangle
+   #:get-back-buffer-data
    ;; --- Texture and Texture2D ---------------------------------------------
    #:texture #:texture-2d
    #:texture-2d-from-png-file #:texture-2d-from-png-bytes

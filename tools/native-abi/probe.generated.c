@@ -604,6 +604,23 @@ _Static_assert(sizeof(((CNA_VertexElement *)0)->usage) == 4, "CNA_VertexElement.
 _Static_assert(offsetof(CNA_VertexElement, usage_index) == 12, "CNA_VertexElement.usage_index offset");
 _Static_assert(sizeof(((CNA_VertexElement *)0)->usage_index) == 4, "CNA_VertexElement.usage_index size");
 
+_Static_assert(sizeof(CNA_BackBufferReadback) == 48, "CNA_BackBufferReadback size");
+_Static_assert(_Alignof(CNA_BackBufferReadback) == 8, "CNA_BackBufferReadback alignment");
+_Static_assert(offsetof(CNA_BackBufferReadback, struct_size) == 0, "CNA_BackBufferReadback.struct_size offset");
+_Static_assert(sizeof(((CNA_BackBufferReadback *)0)->struct_size) == 4, "CNA_BackBufferReadback.struct_size size");
+_Static_assert(offsetof(CNA_BackBufferReadback, struct_version) == 4, "CNA_BackBufferReadback.struct_version offset");
+_Static_assert(sizeof(((CNA_BackBufferReadback *)0)->struct_version) == 4, "CNA_BackBufferReadback.struct_version size");
+_Static_assert(offsetof(CNA_BackBufferReadback, has_source_rectangle) == 8, "CNA_BackBufferReadback.has_source_rectangle offset");
+_Static_assert(sizeof(((CNA_BackBufferReadback *)0)->has_source_rectangle) == 1, "CNA_BackBufferReadback.has_source_rectangle size");
+_Static_assert(offsetof(CNA_BackBufferReadback, reserved) == 9, "CNA_BackBufferReadback.reserved offset");
+_Static_assert(sizeof(((CNA_BackBufferReadback *)0)->reserved) == 3, "CNA_BackBufferReadback.reserved size");
+_Static_assert(offsetof(CNA_BackBufferReadback, source_rectangle) == 12, "CNA_BackBufferReadback.source_rectangle offset");
+_Static_assert(sizeof(((CNA_BackBufferReadback *)0)->source_rectangle) == 16, "CNA_BackBufferReadback.source_rectangle size");
+_Static_assert(offsetof(CNA_BackBufferReadback, start_index) == 32, "CNA_BackBufferReadback.start_index offset");
+_Static_assert(sizeof(((CNA_BackBufferReadback *)0)->start_index) == 8, "CNA_BackBufferReadback.start_index size");
+_Static_assert(offsetof(CNA_BackBufferReadback, element_count) == 40, "CNA_BackBufferReadback.element_count offset");
+_Static_assert(sizeof(((CNA_BackBufferReadback *)0)->element_count) == 8, "CNA_BackBufferReadback.element_count size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -730,6 +747,7 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_texture)(CNA_Handle, C
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_texture)(CNA_Handle, CNA_ShaderStage, uint32_t, CNA_Handle) = cna_graphics_device_set_texture;
 CNA_Result (*const cna_lisp_probe_cna_vertex_type_get_stride)(CNA_VertexType, uint32_t*) = cna_vertex_type_get_stride;
 CNA_Result (*const cna_lisp_probe_cna_vertex_type_copy_elements)(CNA_VertexType, CNA_VertexElement*, uint64_t, uint64_t*) = cna_vertex_type_copy_elements;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_backbuffer_data_window)(CNA_Handle, const CNA_BackBufferReadback*, CNA_Color*, uint64_t) = cna_graphics_device_get_backbuffer_data_window;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");

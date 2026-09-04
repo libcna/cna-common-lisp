@@ -21,9 +21,9 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 124,
-    "structs": 33,
-    "struct_fields": 248,
+    "functions": 125,
+    "structs": 34,
+    "struct_fields": 255,
     "constants": 420,
     "callbacks": 4,
     "by_value_aggregates": 3,
@@ -3018,6 +3018,38 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_vertex_type_copy_elements(CNA_VertexType type, CNA_VertexElement* destination, uint64_t capacity, uint64_t* out_element_count)"
+    },
+    {
+      "name": "cna_graphics_device_get_backbuffer_data_window",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "readback",
+          "c_type": "const CNA_BackBufferReadback*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_Color*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_backbuffer_data_window(CNA_Handle graphics_device, const CNA_BackBufferReadback* readback, CNA_Color* destination, uint64_t capacity)"
     }
   ],
   "structs": [
@@ -5611,6 +5643,79 @@
       "header": "graphics3d.h",
       "direction": "out",
       "versioned": false
+    },
+    {
+      "name": "CNA_BackBufferReadback",
+      "size": 48,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_source_rectangle",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 9,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "source_rectangle",
+          "c_type": "CNA_Rectangle",
+          "offset": 12,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Rectangle",
+          "kind": "aggregate"
+        },
+        {
+          "name": "start_index",
+          "c_type": "uint64_t",
+          "offset": 32,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "element_count",
+          "c_type": "uint64_t",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics_device.h",
+      "direction": "in",
+      "versioned": true
     }
   ],
   "callbacks": [

@@ -510,6 +510,10 @@
 (defcfun ("cna_vertex_type_copy_elements" %vertex-type-copy-elements) :uint32
   (type :uint32) (destination :pointer) (capacity :uint64) (out-element-count :pointer))
 
+;;; CNA_Result cna_graphics_device_get_backbuffer_data_window(CNA_Handle graphics_device, const CNA_BackBufferReadback* readback, CNA_Color* destination, uint64_t capacity)
+(defcfun ("cna_graphics_device_get_backbuffer_data_window" %graphics-device-get-backbuffer-data-window) :uint32
+  (graphics-device :uint64) (readback :pointer) (destination :pointer) (capacity :uint64))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -634,6 +638,7 @@
     ("cna_graphics_device_get_texture" %graphics-device-get-texture :uint32 (:uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_set_texture" %graphics-device-set-texture :uint32 (:uint64 :uint32 :uint32 :uint64) :thread :owner :ownership "none")
     ("cna_vertex_type_get_stride" %vertex-type-get-stride :uint32 (:uint32 :pointer) :thread :any :ownership "none")
-    ("cna_vertex_type_copy_elements" %vertex-type-copy-elements :uint32 (:uint32 :pointer :uint64 :pointer) :thread :any :ownership "none"))
+    ("cna_vertex_type_copy_elements" %vertex-type-copy-elements :uint32 (:uint32 :pointer :uint64 :pointer) :thread :any :ownership "none")
+    ("cna_graphics_device_get_backbuffer_data_window" %graphics-device-get-backbuffer-data-window :uint32 (:uint64 :pointer :pointer :uint64) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

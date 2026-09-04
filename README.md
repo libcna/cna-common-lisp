@@ -28,9 +28,13 @@ This is what has actually been run, not what might work.
 | Build system | ASDF |
 | CNA C ABI | **0.21.0** only (encoded 5376) |
 | CNA build | `SDL3` platform, `SDL3` audio, **HEADLESS** renderer |
+| Second lane | the same suite against a **SOFTWARE** renderer, which reads real pixels back out of the back buffer |
 
 No claim is made for another Common Lisp implementation, for Windows or macOS,
-for another ABI version, or for visible rendering. See `docs/limitations.md`.
+for another ABI version, or for a physical monitor. HEADLESS proves lifecycle and
+command submission; the SOFTWARE lane proves that selected drawing reaches actual
+pixels in a back buffer, and needs no display to do it. `docs/qualification.md`
+defines the claims and `docs/limitations.md` bounds them.
 
 ## What is implemented
 
@@ -114,13 +118,13 @@ placeholder methods that answer a default and claim success.
 <!-- generated:complete types=96 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1381 -->
+<!-- generated:complete members=1384 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=85 -->
+<!-- generated:missing members=82 -->
 <!-- generated:not-applicable members=379 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=124 -->
-<!-- generated:bound native structs=33 -->
+<!-- generated:bound native functions=125 -->
+<!-- generated:bound native structs=34 -->
 
 <!-- generated-block:scoreboard-headline -->
 The generated scoreboard, over a selection of **101 XNA types and 1846 members**:
@@ -128,7 +132,7 @@ The generated scoreboard, over a selection of **101 XNA types and 1846 members**
 | | |
 | --- | --- |
 | Types complete / partial / missing | **96 / 5 / 0** |
-| Members complete / missing | **1381 / 85** |
+| Members complete / missing | **1384 / 82** |
 | Members not applicable | **379** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
@@ -142,7 +146,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **124 native routes** and **33 native structs**,
+The private foreign layer binds **125 native routes** and **34 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

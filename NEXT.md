@@ -52,12 +52,15 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
 | Prose consistency | every generated fact and block matches the reports |
+| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: back buffer read, and the pixels are the colour that was cleared |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
 
-HEADLESS proves lifecycle and command submission. It proves nothing about pixels,
-and nothing in this repository says otherwise. `docs/qualification.md` defines
+HEADLESS proves lifecycle and command submission. It proves nothing about pixels
+-- **the SOFTWARE lane is what does**, and it needs no display: a CPU rasteriser
+clears to CornflowerBlue and the back buffer reads back (100, 149, 237, 255).
+Neither is a claim about a physical monitor. `docs/qualification.md` defines
 `REFERENCE_QUALIFIED`, `CI_TESTED`, `HEADLESS` and `NOT RUN`, and no claim here
 may collapse two of them.
 
@@ -70,7 +73,8 @@ they have never executed is stale.
 | --- | --- |
 | `Lisp` / reference | pure gates on SBCL 2.5.2, installed from the upstream binary release and verified by SHA-256 |
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
-| `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime |
+| `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
+| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless the back buffer was actually read |
 
 The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
 `openeggbert/cna:next` does not currently build from published sources, because
@@ -88,9 +92,9 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 <!-- generated:complete types=96 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1381 -->
+<!-- generated:complete members=1384 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=85 -->
+<!-- generated:missing members=82 -->
 <!-- generated:not-applicable members=379 -->
 <!-- generated:disagreement total=0 -->
 
@@ -104,9 +108,9 @@ Selection **Foundation 1 and the managed closures**: 101 types, 1846 members.
 | Types complete | **96** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1381** |
+| Members complete | **1384** |
 | Members partial | **1** |
-| Members missing | **85** |
+| Members missing | **82** |
 | Members not applicable | **379** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -128,7 +132,7 @@ remaining members actually are:
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 41 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 38 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -235,6 +239,13 @@ the graph after each closure instead of following this list once it has moved.
   after it costs nothing measurable: CNA creates its native state objects on
   first use. Under a fixed time step that warm-up becomes catch-up updates with
   no draws, which is why the graphics fixture runs on variable timing.
+* **A qualification lane that cannot fail for the right reason proves nothing.**
+  The rasterizer lane runs the same suite against a SOFTWARE-renderer CNA, and
+  the trap it avoids is passing while silently taking the no-readback branch. So
+  the test branches on the renderer that is present and asserts the truth for
+  each, the runner prints which branch ran, and
+  `tools/qualification/rasterizer.sh` fails when the branch was the wrong one.
+  Verified by pointing it at a HEADLESS library: it exits 1.
 * **An exported symbol that is neither a mapped member nor a declared extension
   is a diagnostic.** Adding a convenience function means adding an entry to
   `cna-lisp.internal::*binding-extensions*` with the reason it exists. That is the

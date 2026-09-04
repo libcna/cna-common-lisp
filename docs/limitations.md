@@ -16,7 +16,7 @@ CNA-Lisp is qualified on exactly one configuration:
 No claim is made for any other Common Lisp implementation, for Windows or macOS,
 for a different ABI version, or for a different renderer.
 
-## HEADLESS proves execution, not pixels
+## HEADLESS proves execution, not pixels — and what does prove pixels
 
 Every graphics result recorded here was produced against the HEADLESS renderer.
 That proves the lifecycle ran, the device was borrowed, the commands were
@@ -26,6 +26,23 @@ what a pixel looks like.
 There is no visible-rendering claim and no rasterisation readback test. Until one
 of those exists, "drew a sprite" here means "submitted a sprite draw that the
 renderer accepted".
+
+### The rasterizer lane, which does prove pixels
+
+`GraphicsDevice.GetBackBufferData` reads the back buffer, and CNA is honest about
+which renderers can answer: the route returns `CNA_RESULT_NOT_SUPPORTED` "when
+the active renderer has no honest back-buffer readback" rather than a buffer of
+zeroes. Under `HEADLESS` it therefore refuses, by name.
+
+Under a rasterising renderer it answers. Measured: a CNA built with
+`-DCNA_GRAPHICS_RENDERER=SOFTWARE` — a CPU rasteriser, needing **no display and
+no Xvfb** — clears to `CornflowerBlue` and reads back `(100, 149, 237, 255)` for
+every pixel of the window asked for. `tools/qualification/rasterizer.sh` is that
+lane, and it fails rather than passes if the run took the no-readback branch.
+
+Two things this does *not* establish. It is not a claim about a physical monitor;
+a back buffer is a back buffer. And it is one renderer: `SOFTWARE` rasterises on
+the CPU, and nothing here says a GPU renderer would produce the same pixels.
 
 ## No `cffi-libffi`, and what that costs
 

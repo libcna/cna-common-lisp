@@ -592,6 +592,33 @@
      "setf": true,
      "status": "partial",
      "reason": "The reader is unconditional. The setter goes through the optional private shim: cna_graphics_device_set_viewport takes CNA_Viewport by value, and the System V AMD64 ABI passes a 24-byte aggregate in memory, which CFFI cannot do without cffi-libffi. The shim is not shipped prebuilt -- a release must load with no C toolchain -- so a consumer that has not built it gets a CNA-NOT-SUPPORTED-ERROR naming CNA_LISP_SHIM and the command that produces one. The qualified configuration includes the shim and exercises the setter."
+    },
+    "GetBackBufferData(!!0[])": {
+     "lisp": "get-back-buffer-data",
+     "generic": true,
+     "distinguished_by": "no-keywords",
+     "reason": "XNA's GetBackBufferData is generic over the element type. Common Lisp has no type parameter to instantiate, and CNA's route (cna_graphics_device_get_backbuffer_data_window) produces RGBA8 pixels and nothing else, so this answers a vector of COLOR. XNA's other element types are the same bytes read differently, which a caller does with COLOR-PACKED-VALUE. The whole-buffer overload is the one that supplies no keyword."
+    },
+    "GetBackBufferData(!!0[],Int32,Int32)": {
+     "lisp": "get-back-buffer-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "start-index",
+      "element-count"
+     ],
+     "reason": "XNA's GetBackBufferData is generic over the element type. Common Lisp has no type parameter to instantiate, and CNA's route (cna_graphics_device_get_backbuffer_data_window) produces RGBA8 pixels and nothing else, so this answers a vector of COLOR. XNA's other element types are the same bytes read differently, which a caller does with COLOR-PACKED-VALUE."
+    },
+    "GetBackBufferData(Nullable`1,!!0[],Int32,Int32)": {
+     "lisp": "get-back-buffer-data",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "source",
+      "start-index",
+      "element-count"
+     ],
+     "reason": "XNA's GetBackBufferData is generic over the element type. Common Lisp has no type parameter to instantiate, and CNA's route (cna_graphics_device_get_backbuffer_data_window) produces RGBA8 pixels and nothing else, so this answers a vector of COLOR. XNA's other element types are the same bytes read differently, which a caller does with COLOR-PACKED-VALUE."
     }
    },
    "not_applicable": {
@@ -613,6 +640,10 @@
     "Clear": {
      "lisp": "clear",
      "reason": "Only Clear(Color) is projected."
+    },
+    "GetBackBufferData": {
+     "lisp": "get-back-buffer-data",
+     "reason": "One generic function whose supplied keywords select the overload: none reads the whole back buffer, :START-INDEX with :ELEMENT-COUNT reads a window of it, and :SOURCE may be given with them. The two are one group, because XNA has no overload carrying one without the other."
     }
    }
   },
