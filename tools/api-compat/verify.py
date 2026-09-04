@@ -225,7 +225,152 @@ DISTINGUISHING_MECHANISMS = frozenset((
     # the tag it uses, and the tags in one family must be distinct -- two
     # overloads answering to the same tag would be the same call.
     "tagged-argument",
+    # Nothing tells them apart, and that is correct. Two CLR overloads whose
+    # parameter types share one Common Lisp representation, and whose bodies are
+    # observably identical, are one Lisp call. `SpriteFont.MeasureString(String)'
+    # and `MeasureString(StringBuilder)' are the case: XNA itself wraps both in a
+    # private StringProxy and runs the same code. An overload declaring this must
+    # also declare `unified_with' -- naming exactly the siblings it cannot be told
+    # from -- and a reason, so that "these are the same call" is a checked claim
+    # and not a way to make a missing overload look accounted for.
+    "unified",
 ))
+
+
+def discriminating_key(member, rule):
+    """What the declared mechanism actually tells this overload apart *by*.
+
+    Naming a mechanism is not the same as being separated by it. Two overloads
+    can both say "keywords" and list the same keywords, and then nothing tells
+    them apart at all -- which is how `SpriteBatch.Draw`'s scalar-scale and
+    Vector2-scale overloads sat side by side declaring identical keyword sets,
+    and how the two `DrawUserIndexedPrimitives' index widths did. So the key is
+    computed from the mechanism *applied to the contract signature*, and two
+    members of one group that produce the same key have not been separated by
+    what they declared.
+
+    The `discriminator' is deliberately **not** part of this key. It is what
+    resolves a collision, and resolving one is a property of the whole partition
+    -- every member of it has to name the same argument and a different type --
+    so it is checked there rather than folded in here, where one member
+    declaring it would have been enough to make the keys differ.
+    """
+    mechanism = rule.get("distinguished_by")
+    parameters = tuple(simple(p["type"]) for p in member.get("parameters", []))
+    if mechanism == "dispatch":
+        return ("dispatch", parameters)
+    if mechanism == "arity":
+        return ("arity", len(parameters))
+    if mechanism == "dispatch-and-arity":
+        return ("dispatch-and-arity", len(parameters), parameters)
+    if mechanism == "keywords":
+        return ("keywords", tuple(sorted(rule.get("keywords") or ())))
+    if mechanism == "no-keywords":
+        return ("no-keywords",)
+    if mechanism == "tagged-argument":
+        return ("tagged-argument", rule.get("tag"))
+    if mechanism == "unified":
+        # A constant key on purpose: every overload declaring it lands in one
+        # partition, so each has to name the others in `unified_with'.
+        return ("unified",)
+    return (mechanism, parameters)
+
+
+def verify_group_separation(report, subject, group, overrides, entry):
+    """Every overload in a group must be told from every other one in it.
+
+    Three ways, and each is a declaration rather than a silence:
+
+    * the declared mechanism separates them -- distinct keys;
+    * a `discriminator' does, when the mechanism does not: an argument whose
+      Lisp *type* selects the overload, which is what an index array's element
+      type and a scale's realness do. Every overload in the partition must name
+      the same argument, and their types must differ -- one of them declaring it
+      would only have hidden the collision;
+    * or they declare `unified_with', naming exactly the siblings they cannot be
+      told from, and why that is right. `MeasureString(String)' and
+      `MeasureString(StringBuilder)' are the honest case: after XNA's own private
+      StringProxy the two method bodies are identical, a StringBuilder is reached
+      only through Length and Chars, and one Common Lisp string expresses both.
+
+    An undeclared collision is the dishonest case, and is what this refuses.
+    """
+    partitions = {}
+    for member in group:
+        rule = overrides.get(signature(member), {})
+        partitions.setdefault(discriminating_key(member, rule), []).append(member)
+    for members in partitions.values():
+        if len(members) < 2:
+            continue
+        signatures = sorted(signature(m) for m in members)
+        discriminators = {signature(m): overrides.get(signature(m), {}).get("discriminator")
+                          for m in members}
+        declared = [sig for sig, d in discriminators.items() if d]
+        if declared and len(declared) != len(members):
+            report.add("wrong_overload_shape", subject,
+                       "%s of %d overloads that nothing else separates declare a "
+                       "discriminator; a discriminator separates a partition only when "
+                       "every overload in it names one: %s"
+                       % (len(declared), len(members), sorted(set(signatures) - set(declared))))
+            continue
+        if declared:
+            arguments = {d["argument"] for d in discriminators.values() if d.get("argument")}
+            missing = [sig for sig, d in discriminators.items()
+                       if not d.get("argument") or not d.get("lisp_type")]
+            if missing:
+                report.add("wrong_overload_shape", subject,
+                           "%s declares a discriminator without both an argument and a "
+                           "lisp_type" % sorted(missing))
+                continue
+            if len(arguments) != 1:
+                report.add("wrong_overload_shape", subject,
+                           "the overloads on this symbol are discriminated by different "
+                           "arguments %s, so no one argument tells them apart"
+                           % sorted(arguments))
+                continue
+            argument = arguments.pop()
+            if entry is not None:
+                accepted = set(entry.get("keywords") or ())
+                accepted.update(item.lstrip("&") for item in entry["lambda_list"])
+                if argument not in accepted:
+                    report.add("wrong_overload_shape", subject,
+                               "the overloads are discriminated by an argument %r the "
+                               "projection does not accept" % argument)
+            # The discriminator splits the partition; whatever it leaves
+            # together has to be declared unified. DrawString needs exactly that:
+            # the scale's type tells the uniform overloads from the per-axis
+            # ones, and inside each pair the String and StringBuilder members are
+            # the same call.
+            types = {}
+            for sig, d in discriminators.items():
+                types.setdefault(d["lisp_type"], []).append(sig)
+            for sigs in types.values():
+                require_unified(report, subject, sorted(sigs), overrides)
+            continue
+        require_unified(report, subject, signatures, overrides)
+
+
+def require_unified(report, subject, signatures, overrides):
+    """These overloads are not told apart, so each must say so and say why."""
+    if len(signatures) < 2:
+        return
+    for sig in signatures:
+        rule = overrides.get(sig, {})
+        others = [s for s in signatures if s != sig]
+        unified = rule.get("unified_with")
+        if not unified:
+            report.add("wrong_overload_shape", subject,
+                       "%r is not told apart from %s by anything it declares, and "
+                       "does not declare them unified" % (sig, others))
+            continue
+        if sorted(unified) != others:
+            report.add("wrong_overload_shape", subject,
+                       "%r declares it is unified with %s, but the overloads it is "
+                       "actually indistinguishable from are %s"
+                       % (sig, sorted(unified), others))
+        if not rule.get("reason"):
+            report.add("wrong_overload_shape", subject,
+                       "%r declares a unified collapse and gives no reason for it" % sig)
 
 
 def verify_rule_freshness(report, type_rule, contract_type):
@@ -655,6 +800,10 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
                                "%s.%s" % (contract_type["name"], family),
                                "%d overloads on %r claim to supply no keyword; at most one "
                                "can: %s" % (len(empty), symbol, empty))
+                # Declaring a mechanism is not the same as being separated by it.
+                verify_group_separation(
+                    report, "%s.%s" % (contract_type["name"], family), group, overrides,
+                    symbols.get(symbol))
     return statuses
 
 

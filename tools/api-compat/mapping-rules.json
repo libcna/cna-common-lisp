@@ -437,33 +437,33 @@
         },
         "Transform(Vector2[],Matrix&,Vector2[])": {
           "lisp": "vector2-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector2[],Int32,Matrix&,Vector2[],Int32,Int32)": {
           "lisp": "vector2-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector2[],Quaternion&,Vector2[])": {
           "lisp": "vector2-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector2[],Int32,Quaternion&,Vector2[],Int32,Int32)": {
           "lisp": "vector2-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "TransformNormal(Vector2[],Matrix&,Vector2[])": {
           "lisp": "vector2-transform-normal-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "TransformNormal(Vector2[],Int32,Matrix&,Vector2[],Int32,Int32)": {
           "lisp": "vector2-transform-normal-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         }
       },
       "not_applicable": {
@@ -689,7 +689,11 @@
             "index-offset",
             "primitive-count"
           ],
-          "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+          "reason": "XNA's Int16 and Int32 index overloads declare the same keyword set here, so the keywords do not separate them: the element type of the INDICES array does. A specialised (unsigned-byte 16) or (unsigned-byte 32) array chooses the width, and an unspecialised sequence defaults to sixteen bits, which is the overload XNA's own Int16 form is.",
+          "discriminator": {
+            "argument": "indices",
+            "lisp_type": "(unsigned-byte 16)"
+          }
         },
         "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32)": {
           "lisp": "draw-user-indexed-primitives",
@@ -701,7 +705,11 @@
             "index-offset",
             "primitive-count"
           ],
-          "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+          "reason": "XNA's Int16 and Int32 index overloads declare the same keyword set here, so the keywords do not separate them: the element type of the INDICES array does. A specialised (unsigned-byte 16) or (unsigned-byte 32) array chooses the width, and an unspecialised sequence defaults to sixteen bits, which is the overload XNA's own Int16 form is.",
+          "discriminator": {
+            "argument": "indices",
+            "lisp_type": "(unsigned-byte 32)"
+          }
         },
         "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32,VertexDeclaration)": {
           "lisp": "draw-user-indexed-primitives",
@@ -714,7 +722,11 @@
             "primitive-count",
             "vertex-declaration"
           ],
-          "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+          "reason": "XNA's Int16 and Int32 index overloads declare the same keyword set here, so the keywords do not separate them: the element type of the INDICES array does. A specialised (unsigned-byte 16) or (unsigned-byte 32) array chooses the width, and an unspecialised sequence defaults to sixteen bits, which is the overload XNA's own Int16 form is.",
+          "discriminator": {
+            "argument": "indices",
+            "lisp_type": "(unsigned-byte 16)"
+          }
         },
         "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32,VertexDeclaration)": {
           "lisp": "draw-user-indexed-primitives",
@@ -727,7 +739,11 @@
             "primitive-count",
             "vertex-declaration"
           ],
-          "reason": "One generic function per family, with the keywords the overload supplies. The declaration-bearing overloads pass :VERTEX-DECLARATION and the others infer it through VERTEX-DECLARATION-OF, which is the IVertexType projection -- exactly XNA's split. The Int16 and Int32 index overloads are one shape here because the index width is the array's own element type, which is what distinguishes them in C#."
+          "reason": "XNA's Int16 and Int32 index overloads declare the same keyword set here, so the keywords do not separate them: the element type of the INDICES array does. A specialised (unsigned-byte 16) or (unsigned-byte 32) array chooses the width, and an unspecialised sequence defaults to sixteen bits, which is the overload XNA's own Int16 form is.",
+          "discriminator": {
+            "argument": "indices",
+            "lisp_type": "(unsigned-byte 32)"
+          }
         }
       },
       "not_applicable": {
@@ -888,7 +904,12 @@
             "scale",
             "effects",
             "layer-depth"
-          ]
+          ],
+          "discriminator": {
+            "argument": "scale",
+            "lisp_type": "real"
+          },
+          "reason": "The uniform-scale overload. It and its per-axis sibling declare the same keyword set, so the keywords do not separate them and the Lisp type of :SCALE does: a real here, a Vector2 there. %SPRITE-SCALE-COMPONENTS is where the projection reads it."
         },
         "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)": {
           "lisp": "draw-texture",
@@ -903,7 +924,12 @@
             "scale",
             "effects",
             "layer-depth"
-          ]
+          ],
+          "discriminator": {
+            "argument": "scale",
+            "lisp_type": "vector2"
+          },
+          "reason": "The per-axis-scale overload, told from the uniform one by :SCALE being a Vector2 rather than a real."
         },
         "Draw(Texture2D,Rectangle,Nullable`1,Color)": {
           "lisp": "draw-texture",
@@ -983,14 +1009,6 @@
       "not_applicable": {
         "Dispose(Boolean)": "The protected dispose(bool) pattern."
       },
-      "unimplemented": {
-        "DrawString(SpriteFont,String,Vector2,Color)": "Needs SpriteFont.",
-        "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "Needs SpriteFont and StringBuilder.",
-        "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont.",
-        "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder.",
-        "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont.",
-        "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder."
-      },
       "overload_families": {
         "Begin": {
           "lisp": "begin",
@@ -1001,7 +1019,15 @@
           "reason": "All seven texture overloads are one generic function whose keyword combination selects the overload, and only those seven combinations are accepted: :COLOR is required, exactly one of :POSITION and :DESTINATION must be given, the transform group is all-or-nothing, and :SCALE belongs to the position family alone. The two placements take CNA's two different submission routes, because a position and a destination rectangle are not interchangeable."
         }
       },
-      "expected_superclass": "microsoft.xna.framework.graphics:graphics-resource"
+      "expected_superclass": "microsoft.xna.framework.graphics:graphics-resource",
+      "unimplemented": {
+        "DrawString(SpriteFont,String,Vector2,Color)": "Needs SpriteFont.",
+        "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "Needs SpriteFont and StringBuilder.",
+        "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont.",
+        "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder.",
+        "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont.",
+        "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder."
+      }
     },
     "Microsoft.Xna.Framework.Graphics.SpriteSortMode": {
       "lisp_package": "microsoft.xna.framework.graphics",
@@ -1274,33 +1300,33 @@
         },
         "Transform(Vector3[],Matrix&,Vector3[])": {
           "lisp": "vector3-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": {
           "lisp": "vector3-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector3[],Quaternion&,Vector3[])": {
           "lisp": "vector3-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector3[],Int32,Quaternion&,Vector3[],Int32,Int32)": {
           "lisp": "vector3-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "TransformNormal(Vector3[],Matrix&,Vector3[])": {
           "lisp": "vector3-transform-normal-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "TransformNormal(Vector3[],Int32,Matrix&,Vector3[],Int32,Int32)": {
           "lisp": "vector3-transform-normal-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         }
       },
       "not_applicable": {
@@ -1529,23 +1555,23 @@
         },
         "Transform(Vector4[],Matrix&,Vector4[])": {
           "lisp": "vector4-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector4[],Int32,Matrix&,Vector4[],Int32,Int32)": {
           "lisp": "vector4-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector4[],Quaternion&,Vector4[])": {
           "lisp": "vector4-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         },
         "Transform(Vector4[],Int32,Quaternion&,Vector4[],Int32,Int32)": {
           "lisp": "vector4-transform-array",
-          "reason": "The array overloads: SOURCE-INDEX, DESTINATION-INDEX and LENGTH express the windowed form, and the whole-array form is the same function with none of them.",
-          "distinguished_by": "arity"
+          "reason": "Two overloads share each arity here -- the Matrix form and the Quaternion form -- so arity alone does not separate them and the CLOS dispatch on the transform argument is the other half of what does.",
+          "distinguished_by": "dispatch-and-arity"
         }
       },
       "not_applicable": {

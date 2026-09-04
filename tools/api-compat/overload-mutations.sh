@@ -3,13 +3,19 @@
 #
 # A family of XNA overloads collapsed onto one Lisp function has to declare how
 # each overload is told from its siblings, and the verifier has to be able to
-# call a declaration a lie. This mutates the rules four ways and requires a
+# call a declaration a lie. This mutates the rules seven ways and requires a
 # wrong_overload_shape diagnostic each time, mutates the contract once and
 # requires a refusal, and then requires a clean run.
 #
 # The fifth is not about overloads at all but belongs with them: two members
 # sharing a signature key is how an overload goes unmeasured, and the count is the
 # only thing that notices.
+#
+# Steps 5 to 7 exist because declaring a mechanism is not the same as being
+# separated by it: two overloads can both say "keywords" and list the same
+# ones, which is how SpriteBatch.Draw's two scale overloads and
+# GraphicsDevice's two index widths sat side by side telling nobody what
+# actually distinguishes them.
 #
 # The tagged-argument steps exist because of the mechanism EffectParameter
 # needed. Its eighteen SetValue overloads differ only in the value's type; Lisp
@@ -94,7 +100,48 @@ json.dump(d, open(path, "w"), indent=2)
 PY
 expect_red "Begin claiming a :SHADER keyword it does not take"
 
-echo "== 5. a contract whose member count does not match what gets measured =="
+echo "== 5. an overload whose declared mechanism does not actually separate it =="
+# The gap this closes: SpriteBatch.Draw's uniform-scale and per-axis-scale
+# overloads declare the *same* keyword set, so the keywords do not tell them
+# apart at all and only the Lisp type of :SCALE does. Declaring a mechanism used
+# to be enough; now the mechanism has to work, so dropping the discriminator that
+# does the separating has to be caught.
+python3 - "$rules" <<'PY'
+import json, sys
+path = sys.argv[1]
+d = json.load(open(path))
+overrides = d["types"]["Microsoft.Xna.Framework.Graphics.SpriteBatch"]["member_overrides"]
+key = "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)"
+overrides[key].pop("discriminator", None)
+json.dump(d, open(path, "w"), indent=2)
+PY
+expect_red "two Draw overloads left with identical keywords and nothing else"
+
+echo "== 6. a discriminator naming an argument the projection does not take =="
+python3 - "$rules" <<'PY'
+import json, sys
+path = sys.argv[1]
+d = json.load(open(path))
+overrides = d["types"]["Microsoft.Xna.Framework.Graphics.SpriteBatch"]["member_overrides"]
+key = "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)"
+overrides[key]["discriminator"] = {"argument": "stretch", "lisp_type": "vector2"}
+json.dump(d, open(path, "w"), indent=2)
+PY
+expect_red "a discriminator on a :STRETCH argument that does not exist"
+
+echo "== 7. two overloads claiming the same discriminating type =="
+python3 - "$rules" <<'PY'
+import json, sys
+path = sys.argv[1]
+d = json.load(open(path))
+overrides = d["types"]["Microsoft.Xna.Framework.Graphics.SpriteBatch"]["member_overrides"]
+key = "Draw(Texture2D,Vector2,Nullable`1,Color,Single,Vector2,Vector2,SpriteEffects,Single)"
+overrides[key]["discriminator"] = {"argument": "scale", "lisp_type": "real"}
+json.dump(d, open(path, "w"), indent=2)
+PY
+expect_red "both scale overloads claiming :SCALE is a real"
+
+echo "== 8. a contract whose member count does not match what gets measured =="
 # Not an overload rule, but the same failure it protects against: two members
 # sharing a signature key means one of them is never measured, and the count is
 # the only thing that notices. The guard is a refusal to write the report at all
@@ -113,11 +160,18 @@ if ! grep -q "were measured" "$work/out.txt"; then
 fi
 echo "  ok  a selection count that does not match the measurement -> refused"
 
-echo "== 6. and the unmutated rules are green =="
-python3 "$here/verify.py" --strict | grep -E "disagreement"
+echo "== 9. and the unmutated rules are green =="
+# --strict exits non-zero on any disagreement, and `set -e' is what makes that
+# stop the script. Piping it into grep used to hide the exit code, so a mutation
+# left behind by a failing step would have been reported as a pass.
+python3 "$here/verify.py" --strict > "$work/final.txt"
+grep -E "disagreement" "$work/final.txt"
 
 echo
 echo "overload mutation self-test passed: the verifier goes red for a family that"
 echo "declares nothing, for a tagged-argument rule with no tag, for two overloads"
-echo "sharing one tag, and for a keyword set the real method does not have -- and"
-echo "refuses to write a report whose member count does not add up."
+echo "sharing one tag, for a keyword set the real method does not have, for a"
+echo "declared mechanism that does not actually separate two overloads, and for a"
+echo "discriminator on an argument that does not exist or on a type its sibling"
+echo "also claims -- and refuses to write a report whose member count does not"
+echo "add up."
