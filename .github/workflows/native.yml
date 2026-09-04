@@ -546,7 +546,7 @@ jobs:
             exit 1
           }
           echo "the consumer read the cleared colour, and its own triangle, back out"
-          echo "of the back buffer""
+          echo "of the back buffer"
 
       - name: Record what this lane proved
         if: always()
