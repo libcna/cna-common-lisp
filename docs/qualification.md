@@ -124,7 +124,7 @@ init only adds nested codec submodules this build disables anyway.
 | Lane | Renderer | What it proves |
 | --- | --- | --- |
 | `Native` | `HEADLESS` | the lifecycle ran, handles were valid, and draw commands were submitted and accepted. **Nothing about pixels.** |
-| `Rasterizer` | `SOFTWARE` | the same suite, plus: a clear to a known colour is read back out of the back buffer as those exact pixels. **Selected drawing reaches actual pixels.** |
+| `Rasterizer` | `SOFTWARE` | the same suite, plus: a clear to a known colour is read back out of the back buffer as those exact pixels, from the suite *and* from the template running as an isolated consumer. **Selected drawing reaches actual pixels.** |
 
 They are separate jobs on purpose. They support different claims, and a failure
 in one must not take down the other.

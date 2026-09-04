@@ -373,6 +373,12 @@ jobs:
         with:
           path: cna-common-lisp
 
+      - name: Checkout the template
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: openeggbert/cna-common-lisp-template
+          path: cna-common-lisp-template
+
       - name: Checkout CNA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -507,6 +513,23 @@ jobs:
       - name: Rasterizer qualification
         working-directory: cna-common-lisp
         run: tools/qualification/rasterizer.sh
+
+      # The same consumer story, with pixels. The canary reports the colour it
+      # read back, and this checks it is the one that was cleared -- so the
+      # template is proved from a consumer's position against a renderer that
+      # really rasterises, not only against one that accepts commands.
+      - name: Isolated consumer, with a pixel it can point at
+        working-directory: cna-common-lisp
+        run: |
+          set -eu
+          tools/qualification/isolated-consumer.sh \
+            "${GITHUB_WORKSPACE}/cna-common-lisp-template" | tee consumer.log
+          grep -q '^CANARY pixels=100,149,237,255$' consumer.log || {
+            echo "the canary did not read CornflowerBlue out of the back buffer:" >&2
+            grep '^CANARY pixels=' consumer.log >&2 || echo "  no pixels line at all" >&2
+            exit 1
+          }
+          echo "the consumer read the cleared colour back out of the back buffer"
 
       - name: Record what this lane proved
         if: always()
