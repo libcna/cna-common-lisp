@@ -32,13 +32,21 @@
 ;;;; the same way the three `IEffect*' contracts are: the interface is what the
 ;;;; object answers, and CLOS dispatches it.
 ;;;;
-;;;; `GameServiceContainer' and `Game.Services' are **not** here, and that is not
-;;;; an omission of convenience. `GameServiceContainer' is keyed by `System.Type',
-;;;; and the two services XNA's own `GraphicsDeviceManager' registers are keyed by
-;;;; `IGraphicsDeviceService' and `IGraphicsDeviceManager' -- neither of which is
-;;;; projected, and the first of which needs `GraphicsDevice`'s four device-loss
-;;;; events. A container whose keys cannot name what XNA puts in it would be four
-;;;; complete members and a lie. `docs/limitations.md' records it.
+;;;; `Game.Services' is **not** here, and the reason is CNA's container rather
+;;;; than the interfaces that key it. Read from the pinned metadata:
+;;;; `IGraphicsDeviceService' is `GraphicsDevice', `DeviceCreated',
+;;;; `DeviceDisposing', `DeviceReset' and `DeviceResetting', and all five are
+;;;; already complete on `GraphicsDeviceManager', the type that implements it.
+;;;; (`GraphicsDevice' has events of its own called `DeviceReset' and
+;;;; `DeviceResetting' too; they are a different set on a different type, and
+;;;; confusing the two is what this comment used to do.)
+;;;;
+;;;; What is missing is a container. CNA has `cna_game_services_contains_ext' and
+;;;; `remove_ext' over a closed enum of runtime-registered identities, and no
+;;;; route that registers a service or hands one back -- so `GetService', the
+;;;; member the type exists for, cannot be answered for the two services XNA
+;;;; itself registers. A Lisp dictionary would answer it for services the program
+;;;; added and quietly invent the rest. `docs/limitations.md' records it.
 
 (in-package #:microsoft.xna.framework)
 

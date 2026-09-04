@@ -245,8 +245,10 @@ are pure managed and touch no native route:
   takes a callback set and supplies the object implementing its C++ interfaces,
   and a component's behaviour is its CLOS methods on the same generic functions a
   `Game` specialises. The tests assert counts taken inside CNA's own loop, so an
-  engine that was exported and never wired would fail them. `GameServiceContainer`
-  is deliberately absent: its keys are two interfaces that are not projected;
+  engine that was exported and never wired would fail them. `Game.Services`
+  is deliberately absent: CNA's service container has no route that registers a
+  service or hands one back, so `GetService` could not be answered for the two
+  services the runtime registers;
 * `Texture2D`'s own construction and data surface -- both constructors and the
   three `SetData` and three `GetData` overloads, as narrow as the buffers' and
   over the same proven layouts. With it the rasterizer lane gained a seventh kind

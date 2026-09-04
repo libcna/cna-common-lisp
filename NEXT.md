@@ -222,18 +222,33 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **`GameServiceContainer` and `Game.Services`**, which need
-   `IGraphicsDeviceService` and `IGraphicsDeviceManager` first -- and the first of
-   those needs `GraphicsDevice`'s four device-loss events. That is really the
-   *device-settings closure*: `Adapter`, `DisplayMode`, `PresentationParameters`,
-   `GraphicsProfile`, `GraphicsDeviceStatus`, the three `Reset` overloads,
-   `Present`, the five device events, and `GraphicsDeviceManager`'s sixteen, which
-   are the same subject seen from the other side. Doing it opens the container as
-   a by-product.
-2. **`System.IO.Stream` and `TitleContainer`**, which unblock
+1. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager` --
    and with it the only public way to obtain a `SpriteFont`, which is the loop
-   this session opened and did not close.
+   this session opened and did not close. It is first because it is the only item
+   here that closes a loop already open: `SpriteFont` is complete and reachable
+   today only through a test-only producer, and `ContentManager.Load` is what
+   makes it reachable from the template.
+2. **The device-settings closure**: `Adapter`, `DisplayMode`,
+   `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
+   `Reset` overloads, `Present`, `GraphicsDevice`'s six events, and
+   `GraphicsDeviceManager`'s sixteen remaining members, which are the same subject
+   seen from the other side. It brings `GameServiceContainer` into the selection.
+
+   **`Game.Services` will still not be projectable when it is done**, and that is
+   worth knowing before starting. Re-audited against the pinned metadata:
+   `IGraphicsDeviceService`'s five members -- the `GraphicsDevice` property and the
+   `DeviceCreated`, `DeviceDisposing`, `DeviceReset` and `DeviceResetting` events
+   -- are *already complete*, on `GraphicsDeviceManager`, the type that implements
+   the interface; and `IGraphicsDeviceManager`'s `CreateDevice`, `BeginDraw` and
+   `EndDraw` each have a CNA route. An earlier note here claimed the blocker was
+   those interfaces and `GraphicsDevice`'s device-loss events; it had confused
+   `GraphicsDevice`'s own same-named `DeviceReset`/`DeviceResetting` with the
+   service interface's. The actual blocker is that CNA's container has
+   `contains_ext` and `remove_ext` over a closed enum and **no route that registers
+   a service or hands one back**, so `GetService` cannot be answered for the two
+   services the runtime registers. That needs a CNA route, not a projection idea.
+   `docs/limitations.md` has the full audit.
 3. **`RenderTargetCube` and `RenderTargetBinding`**, now that `TextureCube`
    exists to derive the first from. They bring `GraphicsDevice`'s last three
    render-target members: `SetRenderTarget(RenderTargetCube, CubeMapFace)`,

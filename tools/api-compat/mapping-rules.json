@@ -76,7 +76,8 @@
       "unimplemented": {
         "OnActivated(Object,EventArgs)": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not.",
         "OnDeactivated(Object,EventArgs)": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not.",
-        "ShowMissingRequirementMessage(Exception)": "Needs the CLR exception projection and a platform message box."
+        "ShowMissingRequirementMessage(Exception)": "Needs the CLR exception projection and a platform message box.",
+        "Services": "GameServiceContainer, which CNA does not have a container for. It has cna_game_services_contains_ext and remove_ext over a closed CNA_GAME_SERVICE_TYPE_* enum and no route that registers a service or hands one back, so GetService -- the member the type exists for -- cannot be answered for the two services the runtime registers. Not, as an earlier note claimed, because IGraphicsDeviceService is unprojectable: its five members are already complete on GraphicsDeviceManager, the type that implements it. docs/limitations.md carries the audit."
       },
       "events": {
         "Activated": {

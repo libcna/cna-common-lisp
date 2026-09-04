@@ -182,23 +182,50 @@ exactly, measured, and `tests/native/game-components.lisp` pins it — so a CNA
 that changed it would fail rather than pass quietly. Add components in
 `Initialize` or later.
 
-### `GameServiceContainer` and `Game.Services` are not projected
+### `Game.Services` is not projected, and not for the reason this file used to give
 
-`GameServiceContainer` is keyed by `System.Type`, and the two services XNA's own
-`GraphicsDeviceManager` registers are keyed by `IGraphicsDeviceService` and
-`IGraphicsDeviceManager`. Neither interface is projected here, and the first
-needs `GraphicsDevice`'s four device-loss events, which are not either. A
-container with `AddService`, `RemoveService` and `GetService` could be written in
-an afternoon — it is a dictionary — and it would be four complete members whose
-keys could not name what XNA puts in it. So it waits for those two interfaces
-rather than shipping as a shape.
+`Game.Services` is in the selection and is **missing**. `GameServiceContainer`
+itself is not in the selection at all — it arrives with the device-settings
+closure.
 
-CNA is worth quoting here, because it made the same call for a stronger reason
-and says so: it has `cna_game_services_contains_ext` and `remove_ext` for the two
-services the runtime registers and **no registration route at all**, because
-"`GameServiceContainer.AddService` stores an object under a *type*, and both
-halves of that are outside C's reach". A future projection has the advantage C
-does not — Common Lisp can name a type — but it still needs the types.
+An earlier version of this section said the blocker was that
+`IGraphicsDeviceService` and `IGraphicsDeviceManager` are not projected, and that
+the first needs `GraphicsDevice`'s four device-loss events. **That was wrong, and
+re-reading the pinned metadata is what corrected it.** `IGraphicsDeviceService`
+is five members — the `GraphicsDevice` property and the `DeviceCreated`,
+`DeviceDisposing`, `DeviceReset` and `DeviceResetting` events — and all five are
+already *complete* here, on `GraphicsDeviceManager`, which is the type that
+implements the interface. `IGraphicsDeviceManager` is `CreateDevice`, `BeginDraw`
+and `EndDraw`, which `GraphicsDeviceManager` implements explicitly, and CNA has a
+route for each of the three.
+
+The mistake was a name collision. `GraphicsDevice` has its own `DeviceReset` and
+`DeviceResetting` events, alongside `Disposing`, `ResourceCreated`,
+`ResourceDestroyed` and `DeviceLost`; those six are all missing, but they are a
+different set on a different type and the service interface does not ask for
+them. Two types with two same-named events was enough to produce a confident
+paragraph about the wrong one.
+
+**The real obstacle is that CNA's service container is not a container.** It has
+`cna_game_services_contains_ext` and `cna_game_services_remove_ext`, both keyed
+by a closed `CNA_GAME_SERVICE_TYPE_*` enum, and no route that registers a service
+or returns one. CNA says why, and the reason is sound: "the canonical container
+is keyed by C++ type identity, which has no C expression: a C consumer cannot
+name a type, and cannot author an object implementing a C++ interface to register
+under one."
+
+So `GetService` — the member the type exists for — cannot be answered for the two
+services XNA's own runtime registers. A Lisp-side dictionary would answer it
+perfectly for services the *program* adds and silently invent the two that matter
+most, which is still the wrong trade; only the reason for refusing it has
+changed. Common Lisp can name a type where C cannot, so the missing half is a CNA
+route rather than a projection idea.
+
+One thing genuinely did unblock: this binding *knows* the object in question.
+CNA's header records that creating the manager "registers it as the game's
+graphics device manager and graphics device service", and the binding holds that
+manager as a Lisp object. So the day a container is projected, both service keys
+resolve to something real rather than to a lookup that cannot be performed.
 
 ### LaunchParameters is empty unless the program fills it
 

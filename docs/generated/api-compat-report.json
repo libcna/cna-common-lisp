@@ -3310,7 +3310,7 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Game.Services",
-   "detail": "no exported 'services' in microsoft.xna.framework"
+   "detail": "GameServiceContainer, which CNA does not have a container for. It has cna_game_services_contains_ext and remove_ext over a closed CNA_GAME_SERVICE_TYPE_* enum and no route that registers a service or hands one back, so GetService -- the member the type exists for -- cannot be answered for the two services the runtime registers. Not, as an earlier note claimed, because IGraphicsDeviceService is unprojectable: its five members are already complete on GraphicsDeviceManager, the type that implements it. docs/limitations.md carries the audit."
   },
   {
    "category": "missing_member",
