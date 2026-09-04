@@ -11689,6 +11689,44 @@
           "documentation": "Every member of CULL-MODE, as keywords, in value order."
         },
         {
+          "name": "all-effect-parameter-class",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of EFFECT-PARAMETER-CLASS, as keywords, in value order."
+        },
+        {
+          "name": "all-effect-parameter-type",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of EFFECT-PARAMETER-TYPE, as keywords, in value order."
+        },
+        {
           "name": "all-fill-mode",
           "fbound": true,
           "macro": false,
@@ -11989,6 +12027,55 @@
           "documentation": "BLEND-STATE.ALPHA-SOURCE-BLEND. Defaults to ONE."
         },
         {
+          "name": "apply-effect-pass",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "pass"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EffectPass.Apply(): make this pass's state current on the graphics device.\n\nNamed APPLY-EFFECT-PASS rather than APPLY, because APPLY is a standard Common\nLisp function and shadowing it in a package a consumer uses unqualified would be\nhostile. See docs/naming.md."
+        },
+        {
+          "name": "basic-effect",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:basic-effect",
+            "microsoft.xna.framework.graphics:effect",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.BasicEffect.\n\n    (make-instance 'basic-effect :graphics-device device)\n\nThe stock effect XNA gives a game that wants transforms, lighting, fog, a\ntexture and per-vertex colour without writing a shader. It satisfies all three of\nIEffectMatrices, IEffectLights and IEffectFog, which here means the thirteen\ngeneric functions those interfaces became answer for it.\n\n**This is what makes a primitive draw legal.** CNA, like XNA's own\n`VerifyCanDraw', refuses a draw until an effect pass has been applied:\n\n    (setf (effect-vertex-color-enabled effect) t\n          (effect-lighting-enabled effect) nil)\n    (dolist (pass (collection-elements\n                   (effect-technique-passes (effect-current-technique effect))))\n      (apply-effect-pass pass)\n      (draw-user-primitives device :triangle-list triangle :primitive-count 1))"
+        },
+        {
           "name": "begin",
           "fbound": true,
           "macro": false,
@@ -12000,14 +12087,18 @@
             "blend-state",
             "sampler-state",
             "depth-stencil-state",
-            "rasterizer-state"
+            "rasterizer-state",
+            "effect",
+            "transform-matrix"
           ],
           "keywords": [
             "blend-state",
             "depth-stencil-state",
+            "effect",
             "rasterizer-state",
             "sampler-state",
-            "sort-mode"
+            "sort-mode",
+            "transform-matrix"
           ],
           "setf_fbound": false,
           "setf_lambda_list": [],
@@ -12019,7 +12110,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "SpriteBatch.Begin: the three overloads whose arguments this milestone has.\n\n    (begin batch)                              Begin()\n    (begin batch :sort-mode m :blend-state b)  Begin(SpriteSortMode, BlendState)\n    (begin batch :sort-mode m :blend-state b\n                 :sampler-state s :depth-stencil-state d\n                 :rasterizer-state r)          the five-parameter overload\n\nOnly those three keyword shapes are accepted. XNA has no Begin that takes a sort\nmode on its own, none that takes a state without a sort mode, and none that takes\nsome of the four states and not the others, so each of those is refused rather\nthan quietly treated as one of the overloads that does exist.\n\nA state argument may be NIL, and NIL is not the same as absent: XNA's state\nparameters are nullable and a null selects the framework's default, so\n`:blend-state nil' is `Begin(sortMode, null)' -- the AlphaBlend overload -- while\nleaving `:blend-state' out entirely is a different overload. The defaults a null\nselects are XNA's own, read from SpriteBatch::SetRenderState: **AlphaBlend**,\n**LinearClamp**, **DepthStencilState.None** and **CullCounterClockwise**.\n\nEvery state object supplied here becomes read-only, as XNA's do when they reach a\ndevice. XNA latches them at Begin for `:immediate' and at End for the deferred\nmodes, because that is when it applies them; CNA copies the descriptors at Begin,\nso this latches them at Begin for every sort mode. The difference is one\nobservable case -- mutating a state between BEGIN and END in a deferred mode --\nand refusing it is preferred to accepting a change that could no longer have any\neffect. `docs/limitations.md' records it.\n\nThe two overloads that take an `Effect' are **not** projected: `Effect' does not\nexist in this milestone, and an effect parameter that could only ever be given\nNIL would be a fourth shape XNA does not have. They are measured as missing."
+          "documentation": "SpriteBatch.Begin: all five overloads.\n\n    (begin batch)                              Begin()\n    (begin batch :sort-mode m :blend-state b)  Begin(SpriteSortMode, BlendState)\n    (begin batch :sort-mode m :blend-state b\n                 :sampler-state s :depth-stencil-state d\n                 :rasterizer-state r)          the five-parameter overload\n    (begin batch ... :effect e)                the six-parameter overload\n    (begin batch ... :effect e\n                     :transform-matrix m)      the seven-parameter overload\n\nOnly those five keyword shapes are accepted. XNA has no Begin that takes a sort\nmode on its own, none that takes a state without a sort mode, and none that takes\nsome of the four states and not the others, so each of those is refused rather\nthan quietly treated as one of the overloads that does exist.\n\nA state argument may be NIL, and NIL is not the same as absent: XNA's state\nparameters are nullable and a null selects the framework's default, so\n`:blend-state nil' is `Begin(sortMode, null)' -- the AlphaBlend overload -- while\nleaving `:blend-state' out entirely is a different overload. The defaults a null\nselects are XNA's own, read from SpriteBatch::SetRenderState: **AlphaBlend**,\n**LinearClamp**, **DepthStencilState.None** and **CullCounterClockwise**.\n\nEvery state object supplied here becomes read-only, as XNA's do when they reach a\ndevice. XNA latches them at Begin for `:immediate' and at End for the deferred\nmodes, because that is when it applies them; CNA copies the descriptors at Begin,\nso this latches them at Begin for every sort mode. The difference is one\nobservable case -- mutating a state between BEGIN and END in a deferred mode --\nand refusing it is preferred to accepting a change that could no longer have any\neffect. `docs/limitations.md' records it.\n\n`:EFFECT' and `:TRANSFORM-MATRIX' extend the five-parameter shape and only that\none: XNA has no Begin that takes an effect without the four states, and none that\ntakes a transform without an effect, so both are refused. A NIL `:EFFECT' is the\ndefault sprite effect, which is what a null Effect means to XNA, and is not the\nsame as leaving the keyword out.\n\n`:TRANSFORM-MATRIX' takes a Matrix by pointer here, so unlike BasicEffect's World,\nView and Projection it needs no shim: CNA's route already takes `const\nCNA_Matrix*'."
         },
         {
           "name": "blend",
@@ -12380,6 +12471,113 @@
           "constant": false,
           "value": null,
           "documentation": "GraphicsDevice.Clear(Color): clear the current render target to COLOR."
+        },
+        {
+          "name": "clone-effect",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Effect.Clone(): an independent copy, of the same concrete type.\n\nNamed CLONE-EFFECT rather than CLONE for the reason APPLY-EFFECT-PASS is not\nAPPLY: the projection does not put a bare, very general verb into a package\nconsumers use unqualified."
+        },
+        {
+          "name": "collection-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The number of elements in an effect collection: XNA's Count on all four of\nEffectTechniqueCollection, EffectPassCollection, EffectParameterCollection and\nEffectAnnotationCollection."
+        },
+        {
+          "name": "collection-elements",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The elements of an effect collection as a Lisp list, in order.\n\nXNA spells this `GetEnumerator()' and returns a List<T>.Enumerator. Common Lisp\niterates over sequences, so the projection hands back a fresh list rather than a\nstateful cursor object with no Lisp meaning."
+        },
+        {
+          "name": "collection-item",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "key"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "An effect collection's indexer, by zero-based index or by name.\n\n**Answers NIL for a miss, and that is XNA's behaviour, not a simplification.**\nThe pinned IL's `get_Item(int32)' branches on a negative index and on one that is\nnot below Count straight to `ldnull; ret'; `get_Item(string)' walks the elements\nand returns null when no name matches. Neither throws."
+        },
+        {
+          "name": "collection-parameter-by-semantic",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "semantic"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EffectParameterCollection.GetParameterBySemantic(string).\n\nAnswers NIL when nothing carries that semantic, which is what XNA's does."
         },
         {
           "name": "color-blend-function",
@@ -13147,6 +13345,191 @@
           "documentation": "DepthStencilState.None: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
         },
         {
+          "name": "directional-light",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:directional-light",
+            "microsoft.xna.framework.graphics:%effect-view",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.DirectionalLight: one of the three lights an\nIEffectLights effect carries.\n\nReached through DIRECTIONAL-LIGHT-0, -1 and -2 on the effect. XNA's public\nconstructor takes three EffectParameters and a source light, and clones a light\nonto a *shader's own* parameters; CNA has no route that does that -- its lights\nare member views of an effect -- so that constructor is recorded missing rather\nthan approximated."
+        },
+        {
+          "name": "directional-light-0",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectLights.DirectionalLight0."
+        },
+        {
+          "name": "directional-light-1",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectLights.DirectionalLight1."
+        },
+        {
+          "name": "directional-light-2",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectLights.DirectionalLight2."
+        },
+        {
+          "name": "directional-light-diffuse-color",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "light"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "light"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DirectionalLight.DiffuseColor"
+        },
+        {
+          "name": "directional-light-direction",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "light"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "light"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DirectionalLight.Direction"
+        },
+        {
+          "name": "directional-light-enabled",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "light"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "light"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DirectionalLight.Enabled."
+        },
+        {
+          "name": "directional-light-specular-color",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "light"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "light"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DirectionalLight.SpecularColor"
+        },
+        {
           "name": "draw-indexed-primitives",
           "fbound": true,
           "macro": false,
@@ -13363,6 +13746,1567 @@
           "constant": false,
           "value": null,
           "documentation": "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer.\n\nAdds the SetDataOptions overloads, IsContentLost and the ContentLost event. See\ndocs/limitations.md for what CNA currently reports for content loss."
+        },
+        {
+          "name": "effect",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.Effect.\n\nCreated either from compiled Direct3D 9 Effect Framework bytecode --\n\n    (make-instance 'effect :graphics-device device :effect-code bytes)\n\n-- which is XNA's `Effect(GraphicsDevice, byte[])', or as one of the stock\neffects, of which BASIC-EFFECT is projected here.\n\n**Compiled bytecode is a renderer capability, not an ABI one.** CNA accepts the\nsame `.fxb' payload XNA does, but only on a renderer built with the compiled\neffect runtime; the HEADLESS and SOFTWARE renderers used for qualification here\nare not among them, and refuse the bytecode rather than quietly substituting a\nstock shader. The constructor reports that refusal; it does not work around it.\ndocs/limitations.md has the consequences, the largest of which is that no\n`Effect' in this binding has ever been observed with a non-empty\n`Parameters'."
+        },
+        {
+          "name": "effect-alpha",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.Alpha"
+        },
+        {
+          "name": "effect-ambient-light-color",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectLights.AmbientLightColor"
+        },
+        {
+          "name": "effect-annotation",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect-annotation",
+            "microsoft.xna.framework.graphics:%effect-view",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectAnnotation: one piece of metadata an\neffect author attached to a technique, a pass or a parameter.\n\nImmutable: XNA has eight GetValue* methods on it and no setter at all. Its\nmetadata is read once, when the effect's graph is built."
+        },
+        {
+          "name": "effect-annotation-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect-annotation-collection",
+            "microsoft.xna.framework.graphics:%effect-collection",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectAnnotationCollection."
+        },
+        {
+          "name": "effect-annotation-column-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-name",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-parameter-class",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-parameter-type",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-row-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-semantic",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-value-boolean",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "annotation"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-value-int32",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "annotation"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-value-matrix",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "annotation"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-value-single",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "annotation"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-value-string",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "annotation"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-value-vector2",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "annotation"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-value-vector3",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "annotation"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-annotation-value-vector4",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "annotation"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-current-technique",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "technique",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Effect.CurrentTechnique."
+        },
+        {
+          "name": "effect-diffuse-color",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.DiffuseColor"
+        },
+        {
+          "name": "effect-emissive-color",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.EmissiveColor"
+        },
+        {
+          "name": "effect-fog-color",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectFog.FogColor"
+        },
+        {
+          "name": "effect-fog-enabled",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectFog.FogEnabled"
+        },
+        {
+          "name": "effect-fog-end",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectFog.FogEnd"
+        },
+        {
+          "name": "effect-fog-start",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectFog.FogStart"
+        },
+        {
+          "name": "effect-lighting-enabled",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectLights.LightingEnabled"
+        },
+        {
+          "name": "effect-parameter",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect-parameter",
+            "microsoft.xna.framework.graphics:%effect-view",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectParameter: one named shader input.\n\nXNA's overload sets collapse into two generic functions carrying the value type\nas a keyword:\n\n    (setf (effect-parameter-value parameter :vector3) v)\n    (effect-parameter-value parameter :vector3)\n    (setf (effect-parameter-values parameter :single) #(1.0 2.0 3.0))\n    (effect-parameter-values parameter :single 3)\n\n`SetValueTranspose' is the :MATRIX-TRANSPOSE value type rather than a second\nfunction, because that is exactly what it is: the same value in transposed\nstorage, and CNA carries it as its own CNA_EffectValueType.\n\nThe array getters take a count, as XNA's do -- `GetValueSingleArray(int count)'."
+        },
+        {
+          "name": "effect-parameter-annotations",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-class",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectParameterClass."
+        },
+        {
+          "name": "effect-parameter-class-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The EFFECT-PARAMETER-CLASS member a value names."
+        },
+        {
+          "name": "effect-parameter-class-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a EFFECT-PARAMETER-CLASS member."
+        },
+        {
+          "name": "effect-parameter-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect-parameter-collection",
+            "microsoft.xna.framework.graphics:%effect-collection",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectParameterCollection."
+        },
+        {
+          "name": "effect-parameter-column-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-elements",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-name",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-parameter-class",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-parameter-type",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-row-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-semantic",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-structure-members",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-parameter-type",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectParameterType."
+        },
+        {
+          "name": "effect-parameter-type-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The EFFECT-PARAMETER-TYPE member a value names."
+        },
+        {
+          "name": "effect-parameter-type-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a EFFECT-PARAMETER-TYPE member."
+        },
+        {
+          "name": "effect-parameter-value",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameter",
+            "value-type"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "parameter",
+            "value-type"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EffectParameter's GetValue<T>() family, with the type named rather than\ninferred.\n\n    (effect-parameter-value parameter :single)     GetValueSingle()\n    (effect-parameter-value parameter :matrix)     GetValueMatrix()\n\n:MATRIX-TRANSPOSE is GetValueMatrixTranspose()."
+        },
+        {
+          "name": "effect-parameter-value-string",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameter"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "parameter"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EffectParameter.GetValueString()."
+        },
+        {
+          "name": "effect-parameter-value-texture",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameter"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "texture",
+            "parameter"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EffectParameter.GetValueTexture2D().\n\nAnswers the TEXTURE-2D this parameter was last set to, cross-checked against the\nhandle CNA reports, and NIL when nothing has been set. It has to work that way\nfor the reason GetVertexBuffers does: CNA's ABI has no route from a native handle\nback to the object that names it, so a binding can either remember what it bound\nor invent an object -- and inventing one would hand back a Texture2D with no\nowner, no dimensions and no disposal story.\n\nThere is no getter for the base Texture overload: XNA has none, and neither does\nCNA."
+        },
+        {
+          "name": "effect-parameter-values",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameter",
+            "value-type",
+            "count"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "values",
+            "parameter",
+            "value-type"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EffectParameter's GetValue*Array(int count) family.\n\nAnswers a simple vector of COUNT elements, freshly made, as XNA's does."
+        },
+        {
+          "name": "effect-parameters",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-pass",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect-pass",
+            "microsoft.xna.framework.graphics:%effect-view",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectPass.\n\nAPPLY selects this pass's shader state on the device. That is the public route to\ndrawing with an effect -- XNA has no `GraphicsDevice.CurrentEffect' -- and CNA\nrefuses a primitive draw until it has been called:\n\n    (dolist (pass (collection-elements (effect-technique-passes\n                                        (effect-current-technique effect))))\n      (apply-effect-pass pass)\n      (draw-user-primitives device ...))"
+        },
+        {
+          "name": "effect-pass-annotations",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-pass-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect-pass-collection",
+            "microsoft.xna.framework.graphics:%effect-collection",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectPassCollection."
+        },
+        {
+          "name": "effect-pass-name",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-prefer-per-pixel-lighting",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.PreferPerPixelLighting"
+        },
+        {
+          "name": "effect-projection",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectMatrices.Projection"
+        },
+        {
+          "name": "effect-specular-color",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.SpecularColor"
+        },
+        {
+          "name": "effect-specular-power",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.SpecularPower"
+        },
+        {
+          "name": "effect-technique",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect-technique",
+            "microsoft.xna.framework.graphics:%effect-view",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectTechnique."
+        },
+        {
+          "name": "effect-technique-annotations",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-technique-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:effect-technique-collection",
+            "microsoft.xna.framework.graphics:%effect-collection",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EffectTechniqueCollection."
+        },
+        {
+          "name": "effect-technique-name",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-technique-passes",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-techniques",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "effect-texture",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "texture",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.Texture.\n\nAnswers the TEXTURE-2D this effect was last given, cross-checked against the\nhandle CNA reports. As with EFFECT-PARAMETER-VALUE-TEXTURE and\nGET-VERTEX-BUFFERS, CNA's ABI has no route from a native handle back to the\nobject that names it, so this remembers rather than invents."
+        },
+        {
+          "name": "effect-texture-enabled",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.TextureEnabled"
+        },
+        {
+          "name": "effect-vertex-color-enabled",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BasicEffect.VertexColorEnabled"
+        },
+        {
+          "name": "effect-view",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectMatrices.View"
+        },
+        {
+          "name": "effect-world",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectMatrices.World"
+        },
+        {
+          "name": "enable-default-lighting",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IEffectLights.EnableDefaultLighting(): XNA's standard three-point rig.\n\nThe values are the runtime's, not this binding's: CNA applies its own preset\nthrough cna_effect_lights_enable_default, and CNA-Lisp does not second-guess it\nwith numbers copied out of a decompiler."
         },
         {
           "name": "end",
@@ -24744,6 +26688,25 @@
       "triangle-strip": 1,
       "line-list": 2,
       "line-strip": 3
+    },
+    "effect-parameter-class": {
+      "scalar": 0,
+      "vector": 1,
+      "matrix": 2,
+      "object": 3,
+      "struct": 4
+    },
+    "effect-parameter-type": {
+      "void": 0,
+      "bool": 1,
+      "int32": 2,
+      "single": 3,
+      "string": 4,
+      "texture": 5,
+      "texture-1d": 6,
+      "texture-2d": 7,
+      "texture-3d": 8,
+      "texture-cube": 9
     }
   },
   "predefined_colors": [

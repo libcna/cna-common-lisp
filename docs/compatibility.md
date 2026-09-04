@@ -88,31 +88,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=110 -->
-<!-- generated:selected members=1904 -->
-<!-- generated:complete types=105 -->
-<!-- generated:partial types=5 -->
+<!-- generated:selected types=126 -->
+<!-- generated:selected members=2057 -->
+<!-- generated:complete types=117 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1449 -->
+<!-- generated:complete members=1594 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=69 -->
-<!-- generated:not-applicable members=385 -->
+<!-- generated:missing members=72 -->
+<!-- generated:not-applicable members=390 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 110 types, 1904 members.
+Selection **Foundation 1 and the managed closures**: 126 types, 2061 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **105** |
-| Types partial | **5** |
+| Types complete | **117** |
+| Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1449** |
+| Members complete | **1594** |
 | Members partial | **1** |
-| Members missing | **69** |
-| Members not applicable | **385** |
+| Members missing | **72** |
+| Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -156,7 +156,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
-| `M.X.F.Graphics.SpriteBatch` | **partial** | 12 | 0 | 8 | 1 |
+| `M.X.F.Graphics.SpriteBatch` | **partial** | 14 | 0 | 6 | 1 |
 | `M.X.F.Graphics.SpriteSortMode` | **complete** | 5 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SpriteEffects` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SurfaceFormat` | **complete** | 20 | 0 | 0 | 1 |
@@ -193,6 +193,22 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.IndexBuffer` | **complete** | 11 | 0 | 0 | 1 |
 | `M.X.F.Graphics.DynamicIndexBuffer` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.Graphics.VertexBufferBinding` | **complete** | 7 | 0 | 0 | 0 |
+| `M.X.F.Graphics.Effect` | **partial** | 5 | 0 | 1 | 2 |
+| `M.X.F.Graphics.EffectTechnique` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectTechniqueCollection` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectPass` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectPassCollection` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectParameter` | **partial** | 49 | 0 | 2 | 0 |
+| `M.X.F.Graphics.EffectParameterCollection` | **complete** | 4 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectAnnotation` | **complete** | 14 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectAnnotationCollection` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectParameterClass` | **complete** | 5 | 0 | 0 | 1 |
+| `M.X.F.Graphics.EffectParameterType` | **complete** | 10 | 0 | 0 | 1 |
+| `M.X.F.Graphics.IEffectMatrices` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.IEffectLights` | **complete** | 6 | 0 | 0 | 0 |
+| `M.X.F.Graphics.IEffectFog` | **complete** | 4 | 0 | 0 | 0 |
+| `M.X.F.Graphics.DirectionalLight` | **partial** | 4 | 0 | 1 | 0 |
+| `M.X.F.Graphics.BasicEffect` | **partial** | 24 | 0 | 1 | 1 |
 | `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
@@ -281,7 +297,11 @@ back-reference.
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
-| `M.X.F.Graphics.SpriteBatch` | 8 | 0 |
+| `M.X.F.Graphics.SpriteBatch` | 6 | 0 |
+| `M.X.F.Graphics.EffectParameter` | 2 | 0 |
+| `M.X.F.Graphics.Effect` | 1 | 0 |
+| `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
+| `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 <!-- /generated-block:partial-frontier -->
 
 The counts in that table are the real remaining surface. The largest by far is
@@ -309,25 +329,25 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=158 -->
-<!-- generated:bound native structs=42 -->
-<!-- generated:bound native struct fields=312 -->
-<!-- generated:bound native constants=432 -->
+<!-- generated:bound native functions=273 -->
+<!-- generated:bound native structs=49 -->
+<!-- generated:bound native struct fields=359 -->
+<!-- generated:bound native constants=460 -->
 <!-- generated:bound native callbacks=6 -->
-<!-- generated:by-value aggregates=3 -->
-<!-- generated:shimmed routes=1 -->
+<!-- generated:by-value aggregates=6 -->
+<!-- generated:shimmed routes=4 -->
 <!-- generated:abi version encoded=5376 -->
 
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 158 |
-| Bound structs | 42 |
-| Bound struct fields | 312 |
-| Bound constants | 432 |
+| Bound functions | 273 |
+| Bound structs | 49 |
+| Bound struct fields | 359 |
+| Bound constants | 460 |
 | Bound callback typedefs | 6 |
-| By-value aggregates admitted | 3 |
-| Routes proved unbindable, and shimmed | 1 |
+| By-value aggregates admitted | 6 |
+| Routes proved unbindable, and shimmed | 4 |
 | Admitted ABI versions | 0.21.0 only (encoded 5376) |
 <!-- /generated-block:native-abi-summary -->
 

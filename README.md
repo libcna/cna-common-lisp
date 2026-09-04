@@ -34,13 +34,15 @@ No claim is made for another Common Lisp implementation, for Windows or macOS,
 for another ABI version, for a physical monitor, or for a GPU renderer.
 
 HEADLESS qualifies command submission and the lifecycle. The SOFTWARE lane
-qualifies the two pixel paths it actually tests: a `Clear` reaches the back
-buffer and reads back, and a `SpriteBatch` draw puts a generated opaque texture's
-own texels on exactly the pixels its destination rectangle names — checked at the
+qualifies the three pixel paths it actually tests: a `Clear` reaches the back
+buffer and reads back; a `SpriteBatch` draw puts a generated opaque texture's own
+texels on exactly the pixels its destination rectangle names — checked at the
 rectangle's corners and at the pixels immediately outside it, with a second,
-four-colour texture proving orientation as well as placement. It needs no display
-to do that. `docs/qualification.md` defines the claims and `docs/limitations.md`
-bounds them.
+four-colour texture proving orientation as well as placement; and a
+`DrawUserPrimitives` triangle drawn through a `BasicEffect` pass covers exactly
+the pixels its geometry covers and none outside them. It needs no display to do
+any of that. `docs/qualification.md` defines the claims and
+`docs/limitations.md` bounds them.
 
 ## What is implemented
 
@@ -106,18 +108,23 @@ stubs:
   layout it can prove and refuses the rest by name;
 * the **primitive draw calls** — `DrawPrimitives`, `DrawIndexedPrimitives`,
   `DrawUserPrimitives`, `DrawUserIndexedPrimitives` — with XNA's own argument
-  validation reproduced from the IL. They are submitted, not yet rasterised: CNA
-  refuses a draw until an `Effect` is current, which is XNA's rule, and `Effect`
-  is the next closure. `docs/limitations.md` has the boundary and the test that
-  pins it;
+  validation reproduced from the IL, and, since the effect closure landed, a
+  rasterised triangle to show for it;
+* **`Effect` and `BasicEffect`**: the whole effect object graph — techniques,
+  passes, parameters, annotations and their four collections — plus the three
+  `IEffect*` contracts as generic functions, `DirectionalLight`, and
+  `SpriteBatch.Begin`'s two remaining overloads. `Effect(GraphicsDevice, byte[])`
+  loads compiled bytecode where the renderer can, and reports CNA's refusal where
+  it cannot rather than substituting a stock shader;
 * the **vertex declaration** surface: `VertexElement`, `VertexDeclaration` with
   XNA's own five-stage validator in its own refusal order, `IVertexType` as a
   generic function, and the four standard vertex value types with the exact
   declarations their class constructors build — strides 16, 20, 24 and 32,
   cross-checked element for element against CNA's own;
-* `SpriteBatch.Begin`'s three state-bearing shapes, and only those three: the
-  parameterless one, the sort-mode-and-blend-state one and the five-parameter
-  one, with a null state meaning the framework default exactly as XNA's
+* `SpriteBatch.Begin`'s five shapes, and only those five: the parameterless one,
+  the sort-mode-and-blend-state one, the five-parameter one and the two that add
+  an `Effect` and a transform, with a null state meaning the framework default
+  exactly as XNA's
   `SetRenderState` does. The two `Effect`-bearing overloads are **not** faked and
   are measured as missing;
 * the CLR **event projection**: `game.Activated += handler` becomes
@@ -130,27 +137,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=110 -->
-<!-- generated:selected members=1904 -->
-<!-- generated:complete types=105 -->
-<!-- generated:partial types=5 -->
+<!-- generated:selected types=126 -->
+<!-- generated:selected members=2057 -->
+<!-- generated:complete types=117 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1449 -->
+<!-- generated:complete members=1594 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=69 -->
-<!-- generated:not-applicable members=385 -->
+<!-- generated:missing members=72 -->
+<!-- generated:not-applicable members=390 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=158 -->
-<!-- generated:bound native structs=42 -->
+<!-- generated:bound native functions=273 -->
+<!-- generated:bound native structs=49 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **110 XNA types and 1904 members**:
+The generated scoreboard, over a selection of **126 XNA types and 2061 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **105 / 5 / 0** |
-| Members complete / missing | **1449 / 69** |
-| Members not applicable | **385** |
+| Types complete / partial / missing | **117 / 9 / 0** |
+| Members complete / missing | **1594 / 72** |
+| Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -163,7 +170,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **158 native routes** and **42 native structs**,
+The private foreign layer binds **273 native routes** and **49 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

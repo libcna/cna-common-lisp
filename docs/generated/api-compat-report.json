@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 110,
-  "member_count": 1904
+  "type_count": 126,
+  "member_count": 2061
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 110,
-  "members": 1904,
+  "types": 126,
+  "members": 2057,
   "types_by_status": {
-   "partial": 5,
-   "complete": 105
+   "partial": 9,
+   "complete": 117
   },
   "members_by_status": {
-   "complete": 1449,
-   "missing": 69,
-   "not-applicable": 385,
+   "complete": 1594,
+   "missing": 72,
+   "not-applicable": 390,
    "partial": 1
   },
-  "diagnostics": 69,
+  "diagnostics": 72,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 69,
+   "missing_member": 72,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1308,8 +1308,8 @@
     "Begin()": "complete",
     "Begin(SpriteSortMode,BlendState)": "complete",
     "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)": "complete",
-    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)": "missing",
-    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)": "missing",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)": "complete",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)": "complete",
     "End()": "complete",
     "Draw(Texture2D,Vector2,Color)": "complete",
     "Draw(Texture2D,Vector2,Nullable`1,Color)": "complete",
@@ -1881,6 +1881,271 @@
     "VertexBuffer": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:vertex-buffer-binding"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.Effect",
+   "status": "partial",
+   "members": {
+    "new(GraphicsDevice,Byte[])": "complete",
+    "new(Effect)": "not-applicable",
+    "Clone()": "complete",
+    "OnApply()": "missing",
+    "Dispose(Boolean)": "not-applicable",
+    "Parameters": "complete",
+    "Techniques": "complete",
+    "CurrentTechnique": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectTechnique",
+   "status": "complete",
+   "members": {
+    "Annotations": "complete",
+    "Passes": "complete",
+    "Name": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-technique"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectTechniqueCollection",
+   "status": "complete",
+   "members": {
+    "GetEnumerator()": "complete",
+    "Item": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-technique-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectPass",
+   "status": "complete",
+   "members": {
+    "Apply()": "complete",
+    "Annotations": "complete",
+    "Name": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-pass"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectPassCollection",
+   "status": "complete",
+   "members": {
+    "GetEnumerator()": "complete",
+    "Item": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-pass-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectParameter",
+   "status": "partial",
+   "members": {
+    "SetValue(Texture)": "complete",
+    "SetValue(String)": "complete",
+    "SetValue(Matrix[])": "complete",
+    "SetValue(Matrix)": "complete",
+    "SetValue(Quaternion[])": "complete",
+    "SetValue(Quaternion)": "complete",
+    "SetValue(Vector4[])": "complete",
+    "SetValue(Vector4)": "complete",
+    "SetValue(Vector3[])": "complete",
+    "SetValue(Vector3)": "complete",
+    "SetValue(Vector2[])": "complete",
+    "SetValue(Vector2)": "complete",
+    "SetValue(Single[])": "complete",
+    "SetValue(Single)": "complete",
+    "SetValue(Int32[])": "complete",
+    "SetValue(Int32)": "complete",
+    "SetValue(Boolean[])": "complete",
+    "SetValue(Boolean)": "complete",
+    "SetValueTranspose(Matrix[])": "complete",
+    "SetValueTranspose(Matrix)": "complete",
+    "GetValueBoolean()": "complete",
+    "GetValueBooleanArray(Int32)": "complete",
+    "GetValueInt32()": "complete",
+    "GetValueInt32Array(Int32)": "complete",
+    "GetValueSingle()": "complete",
+    "GetValueSingleArray(Int32)": "complete",
+    "GetValueVector2()": "complete",
+    "GetValueVector2Array(Int32)": "complete",
+    "GetValueVector3()": "complete",
+    "GetValueVector3Array(Int32)": "complete",
+    "GetValueVector4()": "complete",
+    "GetValueVector4Array(Int32)": "complete",
+    "GetValueQuaternion()": "complete",
+    "GetValueQuaternionArray(Int32)": "complete",
+    "GetValueMatrix()": "complete",
+    "GetValueMatrixArray(Int32)": "complete",
+    "GetValueMatrixTranspose()": "complete",
+    "GetValueMatrixTransposeArray(Int32)": "complete",
+    "GetValueString()": "complete",
+    "GetValueTexture2D()": "complete",
+    "GetValueTextureCube()": "missing",
+    "GetValueTexture3D()": "missing",
+    "ParameterType": "complete",
+    "ParameterClass": "complete",
+    "Elements": "complete",
+    "StructureMembers": "complete",
+    "ColumnCount": "complete",
+    "RowCount": "complete",
+    "Annotations": "complete",
+    "Semantic": "complete",
+    "Name": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-parameter"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectParameterCollection",
+   "status": "complete",
+   "members": {
+    "GetParameterBySemantic(String)": "complete",
+    "GetEnumerator()": "complete",
+    "Item": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-parameter-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectAnnotation",
+   "status": "complete",
+   "members": {
+    "GetValueBoolean()": "complete",
+    "GetValueInt32()": "complete",
+    "GetValueSingle()": "complete",
+    "GetValueVector2()": "complete",
+    "GetValueVector3()": "complete",
+    "GetValueVector4()": "complete",
+    "GetValueMatrix()": "complete",
+    "GetValueString()": "complete",
+    "ParameterType": "complete",
+    "ParameterClass": "complete",
+    "ColumnCount": "complete",
+    "RowCount": "complete",
+    "Semantic": "complete",
+    "Name": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-annotation"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectAnnotationCollection",
+   "status": "complete",
+   "members": {
+    "GetEnumerator()": "complete",
+    "Item": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-annotation-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Scalar": "complete",
+    "Vector": "complete",
+    "Matrix": "complete",
+    "Object": "complete",
+    "Struct": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-parameter-class"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Void": "complete",
+    "Bool": "complete",
+    "Int32": "complete",
+    "Single": "complete",
+    "String": "complete",
+    "Texture": "complete",
+    "Texture1D": "complete",
+    "Texture2D": "complete",
+    "Texture3D": "complete",
+    "TextureCube": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:effect-parameter-type"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+   "status": "complete",
+   "members": {
+    "World": "complete",
+    "View": "complete",
+    "Projection": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework.graphics"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IEffectLights",
+   "status": "complete",
+   "members": {
+    "EnableDefaultLighting()": "complete",
+    "DirectionalLight0": "complete",
+    "DirectionalLight1": "complete",
+    "DirectionalLight2": "complete",
+    "AmbientLightColor": "complete",
+    "LightingEnabled": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework.graphics"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IEffectFog",
+   "status": "complete",
+   "members": {
+    "FogEnabled": "complete",
+    "FogStart": "complete",
+    "FogEnd": "complete",
+    "FogColor": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework.graphics"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+   "status": "partial",
+   "members": {
+    "new(EffectParameter,EffectParameter,EffectParameter,DirectionalLight)": "missing",
+    "Enabled": "complete",
+    "Direction": "complete",
+    "DiffuseColor": "complete",
+    "SpecularColor": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:directional-light"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.BasicEffect",
+   "status": "partial",
+   "members": {
+    "new(GraphicsDevice)": "complete",
+    "new(BasicEffect)": "not-applicable",
+    "Clone()": "complete",
+    "EnableDefaultLighting()": "complete",
+    "OnApply()": "missing",
+    "World": "complete",
+    "View": "complete",
+    "Projection": "complete",
+    "DiffuseColor": "complete",
+    "EmissiveColor": "complete",
+    "SpecularColor": "complete",
+    "SpecularPower": "complete",
+    "Alpha": "complete",
+    "LightingEnabled": "complete",
+    "PreferPerPixelLighting": "complete",
+    "AmbientLightColor": "complete",
+    "DirectionalLight0": "complete",
+    "DirectionalLight1": "complete",
+    "DirectionalLight2": "complete",
+    "FogEnabled": "complete",
+    "FogStart": "complete",
+    "FogEnd": "complete",
+    "FogColor": "complete",
+    "TextureEnabled": "complete",
+    "Texture": "complete",
+    "VertexColorEnabled": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:basic-effect"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
@@ -3032,16 +3297,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)",
-   "detail": "Needs Effect. The parameter is nullable in XNA, so a projection could accept an :EFFECT that may only ever be NIL -- which would be a fourth Begin shape XNA does not have, distinguishable from the five-parameter overload by nothing a caller could act on. It stays missing until Effect exists."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)",
-   "detail": "Needs Effect, for the same reason. Matrix exists and is complete; the effect parameter is what is absent, and CNA's own route for this overload (cna_sprite_batch_begin_with_effect) takes an Effect handle, so there is nothing to bind it to yet."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,String,Vector2,Color)",
    "detail": "Needs SpriteFont."
   },
@@ -3069,6 +3324,31 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)",
    "detail": "Needs SpriteFont and StringBuilder."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.Effect.OnApply()",
+   "detail": "no exported 'on-apply' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.EffectParameter.GetValueTextureCube()",
+   "detail": "no exported 'get-value-texture-cube' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.EffectParameter.GetValueTexture3D()",
+   "detail": "no exported 'get-value-texture-3d' in microsoft.xna.framework.graphics"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.DirectionalLight.new(EffectParameter,EffectParameter,EffectParameter,DirectionalLight)",
+   "detail": "this constructor signature is not projected"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.BasicEffect.OnApply()",
+   "detail": "no exported 'on-apply' in microsoft.xna.framework.graphics"
   }
  ]
 }

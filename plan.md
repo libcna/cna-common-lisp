@@ -117,23 +117,29 @@ Measured, not assumed: CFFI answers *"Unable to call structures by value without
 cffi-libffi loaded"*, and `cffi-libffi` needs libffi headers and a C compiler at
 load time, which a released CNA-Lisp must not.
 
-So a by-value aggregate is bound only when the System V AMD64 ABI classifies
-every eightbyte INTEGER and the size is at most 16 bytes, and is passed as one
-scalar per eightbyte. `CNA_Color` becomes `:uint32`; `CNA_StringView` becomes
-`:pointer :uint64`. A MEMORY-class or SSE-class aggregate is **refused by the
-generator**, and the route is recorded as blocked with the generator's own proof.
+So a by-value aggregate is bound only when it is at most 16 bytes, which is what
+makes the ABI pass it in registers, and is passed as one scalar per eightbyte, of
+the eightbyte's own class: an integer for INTEGER, a double -- or a float for a
+trailing four-byte one -- for SSE. `CNA_Color` becomes `:uint32`; `CNA_StringView`
+becomes `:pointer :uint64`; `CNA_Vector3` becomes `:double :float`. A
+MEMORY-class aggregate, larger than 16 bytes, travels on the stack and no
+sequence of scalar arguments occupies the same place, so it is **refused by the
+generator** and the route is either shimmed or recorded as blocked with the
+generator's own proof.
 
 `tools/native-abi/valueprobe.generated.c` defines functions with the real
 by-value prototypes; the run-time test calls them through the flattened shape and
 compares byte for byte.
 
-One route resists even that: `cna_graphics_device_set_viewport` takes a 24-byte
-aggregate, which the ABI passes in memory. For that one the generator emits a
-tiny private shim -- a wrapper that takes the aggregate by pointer and the real
+Four routes resist even that: `cna_graphics_device_set_viewport` takes a 24-byte
+aggregate and the three `cna_effect_matrices_set_*` routes take a 64-byte one,
+which the ABI passes in memory. For those the generator emits a tiny private
+shim -- a wrapper that takes the aggregate by pointer and the real
 route by function pointer, links against nothing, and does only the ABI
 transition. It is optional and not shipped prebuilt, so a release still loads
-with no C toolchain; `CNA_LISP_SHIM` names a build of it and the setter refuses
-with an actionable condition when it is absent.
+with no C toolchain; `CNA_LISP_SHIM` names a build of it and those setters refuse
+with an actionable condition when it is absent. Every corresponding *getter*
+takes a pointer and needs nothing.
 
 ### 4.5 The graphics device stores no handle
 
@@ -194,9 +200,13 @@ are pure managed and touch no native route:
   `IVertexType` and the four standard vertex value types -- computed from the
   pinned assembly and cross-checked against CNA's own built-in declarations;
 * the vertex and index buffers, their dynamic subclasses, `VertexBufferBinding`,
-  the device's stream and index state, and the four primitive draw calls. The
-  draws are submitted and argument-checked; they are not rasterised, because CNA
-  requires a current `Effect` and `Effect` is the next closure.
+  the device's stream and index state, and the four primitive draw calls;
+* the effect closure -- `Effect`, its techniques, passes, parameters, annotations
+  and their four collections, the three `IEffect*` contracts as generic
+  functions, `DirectionalLight` and `BasicEffect` -- which is what makes a
+  primitive draw legal, and with it `SpriteBatch.Begin`'s last two overloads.
+  With it the rasterizer lane gained its third proof: a triangle drawn through a
+  `BasicEffect` pass covering exactly the pixels its geometry covers.
 
 ## 6. Measured status
 
@@ -219,31 +229,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=110 -->
-<!-- generated:selected members=1904 -->
-<!-- generated:complete types=105 -->
-<!-- generated:partial types=5 -->
+<!-- generated:selected types=126 -->
+<!-- generated:selected members=2057 -->
+<!-- generated:complete types=117 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1449 -->
+<!-- generated:complete members=1594 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=69 -->
-<!-- generated:not-applicable members=385 -->
+<!-- generated:missing members=72 -->
+<!-- generated:not-applicable members=390 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 110 types, 1904 members.
+Selection **Foundation 1 and the managed closures**: 126 types, 2061 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **105** |
-| Types partial | **5** |
+| Types complete | **117** |
+| Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1449** |
+| Members complete | **1594** |
 | Members partial | **1** |
-| Members missing | **69** |
-| Members not applicable | **385** |
+| Members missing | **72** |
+| Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

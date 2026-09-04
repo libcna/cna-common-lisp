@@ -134,14 +134,17 @@ and one of them used to be asserted on the strength of the other:
 | `clear` | clear to CornflowerBlue, read the back buffer | `GraphicsDevice.Clear` reaches the back buffer and the readback returns those pixels |
 | `sprite` | clear, then draw a generated 8×8 fully opaque texture to an 8×8 destination at (16,16) with `BlendState.Opaque`, `SamplerState.PointClamp`, `Color.White`, no rotation/scale/origin — then read the corners of that rectangle *and* the pixels immediately outside it | **`SpriteBatch.Draw` rasterises**: the texture's own texels land on exactly the pixels its destination names, and on none outside them |
 | `sprite` | the same with a generated 4×4 texture of four differently-coloured 2×2 quadrants | orientation and sampling are right, not merely placement — a flipped or transposed sample would fail |
+| `primitive` | clear, make a `BasicEffect`, apply its one pass, then one `DrawUserPrimitives` triangle list in clip space — World, View and Projection left at the identity CNA reports as their default, `VertexColorEnabled` on and lighting off — then read four points inside the triangle and five outside it | **the primitive pipeline rasterises**: the vertices' own colour lands on the pixels the geometry covers and on none outside it, and no matrix setter and therefore no optional shim takes part in the proof |
 
 The textures are **generated**, not drawn:
 `tools/qualification/make-pixel-fixtures.py` states every texel in source, so the
 expected colours are checkable without opening an image editor.
 
-`tools/qualification/rasterizer.sh` requires **both** kinds and fails if either
-is missing, so the lane cannot pass on a clear alone. Verified in both directions:
-it exits 1 against a `HEADLESS` library and 0 against a `SOFTWARE` one.
+`tools/qualification/rasterizer.sh` requires **all three** kinds and fails if any
+is missing, so the lane cannot pass on a clear alone, and the sprite path cannot
+stand in for the primitive path — they are different paths through the renderer.
+Verified in both directions: it exits 1 against a `HEADLESS` library and 0
+against a `SOFTWARE` one.
 
 They are separate jobs on purpose. They support different claims, and a failure
 in one must not take down the other.
@@ -160,11 +163,17 @@ proof is absent.
 
 ### What is not in the rasterizer lane
 
-**Primitive drawing.** `DrawPrimitives` and the `DrawUser*` family are
-implemented and their arguments are validated, but CNA refuses the draw itself
-until an `Effect` is current -- which is XNA's own `VerifyCanDraw` rule. No
-primitive has been rasterised, and `docs/limitations.md` records the boundary
-with the test that pins it.
+**Every draw shape but the three above.** Each proof is one shape. The sprite
+ones are axis-aligned, unrotated, unscaled, untinted opaque blits; the primitive
+one is a single untextured, unlit, unfogged triangle list with no transform.
+Rotation, scaling, tinting, blending, texturing, lighting, fog, indexed draws,
+buffer-backed draws and every non-identity transform are submitted and accepted,
+and no pixel of any of them is asserted anywhere.
+
+**Compiled effects.** `Effect(GraphicsDevice, byte[])` is implemented, and
+neither qualification renderer has `CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`, so
+no effect with a reflected parameter graph has ever been loaded here.
+`docs/limitations.md` says what that means for `EffectParameter`.
 
 **No claim is made about a physical monitor.** Pixels in a back buffer are pixels
 in a back buffer. Nothing here has been displayed to anyone.

@@ -380,3 +380,217 @@
         (gfx:set-vertex-buffer device nil)))
     (is (eq :accepted outcome)
         "a buffered draw with an applied effect pass was refused: ~a" outcome)))
+
+;;; --- SpriteBatch.Begin's two effect-bearing overloads ---------------------------------
+
+(define-native-test sprite-batch-begin-takes-an-effect-and-a-transform
+  (with-effect-game (game effect)
+    (let ((batch (batch game)))
+      (gfx:begin batch :sort-mode :deferred
+                       :blend-state (gfx:blend-state-opaque)
+                       :sampler-state (gfx:sampler-state-point-clamp)
+                       :depth-stencil-state (gfx:depth-stencil-state-none)
+                       :rasterizer-state (gfx:rasterizer-state-cull-none)
+                       :effect effect)
+      (gfx:end batch)
+      ;; And the seven-parameter one. The transform travels by pointer, so this
+      ;; needs no shim even though it carries a Matrix.
+      (gfx:begin batch :sort-mode :deferred
+                       :blend-state (gfx:blend-state-opaque)
+                       :sampler-state (gfx:sampler-state-point-clamp)
+                       :depth-stencil-state (gfx:depth-stencil-state-none)
+                       :rasterizer-state (gfx:rasterizer-state-cull-none)
+                       :effect effect
+                       :transform-matrix (xna:matrix-identity))
+      (gfx:end batch)
+      ;; A NIL effect is the default sprite effect, which is what a null Effect
+      ;; means to XNA -- and is not the same as leaving the keyword out.
+      (gfx:begin batch :sort-mode :deferred
+                       :blend-state (gfx:blend-state-opaque)
+                       :sampler-state (gfx:sampler-state-point-clamp)
+                       :depth-stencil-state (gfx:depth-stencil-state-none)
+                       :rasterizer-state (gfx:rasterizer-state-cull-none)
+                       :effect nil)
+      (gfx:end batch))))
+
+(define-native-test sprite-batch-begin-refuses-the-shapes-xna-does-not-have
+  (with-effect-game (game effect)
+    (let ((batch (batch game)))
+      ;; An effect without the four states is no XNA overload.
+      (signals xna:cna-usage-error
+        (gfx:begin batch :sort-mode :deferred :blend-state nil :effect effect))
+      (signals xna:cna-usage-error
+        (gfx:begin batch :effect effect))
+      ;; A transform without an effect is no XNA overload either.
+      (signals xna:cna-usage-error
+        (gfx:begin batch :sort-mode :deferred
+                         :blend-state nil :sampler-state nil
+                         :depth-stencil-state nil :rasterizer-state nil
+                         :transform-matrix (xna:matrix-identity))))))
+
+;;; --- the EffectParameter value surface ------------------------------------------------
+;;;
+;;; No effect reachable here has a parameter: CNA reflects a parameter graph only
+;;; from compiled effect bytecode, and neither qualification renderer has
+;;; CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS. Rather than leave fifty-one members
+;;; written and never once run, these build a parameter collection through CNA's
+;;; own construction routes and round-trip every value type through the real
+;;; marshalling.
+;;;
+;;; What that proves and what it does not: the layout each value type is written
+;;; and read with is exact, because CNA stored and returned it. It says nothing
+;;; about how a real shader's parameter behaves, which nothing available here
+;;; could say.
+
+(defmacro with-standalone-parameters ((collection effect &rest specs) &body body)
+  "Build a CNA parameter collection by hand and project it, for BODY.
+
+Each SPEC is (name semantic class type). The handles are given back afterwards,
+in the order CNA expects."
+  (let ((handle (gensym "HANDLE")))
+    `(let ((,handle 0) (,collection nil))
+       (unwind-protect
+            (progn
+              (cffi:with-foreign-object (out :uint64)
+                (int:check-result (ffi::%effect-parameter-collection-create out)
+                                  "parameter collection")
+                (setf ,handle (cffi:mem-ref out :uint64)))
+              ,@(loop for (name semantic class type) in specs
+                      collect `(add-standalone-parameter ,handle ,name ,semantic
+                                                         ,class ,type))
+              (setf ,collection (gfx::%build-parameter-collection ,handle ,effect 0))
+              ,@body)
+         (progn
+           (when ,collection (gfx::%destroy-parameter-collection ,collection))
+           (unless (zerop ,handle)
+             (ffi::%effect-parameter-collection-destroy ,handle)))))))
+
+(defun add-standalone-parameter (collection name semantic parameter-class parameter-type)
+  "Add one parameter to a hand-built CNA collection, and give its handle back.
+
+The element view is destroyed immediately: %BUILD-PARAMETER-COLLECTION takes its
+own views of everything in the collection, and a view kept here as well would be
+one CNA is still owed when the game shuts down."
+  (cffi:with-foreign-objects
+      ((info '(:struct ffi::cna-effect-parameter-create-info)) (out :uint64))
+    (cffi:foreign-funcall "memset" :pointer info :int 0
+                          :size ffi::+sizeof-cna-effect-parameter-create-info+ :void)
+    (int:with-utf8-view (name-data name-length name)
+      (int:with-utf8-view (semantic-data semantic-length semantic)
+        (macrolet ((slot (field)
+                     `(cffi:foreign-slot-value
+                       info '(:struct ffi::cna-effect-parameter-create-info) ',field)))
+          (setf (slot ffi::struct-size) ffi::+sizeof-cna-effect-parameter-create-info+
+                (slot ffi::struct-version) 1
+                (slot ffi::row-count) 1
+                (slot ffi::column-count) 1
+                (slot ffi::parameter-class) parameter-class
+                (slot ffi::parameter-type) parameter-type))
+        (let ((view (cffi:foreign-slot-pointer
+                     info '(:struct ffi::cna-effect-parameter-create-info) 'ffi::name)))
+          (setf (cffi:foreign-slot-value view '(:struct ffi::cna-string-view) 'ffi::data)
+                name-data
+                (cffi:foreign-slot-value view '(:struct ffi::cna-string-view)
+                                         'ffi::byte-length)
+                name-length))
+        (let ((view (cffi:foreign-slot-pointer
+                     info '(:struct ffi::cna-effect-parameter-create-info) 'ffi::semantic)))
+          (setf (cffi:foreign-slot-value view '(:struct ffi::cna-string-view) 'ffi::data)
+                semantic-data
+                (cffi:foreign-slot-value view '(:struct ffi::cna-string-view)
+                                         'ffi::byte-length)
+                semantic-length))
+        (int:check-result
+         (ffi::%effect-parameter-collection-add-create collection info out)
+         "add parameter")))
+    (ffi::%effect-parameter-destroy (cffi:mem-ref out :uint64))))
+
+(define-native-test a-parameter-reports-the-metadata-it-was-made-with
+  (with-effect-game (game effect)
+    (declare (ignore game))
+    (with-standalone-parameters (parameters effect
+                                 ("WorldMatrix" "WORLD"
+                                  ffi::+effect-parameter-class-matrix+
+                                  ffi::+effect-parameter-type-single+)
+                                 ("Tint" "COLOR"
+                                  ffi::+effect-parameter-class-vector+
+                                  ffi::+effect-parameter-type-single+))
+      (is (= 2 (gfx:collection-count parameters)))
+      (let ((world (gfx:collection-item parameters "WorldMatrix")))
+        (is (not (null world)) "the by-name indexer did not find WorldMatrix")
+        (is (equal "WorldMatrix" (gfx:effect-parameter-name world)))
+        (is (equal "WORLD" (gfx:effect-parameter-semantic world)))
+        (is (eq :matrix (gfx:effect-parameter-parameter-class world)))
+        (is (eq :single (gfx:effect-parameter-parameter-type world)))
+        (is (eq world (gfx:collection-item parameters 0)))
+        (is (eq world (gfx:collection-parameter-by-semantic parameters "WORLD"))))
+      (is (null (gfx:collection-item parameters "no parameter is called this")))
+      (is (null (gfx:collection-parameter-by-semantic parameters "NOSUCH"))))))
+
+(define-native-test every-parameter-value-type-round-trips
+  ;; One assertion per CNA_EffectValueType. The layouts are what is being proved:
+  ;; a wrong one gives back a value that is close but not equal, or garbage in
+  ;; the last field, which is why every field is checked and not just the first.
+  (with-effect-game (game effect)
+    (declare (ignore game))
+    (with-standalone-parameters (parameters effect
+                                 ("value" "" ffi::+effect-parameter-class-scalar+
+                                  ffi::+effect-parameter-type-single+))
+      (let ((p (gfx:collection-item parameters 0)))
+        (setf (gfx:effect-parameter-value p :boolean) t)
+        (is (eq t (gfx:effect-parameter-value p :boolean)))
+        (setf (gfx:effect-parameter-value p :boolean) nil)
+        (is (null (gfx:effect-parameter-value p :boolean)))
+        (setf (gfx:effect-parameter-value p :int32) -4242)
+        (is (= -4242 (gfx:effect-parameter-value p :int32)))
+        (setf (gfx:effect-parameter-value p :single) 0.125)
+        (is (= 0.125f0 (gfx:effect-parameter-value p :single)))
+        (setf (gfx:effect-parameter-value p :vector2) (xna:make-vector2 1.5 -2.5))
+        (let ((v (gfx:effect-parameter-value p :vector2)))
+          (is (= 1.5f0 (xna:vector2-x v)))
+          (is (= -2.5f0 (xna:vector2-y v))))
+        (setf (gfx:effect-parameter-value p :vector3) (v3 1.0 2.0 3.0))
+        (let ((v (gfx:effect-parameter-value p :vector3)))
+          (is (= 3.0f0 (xna:vector3-z v)) "Z is where a wrong Vector3 layout shows"))
+        (setf (gfx:effect-parameter-value p :vector4)
+              (xna:make-vector4 1.0 2.0 3.0 4.0))
+        (let ((v (gfx:effect-parameter-value p :vector4)))
+          (is (= 4.0f0 (xna:vector4-w v))))
+        (setf (gfx:effect-parameter-value p :quaternion)
+              (xna:make-quaternion 0.0 0.0 0.0 1.0))
+        (let ((q (gfx:effect-parameter-value p :quaternion)))
+          (is (= 1.0f0 (xna:quaternion-w q))))
+        ;; A matrix, and the same matrix transposed, are different value types and
+        ;; must not be the same storage.
+        (let ((m (xna:make-matrix 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0
+                                  9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0)))
+          (setf (gfx:effect-parameter-value p :matrix) m)
+          (is (xna:matrix-equal m (gfx:effect-parameter-value p :matrix)))
+          (setf (gfx:effect-parameter-value p :matrix-transpose) m)
+          (is (xna:matrix-equal m (gfx:effect-parameter-value p :matrix-transpose))))
+        ;; And a string, which is the one value with no fixed width.
+        (setf (gfx:effect-parameter-value-string p) "CNA-Lisp ✓")
+        (is (equal "CNA-Lisp ✓" (gfx:effect-parameter-value-string p)))))))
+
+(define-native-test parameter-arrays-round-trip-and-refuse-what-they-cannot-lay-out
+  (with-effect-game (game effect)
+    (declare (ignore game))
+    (with-standalone-parameters (parameters effect
+                                 ("values" "" ffi::+effect-parameter-class-vector+
+                                  ffi::+effect-parameter-type-single+))
+      (let ((p (gfx:collection-item parameters 0)))
+        (setf (gfx:effect-parameter-values p :single) #(1.0 2.0 4.0 8.0))
+        (is (equalp #(1.0f0 2.0f0 4.0f0 8.0f0)
+                    (gfx:effect-parameter-values p :single 4)))
+        (setf (gfx:effect-parameter-values p :vector3)
+              (list (v3 1.0 2.0 3.0) (v3 4.0 5.0 6.0)))
+        (let ((back (gfx:effect-parameter-values p :vector3 2)))
+          (is (= 2 (length back)))
+          (is (= 6.0f0 (xna:vector3-z (aref back 1)))
+              "the second element's Z is where a wrong stride would show"))
+        ;; A value type CNA does not have is refused by name, not guessed at.
+        (handler-case
+            (progn (setf (gfx:effect-parameter-value p :colour) 1)
+                   (fail ":colour was accepted as an effect value type"))
+          (xna:cna-usage-error (condition)
+            (is (search "value type" (princ-to-string condition)))))))))

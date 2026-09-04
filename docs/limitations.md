@@ -23,9 +23,10 @@ That proves the lifecycle ran, the device was borrowed, the commands were
 accepted and the resources were created and destroyed. It proves **nothing** about
 what a pixel looks like.
 
-There is no visible-rendering claim and no rasterisation readback test. Until one
-of those exists, "drew a sprite" here means "submitted a sprite draw that the
-renderer accepted".
+There is no visible-rendering claim anywhere in this repository. Under HEADLESS,
+"drew a sprite" means "submitted a sprite draw that the renderer accepted"; the
+rasterizer lane below is what turns that into a statement about pixels, and only
+for the shapes it actually reads back.
 
 ### The rasterizer lane, which does prove pixels
 
@@ -36,7 +37,7 @@ zeroes. Under `HEADLESS` it therefore refuses, by name.
 
 Under a rasterising renderer it answers. Measured against a CNA built with
 `-DCNA_GRAPHICS_RENDERER=SOFTWARE` — a CPU rasteriser, needing **no display and
-no Xvfb** — in two separate proofs, kept apart because they are two claims:
+no Xvfb** — in three separate proofs, kept apart because they are three claims:
 
 * **clear.** Clearing to `CornflowerBlue` reads back `(100, 149, 237, 255)` for
   every pixel of the window asked for.
@@ -48,16 +49,28 @@ no Xvfb** — in two separate proofs, kept apart because they are two claims:
   2×2 quadrants in four colours — lands each quadrant on its own pixels, so
   orientation and sampling are proved and not only placement.
 
-`tools/qualification/rasterizer.sh` requires both and fails when either is
+* **primitive.** A `BasicEffect` pass applied, then one `DrawUserPrimitives`
+  triangle in clip space — the effect's World, View and Projection left at the
+  identity CNA reports as their default, so no matrix setter and therefore no
+  optional shim takes part — puts the vertices' own colour on four sampled points
+  inside the triangle and leaves five outside it, and the two far corners, at the
+  clear colour. `VertexColorEnabled` is on and lighting off, so the colour read
+  back is the vertex colour and not a shading result.
+
+`tools/qualification/rasterizer.sh` requires all three and fails when any is
 absent; a clear alone is not accepted as evidence about `SpriteBatch`, which it
-briefly was.
+briefly was, and the sprite path is not accepted as evidence about the primitive
+path, which is a different path through the renderer.
 
 Three things this does *not* establish. It is not a claim about a physical
 monitor; a back buffer is a back buffer. It is one renderer: `SOFTWARE`
 rasterises on the CPU, and nothing here says a GPU renderer would produce the
-same pixels. And it is one draw shape — an axis-aligned, unrotated, unscaled,
-untinted, opaque blit; rotation, scaling, tinting and blending are submitted and
-accepted but their pixels are not asserted anywhere.
+same pixels. And each proof is one shape: the sprite one is an axis-aligned,
+unrotated, unscaled, untinted, opaque blit, and the primitive one is a single
+untextured, unlit, unfogged triangle list with no transform. Rotation, scaling,
+tinting, blending, texturing, lighting, fog, indexed and buffer-backed draws and
+every non-identity transform are submitted and accepted, and their pixels are not
+asserted anywhere.
 
 ## No `cffi-libffi`, and what that costs
 
@@ -66,20 +79,25 @@ requires libffi headers and a C compiler at load time. CNA-Lisp does not depend 
 it, so a released binding needs neither.
 
 The cost is that a route taking a by-value aggregate the System V AMD64 ABI
-classifies as MEMORY (larger than 16 bytes), or one with a floating-point (SSE)
-eightbyte, cannot be bound. See `docs/native-abi.md`.
+classifies as MEMORY — one larger than 16 bytes, which travels on the stack —
+cannot be bound. An aggregate of at most 16 bytes *can*: each of its eightbytes
+is passed as one scalar of the eightbyte's own class, an integer for INTEGER and
+a double (or a float for a trailing four-byte one) for SSE. See
+`docs/native-abi.md`, and `tests/native/struct-passing.lisp` for the proof
+against a C compiler's own idea of the convention.
 
-One member is affected: `GraphicsDevice.Viewport`'s setter, whose route takes
-`CNA_Viewport` (24 bytes) by value. The refusal is proved by the generator, not
-asserted.
+Four members are affected, all taking `CNA_Matrix` (64 bytes) or `CNA_Viewport`
+(24 bytes) by value: `GraphicsDevice.Viewport`'s setter and `BasicEffect`'s
+`World`, `View` and `Projection` setters. The refusal is proved by the generator,
+not asserted.
 
 It is **not blocked**, though. The generator emits a tiny private shim -- a
 wrapper that takes the aggregate by pointer and the real route by function
-pointer, and does nothing else -- and the setter goes through it. The shim is
-optional and is **not shipped prebuilt**, because a released CNA-Lisp must load
-with no C toolchain: `tools/native-abi/verify.sh` builds it, `CNA_LISP_SHIM`
-names it, and without it the setter signals a `cna-not-supported-error` naming
-the variable, the command and the reason. The reader works either way.
+pointer, and does nothing else -- and those four setters go through it. The shim
+is optional and is **not shipped prebuilt**, because a released CNA-Lisp must
+load with no C toolchain: `tools/native-abi/verify.sh` builds it, `CNA_LISP_SHIM`
+names it, and without it each setter signals a `cna-not-supported-error` naming
+the variable, the command and the reason. The readers work either way.
 
 The qualified configuration includes the shim, and the test suite asserts both
 outcomes.
@@ -129,11 +147,10 @@ These are absent, and measured as absent, not faked:
 * `ContentManager` and the XNB pipeline;
 * `GameWindow` as a type -- only the window title is reachable, on `game`;
 * `SpriteFont` and `SpriteBatch.DrawString`;
-* `SpriteBatch.Begin`'s state-bearing overloads, and the four graphics state
-  objects they need;
-* `Mouse`, `GamePad`, `TouchPanel`;
-* `Effect`, `Model`, vertex and index buffers, and everything else that draws in
-  three dimensions;
+* `Model`, `RenderTarget2D`, `Texture3D`, `TextureCube` and the rest of the 3D
+  resource surface;
+* the stock effects other than `BasicEffect` — `AlphaTestEffect`,
+  `DualTextureEffect`, `EnvironmentMapEffect`, `SkinnedEffect`;
 * audio, media, storage, gamer services and networking.
 
 The math types are present and complete: `Vector2`, `Vector3`, `Vector4`,
@@ -324,34 +341,105 @@ unusable. XNA's setters are guarded by `ThrowIfBound` and by nothing else, so a
 disposed but unapplied state object can still be mutated there, and it can here.
 That is XNA's behaviour reproduced, not an oversight.
 
-## Primitive drawing is submitted; its pixels are not proved yet
+## Primitive drawing needs a current effect, and now has one
 
 `DrawPrimitives`, `DrawIndexedPrimitives`, `DrawUserPrimitives` and
-`DrawUserIndexedPrimitives` are implemented, and their arguments are validated
-here before anything reaches CNA -- a non-positive `primitiveCount`, a
-non-positive `numVertices`, a short vertex or index array, a vertex offset
-outside its buffer, and a non-instanced draw while a stream carries a non-zero
-instance frequency are each refused with the condition and the parameter name XNA
-uses.
+`DrawUserIndexedPrimitives` validate their arguments here before anything reaches
+CNA — a non-positive `primitiveCount`, a non-positive `numVertices`, a short
+vertex or index array, a vertex offset outside its buffer, and a non-instanced
+draw while a stream carries a non-zero instance frequency are each refused with
+the condition and the parameter name XNA uses.
 
-Past those checks CNA refuses the draw itself:
+Past those checks CNA refuses the draw itself unless an effect pass has been
+applied:
 
     GraphicsDevice::DrawUserPrimitives: no effect has been applied
 
 That is **XNA's own rule**, not a CNA limitation: `GraphicsDevice.VerifyCanDraw`
-requires a current `Effect`, and `Effect` is not in this milestone. So:
+requires a current `Effect`. Since the Effect closure landed, applying a pass is
+what changes the answer, and the rasterizer lane's third proof shows a triangle
+drawn that way reaching real pixels.
 
-* the vertex and index buffer surface is exercised for real -- creation, both
-  index widths, data round-trips through the proven layouts, windows, the device's
-  stream and index state, and disposal;
-* the draw calls' *argument* behaviour is exercised for real;
-* **no primitive has been rasterised**, and the qualification matrix says so.
+Two halves of that are pinned rather than described.
+`tests/native/buffers.lisp` requires all four draw entry points to refuse while
+no effect is current, and to name the effect when they do; `tests/native/effects.lisp`
+requires the same draw to be accepted once a pass has been applied.
 
-`tests/native/buffers.lisp` pins that boundary with a test that requires the
-refusal and requires it to name the effect. When the `Effect` closure lands, that
-test fails -- which is the signal to replace it with the primitive pixel proof it
-is standing in for. CNA already has `cna_basic_effect_create`, so the dependency
-is a closure of work in this repository and not an external blocker.
+What is still not proved about primitives: only the user-primitive path with a
+`VertexPositionColor` triangle list has been read back. Indexed draws,
+buffer-backed draws, non-identity transforms, textures, lighting and fog are
+submitted and accepted, and no pixel of any of them is asserted.
+
+## BasicEffect's matrix setters need the optional shim
+
+`World`, `View` and `Projection` are the only members of the effect surface that
+go through the private shim, and they join `GraphicsDevice.Viewport`'s setter as
+the whole of that list. `CNA_Matrix` is 64 bytes, the System V AMD64 ABI
+classifies it MEMORY, it travels on the stack, and no sequence of scalar
+arguments occupies the same place — so CFFI cannot express the call without
+`cffi-libffi`, which a released CNA-Lisp must not require. Without
+`CNA_LISP_SHIM` those three setters refuse with an actionable
+`CNA-NOT-SUPPORTED-ERROR`; the three *getters* take `CNA_Matrix*` and work
+regardless.
+
+Nothing else on the effect surface needs it. Every colour in it — fog, ambient
+light, a directional light's diffuse and specular, `BasicEffect`'s diffuse,
+emissive and specular — is a `CNA_Vector3` by value, which is 12 bytes and travels
+in two SSE registers; the generator flattens those and
+`tests/native/struct-passing.lisp` proves the flattening byte for byte.
+`SpriteBatch.Begin`'s transform matrix needs no shim either, because CNA's route
+for it takes `const CNA_Matrix*`.
+
+## No effect here has ever had a parameter
+
+`Effect.Parameters` is real, is CNA's own collection, and is **empty for every
+effect this binding can currently make**. CNA reflects a parameter graph only
+from compiled Direct3D 9 Effect Framework bytecode; its stock effects —
+`BasicEffect` and its siblings — carry none. Loading bytecode needs
+`CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`, which is a renderer property, and
+neither `HEADLESS` nor `SOFTWARE` has it: they refuse the bytecode rather than
+quietly drawing with a stock shader.
+
+So `Effect(GraphicsDevice, byte[])` is implemented and reports CNA's refusal
+rather than working around it, and `tests/native/effects.lisp` requires the
+refusal.
+
+`EffectParameter`'s fifty-one members are therefore implemented against a surface
+no reachable effect exposes. Rather than leave them written and never once run,
+the test suite builds a parameter collection through CNA's own construction
+routes and round-trips every one of the nine value types, both scalar and array,
+plus the string and texture pairs. **That proves the marshalling and nothing
+more**: the layout each value is written and read with is exact, because CNA
+stored it and gave it back. It says nothing about how a real shader's parameter
+behaves, which nothing available here could say.
+
+Two of `EffectParameter`'s getters are missing on purpose:
+`GetValueTexture3D` and `GetValueTextureCube` return `Texture3D` and
+`TextureCube`, which this binding does not project. CNA has the routes; the
+public types do not exist, and inventing them would be worse than the absence.
+
+## An effect's techniques, passes and parameters are not disposable
+
+XNA gives `EffectTechnique`, `EffectPass`, `EffectParameter` and
+`EffectAnnotation` `System.Object` for a base type: none of them is
+`IDisposable`. On the CNA side every one of them is an *owned view handle* the
+ABI expects back, and CNA refuses to destroy a game while any child handle is
+alive.
+
+The projection resolves that by having the `Effect` destroy all of them itself,
+leaves first, when it is disposed. They are not registered as its disposable
+children — that would make `DISPOSE` on the effect refuse until a consumer
+disposed objects XNA gives them no way to dispose — but the effect *does* own them
+for staleness, so using a technique after its effect is gone refuses rather than
+reaching a handle CNA may have reissued. `DISPOSE` on one of them refuses by
+name and says to dispose the effect.
+
+One consequence a consumer can see: `Effect.CurrentTechnique` and every
+collection element are the same Lisp objects for the life of the effect, because
+the graph is built once. That is what XNA guarantees too — its `CurrentTechnique`
+setter compares by reference — and it is not what CNA does on its own: CNA hands
+back a fresh handle for each call, and `cna_effect_technique_get_identity` is
+what maps one to the object that already stands for it.
 
 ## CNA never reports buffer content loss
 

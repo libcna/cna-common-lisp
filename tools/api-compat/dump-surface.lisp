@@ -230,7 +230,11 @@ that a keyword-taking projection accepts no keywords at all."
    "set-data-options"
    (alist-object microsoft.xna.framework.graphics::*set-data-options-table*)
    "primitive-type"
-   (alist-object microsoft.xna.framework.graphics::*primitive-type-table*)))
+   (alist-object microsoft.xna.framework.graphics::*primitive-type-table*)
+   "effect-parameter-class"
+   (alist-object microsoft.xna.framework.graphics::*effect-parameter-class-table*)
+   "effect-parameter-type"
+   (alist-object microsoft.xna.framework.graphics::*effect-parameter-type-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

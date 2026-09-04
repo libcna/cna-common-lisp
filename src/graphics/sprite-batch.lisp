@@ -33,17 +33,21 @@ and disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE before the game is."))
       (cna-lisp.internal:register-child game batch))))
 
 (defgeneric begin (sprite-batch &key sort-mode blend-state sampler-state
-                                     depth-stencil-state rasterizer-state)
+                                     depth-stencil-state rasterizer-state
+                                     effect transform-matrix)
   (:documentation
-   "SpriteBatch.Begin: the three overloads whose arguments this milestone has.
+   "SpriteBatch.Begin: all five overloads.
 
     (begin batch)                              Begin()
     (begin batch :sort-mode m :blend-state b)  Begin(SpriteSortMode, BlendState)
     (begin batch :sort-mode m :blend-state b
                  :sampler-state s :depth-stencil-state d
                  :rasterizer-state r)          the five-parameter overload
+    (begin batch ... :effect e)                the six-parameter overload
+    (begin batch ... :effect e
+                     :transform-matrix m)      the seven-parameter overload
 
-Only those three keyword shapes are accepted. XNA has no Begin that takes a sort
+Only those five keyword shapes are accepted. XNA has no Begin that takes a sort
 mode on its own, none that takes a state without a sort mode, and none that takes
 some of the four states and not the others, so each of those is refused rather
 than quietly treated as one of the overloads that does exist.
@@ -63,9 +67,15 @@ observable case -- mutating a state between BEGIN and END in a deferred mode --
 and refusing it is preferred to accepting a change that could no longer have any
 effect. `docs/limitations.md' records it.
 
-The two overloads that take an `Effect' are **not** projected: `Effect' does not
-exist in this milestone, and an effect parameter that could only ever be given
-NIL would be a fourth shape XNA does not have. They are measured as missing."))
+`:EFFECT' and `:TRANSFORM-MATRIX' extend the five-parameter shape and only that
+one: XNA has no Begin that takes an effect without the four states, and none that
+takes a transform without an effect, so both are refused. A NIL `:EFFECT' is the
+default sprite effect, which is what a null Effect means to XNA, and is not the
+same as leaving the keyword out.
+
+`:TRANSFORM-MATRIX' takes a Matrix by pointer here, so unlike BasicEffect's World,
+View and Projection it needs no shim: CNA's route already takes `const
+CNA_Matrix*'."))
 
 (defun %refuse-begin (format-control &rest format-arguments)
   (error 'microsoft.xna.framework:cna-usage-error
@@ -73,11 +83,21 @@ NIL would be a fourth shape XNA does not have. They are measured as missing."))
          :format-control format-control
          :format-arguments format-arguments))
 
-(defun %check-begin-shape (sort-mode-p blend-p sampler-p depth-p rasterizer-p)
+(defun %check-begin-shape (sort-mode-p blend-p sampler-p depth-p rasterizer-p
+                           effect-p transform-p)
   "Refuse every keyword combination XNA's Begin family does not have.
 
-Answers :PLAIN, :BLEND or :FULL for the three shapes it accepts."
+Answers :PLAIN, :BLEND, :FULL, :EFFECT or :TRANSFORM for the five it accepts."
   (let ((states (list blend-p sampler-p depth-p rasterizer-p)))
+    (when (and transform-p (not effect-p))
+      (%refuse-begin ":TRANSFORM-MATRIX is XNA's seventh Begin parameter and comes ~
+                      after the Effect; there is no overload that takes a transform ~
+                      without one. Pass :EFFECT too, with NIL for the default sprite ~
+                      effect."))
+    (when (and effect-p (notevery #'identity (cons sort-mode-p states)))
+      (%refuse-begin ":EFFECT extends the five-parameter Begin and only that one: XNA ~
+                      has no overload that takes an Effect without the sort mode and ~
+                      all four states."))
     (cond ((notany #'identity (cons sort-mode-p states)) :plain)
           ((not sort-mode-p)
            (%refuse-begin "a state argument needs :SORT-MODE with it: every XNA Begin ~
@@ -88,21 +108,52 @@ Answers :PLAIN, :BLEND or :FULL for the three shapes it accepts."
                            and the next one takes a SpriteSortMode *and* a BlendState; ~
                            pass :BLEND-STATE too, with NIL if you want the default."))
           ((notany #'identity (list sampler-p depth-p rasterizer-p)) :blend)
-          ((every #'identity (list sampler-p depth-p rasterizer-p)) :full)
+          ((every #'identity (list sampler-p depth-p rasterizer-p))
+           (cond (transform-p :transform) (effect-p :effect) (t :full)))
           (t
            (%refuse-begin ":SAMPLER-STATE, :DEPTH-STENCIL-STATE and :RASTERIZER-STATE are ~
                            one group: XNA has no Begin carrying some of them and not the ~
                            others. Give all three or none.")))))
+
+(defun %begin-with-effect (batch sort-mode blend sampler depth rasterizer
+                           effect transform-matrix)
+  "The two Begin overloads that carry an Effect.
+
+CNA folds both into one route: a null transform is the identity the
+effect-without-transform overload uses, and CNA_INVALID_HANDLE selects the
+default sprite effect, which is what a null Effect means to XNA. The transform
+travels by pointer, so this needs no shim."
+  (when effect (check-type effect effect))
+  (when transform-matrix (check-type transform-matrix microsoft.xna.framework:matrix))
+  (let ((handle (if effect
+                    (progn (cna-lisp.internal:check-usable effect "begin")
+                           (cna-lisp.internal:handle-of effect))
+                    0)))
+    (flet ((call (matrix-pointer)
+             (cna-lisp.internal:check-result
+              (cna-lisp.internal.ffi::%sprite-batch-begin-with-effect
+               (cna-lisp.internal:handle-of batch)
+               (sprite-sort-mode-value sort-mode)
+               blend sampler depth rasterizer handle matrix-pointer)
+              "begin" :object-type 'sprite-batch)))
+      (if transform-matrix
+          (cffi:with-foreign-object (m '(:struct cna-lisp.internal.ffi::cna-matrix))
+            (%write-matrix m transform-matrix)
+            (call m))
+          (call (cffi:null-pointer))))))
 
 (defmethod begin ((batch sprite-batch)
                   &key (sort-mode nil sort-mode-p)
                        (blend-state nil blend-state-p)
                        (sampler-state nil sampler-state-p)
                        (depth-stencil-state nil depth-stencil-state-p)
-                       (rasterizer-state nil rasterizer-state-p))
+                       (rasterizer-state nil rasterizer-state-p)
+                       (effect nil effect-p)
+                       (transform-matrix nil transform-matrix-p))
   ;; Arguments before state, the same order the CNA C ABI documents for itself.
   (let ((shape (%check-begin-shape sort-mode-p blend-state-p sampler-state-p
-                                   depth-stencil-state-p rasterizer-state-p)))
+                                   depth-stencil-state-p rasterizer-state-p
+                                   effect-p transform-matrix-p)))
     (cna-lisp.internal:check-usable batch "begin")
     (when (%begun-p batch)
       (error 'microsoft.xna.framework:cna-invalid-state-error
@@ -135,12 +186,16 @@ Answers :PLAIN, :BLEND or :FULL for the three shapes it accepts."
               (%write-sampler-state sampler-pointer sampler)
               (%write-depth-stencil-state depth-pointer depth)
               (%write-rasterizer-state rasterizer-pointer rasterizer)
-              (cna-lisp.internal:check-result
-               (cna-lisp.internal.ffi::%sprite-batch-begin-with-states
-                (cna-lisp.internal:handle-of batch)
-                (sprite-sort-mode-value sort-mode)
-                blend-pointer sampler-pointer depth-pointer rasterizer-pointer)
-               "begin" :object-type 'sprite-batch)))))
+              (if (member shape '(:effect :transform))
+                  (%begin-with-effect batch sort-mode blend-pointer sampler-pointer
+                                      depth-pointer rasterizer-pointer
+                                      effect transform-matrix)
+                  (cna-lisp.internal:check-result
+                   (cna-lisp.internal.ffi::%sprite-batch-begin-with-states
+                    (cna-lisp.internal:handle-of batch)
+                    (sprite-sort-mode-value sort-mode)
+                    blend-pointer sampler-pointer depth-pointer rasterizer-pointer)
+                   "begin" :object-type 'sprite-batch))))))
       ;; Only after the native call has been accepted: a Begin that was refused
       ;; applied nothing, so it must not leave the caller's state objects latched.
       (let ((device (graphics-resource-graphics-device batch)))

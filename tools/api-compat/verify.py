@@ -207,6 +207,13 @@ DISTINGUISHING_MECHANISMS = frozenset((
     # overload, because two overloads that both supply nothing would be the same
     # call.
     "no-keywords",
+    # A required argument whose *value* names the overload. EffectParameter's
+    # eighteen SetValue overloads are the case: they differ only in the type of
+    # the value, Common Lisp has no overloading to dispatch on that, and the
+    # projection takes the type as an argument. A rule declaring this must name
+    # the tag it uses, and the tags in one family must be distinct -- two
+    # overloads answering to the same tag would be the same call.
+    "tagged-argument",
 ))
 
 
@@ -573,44 +580,70 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
             report.add("overload_mapping_mismatch",
                        "%s.%s" % (contract_type["name"], family),
                        "maps to %d symbols with no declared overload family" % len(mapped))
-        # A family that collapses several *complete* overloads onto ONE symbol has
-        # to distinguish them somehow. Requiring a declared keyword set per
-        # overload is what turns "one function expresses them all" into something
-        # a machine can check.
+        # Any set of *complete* overloads that lands on ONE symbol has to say how
+        # each is told from the others. Grouping by the symbol rather than
+        # requiring the whole family to collapse matters: EffectParameter's
+        # SetValue family splits across four functions and then collapses
+        # eighteen overloads onto two of them, and checking only whole-family
+        # collapses would leave every one of those declarations unverified.
         complete = [m for m in members if statuses.get(signature(m)) == "complete"]
-        if len(mapped) == 1 and len(complete) > 1 and family != ".ctor":
+        if family != ".ctor":
             overrides = type_rule.get("member_overrides", {})
-            undeclared = [signature(m) for m in complete
-                          if not overrides.get(signature(m), {}).get("distinguished_by")]
-            if undeclared:
-                report.add("wrong_overload_shape",
-                           "%s.%s" % (contract_type["name"], family),
-                           "%d overloads collapse onto %r without declaring how each is "
-                           "expressed: %s"
-                           % (len(complete), list(mapped)[0], undeclared[:4]))
+            groups = {}
             for member in complete:
-                sig = signature(member)
-                mechanism = overrides.get(sig, {}).get("distinguished_by")
-                if mechanism and mechanism not in DISTINGUISHING_MECHANISMS:
+                expected, _ = expected_symbol(rules, type_rule, contract_type["name"], member)
+                groups.setdefault(expected, []).append(member)
+            for symbol, group in sorted(groups.items()):
+                if len(group) < 2:
+                    continue
+                undeclared = [signature(m) for m in group
+                              if not overrides.get(signature(m), {}).get("distinguished_by")]
+                if undeclared:
                     report.add("wrong_overload_shape",
-                               "%s.%s" % (contract_type["name"], sig),
-                               "%r is not a distinguishing mechanism" % mechanism)
-                if mechanism == "keywords" and not overrides.get(sig, {}).get("keywords"):
+                               "%s.%s" % (contract_type["name"], family),
+                               "%d overloads collapse onto %r without declaring how each "
+                               "is expressed: %s" % (len(group), symbol, undeclared[:4]))
+                for member in group:
+                    sig = signature(member)
+                    mechanism = overrides.get(sig, {}).get("distinguished_by")
+                    if mechanism and mechanism not in DISTINGUISHING_MECHANISMS:
+                        report.add("wrong_overload_shape",
+                                   "%s.%s" % (contract_type["name"], sig),
+                                   "%r is not a distinguishing mechanism" % mechanism)
+                    if mechanism == "keywords" and not overrides.get(sig, {}).get("keywords"):
+                        report.add("wrong_overload_shape",
+                                   "%s.%s" % (contract_type["name"], sig),
+                                   "claims to be distinguished by keywords and lists none")
+                    if mechanism == "no-keywords" and overrides.get(sig, {}).get("keywords"):
+                        report.add("wrong_overload_shape",
+                                   "%s.%s" % (contract_type["name"], sig),
+                                   "claims to supply no keyword and then lists some")
+                    if mechanism == "tagged-argument" and not overrides.get(sig, {}).get("tag"):
+                        report.add("wrong_overload_shape",
+                                   "%s.%s" % (contract_type["name"], sig),
+                                   "claims to be distinguished by a tagged argument and "
+                                   "names no tag")
+                tags = {}
+                for member in group:
+                    sig = signature(member)
+                    rule = overrides.get(sig, {})
+                    if rule.get("distinguished_by") == "tagged-argument" and rule.get("tag"):
+                        tags.setdefault(rule["tag"], []).append(sig)
+                for tag, sigs in sorted(tags.items()):
+                    if len(sigs) > 1:
+                        report.add("wrong_overload_shape",
+                                   "%s.%s" % (contract_type["name"], family),
+                                   "%d overloads on %r answer to the same tag %r, so "
+                                   "nothing tells them apart: %s"
+                                   % (len(sigs), symbol, tag, sigs))
+                empty = [signature(m) for m in group
+                         if overrides.get(signature(m), {}).get("distinguished_by")
+                         == "no-keywords"]
+                if len(empty) > 1:
                     report.add("wrong_overload_shape",
-                               "%s.%s" % (contract_type["name"], sig),
-                               "claims to be distinguished by keywords and lists none")
-                if mechanism == "no-keywords" and overrides.get(sig, {}).get("keywords"):
-                    report.add("wrong_overload_shape",
-                               "%s.%s" % (contract_type["name"], sig),
-                               "claims to supply no keyword and then lists some")
-            empty = [signature(m) for m in complete
-                     if overrides.get(signature(m), {}).get("distinguished_by")
-                     == "no-keywords"]
-            if len(empty) > 1:
-                report.add("wrong_overload_shape",
-                           "%s.%s" % (contract_type["name"], family),
-                           "%d overloads claim to supply no keyword; at most one can: %s"
-                           % (len(empty), empty))
+                               "%s.%s" % (contract_type["name"], family),
+                               "%d overloads on %r claim to supply no keyword; at most one "
+                               "can: %s" % (len(empty), symbol, empty))
     return statuses
 
 

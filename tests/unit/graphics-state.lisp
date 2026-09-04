@@ -265,32 +265,40 @@
 ;;; itself does not, and it is the part that has to be exhaustive. The native
 ;;; suite exercises the same shapes through the real BEGIN.
 
-(test the-three-begin-shapes-xna-has-are-recognised
-  (is (eq :plain (gfx::%check-begin-shape nil nil nil nil nil)))
-  (is (eq :blend (gfx::%check-begin-shape t t nil nil nil)))
-  (is (eq :full (gfx::%check-begin-shape t t t t t))))
+(test the-five-begin-shapes-xna-has-are-recognised
+  (is (eq :plain (gfx::%check-begin-shape nil nil nil nil nil nil nil)))
+  (is (eq :blend (gfx::%check-begin-shape t t nil nil nil nil nil)))
+  (is (eq :full (gfx::%check-begin-shape t t t t t nil nil)))
+  ;; And the two the Effect closure added.
+  (is (eq :effect (gfx::%check-begin-shape t t t t t t nil)))
+  (is (eq :transform (gfx::%check-begin-shape t t t t t t t))))
 
 (test the-begin-shapes-xna-does-not-have-are-refused
   ;; A sort mode on its own. XNA's second Begin takes a SpriteSortMode *and* a
   ;; BlendState; there has never been an overload taking only the mode, and
   ;; offering one is the mistake this check exists to stop.
-  (signals xna:cna-usage-error (gfx::%check-begin-shape t nil nil nil nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t nil nil nil nil nil nil))
   ;; A state without a sort mode.
-  (signals xna:cna-usage-error (gfx::%check-begin-shape nil t nil nil nil))
-  (signals xna:cna-usage-error (gfx::%check-begin-shape nil nil t nil nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape nil t nil nil nil nil nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape nil nil t nil nil nil nil))
   ;; Every partial subset of the three trailing states.
-  (signals xna:cna-usage-error (gfx::%check-begin-shape t t t nil nil))
-  (signals xna:cna-usage-error (gfx::%check-begin-shape t t nil t nil))
-  (signals xna:cna-usage-error (gfx::%check-begin-shape t t nil nil t))
-  (signals xna:cna-usage-error (gfx::%check-begin-shape t t t t nil))
-  (signals xna:cna-usage-error (gfx::%check-begin-shape t t t nil t))
-  (signals xna:cna-usage-error (gfx::%check-begin-shape t t nil t t))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t t t nil nil nil nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t t nil t nil nil nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t t nil nil t nil nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t t t t nil nil nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t t t nil t nil nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t t nil t t nil nil))
   ;; The trailing states without a blend state: the five-parameter overload takes
   ;; all five, so there is no shape that skips the second argument.
-  (signals xna:cna-usage-error (gfx::%check-begin-shape t nil t t t)))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t nil t t t nil nil))
+  ;; An :EFFECT without the four states, and a :TRANSFORM-MATRIX without an
+  ;; :EFFECT, are each no XNA overload.
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t t nil nil nil t nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape nil nil nil nil nil t nil))
+  (signals xna:cna-usage-error (gfx::%check-begin-shape t t t t t nil t)))
 
 (test the-begin-refusals-say-what-is-wrong
-  (handler-case (gfx::%check-begin-shape t nil nil nil nil)
+  (handler-case (gfx::%check-begin-shape t nil nil nil nil nil nil)
     (xna:cna-usage-error (condition)
       (is (search "BLEND-STATE" (princ-to-string condition))
           "the refusal should name the missing argument; it said: ~a" condition))))

@@ -57,15 +57,17 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
 | Prose consistency | every generated fact and block matches the reports |
-| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: back buffer read, and the pixels are the colour that was cleared |
+| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all three proofs -- clear, sprite and primitive |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
 -- **the SOFTWARE lane is what does**, and it needs no display: a CPU rasteriser
-clears to CornflowerBlue and the back buffer reads back (100, 149, 237, 255).
-Neither is a claim about a physical monitor. `docs/qualification.md` defines
+clears to CornflowerBlue and the back buffer reads back (100, 149, 237, 255), a
+SpriteBatch draw lands a known texture's texels where its destination says, and a
+BasicEffect pass followed by one DrawUserPrimitives triangle covers exactly the
+pixels its geometry covers. Neither lane is a claim about a physical monitor. `docs/qualification.md` defines
 `REFERENCE_QUALIFIED`, `CI_TESTED`, `HEADLESS` and `NOT RUN`, and no claim here
 may collapse two of them.
 
@@ -79,7 +81,7 @@ they have never executed is stale.
 | `Lisp` / reference | pure gates on SBCL 2.5.2, installed from the upstream binary release and verified by SHA-256 |
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
-| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless the back buffer was actually read |
+| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all three pixel proofs were obtained |
 
 The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
 `openeggbert/cna:next` does not currently build from published sources, because
@@ -92,31 +94,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=110 -->
-<!-- generated:selected members=1904 -->
-<!-- generated:complete types=105 -->
-<!-- generated:partial types=5 -->
+<!-- generated:selected types=126 -->
+<!-- generated:selected members=2057 -->
+<!-- generated:complete types=117 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1449 -->
+<!-- generated:complete members=1594 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=69 -->
-<!-- generated:not-applicable members=385 -->
+<!-- generated:missing members=72 -->
+<!-- generated:not-applicable members=390 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 110 types, 1904 members.
+Selection **Foundation 1 and the managed closures**: 126 types, 2061 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **105** |
-| Types partial | **5** |
+| Types complete | **117** |
+| Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1449** |
+| Members complete | **1594** |
 | Members partial | **1** |
-| Members missing | **69** |
-| Members not applicable | **385** |
+| Members missing | **72** |
+| Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -141,7 +143,11 @@ remaining members actually are:
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
-| `M.X.F.Graphics.SpriteBatch` | 8 | 0 |
+| `M.X.F.Graphics.SpriteBatch` | 6 | 0 |
+| `M.X.F.Graphics.EffectParameter` | 2 | 0 |
+| `M.X.F.Graphics.Effect` | 1 | 0 |
+| `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
+| `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 <!-- /generated-block:partial-frontier -->
 
 Do not describe that as "graphics state objects, `Stream` and `SpriteFont`". The
@@ -159,7 +165,11 @@ one.
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
-| `M.X.F.Graphics.SpriteBatch` | 8 | 0 |
+| `M.X.F.Graphics.SpriteBatch` | 6 | 0 |
+| `M.X.F.Graphics.EffectParameter` | 2 | 0 |
+| `M.X.F.Graphics.Effect` | 1 | 0 |
+| `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
+| `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 <!-- /generated-block:partial-frontier -->
 
 `GraphicsDevice` is most of it, and most of *that* is one thing: the drawing
@@ -188,24 +198,25 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **`Effect` and the stock effects.** This is now the highest-value closure and
-   the only thing standing between the binding and a rasterised primitive:
-   `GraphicsDevice.VerifyCanDraw` requires a current Effect, so every primitive
-   draw is refused with "no effect has been applied" until one exists. CNA has
-   `cna_basic_effect_create` and a full effect surface, so this is local work.
-   The closure is `Effect`, `EffectTechnique`, `EffectPass`, `EffectParameter`,
-   their collections and `BasicEffect`. When it lands,
-   `A-PRIMITIVE-DRAW-NEEDS-AN-EFFECT-AND-SAYS-SO` fails -- that is the signal to
-   replace it with the primitive pixel proof, and to add
-   `SpriteBatch.Begin`'s two remaining overloads.
-2. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+1. **`SpriteFont` and `SpriteBatch.DrawString`.** Eight of `SpriteBatch`'s
+   members are its `DrawString` family, and they are the largest single block of
+   missing surface left in a type that is otherwise complete. CNA has a sprite
+   font surface and the CNB pipeline behind it, so this is local work. It brings
+   `SpriteFont`, `SpriteFont.MeasureString` and the glyph metadata with it.
+2. **The rest of the stock effects.** `AlphaTestEffect`, `DualTextureEffect`,
+   `EnvironmentMapEffect` and `SkinnedEffect` are the same shape `BasicEffect`
+   already has -- the three `IEffect*` contracts are generic functions and a new
+   stock effect implements them by inheriting -- over their own CNA routes. The
+   Effect closure did the hard part; this is breadth.
+3. **Render targets.** `RenderTarget2D`, `RenderTargetUsage`, `DepthFormat` and
+   `GraphicsDevice.SetRenderTarget(s)`. This is the closure that would let the
+   rasterizer lane prove things it currently cannot: a render target is readable
+   on every renderer that can draw at all, so pixel evidence would stop depending
+   on back-buffer readback.
+4. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
-3. **`System.IO.Stream` and `TitleContainer`**, which unblock
+5. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-4. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-5. **`Effect`**, which unblocks `SpriteBatch.Begin`'s remaining two overloads.
-   CNA's route for them (`cna_sprite_batch_begin_with_effect`) already exists and
-   takes an Effect handle, so the type is the whole of what is missing.
 6. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping

@@ -281,8 +281,7 @@ generic functions those interfaces became answer for it.
     (dolist (pass (collection-elements
                    (effect-technique-passes (effect-current-technique effect))))
       (apply-effect-pass pass)
-      (draw-user-primitives device :primitive-type :triangle-list
-                                   :vertices triangle :primitive-count 1))"))
+      (draw-user-primitives device :triangle-list triangle :primitive-count 1))"))
 
 (defmethod %effect-takes-code-p ((effect basic-effect)) nil)
 
