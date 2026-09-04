@@ -5707,6 +5707,334 @@
         "new(BasicEffect)": "The protected clone constructor. It exists so Clone() can copy; Common Lisp has no protected constructors, and the copying it is for is CLONE-EFFECT, which is projected."
       }
     },
+    "Microsoft.Xna.Framework.Graphics.AlphaTestEffect": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "alpha-test-effect",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDevice)": "make-instance"
+      },
+      "member_overrides": {
+        "Clone()": {
+          "lisp": "clone-effect",
+          "generic": true,
+          "reason": "Inherited from Effect; the clone keeps its concrete type."
+        },
+        "World": {
+          "lisp": "effect-world",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and AlphaTestEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "View": {
+          "lisp": "effect-view",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and AlphaTestEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "Projection": {
+          "lisp": "effect-projection",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and AlphaTestEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogEnabled": {
+          "lisp": "effect-fog-enabled",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and AlphaTestEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogStart": {
+          "lisp": "effect-fog-start",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and AlphaTestEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogEnd": {
+          "lisp": "effect-fog-end",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and AlphaTestEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogColor": {
+          "lisp": "effect-fog-color",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and AlphaTestEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "DiffuseColor": {
+          "lisp": "effect-diffuse-color",
+          "generic": true,
+          "setf": true
+        },
+        "Alpha": {
+          "lisp": "effect-alpha",
+          "generic": true,
+          "setf": true
+        },
+        "Texture": {
+          "lisp": "effect-texture",
+          "generic": true,
+          "setf": true
+        },
+        "VertexColorEnabled": {
+          "lisp": "effect-vertex-color-enabled",
+          "generic": true,
+          "setf": true
+        },
+        "AlphaFunction": {
+          "lisp": "effect-alpha-function",
+          "generic": true,
+          "setf": true,
+          "reason": "A CompareFunction, translated by name through the projected enumeration rather than passed through as an integer -- the rule every enumeration here follows, because XNA and CNA number BlendFunction's Min and Max the other way round from each other."
+        },
+        "ReferenceAlpha": {
+          "lisp": "effect-reference-alpha",
+          "generic": true,
+          "setf": true,
+          "reason": "Int32, and XNA's setter stores it without clamping, so neither does this."
+        }
+      },
+      "not_applicable": {
+        "new(AlphaTestEffect)": "The protected clone constructor. It exists so Clone() can copy; Common Lisp has no protected constructors, and the copying is CLONE-EFFECT's, over CNA's own clone route.",
+        "OnApply()": "The protected hook a subclass overrides to change effect state just before a pass is applied. CNA applies a pass itself and has no route that calls back into managed code between the two, so there is no place in this projection for a subclass to stand; reported not applicable with that reason rather than projected as something it is not."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.DualTextureEffect": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "dual-texture-effect",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDevice)": "make-instance"
+      },
+      "member_overrides": {
+        "Clone()": {
+          "lisp": "clone-effect",
+          "generic": true,
+          "reason": "Inherited from Effect; the clone keeps its concrete type."
+        },
+        "World": {
+          "lisp": "effect-world",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and DualTextureEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "View": {
+          "lisp": "effect-view",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and DualTextureEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "Projection": {
+          "lisp": "effect-projection",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and DualTextureEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogEnabled": {
+          "lisp": "effect-fog-enabled",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and DualTextureEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogStart": {
+          "lisp": "effect-fog-start",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and DualTextureEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogEnd": {
+          "lisp": "effect-fog-end",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and DualTextureEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogColor": {
+          "lisp": "effect-fog-color",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and DualTextureEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "DiffuseColor": {
+          "lisp": "effect-diffuse-color",
+          "generic": true,
+          "setf": true
+        },
+        "Alpha": {
+          "lisp": "effect-alpha",
+          "generic": true,
+          "setf": true
+        },
+        "Texture": {
+          "lisp": "effect-texture",
+          "generic": true,
+          "setf": true,
+          "reason": "CNA's texture layer zero. XNA has two properties and CNA one route taking a layer index; the index is not exposed, because XNA's public surface has none."
+        },
+        "Texture2": {
+          "lisp": "effect-texture-2",
+          "generic": true,
+          "setf": true,
+          "reason": "CNA's texture layer one."
+        },
+        "VertexColorEnabled": {
+          "lisp": "effect-vertex-color-enabled",
+          "generic": true,
+          "setf": true
+        }
+      },
+      "not_applicable": {
+        "new(DualTextureEffect)": "The protected clone constructor. It exists so Clone() can copy; Common Lisp has no protected constructors, and the copying is CLONE-EFFECT's, over CNA's own clone route.",
+        "OnApply()": "The protected hook a subclass overrides to change effect state just before a pass is applied. CNA applies a pass itself and has no route that calls back into managed code between the two, so there is no place in this projection for a subclass to stand; reported not applicable with that reason rather than projected as something it is not."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.SkinnedEffect": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "skinned-effect",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDevice)": "make-instance"
+      },
+      "member_overrides": {
+        "Clone()": {
+          "lisp": "clone-effect",
+          "generic": true,
+          "reason": "Inherited from Effect; the clone keeps its concrete type."
+        },
+        "World": {
+          "lisp": "effect-world",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and SkinnedEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "View": {
+          "lisp": "effect-view",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and SkinnedEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "Projection": {
+          "lisp": "effect-projection",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and SkinnedEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogEnabled": {
+          "lisp": "effect-fog-enabled",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and SkinnedEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogStart": {
+          "lisp": "effect-fog-start",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and SkinnedEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogEnd": {
+          "lisp": "effect-fog-end",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and SkinnedEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogColor": {
+          "lisp": "effect-fog-color",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and SkinnedEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "EnableDefaultLighting()": {
+          "lisp": "enable-default-lighting",
+          "generic": true,
+          "reason": "IEffectLights' method. The preset's values are CNA's, applied through cna_effect_lights_enable_default, rather than numbers copied out of a decompiler."
+        },
+        "AmbientLightColor": {
+          "lisp": "effect-ambient-light-color",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and SkinnedEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "DirectionalLight0": {
+          "lisp": "directional-light-0",
+          "generic": true,
+          "setf": false,
+          "reason": "A stable member view of the effect, taken once at construction, exactly as XNA's is a field. Read-only, as XNA's is."
+        },
+        "DirectionalLight1": {
+          "lisp": "directional-light-1",
+          "generic": true,
+          "setf": false,
+          "reason": "A stable member view of the effect, taken once at construction, exactly as XNA's is a field. Read-only, as XNA's is."
+        },
+        "DirectionalLight2": {
+          "lisp": "directional-light-2",
+          "generic": true,
+          "setf": false,
+          "reason": "A stable member view of the effect, taken once at construction, exactly as XNA's is a field. Read-only, as XNA's is."
+        },
+        "DiffuseColor": {
+          "lisp": "effect-diffuse-color",
+          "generic": true,
+          "setf": true
+        },
+        "EmissiveColor": {
+          "lisp": "effect-emissive-color",
+          "generic": true,
+          "setf": true
+        },
+        "SpecularColor": {
+          "lisp": "effect-specular-color",
+          "generic": true,
+          "setf": true
+        },
+        "SpecularPower": {
+          "lisp": "effect-specular-power",
+          "generic": true,
+          "setf": true
+        },
+        "Alpha": {
+          "lisp": "effect-alpha",
+          "generic": true,
+          "setf": true
+        },
+        "PreferPerPixelLighting": {
+          "lisp": "effect-prefer-per-pixel-lighting",
+          "generic": true,
+          "setf": true
+        },
+        "Texture": {
+          "lisp": "effect-texture",
+          "generic": true,
+          "setf": true
+        },
+        "WeightsPerVertex": {
+          "lisp": "effect-weights-per-vertex",
+          "generic": true,
+          "setf": true,
+          "reason": "Int32; CNA accepts one, two or four."
+        },
+        "SetBoneTransforms(Matrix[])": {
+          "lisp": "set-bone-transforms",
+          "generic": true,
+          "reason": "The palette is copied: CNA takes the array by pointer and reads it during the call, so nothing of the caller's is retained."
+        },
+        "GetBoneTransforms(Int32)": {
+          "lisp": "get-bone-transforms",
+          "generic": true,
+          "reason": "Answers a fresh vector, as XNA answers a fresh Matrix[], so a caller cannot reach back into the effect through what it was given."
+        },
+        "MaxBones": {
+          "lisp": "+skinned-effect-max-bones+",
+          "kind": "constant",
+          "setf": false,
+          "reason": "A public const field. The value is read from the CNA header rather than written down here, and the two agree at 72."
+        }
+      },
+      "not_applicable": {
+        "new(SkinnedEffect)": "The protected clone constructor. It exists so Clone() can copy; Common Lisp has no protected constructors, and the copying is CLONE-EFFECT's, over CNA's own clone route.",
+        "OnApply()": "The protected hook a subclass overrides to change effect state just before a pass is applied. CNA applies a pass itself and has no route that calls back into managed code between the two, so there is no place in this projection for a subclass to stand; reported not applicable with that reason rather than projected as something it is not."
+      }
+    },
     "Microsoft.Xna.Framework.Graphics.EffectParameterClass": {
       "lisp_package": "microsoft.xna.framework.graphics",
       "lisp_name": "effect-parameter-class",

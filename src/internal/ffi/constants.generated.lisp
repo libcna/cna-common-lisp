@@ -381,6 +381,7 @@
 (defconstant +set-data-no-overwrite+ 2)
 (defconstant +shader-stage-pixel+ 0)
 (defconstant +shader-stage-vertex+ 1)
+(defconstant +skinned-effect-max-bones+ 72)
 (defconstant +sprite-effect-flip-horizontally+ 1)
 (defconstant +sprite-effect-flip-vertically+ 2)
 (defconstant +sprite-effect-none+ 0)

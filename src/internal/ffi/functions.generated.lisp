@@ -1130,6 +1130,178 @@
 (defcfun ("cna_sprite_font_measure_utf8" %sprite-font-measure-utf-8) :uint32
   (sprite-font :uint64) (text-0 :pointer) (text-1 :uint64) (out-size :pointer))
 
+;;; CNA_Result cna_alpha_test_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)
+(defcfun ("cna_alpha_test_effect_create" %alpha-test-effect-create) :uint32
+  (graphics-device :uint64) (out-effect :pointer))
+
+;;; CNA_Result cna_alpha_test_effect_get_alpha(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_alpha_test_effect_get_alpha" %alpha-test-effect-get-alpha) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_alpha_test_effect_get_alpha_function(CNA_EffectHandle effect, CNA_CompareFunction* out_value)
+(defcfun ("cna_alpha_test_effect_get_alpha_function" %alpha-test-effect-get-alpha-function) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_alpha_test_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_alpha_test_effect_get_diffuse_color" %alpha-test-effect-get-diffuse-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_alpha_test_effect_get_reference_alpha(CNA_EffectHandle effect, int32_t* out_value)
+(defcfun ("cna_alpha_test_effect_get_reference_alpha" %alpha-test-effect-get-reference-alpha) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_alpha_test_effect_get_texture(CNA_EffectHandle effect, CNA_Bool* out_has_texture, CNA_Handle* out_texture)
+(defcfun ("cna_alpha_test_effect_get_texture" %alpha-test-effect-get-texture) :uint32
+  (effect :uint64) (out-has-texture :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_alpha_test_effect_get_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_alpha_test_effect_get_vertex_color_enabled" %alpha-test-effect-get-vertex-color-enabled) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_alpha_test_effect_set_alpha(CNA_EffectHandle effect, float value)
+(defcfun ("cna_alpha_test_effect_set_alpha" %alpha-test-effect-set-alpha) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_alpha_test_effect_set_alpha_function(CNA_EffectHandle effect, CNA_CompareFunction value)
+(defcfun ("cna_alpha_test_effect_set_alpha_function" %alpha-test-effect-set-alpha-function) :uint32
+  (effect :uint64) (value :uint32))
+
+;;; CNA_Result cna_alpha_test_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_alpha_test_effect_set_diffuse_color" %alpha-test-effect-set-diffuse-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_alpha_test_effect_set_reference_alpha(CNA_EffectHandle effect, int32_t value)
+(defcfun ("cna_alpha_test_effect_set_reference_alpha" %alpha-test-effect-set-reference-alpha) :uint32
+  (effect :uint64) (value :int32))
+
+;;; CNA_Result cna_alpha_test_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)
+(defcfun ("cna_alpha_test_effect_set_texture" %alpha-test-effect-set-texture) :uint32
+  (effect :uint64) (texture :uint64))
+
+;;; CNA_Result cna_alpha_test_effect_set_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_alpha_test_effect_set_vertex_color_enabled" %alpha-test-effect-set-vertex-color-enabled) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_dual_texture_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)
+(defcfun ("cna_dual_texture_effect_create" %dual-texture-effect-create) :uint32
+  (graphics-device :uint64) (out-effect :pointer))
+
+;;; CNA_Result cna_dual_texture_effect_get_alpha(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_dual_texture_effect_get_alpha" %dual-texture-effect-get-alpha) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_dual_texture_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_dual_texture_effect_get_diffuse_color" %dual-texture-effect-get-diffuse-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_dual_texture_effect_get_texture(CNA_EffectHandle effect, uint32_t texture_index, CNA_Bool* out_has_texture, CNA_Handle* out_texture)
+(defcfun ("cna_dual_texture_effect_get_texture" %dual-texture-effect-get-texture) :uint32
+  (effect :uint64) (texture-index :uint32) (out-has-texture :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_dual_texture_effect_get_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_dual_texture_effect_get_vertex_color_enabled" %dual-texture-effect-get-vertex-color-enabled) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_dual_texture_effect_set_alpha(CNA_EffectHandle effect, float value)
+(defcfun ("cna_dual_texture_effect_set_alpha" %dual-texture-effect-set-alpha) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_dual_texture_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_dual_texture_effect_set_diffuse_color" %dual-texture-effect-set-diffuse-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_dual_texture_effect_set_texture(CNA_EffectHandle effect, uint32_t texture_index, CNA_Handle texture)
+(defcfun ("cna_dual_texture_effect_set_texture" %dual-texture-effect-set-texture) :uint32
+  (effect :uint64) (texture-index :uint32) (texture :uint64))
+
+;;; CNA_Result cna_dual_texture_effect_set_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_dual_texture_effect_set_vertex_color_enabled" %dual-texture-effect-set-vertex-color-enabled) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_skinned_effect_copy_bone_transforms(CNA_EffectHandle effect, uint64_t requested_count, CNA_Matrix* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_skinned_effect_copy_bone_transforms" %skinned-effect-copy-bone-transforms) :uint32
+  (effect :uint64) (requested-count :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_skinned_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)
+(defcfun ("cna_skinned_effect_create" %skinned-effect-create) :uint32
+  (graphics-device :uint64) (out-effect :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_alpha(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_skinned_effect_get_alpha" %skinned-effect-get-alpha) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_skinned_effect_get_diffuse_color" %skinned-effect-get-diffuse-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_emissive_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_skinned_effect_get_emissive_color" %skinned-effect-get-emissive-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_prefer_per_pixel_lighting(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_skinned_effect_get_prefer_per_pixel_lighting" %skinned-effect-get-prefer-per-pixel-lighting) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_specular_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_skinned_effect_get_specular_color" %skinned-effect-get-specular-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_specular_power(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_skinned_effect_get_specular_power" %skinned-effect-get-specular-power) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_texture(CNA_EffectHandle effect, CNA_Bool* out_has_texture, CNA_Handle* out_texture)
+(defcfun ("cna_skinned_effect_get_texture" %skinned-effect-get-texture) :uint32
+  (effect :uint64) (out-has-texture :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_skinned_effect_get_vertex_color_enabled" %skinned-effect-get-vertex-color-enabled) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_skinned_effect_get_weights_per_vertex(CNA_EffectHandle effect, int32_t* out_value)
+(defcfun ("cna_skinned_effect_get_weights_per_vertex" %skinned-effect-get-weights-per-vertex) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_skinned_effect_set_alpha(CNA_EffectHandle effect, float value)
+(defcfun ("cna_skinned_effect_set_alpha" %skinned-effect-set-alpha) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_skinned_effect_set_bone_transforms(CNA_EffectHandle effect, const CNA_Matrix* transforms, uint64_t transform_count)
+(defcfun ("cna_skinned_effect_set_bone_transforms" %skinned-effect-set-bone-transforms) :uint32
+  (effect :uint64) (transforms :pointer) (transform-count :uint64))
+
+;;; CNA_Result cna_skinned_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_skinned_effect_set_diffuse_color" %skinned-effect-set-diffuse-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_skinned_effect_set_emissive_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_skinned_effect_set_emissive_color" %skinned-effect-set-emissive-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_skinned_effect_set_prefer_per_pixel_lighting(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_skinned_effect_set_prefer_per_pixel_lighting" %skinned-effect-set-prefer-per-pixel-lighting) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_skinned_effect_set_specular_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_skinned_effect_set_specular_color" %skinned-effect-set-specular-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_skinned_effect_set_specular_power(CNA_EffectHandle effect, float value)
+(defcfun ("cna_skinned_effect_set_specular_power" %skinned-effect-set-specular-power) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_skinned_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)
+(defcfun ("cna_skinned_effect_set_texture" %skinned-effect-set-texture) :uint32
+  (effect :uint64) (texture :uint64))
+
+;;; CNA_Result cna_skinned_effect_set_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_skinned_effect_set_vertex_color_enabled" %skinned-effect-set-vertex-color-enabled) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_skinned_effect_set_weights_per_vertex(CNA_EffectHandle effect, int32_t value)
+(defcfun ("cna_skinned_effect_set_weights_per_vertex" %skinned-effect-set-weights-per-vertex) :uint32
+  (effect :uint64) (value :int32))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -1409,6 +1581,49 @@
     ("cna_sprite_font_get_info" %sprite-font-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_sprite_font_copy_characters" %sprite-font-copy-characters :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_sprite_font_copy_glyphs" %sprite-font-copy-glyphs :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
-    ("cna_sprite_font_measure_utf8" %sprite-font-measure-utf-8 :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none"))
+    ("cna_sprite_font_measure_utf8" %sprite-font-measure-utf-8 :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_create" %alpha-test-effect-create :uint32 (:uint64 :pointer) :thread :game :ownership "creates-owned:effect:child-of-game")
+    ("cna_alpha_test_effect_get_alpha" %alpha-test-effect-get-alpha :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_get_alpha_function" %alpha-test-effect-get-alpha-function :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_get_diffuse_color" %alpha-test-effect-get-diffuse-color :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_get_reference_alpha" %alpha-test-effect-get-reference-alpha :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_get_texture" %alpha-test-effect-get-texture :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_get_vertex_color_enabled" %alpha-test-effect-get-vertex-color-enabled :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_set_alpha" %alpha-test-effect-set-alpha :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_set_alpha_function" %alpha-test-effect-set-alpha-function :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_set_diffuse_color" %alpha-test-effect-set-diffuse-color :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_set_reference_alpha" %alpha-test-effect-set-reference-alpha :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_set_texture" %alpha-test-effect-set-texture :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_alpha_test_effect_set_vertex_color_enabled" %alpha-test-effect-set-vertex-color-enabled :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_dual_texture_effect_create" %dual-texture-effect-create :uint32 (:uint64 :pointer) :thread :game :ownership "creates-owned:effect:child-of-game")
+    ("cna_dual_texture_effect_get_alpha" %dual-texture-effect-get-alpha :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_dual_texture_effect_get_diffuse_color" %dual-texture-effect-get-diffuse-color :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_dual_texture_effect_get_texture" %dual-texture-effect-get-texture :uint32 (:uint64 :uint32 :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_dual_texture_effect_get_vertex_color_enabled" %dual-texture-effect-get-vertex-color-enabled :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_dual_texture_effect_set_alpha" %dual-texture-effect-set-alpha :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_dual_texture_effect_set_diffuse_color" %dual-texture-effect-set-diffuse-color :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
+    ("cna_dual_texture_effect_set_texture" %dual-texture-effect-set-texture :uint32 (:uint64 :uint32 :uint64) :thread :owner :ownership "none")
+    ("cna_dual_texture_effect_set_vertex_color_enabled" %dual-texture-effect-set-vertex-color-enabled :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_skinned_effect_copy_bone_transforms" %skinned-effect-copy-bone-transforms :uint32 (:uint64 :uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_create" %skinned-effect-create :uint32 (:uint64 :pointer) :thread :game :ownership "creates-owned:effect:child-of-game")
+    ("cna_skinned_effect_get_alpha" %skinned-effect-get-alpha :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_get_diffuse_color" %skinned-effect-get-diffuse-color :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_get_emissive_color" %skinned-effect-get-emissive-color :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_get_prefer_per_pixel_lighting" %skinned-effect-get-prefer-per-pixel-lighting :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_get_specular_color" %skinned-effect-get-specular-color :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_get_specular_power" %skinned-effect-get-specular-power :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_get_texture" %skinned-effect-get-texture :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_get_vertex_color_enabled" %skinned-effect-get-vertex-color-enabled :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_get_weights_per_vertex" %skinned-effect-get-weights-per-vertex :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_alpha" %skinned-effect-set-alpha :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_bone_transforms" %skinned-effect-set-bone-transforms :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_diffuse_color" %skinned-effect-set-diffuse-color :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_emissive_color" %skinned-effect-set-emissive-color :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_prefer_per_pixel_lighting" %skinned-effect-set-prefer-per-pixel-lighting :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_specular_color" %skinned-effect-set-specular-color :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_specular_power" %skinned-effect-set-specular-power :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_texture" %skinned-effect-set-texture :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_vertex_color_enabled" %skinned-effect-set-vertex-color-enabled :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_skinned_effect_set_weights_per_vertex" %skinned-effect-set-weights-per-vertex :uint32 (:uint64 :int32) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

@@ -168,11 +168,12 @@ CNA-NOT-SUPPORTED-ERROR; the reader works regardless." documentation)))
 ;;; out thirty times.
 
 (defmacro %define-effect-boolean (name getter-route setter-route documentation
-                                  &optional (class 'effect))
+                                  &optional (class 'effect) (define-generic t))
   `(progn
-     (defgeneric ,name (effect) (:documentation ,documentation))
-     (defgeneric (setf ,name) (value effect)
-       (:documentation ,(format nil "~a's setter." documentation)))
+     ,@(when define-generic
+         `((defgeneric ,name (effect) (:documentation ,documentation))
+           (defgeneric (setf ,name) (value effect)
+             (:documentation ,(format nil "~a's setter." documentation)))))
      (defmethod ,name ((effect ,class))
        (cna-lisp.internal:check-usable effect ,(string-downcase (symbol-name name)))
        (cffi:with-foreign-object (out :uint8)
@@ -189,11 +190,12 @@ CNA-NOT-SUPPORTED-ERROR; the reader works regardless." documentation)))
        value)))
 
 (defmacro %define-effect-single (name getter-route setter-route documentation
-                                 &optional (class 'effect))
+                                 &optional (class 'effect) (define-generic t))
   `(progn
-     (defgeneric ,name (effect) (:documentation ,documentation))
-     (defgeneric (setf ,name) (value effect)
-       (:documentation ,(format nil "~a's setter." documentation)))
+     ,@(when define-generic
+         `((defgeneric ,name (effect) (:documentation ,documentation))
+           (defgeneric (setf ,name) (value effect)
+             (:documentation ,(format nil "~a's setter." documentation)))))
      (defmethod ,name ((effect ,class))
        (cna-lisp.internal:check-usable effect ,(string-downcase (symbol-name name)))
        (cffi:with-foreign-object (out :float)
@@ -209,11 +211,12 @@ CNA-NOT-SUPPORTED-ERROR; the reader works regardless." documentation)))
        value)))
 
 (defmacro %define-effect-vector3 (name getter-route setter-route documentation
-                                  &optional (class 'effect))
+                                  &optional (class 'effect) (define-generic t))
   `(progn
-     (defgeneric ,name (effect) (:documentation ,documentation))
-     (defgeneric (setf ,name) (value effect)
-       (:documentation ,(format nil "~a's setter." documentation)))
+     ,@(when define-generic
+         `((defgeneric ,name (effect) (:documentation ,documentation))
+           (defgeneric (setf ,name) (value effect)
+             (:documentation ,(format nil "~a's setter." documentation)))))
      (defmethod ,name ((effect ,class))
        (cna-lisp.internal:check-usable effect ,(string-downcase (symbol-name name)))
        (cffi:with-foreign-object (out '(:struct cna-lisp.internal.ffi::cna-vector-3))
@@ -248,21 +251,39 @@ CNA-NOT-SUPPORTED-ERROR; the reader works regardless." documentation)))
     cna-lisp.internal.ffi::%effect-fog-set-color
     "IEffectFog.FogColor")
 
-;;; IEffectLights
-(%define-effect-boolean effect-lighting-enabled
-    cna-lisp.internal.ffi::%effect-lights-get-enabled
-    cna-lisp.internal.ffi::%effect-lights-set-enabled
-    "IEffectLights.LightingEnabled")
+;;; --- IEffectLights, as a class rather than as every effect -------------------
+;;;
+;;; The other two contracts are specialised on EFFECT, because CNA's
+;;; `cna_effect_matrices_*' and `cna_effect_fog_*' take any effect handle and
+;;; every stock effect in the selection implements both. Lighting is not like
+;;; that: `AlphaTestEffect' and `DualTextureEffect' implement neither
+;;; `IEffectLights' nor any part of it, and a generic function specialised on
+;;; EFFECT would have answered for them -- an applicable method for a member XNA
+;;; has not got. So the lights live on a private mixin, and "implements
+;;; IEffectLights" is a superclass rather than a hope.
+;;;
+;;; `LightingEnabled' is narrower still. `EnvironmentMapEffect' and
+;;; `SkinnedEffect' implement `IEffectLights' *explicitly*, so their
+;;; `LightingEnabled' is not part of their public contract and the pinned
+;;; metadata does not list it; only `BasicEffect' has it publicly, and only
+;;; BASIC-EFFECT answers it here.
+
+(defclass %effect-with-lights (effect)
+  ((%lights :initform #() :accessor %effect-lights))
+  (:documentation
+   "Private base of the effects whose public contract carries IEffectLights'
+ambient colour, three directional lights and EnableDefaultLighting."))
+
 (%define-effect-vector3 effect-ambient-light-color
     cna-lisp.internal.ffi::%effect-lights-get-ambient-color
     cna-lisp.internal.ffi::%effect-lights-set-ambient-color
-    "IEffectLights.AmbientLightColor")
+    "IEffectLights.AmbientLightColor"
+    %effect-with-lights)
 
 ;;; --- BasicEffect -----------------------------------------------------------
 
-(defclass basic-effect (effect)
-  ((%lights :initform #() :accessor %basic-effect-lights)
-   (%texture :initform nil :accessor %basic-effect-texture))
+(defclass basic-effect (%effect-with-lights)
+  ((%texture :initform nil :accessor %basic-effect-texture))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.BasicEffect.
 
@@ -293,7 +314,7 @@ generic functions those interfaces became answer for it.
      "make-instance 'basic-effect" :object-type 'basic-effect)
     (cffi:mem-ref out :uint64)))
 
-(defmethod %build-effect-extras ((effect basic-effect))
+(defmethod %build-effect-extras ((effect %effect-with-lights))
   (%build-directional-lights effect))
 
 (defun %build-directional-lights (effect)
@@ -312,17 +333,17 @@ generic functions those interfaces became answer for it.
                                #'cna-lisp.internal.ffi::%directional-light-destroy)
           (%adopt-view light effect)
           (setf (aref lights index) light))))
-    (setf (%basic-effect-lights effect) lights)))
+    (setf (%effect-lights effect) lights)))
 
 (macrolet ((define-light-reader (name index)
              `(progn
                 (defgeneric ,name (effect)
                   (:documentation
                    ,(format nil "IEffectLights.DirectionalLight~d." index)))
-                (defmethod ,name ((effect basic-effect))
+                (defmethod ,name ((effect %effect-with-lights))
                   (cna-lisp.internal:check-live
                    effect ,(string-downcase (symbol-name name)))
-                  (aref (%basic-effect-lights effect) ,index)))))
+                  (aref (%effect-lights effect) ,index)))))
   (define-light-reader directional-light-0 0)
   (define-light-reader directional-light-1 1)
   (define-light-reader directional-light-2 2))
@@ -368,6 +389,11 @@ generic functions those interfaces became answer for it.
     cna-lisp.internal.ffi::%basic-effect-set-prefer-per-pixel-lighting
     "BasicEffect.PreferPerPixelLighting"
     basic-effect)
+(%define-effect-boolean effect-lighting-enabled
+    cna-lisp.internal.ffi::%effect-lights-get-enabled
+    cna-lisp.internal.ffi::%effect-lights-set-enabled
+    "IEffectLights.LightingEnabled"
+    basic-effect)
 
 (defgeneric enable-default-lighting (effect)
   (:documentation
@@ -377,7 +403,7 @@ The values are the runtime's, not this binding's: CNA applies its own preset
 through cna_effect_lights_enable_default, and CNA-Lisp does not second-guess it
 with numbers copied out of a decompiler."))
 
-(defmethod enable-default-lighting ((effect effect))
+(defmethod enable-default-lighting ((effect %effect-with-lights))
   (cna-lisp.internal:check-usable effect "enable-default-lighting")
   (cna-lisp.internal:check-result
    (cna-lisp.internal.ffi::%effect-lights-enable-default (cna-lisp.internal:handle-of effect))
@@ -398,17 +424,21 @@ object that names it, so this remembers rather than invents."))
 (defgeneric (setf effect-texture) (texture effect)
   (:documentation "BasicEffect.Texture's setter. NIL clears it."))
 
-(defmethod effect-texture ((effect basic-effect))
-  (cna-lisp.internal:check-usable effect "effect-texture")
+(defun %effect-texture-of (effect route remembered operation)
+  "The Texture2D behind a stock effect's texture property.
+
+Shared by every stock effect that has one, because the reasoning is the same for
+all of them: CNA answers a handle, its ABI has no route from a handle back to the
+object that names it, so this compares the handle against the object the setter
+remembered and refuses rather than inventing a Texture2D."
+  (cna-lisp.internal:check-usable effect operation)
   (cffi:with-foreign-objects ((out :uint64) (has :uint8))
     (cna-lisp.internal:check-result
-     (cna-lisp.internal.ffi::%basic-effect-get-texture
-      (cna-lisp.internal:handle-of effect) has out)
-     "effect-texture" :object-type (type-of effect))
+     (funcall route (cna-lisp.internal:handle-of effect) has out)
+     operation :object-type (type-of effect))
     (let ((native (if (cna-lisp.internal.ffi:cna-true-p (cffi:mem-ref has :uint8))
                       (cffi:mem-ref out :uint64)
-                      0))
-          (remembered (%basic-effect-texture effect)))
+                      0)))
       (cond ((zerop native) nil)
             ((and remembered
                   (not (microsoft.xna.framework:disposed-p remembered))
@@ -416,30 +446,40 @@ object that names it, so this remembers rather than invents."))
              remembered)
             (t
              (error 'microsoft.xna.framework:cna-invalid-state-error
-                    :operation "effect-texture" :object-type (type-of effect)
+                    :operation operation :object-type (type-of effect)
                     :format-control
                     "CNA reports a texture on this effect that this binding did not ~
                      set. There is no way back from a native texture handle to the ~
                      object that names it, so this refuses rather than answering a ~
                      Texture2D it would have to invent."))))))
 
-(defmethod (setf effect-texture) (texture (effect basic-effect))
-  (cna-lisp.internal:check-usable effect "(setf effect-texture)")
+(defun %set-effect-texture (effect route texture operation)
+  "Assign or clear a stock effect's texture. NIL is CNA_INVALID_HANDLE."
+  (cna-lisp.internal:check-usable effect operation)
   (when texture (check-type texture texture-2d))
   (cna-lisp.internal:check-result
-   (cna-lisp.internal.ffi::%basic-effect-set-texture
-    (cna-lisp.internal:handle-of effect)
-    (if texture
-        (progn (cna-lisp.internal:check-usable texture "(setf effect-texture)")
-               (cna-lisp.internal:handle-of texture))
-        0))
-   "(setf effect-texture)" :object-type (type-of effect))
-  (setf (%basic-effect-texture effect) texture))
+   (funcall route
+            (cna-lisp.internal:handle-of effect)
+            (if texture
+                (progn (cna-lisp.internal:check-usable texture operation)
+                       (cna-lisp.internal:handle-of texture))
+                0))
+   operation :object-type (type-of effect))
+  texture)
 
-(defmethod cna-lisp.internal:destroy-native :before ((effect basic-effect))
+(defmethod effect-texture ((effect basic-effect))
+  (%effect-texture-of effect #'cna-lisp.internal.ffi::%basic-effect-get-texture
+                      (%basic-effect-texture effect) "effect-texture"))
+
+(defmethod (setf effect-texture) (texture (effect basic-effect))
+  (setf (%basic-effect-texture effect)
+        (%set-effect-texture effect #'cna-lisp.internal.ffi::%basic-effect-set-texture
+                             texture "(setf effect-texture)")))
+
+(defmethod cna-lisp.internal:destroy-native :before ((effect %effect-with-lights))
   ;; The handles themselves are on the effect's ledger, released with everything
   ;; else; this only drops the Lisp objects that named them.
-  (setf (%basic-effect-lights effect) #()))
+  (setf (%effect-lights effect) #()))
 
 (defmethod clone-effect ((effect basic-effect))
   ;; The lights come with the graph; the remembered texture does not, because it

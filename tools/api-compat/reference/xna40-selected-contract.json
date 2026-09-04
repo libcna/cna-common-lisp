@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 127,
-  "member_count": 2067
+  "type_count": 130,
+  "member_count": 2127
  },
  "types": [
   {
@@ -30195,6 +30195,770 @@
      "getAccess": "public",
      "setAccess": "public",
      "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.Effect",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IEffectFog",
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IEffectFog",
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "device",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "protected",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "cloneSource",
+       "type": "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Clone",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Graphics.Effect",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "OnApply",
+     "static": false,
+     "access": "protected-internal",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "World",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "View",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Projection",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DiffuseColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Alpha",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogEnabled",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogStart",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogEnd",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Texture",
+     "type": "Microsoft.Xna.Framework.Graphics.Texture2D",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "VertexColorEnabled",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AlphaFunction",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ReferenceAlpha",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DualTextureEffect",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.Effect",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IEffectFog",
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IEffectFog",
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "device",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "protected",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "cloneSource",
+       "type": "Microsoft.Xna.Framework.Graphics.DualTextureEffect",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Clone",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Graphics.Effect",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "OnApply",
+     "static": false,
+     "access": "protected-internal",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "World",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "View",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Projection",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DiffuseColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Alpha",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogEnabled",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogStart",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogEnd",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Texture",
+     "type": "Microsoft.Xna.Framework.Graphics.Texture2D",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Texture2",
+     "type": "Microsoft.Xna.Framework.Graphics.Texture2D",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "VertexColorEnabled",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SkinnedEffect",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.Effect",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IEffectFog",
+    "Microsoft.Xna.Framework.Graphics.IEffectLights",
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IEffectFog",
+    "Microsoft.Xna.Framework.Graphics.IEffectLights",
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "device",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "protected",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "cloneSource",
+       "type": "Microsoft.Xna.Framework.Graphics.SkinnedEffect",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetBoneTransforms",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "boneTransforms",
+       "type": "Microsoft.Xna.Framework.Matrix[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetBoneTransforms",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Matrix[]",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "count",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Clone",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Graphics.Effect",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "EnableDefaultLighting",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "OnApply",
+     "static": false,
+     "access": "protected-internal",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "World",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "View",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Projection",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DiffuseColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "EmissiveColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "SpecularColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "SpecularPower",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Alpha",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "PreferPerPixelLighting",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AmbientLightColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DirectionalLight0",
+     "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DirectionalLight1",
+     "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DirectionalLight2",
+     "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogEnabled",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogStart",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogEnd",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Texture",
+     "type": "Microsoft.Xna.Framework.Graphics.Texture2D",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "WeightsPerVertex",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "field",
+     "name": "MaxBones",
+     "type": "System.Int32",
+     "static": true,
+     "constant": true,
+     "value": "72"
     }
    ]
   },

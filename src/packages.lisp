@@ -394,6 +394,11 @@
    #:width #:height #:level-count #:format-of #:bounds
    ;; --- SpriteBatch -------------------------------------------------------
    #:sprite-batch #:begin #:end #:draw-texture #:draw-string
+   ;; --- the other stock effects -------------------------------------------
+   #:alpha-test-effect #:effect-alpha-function #:effect-reference-alpha
+   #:dual-texture-effect #:effect-texture-2
+   #:skinned-effect #:effect-weights-per-vertex
+   #:set-bone-transforms #:get-bone-transforms #:+skinned-effect-max-bones+
    ;; --- SpriteFont --------------------------------------------------------
    #:sprite-font #:line-spacing #:spacing #:default-character #:characters
    #:measure-string))

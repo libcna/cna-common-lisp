@@ -295,7 +295,8 @@
       "CNA_EFFECT_TEXTURE_BASE",
       "CNA_EFFECT_TEXTURE_2D",
       "CNA_EFFECT_TEXTURE_3D",
-      "CNA_EFFECT_TEXTURE_CUBE"
+      "CNA_EFFECT_TEXTURE_CUBE",
+      "CNA_SKINNED_EFFECT_MAX_BONES"
     ],
     "prefix_families": [
       {
@@ -2290,6 +2291,264 @@
     {
       "name": "cna_sprite_font_measure_utf8",
       "header": "sprite_font.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_create",
+      "header": "effects.h",
+      "thread": "game",
+      "ownership": "creates-owned:effect:child-of-game"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_alpha_function",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_diffuse_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_reference_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_texture",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_vertex_color_enabled",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_alpha_function",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_diffuse_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_reference_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_texture",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_vertex_color_enabled",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dual_texture_effect_create",
+      "header": "effects.h",
+      "thread": "game",
+      "ownership": "creates-owned:effect:child-of-game"
+    },
+    {
+      "name": "cna_dual_texture_effect_get_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dual_texture_effect_get_diffuse_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dual_texture_effect_get_texture",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dual_texture_effect_get_vertex_color_enabled",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dual_texture_effect_set_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dual_texture_effect_set_diffuse_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dual_texture_effect_set_texture",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dual_texture_effect_set_vertex_color_enabled",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_copy_bone_transforms",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_create",
+      "header": "effects.h",
+      "thread": "game",
+      "ownership": "creates-owned:effect:child-of-game"
+    },
+    {
+      "name": "cna_skinned_effect_get_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_get_diffuse_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_get_emissive_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_get_prefer_per_pixel_lighting",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_get_specular_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_get_specular_power",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_get_texture",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_get_vertex_color_enabled",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_get_weights_per_vertex",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_bone_transforms",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_diffuse_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_emissive_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_prefer_per_pixel_lighting",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_specular_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_specular_power",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_texture",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_vertex_color_enabled",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_skinned_effect_set_weights_per_vertex",
+      "header": "effects.h",
       "thread": "owner",
       "ownership": "none"
     }

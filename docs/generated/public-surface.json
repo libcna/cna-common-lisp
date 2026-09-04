@@ -11488,6 +11488,25 @@
       "package": "microsoft.xna.framework.graphics",
       "symbols": [
         {
+          "name": "+skinned-effect-max-bones+",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": true,
+          "value": 72,
+          "documentation": "SkinnedEffect.MaxBones: the largest bone palette the effect can hold.\n\nXNA's is a public const field. The value here is read from the CNA header rather\nthan written down, and the two agree at 72; a build whose header said otherwise\nwould change this constant rather than leave it wrong."
+        },
+        {
           "name": "add-content-lost-handler",
           "fbound": true,
           "macro": false,
@@ -12056,6 +12075,34 @@
           "documentation": "BLEND-STATE.ALPHA-SOURCE-BLEND. Defaults to ONE."
         },
         {
+          "name": "alpha-test-effect",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:alpha-test-effect",
+            "microsoft.xna.framework.graphics:effect",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.AlphaTestEffect.\n\n    (make-instance 'alpha-test-effect :graphics-device device)\n\nTransforms, fog, a texture, per-vertex colour and an alpha test. It satisfies\nIEffectMatrices and IEffectFog and **not** IEffectLights, so EFFECT-AMBIENT-LIGHT-COLOR,\nDIRECTIONAL-LIGHT-0 and ENABLE-DEFAULT-LIGHTING have no applicable method for it,\nexactly as XNA has no such member on it."
+        },
+        {
           "name": "apply-effect-pass",
           "fbound": true,
           "macro": false,
@@ -12091,6 +12138,7 @@
           "metaclass": "standard-class",
           "precedence": [
             "microsoft.xna.framework.graphics:basic-effect",
+            "microsoft.xna.framework.graphics:%effect-with-lights",
             "microsoft.xna.framework.graphics:effect",
             "microsoft.xna.framework.graphics:%native-graphics-resource",
             "microsoft.xna.framework.graphics:graphics-resource",
@@ -13803,6 +13851,34 @@
           "documentation": "GraphicsDevice.DrawUserPrimitives, both overloads.\n\n    (draw-user-primitives device :triangle-list vertices :primitive-count 1)\n    (draw-user-primitives device :triangle-list raw-bytes\n                          :primitive-count 1 :vertex-declaration declaration)\n\nDATA is a Lisp sequence whose layout this binding can prove -- see\nsrc/graphics/buffer-data.lisp. Without :VERTEX-DECLARATION the layout comes from\nthe elements' own declaration through VERTEX-DECLARATION-OF, which is XNA's\nIVertexType overload; with one it is used as given, which is XNA's other.\n\nNothing native outlives the call: the packed bytes are stack-allocated for its\nduration, which is what XNA's own user-primitive path does."
         },
         {
+          "name": "dual-texture-effect",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:dual-texture-effect",
+            "microsoft.xna.framework.graphics:effect",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.DualTextureEffect.\n\n    (make-instance 'dual-texture-effect :graphics-device device)\n\nTwo texture layers blended together, with transforms, fog and per-vertex colour.\nLike ALPHA-TEST-EFFECT it satisfies IEffectMatrices and IEffectFog and not\nIEffectLights, and unlike every other stock effect here it has neither an\nemissive nor a specular colour.\n\nXNA spells its two layers as two properties, `Texture' and `Texture2'; CNA spells\nthem as one route taking a layer index of zero or one. The two are mapped by an\nexplicit pair of methods rather than by exposing the index, because XNA's public\nsurface has no index and inventing one would be inventing a member."
+        },
+        {
           "name": "dynamic-index-buffer",
           "fbound": false,
           "macro": false,
@@ -13910,6 +13986,30 @@
           "constant": false,
           "value": null,
           "documentation": "BasicEffect.Alpha"
+        },
+        {
+          "name": "effect-alpha-function",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "AlphaTestEffect.AlphaFunction: the comparison the alpha test performs.\n\nA CompareFunction, translated **by name** through the projected enumeration\nrather than passed through as an integer. Every enumeration in this binding does\nthat, for the reason `BlendFunction' gives: XNA numbers Min 3 and Max 4 and CNA\nnumbers them the other way round, so a numeric pass-through happens to work\neverywhere else and turns a minimum into a maximum there."
         },
         {
           "name": "effect-ambient-light-color",
@@ -15098,6 +15198,30 @@
           "documentation": "IEffectMatrices.Projection"
         },
         {
+          "name": "effect-reference-alpha",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "AlphaTestEffect.ReferenceAlpha, which XNA stores without clamping."
+        },
+        {
           "name": "effect-specular-color",
           "fbound": true,
           "macro": false,
@@ -15305,6 +15429,30 @@
           "documentation": "BasicEffect.Texture.\n\nAnswers the TEXTURE-2D this effect was last given, cross-checked against the\nhandle CNA reports. As with EFFECT-PARAMETER-VALUE-TEXTURE and\nGET-VERTEX-BUFFERS, CNA's ABI has no route from a native handle back to the\nobject that names it, so this remembers rather than invents."
         },
         {
+          "name": "effect-texture-2",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "texture",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DualTextureEffect.Texture2: the second texture layer.\n\nCNA's layer one. A separate generic function rather than an index argument,\nbecause XNA's public surface has two properties and no index."
+        },
+        {
           "name": "effect-texture-enabled",
           "fbound": true,
           "macro": false,
@@ -15375,6 +15523,30 @@
           "constant": false,
           "value": null,
           "documentation": "IEffectMatrices.View"
+        },
+        {
+          "name": "effect-weights-per-vertex",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SkinnedEffect.WeightsPerVertex: one, two or four."
         },
         {
           "name": "effect-world",
@@ -15581,6 +15753,28 @@
           "constant": false,
           "value": null,
           "documentation": "GraphicsDevice.GetBackBufferData: the back buffer's pixels, as a vector of COLOR.\n\n    (get-back-buffer-data device)\n    (get-back-buffer-data device :start-index i :element-count n)\n    (get-back-buffer-data device :source rectangle :start-index i :element-count n)\n\nThose are XNA's three overloads. :START-INDEX and :ELEMENT-COUNT are one group,\nbecause XNA has no overload that carries one without the other; :SOURCE may be\ngiven with them or alone. With nothing supplied the whole back buffer is read.\n\n**Under a renderer with no honest readback this signals**\nCNA-NOT-SUPPORTED-ERROR rather than answering zeroes -- which is what makes the\nmember usable as evidence that pixels were produced. See docs/limitations.md."
+        },
+        {
+          "name": "get-bone-transforms",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect",
+            "count"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SkinnedEffect.GetBoneTransforms(Int32): the leading COUNT bone transforms.\n\nAnswers a fresh simple vector of COUNT matrices. XNA answers a `Matrix[]', and\nthis copies for the same reason `VertexDeclaration.GetVertexElements' does:\na caller must not be able to reach back into the effect through what it was\ngiven."
         },
         {
           "name": "get-data",
@@ -16845,6 +17039,28 @@
           "documentation": "RASTERIZER-STATE.SCISSOR-TEST-ENABLE. Defaults to NIL."
         },
         {
+          "name": "set-bone-transforms",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect",
+            "transforms"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SkinnedEffect.SetBoneTransforms(Matrix[]).\n\nTRANSFORMS is a sequence of at least one and at most +SKINNED-EFFECT-MAX-BONES+\nmatrices, and it is copied: CNA takes the array by pointer and reads it during\nthe call, so nothing of the caller's is retained."
+        },
+        {
           "name": "set-data",
           "fbound": true,
           "macro": false,
@@ -16984,6 +17200,35 @@
           "constant": false,
           "value": null,
           "documentation": "GraphicsDevice.SetVertexBuffers(params VertexBufferBinding[]).\n\nAn empty list unbinds every stream, which is what XNA's empty array does."
+        },
+        {
+          "name": "skinned-effect",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:skinned-effect",
+            "microsoft.xna.framework.graphics:%effect-with-lights",
+            "microsoft.xna.framework.graphics:effect",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.SkinnedEffect.\n\n    (make-instance 'skinned-effect :graphics-device device)\n\nSkeletal animation: a palette of up to +SKINNED-EFFECT-MAX-BONES+ bone\ntransforms, one to four weights per vertex, and the lighting, fog, transform and\nmaterial surface of a stock effect.\n\nIt implements IEffectLights, so it answers EFFECT-AMBIENT-LIGHT-COLOR, the three\ndirectional lights and ENABLE-DEFAULT-LIGHTING. It does **not** answer\nEFFECT-LIGHTING-ENABLED: XNA implements that member of the interface explicitly,\nso it is not part of SkinnedEffect's public contract and the pinned metadata does\nnot list it."
         },
         {
           "name": "slope-scale-depth-bias",

@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 127,
-  "member_count": 2067
+  "type_count": 130,
+  "member_count": 2127
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,16 +15,16 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 127,
-  "members": 2067,
+  "types": 130,
+  "members": 2127,
   "types_by_status": {
    "partial": 8,
-   "complete": 119
+   "complete": 122
   },
   "members_by_status": {
-   "complete": 1610,
+   "complete": 1664,
    "missing": 66,
-   "not-applicable": 390,
+   "not-applicable": 396,
    "partial": 1
   },
   "diagnostics": 66,
@@ -2163,6 +2163,87 @@
     "VertexColorEnabled": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:basic-effect"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice)": "complete",
+    "new(AlphaTestEffect)": "not-applicable",
+    "Clone()": "complete",
+    "OnApply()": "not-applicable",
+    "World": "complete",
+    "View": "complete",
+    "Projection": "complete",
+    "DiffuseColor": "complete",
+    "Alpha": "complete",
+    "FogEnabled": "complete",
+    "FogStart": "complete",
+    "FogEnd": "complete",
+    "FogColor": "complete",
+    "Texture": "complete",
+    "VertexColorEnabled": "complete",
+    "AlphaFunction": "complete",
+    "ReferenceAlpha": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:alpha-test-effect"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DualTextureEffect",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice)": "complete",
+    "new(DualTextureEffect)": "not-applicable",
+    "Clone()": "complete",
+    "OnApply()": "not-applicable",
+    "World": "complete",
+    "View": "complete",
+    "Projection": "complete",
+    "DiffuseColor": "complete",
+    "Alpha": "complete",
+    "FogEnabled": "complete",
+    "FogStart": "complete",
+    "FogEnd": "complete",
+    "FogColor": "complete",
+    "Texture": "complete",
+    "Texture2": "complete",
+    "VertexColorEnabled": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:dual-texture-effect"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SkinnedEffect",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice)": "complete",
+    "new(SkinnedEffect)": "not-applicable",
+    "SetBoneTransforms(Matrix[])": "complete",
+    "GetBoneTransforms(Int32)": "complete",
+    "Clone()": "complete",
+    "EnableDefaultLighting()": "complete",
+    "OnApply()": "not-applicable",
+    "World": "complete",
+    "View": "complete",
+    "Projection": "complete",
+    "DiffuseColor": "complete",
+    "EmissiveColor": "complete",
+    "SpecularColor": "complete",
+    "SpecularPower": "complete",
+    "Alpha": "complete",
+    "PreferPerPixelLighting": "complete",
+    "AmbientLightColor": "complete",
+    "DirectionalLight0": "complete",
+    "DirectionalLight1": "complete",
+    "DirectionalLight2": "complete",
+    "FogEnabled": "complete",
+    "FogStart": "complete",
+    "FogEnd": "complete",
+    "FogColor": "complete",
+    "Texture": "complete",
+    "WeightsPerVertex": "complete",
+    "MaxBones": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:skinned-effect"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",

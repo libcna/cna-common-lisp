@@ -24,10 +24,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 279,
+    "functions": 322,
     "structs": 52,
     "struct_fields": 384,
-    "constants": 460,
+    "constants": 461,
     "callbacks": 6,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -7041,6 +7041,1042 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_sprite_font_measure_utf8(CNA_Handle sprite_font, CNA_StringView text, CNA_Vector2* out_size)"
+    },
+    {
+      "name": "cna_alpha_test_effect_create",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:effect:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_get_alpha(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_alpha_function",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_CompareFunction*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_get_alpha_function(CNA_EffectHandle effect, CNA_CompareFunction* out_value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_reference_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_get_reference_alpha(CNA_EffectHandle effect, int32_t* out_value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_texture",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_get_texture(CNA_EffectHandle effect, CNA_Bool* out_has_texture, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_alpha_test_effect_get_vertex_color_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_get_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_set_alpha(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_alpha_function",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_CompareFunction",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_set_alpha_function(CNA_EffectHandle effect, CNA_CompareFunction value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_reference_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_set_reference_alpha(CNA_EffectHandle effect, int32_t value)"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)"
+    },
+    {
+      "name": "cna_alpha_test_effect_set_vertex_color_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_alpha_test_effect_set_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_dual_texture_effect_create",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:effect:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)"
+    },
+    {
+      "name": "cna_dual_texture_effect_get_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_get_alpha(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_dual_texture_effect_get_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_dual_texture_effect_get_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "texture_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_has_texture",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_get_texture(CNA_EffectHandle effect, uint32_t texture_index, CNA_Bool* out_has_texture, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_dual_texture_effect_get_vertex_color_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_get_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_dual_texture_effect_set_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_set_alpha(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_dual_texture_effect_set_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_dual_texture_effect_set_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "texture_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_set_texture(CNA_EffectHandle effect, uint32_t texture_index, CNA_Handle texture)"
+    },
+    {
+      "name": "cna_dual_texture_effect_set_vertex_color_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dual_texture_effect_set_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_skinned_effect_copy_bone_transforms",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "requested_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_Matrix*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_copy_bone_transforms(CNA_EffectHandle effect, uint64_t requested_count, CNA_Matrix* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_skinned_effect_create",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:effect:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)"
+    },
+    {
+      "name": "cna_skinned_effect_get_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_alpha(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_skinned_effect_get_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_skinned_effect_get_emissive_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_emissive_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_skinned_effect_get_prefer_per_pixel_lighting",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_prefer_per_pixel_lighting(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_skinned_effect_get_specular_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_specular_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_skinned_effect_get_specular_power",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_specular_power(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_skinned_effect_get_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_texture",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_texture(CNA_EffectHandle effect, CNA_Bool* out_has_texture, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_skinned_effect_get_vertex_color_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)"
+    },
+    {
+      "name": "cna_skinned_effect_get_weights_per_vertex",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_get_weights_per_vertex(CNA_EffectHandle effect, int32_t* out_value)"
+    },
+    {
+      "name": "cna_skinned_effect_set_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_alpha(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_skinned_effect_set_bone_transforms",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transforms",
+          "c_type": "const CNA_Matrix*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "transform_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_bone_transforms(CNA_EffectHandle effect, const CNA_Matrix* transforms, uint64_t transform_count)"
+    },
+    {
+      "name": "cna_skinned_effect_set_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_skinned_effect_set_emissive_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_emissive_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_skinned_effect_set_prefer_per_pixel_lighting",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_prefer_per_pixel_lighting(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_skinned_effect_set_specular_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_specular_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_skinned_effect_set_specular_power",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_specular_power(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_skinned_effect_set_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)"
+    },
+    {
+      "name": "cna_skinned_effect_set_vertex_color_enabled",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool value)"
+    },
+    {
+      "name": "cna_skinned_effect_set_weights_per_vertex",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_skinned_effect_set_weights_per_vertex(CNA_EffectHandle effect, int32_t value)"
     }
   ],
   "structs": [
@@ -11565,6 +12601,7 @@
     "CNA_SET_DATA_NO_OVERWRITE": 2,
     "CNA_SHADER_STAGE_PIXEL": 0,
     "CNA_SHADER_STAGE_VERTEX": 1,
+    "CNA_SKINNED_EFFECT_MAX_BONES": 72,
     "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY": 1,
     "CNA_SPRITE_EFFECT_FLIP_VERTICALLY": 2,
     "CNA_SPRITE_EFFECT_NONE": 0,
