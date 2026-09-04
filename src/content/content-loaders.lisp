@@ -5,6 +5,23 @@
 ;;;; before nothing in particular. Each entry is one `cna_content_manager_load_*'
 ;;;; route, and the table is what makes `Load<T>' a single member rather than
 ;;;; three differently-named functions.
+;;;;
+;;;; **One asset load is one transaction, and it is this file's.** Every loader
+;;;; here opens exactly one rollback ledger and every native handle the load
+;;;; acquires is recorded in it, once, in CNA's required destruction order. The
+;;;; adoption helpers in the graphics layer take that ledger's recorder as an
+;;;; argument and record only the *Lisp* state they create -- the CLOS object and
+;;;; its registration as a child. The rule, which each helper repeats:
+;;;;
+;;;;     whoever receives a handle from CNA records its destruction.
+;;;;
+;;;; The shape this replaced had the loader record a handle and then call a helper
+;;;; that opened its own ledger and recorded the same handle again. A failure
+;;;; inside the helper destroyed the handle twice -- and for a SpriteFont it was
+;;;; worse: the atlas was adopted by a ledger that had already committed, so a
+;;;; later failure destroyed the atlas handle while the atlas object stayed
+;;;; registered as a live child of the game. The game then refused to shut down, a
+;;;; whole callback away from the load that broke it.
 
 (in-package #:microsoft.xna.framework.content)
 
@@ -42,22 +59,24 @@
 ;;; --- Texture2D and TextureCube ----------------------------------------------
 
 (%define-asset-loader (microsoft.xna.framework.graphics:texture-2d manager asset-name)
-  (let ((handle (%load-one-handle manager asset-name
-                                  #'cna-lisp.internal.ffi::%content-manager-load-texture-2d
-                                  "load-asset 'texture-2d")))
+  (let* ((operation "load-asset 'texture-2d")
+         (game (%loading-game manager operation))
+         (handle (%load-one-handle manager asset-name
+                                   #'cna-lisp.internal.ffi::%content-manager-load-texture-2d
+                                   operation)))
     (cna-lisp.internal:with-native-rollback (record)
       (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
-      (microsoft.xna.framework.graphics::%adopt-loaded-texture-2d
-       (%loading-game manager "load-asset 'texture-2d") handle))))
+      (microsoft.xna.framework.graphics::%adopt-loaded-texture-2d game handle record))))
 
 (%define-asset-loader (microsoft.xna.framework.graphics:texture-cube manager asset-name)
-  (let ((handle (%load-one-handle manager asset-name
-                                  #'cna-lisp.internal.ffi::%content-manager-load-texture-cube
-                                  "load-asset 'texture-cube")))
+  (let* ((operation "load-asset 'texture-cube")
+         (game (%loading-game manager operation))
+         (handle (%load-one-handle manager asset-name
+                                   #'cna-lisp.internal.ffi::%content-manager-load-texture-cube
+                                   operation)))
     (cna-lisp.internal:with-native-rollback (record)
       (funcall record (lambda () (cna-lisp.internal.ffi::%texturecube-destroy handle)))
-      (microsoft.xna.framework.graphics::%adopt-loaded-texture-cube
-       (%loading-game manager "load-asset 'texture-cube") handle))))
+      (microsoft.xna.framework.graphics::%adopt-loaded-texture-cube game handle record))))
 
 ;;; --- SpriteFont -------------------------------------------------------------
 ;;;
@@ -68,9 +87,9 @@
 ;;; destroyed until this SpriteFont is destroyed".
 
 (%define-asset-loader (microsoft.xna.framework.graphics:sprite-font manager asset-name)
-  (let ((operation "load-asset 'sprite-font")
-        (game (%loading-game manager "load-asset 'sprite-font"))
-        (handle (%content-manager-handle manager "load-asset 'sprite-font")))
+  (let* ((operation "load-asset 'sprite-font")
+         (game (%loading-game manager operation))
+         (handle (%content-manager-handle manager operation)))
     (cffi:with-foreign-objects ((font-out :uint64) (atlas-out :uint64))
       (setf (cffi:mem-ref font-out :uint64) 0
             (cffi:mem-ref atlas-out :uint64) 0)
@@ -82,7 +101,7 @@
       (let ((font-handle (cffi:mem-ref font-out :uint64))
             (atlas-handle (cffi:mem-ref atlas-out :uint64)))
         (cna-lisp.internal:with-native-rollback (record)
-          ;; Recorded font-first so the rollback runs it *last*: undo is
+          ;; Recorded atlas-first so the rollback runs it *last*: undo is
           ;; newest-first, and CNA refuses to destroy the atlas while the font
           ;; lives. Recording them the other way round would produce a rollback
           ;; that CNA refuses half of.
@@ -91,4 +110,4 @@
           (funcall record
                    (lambda () (cna-lisp.internal.ffi::%sprite-font-destroy font-handle)))
           (microsoft.xna.framework.graphics::%adopt-loaded-sprite-font
-           game font-handle atlas-handle))))))
+           game font-handle atlas-handle record))))))

@@ -80,8 +80,9 @@ milestone, so no public route here produces one either."))
 
 ;;; --- the glyph table -------------------------------------------------------
 
-(defun %read-font-glyph-table (handle count operation)
-  "Copy CNA's glyph rows out into four parallel Lisp vectors.
+(defgeneric %read-font-glyph-table (handle count operation)
+  (:documentation
+   "Copy CNA's glyph rows out into four parallel Lisp vectors.
 
 Read once, at construction, and never again: XNA's SpriteFont takes four
 `List<T>'s in its constructor and no member of it can change their contents, so
@@ -91,7 +92,20 @@ character drawn.
 Four vectors rather than one vector of structures, because that is what XNA has
 -- `glyphData', `croppingData', `characterMap' and `kerning', indexed in
 lockstep -- and because the measurement transcription indexes them exactly that
-way."
+way.
+
+**A generic function on unspecialised arguments, and deliberately.** This step
+runs after both of the load's native handles exist and after the atlas has been
+adopted, which makes it the exact window a failure-injection test has to be able
+to open -- the same reason %READ-TEXTURE-STORAGE is a generic function. There is
+nothing here worth dispatching *on*; what the seam needs is somewhere for a test
+to attach an `:around' method, and a generic function is that whether or not any
+argument is specialised. Nothing public overrides it.")
+  (:method (handle count operation)
+    (%glyph-table handle count operation)))
+
+(defun %glyph-table (handle count operation)
+  "The default %READ-FONT-GLYPH-TABLE, as an ordinary function."
   (let ((characters (make-array count :element-type '(unsigned-byte 16)))
         (glyphs (make-array count))
         (cropping (make-array count))
@@ -253,12 +267,22 @@ it cannot mask the failure that caused it."
         (unless constructed
           (ignore-errors (cna-lisp.internal.ffi::%sprite-font-destroy handle)))))))
 
-(defun %sprite-font-info (handle operation)
-  "Read a loaded font's character count, spacings and default character.
+(defgeneric %sprite-font-info (handle operation)
+  (:documentation
+   "Read a loaded font's character count, spacings and default character.
 
 Only a *loaded* font needs this. A font built here already knows all of it,
 because it was given all of it; one that came out of a `.cnj' was described by
-the asset rather than by the caller, and CNA is the only thing that has read it."
+the asset rather than by the caller, and CNA is the only thing that has read it.
+
+A generic function for the reason %READ-FONT-GLYPH-TABLE is one: it is the first
+step of the load that runs *after* the atlas has been fully adopted, which makes
+it the exact window a failure-injection test has to be able to open.")
+  (:method (handle operation)
+    (%font-info handle operation)))
+
+(defun %font-info (handle operation)
+  "The default %SPRITE-FONT-INFO, as an ordinary function."
   (cffi:with-foreign-object (info '(:struct cna-lisp.internal.ffi::cna-sprite-font-info))
     (cffi:foreign-funcall "memset" :pointer info :int 0
                           :size cna-lisp.internal.ffi::+sizeof-cna-sprite-font-info+ :void)
@@ -277,7 +301,7 @@ the asset rather than by the caller, and CNA is the only thing that has read it.
               (and (plusp (slot cna-lisp.internal.ffi::has-default-character))
                    (slot cna-lisp.internal.ffi::default-character))))))
 
-(defun %adopt-loaded-sprite-font (game font-handle atlas-handle)
+(defun %adopt-loaded-sprite-font (game font-handle atlas-handle record)
   "Wrap the font *and* the atlas one `Load<SpriteFont>' produced.
 
 CNA answers two owned handles for one asset, because \"a SpriteFont is a font
@@ -286,31 +310,38 @@ objects here, parented the same way a caller-built font is: the atlas is a child
 of the game, and the font is a child of the *atlas*, so disposing them in the
 wrong order is a diagnosable refusal rather than a native failure.
 
+RECORD is the *loader's* transaction, which is the only one: both handles came
+back from `cna_content_manager_load_sprite_font' and their destructions are
+recorded there, in CNA's required order. What is recorded here is only the Lisp
+state -- the atlas object, then the font object -- so the undo abandons the
+adopted atlas as well as destroying its handle. That is the failure this shape
+exists for: before it, a font that failed *after* its atlas had been adopted left
+the atlas registered as a live child of the game over a handle the outer rollback
+had already destroyed, and the game refused to shut down a whole callback later.
+
 Answers the font and the atlas, in that order."
   (let ((operation "load-asset 'sprite-font"))
-    (cna-lisp.internal:with-native-rollback (record)
-      (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy atlas-handle)))
-      (let ((atlas (%adopt-loaded-texture-2d game atlas-handle)))
-        (funcall record (lambda () (cna-lisp.internal.ffi::%sprite-font-destroy font-handle)))
-        (multiple-value-bind (count line-spacing spacing default-character)
-            (%sprite-font-info font-handle operation)
-          (multiple-value-bind (characters bounds cropping kerning)
-              (%read-font-glyph-table font-handle count operation)
-            (let ((font (make-instance 'sprite-font
-                                       :handle font-handle
-                                       :ownership :owned
-                                       :owner atlas
-                                       :owner-thread (cna-lisp.internal:owner-thread-of game)
-                                       :characters characters
-                                       :glyphs bounds
-                                       :cropping cropping
-                                       :kerning kerning
-                                       :line-spacing line-spacing
-                                       :spacing spacing
-                                       :default-character default-character
-                                       :texture atlas)))
-              (cna-lisp.internal:register-child atlas font)
-              (values font atlas))))))))
+    (let ((atlas (%adopt-loaded-texture-2d game atlas-handle record)))
+      (multiple-value-bind (count line-spacing spacing default-character)
+          (%sprite-font-info font-handle operation)
+        (multiple-value-bind (characters bounds cropping kerning)
+            (%read-font-glyph-table font-handle count operation)
+          (let ((font (make-instance 'sprite-font
+                                     :handle font-handle
+                                     :ownership :owned
+                                     :owner atlas
+                                     :owner-thread (cna-lisp.internal:owner-thread-of game)
+                                     :characters characters
+                                     :glyphs bounds
+                                     :cropping cropping
+                                     :kerning kerning
+                                     :line-spacing line-spacing
+                                     :spacing spacing
+                                     :default-character default-character
+                                     :texture atlas)))
+            (cna-lisp.internal:register-child atlas font)
+            (funcall record (lambda () (cna-lisp.internal:invalidate font)))
+            (values font atlas)))))))
 
 (defmethod cna-lisp.internal:destroy-native ((font sprite-font))
   (cna-lisp.internal:check-result

@@ -115,25 +115,27 @@ because the base class is what asks.")
                 (ignore-errors
                  (cna-lisp.internal.ffi::%texturecube-destroy handle))))))))))
 
-(defun %adopt-loaded-texture-cube (game handle)
-  "Wrap a cube a ContentManager created.
+(defun %adopt-loaded-texture-cube (game handle record)
+  "Wrap a cube a ContentManager created, inside the caller's load transaction.
 
 Unlike a Texture2D, a cube *can* report its own shape: `cna_texturecube_get_info'
 answers the edge size, the level count and the format, so a loaded cube is as
-complete as a constructed one."
-  (cna-lisp.internal:with-native-rollback (record)
-    (funcall record (lambda () (cna-lisp.internal.ffi::%texturecube-destroy handle)))
-    (multiple-value-bind (size levels format)
-        (%texture-cube-info handle "load-asset 'texture-cube")
-      (let ((texture (make-instance 'texture-cube
-                                    :handle handle
-                                    :ownership :owned
-                                    :owner game
-                                    :owner-thread (cna-lisp.internal:owner-thread-of game)
-                                    :size size :level-count levels :format format)))
-        (cna-lisp.internal:register-child game texture)
-        (funcall record (lambda () (cna-lisp.internal:unregister-child game texture)))
-        texture))))
+complete as a constructed one.
+
+RECORD is the enclosing transaction's recorder, and HANDLE's destruction is
+**not** recorded here: the loader received the handle from CNA and recorded it
+there. See %ADOPT-TEXTURE-2D for the rule and why it is the rule."
+  (multiple-value-bind (size levels format)
+      (%texture-cube-info handle "load-asset 'texture-cube")
+    (let ((texture (make-instance 'texture-cube
+                                  :handle handle
+                                  :ownership :owned
+                                  :owner game
+                                  :owner-thread (cna-lisp.internal:owner-thread-of game)
+                                  :size size :level-count levels :format format)))
+      (cna-lisp.internal:register-child game texture)
+      (funcall record (lambda () (cna-lisp.internal:invalidate texture)))
+      texture)))
 
 (defmethod cna-lisp.internal:destroy-native ((texture texture-cube))
   (cna-lisp.internal:check-result

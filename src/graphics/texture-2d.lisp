@@ -63,23 +63,42 @@ wrong-sized quads; refusing says what is missing."))
 (defmethod height ((texture texture-2d))
   (%texture-dimension texture (%texture-height texture) "height"))
 
-(defun %adopt-loaded-texture-2d (game handle)
+(defun %adopt-texture-2d (game handle record &key width height (class 'texture-2d))
+  "Build the CLOS Texture2D over a handle the caller's transaction already owns.
+
+RECORD is that transaction's recorder, and the division of labour is the rule
+that keeps one asset load to one ledger:
+
+  **whoever receives a handle from CNA records its destruction.**
+
+This function did not receive HANDLE from CNA -- the decoder or the content
+loader did -- so it records only the undo for the *Lisp* state it creates: the
+object, and its registration as a child of the game. Recording the handle here
+too is the bug this shape exists to make unsayable, because a handle owned by two
+nested ledgers is destroyed twice when the inner one runs first.
+
+The undo is INVALIDATE rather than UNREGISTER-CHILD. An abandoned object is not
+merely unowned: its handle is about to be destroyed by the step recorded before
+it, so anything still holding a reference must find a disposed object rather than
+a live-looking one over a dead handle."
+  (let ((texture (make-instance class
+                                :handle handle
+                                :ownership :owned
+                                :owner game
+                                :owner-thread (cna-lisp.internal:owner-thread-of game)
+                                :width width :height height)))
+    (%read-texture-storage texture)
+    (cna-lisp.internal:register-child game texture)
+    (funcall record (lambda () (cna-lisp.internal:invalidate texture)))
+    texture))
+
+(defun %adopt-loaded-texture-2d (game handle record)
   "Wrap a texture a ContentManager created, whose dimensions CNA will not report.
 
 The width and height are NIL rather than zero, so WIDTH and HEIGHT refuse rather
-than answering a plausible wrong number. See WIDTH."
-  (cna-lisp.internal:with-native-rollback (record)
-    (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
-    (let ((texture (make-instance 'texture-2d
-                                  :handle handle
-                                  :ownership :owned
-                                  :owner game
-                                  :owner-thread (cna-lisp.internal:owner-thread-of game)
-                                  :width nil :height nil)))
-      (%read-texture-storage texture)
-      (cna-lisp.internal:register-child game texture)
-      (funcall record (lambda () (cna-lisp.internal:unregister-child game texture)))
-      texture)))
+than answering a plausible wrong number. See WIDTH. RECORD is the enclosing
+load transaction's recorder; see %ADOPT-TEXTURE-2D for what is recorded where."
+  (%adopt-texture-2d game handle record :width nil :height nil))
 
 (defun %texture-storage-dimensions (handle)
   "Read a freshly created texture's dimensions and format back out of CNA."
@@ -143,17 +162,8 @@ CLASS exists for the failure-injection test and defaults to TEXTURE-2D; nothing
 public passes it."
   (cna-lisp.internal:with-native-rollback (record)
     (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
-    (let* ((game (cna-lisp.internal:owner-of device))
-           (texture (make-instance class
-                                   :handle handle
-                                   :ownership :owned
-                                   :owner game
-                                   :owner-thread (cna-lisp.internal:owner-thread-of game)
-                                   :width width :height height)))
-      (%read-texture-storage texture)
-      (cna-lisp.internal:register-child game texture)
-      (funcall record (lambda () (cna-lisp.internal:unregister-child game texture)))
-      texture)))
+    (%adopt-texture-2d (cna-lisp.internal:owner-of device) handle record
+                       :width width :height height :class class)))
 
 (defun texture-2d-from-png-bytes (graphics-device octets)
   "Decode an encoded image held in memory into a real native Texture2D.
