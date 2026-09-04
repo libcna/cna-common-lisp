@@ -450,26 +450,50 @@ different set on a different type and the service interface does not ask for
 them. Two types with two same-named events was enough to produce a confident
 paragraph about the wrong one.
 
-**The real obstacle is that CNA's service container is not a container.** It has
-`cna_game_services_contains_ext` and `cna_game_services_remove_ext`, both keyed
-by a closed `CNA_GAME_SERVICE_TYPE_*` enum, and no route that registers a service
-or returns one. CNA says why, and the reason is sound: "the canonical container
-is keyed by C++ type identity, which has no C expression: a C consumer cannot
-name a type, and cannot author an object implementing a C++ interface to register
-under one."
+**The real obstacle is that CNA's service container is not a container.**
+Re-audited against 0.21.0's headers, route by route, so the claim is a
+measurement:
 
-So `GetService` — the member the type exists for — cannot be answered for the two
-services XNA's own runtime registers. A Lisp-side dictionary would answer it
-perfectly for services the *program* adds and silently invent the two that matter
-most, which is still the wrong trade; only the reason for refusing it has
-changed. Common Lisp can name a type where C cannot, so the missing half is a CNA
-route rather than a projection idea.
+| Operation | Route | What it does |
+| --- | --- | --- |
+| contains | `cna_game_services_contains_ext` | answers a boolean for one of two identities |
+| remove | `cna_game_services_remove_ext` | removes one of those two |
+| get | — | **none** |
+| register / add | — | **none, and deliberately so** |
 
-One thing genuinely did unblock: this binding *knows* the object in question.
-CNA's header records that creating the manager "registers it as the game's
-graphics device manager and graphics device service", and the binding holds that
-manager as a Lisp object. So the day a container is projected, both service keys
-resolve to something real rather than to a lookup that cannot be performed.
+Both existing routes are keyed by a closed `CNA_GAME_SERVICE_TYPE_*` enum with
+exactly two members, the graphics device manager and the graphics device service.
+CNA says why there is no third and fourth, and the reason is sound: "the canonical
+container is keyed by C++ type identity, which has no C expression: a C consumer
+cannot name a type, and cannot author an object implementing a C++ interface to
+register under one." The registration route is not an omission but a stated
+decision — "A route that accepted an opaque token instead would satisfy neither
+side: native code asking for `IGraphicsDeviceService` needs a vtable, not a
+`void*`" — and CNA's advice is that a consumer keep its own container beside this
+one.
+
+So `GetService` — the member the type exists for — cannot be answered *from CNA*
+for the two services XNA's own runtime registers. `contains_ext` says whether one
+is registered; it does not hand it back.
+
+**A managed-side mirror is conceivable and is not being taken as a shortcut.**
+This binding does hold the object in question: CNA's header records that creating
+the manager "registers it as the game's graphics device manager and graphics
+device service", and the manager is a Lisp object here. So a container could
+answer both canonical keys from the record, ask `contains_ext` before doing so,
+and route a removal through `remove_ext` so the two sides agree — and hold a
+program's own services in a Lisp dictionary, which is exactly where CNA says they
+belong and where XNA keeps them too, since nothing native reads them in XNA
+either.
+
+What stops that being done here and now is scope, not doubt: `GameServiceContainer`
+is **not in the selection**, and putting it there means importing the type from the
+pinned contract and reading its three members out of the IL. That is the
+device-settings closure's work, and it is listed there rather than done early. A
+Lisp dictionary *on its own* — one that answered a program's own services and
+invented the two canonical ones — remains refused, because inventing them is the
+part that would be wrong.
+
 
 ### LaunchParameters is empty unless the program fills it
 

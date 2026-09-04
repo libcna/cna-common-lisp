@@ -239,8 +239,8 @@ the graph after each closure instead of following this list once it has moved.
    `GraphicsDeviceManager`'s sixteen remaining members, which are the same subject
    seen from the other side. It brings `GameServiceContainer` into the selection.
 
-   **`Game.Services` will still not be projectable when it is done**, and that is
-   worth knowing before starting. Re-audited against the pinned metadata:
+   **`Game.Services` is where that closure gets hard**, and it is worth knowing
+   why before starting. Re-audited against the pinned metadata:
    `IGraphicsDeviceService`'s five members -- the `GraphicsDevice` property and the
    `DeviceCreated`, `DeviceDisposing`, `DeviceReset` and `DeviceResetting` events
    -- are *already complete*, on `GraphicsDeviceManager`, the type that implements
@@ -248,10 +248,24 @@ the graph after each closure instead of following this list once it has moved.
    `EndDraw` each have a CNA route. An earlier note here claimed the blocker was
    those interfaces and `GraphicsDevice`'s device-loss events; it had confused
    `GraphicsDevice`'s own same-named `DeviceReset`/`DeviceResetting` with the
-   service interface's. The actual blocker is that CNA's container has
-   `contains_ext` and `remove_ext` over a closed enum and **no route that registers
-   a service or hands one back**, so `GetService` cannot be answered for the two
-   services the runtime registers. That needs a CNA route, not a projection idea.
+   service interface's. **Do not reintroduce that reason.**
+
+   Re-audited again against 0.21.0's headers, route by route: CNA's container has
+   `contains_ext` and `remove_ext` over a closed two-member enum, **no get route
+   at all, and no registration route by explicit decision** -- "a route that
+   accepted an opaque token instead would satisfy neither side: native code asking
+   for `IGraphicsDeviceService` needs a vtable, not a `void*`". CNA's own advice is
+   that a consumer keep its own container beside this one.
+
+   So `GetService` cannot be answered *from CNA*. It might be answerable from
+   *here*: the binding holds the manager CNA registers as both canonical services,
+   so a container could answer both keys from the record, ask `contains_ext` first,
+   route a removal through `remove_ext` so the two sides stay in step, and keep a
+   program's own services in a Lisp dictionary -- which is where CNA says they
+   belong and where XNA keeps them too. That is a real option and it is this
+   closure's work, not a shortcut to take earlier: `GameServiceContainer` has to
+   enter the selection and its three members have to come out of the IL first. A
+   Lisp dictionary on its own, inventing the two canonical services, stays refused.
    `docs/limitations.md` has the full audit.
 3. **Audio, models, media, storage, gamer services, networking.**
 
@@ -355,12 +369,13 @@ the graph after each closure instead of following this list once it has moved.
   two scale overloads, `DrawUserIndexedPrimitives`'s two index widths, and the
   sixteen array transforms that claimed `arity` when there are two of each arity.
 
-* **SpriteFont is projected and cannot be obtained.** XNA gives it no public
-  constructor: it comes from `ContentManager.Load<SpriteFont>`. CNA has
-  `cna_sprite_font_create`, and projecting that as a public constructor would
-  invent a member XNA has not got, so the producer is unexported and test-only.
-  The template therefore draws no text yet, and must not be given an internal
-  route to do so.
+* **SpriteFont has no public constructor here, and does not need one.** XNA gives
+  it none either: a font comes from `ContentManager.Load<SpriteFont>`, and it does
+  here too. CNA has `cna_sprite_font_create`, and projecting *that* as a public
+  constructor would invent a member XNA has not got, so the producer stays
+  unexported and test-only. The template draws text through the public content
+  path and must not be given an internal route to do so; the SOFTWARE lane's
+  `loaded-text` proof and the template's own `text_pixel` are what say it works.
 
 * **CNA is stricter than XNA about a SpriteFont's spacing, and XNA wins.**
   `cna_sprite_font_set_spacing` requires a finite value; XNA's setter is a bare
