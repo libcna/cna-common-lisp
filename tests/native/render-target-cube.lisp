@@ -169,3 +169,161 @@ refusal names the renderer's limit."
           (is (null (observed game :cube-unbound))
               "passing NIL must restore the back buffer, as SET-RENDER-TARGET's ~
                NIL does")))))
+
+;;; --- what the cross-check actually cross-checks ------------------------------
+;;;
+;;; GetRenderTargets answers the RENDER-TARGET-BINDING values this binding
+;;; recorded, because CNA answers handles and the ABI has no route from a handle
+;;; back to the object that owns it. That makes the cross-check the only thing
+;;; standing between the record and a plausible answer that is wrong, so it has to
+;;; be shown to catch each way the record can be wrong -- not merely to agree with
+;;; itself on the happy path.
+;;;
+;;; The mutation is applied to the *record*, which is the half that can drift.
+;;; CNA is left alone: the device really is bound to what it is bound to, and the
+;;; question is whether a record that no longer describes it is noticed.
+
+(defclass binding-cross-check-game (graphics-game)
+  ((flat-a :initform nil :accessor flat-a)
+   (flat-b :initform nil :accessor flat-b)
+   (cube :initform nil :accessor cross-check-cube)
+   (results :initform '() :accessor cross-check-results)
+   (mrt-error :initform nil :accessor mrt-error)
+   (cube-bind-error :initform nil :accessor cube-bind-error)
+   (build-error :initform nil :accessor cross-check-build-error))
+  (:documentation
+   "Binds real targets, corrupts the remembered record, and records what
+GetRenderTargets did about it."))
+
+(defun %record-cross-check (game label device mutate)
+  "Apply MUTATE to the remembered record, ask, and put the record back."
+  (let ((saved (gfx::%bound-render-targets device))
+        (outcome :accepted))
+    (unwind-protect
+         (progn
+           (setf (gfx::%bound-render-targets device)
+                 (funcall mutate (copy-list saved)))
+           (handler-case (gfx:get-render-targets device)
+             (xna:cna-internal-error () (setf outcome :refused))
+             (error (condition) (setf outcome (type-of condition)))))
+      (setf (gfx::%bound-render-targets device) saved))
+    (push (cons label outcome) (cross-check-results game))
+    outcome))
+
+(defmethod xna:load-content ((game binding-cross-check-game))
+  (call-next-method)
+  (handler-case
+      (let ((device (xna:graphics-device game)))
+        (setf (flat-a game) (make-instance 'gfx:render-target-2d
+                                           :graphics-device device :width 16 :height 16)
+              (flat-b game) (make-instance 'gfx:render-target-2d
+                                           :graphics-device device :width 16 :height 16)
+              (cross-check-cube game) (make-instance 'gfx:render-target-cube
+                                                     :graphics-device device :size 16))
+        ;; One 2D target bound for real.
+        (gfx:set-render-targets device (gfx:make-render-target-binding (flat-a game)))
+        (%record-cross-check
+         game :unmutated device #'identity)
+        ;; A face where CNA reports none. CNA answers positive X for a 2D target
+        ;; -- "meaningless for a 2D target and must then be positive X" -- so a
+        ;; record claiming any other face is a record that does not describe the
+        ;; device, on every renderer.
+        (%record-cross-check
+         game :wrong-face device
+         (lambda (record)
+           (declare (ignore record))
+           (list (gfx::%make-render-target-binding (flat-a game) :negative-x))))
+        ;; A record with one binding too many.
+        (%record-cross-check
+         game :too-many device
+         (lambda (record)
+           (append record (list (gfx:make-render-target-binding (flat-b game))))))
+        ;; A record with none at all, while one is bound.
+        (%record-cross-check game :too-few device
+                             (lambda (record) (declare (ignore record)) '()))
+        ;; A record naming a live target that is not the bound one.
+        (%record-cross-check
+         game :stale-target device
+         (lambda (record)
+           (declare (ignore record))
+           (list (gfx:make-render-target-binding (flat-b game)))))
+        ;; Two targets at once, if the renderer does multiple render targets, so
+        ;; that a swapped pair has something to be swapped.
+        (handler-case
+            (progn
+              (gfx:set-render-targets device
+                                      (gfx:make-render-target-binding (flat-a game))
+                                      (gfx:make-render-target-binding (flat-b game)))
+              (%record-cross-check game :two-unmutated device #'identity)
+              (%record-cross-check game :swapped device #'reverse))
+          (error (condition) (setf (mrt-error game) condition)))
+        (gfx:set-render-targets device)
+        ;; And a cube face, on a renderer that binds one: there the face is the
+        ;; half of the binding's identity the handle does not carry at all.
+        (handler-case
+            (progn
+              (gfx:set-render-target device (cross-check-cube game) :positive-y)
+              (%record-cross-check game :cube-unmutated device #'identity)
+              (%record-cross-check
+               game :cube-wrong-face device
+               (lambda (record)
+                 (declare (ignore record))
+                 (list (gfx::%make-render-target-binding (cross-check-cube game)
+                                                         :negative-z))))
+              (gfx:set-render-target device nil))
+          (error (condition) (setf (cube-bind-error game) condition)))
+        (gfx:set-render-targets device))
+    (error (condition) (setf (cross-check-build-error game) condition))))
+
+(defun %cross-check-outcome (game label)
+  (cdr (assoc label (cross-check-results game))))
+
+(define-native-test the-render-target-cross-check-catches-a-record-that-drifted
+  "Four ways a record can stop describing the device, and each one is refused."
+  (let ((game (make-instance 'binding-cross-check-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (null (cross-check-build-error game))
+               "the fixture failed: ~a" (cross-check-build-error game))
+           (is (eq :accepted (%cross-check-outcome game :unmutated))
+               "an untouched record was refused as ~a; every assertion below ~
+                would then pass for the wrong reason"
+               (%cross-check-outcome game :unmutated))
+           (dolist (label '(:wrong-face :too-many :too-few :stale-target))
+             (is (eq :refused (%cross-check-outcome game label))
+                 "~a was answered as ~a rather than refused"
+                 label (%cross-check-outcome game label)))
+           ;; The two renderer-dependent halves. Each is checked when its
+           ;; renderer offers it, and its absence is stated rather than passed
+           ;; over -- a branch that silently did nothing would prove nothing.
+           (if (mrt-error game)
+               (is (typep (mrt-error game) 'xna:cna-error)
+                   "a renderer that cannot bind two targets must refuse with a ~
+                    CNA-ERROR, not with ~a" (type-of (mrt-error game)))
+               (progn
+                 (is (eq :accepted (%cross-check-outcome game :two-unmutated)))
+                 (is (eq :refused (%cross-check-outcome game :swapped))
+                     "a swapped pair was answered as ~a; the handles are both ~
+                      still there, so only their order says anything"
+                     (%cross-check-outcome game :swapped))))
+           (if (cube-bind-error game)
+               (is (typep (cube-bind-error game) 'xna:cna-error)
+                   "a renderer that cannot bind a cube must refuse with a ~
+                    CNA-ERROR, not with ~a" (type-of (cube-bind-error game)))
+               (progn
+                 (is (eq :accepted (%cross-check-outcome game :cube-unmutated)))
+                 (is (eq :refused (%cross-check-outcome game :cube-wrong-face))
+                     "a cube binding with the wrong face was answered as ~a; ~
+                      the target handle is the same either way, so the face is ~
+                      the only thing that distinguishes them"
+                     (%cross-check-outcome game :cube-wrong-face)))))
+      (progn
+        (when (flat-a game) (ignore-errors (xna:dispose (flat-a game))))
+        (when (flat-b game) (ignore-errors (xna:dispose (flat-b game))))
+        (when (cross-check-cube game)
+          (ignore-errors (xna:dispose (cross-check-cube game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (xna:dispose game)))))

@@ -305,11 +305,27 @@ which restores the back buffer. Each argument is a RENDER-TARGET-BINDING."))
    "GraphicsDevice.GetRenderTargets(): the bindings currently set, as a list.
 
 Answers the RENDER-TARGET-BINDING values this binding bound, **cross-checked**
-against what CNA reports: `cna_graphics_device_copy_render_targets' answers
-handles, and the ABI has no route from a handle back to the object that owns it,
-so wrapping them would invent second objects for targets this program already
-has. If CNA's count or handles disagree with the record, that is a bug worth
-signalling rather than papering over, and it is signalled.
+against what CNA reports. Only the objects come from the record, and only because
+they have to: `cna_graphics_device_copy_render_targets' answers handles, and the
+ABI has no route from a handle back to the object that owns it, so wrapping them
+would invent second objects for targets this program already has.
+
+Everything CNA *can* be asked is checked against the record, and a disagreement
+signals rather than being papered over. That is four things, because a binding's
+identity is more than its target handle:
+
+* the **count** `cna_graphics_device_get_render_target_count' reports;
+* the **written count** the copy route reports, which is the exact required
+  element count -- a copy that wrote fewer elements than the count promised would
+  otherwise leave the rest of the array reading as zeroed bindings;
+* every slot's **target handle**, in order, so a swapped pair is caught;
+* every slot's **cube map face**, which is the half of a cube binding's identity
+  the handle does not carry. A 2D target has no face, and CNA reports positive X
+  for one -- \"meaningless for a 2D target and must then be positive X\" -- so that
+  is what a faceless binding is checked against, rather than being skipped.
+
+The array slice is checked to be zero as well, which is what CNA requires of it
+in both directions.
 
 An empty list is XNA's empty array: the back buffer is current."))
 
@@ -337,41 +353,79 @@ An empty list is XNA's empty array: the back buffer is current."))
             (cffi:foreign-funcall
              "memset" :pointer array :int 0
              :size (* count cna-lisp.internal.ffi::+sizeof-cna-render-target-binding+) :void)
-            (dotimes (index count)
-              (setf (cffi:foreign-slot-value
-                     (cffi:mem-aptr
-                      array '(:struct cna-lisp.internal.ffi::cna-render-target-binding) index)
-                     '(:struct cna-lisp.internal.ffi::cna-render-target-binding)
-                     'cna-lisp.internal.ffi::struct-size)
-                    cna-lisp.internal.ffi::+sizeof-cna-render-target-binding+
-                    (cffi:foreign-slot-value
-                     (cffi:mem-aptr
-                      array '(:struct cna-lisp.internal.ffi::cna-render-target-binding) index)
-                     '(:struct cna-lisp.internal.ffi::cna-render-target-binding)
-                     'cna-lisp.internal.ffi::struct-version)
-                    1))
-            (cffi:with-foreign-object (written :uint64)
-              (cna-lisp.internal:check-result
-               (cna-lisp.internal.ffi::%graphics-device-copy-render-targets
-                handle array count written)
-               "get-render-targets" :object-type 'graphics-device))
-            (loop for binding in remembered
-                  for index from 0
-                  for reported = (cffi:foreign-slot-value
-                                  (cffi:mem-aptr
-                                   array
-                                   '(:struct cna-lisp.internal.ffi::cna-render-target-binding)
-                                   index)
-                                  '(:struct cna-lisp.internal.ffi::cna-render-target-binding)
-                                  'cna-lisp.internal.ffi::render-target)
-                  for expected = (cna-lisp.internal:handle-of
-                                  (render-target-binding-target binding))
-                  unless (= reported expected)
-                    do (error 'microsoft.xna.framework:cna-internal-error
-                              :operation "get-render-targets"
-                              :object-type 'graphics-device
-                              :format-control
-                              "CNA reports a different target in slot ~d than this ~
-                               binding recorded there."
-                              :format-arguments (list index)))))
+            (macrolet ((entry (index name)
+                         `(cffi:foreign-slot-value
+                           (cffi:mem-aptr
+                            array '(:struct cna-lisp.internal.ffi::cna-render-target-binding)
+                            ,index)
+                           '(:struct cna-lisp.internal.ffi::cna-render-target-binding)
+                           ',name)))
+              (dotimes (index count)
+                (setf (entry index cna-lisp.internal.ffi::struct-size)
+                      cna-lisp.internal.ffi::+sizeof-cna-render-target-binding+
+                      (entry index cna-lisp.internal.ffi::struct-version) 1))
+              (cffi:with-foreign-object (written :uint64)
+                (setf (cffi:mem-ref written :uint64) 0)
+                (cna-lisp.internal:check-result
+                 (cna-lisp.internal.ffi::%graphics-device-copy-render-targets
+                  handle array count written)
+                 "get-render-targets" :object-type 'graphics-device)
+                ;; The copy route answers "the exact required element count", so a
+                ;; number that is not the count already reported means the rest of
+                ;; the array is the zeroed memory this filled in, not bindings.
+                (let ((n (cffi:mem-ref written :uint64)))
+                  (unless (= n count)
+                    (error 'microsoft.xna.framework:cna-internal-error
+                           :operation "get-render-targets"
+                           :object-type 'graphics-device
+                           :format-control
+                           "CNA reported ~d bound render target(s) and then wrote ~d. ~
+                            The remainder of the array is not a binding, so no part of ~
+                            this answer can be trusted."
+                           :format-arguments (list count n)))))
+              (loop for binding in remembered
+                    for index from 0
+                    for expected-target = (cna-lisp.internal:handle-of
+                                           (render-target-binding-target binding))
+                    for expected-face
+                      = (let ((face (render-target-binding-cube-map-face binding)))
+                          ;; A 2D binding has no face here, and CNA reports positive X
+                          ;; for one; checking against that is what makes a cube
+                          ;; binding's face a real cross-check rather than a skipped one.
+                          (cube-map-face-value (or face :positive-x)))
+                    do (progn
+                         (unless (= (entry index cna-lisp.internal.ffi::render-target)
+                                    expected-target)
+                           (error 'microsoft.xna.framework:cna-internal-error
+                                  :operation "get-render-targets"
+                                  :object-type 'graphics-device
+                                  :format-control
+                                  "CNA reports a different target in slot ~d than this ~
+                                   binding recorded there."
+                                  :format-arguments (list index)))
+                         (unless (= (entry index cna-lisp.internal.ffi::cube-map-face)
+                                    expected-face)
+                           (error 'microsoft.xna.framework:cna-internal-error
+                                  :operation "get-render-targets"
+                                  :object-type 'graphics-device
+                                  :format-control
+                                  "CNA reports slot ~d bound to face ~a and this binding ~
+                                   recorded ~a. A cube binding's identity is the target ~
+                                   *and* the face, so the handles agreeing is not enough."
+                                  :format-arguments
+                                  (list index
+                                        (cube-map-face-from-value
+                                         (entry index cna-lisp.internal.ffi::cube-map-face))
+                                        (cube-map-face-from-value expected-face))))
+                         (unless (zerop (entry index cna-lisp.internal.ffi::array-slice))
+                           (error 'microsoft.xna.framework:cna-internal-error
+                                  :operation "get-render-targets"
+                                  :object-type 'graphics-device
+                                  :format-control
+                                  "CNA reports an array slice of ~d in slot ~d. CNA ~
+                                   requires the slice to be zero in both directions, so ~
+                                   this binding does not know what it would mean."
+                                  :format-arguments
+                                  (list (entry index cna-lisp.internal.ffi::array-slice)
+                                        index))))))))
         (copy-list remembered)))))

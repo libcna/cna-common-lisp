@@ -169,9 +169,35 @@ whole `TextureCube` family.
 route from a handle back to the object that owns it. Wrapping them would invent a
 second `RenderTarget2D` for a target the program already holds, with a second
 lifetime to get wrong. So the device remembers the bindings it was given and
-`GetRenderTargets` answers those, cross-checking CNA's count *and* each handle
-against the record and signalling if they disagree — the same decision, for the
-same reason, that the vertex-buffer bindings record.
+`GetRenderTargets` answers those — the same decision, for the same reason, that
+the vertex-buffer bindings record.
+
+Only the **objects** come from the record. Everything CNA can be asked is checked
+against it, and a disagreement signals rather than being papered over:
+
+| Checked | Against |
+| --- | --- |
+| `cna_graphics_device_get_render_target_count` | the number of remembered bindings |
+| the copy route's `out_count` | that count, since the header calls it "the exact required element count" |
+| each slot's `render_target` | the remembered target's handle, in order |
+| each slot's `cube_map_face` | the remembered face |
+| each slot's `array_slice` | zero, which CNA requires in both directions |
+
+The face matters because a binding's identity is more than its target handle: two
+bindings of the same cube differ only in which face they name, and checking the
+handles alone would call them the same. A `RenderTarget2D` has no face here and
+CNA reports positive X for one — "meaningless for a 2D target and must then be
+positive X" — so a faceless binding is checked against *that*, rather than having
+its face skipped.
+
+`tests/native/render-target-cube.lisp` mutates the record four ways that need no
+particular renderer — a wrong face, one binding too many, one too few, and a live
+target that is not the bound one — and two more where the renderer allows them: a
+swapped pair, which only the order distinguishes, and a cube binding whose face is
+wrong, where the target handle is identical either way. Measured: HEADLESS runs
+all six; SOFTWARE runs the first four and refuses to bind two targets at once
+("SoftwareRenderer does not support multiple simultaneous render targets") or a
+cube at all, which the test states rather than passes over.
 
 ### `RenderTargetBinding.CubeMapFace` answers NIL for a 2D target
 
