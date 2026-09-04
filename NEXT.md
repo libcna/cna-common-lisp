@@ -72,11 +72,14 @@ they have never executed is stale.
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime |
 
-The `Native` job follows CNA's moving `next` branch on purpose, and records the
-CNA commit it landed on in the run's step summary and in `qualification-run.json`
-inside the run's artifact. `workflow_dispatch` takes a `cna_ref` input for
-qualifying a specific CNA commit. `docs/qualification.md` has the policy and the
-reasons.
+The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
+`openeggbert/cna:next` does not currently build from published sources, because
+its storage module calls a `sharp-runtime` member that has not been pushed. The
+pin is that call's parent commit. Every run records the CNA and sharp-runtime
+commits it landed on, in the step summary and in `qualification-run.json` inside
+the run's artifact, and `workflow_dispatch` takes `cna_ref` and
+`sharp_runtime_ref` for checking whether the two repositories have caught up.
+`docs/qualification.md` has the policy and the evidence.
 
 ## The measured frontier
 

@@ -38,13 +38,39 @@ Locally, the reference runtime is Debian's build of the same upstream release
 
 ## The CNA source
 
-**Qualification deliberately follows a moving branch: `openeggbert/cna`, branch
-`next`.** That is the branch the CNA C ABI 0.21.0 lives on, and pinning a commit
-here would mean the binding stops noticing the day CNA's ABI moves — which is the
-one thing this qualification exists to notice.
+The intent is to follow a moving branch: `openeggbert/cna`, branch `next`. That
+is where the CNA C ABI 0.21.0 lives, and pinning by preference would mean the
+binding stops noticing the day CNA's ABI moves — which is the one thing this
+qualification exists to notice.
 
-Following a moving branch is only honest if every run records where it actually
-landed. So the `Native` workflow:
+**As of 2026-09-04 that branch does not build from published sources, so
+`CNA_REF` is pinned to `056e57d478f8e6accfa9124337803e735b39f1e4`.** The reason
+is measured, not suspected:
+
+* `openeggbert/cna:next` commit `822d3b960` ("scope isolated storage with game
+  identity", 2026-09-03) made `modules/storage/src/StorageDevice.cpp` call
+  `SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride`;
+* that member does not exist in `openeggbert/sharp-runtime:next` as published
+  (`bd282d101640005454639b372f67e119ffa5642b`) — the sharp-runtime commit that
+  adds it has not been pushed;
+* so the build fails eleven minutes in, in CNA's storage module, with
+  `'SetIsolatedStorageRootOverride' is not a member of
+  'SharpRuntime::Storage::StoragePaths'`. Workflow run 33841079977 is the
+  evidence.
+
+This is not a CNA code defect. It is the consequence CNA's own `CHANGELOG.md`
+predicts: "`sharp-runtime` is the exception and is not pinned by the build …
+Recording the revision here is a stopgap." Two repositories moved out of step and
+nothing enforces the pairing.
+
+`056e57d47` is `822d3b960`'s parent. It is on `origin/next`, it is ABI 0.21.0, it
+carries every route `docs/generated/native-abi-manifest.json` binds, and it does
+not make that call. **The pin should be dropped the moment `sharp-runtime:next`
+catches up**; until then `workflow_dispatch` with `cna_ref: next` is how to check
+whether it has.
+
+Following a branch, or a pin, is only honest if every run records where it
+actually landed. So the `Native` workflow:
 
 1. resolves `CNA_REF` to a commit immediately after checkout;
 2. writes the requested ref, the resolved CNA commit, the sharp-runtime commit,
@@ -52,8 +78,8 @@ landed. So the `Native` workflow:
 3. writes the same facts, plus the runtime version and the CNA build
    configuration, into `qualification-run.json` in the run's uploaded artifact.
 
-`workflow_dispatch` takes a `cna_ref` input, so a specific CNA commit or tag can
-be qualified on demand without editing the workflow.
+`workflow_dispatch` takes `cna_ref` and `sharp_runtime_ref` inputs, so a specific
+pairing can be qualified on demand without editing the workflow.
 
 ### sharp-runtime is CNA's unpinned dependency, and therefore ours
 
