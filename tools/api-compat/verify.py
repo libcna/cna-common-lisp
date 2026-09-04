@@ -296,12 +296,7 @@ def verify_type(report, rules, contract_type, surface, packages, claimed):
                     report.add("wrong_kind", name, "%r is not a structure" % lisp_name)
                 claimed[package].update(
                     {"make-%s" % lisp_name, "%s-p" % lisp_name, "copy-%s" % lisp_name})
-            expected_super = type_rule.get("expected_superclass")
-            if expected_super and entry["class"]:
-                if expected_super not in entry["precedence"]:
-                    report.add("wrong_superclass", name,
-                               "%r is not in the class precedence list %s"
-                               % (expected_super, entry["precedence"]))
+            verify_base_type(report, rules, type_rule, contract_type, entry, name)
         statuses = verify_members(report, rules, type_rule, contract_type, symbols,
                                   package, claimed, surface["predefined_colors"],
                                   all_packages=packages)
@@ -324,6 +319,75 @@ def verify_type(report, rules, contract_type, surface, packages, claimed):
     else:
         result["lisp"] = "%s:%s" % (package, lisp_name)
     return result
+
+
+def verify_base_type(report, rules, type_rule, contract_type, entry, name):
+    """A projected CLR base class must be a real CLOS superclass.
+
+    This is checked from the *contract*, not from a rule: `baseType` is in the
+    pinned metadata for every selected type, so the default is to verify it and a
+    rule is only needed to declare a deliberate exception. It used to be the
+    other way round -- the check ran only where a rule volunteered an
+    `expected_superclass` -- which meant a type could fail to inherit its base
+    and the scoreboard would still read zero disagreements. It did: five types
+    whose contract says `baseType` GraphicsResource were not GraphicsResources.
+
+    A rule may still override, in exactly two shapes, and both are checked:
+
+      "expected_superclass": "package:name"
+          the CLR base projects onto a different CLOS class than the default
+          rules would name. The class must still be in the precedence list.
+
+      "base_type_exception": {"reason": "..."}
+          the CLR base is deliberately not projected as a superclass. The reason
+          is required and must be substantial; a bare marker does not buy an
+          exception, and a note on a rule that is not this key buys nothing at
+          all.
+    """
+    base = contract_type.get("baseType")
+    override = type_rule.get("expected_superclass")
+    exception = type_rule.get("base_type_exception")
+
+    if exception is not None:
+        reason = (exception or {}).get("reason") if isinstance(exception, dict) else None
+        if not reason or len(reason) < 40:
+            report.add("wrong_superclass", name,
+                       "declares a base_type_exception without a substantial reason")
+        if override:
+            report.add("wrong_superclass", name,
+                       "declares both expected_superclass and base_type_exception")
+        return
+
+    if override:
+        if not entry.get("class"):
+            report.add("wrong_superclass", name,
+                       "expects superclass %r but %r is not a class"
+                       % (override, entry.get("name")))
+        elif override not in entry["precedence"]:
+            report.add("wrong_superclass", name,
+                       "%r is not in the class precedence list %s"
+                       % (override, entry["precedence"]))
+        return
+
+    # No rule: derive the expected superclass from the contract's own baseType.
+    if not base or base in ("System.Object", "System.ValueType", "System.Enum"):
+        return
+    base_rule = rules["types"].get(base)
+    if base_rule is None:
+        # The base is outside the selection. Nothing to check against, and
+        # silence here is honest: the selection decides what is measured.
+        return
+    expected = "%s:%s" % (base_rule["lisp_package"], base_rule["lisp_name"])
+    if not entry.get("class"):
+        report.add("wrong_superclass", name,
+                   "the contract says baseType %s, which projects onto the class %r, "
+                   "but %r is not a class" % (base, expected, entry.get("name")))
+        return
+    if expected not in entry["precedence"]:
+        report.add("wrong_superclass", name,
+                   "the contract says baseType %s, which projects onto %r, and that "
+                   "is not in the class precedence list %s"
+                   % (base, expected, entry["precedence"]))
 
 
 def verify_event(report, type_rule, member, subject, symbols, package, claimed):

@@ -24,6 +24,12 @@ prose that does not match it.
    lambda list, setf-ability, class precedence and documentation.
 
 4. **The verifier** compares them and classifies every selected type and member.
+   Base classes are part of that comparison and are checked from the contract
+   rather than from a rule: every selected type carries a `baseType`, so the
+   default is to require the projected CLOS superclass and a mapping rule is only
+   needed to declare a deliberate exception -- with a substantial reason, which is
+   itself checked. `tools/api-compat/superclass-mutations.sh` breaks the
+   projection six ways and requires a `wrong_superclass` diagnostic each time.
 
 ```sh
 sbcl --script tools/api-compat/dump-surface.lisp

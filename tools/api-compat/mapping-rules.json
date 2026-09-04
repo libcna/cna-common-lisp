@@ -534,7 +534,6 @@
    "lisp_package": "microsoft.xna.framework.graphics",
    "lisp_name": "graphics-resource",
    "lisp_kind": "class",
-   "expected_superclass": "cna-lisp.internal:native-object",
    "constructors": {},
    "member_overrides": {
     "Name": {
@@ -3756,7 +3755,6 @@
    "lisp_package": "microsoft.xna.framework.graphics",
    "lisp_name": "blend-state",
    "lisp_kind": "class",
-   "superclass_note": "XNA's state objects derive from GraphicsResource. CNA-Lisp's do not: GRAPHICS-RESOURCE here is a NATIVE-OBJECT with a CNA handle, and CNA models a state object as a versioned C descriptor with no handle at all -- there is no create route and nothing to destroy. Giving these four a handle they do not have would be a fake. The inherited surface is recorded as a deliberate absence in src/capabilities.lisp; no member of it is in the selected contract for these types, because the contract lists each type's own members.",
    "constructors": {
     "new()": "make-instance"
    },
@@ -3786,7 +3784,6 @@
    "lisp_package": "microsoft.xna.framework.graphics",
    "lisp_name": "depth-stencil-state",
    "lisp_kind": "class",
-   "superclass_note": "XNA's state objects derive from GraphicsResource. CNA-Lisp's do not: GRAPHICS-RESOURCE here is a NATIVE-OBJECT with a CNA handle, and CNA models a state object as a versioned C descriptor with no handle at all -- there is no create route and nothing to destroy. Giving these four a handle they do not have would be a fake. The inherited surface is recorded as a deliberate absence in src/capabilities.lisp; no member of it is in the selected contract for these types, because the contract lists each type's own members.",
    "constructors": {
     "new()": "make-instance"
    },
@@ -3812,7 +3809,6 @@
    "lisp_package": "microsoft.xna.framework.graphics",
    "lisp_name": "rasterizer-state",
    "lisp_kind": "class",
-   "superclass_note": "XNA's state objects derive from GraphicsResource. CNA-Lisp's do not: GRAPHICS-RESOURCE here is a NATIVE-OBJECT with a CNA handle, and CNA models a state object as a versioned C descriptor with no handle at all -- there is no create route and nothing to destroy. Giving these four a handle they do not have would be a fake. The inherited surface is recorded as a deliberate absence in src/capabilities.lisp; no member of it is in the selected contract for these types, because the contract lists each type's own members.",
    "constructors": {
     "new()": "make-instance"
    },
@@ -3838,7 +3834,6 @@
    "lisp_package": "microsoft.xna.framework.graphics",
    "lisp_name": "sampler-state",
    "lisp_kind": "class",
-   "superclass_note": "XNA's state objects derive from GraphicsResource. CNA-Lisp's do not: GRAPHICS-RESOURCE here is a NATIVE-OBJECT with a CNA handle, and CNA models a state object as a versioned C descriptor with no handle at all -- there is no create route and nothing to destroy. Giving these four a handle they do not have would be a fake. The inherited surface is recorded as a deliberate absence in src/capabilities.lisp; no member of it is in the selected contract for these types, because the contract lists each type's own members.",
    "constructors": {
     "new()": "make-instance"
    },
@@ -3937,7 +3932,6 @@
    "lisp_package": "microsoft.xna.framework.graphics",
    "lisp_name": "vertex-declaration",
    "lisp_kind": "class",
-   "superclass_note": "XNA's VertexDeclaration derives from GraphicsResource; this one does not, for the reason src/capabilities.lisp records for the state objects -- CNA has no handle for a vertex declaration and one invented here would be a fake.",
    "constructors": {
     "new(VertexElement[])": "make-instance",
     "new(Int32,VertexElement[])": "make-instance"
