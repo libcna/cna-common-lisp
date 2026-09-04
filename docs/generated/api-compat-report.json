@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 130,
-  "member_count": 2127
+  "type_count": 133,
+  "member_count": 2145
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 130,
-  "members": 2127,
+  "types": 133,
+  "members": 2145,
   "types_by_status": {
    "partial": 8,
-   "complete": 122
+   "complete": 125
   },
   "members_by_status": {
-   "complete": 1664,
-   "missing": 66,
-   "not-applicable": 396,
+   "complete": 1680,
+   "missing": 65,
+   "not-applicable": 399,
    "partial": 1
   },
-  "diagnostics": 66,
+  "diagnostics": 65,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 66,
+   "missing_member": 65,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1206,7 +1206,7 @@
     "Clear(Color)": "complete",
     "SetRenderTargets(RenderTargetBinding[])": "missing",
     "SetRenderTarget(RenderTargetCube,CubeMapFace)": "missing",
-    "SetRenderTarget(RenderTarget2D)": "missing",
+    "SetRenderTarget(RenderTarget2D)": "complete",
     "GetRenderTargets()": "missing",
     "GetBackBufferData(Nullable`1,!!0[],Int32,Int32)": "complete",
     "GetBackBufferData(!!0[],Int32,Int32)": "complete",
@@ -1298,6 +1298,45 @@
     "Width": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:texture-2d"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.RenderTarget2D",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat,DepthFormat,Int32,RenderTargetUsage)": "complete",
+    "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat,DepthFormat)": "complete",
+    "new(GraphicsDevice,Int32,Int32)": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "IsContentLost": "complete",
+    "RenderTargetUsage": "complete",
+    "MultiSampleCount": "complete",
+    "DepthStencilFormat": "complete",
+    "ContentLost": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:render-target-2d"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "DiscardContents": "complete",
+    "PreserveContents": "complete",
+    "PlatformContents": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:render-target-usage"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "None": "complete",
+    "Depth16": "complete",
+    "Depth24": "complete",
+    "Depth24Stencil8": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:depth-format"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.SpriteBatch",
@@ -3251,22 +3290,17 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetRenderTargets(RenderTargetBinding[])",
-   "detail": "no exported 'set-render-targets' in microsoft.xna.framework.graphics"
+   "detail": "Needs RenderTargetBinding, which carries a CubeMapFace and therefore the whole cube-target closure."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetRenderTarget(RenderTargetCube,CubeMapFace)",
-   "detail": "no exported 'set-render-target' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.SetRenderTarget(RenderTarget2D)",
-   "detail": "no exported 'set-render-target' in microsoft.xna.framework.graphics"
+   "detail": "Needs RenderTargetCube and CubeMapFace, neither of which is projected. Without this entry the default naming rule would resolve it onto SET-RENDER-TARGET, which is the 2D overload, and report it complete."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GetRenderTargets()",
-   "detail": "no exported 'get-render-targets' in microsoft.xna.framework.graphics"
+   "detail": "Answers a RenderTargetBinding[], so it needs the same closure SetRenderTargets does."
   },
   {
    "category": "missing_member",

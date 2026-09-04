@@ -41,7 +41,7 @@ zeroes. Under `HEADLESS` it therefore refuses, by name.
 
 Under a rasterising renderer it answers. Measured against a CNA built with
 `-DCNA_GRAPHICS_RENDERER=SOFTWARE` — a CPU rasteriser, needing **no display and
-no Xvfb** — in five separate kinds of proof, kept apart because they are
+no Xvfb** — in six separate kinds of proof, kept apart because they are
 different claims:
 
 * **clear.** Clearing to `CornflowerBlue` reads back `(100, 149, 237, 255)` for
@@ -81,7 +81,15 @@ different claims:
   usable *draw* effects, and — as the section above says at length — nothing
   about the alpha test or about skinning.
 
-`tools/qualification/rasterizer.sh` requires all five and fails when any is
+* **render-target.** The back buffer is cleared, a `RenderTarget2D` is bound and
+  cleared to a different colour, and the back buffer is read *before anything
+  else*: it must be untouched, so a clear that leaked to the screen fails. Then
+  the back buffer is restored, the target is drawn onto it as the ordinary
+  `Texture2D` it is, and its own colour appears under the destination rectangle
+  and nowhere else. Checked by mutation: a bind that silently does nothing turns
+  fourteen of these assertions red.
+
+`tools/qualification/rasterizer.sh` requires all six and fails when any is
 absent; a clear alone is not accepted as evidence about `SpriteBatch`, which it
 briefly was, the sprite path is not accepted as evidence about the primitive
 path, which is a different path through the renderer, and neither is accepted as
@@ -98,6 +106,44 @@ unrotated, unscaled, untinted text with no origin and no `SpriteEffects`.
 Rotation, scaling, tinting, blending, texturing, lighting, fog, indexed and
 buffer-backed draws, flipped or rotated text and every non-identity transform are
 submitted and accepted, and their pixels are not asserted anywhere.
+
+## Render targets, and the one thing they change about the evidence
+
+`RenderTarget2D`, `RenderTargetUsage` and `DepthFormat` are complete, and
+`GraphicsDevice.SetRenderTarget(RenderTarget2D)` with them. A `RenderTarget2D`
+**is** a `Texture2D` here, as XNA's is, so a finished target is an ordinary
+texture that `SpriteBatch` can draw and an effect can sample.
+
+That inheritance is what changes the qualification. Until now every pixel claim
+in this repository rested on `GraphicsDevice.GetBackBufferData`, which most
+renderers refuse. A render target's contents are readable on **any** renderer
+that can draw at all — by drawing the target — so the mechanism is no longer the
+only one. The `render-target` proof still uses the back-buffer readback to check
+itself, because that is what this renderer offers; what it establishes is that
+the evidence no longer has to arrive that way.
+
+Three properties are read back out of CNA at construction rather than echoed from
+the constructor's arguments: `RenderTargetUsage`, `MultiSampleCount` and
+`DepthStencilFormat`. A backend may grant less than was asked for, and reporting
+the request is how a program comes to believe it has multisampling it has not
+got.
+
+`IsContentLost` is asked of CNA per read rather than cached, and is false on both
+qualification renderers — not because nothing was tested, but because CNA
+reports it only from the moment a renderer announces a real *device loss*, and
+only `DIRECTX9`, `DIRECT2D` and `SKIA` can announce one. A caller-initiated reset
+does not set it. The `ContentLost` subscription and its release are real and are
+exercised; the raise is CNA's to make and neither qualification renderer ever
+will.
+
+**Three of `GraphicsDevice`'s render-target members are still absent**, and for
+one reason: `SetRenderTarget(RenderTargetCube, CubeMapFace)`,
+`SetRenderTargets(RenderTargetBinding[])` and `GetRenderTargets()` all need
+`RenderTargetCube` and `CubeMapFace`, and `RenderTargetCube` derives from
+`TextureCube`, which needs the texture data surface `Texture2D` has not got here
+either. They carry explicit absences in the mapping rules rather than being left
+to the default naming rule — which would have resolved the cube overload onto
+`SET-RENDER-TARGET`, the 2D one, and reported it complete.
 
 ## Three stock effects, and what their evidence is worth
 
@@ -360,7 +406,7 @@ These are absent, and measured as absent, not faked:
 * the game component engine (`GameComponent`, `Game.Components`, services);
 * `ContentManager` and the XNB pipeline;
 * `GameWindow` as a type -- only the window title is reachable, on `game`;
-* `Model`, `RenderTarget2D`, `Texture3D`, `TextureCube` and the rest of the 3D
+* `Model`, `Texture3D`, `TextureCube`, `RenderTargetCube` and the rest of the 3D
   resource surface;
 * `EnvironmentMapEffect`, the one stock effect still absent — see below;
 * audio, media, storage, gamer services and networking.

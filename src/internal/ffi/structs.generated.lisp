@@ -712,6 +712,42 @@
 (defconstant +sizeof-cna-sprite-font-info+ 32)
 (defconstant +alignof-cna-sprite-font-info+ 8)
 
+;;; CNA_RenderTarget2DCreateInfo -- 40 bytes, 4-byte aligned, from render_target.h.
+(defcstruct (cna-render-target-2d-create-info :size 40)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (width :uint32 :offset 8)
+  (height :uint32 :offset 12)
+  (mip-map :uint8 :offset 16)
+  (reserved-0 :uint8 :offset 17 :count 3)
+  (format :uint32 :offset 20)
+  (depth-format :uint32 :offset 24)
+  (multi-sample-count :int32 :offset 28)
+  (usage :uint32 :offset 32)
+  (reserved-1 :uint32 :offset 36))
+
+(defconstant +sizeof-cna-render-target-2d-create-info+ 40)
+(defconstant +alignof-cna-render-target-2d-create-info+ 4)
+
+;;; CNA_RenderTargetInfo -- 44 bytes, 4-byte aligned, from render_target.h.
+(defcstruct (cna-render-target-info :size 44)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (kind :uint32 :offset 8)
+  (width :uint32 :offset 12)
+  (height :uint32 :offset 16)
+  (level-count :uint32 :offset 20)
+  (format :uint32 :offset 24)
+  (depth-format :uint32 :offset 28)
+  (multi-sample-count :int32 :offset 32)
+  (usage :uint32 :offset 36)
+  (is-content-lost :uint8 :offset 40)
+  (renderer-available :uint8 :offset 41)
+  (reserved :uint8 :offset 42 :count 2))
+
+(defconstant +sizeof-cna-render-target-info+ 44)
+(defconstant +alignof-cna-render-target-info+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -766,6 +802,8 @@
     (cna-quaternion 16 4 ((x 0 4) (y 4 4) (z 8 4) (w 12 4)))
     (cna-sprite-font-glyph 56 4 ((struct-size 0 4) (struct-version 4 4) (glyph-bounds 8 16) (cropping 24 16) (character 40 2) (reserved 42 2) (kerning 44 12)))
     (cna-sprite-font-create-info 48 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (glyphs 16 8) (glyph-count 24 8) (line-spacing 32 4) (spacing 36 4) (default-character 40 2) (has-default-character 42 1) (reserved 43 5)))
-    (cna-sprite-font-info 32 8 ((struct-size 0 4) (struct-version 4 4) (character-count 8 8) (line-spacing 16 4) (spacing 20 4) (default-character 24 2) (has-default-character 26 1) (reserved 27 5))))
+    (cna-sprite-font-info 32 8 ((struct-size 0 4) (struct-version 4 4) (character-count 8 8) (line-spacing 16 4) (spacing 20 4) (default-character 24 2) (has-default-character 26 1) (reserved 27 5)))
+    (cna-render-target-2d-create-info 40 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (mip-map 16 1) (reserved-0 17 3) (format 20 4) (depth-format 24 4) (multi-sample-count 28 4) (usage 32 4) (reserved-1 36 4)))
+    (cna-render-target-info 44 4 ((struct-size 0 4) (struct-version 4 4) (kind 8 4) (width 12 4) (height 16 4) (level-count 20 4) (format 24 4) (depth-format 28 4) (multi-sample-count 32 4) (usage 36 4) (is-content-lost 40 1) (renderer-available 41 1) (reserved 42 2))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

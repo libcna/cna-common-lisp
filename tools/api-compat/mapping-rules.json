@@ -744,6 +744,11 @@
             "argument": "indices",
             "lisp_type": "(unsigned-byte 32)"
           }
+        },
+        "SetRenderTarget(RenderTarget2D)": {
+          "lisp": "set-render-target",
+          "generic": true,
+          "reason": "NIL is XNA's null and restores the back buffer, which is CNA_INVALID_HANDLE to cna_graphics_device_set_render_target2d. The cube overload and the two RenderTargetBinding members need RenderTargetCube and CubeMapFace, which are not projected, and stay missing."
         }
       },
       "not_applicable": {
@@ -755,7 +760,10 @@
         "Reset(PresentationParameters,GraphicsAdapter)": "Needs PresentationParameters and GraphicsAdapter.",
         "Clear(ClearOptions,Vector4,Single,Int32)": "Needs ClearOptions and Vector4.",
         "Clear(ClearOptions,Color,Single,Int32)": "Needs ClearOptions.",
-        "Present(Nullable`1,Nullable`1,IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected."
+        "Present(Nullable`1,Nullable`1,IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected.",
+        "SetRenderTarget(RenderTargetCube,CubeMapFace)": "Needs RenderTargetCube and CubeMapFace, neither of which is projected. Without this entry the default naming rule would resolve it onto SET-RENDER-TARGET, which is the 2D overload, and report it complete.",
+        "SetRenderTargets(RenderTargetBinding[])": "Needs RenderTargetBinding, which carries a CubeMapFace and therefore the whole cube-target closure.",
+        "GetRenderTargets()": "Answers a RenderTargetBinding[], so it needs the same closure SetRenderTargets does."
       },
       "overload_families": {
         "Present": {
@@ -843,6 +851,58 @@
         "SetData(Int32,Nullable`1,!!0[],Int32,Int32)": "Pixel access is not projected.",
         "GetData(Int32,Nullable`1,!!0[],Int32,Int32)": "Pixel access is not projected."
       }
+    },
+    "Microsoft.Xna.Framework.Graphics.RenderTarget2D": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "render-target-2d",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDevice,Int32,Int32)": "make-instance",
+        "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat,DepthFormat)": "make-instance",
+        "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat,DepthFormat,Int32,RenderTargetUsage)": "make-instance"
+      },
+      "member_overrides": {
+        "IsContentLost": {
+          "lisp": "is-content-lost",
+          "generic": true,
+          "setf": false,
+          "reason": "The generic function the dynamic buffers already answer. Unlike theirs -- CNA documents a buffer's as always false -- a render target's can really become true, and it is asked of CNA per read rather than cached, because a Lisp flag could not know when a renderer lost its device."
+        },
+        "RenderTargetUsage": {
+          "lisp": "render-target-usage",
+          "setf": false,
+          "reason": "The usage CNA *granted*, read back at construction, not the one requested: a backend may give less, and echoing the request is how a program comes to believe it has what it asked for."
+        },
+        "MultiSampleCount": {
+          "lisp": "multi-sample-count",
+          "setf": false,
+          "reason": "The granted sample count, read back at construction."
+        },
+        "DepthStencilFormat": {
+          "lisp": "depth-stencil-format",
+          "setf": false,
+          "reason": "The granted depth format, read back at construction."
+        }
+      },
+      "events": {
+        "ContentLost": {
+          "add": "add-content-lost-handler",
+          "remove": "remove-content-lost-handler"
+        }
+      },
+      "not_applicable": {
+        "Dispose(Boolean)": "The protected dispose(bool) pattern. Disposal here is MICROSOFT.XNA.FRAMEWORK:DISPOSE, one mechanism for every native object."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.RenderTargetUsage": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "render-target-usage",
+      "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.Graphics.DepthFormat": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "depth-format",
+      "lisp_kind": "enum"
     },
     "Microsoft.Xna.Framework.Graphics.SpriteBatch": {
       "lisp_package": "microsoft.xna.framework.graphics",

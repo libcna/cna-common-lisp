@@ -933,6 +933,60 @@ _Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->has_default_character) == 1, "C
 _Static_assert(offsetof(CNA_SpriteFontInfo, reserved) == 27, "CNA_SpriteFontInfo.reserved offset");
 _Static_assert(sizeof(((CNA_SpriteFontInfo *)0)->reserved) == 5, "CNA_SpriteFontInfo.reserved size");
 
+_Static_assert(sizeof(CNA_RenderTarget2DCreateInfo) == 40, "CNA_RenderTarget2DCreateInfo size");
+_Static_assert(_Alignof(CNA_RenderTarget2DCreateInfo) == 4, "CNA_RenderTarget2DCreateInfo alignment");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, struct_size) == 0, "CNA_RenderTarget2DCreateInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->struct_size) == 4, "CNA_RenderTarget2DCreateInfo.struct_size size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, struct_version) == 4, "CNA_RenderTarget2DCreateInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->struct_version) == 4, "CNA_RenderTarget2DCreateInfo.struct_version size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, width) == 8, "CNA_RenderTarget2DCreateInfo.width offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->width) == 4, "CNA_RenderTarget2DCreateInfo.width size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, height) == 12, "CNA_RenderTarget2DCreateInfo.height offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->height) == 4, "CNA_RenderTarget2DCreateInfo.height size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, mip_map) == 16, "CNA_RenderTarget2DCreateInfo.mip_map offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->mip_map) == 1, "CNA_RenderTarget2DCreateInfo.mip_map size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, reserved0) == 17, "CNA_RenderTarget2DCreateInfo.reserved0 offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->reserved0) == 3, "CNA_RenderTarget2DCreateInfo.reserved0 size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, format) == 20, "CNA_RenderTarget2DCreateInfo.format offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->format) == 4, "CNA_RenderTarget2DCreateInfo.format size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, depth_format) == 24, "CNA_RenderTarget2DCreateInfo.depth_format offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->depth_format) == 4, "CNA_RenderTarget2DCreateInfo.depth_format size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, multi_sample_count) == 28, "CNA_RenderTarget2DCreateInfo.multi_sample_count offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->multi_sample_count) == 4, "CNA_RenderTarget2DCreateInfo.multi_sample_count size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, usage) == 32, "CNA_RenderTarget2DCreateInfo.usage offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->usage) == 4, "CNA_RenderTarget2DCreateInfo.usage size");
+_Static_assert(offsetof(CNA_RenderTarget2DCreateInfo, reserved1) == 36, "CNA_RenderTarget2DCreateInfo.reserved1 offset");
+_Static_assert(sizeof(((CNA_RenderTarget2DCreateInfo *)0)->reserved1) == 4, "CNA_RenderTarget2DCreateInfo.reserved1 size");
+
+_Static_assert(sizeof(CNA_RenderTargetInfo) == 44, "CNA_RenderTargetInfo size");
+_Static_assert(_Alignof(CNA_RenderTargetInfo) == 4, "CNA_RenderTargetInfo alignment");
+_Static_assert(offsetof(CNA_RenderTargetInfo, struct_size) == 0, "CNA_RenderTargetInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->struct_size) == 4, "CNA_RenderTargetInfo.struct_size size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, struct_version) == 4, "CNA_RenderTargetInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->struct_version) == 4, "CNA_RenderTargetInfo.struct_version size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, kind) == 8, "CNA_RenderTargetInfo.kind offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->kind) == 4, "CNA_RenderTargetInfo.kind size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, width) == 12, "CNA_RenderTargetInfo.width offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->width) == 4, "CNA_RenderTargetInfo.width size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, height) == 16, "CNA_RenderTargetInfo.height offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->height) == 4, "CNA_RenderTargetInfo.height size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, level_count) == 20, "CNA_RenderTargetInfo.level_count offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->level_count) == 4, "CNA_RenderTargetInfo.level_count size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, format) == 24, "CNA_RenderTargetInfo.format offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->format) == 4, "CNA_RenderTargetInfo.format size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, depth_format) == 28, "CNA_RenderTargetInfo.depth_format offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->depth_format) == 4, "CNA_RenderTargetInfo.depth_format size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, multi_sample_count) == 32, "CNA_RenderTargetInfo.multi_sample_count offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->multi_sample_count) == 4, "CNA_RenderTargetInfo.multi_sample_count size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, usage) == 36, "CNA_RenderTargetInfo.usage offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->usage) == 4, "CNA_RenderTargetInfo.usage size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, is_content_lost) == 40, "CNA_RenderTargetInfo.is_content_lost offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->is_content_lost) == 1, "CNA_RenderTargetInfo.is_content_lost size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, renderer_available) == 41, "CNA_RenderTargetInfo.renderer_available offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->renderer_available) == 1, "CNA_RenderTargetInfo.renderer_available size");
+_Static_assert(offsetof(CNA_RenderTargetInfo, reserved) == 42, "CNA_RenderTargetInfo.reserved offset");
+_Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->reserved) == 2, "CNA_RenderTargetInfo.reserved size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1257,6 +1311,12 @@ CNA_Result (*const cna_lisp_probe_cna_skinned_effect_set_specular_power)(CNA_Eff
 CNA_Result (*const cna_lisp_probe_cna_skinned_effect_set_texture)(CNA_EffectHandle, CNA_Handle) = cna_skinned_effect_set_texture;
 CNA_Result (*const cna_lisp_probe_cna_skinned_effect_set_vertex_color_enabled)(CNA_EffectHandle, CNA_Bool) = cna_skinned_effect_set_vertex_color_enabled;
 CNA_Result (*const cna_lisp_probe_cna_skinned_effect_set_weights_per_vertex)(CNA_EffectHandle, int32_t) = cna_skinned_effect_set_weights_per_vertex;
+CNA_Result (*const cna_lisp_probe_cna_render_target2d_create)(CNA_Handle, const CNA_RenderTarget2DCreateInfo*, CNA_Handle*) = cna_render_target2d_create;
+CNA_Result (*const cna_lisp_probe_cna_render_target_destroy)(CNA_Handle) = cna_render_target_destroy;
+CNA_Result (*const cna_lisp_probe_cna_render_target_get_info)(CNA_Handle, CNA_RenderTargetInfo*) = cna_render_target_get_info;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_render_target2d)(CNA_Handle, CNA_Handle) = cna_graphics_device_set_render_target2d;
+CNA_Result (*const cna_lisp_probe_cna_render_target_subscribe_content_lost)(CNA_Handle, CNA_RenderTargetContentLostCallback, void*, CNA_RenderTargetEventRegistrationHandle*) = cna_render_target_subscribe_content_lost;
+CNA_Result (*const cna_lisp_probe_cna_render_target_unsubscribe_content_lost)(CNA_RenderTargetEventRegistrationHandle) = cna_render_target_unsubscribe_content_lost;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -1265,6 +1325,7 @@ _Static_assert(sizeof(CNA_GameEventCallback) == sizeof(void (*)(void)), "CNA_Gam
 _Static_assert(sizeof(CNA_GraphicsResourceDisposingCallback) == sizeof(void (*)(void)), "CNA_GraphicsResourceDisposingCallback size");
 _Static_assert(sizeof(CNA_VertexBufferContentLostCallback) == sizeof(void (*)(void)), "CNA_VertexBufferContentLostCallback size");
 _Static_assert(sizeof(CNA_IndexBufferContentLostCallback) == sizeof(void (*)(void)), "CNA_IndexBufferContentLostCallback size");
+_Static_assert(sizeof(CNA_RenderTargetContentLostCallback) == sizeof(void (*)(void)), "CNA_RenderTargetContentLostCallback size");
 
 /* --- constants --- */
 _Static_assert((int64_t)(CNA_ABI_VERSION) == INT64_C(5376), "CNA_ABI_VERSION value");
@@ -1313,6 +1374,10 @@ _Static_assert((int64_t)(CNA_COMPARE_NOT_EQUAL) == INT64_C(7), "CNA_COMPARE_NOT_
 _Static_assert((int64_t)(CNA_CULL_CLOCKWISE_FACE) == INT64_C(1), "CNA_CULL_CLOCKWISE_FACE value");
 _Static_assert((int64_t)(CNA_CULL_COUNTER_CLOCKWISE_FACE) == INT64_C(2), "CNA_CULL_COUNTER_CLOCKWISE_FACE value");
 _Static_assert((int64_t)(CNA_CULL_NONE) == INT64_C(0), "CNA_CULL_NONE value");
+_Static_assert((int64_t)(CNA_DEPTH_FORMAT_DEPTH16) == INT64_C(1), "CNA_DEPTH_FORMAT_DEPTH16 value");
+_Static_assert((int64_t)(CNA_DEPTH_FORMAT_DEPTH24) == INT64_C(2), "CNA_DEPTH_FORMAT_DEPTH24 value");
+_Static_assert((int64_t)(CNA_DEPTH_FORMAT_DEPTH24_STENCIL8) == INT64_C(3), "CNA_DEPTH_FORMAT_DEPTH24_STENCIL8 value");
+_Static_assert((int64_t)(CNA_DEPTH_FORMAT_NONE) == INT64_C(0), "CNA_DEPTH_FORMAT_NONE value");
 _Static_assert((int64_t)(CNA_DEPTH_STENCIL_STATE_PRESET_DEFAULT) == INT64_C(0), "CNA_DEPTH_STENCIL_STATE_PRESET_DEFAULT value");
 _Static_assert((int64_t)(CNA_DEPTH_STENCIL_STATE_PRESET_DEPTH_READ) == INT64_C(1), "CNA_DEPTH_STENCIL_STATE_PRESET_DEPTH_READ value");
 _Static_assert((int64_t)(CNA_DEPTH_STENCIL_STATE_PRESET_NONE) == INT64_C(2), "CNA_DEPTH_STENCIL_STATE_PRESET_NONE value");
@@ -1608,6 +1673,10 @@ _Static_assert((int64_t)(CNA_RASTERIZER_STATE_PRESET_CULL_CLOCKWISE) == INT64_C(
 _Static_assert((int64_t)(CNA_RASTERIZER_STATE_PRESET_CULL_COUNTER_CLOCKWISE) == INT64_C(2), "CNA_RASTERIZER_STATE_PRESET_CULL_COUNTER_CLOCKWISE value");
 _Static_assert((int64_t)(CNA_RASTERIZER_STATE_PRESET_CULL_NONE) == INT64_C(3), "CNA_RASTERIZER_STATE_PRESET_CULL_NONE value");
 _Static_assert((int64_t)(CNA_RASTERIZER_STATE_PRESET_DEFAULT) == INT64_C(0), "CNA_RASTERIZER_STATE_PRESET_DEFAULT value");
+_Static_assert((int64_t)(CNA_RENDER_TARGET_KIND_2D) == INT64_C(1), "CNA_RENDER_TARGET_KIND_2D value");
+_Static_assert((int64_t)(CNA_RENDER_TARGET_USAGE_DISCARD_CONTENTS) == INT64_C(0), "CNA_RENDER_TARGET_USAGE_DISCARD_CONTENTS value");
+_Static_assert((int64_t)(CNA_RENDER_TARGET_USAGE_PLATFORM_CONTENTS) == INT64_C(2), "CNA_RENDER_TARGET_USAGE_PLATFORM_CONTENTS value");
+_Static_assert((int64_t)(CNA_RENDER_TARGET_USAGE_PRESERVE_CONTENTS) == INT64_C(1), "CNA_RENDER_TARGET_USAGE_PRESERVE_CONTENTS value");
 _Static_assert((int64_t)(CNA_RESULT_BUFFER_TOO_SMALL) == INT64_C(14), "CNA_RESULT_BUFFER_TOO_SMALL value");
 _Static_assert((int64_t)(CNA_RESULT_CALLBACK) == INT64_C(9), "CNA_RESULT_CALLBACK value");
 _Static_assert((int64_t)(CNA_RESULT_ENCODING) == INT64_C(11), "CNA_RESULT_ENCODING value");

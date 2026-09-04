@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=130 -->
-<!-- generated:selected members=2127 -->
-<!-- generated:complete types=122 -->
+<!-- generated:selected types=133 -->
+<!-- generated:selected members=2145 -->
+<!-- generated:complete types=125 -->
 <!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1664 -->
+<!-- generated:complete members=1680 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=66 -->
-<!-- generated:not-applicable members=396 -->
+<!-- generated:missing members=65 -->
+<!-- generated:not-applicable members=399 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 130 types, 2127 members.
+Selection **Foundation 1 and the managed closures**: 133 types, 2145 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **122** |
+| Types complete | **125** |
 | Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1664** |
+| Members complete | **1680** |
 | Members partial | **1** |
-| Members missing | **66** |
-| Members not applicable | **396** |
+| Members missing | **65** |
+| Members not applicable | **399** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -171,10 +171,13 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 29 | 1 | 25 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 30 | 1 | 24 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
+| `M.X.F.Graphics.RenderTarget2D` | **complete** | 8 | 0 | 0 | 1 |
+| `M.X.F.Graphics.RenderTargetUsage` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Graphics.DepthFormat` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SpriteBatch` | **complete** | 20 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SpriteFont` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.Graphics.SpriteSortMode` | **complete** | 5 | 0 | 0 | 1 |
@@ -316,7 +319,7 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 25 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -350,11 +353,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=322 -->
-<!-- generated:bound native structs=52 -->
-<!-- generated:bound native struct fields=384 -->
-<!-- generated:bound native constants=461 -->
-<!-- generated:bound native callbacks=6 -->
+<!-- generated:bound native functions=328 -->
+<!-- generated:bound native structs=54 -->
+<!-- generated:bound native struct fields=408 -->
+<!-- generated:bound native constants=469 -->
+<!-- generated:bound native callbacks=7 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
 <!-- generated:abi version encoded=5376 -->
@@ -362,11 +365,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 322 |
-| Bound structs | 52 |
-| Bound struct fields | 384 |
-| Bound constants | 461 |
-| Bound callback typedefs | 6 |
+| Bound functions | 328 |
+| Bound structs | 54 |
+| Bound struct fields | 408 |
+| Bound constants | 469 |
+| Bound callback typedefs | 7 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
 | Admitted ABI versions | 0.21.0 only (encoded 5376) |

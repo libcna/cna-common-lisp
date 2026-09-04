@@ -24,11 +24,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 322,
-    "structs": 52,
-    "struct_fields": 384,
-    "constants": 461,
-    "callbacks": 6,
+    "functions": 328,
+    "structs": 54,
+    "struct_fields": 408,
+    "constants": 469,
+    "callbacks": 7,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
   },
@@ -8077,6 +8077,143 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_skinned_effect_set_weights_per_vertex(CNA_EffectHandle effect, int32_t value)"
+    },
+    {
+      "name": "cna_render_target2d_create",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_RenderTarget2DCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_render_target",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:render-target-2d:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_render_target2d_create(CNA_Handle graphics_device, const CNA_RenderTarget2DCreateInfo* create_info, CNA_Handle* out_render_target)"
+    },
+    {
+      "name": "cna_render_target_destroy",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "render_target",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:render-target-2d",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_render_target_destroy(CNA_Handle render_target)"
+    },
+    {
+      "name": "cna_render_target_get_info",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "render_target",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_RenderTargetInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_render_target_get_info(CNA_Handle render_target, CNA_RenderTargetInfo* out_info)"
+    },
+    {
+      "name": "cna_graphics_device_set_render_target2d",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "render_target",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_render_target2d(CNA_Handle graphics_device, CNA_Handle render_target)"
+    },
+    {
+      "name": "cna_render_target_subscribe_content_lost",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "render_target",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_RenderTargetContentLostCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_RenderTargetEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_render_target_subscribe_content_lost(CNA_Handle render_target, CNA_RenderTargetContentLostCallback callback, void* context, CNA_RenderTargetEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_render_target_unsubscribe_content_lost",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_RenderTargetEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_render_target_unsubscribe_content_lost(CNA_RenderTargetEventRegistrationHandle registration)"
     }
   ],
   "structs": [
@@ -12106,6 +12243,242 @@
       "header": "sprite_font.h",
       "direction": "out",
       "versioned": true
+    },
+    {
+      "name": "CNA_RenderTarget2DCreateInfo",
+      "size": 40,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "mip_map",
+          "c_type": "CNA_Bool",
+          "offset": 16,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved0",
+          "c_type": "uint8_t",
+          "offset": 17,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_format",
+          "c_type": "CNA_DepthFormat",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "multi_sample_count",
+          "c_type": "int32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "usage",
+          "c_type": "CNA_RenderTargetUsage",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved1",
+          "c_type": "uint32_t",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "render_target.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_RenderTargetInfo",
+      "size": 44,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "kind",
+          "c_type": "CNA_RenderTargetKind",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "uint32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "level_count",
+          "c_type": "uint32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_format",
+          "c_type": "CNA_DepthFormat",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "multi_sample_count",
+          "c_type": "int32_t",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "usage",
+          "c_type": "CNA_RenderTargetUsage",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_content_lost",
+          "c_type": "CNA_Bool",
+          "offset": 40,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "renderer_available",
+          "c_type": "CNA_Bool",
+          "offset": 41,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 42,
+          "size": 2,
+          "count": 2,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "render_target.h",
+      "direction": "out",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -12230,6 +12603,23 @@
           "cffi_type": ":pointer"
         }
       ]
+    },
+    {
+      "name": "CNA_RenderTargetContentLostCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "render_target",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
     }
   ],
   "constants": {
@@ -12279,6 +12669,10 @@
     "CNA_CULL_CLOCKWISE_FACE": 1,
     "CNA_CULL_COUNTER_CLOCKWISE_FACE": 2,
     "CNA_CULL_NONE": 0,
+    "CNA_DEPTH_FORMAT_DEPTH16": 1,
+    "CNA_DEPTH_FORMAT_DEPTH24": 2,
+    "CNA_DEPTH_FORMAT_DEPTH24_STENCIL8": 3,
+    "CNA_DEPTH_FORMAT_NONE": 0,
     "CNA_DEPTH_STENCIL_STATE_PRESET_DEFAULT": 0,
     "CNA_DEPTH_STENCIL_STATE_PRESET_DEPTH_READ": 1,
     "CNA_DEPTH_STENCIL_STATE_PRESET_NONE": 2,
@@ -12574,6 +12968,10 @@
     "CNA_RASTERIZER_STATE_PRESET_CULL_COUNTER_CLOCKWISE": 2,
     "CNA_RASTERIZER_STATE_PRESET_CULL_NONE": 3,
     "CNA_RASTERIZER_STATE_PRESET_DEFAULT": 0,
+    "CNA_RENDER_TARGET_KIND_2D": 1,
+    "CNA_RENDER_TARGET_USAGE_DISCARD_CONTENTS": 0,
+    "CNA_RENDER_TARGET_USAGE_PLATFORM_CONTENTS": 2,
+    "CNA_RENDER_TARGET_USAGE_PRESERVE_CONTENTS": 1,
     "CNA_RESULT_BUFFER_TOO_SMALL": 14,
     "CNA_RESULT_CALLBACK": 9,
     "CNA_RESULT_ENCODING": 11,

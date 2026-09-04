@@ -393,6 +393,11 @@
    #:texture-2d-from-png-file #:texture-2d-from-png-bytes
    #:width #:height #:level-count #:format-of #:bounds
    ;; --- SpriteBatch -------------------------------------------------------
+   ;; --- RenderTarget2D ----------------------------------------------------
+   #:render-target-2d #:render-target-usage #:depth-format
+   #:render-target-usage-value #:render-target-usage-from-value #:all-render-target-usage
+   #:depth-format-value #:depth-format-from-value #:all-depth-format
+   #:multi-sample-count #:depth-stencil-format #:set-render-target
    #:sprite-batch #:begin #:end #:draw-texture #:draw-string
    ;; --- the other stock effects -------------------------------------------
    #:alpha-test-effect #:effect-alpha-function #:effect-reference-alpha

@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 130,
-  "member_count": 2127
+  "type_count": 133,
+  "member_count": 2145
  },
  "types": [
   {
@@ -22185,6 +22185,367 @@
      "getAccess": "public",
      "setAccess": null,
      "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.RenderTarget2D",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.Texture2D",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IDynamicGraphicsResource",
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IDynamicGraphicsResource"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "width",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "height",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "mipMap",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "preferredFormat",
+       "type": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "preferredDepthFormat",
+       "type": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "preferredMultiSampleCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "usage",
+       "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "width",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "height",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "mipMap",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "preferredFormat",
+       "type": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "preferredDepthFormat",
+       "type": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "width",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "height",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "IsContentLost",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "RenderTargetUsage",
+     "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "MultiSampleCount",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DepthStencilFormat",
+     "type": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "ContentLost",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "DiscardContents",
+     "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "PreserveContents",
+     "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "PlatformContents",
+     "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "None",
+     "type": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Depth16",
+     "type": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Depth24",
+     "type": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "Depth24Stencil8",
+     "type": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+     "static": true,
+     "constant": true,
+     "value": "3"
     }
    ]
   },

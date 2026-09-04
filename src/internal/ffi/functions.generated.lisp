@@ -1302,6 +1302,30 @@
 (defcfun ("cna_skinned_effect_set_weights_per_vertex" %skinned-effect-set-weights-per-vertex) :uint32
   (effect :uint64) (value :int32))
 
+;;; CNA_Result cna_render_target2d_create(CNA_Handle graphics_device, const CNA_RenderTarget2DCreateInfo* create_info, CNA_Handle* out_render_target)
+(defcfun ("cna_render_target2d_create" %render-target-2d-create) :uint32
+  (graphics-device :uint64) (create-info :pointer) (out-render-target :pointer))
+
+;;; CNA_Result cna_render_target_destroy(CNA_Handle render_target)
+(defcfun ("cna_render_target_destroy" %render-target-destroy) :uint32
+  (render-target :uint64))
+
+;;; CNA_Result cna_render_target_get_info(CNA_Handle render_target, CNA_RenderTargetInfo* out_info)
+(defcfun ("cna_render_target_get_info" %render-target-get-info) :uint32
+  (render-target :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_graphics_device_set_render_target2d(CNA_Handle graphics_device, CNA_Handle render_target)
+(defcfun ("cna_graphics_device_set_render_target2d" %graphics-device-set-render-target-2d) :uint32
+  (graphics-device :uint64) (render-target :uint64))
+
+;;; CNA_Result cna_render_target_subscribe_content_lost(CNA_Handle render_target, CNA_RenderTargetContentLostCallback callback, void* context, CNA_RenderTargetEventRegistrationHandle* out_registration)
+(defcfun ("cna_render_target_subscribe_content_lost" %render-target-subscribe-content-lost) :uint32
+  (render-target :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_render_target_unsubscribe_content_lost(CNA_RenderTargetEventRegistrationHandle registration)
+(defcfun ("cna_render_target_unsubscribe_content_lost" %render-target-unsubscribe-content-lost) :uint32
+  (registration :uint64))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -1624,6 +1648,12 @@
     ("cna_skinned_effect_set_specular_power" %skinned-effect-set-specular-power :uint32 (:uint64 :float) :thread :owner :ownership "none")
     ("cna_skinned_effect_set_texture" %skinned-effect-set-texture :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
     ("cna_skinned_effect_set_vertex_color_enabled" %skinned-effect-set-vertex-color-enabled :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
-    ("cna_skinned_effect_set_weights_per_vertex" %skinned-effect-set-weights-per-vertex :uint32 (:uint64 :int32) :thread :owner :ownership "none"))
+    ("cna_skinned_effect_set_weights_per_vertex" %skinned-effect-set-weights-per-vertex :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_render_target2d_create" %render-target-2d-create :uint32 (:uint64 :pointer :pointer) :thread :game :ownership "creates-owned:render-target-2d:child-of-game")
+    ("cna_render_target_destroy" %render-target-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:render-target-2d")
+    ("cna_render_target_get_info" %render-target-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_render_target2d" %graphics-device-set-render-target-2d :uint32 (:uint64 :uint64) :thread :game :ownership "none")
+    ("cna_render_target_subscribe_content_lost" %render-target-subscribe-content-lost :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_render_target_unsubscribe_content_lost" %render-target-unsubscribe-content-lost :uint32 (:uint64) :thread :owner :ownership "releases"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

@@ -229,7 +229,14 @@ are pure managed and touch no native route:
   generic function specialised on `Effect` had been giving them an applicable
   method for a member they have not got. `EnvironmentMapEffect` is the fourth and
   is deliberately absent: its `EnvironmentMap` is a `TextureCube`, which is not
-  projected, and a closure is added whole or not at all.
+  projected, and a closure is added whole or not at all;
+* the render-target closure -- `RenderTarget2D`, `RenderTargetUsage`,
+  `DepthFormat` and `GraphicsDevice.SetRenderTarget` -- which is the first thing
+  here whose contents can be read without `GetBackBufferData`, because
+  `RenderTarget2D` derives from `Texture2D` and a target can therefore be drawn.
+  The rasterizer lane's sixth proof uses that: a clear into a bound target leaves
+  the back buffer untouched, and the target's own contents then reach the screen
+  through the texture path.
 
 ## 6. Measured status
 
@@ -252,31 +259,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=130 -->
-<!-- generated:selected members=2127 -->
-<!-- generated:complete types=122 -->
+<!-- generated:selected types=133 -->
+<!-- generated:selected members=2145 -->
+<!-- generated:complete types=125 -->
 <!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1664 -->
+<!-- generated:complete members=1680 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=66 -->
-<!-- generated:not-applicable members=396 -->
+<!-- generated:missing members=65 -->
+<!-- generated:not-applicable members=399 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 130 types, 2127 members.
+Selection **Foundation 1 and the managed closures**: 133 types, 2145 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **122** |
+| Types complete | **125** |
 | Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1664** |
+| Members complete | **1680** |
 | Members partial | **1** |
-| Members missing | **66** |
-| Members not applicable | **396** |
+| Members missing | **65** |
+| Members not applicable | **399** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

@@ -231,6 +231,9 @@ that a keyword-taking projection accepts no keywords at all."
    (alist-object microsoft.xna.framework.graphics::*set-data-options-table*)
    "primitive-type"
    (alist-object microsoft.xna.framework.graphics::*primitive-type-table*)
+   "render-target-usage"
+   (alist-object microsoft.xna.framework.graphics::*render-target-usage-table*)
+   "depth-format" (alist-object microsoft.xna.framework.graphics::*depth-format-table*)
    "effect-parameter-class"
    (alist-object microsoft.xna.framework.graphics::*effect-parameter-class-table*)
    "effect-parameter-type"

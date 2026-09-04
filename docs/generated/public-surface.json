@@ -11737,6 +11737,25 @@
           "documentation": "Every member of CULL-MODE, as keywords, in value order."
         },
         {
+          "name": "all-depth-format",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of DEPTH-FORMAT, as keywords, in value order."
+        },
+        {
           "name": "all-effect-parameter-class",
           "fbound": true,
           "macro": false,
@@ -11830,6 +11849,25 @@
           "constant": false,
           "value": null,
           "documentation": "Every member of PRIMITIVE-TYPE, as keywords, in value order."
+        },
+        {
+          "name": "all-render-target-usage",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of RENDER-TARGET-USAGE, as keywords, in value order."
         },
         {
           "name": "all-set-data-options",
@@ -13376,6 +13414,88 @@
           "constant": false,
           "value": null,
           "documentation": "DEPTH-STENCIL-STATE.DEPTH-BUFFER-WRITE-ENABLE. Defaults to T."
+        },
+        {
+          "name": "depth-format",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.DepthFormat."
+        },
+        {
+          "name": "depth-format-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The DEPTH-FORMAT member a value names."
+        },
+        {
+          "name": "depth-format-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a DEPTH-FORMAT member."
+        },
+        {
+          "name": "depth-stencil-format",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "depth-stencil-state",
@@ -16520,6 +16640,27 @@
           "documentation": "RASTERIZER-STATE.MULTI-SAMPLE-ANTI-ALIAS. Defaults to T."
         },
         {
+          "name": "multi-sample-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "multi-sample-mask",
           "fbound": true,
           "macro": false,
@@ -16781,6 +16922,98 @@
           "constant": false,
           "value": null,
           "documentation": "The `-=' of add-disposing-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "render-target-2d",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:render-target-2d",
+            "microsoft.xna.framework.graphics:texture-2d",
+            "microsoft.xna.framework.graphics:texture",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.RenderTarget2D: a Texture2D that can be\ndrawn into.\n\n    (make-instance 'render-target-2d :graphics-device device :width 64 :height 64)\n\nDerived from TEXTURE-2D, as XNA's is, so a finished target is an ordinary\ntexture: SPRITE-BATCH can draw it, a device texture slot can hold it, and an\neffect can sample it.\n\nBound with SET-RENDER-TARGET and unbound by passing NIL. Owned by the game and\ndisposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE, before it.\n\n`RenderTargetUsage', `MultiSampleCount' and `DepthStencilFormat' are read back\nfrom CNA at construction rather than echoed from the arguments: a backend may\ngrant less than was asked for, and reporting the request instead of the grant is\nhow a program comes to believe it has multisampling it has not got."
+        },
+        {
+          "name": "render-target-usage",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage."
+        },
+        {
+          "name": "render-target-usage-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The RENDER-TARGET-USAGE member a value names."
+        },
+        {
+          "name": "render-target-usage-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a RENDER-TARGET-USAGE member."
         },
         {
           "name": "renderer-name",
@@ -17154,6 +17387,28 @@
           "constant": false,
           "value": null,
           "documentation": "The exact value of a SET-DATA-OPTIONS member."
+        },
+        {
+          "name": "set-render-target",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "target"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.SetRenderTarget(RenderTarget2D).\n\nTARGET is a RENDER-TARGET-2D to draw into, or **NIL to restore the back buffer**,\nwhich is XNA's `SetRenderTarget(null)' and CNA's `CNA_INVALID_HANDLE'. NIL is the\nordinary way to finish with a target, not an error.\n\nLegal only inside a lifecycle callback, like every other device operation: the\ndevice handle is lent for a callback's duration and this resolves a fresh one."
         },
         {
           "name": "set-vertex-buffer",
@@ -27141,6 +27396,17 @@
       "triangle-strip": 1,
       "line-list": 2,
       "line-strip": 3
+    },
+    "render-target-usage": {
+      "discard-contents": 0,
+      "preserve-contents": 1,
+      "platform-contents": 2
+    },
+    "depth-format": {
+      "none": 0,
+      "depth-16": 1,
+      "depth-24": 2,
+      "depth-24-stencil-8": 3
     },
     "effect-parameter-class": {
       "scalar": 0,

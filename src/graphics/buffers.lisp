@@ -684,7 +684,7 @@ identity in a table.")
   (declare (ignore value))
   (cna-lisp.internal.ffi::%vertex-buffer-subscribe-content-lost
    (cna-lisp.internal:handle-of object)
-   (cna-lisp.internal.ffi:buffer-content-lost-callback-pointer)
+   (cna-lisp.internal.ffi:content-lost-callback-pointer)
    (cffi:make-pointer token) registration))
 
 (defmethod microsoft.xna.framework::%unsubscribe-natively
@@ -696,7 +696,7 @@ identity in a table.")
   (declare (ignore value))
   (cna-lisp.internal.ffi::%index-buffer-subscribe-content-lost
    (cna-lisp.internal:handle-of object)
-   (cna-lisp.internal.ffi:buffer-content-lost-callback-pointer)
+   (cna-lisp.internal.ffi:content-lost-callback-pointer)
    (cffi:make-pointer token) registration))
 
 (defmethod microsoft.xna.framework::%unsubscribe-natively

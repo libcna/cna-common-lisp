@@ -57,7 +57,7 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
 | Prose consistency | every generated fact and block matches the reports |
-| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all five kinds -- clear, sprite, primitive, text and stock-effect |
+| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all six kinds -- clear, sprite, primitive, text, stock-effect and render-target |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
@@ -83,7 +83,7 @@ they have never executed is stale.
 | `Lisp` / reference | pure gates on SBCL 2.5.2, installed from the upstream binary release and verified by SHA-256 |
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
-| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all five kinds of pixel proof were obtained |
+| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all six kinds of pixel proof were obtained |
 
 The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
 `openeggbert/cna:next` does not currently build from published sources, because
@@ -96,31 +96,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=130 -->
-<!-- generated:selected members=2127 -->
-<!-- generated:complete types=122 -->
+<!-- generated:selected types=133 -->
+<!-- generated:selected members=2145 -->
+<!-- generated:complete types=125 -->
 <!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1664 -->
+<!-- generated:complete members=1680 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=66 -->
-<!-- generated:not-applicable members=396 -->
+<!-- generated:missing members=65 -->
+<!-- generated:not-applicable members=399 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 130 types, 2127 members.
+Selection **Foundation 1 and the managed closures**: 133 types, 2145 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **122** |
+| Types complete | **125** |
 | Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1664** |
+| Members complete | **1680** |
 | Members partial | **1** |
-| Members missing | **66** |
-| Members not applicable | **396** |
+| Members missing | **65** |
+| Members not applicable | **399** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -142,7 +142,7 @@ members actually are:
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 25 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -162,7 +162,7 @@ one.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 25 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
 | `M.X.F.Game` | 8 | 0 |
@@ -226,16 +226,11 @@ the graph after each closure instead of following this list once it has moved.
    `EnvironmentMapEffect`, which is nine more members over
    `cna_environment_map_effect_*`. Do not add `EnvironmentMapEffect` with
    `EnvironmentMap` reported missing.
-2. **Render targets.** `RenderTarget2D`, `RenderTargetUsage`, `DepthFormat` and
-   `GraphicsDevice.SetRenderTarget(s)`. This is the closure that would let the
-   rasterizer lane prove things it currently cannot: a render target is readable
-   on every renderer that can draw at all, so pixel evidence would stop depending
-   on back-buffer readback.
-3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+2. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
-4. **`System.IO.Stream` and `TitleContainer`**, which unblock
+3. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-5. **Audio, models, media, storage, gamer services, networking.**
+4. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 
@@ -252,6 +247,14 @@ the graph after each closure instead of following this list once it has moved.
   is discrete, local, actionable work: build its headers, run
   `tools/native-abi/generate.py` and `verify.sh` against them, and see what the
   270-odd bound routes say.
+
+* **Pixel evidence no longer has to come from the back buffer.** `RenderTarget2D`
+  derives from `Texture2D`, so a target's contents can be read by drawing it --
+  on any renderer that can draw at all. The `render-target` proof uses the
+  back-buffer readback to check itself, because that is what this renderer
+  offers; what changed is that the mechanism is no longer the only one. The next
+  renderer added to the lane does not need `GetBackBufferData` to be qualified
+  for anything but `clear`.
 
 * **A state round-trip is not shading evidence, and the gap is now measured.**
   CNA's software renderer never reads `GpuDrawParams::alphaTest`, so

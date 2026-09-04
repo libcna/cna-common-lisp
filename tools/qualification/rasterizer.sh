@@ -15,6 +15,11 @@
 #              pixels its destination rectangle names, and on none outside it
 #   primitive  a DrawUserPrimitives triangle, through a BasicEffect pass, covered
 #              exactly the pixels its geometry covers and none outside them
+#   render-target
+#              a clear into a bound RenderTarget2D left the back buffer untouched,
+#              and the target's own contents then reached the back buffer through
+#              the texture path -- the first evidence here that does not depend on
+#              the back-buffer readback being the only way to see a pixel
 #   stock-effect
 #              a pass applied through an AlphaTestEffect and through a
 #              SkinnedEffect made a primitive draw legal and covered the right
@@ -72,7 +77,7 @@ if ! grep -q '^rasterization : ' "$log"; then
     echo "FAIL the runner printed no rasterization line at all" >&2
     exit 1
 fi
-for kind in clear sprite primitive text stock-effect; do
+for kind in clear sprite primitive text stock-effect render-target; do
     if ! grep -q "^rasterization : $kind -- " "$log"; then
         echo "FAIL this lane requires a '$kind' proof and the run did not produce one:" >&2
         grep '^rasterization : ' "$log" >&2 || true

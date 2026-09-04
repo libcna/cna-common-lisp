@@ -738,3 +738,133 @@ fragment of an opaque triangle; here it draws it."
         (when (texture game) (ignore-errors (xna:dispose (texture game))))
         (when (manager game) (ignore-errors (xna:dispose (manager game))))
         (ignore-errors (xna:dispose game))))))
+
+;;; --- do render targets hold what was drawn into them? -----------------------------
+;;;
+;;; The proof this closure was worth doing for, and it is three claims in one run:
+;;;
+;;;   1. **the bind redirected the drawing.** The back buffer is cleared to
+;;;      CornflowerBlue; a target is bound and cleared to red; the back buffer is
+;;;      read *before anything else happens* and must still be entirely
+;;;      CornflowerBlue. A clear that had leaked to the back buffer fails here.
+;;;   2. **the restore worked, and the target kept its contents.** The back buffer
+;;;      is restored, the target is drawn onto it as an ordinary texture -- which
+;;;      it is, because `RenderTarget2D' derives from `Texture2D' -- and the
+;;;      pixels under it are red.
+;;;   3. **and only under it.** The pixels immediately outside the destination
+;;;      rectangle are still the clear colour.
+;;;
+;;; Claim 2 is the one that matters for the qualification: a render target's
+;;; contents can be read on any renderer that can draw at all, so this is the
+;;; first evidence here that does not depend on the back buffer being readable.
+;;; It still *uses* the back-buffer readback to check itself, because that is what
+;;; this renderer offers; the point is that the mechanism no longer has to be the
+;;; only one.
+
+(defclass render-target-pixel-game (graphics-game)
+  ((rt :initform nil :accessor rt)
+   (before :initform nil :accessor before)
+   (after :initform nil :accessor after)
+   (sample-error :initform nil :accessor sample-error)
+   (sampled :initform nil :accessor sampled))
+  (:documentation
+   "Clears the back buffer, draws into a render target, checks the back buffer was
+untouched, then draws the target onto it and checks again."))
+
+(defmethod xna:draw ((game render-target-pixel-game) game-time)
+  (declare (ignore game-time))
+  (incf (draws game))
+  (unless (sampled game)
+    (setf (sampled game) t)
+    (handler-case
+        (let* ((device (xna:graphics-device game))
+               (target (make-instance 'gfx:render-target-2d :graphics-device device
+                                                            :width 16 :height 16))
+               (width (gfx:viewport-width (gfx:viewport device))))
+          (setf (rt game) target)
+          (gfx:clear device (xna:cornflower-blue))
+          ;; Draw into the target, and nowhere else.
+          (gfx:set-render-target device target)
+          (gfx:clear device (xna:make-color 255 0 0 255))
+          (gfx:set-render-target device nil)
+          ;; Claim 1: nothing of that reached the back buffer.
+          (let ((pixels (gfx:get-back-buffer-data device)))
+            (setf (before game)
+                  (lambda (x y) (aref pixels (+ x (* y width))))))
+          ;; Claims 2 and 3: the target's own contents, drawn as a texture.
+          (gfx:begin (batch game)
+                     :sort-mode :deferred
+                     :blend-state (gfx:blend-state-opaque)
+                     :sampler-state (gfx:sampler-state-point-clamp)
+                     :depth-stencil-state (gfx:depth-stencil-state-none)
+                     :rasterizer-state (gfx:rasterizer-state-cull-none))
+          (gfx:draw-texture (batch game) target
+                            :destination (xna:make-rectangle 32 32 16 16)
+                            :color (xna:white))
+          (gfx:end (batch game))
+          (let ((pixels (gfx:get-back-buffer-data device)))
+            (setf (after game)
+                  (lambda (x y) (aref pixels (+ x (* y width)))))))
+      (error (condition) (setf (sample-error game) condition)))))
+
+(define-native-test a-render-target-holds-what-was-drawn-into-it
+  (let ((game (make-instance 'render-target-pixel-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (sampled game) "the draw callback never ran")
+           (let ((renderer (renderer game)))
+             (if (not (rasterizing-renderer-p renderer))
+                 (progn
+                   (is (null (after game))
+                       "~a has no back-buffer readback but answered pixels" renderer)
+                   (is (typep (sample-error game) 'xna:cna-not-supported-error)
+                       "~a should refuse the readback with CNA-NOT-SUPPORTED-ERROR; ~
+                        it signalled ~a" renderer (type-of (sample-error game))))
+                 (progn
+                   (when (sample-error game) (error (sample-error game)))
+                   (let ((red (xna:make-color 255 0 0 255))
+                         (background (xna:cornflower-blue)))
+                     ;; 1. the red clear went to the target and not to the screen
+                     (dolist (point '((34 34) (40 40) (0 0) (100 100) (47 47)))
+                       (is (xna:color-equal background
+                                            (funcall (before game)
+                                                     (first point) (second point)))
+                           "(~d,~d) changed while a render target was bound; it is ~a. ~
+                            The clear should have gone to the target."
+                           (first point) (second point)
+                           (pixel-list (funcall (before game)
+                                                (first point) (second point)))))
+                     ;; 2. the target kept its contents, and they are samplable
+                     (dolist (point '((34 34) (40 40) (47 47) (32 32)))
+                       (is (xna:color-equal red (funcall (after game)
+                                                         (first point) (second point)))
+                           "(~d,~d) should be the render target's own red; it is ~a"
+                           (first point) (second point)
+                           (pixel-list (funcall (after game)
+                                                (first point) (second point)))))
+                     ;; 3. and nowhere else
+                     (dolist (point '((31 32) (48 32) (32 31) (32 48) (0 0)))
+                       (is (xna:color-equal background
+                                            (funcall (after game)
+                                                     (first point) (second point)))
+                           "(~d,~d) is outside the destination and should still be ~
+                            CornflowerBlue; it is ~a"
+                           (first point) (second point)
+                           (pixel-list (funcall (after game)
+                                                (first point) (second point)))))
+                     (note-rasterization
+                      :render-target
+                      "~a: a clear into a bound RenderTarget2D left the back buffer ~
+                       untouched, and the target's own contents then drew onto the back ~
+                       buffer through the texture path -- so a render target's pixels ~
+                       are readable without the back-buffer readback being the only ~
+                       mechanism"
+                      renderer)))))
+           (values))
+      (progn
+        (when (rt game) (ignore-errors (xna:dispose (rt game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))

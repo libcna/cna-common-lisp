@@ -296,7 +296,15 @@
       "CNA_EFFECT_TEXTURE_2D",
       "CNA_EFFECT_TEXTURE_3D",
       "CNA_EFFECT_TEXTURE_CUBE",
-      "CNA_SKINNED_EFFECT_MAX_BONES"
+      "CNA_SKINNED_EFFECT_MAX_BONES",
+      "CNA_DEPTH_FORMAT_NONE",
+      "CNA_DEPTH_FORMAT_DEPTH16",
+      "CNA_DEPTH_FORMAT_DEPTH24",
+      "CNA_DEPTH_FORMAT_DEPTH24_STENCIL8",
+      "CNA_RENDER_TARGET_USAGE_DISCARD_CONTENTS",
+      "CNA_RENDER_TARGET_USAGE_PRESERVE_CONTENTS",
+      "CNA_RENDER_TARGET_USAGE_PLATFORM_CONTENTS",
+      "CNA_RENDER_TARGET_KIND_2D"
     ],
     "prefix_families": [
       {
@@ -586,6 +594,16 @@
       "name": "CNA_SpriteFontInfo",
       "direction": "out",
       "versioned": true
+    },
+    {
+      "name": "CNA_RenderTarget2DCreateInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_RenderTargetInfo",
+      "direction": "out",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -606,6 +624,9 @@
     },
     {
       "name": "CNA_IndexBufferContentLostCallback"
+    },
+    {
+      "name": "CNA_RenderTargetContentLostCallback"
     }
   ],
   "functions": [
@@ -2551,6 +2572,42 @@
       "header": "effects.h",
       "thread": "owner",
       "ownership": "none"
+    },
+    {
+      "name": "cna_render_target2d_create",
+      "header": "render_target.h",
+      "thread": "game",
+      "ownership": "creates-owned:render-target-2d:child-of-game"
+    },
+    {
+      "name": "cna_render_target_destroy",
+      "header": "render_target.h",
+      "thread": "owner",
+      "ownership": "destroys:render-target-2d"
+    },
+    {
+      "name": "cna_render_target_get_info",
+      "header": "render_target.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_set_render_target2d",
+      "header": "render_target.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_render_target_subscribe_content_lost",
+      "header": "render_target.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_render_target_unsubscribe_content_lost",
+      "header": "render_target.h",
+      "thread": "owner",
+      "ownership": "releases"
     }
   ],
   "shimmed_routes": [
