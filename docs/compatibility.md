@@ -112,8 +112,8 @@ genuine absence.
 <!-- generated:complete types=135 -->
 <!-- generated:partial types=13 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1772 -->
-<!-- generated:partial members=17 -->
+<!-- generated:complete members=1774 -->
+<!-- generated:partial members=15 -->
 <!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
@@ -128,8 +128,8 @@ Selection **Foundation 1 and the managed closures**: 148 types, 2257 members.
 | Types complete | **135** |
 | Types partial | **13** |
 | Types missing | **0** |
-| Members complete | **1772** |
-| Members partial | **17** |
+| Members complete | **1774** |
+| Members partial | **15** |
 | Members missing | **51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
@@ -155,7 +155,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.LaunchParameters` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.TitleContainer` | **partial** | 0 | 1 | 0 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 13 | 0 | 16 | 1 |
-| `M.X.F.Content.ContentManager` | **partial** | 1 | 3 | 3 | 3 |
+| `M.X.F.Content.ContentManager` | **partial** | 3 | 1 | 3 | 3 |
 | `M.X.F.Graphics.RenderTargetCube` | **complete** | 7 | 0 | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetBinding` | **partial** | 3 | 1 | 0 | 1 |
 | `M.X.F.Color` | **complete** | 161 | 0 | 0 | 4 |
@@ -337,7 +337,7 @@ back-reference.
 | `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
-| `M.X.F.Content.ContentManager` | 3 | 3 |
+| `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |

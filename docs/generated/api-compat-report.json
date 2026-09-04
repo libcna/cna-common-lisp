@@ -22,10 +22,10 @@
    "complete": 135
   },
   "members_by_status": {
-   "complete": 1772,
+   "complete": 1774,
    "missing": 51,
    "not-applicable": 417,
-   "partial": 17
+   "partial": 15
   },
   "diagnostics": 51,
   "diagnostics_by_category": {
@@ -262,9 +262,9 @@
    "members": {
     "new(IServiceProvider)": "missing",
     "new(IServiceProvider,String)": "missing",
-    "Dispose()": "partial",
+    "Dispose()": "complete",
     "Dispose(Boolean)": "not-applicable",
-    "Unload()": "partial",
+    "Unload()": "complete",
     "Load(String)": "partial",
     "ReadAsset(String,Action`1)": "not-applicable",
     "OpenStream(String)": "not-applicable",

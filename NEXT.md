@@ -101,8 +101,8 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 <!-- generated:complete types=135 -->
 <!-- generated:partial types=13 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1772 -->
-<!-- generated:partial members=17 -->
+<!-- generated:complete members=1774 -->
+<!-- generated:partial members=15 -->
 <!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
@@ -117,8 +117,8 @@ Selection **Foundation 1 and the managed closures**: 148 types, 2257 members.
 | Types complete | **135** |
 | Types partial | **13** |
 | Types missing | **0** |
-| Members complete | **1772** |
-| Members partial | **17** |
+| Members complete | **1774** |
+| Members partial | **15** |
 | Members missing | **51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
@@ -145,7 +145,7 @@ members actually are:
 | `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
-| `M.X.F.Content.ContentManager` | 3 | 3 |
+| `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
@@ -170,7 +170,7 @@ one.
 | `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
-| `M.X.F.Content.ContentManager` | 3 | 3 |
+| `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
@@ -228,19 +228,7 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **The content closure's remaining half: `ContentManager`'s cache.** `Unload()`
-   and `Dispose()` are reported **partial**, and the reason is one thing, not two.
-   XNA's `ContentManager` keeps `loadedAssets` and `disposableAssets`; `Unload`
-   walks the second calling `Dispose` on every entry and clears both, and
-   `Dispose` is `Unload` followed by nulling them. Here a loaded asset is an owned
-   child of the *game* rather than of the manager, so `Unload` drops CNA's cache
-   and releases nothing, and two loads of one name are two objects where XNA's are
-   one. Closing it means the manager owning what it loaded and answering the same
-   object for the same name -- and it is `Load<T>`'s transaction that has to gain a
-   cache-insertion step before its commit, which is why the failure-injection
-   tests have a slot for one and no test in it yet. `docs/limitations.md` has the
-   audit and the IL it was read from.
-2. **The device-settings closure**: `Adapter`, `DisplayMode`,
+1. **The device-settings closure**: `Adapter`, `DisplayMode`,
    `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
    `Reset` overloads, `Present`, `GraphicsDevice`'s six events, and
    `GraphicsDeviceManager`'s sixteen remaining members, which are the same subject
@@ -274,7 +262,7 @@ the graph after each closure instead of following this list once it has moved.
    enter the selection and its three members have to come out of the IL first. A
    Lisp dictionary on its own, inventing the two canonical services, stays refused.
    `docs/limitations.md` has the full audit.
-3. **Audio, models, media, storage, gamer services, networking.**
+2. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 
@@ -340,12 +328,18 @@ the graph after each closure instead of following this list once it has moved.
   the same path, with `make-font-fixture.py` generating its 95-glyph asset.
 
 * **Measured, not assumed, about content:** `.cnj` loads and the older
-  `.font.json` convention does not (`CNA_RESULT_IO`); there is **no cache**, so
-  two loads of one name are two objects and four things to dispose; and ABI
-  0.21.0 has **no route reporting a Texture2D's width or height**, so a loaded
-  texture refuses both rather than answering a plausible zero. A TextureCube does
-  report its size, which makes the gap look like an oversight in CNA rather than
-  a policy.
+  `.font.json` convention does not (`CNA_RESULT_IO`); and ABI 0.21.0 has **no
+  route reporting a Texture2D's width or height**, so a loaded texture refuses
+  both rather than answering a plausible zero. A TextureCube does report its
+  size, which makes the gap look like an oversight in CNA rather than a policy.
+
+* **The cache is this binding's, in front of CNA's route, which is where XNA's is
+  too.** CNA's ABI has one create-shaped route per asset type and no cache; the
+  manager here keeps XNA's two collections, so `Load<T>` twice answers one object,
+  `Unload` disposes what it loaded, and `Game.Content.Dispose()` is `Unload` plus
+  being finished -- which is all XNA's `Dispose` is, since it has nothing native to
+  destroy. Do not restore the note that said there is no cache and that two loads
+  are four things to dispose.
 
 * **A component added in `LoadContent` is never initialized, and that is XNA's
   doing.** `Game.Run` sets `inRun` *after* `Initialize()` returns; `Initialize()`

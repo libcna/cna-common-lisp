@@ -152,12 +152,43 @@ gives. Two glyphs eight wide with no bearings is sixteen by the line spacing."
     (is (string= (%content-root) (observed game :root))
         "root directory read back as ~s" (observed game :root))))
 
-(define-native-test a-games-own-content-manager-refuses-to-be-disposed
-  "CNA lends the game's manager as a borrowed handle that `is released with its
-game' and refuses cna_content_manager_destroy on it. The binding refuses first,
-with a condition that says why, rather than passing the refusal through."
-  (with-content-game (game)
-    (signals xna:cna-ownership-error (xna:dispose (xna:content game)))))
+(define-native-test a-games-own-content-manager-is-disposable-and-unloads
+  "`Game.Content.Dispose()' is legal, and does what XNA's does.
+
+XNA's `ContentManager.Dispose(bool)' is `Unload()' followed by nulling both
+collections -- a purely managed operation that destroys nothing native. So this
+disposes the assets the manager loaded and marks the facade disposed, and CNA's
+borrowed manager, which \"cannot be destroyed\", is left alone. The game shuts
+down afterwards, which it could not if the assets were still alive."
+  (let ((game (make-instance 'content-game :exit-after 2))
+        (teardown nil))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (null (load-error game)) "loading failed: ~a" (load-error game))
+           (let ((content (xna:content game))
+                 (font (loaded-font game))
+                 (atlas (loaded-atlas game)))
+             (xna:dispose content)
+             (is-true (xna:disposed-p content)
+                      "a disposed manager must report itself disposed, as XNA's does")
+             (is-true (xna:disposed-p font)
+                      "Dispose must unload the font it loaded")
+             (is-true (xna:disposed-p atlas)
+                      "and the atlas that came with it")
+             (is (eq content (xna:content game))
+                 "Game.Content is a field in XNA and keeps answering the disposed ~
+                  manager, rather than quietly making a new one")
+             (signals xna:cna-disposed-error (xna.content:root-directory content))))
+      (progn
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (handler-case (xna:dispose game)
+          (error (condition) (setf teardown condition)))
+        (is (null teardown)
+            "the game would not shut down after Game.Content was disposed: ~a"
+            teardown)))))
 
 (define-native-test an-unknown-asset-fails-and-leaves-the-game-owning-nothing
   "A missing asset is an IO failure, and a failed load is all-or-nothing: the
@@ -231,68 +262,147 @@ and says so instead of answering a plausible zero."
 
 ;;; --- Unload -----------------------------------------------------------------
 
-(define-native-test unload-drops-the-cache-and-not-what-was-handed-out
-  "CNA: `independently owned resource handles returned by the manager are not
-destroyed by this call'. So a font stays usable across an Unload, and disposing
-it afterwards is still the caller's job.
+(define-native-test unload-disposes-what-it-loaded-as-xnas-does
+  "XNA's Unload walks `disposableAssets' calling Dispose on every entry and then
+clears both collections in a finally. Read from the assembly, and reproduced:
+after an Unload the font and its atlas are disposed, and the manager is empty
+and still usable.
 
-**This is the divergence that makes `Unload()` and `Dispose()` partial.** XNA's
-Unload walks `disposableAssets' calling Dispose on every entry and then clears
-both collections; read from the pinned IL, not from a description of it. Here the
-cache is dropped and the assets are not. The test asserts what this binding
-actually does, so a CNA that grew XNA's behaviour would fail here rather than
-pass quietly -- and closing the gap means failing this test on purpose."
+This test used to assert the opposite -- that the font survived -- because
+CNA's `cna_content_manager_unload' drops the manager's own cache and, in its own
+words, \"independently owned resource handles returned by the manager are not
+destroyed by this call\". That is still true of CNA's route; what changed is that
+this binding no longer stops there. The manager keeps XNA's two collections, so
+it has something of its own to release, and it releases it."
   (with-content-game (game)
     (is (null (load-error game)) "loading failed: ~a" (load-error game))
-    (xna.content:unload (xna:content game))
-    (let ((measured (gfx:measure-string (loaded-font game) "AB")))
-      (is (= 16.0f0 (xna:vector2-x measured))
-          "the font stopped measuring after Unload: ~a" measured))))
+    (let ((content (xna:content game))
+          (font (loaded-font game))
+          (atlas (loaded-atlas game)))
+      (xna.content:unload content)
+      (is-true (xna:disposed-p font) "Unload must dispose the font it loaded")
+      (is-true (xna:disposed-p atlas) "and the atlas that came with it")
+      ;; ...and the manager itself is untouched: Unload is not Dispose.
+      (is-false (xna:disposed-p content))
+      (is (stringp (xna.content:root-directory content))
+          "the manager must still work after an Unload")
+      ;; A second Unload on an empty manager is an ordinary success.
+      (xna.content:unload content)
+      (is-true t))))
 
-;;; --- the cache XNA has and CNA does not -------------------------------------
+(define-native-test unload-empties-the-cache-so-the-next-load-is-a-new-object
+  "The other half of Unload: `loadedAssets.Clear()'. A name loaded again after an
+Unload is loaded again, and answers a different object -- which is what makes
+Unload the way a program frees content and then reloads it."
+  (with-content-game (game)
+    (is (null (load-error game)) "loading failed: ~a" (load-error game))
+    (let ((content (xna:content game))
+          (first-font (loaded-font game)))
+      (xna.content:unload content)
+      (is-true (xna:disposed-p first-font))
+      ;; Reloading needs the device, which is only lent inside a callback, so
+      ;; this asserts the cache is empty rather than reloading here.
+      (is (zerop (hash-table-count (xna.content::%content-loaded-assets content)))
+          "Unload left ~d entry/entries in the cache"
+          (hash-table-count (xna.content::%content-loaded-assets content)))
+      (is (null (xna.content::%content-disposable-assets content))
+          "Unload left ~d asset(s) on the disposal list"
+          (length (xna.content::%content-disposable-assets content))))))
+
+;;; --- the cache, which is XNA's and is now here too ---------------------------
 
 (defclass twice-loading-game (content-game)
   ((second-font :initform nil :accessor second-font)
-   (second-atlas :initform nil :accessor second-atlas))
-  (:documentation "Loads the same asset name twice in one callback."))
+   (second-atlas :initform nil :accessor second-atlas)
+   (wrong-type :initform nil :accessor wrong-type-error)
+   (cleaned-name :initform nil :accessor cleaned-name-result))
+  (:documentation "Loads the same asset name twice, and once as the wrong type."))
 
 (defmethod xna:load-content ((game twice-loading-game))
   (call-next-method)
   (unless (load-error game)
     (handler-case
-        (multiple-value-bind (font atlas)
-            (xna.content:load-asset (xna:content game) 'gfx:sprite-font (asset game))
-          (setf (second-font game) font
-                (second-atlas game) atlas))
+        (let ((content (xna:content game)))
+          (multiple-value-bind (font atlas)
+              (xna.content:load-asset content 'gfx:sprite-font (asset game))
+            (setf (second-font game) font
+                  (second-atlas game) atlas))
+          ;; The cache is keyed by the *cleaned* name, so a name that cleans to
+          ;; the same string is the same entry -- which is why the cleaning runs
+          ;; before the lookup rather than after it.
+          (setf (cleaned-name-result game)
+                (xna.content:load-asset content 'gfx:sprite-font
+                                        (concatenate 'string "./" (asset game))))
+          ;; ...and it is keyed by the name *alone*, so asking for another type
+          ;; is a failure rather than a second load.
+          (handler-case
+              (xna.content:load-asset content 'gfx:texture-2d (asset game))
+            (error (condition) (setf (wrong-type-error game) condition))))
       (error (condition) (setf (load-error game) condition)))))
 
-(define-native-test loading-one-asset-twice-answers-two-objects-and-not-one
-  "**A divergence from XNA, measured rather than assumed.** XNA's ContentManager
-caches: `Load<T>(\"x\")' twice answers the same instance, and `Unload()' is what
-releases it. CNA's ABI has one create-shaped route per asset type and no cache in
-front of it, so each call builds a new native object.
+(define-native-test loading-one-asset-twice-answers-the-same-object
+  "XNA's ContentManager caches by asset name: `Load<T>(\"x\")' twice answers the
+same instance. So does this now, and the consequence is ownership -- a program
+that loads twice owns *one* font and one atlas, and Unload is what frees them.
 
-Pinned here rather than left to be discovered, because the consequence is
-ownership: a program that loads twice owns two fonts and two atlases and must
-dispose all four. docs/limitations.md."
+This test used to assert the opposite, and said so: CNA's ABI has one
+create-shaped route per asset type with no cache in front of it. That is still
+true of CNA; the cache is this binding's, in front of CNA's route, which is where
+XNA's is too."
   (let ((game (make-instance 'twice-loading-game :exit-after 2)))
     (unwind-protect
          (progn
            (xna:run game)
            (is (null (load-error game)) "loading failed: ~a" (load-error game))
-           (is (not (eq (loaded-font game) (second-font game)))
-               "two loads answered the same object; CNA has grown a cache")
-           (is (/= (int:handle-of (loaded-font game)) (int:handle-of (second-font game)))
-               "two loads answered the same native handle"))
+           (is (eq (loaded-font game) (second-font game))
+               "two loads of one name answered different objects")
+           (is (eq (loaded-atlas game) (second-atlas game))
+               "the atlas that comes with the font must be cached with it")
+           (is (eq (loaded-font game) (cleaned-name-result game))
+               "`./x' and `x' clean to the same name and must be one entry"))
       (progn
-        (when (second-font game) (ignore-errors (xna:dispose (second-font game))))
-        (when (second-atlas game) (ignore-errors (xna:dispose (second-atlas game))))
         (when (loaded-font game) (ignore-errors (xna:dispose (loaded-font game))))
         (when (loaded-atlas game) (ignore-errors (xna:dispose (loaded-atlas game))))
         (when (batch game) (ignore-errors (xna:dispose (batch game))))
         (when (texture game) (ignore-errors (xna:dispose (texture game))))
         (when (manager game) (ignore-errors (xna:dispose (manager game))))
         (xna:dispose game)))))
+
+(define-native-test a-cached-name-asked-for-as-another-type-is-refused
+  "The cache is keyed by the name and not by the type, so `Load<Texture2D>' on a
+name already loaded as a SpriteFont is a failure and not a second load. XNA
+throws ContentLoadException there; this binding's exception types are a separate
+closure, so it is an argument failure naming both types."
+  (let ((game (make-instance 'twice-loading-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (null (load-error game)) "loading failed: ~a" (load-error game))
+           (is (typep (wrong-type-error game) 'xna:cna-argument-error)
+               "asking for the wrong type gave ~a" (type-of (wrong-type-error game)))
+           (is (search "sprite-font" (string-downcase
+                                      (princ-to-string (wrong-type-error game))))
+               "the refusal should name what is actually cached: ~a"
+               (wrong-type-error game)))
+      (progn
+        (when (loaded-font game) (ignore-errors (xna:dispose (loaded-font game))))
+        (when (loaded-atlas game) (ignore-errors (xna:dispose (loaded-atlas game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (xna:dispose game)))))
+
+(define-native-test loading-refuses-an-empty-name-and-a-disposed-manager
+  "XNA's Load checks the manager first and the name second: a disposed manager is
+ObjectDisposedException whatever the name, and an empty name is
+ArgumentNullException. The order is the assembly's."
+  (with-content-game (game)
+    (let ((content (xna:content game)))
+      (signals xna:cna-argument-error
+        (xna.content:load-asset content 'gfx:sprite-font ""))
+      (xna:dispose content)
+      (signals xna:cna-disposed-error
+        (xna.content:load-asset content 'gfx:sprite-font "")))))
 
 ;;; --- a refused disposal must cost the object nothing -------------------------
 ;;;
@@ -303,52 +413,38 @@ dispose all four. docs/limitations.md."
 ;;; before anything is touched. These tests are what says so.
 
 (defclass refused-dispose-game (content-game)
-  ((refusal :initform nil :accessor refusal)
-   (same-object :initform nil :accessor same-object)
-   (still-works :initform nil :accessor still-works)
-   (device-refusal :initform nil :accessor device-refusal)
+  ((device-refusal :initform nil :accessor device-refusal)
    (device-still-works :initform nil :accessor device-still-works))
-  (:documentation "Disposes the two parent-owned facades and then keeps using them."))
+  (:documentation "Disposes the parent-owned facade that has nothing to release."))
 
 (defmethod xna:load-content ((game refused-dispose-game))
   (call-next-method)
-  (let ((content (xna:content game)))
-    (handler-case (xna:dispose content)
-      (error (condition) (setf (refusal game) condition)))
-    (setf (same-object game) (eq content (xna:content game)))
-    ;; A legal operation, through the facade that was just refused. It has to
-    ;; reach CNA -- reading the root directory back is a real ABI round trip.
-    (handler-case
-        (progn (setf (xna.content:root-directory content) (%content-root))
-               (setf (still-works game)
-                     (string= (%content-root) (xna.content:root-directory content))))
-      (error (condition) (setf (still-works game) condition))))
   (let ((device (xna:graphics-device game)))
     (handler-case (xna:dispose device)
       (error (condition) (setf (device-refusal game) condition)))
+    ;; A legal operation, through the facade that was just refused. It has to
+    ;; reach CNA -- the renderer name is a real ABI round trip.
     (handler-case (setf (device-still-works game) (gfx:renderer-name device))
       (error (condition) (setf (device-still-works game) condition)))))
 
 (define-native-test a-refused-disposal-leaves-the-facade-completely-usable
-  "Game.Content refuses to be disposed and is untouched by refusing.
+  "The graphics device refuses to be disposed and is untouched by refusing.
 
-The refusal is right -- CNA lends the game's manager and releases it with the
-game. What must not happen is the object paying for it: a caller who wraps a
-refusal in HANDLER-CASE, which is the reasonable thing to do, must be left with
-the same working facade they started with."
+The refusal is right: CNA lends the device for a callback's duration and releases
+it with the game, and XNA's `GraphicsDevice.Dispose' is itself reported missing
+because a CNA-Lisp program never constructs one. What must not happen is the
+object paying for the refusal -- a caller who wraps it in HANDLER-CASE, which is
+the reasonable thing to do, must be left with the same working facade.
+
+`Game.Content' used to be the other half of this test and no longer is: it is
+disposable now, because XNA's `ContentManager.Dispose()' has real work to do that
+is not a native handle. The bug this test exists for is the same either way --
+DISPOSE invalidates through an UNWIND-PROTECT, so a refusal raised from inside it
+marked the object disposed on the way out."
   (let ((game (make-instance 'refused-dispose-game :exit-after 2)))
     (unwind-protect
          (progn
            (xna:run game)
-           (is (typep (refusal game) 'xna:cna-ownership-error)
-               "disposing Game.Content gave ~a" (type-of (refusal game)))
-           (is-false (xna:disposed-p (xna:content game))
-                     "the refused facade was marked disposed anyway")
-           (is-true (same-object game)
-                    "Game.Content answered a different object after the refusal")
-           (is (eq t (still-works game))
-               "the refused facade could no longer be used: ~a" (still-works game))
-           ;; and the same for the other parent-owned facade
            (is (typep (device-refusal game) 'xna:cna-ownership-error)
                "disposing the graphics device gave ~a" (type-of (device-refusal game)))
            (is-false (xna:disposed-p (xna:graphics-device game))

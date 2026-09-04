@@ -212,7 +212,7 @@ claiming a face. `MAKE-RENDER-TARGET-BINDING` enforces the same distinction from
 the other side: a cube requires a face and a 2D target refuses one, because those
 are exactly XNA's two constructors.
 
-## Content: what loads, and the five things that do not follow XNA
+## Content: what loads, and the two things that do not follow XNA
 
 `ContentManager` is projected, `Game.Content` with it, and that is what makes a
 `SpriteFont` obtainable at all — before it, the only producer in this binding was
@@ -254,59 +254,61 @@ SpriteFont keeps its atlas alive and CNA refuses the other order. The binding
 records that parenting, so the wrong order is a diagnosable refusal rather than a
 native failure.
 
-### There is no cache, and XNA has one
+### The cache is XNA's, and now so is `Unload`
 
-XNA's `ContentManager` caches by asset name: `Load<T>("x")` twice answers the
-same instance, and `Unload()` releases it. CNA's ABI has one create-shaped route
-per asset type with no cache in front, so **each call builds a new native
-object**. A program that loads the same font twice owns two fonts and two atlases
-and must dispose all four. Pinned by a test, so a CNA that grew a cache would
-fail rather than pass quietly.
+XNA's `ContentManager` keeps two collections and they are two for a reason:
+`loadedAssets`, a `Dictionary<string,object>` keyed by asset name, and
+`disposableAssets`, a list of every disposable the loading *created* — which for
+a `SpriteFont` is two objects for one name. `Load<T>` cleans the name with
+`TitleContainer.GetCleanPath`, looks it up, answers the cached instance on a hit
+and adds on a miss; `Unload` disposes every entry in the second list and clears
+both in a `finally`; `Dispose` is `Unload` and then nulling them.
 
-### `Unload()` and `Dispose()` are **partial**, and the IL is why
+All of that is reproduced. Read from the pinned IL rather than described:
 
-Both were reported complete. Re-read against the pinned assembly, neither is.
+| Step | XNA | Here |
+| --- | --- | --- |
+| disposed manager | `ObjectDisposedException` | `CNA-DISPOSED-ERROR` |
+| null or empty name | `ArgumentNullException("assetName")` | `CNA-ARGUMENT-ERROR`, parameter `asset-name` |
+| name normalisation | `TitleContainer.GetCleanPath` | the same function, literally |
+| cache hit, right type | the cached instance | the same objects |
+| cache hit, wrong type | `ContentLoadException` | `CNA-ARGUMENT-ERROR` naming both types |
+| cache miss | read, then `Add` | load, then commit inside the load's ledger |
 
-`ContentManager.Unload()` in XNA is where a program frees what it loaded. The IL
-is unambiguous: it throws `ObjectDisposedException` when `loadedAssets` is
-already null, then walks `disposableAssets` calling `IDisposable.Dispose()` on
-every entry, and clears both collections in a `finally`.
+The cache is keyed by the **cleaned name alone and not by the type**, which is
+why a hit of the wrong type is a failure rather than a second load — and why
+`"./x"` and `"x"` are one entry. `Load<SpriteFont>` twice therefore answers one
+font and one atlas, and `Unload` is what frees them.
 
-```
-IL_002c:  callvirt   instance void [mscorlib]System.IDisposable::Dispose()
-...
-IL_0052:  callvirt   instance void ...Dictionary`2<string,object>::Clear()
-IL_005d:  callvirt   instance void ...List`1<[mscorlib]System.IDisposable>::Clear()
-```
+**The commit is inside the load's rollback ledger**, which is what makes the last
+step of a load recoverable: by the time an asset reaches the cache CNA has handed
+back every handle, the metadata is read, the objects are built and the game owns
+them, and a failure there still has to give all of it back.
+`tests/native/content-atomicity.lisp` makes exactly that failure happen, which is
+the strongest state the transaction is tested from.
 
-`UNLOAD` here calls `cna_content_manager_unload`, whose own documentation says
-"independently owned resource handles returned by the manager are not destroyed
-by this call". So the cache is dropped exactly as XNA drops it, and **the assets
-are not** — the half a program actually notices. In XNA an `Unload` releases the
-textures and fonts; here the caller still owns and must still dispose every one
-of them.
+**One deliberate divergence in `Unload`, and it is a divergence.** XNA's has no
+error handling: a throwing `Dispose` stops the walk while the `finally` still
+clears both collections, so every remaining asset is stranded with nothing left
+that can reach it. In .NET a finalizer eventually collects them; there are no
+finalizers here by policy, so reproducing that would leak *permanently* and fail
+the game's teardown — a worse outcome than XNA's, not the same one. So this
+releases every independent asset and then signals the first failure. CNA's own
+`cna_content_manager_unload` is called as well, so neither side is left holding
+an asset the other has let go: that route drops CNA's cache and, in its own
+words, "independently owned resource handles returned by the manager are not
+destroyed by this call" — which is why the disposing half has to be this
+binding's.
 
-`ContentManager.Dispose()` is `Dispose(true)` followed by `GC.SuppressFinalize`,
-and `Dispose(bool)` calls `Unload()` and then nulls both collections — so
-disposing a manager in XNA frees the assets it loaded and leaves the manager
-unusable. Neither half is reproduced here, and for two separate reasons:
+**`Game.Content` is disposable, and that is XNA's shape too.** `Dispose()` there
+destroys nothing native, because there is nothing native; it unloads and marks
+the manager finished. So it does here: the assets go, the facade is marked
+disposed, `Game.Content` keeps answering it as XNA's field does, and every member
+on it then refuses. The borrowed native manager CNA lends is left alone, which
+costs nothing. The other parent-owned facade, `GraphicsDevice`, still refuses
+disposal — it has nothing of its own to release, and `GraphicsDevice.Dispose` is
+itself reported missing.
 
-* `DISPOSE` destroys the **native manager** and never touches what that manager
-  loaded, because a loaded asset here is an owned child of the *game* rather than
-  of the manager. `Unload()`'s gap is `Dispose()`'s gap too.
-* A game's own manager — the instance an XNA program actually has — **refuses**
-  `DISPOSE` outright. CNA lends it as a borrowed handle that "answers the same
-  handle every time, cannot be destroyed, and is released with its game", so
-  there is nothing for a destroy route to take back. The refusal is a
-  diagnosable `CNA-OWNERSHIP-ERROR` raised *before* the object is touched, and
-  the manager stays completely usable afterwards. XNA's `Dispose()` on
-  `Game.Content` does not refuse, and reporting complete would have been claiming
-  it does not.
-
-Closing either needs the manager to keep XNA's two collections — the
-name-to-asset cache and the disposable list — and to own what it loaded. That is
-one closure with the load-identity behaviour above, and until it lands both
-members stay partial.
 
 ### A loaded `Texture2D` cannot report its size
 
@@ -361,23 +363,20 @@ this needs a CNA route, not a cleverer caller.
   one assigned, and a setter that silently means something else is worse than a
   missing one.
 
-A game's own manager is also not disposable: CNA lends it as a borrowed handle
-that "answers the same handle every time, cannot be destroyed, and is released
-with its game". `DISPOSE` on it is refused here with a condition that says so,
-one step before CNA would refuse it — see `Dispose()` above for why that makes
-the member partial rather than complete.
-
 **A refused disposal costs the object nothing, and that took fixing.** `DISPOSE`
-invalidates through an `UNWIND-PROTECT`, and this refusal used to be raised from
-inside it, in `DESTROY-NATIVE`. The refusal was right and the facade paid for it
-anyway: it came back marked disposed and holding no handle, over a native manager
-that had — correctly — never been destroyed. A caller who wrapped the refusal in
-`HANDLER-CASE`, which is the reasonable thing to do with a refusal, was left with
-a poisoned `Game.Content`. The refusal is now `%CHECK-DISPOSABLE`, called before
-`DISPOSE` touches anything, and `GRAPHICS-DEVICE` — the other parent-owned facade
-— had the same bug and worse: with no `DESTROY-NATIVE` method at all, disposing
-it was a `NO-APPLICABLE-METHOD` raised from inside the same `UNWIND-PROTECT`,
-which then invalidated the device the game draws through.
+invalidates through an `UNWIND-PROTECT`, and a parent-owned facade's refusal used
+to be raised from inside it, in `DESTROY-NATIVE`. The refusal was right and the
+facade paid for it anyway: it came back marked disposed and holding no handle,
+over a native object that had — correctly — never been destroyed. A caller who
+wrapped the refusal in `HANDLER-CASE`, which is the reasonable thing to do with a
+refusal, was left with a poisoned facade. The refusal is now `%CHECK-DISPOSABLE`,
+called before `DISPOSE` touches anything.
+
+`GRAPHICS-DEVICE` is the facade that still refuses, and it had the same bug and
+worse: with no `DESTROY-NATIVE` method at all, disposing it was a
+`NO-APPLICABLE-METHOD` raised from inside the same `UNWIND-PROTECT`, which then
+invalidated the device the game draws through. `Game.Content` is no longer part
+of that story — see the cache section above for why it is disposable.
 
 **A `ContentManager` is built one of exactly two ways, and neither of them is
 "partly".** `(make-instance 'content-manager)` used to succeed and answer a

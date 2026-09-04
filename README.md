@@ -180,8 +180,8 @@ placeholder methods that answer a default and claim success.
 <!-- generated:complete types=135 -->
 <!-- generated:partial types=13 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1772 -->
-<!-- generated:partial members=17 -->
+<!-- generated:complete members=1774 -->
+<!-- generated:partial members=15 -->
 <!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
@@ -194,7 +194,7 @@ The generated scoreboard, over a selection of **148 XNA types and 2257 members**
 | | |
 | --- | --- |
 | Types complete / partial / missing | **135 / 13 / 0** |
-| Members complete / missing | **1772 / 51** |
+| Members complete / missing | **1774 / 51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->

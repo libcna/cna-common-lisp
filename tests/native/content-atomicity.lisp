@@ -155,6 +155,19 @@ failed *before* the atlas was adopted would pass for the wrong reason."
       (error 'content-step-blew-up :step :font-info)
       (call-next-method)))
 
+(defmethod xna.content::%commit-loaded-asset :around
+    ((manager xna.content:content-manager) asset-name record &rest values)
+  "The last step of a load: cache the asset, and fail here if asked to.
+
+This is the commit itself, so a failure in it is the one case where *everything*
+had already worked -- the handles are CNA's, the objects are built, the game owns
+them -- and the load still has to come apart. Nothing else in the suite reaches
+that state."
+  (declare (ignore asset-name record values))
+  (if (eq *exploding-step* :cache-insertion)
+      (error 'content-step-blew-up :step :cache-insertion)
+      (call-next-method)))
+
 (defmethod gfx::%read-font-glyph-table :around (handle count operation)
   "Record that the font's info step had already succeeded, then fail if asked."
   (declare (ignore handle count operation))
@@ -289,6 +302,41 @@ still has to undo everything."
 
 ;;; --- and the happy path is unaffected ---------------------------------------
 
+(define-native-test a-load-whose-caching-fails-keeps-none-of-it
+  "The last step, and the one where everything else had already worked.
+
+By the time the asset reaches the cache CNA has handed back both handles, the
+metadata is read, the objects are built and the game owns them. A failure here is
+therefore the strongest test of the transaction there is: nothing is left to go
+right, and all of it has to come apart. Reaching this state at all is what the
+commit step being inside the load's ledger buys."
+  (with-atomic-load-game (game :asset-type 'gfx:sprite-font
+                               :step-to-blow :cache-insertion)
+    (let ((log (destroy-log game))
+          (content (xna:content game)))
+      (is (typep (condition-seen game) 'content-step-blew-up)
+          "the caller saw ~a" (type-of (condition-seen game)))
+      (is (eq :cache-insertion (blown-step (condition-seen game))))
+      (is (destroyed-exactly-once-p log 'ffi::%sprite-font-destroy)
+          "the font handle was destroyed ~d time(s), not once"
+          (length (destroys-of log 'ffi::%sprite-font-destroy)))
+      (is (destroyed-exactly-once-p log 'ffi::%texture-2d-destroy)
+          "the atlas handle was destroyed ~d time(s), not once"
+          (length (destroys-of log 'ffi::%texture-2d-destroy)))
+      (is (eq 'ffi::%sprite-font-destroy (car (first log)))
+          "the rollback destroyed ~a before the font" (car (first log)))
+      (is (= (textures-before game) (textures-after game))
+          "the adopted atlas was left registered as a live child of the game")
+      (is (= (children-before game) (children-after game)))
+      ;; and the manager kept nothing: no cache entry, and nothing on the
+      ;; disposal list that Unload would later try to dispose twice.
+      (is (zerop (hash-table-count (xna.content::%content-loaded-assets content)))
+          "a failed load left ~d cache entry/entries behind"
+          (hash-table-count (xna.content::%content-loaded-assets content)))
+      (is (null (xna.content::%content-disposable-assets content))
+          "a failed load left ~d asset(s) on the manager's disposal list"
+          (length (xna.content::%content-disposable-assets content))))))
+
 (define-native-test a-successful-load-destroys-nothing-and-registers-both
   "The control. With no step rigged, the same fixture loads and keeps everything.
 
@@ -304,6 +352,15 @@ stopped working."
         "a successful load destroyed ~a" (destroy-log game))
     (is (= (1+ (textures-before game)) (textures-after game))
         "the atlas was not registered as a child of the game")
+    ;; ...and the manager kept both, in the order Unload has to dispose them.
+    (let ((content (xna:content game)))
+      (is (= 1 (hash-table-count (xna.content::%content-loaded-assets content)))
+          "a successful load left ~d cache entry/entries"
+          (hash-table-count (xna.content::%content-loaded-assets content)))
+      (is (equal (list (first (load-result game)) (second (load-result game)))
+                 (xna.content::%content-disposable-assets content))
+          "the disposal list must read font-first, and reads ~a"
+          (xna.content::%content-disposable-assets content)))
     ;; and the caller's objects are disposed here rather than in the teardown,
     ;; font first, because CNA refuses the other order.
     (xna:dispose (first (load-result game)))

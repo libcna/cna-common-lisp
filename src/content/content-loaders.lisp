@@ -66,7 +66,9 @@
                                    operation)))
     (cna-lisp.internal:with-native-rollback (record)
       (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
-      (microsoft.xna.framework.graphics::%adopt-loaded-texture-2d game handle record))))
+      (%commit-loaded-asset
+       manager asset-name record
+       (microsoft.xna.framework.graphics::%adopt-loaded-texture-2d game handle record)))))
 
 (%define-asset-loader (microsoft.xna.framework.graphics:texture-cube manager asset-name)
   (let* ((operation "load-asset 'texture-cube")
@@ -76,7 +78,9 @@
                                    operation)))
     (cna-lisp.internal:with-native-rollback (record)
       (funcall record (lambda () (cna-lisp.internal.ffi::%texturecube-destroy handle)))
-      (microsoft.xna.framework.graphics::%adopt-loaded-texture-cube game handle record))))
+      (%commit-loaded-asset
+       manager asset-name record
+       (microsoft.xna.framework.graphics::%adopt-loaded-texture-cube game handle record)))))
 
 ;;; --- SpriteFont -------------------------------------------------------------
 ;;;
@@ -109,5 +113,7 @@
                    (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy atlas-handle)))
           (funcall record
                    (lambda () (cna-lisp.internal.ffi::%sprite-font-destroy font-handle)))
-          (microsoft.xna.framework.graphics::%adopt-loaded-sprite-font
-           game font-handle atlas-handle record))))))
+          (multiple-value-call #'%commit-loaded-asset
+            manager asset-name record
+            (microsoft.xna.framework.graphics::%adopt-loaded-sprite-font
+             game font-handle atlas-handle record)))))))

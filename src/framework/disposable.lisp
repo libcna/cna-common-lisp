@@ -45,11 +45,18 @@ poisoned facade:
       (ignore-errors (dispose content))   ; correctly refused
       (root-directory content))           ; ...and now this fails too
 
-The default refuses every :PARENT-OWNED object, because a facade holds no handle
-of its own: CNA lends it, answers the same handle every time, and releases it
-with the parent. Specialise this to say *why* for a particular type. Do not
-specialise it to accept -- a facade that quietly accepted disposal would be
-claiming to have released something it does not own.")
+The default refuses every :PARENT-OWNED object, because a facade *usually* holds
+nothing of its own to release: CNA lends the handle, answers the same one every
+time, and releases it with the parent. Specialise this to say *why* for a
+particular type.
+
+Specialising it to **accept** is legitimate exactly when the disposal has real
+work to do that is not the handle. `ContentManager' is the one such case: XNA's
+`Dispose()' is `Unload()' and then nulling two collections -- a purely managed
+operation that destroys nothing native -- and `Game.Content' genuinely owns the
+assets it loaded. What is never legitimate is accepting because refusing was
+inconvenient: a facade that quietly accepted a disposal it did nothing for would
+be claiming to have released something it does not own.")
   (:method ((object cna-lisp.internal:native-object))
     (when (eq (cna-lisp.internal:ownership-of object) :parent-owned)
       (error 'cna-ownership-error

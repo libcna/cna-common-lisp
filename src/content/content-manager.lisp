@@ -37,7 +37,21 @@
 
 (defclass content-manager (cna-lisp.internal:native-object)
   ((%graphics-device :initarg :graphics-device :initform nil
-                     :reader content-manager-graphics-device))
+                     :reader content-manager-graphics-device)
+   ;; XNA's two collections, and they are two rather than one for a reason: the
+   ;; cache is keyed by asset name and holds whatever Load answered, while the
+   ;; disposal list holds every disposable the load *created*, which for a
+   ;; SpriteFont is two objects for one name.
+   (%loaded-assets :initform (make-hash-table :test #'equal)
+                   :reader %content-loaded-assets
+                   :documentation
+                   "Cleaned asset name -> the values LOAD-ASSET answered for it.
+EQUAL, because XNA's Dictionary<string,object> uses the ordinal string comparer:
+the key is case-sensitive there and here.")
+   (%disposable-assets :initform '() :accessor %content-disposable-assets
+                       :documentation
+                       "Every asset this manager created, newest first, in the
+order UNLOAD must dispose them: a SpriteFont before the atlas it keeps alive."))
   (:documentation
    "Microsoft.Xna.Framework.Content.ContentManager: loads assets by logical name.
 
@@ -199,25 +213,36 @@ its own, and therefore takes neither of these arguments."
         length))
 
 (defmethod microsoft.xna.framework::%check-disposable ((manager content-manager))
-  "Refuse a game's own manager here, where a refusal costs the object nothing.
+  "A content manager is disposable whichever way it was made, facade included.
 
-Not in DESTROY-NATIVE, which is where this refusal used to live: DISPOSE
-invalidates through an UNWIND-PROTECT, so refusing there marked the facade
-disposed on the way out and `Game.Content' came back unusable -- over a native
-manager that was, correctly, never destroyed. See %CHECK-DISPOSABLE."
-  (when (eq (cna-lisp.internal:ownership-of manager) :parent-owned)
-    (error 'microsoft.xna.framework:cna-ownership-error
-           :operation "dispose" :object-type 'content-manager
-           :format-control
-           "a game's own content manager is released with its game and cannot be disposed. ~
-            CNA lends it as a borrowed handle and refuses `cna_content_manager_destroy' on ~
-            one. Dispose the game instead. This manager is untouched and remains usable."
-           :format-arguments '())))
+The default method refuses a :PARENT-OWNED object because a facade has nothing of
+its own to release. A content manager is the exception the default's wording
+allows for: `Game.Content' *does* own something -- the assets it loaded -- and
+XNA's `ContentManager.Dispose()' is `Unload()' followed by nulling both
+collections, which is a purely managed operation that destroys no native object
+at all. So disposing this facade releases its assets and marks it disposed, and
+the native manager CNA lends is left alone, exactly as XNA leaves nothing native
+behind either.
+
+Specialised to *accept*, and this is the only place that is right: what makes it
+right is that the disposal has real work to do, not that refusing was
+inconvenient."
+  (declare (ignore manager))
+  nil)
 
 (defmethod cna-lisp.internal:destroy-native ((manager content-manager))
-  (cna-lisp.internal:check-result
-   (cna-lisp.internal.ffi::%content-manager-destroy (cna-lisp.internal:handle-of manager))
-   "dispose" :object-type 'content-manager))
+  "XNA's Dispose(bool): Unload(), and then the object is finished.
+
+The unload is first and is not optional -- it is what the member is *for*, and a
+manager that dropped its assets on the floor here would leave CNA holding every
+one of them. The native destroy runs only for a manager this binding created:
+CNA lends a game's own manager as a borrowed handle that \"cannot be destroyed\",
+and XNA has nothing native to destroy on either kind."
+  (unload manager)
+  (unless (eq (cna-lisp.internal:ownership-of manager) :parent-owned)
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%content-manager-destroy (cna-lisp.internal:handle-of manager))
+     "dispose" :object-type 'content-manager)))
 
 ;;; --- RootDirectory ----------------------------------------------------------
 
@@ -287,16 +312,77 @@ manager caches and answers the same instance. That difference is recorded in
 docs/limitations.md."))
 
 (defmethod load-asset ((manager content-manager) type (asset-name string))
-  (let ((loader (cdr (assoc type *asset-loaders*))))
-    (unless loader
-      (error 'microsoft.xna.framework:cna-not-supported-error
-             :operation "load-asset"
-             :object-type 'content-manager
-             :format-control
-             "there is no native route that loads a ~s. CNA's ABI has one loader per asset ~
-              type rather than a generic one, so the loadable set is finite: ~{~s~^, ~}."
-             :format-arguments (list type (loadable-asset-types))))
-    (funcall loader manager asset-name)))
+  ;; XNA's Load<T>, step for step, read from the assembly:
+  ;;
+  ;;   loadedAssets == null            -> ObjectDisposedException
+  ;;   IsNullOrEmpty(assetName)        -> ArgumentNullException("assetName")
+  ;;   assetName = GetCleanPath(...)   -- TitleContainer's, literally
+  ;;   TryGetValue hit, wrong type     -> ContentLoadException
+  ;;   TryGetValue hit, right type     -> the cached instance
+  ;;   miss                            -> read it, then Add it
+  ;;
+  ;; The cache is keyed by the *cleaned name alone* and not by the type, which is
+  ;; why a hit of the wrong type is a failure rather than a second load.
+  (cna-lisp.internal:check-live manager "load-asset")
+  (when (zerop (length asset-name))
+    (error 'microsoft.xna.framework:cna-argument-error
+           :operation "load-asset" :parameter-name "asset-name"
+           :format-control
+           "an asset name is required; XNA throws ArgumentNullException for a null or ~
+            empty one."))
+  (let* ((key (microsoft.xna.framework::%clean-title-path asset-name))
+         (cached (gethash key (%content-loaded-assets manager))))
+    (when cached
+      (unless (typep (first cached) type)
+        (error 'microsoft.xna.framework:cna-argument-error
+               :operation "load-asset" :parameter-name "type"
+               :format-control
+               "~s is already loaded as a ~s, and this asked for a ~s. XNA's cache is ~
+                keyed by the asset name alone, so the second type is a ContentLoadException ~
+                there rather than a second load; it is a failure here for the same reason."
+               :format-arguments (list key (type-of (first cached)) type)))
+      (return-from load-asset (values-list cached)))
+    (let ((loader (cdr (assoc type *asset-loaders*))))
+      (unless loader
+        (error 'microsoft.xna.framework:cna-not-supported-error
+               :operation "load-asset"
+               :object-type 'content-manager
+               :format-control
+               "there is no native route that loads a ~s. CNA's ABI has one loader per asset ~
+                type rather than a generic one, so the loadable set is finite: ~{~s~^, ~}."
+               :format-arguments (list type (loadable-asset-types))))
+      (funcall loader manager key))))
+
+(defgeneric %commit-loaded-asset (manager asset-name record &rest values)
+  (:documentation
+   "The last step of a load: cache the asset and take responsibility for it.
+
+Called from **inside the load's own rollback ledger**, with that ledger's
+recorder, because it is a step that can fail like any other -- and a load whose
+caching failed must give the whole asset back rather than leave CNA holding
+something nobody has a name for. That is the commit in `all handles acquired ->
+metadata -> objects -> registration -> cache -> COMMIT'.
+
+VALUES is what LOAD-ASSET will answer, in order. They are pushed onto the
+disposal list in reverse, so that list reads front-to-back in the order UNLOAD
+must dispose them: a SpriteFont before the atlas it keeps alive, and a later
+asset before an earlier one.
+
+A generic function because it is the step a failure-injection test has to be able
+to make fail, the same reason %READ-TEXTURE-STORAGE is one.")
+  (:method ((manager content-manager) asset-name record &rest values)
+    (setf (gethash asset-name (%content-loaded-assets manager)) values)
+    (funcall record
+             (lambda () (remhash asset-name (%content-loaded-assets manager))))
+    (dolist (value (reverse values))
+      (push value (%content-disposable-assets manager))
+      (let ((value value))
+        (funcall record
+                 (lambda ()
+                   (setf (%content-disposable-assets manager)
+                         (remove value (%content-disposable-assets manager)
+                                 :test #'eq :count 1))))))
+    (values-list values)))
 
 ;;; --- Unload -----------------------------------------------------------------
 
@@ -311,10 +397,31 @@ destroyed by this call\". Dispose them yourself, as you would any other
 resource."))
 
 (defmethod unload ((manager content-manager))
-  (let ((handle (%content-manager-handle manager "unload")))
-    (cna-lisp.internal:check-result
-     (cna-lisp.internal.ffi::%content-manager-unload handle)
-     "unload" :object-type 'content-manager))
+  (cna-lisp.internal:check-live manager "unload")
+  (let ((assets (%content-disposable-assets manager))
+        (failure nil))
+    (flet ((note (condition) (unless failure (setf failure condition))))
+      ;; The assets first, front-to-back, which is the order they were recorded
+      ;; in: a font before the atlas it keeps alive, and a later asset before an
+      ;; earlier one. DISPOSE is idempotent, so an asset the caller already
+      ;; disposed costs nothing here.
+      (unwind-protect
+           (dolist (asset assets)
+             (handler-case (microsoft.xna.framework:dispose asset)
+               (error (condition) (note condition))))
+        ;; Cleared in a FINALLY, as XNA clears them: a manager that failed to
+        ;; release something must not go on claiming it has it.
+        (progn (setf (%content-disposable-assets manager) '())
+               (clrhash (%content-loaded-assets manager))))
+      ;; CNA's own cache too, so neither side is left holding an asset the other
+      ;; has let go.
+      (handler-case
+          (cna-lisp.internal:check-result
+           (cna-lisp.internal.ffi::%content-manager-unload
+            (%content-manager-handle manager "unload"))
+           "unload" :object-type 'content-manager)
+        (error (condition) (note condition))))
+    (when failure (error failure)))
   (values))
 
 (defmethod print-object ((manager content-manager) stream)
