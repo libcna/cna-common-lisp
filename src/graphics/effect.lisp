@@ -109,12 +109,13 @@ failure here must not mask the one that caused the rollback."
     (dolist (part (%effect-native-parts effect))
       (destructuring-bind (handle . destroyer) part
         (unless (zerop handle)
-          (handler-case
-              (unless quietly
-                (cna-lisp.internal:check-result
-                 (funcall destroyer handle) "dispose" :object-type (type-of effect)))
-            (error (condition) (unless first-failure (setf first-failure condition))))
-          (when quietly (ignore-errors (funcall destroyer handle))))))
+          (if quietly
+              (ignore-errors (funcall destroyer handle))
+              (handler-case
+                  (cna-lisp.internal:check-result
+                   (funcall destroyer handle) "dispose" :object-type (type-of effect))
+                (error (condition)
+                  (unless first-failure (setf first-failure condition))))))))
     (setf (%effect-native-parts effect) '())
     first-failure))
 

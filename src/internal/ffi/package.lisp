@@ -47,7 +47,7 @@ registry. Private; not part of the published API.")
   (:export
    ;; native library -------------------------------------------------------
    #:ensure-native-library #:native-library-path #:native-library-loaded-p
-   #:check-qualified-host #:qualified-host-mismatch
+   #:check-qualified-host #:qualified-host-mismatch #:host-facts #:*host-facts*
    #:*native-library-path*
    #:ensure-shim-library #:shim-loaded-p #:shim-library-path
    #:shim-entry-point #:refuse-without-shim

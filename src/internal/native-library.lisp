@@ -43,11 +43,27 @@ CNA-Lisp -- the math types, the bounding volumes, the Curve family, the packed
 vectors -- is ordinary ANSI Common Lisp and loads and runs anywhere; it is
 opening the foreign layer that is refused.")
 
+(defvar *host-facts* nil
+  "NIL to ask the running image, or a plist overriding it.
+
+Rebinding this is how the refusal below is tested: there is no honest way to run
+this suite on a Windows x64 image, and faking the answer is better than faking
+the *function* -- an encapsulation of MACHINE-TYPE is at the mercy of whether the
+compiler folded the call.")
+
+(defun host-facts ()
+  "What this image is, as :MACHINE, :SOFTWARE and :IMPLEMENTATION."
+  (or *host-facts*
+      (list :machine (machine-type)
+            :software (software-type)
+            :implementation (lisp-implementation-type))))
+
 (defun qualified-host-mismatch ()
   "Which part of the host disagrees with the qualified one, or NIL."
-  (let ((machine (string-upcase (or (machine-type) "")))
-        (software (string-upcase (or (software-type) "")))
-        (implementation (string-upcase (or (lisp-implementation-type) ""))))
+  (let* ((facts (host-facts))
+         (machine (string-upcase (or (getf facts :machine) "")))
+         (software (string-upcase (or (getf facts :software) "")))
+         (implementation (string-upcase (or (getf facts :implementation) ""))))
     (cond ((not (search "X86-64" machine))
            (format nil "the machine is ~a, not x86-64" (machine-type)))
           ((not (search "LINUX" software))

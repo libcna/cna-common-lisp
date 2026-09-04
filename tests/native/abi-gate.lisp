@@ -114,64 +114,51 @@
 ;;; CNA-Lisp that touches no native route is ordinary ANSI Common Lisp.
 
 (test the-qualified-host-is-recognised
-  ;; This image is the qualified host, so the guard must pass and say nothing.
+  ;; This image is the qualified host, so the guard passes and says nothing.
   (is (null (int:qualified-host-mismatch))
       "the reference host reports a mismatch: ~a" (int:qualified-host-mismatch))
-  (is-true (int:check-qualified-host "test")))
+  (is-true (int:check-qualified-host "test"))
+  ;; And it is reading the real image, not a stale constant.
+  (let ((facts (int:host-facts)))
+    (is (search "X86-64" (string-upcase (getf facts :machine))))
+    (is (search "LINUX" (string-upcase (getf facts :software))))))
 
 (test another-host-abi-is-refused-at-the-native-boundary
-  ;; Each of the three facts the guard checks, faked one at a time. What is being
-  ;; tested is that the guard *is* consulted and *does* refuse -- there is no way
-  ;; to run this suite on a Windows x64 image to find out the honest way.
-  (dolist (case (list (list "machine" (lambda () "ARM64") #'machine-type)
-                      (list "operating system" (lambda () "Win32") #'software-type)))
-    (destructuring-bind (what faked real) case
-      (declare (ignore real))
-      (let ((mismatch
-              (handler-case
-                  (progn
-                    (if (string= what "machine")
-                        (sb-int:encapsulate 'machine-type 'host-test
-                                            (lambda (f &rest args)
-                                              (declare (ignore f args))
-                                              (funcall faked)))
-                        (sb-int:encapsulate 'software-type 'host-test
-                                            (lambda (f &rest args)
-                                              (declare (ignore f args))
-                                              (funcall faked))))
-                    (unwind-protect
-                         (handler-case (progn (int:check-qualified-host "test") nil)
-                           (xna:cna-not-supported-error (condition)
-                             (princ-to-string condition)))
-                      (sb-int:unencapsulate (if (string= what "machine")
-                                                'machine-type
-                                                'software-type)
-                                            'host-test)))
-                (error (condition) (princ-to-string condition)))))
-        (is (stringp mismatch) "a foreign ~a was not refused" what)
-        (is (search "System V AMD64" mismatch)
-            "the refusal must say why it is a correctness matter, not a support ~
-             matter: ~a" mismatch))))
+  ;; Each of the three facts, faked one at a time. The facts are injected rather
+  ;; than the functions encapsulated: what is being tested is the decision, and an
+  ;; encapsulation of MACHINE-TYPE is at the mercy of whether the compiler folded
+  ;; the call.
+  (dolist (case '((:machine "ARM64" "the machine")
+                  (:software "Win32" "the operating system")
+                  (:implementation "Clozure Common Lisp" "the implementation")))
+    (destructuring-bind (key value what) case
+      (let* ((facts (list :machine "X86-64" :software "Linux" :implementation "SBCL"))
+             (int::*host-facts* (progn (setf (getf facts key) value) facts))
+             (refusal (handler-case (progn (int:check-qualified-host "test") nil)
+                        (xna:cna-not-supported-error (condition)
+                          (princ-to-string condition)))))
+        (is (stringp refusal) "a foreign ~a was not refused" what)
+        (is (search "System V AMD64" refusal)
+            "the refusal must say why this is a correctness matter and not a ~
+             support matter: ~a" refusal))))
   ;; And the guard is on the path that opens the library, not merely available to
-  ;; be called: with the resolver reset, ENSURE-NATIVE-LIBRARY itself must refuse
-  ;; before it ever looks at CNA_NATIVE_LIBRARY.
-  (let ((refusal
-          (unwind-protect
-               (progn
-                 (sb-int:encapsulate 'machine-type 'host-test
-                                     (lambda (f &rest args)
-                                       (declare (ignore f args))
-                                       "ARM64"))
-                 (setf int::*native-library-path* nil
-                       int::*native-library-handle* nil)
-                 (handler-case (progn (int:ensure-native-library) nil)
-                   (xna:cna-not-supported-error (condition)
-                     (princ-to-string condition))))
-            (progn (sb-int:unencapsulate 'machine-type 'host-test)
-                   (restore-qualified-library)))))
+  ;; be called: with the resolver reset, ENSURE-NATIVE-LIBRARY must refuse before
+  ;; it even looks at CNA_NATIVE_LIBRARY -- which is why this holds whether or not
+  ;; a library was named for this run.
+  (let* ((int::*host-facts* (list :machine "ARM64" :software "Linux"
+                                  :implementation "SBCL"))
+         (saved-path int::*native-library-path*)
+         (saved-handle int::*native-library-handle*)
+         (refusal (unwind-protect
+                       (progn
+                         (setf int::*native-library-path* nil
+                               int::*native-library-handle* nil)
+                         (handler-case (progn (int:ensure-native-library) nil)
+                           (xna:cna-not-supported-error (condition)
+                             (princ-to-string condition))))
+                    (setf int::*native-library-path* saved-path
+                          int::*native-library-handle* saved-handle))))
     (is (stringp refusal)
-        "ENSURE-NATIVE-LIBRARY loaded a library on a host the flattening is not ~
+        "ENSURE-NATIVE-LIBRARY did not refuse on a host the flattening is not ~
          correct for")
-    (is (search "x86-64" refusal)))
-  ;; The resolver is back, so the rest of the suite still has its library.
-  (is-true (int:native-library-loaded-p)))
+    (is (search "x86-64" refusal))))
