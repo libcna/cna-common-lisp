@@ -133,8 +133,9 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 `GamePad` family and the touch panel. So do the four **graphics state objects**
 and the nine enumerations they are built from.
 
-**No selected type is missing.** Five are partial, and this is where the
-remaining members actually are:
+**No selected type is missing.**
+<!-- generated:partial types=9 --> are partial, and this is where the remaining
+members actually are:
 
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
@@ -198,10 +199,11 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **`SpriteFont` and `SpriteBatch.DrawString`.** Eight of `SpriteBatch`'s
-   members are its `DrawString` family, and they are the largest single block of
-   missing surface left in a type that is otherwise complete. CNA has a sprite
-   font surface and the CNB pipeline behind it, so this is local work. It brings
+1. **`SpriteFont` and `SpriteBatch.DrawString`.**
+   <!-- generated:missing M.X.F.Graphics.SpriteBatch.DrawString=6 --> of
+   `SpriteBatch`'s members are its `DrawString` family, and they are the whole of
+   what is missing from a type that is otherwise complete. CNA has a sprite font
+   surface and the CNB pipeline behind it, so this is local work. It brings
    `SpriteFont`, `SpriteFont.MeasureString` and the glyph metadata with it.
 2. **The rest of the stock effects.** `AlphaTestEffect`, `DualTextureEffect`,
    `EnvironmentMapEffect` and `SkinnedEffect` are the same shape `BasicEffect`

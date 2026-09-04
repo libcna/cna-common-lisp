@@ -104,6 +104,35 @@ def facts_of(abi, compat):
     }
 
 
+def family_facts(compat):
+    """One fact per method family that still has missing members.
+
+    `NEXT.md` said "Eight of SpriteBatch's members are its DrawString family"
+    while the contract had six, and nothing caught it: the sentence was prose,
+    and prose carried no marker. A count of *how much of one family is missing*
+    is derivable from the report, so it is derived, and a sentence that wants to
+    say it writes `<!-- generated:missing M.X.F.Graphics.SpriteBatch.DrawString=6 -->`
+    and is checked like every other number.
+
+    Only families with at least one missing member get a fact. A family that is
+    finished has nothing left to write a frontier sentence about, and emitting
+    zeroes for all 2061 members would bury the ones that matter.
+    """
+    facts = {}
+    for entry in compat["types"]:
+        counts = {}
+        for signature, status in entry["members"].items():
+            family = signature.split("(", 1)[0]
+            counts.setdefault(family, [0, 0])
+            counts[family][0] += 1
+            if status == "missing":
+                counts[family][1] += 1
+        for family, (_, missing) in counts.items():
+            if missing:
+                facts["missing %s.%s" % (short(entry["name"]), family)] = missing
+    return facts
+
+
 def short(name):
     for long_form, abbreviation in SHORT.items():
         if name.startswith(long_form):
@@ -249,6 +278,7 @@ def main():
     abi = load("docs/generated/native-abi-manifest.json")
     compat = load("docs/generated/api-compat-report.json")
     facts = facts_of(abi, compat)
+    facts.update(family_facts(compat))
 
     print("generated facts")
     for key, value in facts.items():
@@ -260,7 +290,7 @@ def main():
         if body is None:
             continue
 
-        for match in re.finditer(r"<!--\s*generated:([a-z0-9 .-]+)=(\d+)\s*-->", body):
+        for match in re.finditer(r"<!--\s*generated:([A-Za-z0-9 .-]+)=(\d+)\s*-->", body):
             name, claimed = match.group(1), int(match.group(2))
             if name not in facts:
                 problems.append("%s: no generated fact named %r" % (document, name))
@@ -275,7 +305,7 @@ def main():
                 if name not in facts:
                     return match.group(0)
                 return "<!-- generated:%s=%d -->" % (name, facts[name])
-            rendered = re.sub(r"<!--\s*generated:([a-z0-9 .-]+)=\d+\s*-->",
+            rendered = re.sub(r"<!--\s*generated:([A-Za-z0-9 .-]+)=\d+\s*-->",
                               restate, rendered)
         rendered = render_blocks(rendered, abi, compat, document, problems)
         if rendered != body:
