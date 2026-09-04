@@ -13861,6 +13861,27 @@
           "documentation": "The exact value of a COMPARE-FUNCTION member."
         },
         {
+          "name": "copy-render-target-binding",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "copy-vertex-buffer-binding",
           "fbound": true,
           "macro": false,
@@ -17028,6 +17049,27 @@
           "documentation": "GetData, on a vertex buffer, an index buffer or a Texture2D, reading into INTO.\n\nXNA fills the caller's array, so this does too, and answers it. The element type\nof INTO decides what is read, by the same proven layouts SET-DATA writes."
         },
         {
+          "name": "get-render-targets",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.GetRenderTargets(): the bindings currently set, as a list.\n\nAnswers the RENDER-TARGET-BINDING values this binding bound, **cross-checked**\nagainst what CNA reports: `cna_graphics_device_copy_render_targets' answers\nhandles, and the ABI has no route from a handle back to the object that owns it,\nso wrapping them would invent second objects for targets this program already\nhas. If CNA's count or handles disagree with the record, that is a bug worth\nsignalling rather than papering over, and it is signalled.\n\nAn empty list is XNA's empty array: the back buffer is current."
+        },
+        {
           "name": "get-vertex-buffers",
           "fbound": true,
           "macro": false,
@@ -17432,6 +17474,29 @@
           "constant": false,
           "value": null,
           "documentation": "SpriteFont.LineSpacing: the vertical distance between baselines, in pixels."
+        },
+        {
+          "name": "make-render-target-binding",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "target",
+            "&optional",
+            "cube-map-face"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "RenderTargetBinding(RenderTarget2D) and RenderTargetBinding(RenderTargetCube,\nCubeMapFace), distinguished by whether a face is given.\n\nA face is required for a cube and refused for a 2D target, because in XNA the two\nconstructors are the only way to build one and neither accepts the other's\narguments."
         },
         {
           "name": "make-vertex-buffer-binding",
@@ -18052,6 +18117,144 @@
           "documentation": "Microsoft.Xna.Framework.Graphics.RenderTarget2D: a Texture2D that can be\ndrawn into.\n\n    (make-instance 'render-target-2d :graphics-device device :width 64 :height 64)\n\nDerived from TEXTURE-2D, as XNA's is, so a finished target is an ordinary\ntexture: SPRITE-BATCH can draw it, a device texture slot can hold it, and an\neffect can sample it.\n\nBound with SET-RENDER-TARGET and unbound by passing NIL. Owned by the game and\ndisposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE, before it.\n\n`RenderTargetUsage', `MultiSampleCount' and `DepthStencilFormat' are read back\nfrom CNA at construction rather than echoed from the arguments: a backend may\ngrant less than was asked for, and reporting the request instead of the grant is\nhow a program comes to believe it has multisampling it has not got."
         },
         {
+          "name": "render-target-binding",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": true,
+          "condition": false,
+          "metaclass": "structure-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:render-target-binding",
+            "common-lisp:structure-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.RenderTargetBinding: one target of a\nmultiple-render-target draw.\n\nA value type in XNA -- it derives from System.ValueType -- so it is a struct here\nand not a native object: it names a target, it does not own one.\n\n    (make-render-target-binding target)                ; a RENDER-TARGET-2D\n    (make-render-target-binding cube-target :positive-x) ; one face of a cube"
+        },
+        {
+          "name": "render-target-binding-cube-map-face",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "render-target-binding-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "a",
+            "b"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Value equality, as a value type has."
+        },
+        {
+          "name": "render-target-binding-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "render-target-binding-target",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "render-target-cube",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:render-target-cube",
+            "microsoft.xna.framework.graphics:texture-cube",
+            "microsoft.xna.framework.graphics:texture",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.RenderTargetCube: a TextureCube drawn into.\n\n    (make-instance 'render-target-cube :graphics-device device :size 64)\n\nDerived from TEXTURE-CUBE, as XNA's is. Bound one face at a time with\nSET-RENDER-TARGET, which takes the face as a third argument:\n\n    (set-render-target device target :positive-x)\n\n`RenderTargetUsage', `MultiSampleCount' and `DepthStencilFormat' are read back\nfrom CNA rather than echoed from the arguments, for the reason RENDER-TARGET-2D\nrecords: a backend may grant less than was asked for."
+        },
+        {
           "name": "render-target-usage",
           "fbound": true,
           "macro": false,
@@ -18531,7 +18734,9 @@
           "generic": true,
           "lambda_list": [
             "graphics-device",
-            "target"
+            "target",
+            "&optional",
+            "cube-map-face"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -18544,7 +18749,30 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "GraphicsDevice.SetRenderTarget(RenderTarget2D).\n\nTARGET is a RENDER-TARGET-2D to draw into, or **NIL to restore the back buffer**,\nwhich is XNA's `SetRenderTarget(null)' and CNA's `CNA_INVALID_HANDLE'. NIL is the\nordinary way to finish with a target, not an error.\n\nLegal only inside a lifecycle callback, like every other device operation: the\ndevice handle is lent for a callback's duration and this resolves a fresh one."
+          "documentation": "GraphicsDevice.SetRenderTarget: both overloads.\n\n    (set-render-target device target)              ; SetRenderTarget(RenderTarget2D)\n    (set-render-target device cube :positive-y)    ; SetRenderTarget(RenderTargetCube,\n                                                   ;                 CubeMapFace)\n    (set-render-target device nil)                 ; SetRenderTarget(null)\n\nOne generic function, because XNA gives both members one name. They are told\napart by what TARGET is and by whether a face was given -- a RENDER-TARGET-CUBE\nrequires one, since a cube is drawn into one face at a time, and a\nRENDER-TARGET-2D refuses one, since it has no faces. NIL restores the back\nbuffer, which is CNA's `CNA_INVALID_HANDLE'; that is the ordinary way to finish\nwith a target, not an error.\n\nLegal only inside a lifecycle callback, like every other device operation: the\ndevice handle is lent for a callback's duration and this resolves a fresh one.\n\n**A cube target is renderer-dependent.** Creating one works everywhere measured;\nbinding one is accepted by HEADLESS and refused by the SOFTWARE rasterizer with\n`this renderer does not support RenderTargetCube'. The refusal is CNA's and it\nnames what is missing. See docs/limitations.md."
+        },
+        {
+          "name": "set-render-targets",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "&rest",
+            "bindings"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.SetRenderTargets(params RenderTargetBinding[]).\n\n    (set-render-targets device binding-a binding-b)\n    (set-render-targets device)          ; back to the back buffer\n\nXNA's `params' array is a &REST list here, and no arguments is XNA's empty array,\nwhich restores the back buffer. Each argument is a RENDER-TARGET-BINDING."
         },
         {
           "name": "set-vertex-buffer",
@@ -29057,6 +29285,13 @@
         "window-title"
       ],
       "reason": "The game window's title, reached through the game. GameWindow is not\n      projected as a type in this milestone, and the title is the one part of it\n      CNA's C ABI exposes without one."
+    },
+    {
+      "package": "microsoft.xna.framework.graphics",
+      "symbols": [
+        "render-target-binding-equal"
+      ],
+      "reason": "Structural equality for RenderTargetBinding, for the reason VIEWPORT-EQUAL\n      records: the XNA struct has no Equals of its own, and a projected value type\n      that cannot be compared is awkward to test."
     },
     {
       "package": "microsoft.xna.framework.graphics",

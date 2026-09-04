@@ -1110,6 +1110,40 @@ _Static_assert(sizeof(((CNA_ContentManagerCreateInfo *)0)->root_directory) == 16
 _Static_assert(offsetof(CNA_ContentManagerCreateInfo, reserved) == 24, "CNA_ContentManagerCreateInfo.reserved offset");
 _Static_assert(sizeof(((CNA_ContentManagerCreateInfo *)0)->reserved) == 8, "CNA_ContentManagerCreateInfo.reserved size");
 
+_Static_assert(sizeof(CNA_RenderTargetCubeCreateInfo) == 32, "CNA_RenderTargetCubeCreateInfo size");
+_Static_assert(_Alignof(CNA_RenderTargetCubeCreateInfo) == 4, "CNA_RenderTargetCubeCreateInfo alignment");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, struct_size) == 0, "CNA_RenderTargetCubeCreateInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->struct_size) == 4, "CNA_RenderTargetCubeCreateInfo.struct_size size");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, struct_version) == 4, "CNA_RenderTargetCubeCreateInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->struct_version) == 4, "CNA_RenderTargetCubeCreateInfo.struct_version size");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, size) == 8, "CNA_RenderTargetCubeCreateInfo.size offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->size) == 4, "CNA_RenderTargetCubeCreateInfo.size size");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, mip_map) == 12, "CNA_RenderTargetCubeCreateInfo.mip_map offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->mip_map) == 1, "CNA_RenderTargetCubeCreateInfo.mip_map size");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, reserved) == 13, "CNA_RenderTargetCubeCreateInfo.reserved offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->reserved) == 3, "CNA_RenderTargetCubeCreateInfo.reserved size");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, format) == 16, "CNA_RenderTargetCubeCreateInfo.format offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->format) == 4, "CNA_RenderTargetCubeCreateInfo.format size");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, depth_format) == 20, "CNA_RenderTargetCubeCreateInfo.depth_format offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->depth_format) == 4, "CNA_RenderTargetCubeCreateInfo.depth_format size");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, multi_sample_count) == 24, "CNA_RenderTargetCubeCreateInfo.multi_sample_count offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->multi_sample_count) == 4, "CNA_RenderTargetCubeCreateInfo.multi_sample_count size");
+_Static_assert(offsetof(CNA_RenderTargetCubeCreateInfo, usage) == 28, "CNA_RenderTargetCubeCreateInfo.usage offset");
+_Static_assert(sizeof(((CNA_RenderTargetCubeCreateInfo *)0)->usage) == 4, "CNA_RenderTargetCubeCreateInfo.usage size");
+
+_Static_assert(sizeof(CNA_RenderTargetBinding) == 24, "CNA_RenderTargetBinding size");
+_Static_assert(_Alignof(CNA_RenderTargetBinding) == 8, "CNA_RenderTargetBinding alignment");
+_Static_assert(offsetof(CNA_RenderTargetBinding, struct_size) == 0, "CNA_RenderTargetBinding.struct_size offset");
+_Static_assert(sizeof(((CNA_RenderTargetBinding *)0)->struct_size) == 4, "CNA_RenderTargetBinding.struct_size size");
+_Static_assert(offsetof(CNA_RenderTargetBinding, struct_version) == 4, "CNA_RenderTargetBinding.struct_version offset");
+_Static_assert(sizeof(((CNA_RenderTargetBinding *)0)->struct_version) == 4, "CNA_RenderTargetBinding.struct_version size");
+_Static_assert(offsetof(CNA_RenderTargetBinding, render_target) == 8, "CNA_RenderTargetBinding.render_target offset");
+_Static_assert(sizeof(((CNA_RenderTargetBinding *)0)->render_target) == 8, "CNA_RenderTargetBinding.render_target size");
+_Static_assert(offsetof(CNA_RenderTargetBinding, array_slice) == 16, "CNA_RenderTargetBinding.array_slice offset");
+_Static_assert(sizeof(((CNA_RenderTargetBinding *)0)->array_slice) == 4, "CNA_RenderTargetBinding.array_slice size");
+_Static_assert(offsetof(CNA_RenderTargetBinding, cube_map_face) == 20, "CNA_RenderTargetBinding.cube_map_face offset");
+_Static_assert(sizeof(((CNA_RenderTargetBinding *)0)->cube_map_face) == 4, "CNA_RenderTargetBinding.cube_map_face size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1510,6 +1544,11 @@ CNA_Result (*const cna_lisp_probe_cna_content_manager_load_texture2d)(CNA_Handle
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_texture_cube)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_content_manager_load_texture_cube;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_sprite_font)(CNA_Handle, CNA_StringView, CNA_Handle*, CNA_Handle*) = cna_content_manager_load_sprite_font;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_unload)(CNA_Handle) = cna_content_manager_unload;
+CNA_Result (*const cna_lisp_probe_cna_render_target_cube_create)(CNA_Handle, const CNA_RenderTargetCubeCreateInfo*, CNA_Handle*) = cna_render_target_cube_create;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_render_target_cube)(CNA_Handle, CNA_Handle, CNA_CubeMapFace) = cna_graphics_device_set_render_target_cube;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_render_targets)(CNA_Handle, const CNA_RenderTargetBinding*, uint64_t) = cna_graphics_device_set_render_targets;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_render_target_count)(CNA_Handle, uint64_t*) = cna_graphics_device_get_render_target_count;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_copy_render_targets)(CNA_Handle, CNA_RenderTargetBinding*, uint64_t, uint64_t*) = cna_graphics_device_copy_render_targets;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");

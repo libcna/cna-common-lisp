@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=145 -->
-<!-- generated:selected members=2243 -->
-<!-- generated:complete types=134 -->
-<!-- generated:partial types=11 -->
+<!-- generated:selected types=147 -->
+<!-- generated:selected members=2256 -->
+<!-- generated:complete types=135 -->
+<!-- generated:partial types=12 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1759 -->
-<!-- generated:partial members=11 -->
-<!-- generated:missing members=58 -->
-<!-- generated:not-applicable members=415 -->
+<!-- generated:complete members=1772 -->
+<!-- generated:partial members=12 -->
+<!-- generated:missing members=55 -->
+<!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 145 types, 2243 members.
+Selection **Foundation 1 and the managed closures**: 147 types, 2256 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **134** |
-| Types partial | **11** |
+| Types complete | **135** |
+| Types partial | **12** |
 | Types missing | **0** |
-| Members complete | **1759** |
-| Members partial | **11** |
-| Members missing | **58** |
-| Members not applicable | **415** |
+| Members complete | **1772** |
+| Members partial | **12** |
+| Members missing | **55** |
+| Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -155,6 +155,8 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.LaunchParameters` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 13 | 0 | 16 | 1 |
 | `M.X.F.Content.ContentManager` | **partial** | 3 | 1 | 3 | 3 |
+| `M.X.F.Graphics.RenderTargetCube` | **complete** | 7 | 0 | 0 | 1 |
+| `M.X.F.Graphics.RenderTargetBinding` | **partial** | 3 | 1 | 0 | 1 |
 | `M.X.F.Color` | **complete** | 161 | 0 | 0 | 4 |
 | `M.X.F.Point` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Rectangle` | **complete** | 24 | 0 | 0 | 9 |
@@ -180,7 +182,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 30 | 1 | 24 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 33 | 1 | 21 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 9 | 2 | 4 | 1 |
@@ -331,7 +333,7 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Graphics.Texture2D` | 4 | 2 |
@@ -341,6 +343,7 @@ back-reference.
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
@@ -368,9 +371,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=398 -->
-<!-- generated:bound native structs=61 -->
-<!-- generated:bound native struct fields=459 -->
+<!-- generated:bound native functions=403 -->
+<!-- generated:bound native structs=63 -->
+<!-- generated:bound native struct fields=473 -->
 <!-- generated:bound native constants=485 -->
 <!-- generated:bound native callbacks=9 -->
 <!-- generated:by-value aggregates=6 -->
@@ -380,9 +383,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 398 |
-| Bound structs | 61 |
-| Bound struct fields | 459 |
+| Bound functions | 403 |
+| Bound structs | 63 |
+| Bound struct fields | 473 |
 | Bound constants | 485 |
 | Bound callback typedefs | 9 |
 | By-value aggregates admitted | 6 |

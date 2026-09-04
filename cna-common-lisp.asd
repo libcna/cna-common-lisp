@@ -75,6 +75,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; RenderTarget2D is a Texture2D and raises a buffer-shaped ContentLost, so
    ;; it loads after both.
    (:file "graphics/render-target")
+   ;; The cube target derives from TextureCube and RenderTargetBinding names
+   ;; both kinds, so this loads after both target families exist.
+   (:file "graphics/render-target-cube")
    (:file "graphics/drawing")
    ;; Effect is a GraphicsResource, and the four view kinds hanging off it are
    ;; not; both halves are here, and BasicEffect after them.
@@ -157,6 +160,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/effects")
    (:file "native/stock-effects")
    (:file "native/render-target")
+   (:file "native/render-target-cube")
    (:file "native/game-components")
    ;; The text pixel proofs build on the SpriteFont fixture game.
    (:file "native/sprite-font")

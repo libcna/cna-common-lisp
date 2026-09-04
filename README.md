@@ -132,7 +132,8 @@ stubs:
   loop drives them -- honouring `UpdateOrder`, `DrawOrder`, `Enabled` and
   `Visible`, which the tests check by counting calls inside the loop rather than
   by asking whether the members exist;
-* **render targets**: `RenderTarget2D`, `RenderTargetUsage`, `DepthFormat` and
+* **render targets**, now including `RenderTargetCube` and
+  `RenderTargetBinding`: `RenderTarget2D`, `RenderTargetUsage`, `DepthFormat` and
   `GraphicsDevice.SetRenderTarget`. A target is a `Texture2D`, as XNA's is, so it
   can be drawn back onto the screen -- which is how the qualification reads one
   without depending on back-buffer readback;
@@ -174,27 +175,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=145 -->
-<!-- generated:selected members=2243 -->
-<!-- generated:complete types=134 -->
-<!-- generated:partial types=11 -->
+<!-- generated:selected types=147 -->
+<!-- generated:selected members=2256 -->
+<!-- generated:complete types=135 -->
+<!-- generated:partial types=12 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1759 -->
-<!-- generated:partial members=11 -->
-<!-- generated:missing members=58 -->
-<!-- generated:not-applicable members=415 -->
+<!-- generated:complete members=1772 -->
+<!-- generated:partial members=12 -->
+<!-- generated:missing members=55 -->
+<!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=398 -->
-<!-- generated:bound native structs=61 -->
+<!-- generated:bound native functions=403 -->
+<!-- generated:bound native structs=63 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **145 XNA types and 2243 members**:
+The generated scoreboard, over a selection of **147 XNA types and 2256 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **134 / 11 / 0** |
-| Members complete / missing | **1759 / 58** |
-| Members not applicable | **415** |
+| Types complete / partial / missing | **135 / 12 / 0** |
+| Members complete / missing | **1772 / 55** |
+| Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -207,7 +208,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **398 native routes** and **61 native structs**,
+The private foreign layer binds **403 native routes** and **63 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

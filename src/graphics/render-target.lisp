@@ -209,24 +209,45 @@ own constructor must not make a plain texture underneath it."
 
 ;;; --- binding one to the device -------------------------------------------------
 
-(defgeneric set-render-target (graphics-device target)
+(defgeneric set-render-target (graphics-device target &optional cube-map-face)
   (:documentation
-   "GraphicsDevice.SetRenderTarget(RenderTarget2D).
+   "GraphicsDevice.SetRenderTarget: both overloads.
 
-TARGET is a RENDER-TARGET-2D to draw into, or **NIL to restore the back buffer**,
-which is XNA's `SetRenderTarget(null)' and CNA's `CNA_INVALID_HANDLE'. NIL is the
-ordinary way to finish with a target, not an error.
+    (set-render-target device target)              ; SetRenderTarget(RenderTarget2D)
+    (set-render-target device cube :positive-y)    ; SetRenderTarget(RenderTargetCube,
+                                                   ;                 CubeMapFace)
+    (set-render-target device nil)                 ; SetRenderTarget(null)
+
+One generic function, because XNA gives both members one name. They are told
+apart by what TARGET is and by whether a face was given -- a RENDER-TARGET-CUBE
+requires one, since a cube is drawn into one face at a time, and a
+RENDER-TARGET-2D refuses one, since it has no faces. NIL restores the back
+buffer, which is CNA's `CNA_INVALID_HANDLE'; that is the ordinary way to finish
+with a target, not an error.
 
 Legal only inside a lifecycle callback, like every other device operation: the
-device handle is lent for a callback's duration and this resolves a fresh one."))
+device handle is lent for a callback's duration and this resolves a fresh one.
 
-(defmethod set-render-target ((device graphics-device) target)
-  (when target (check-type target render-target-2d))
+**A cube target is renderer-dependent.** Creating one works everywhere measured;
+binding one is accepted by HEADLESS and refused by the SOFTWARE rasterizer with
+`this renderer does not support RenderTargetCube'. The refusal is CNA's and it
+names what is missing. See docs/limitations.md."))
+
+(defmethod set-render-target ((device graphics-device) target &optional cube-map-face)
+  (%check-render-target-shape target cube-map-face "set-render-target")
   (let ((handle (%resolve-device-handle device "set-render-target")))
     (when target
       (cna-lisp.internal:check-usable target "set-render-target"))
     (cna-lisp.internal:check-result
-     (cna-lisp.internal.ffi::%graphics-device-set-render-target-2d
-      handle (if target (cna-lisp.internal:handle-of target) 0))
-     "set-render-target" :object-type 'graphics-device))
+     (if (typep target 'render-target-cube)
+         (cna-lisp.internal.ffi::%graphics-device-set-render-target-cube
+          handle (cna-lisp.internal:handle-of target)
+          (cube-map-face-value cube-map-face))
+         (cna-lisp.internal.ffi::%graphics-device-set-render-target-2d
+          handle (if target (cna-lisp.internal:handle-of target) 0)))
+     "set-render-target" :object-type 'graphics-device)
+    ;; Keep the device's record of what is bound in step, so GET-RENDER-TARGETS
+    ;; answers this binding too and not only SET-RENDER-TARGETS'.
+    (setf (%bound-render-targets device)
+          (if target (list (make-render-target-binding target cube-map-face)) '())))
   (values))

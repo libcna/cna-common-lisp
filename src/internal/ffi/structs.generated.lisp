@@ -841,6 +841,32 @@
 (defconstant +sizeof-cna-content-manager-create-info+ 32)
 (defconstant +alignof-cna-content-manager-create-info+ 8)
 
+;;; CNA_RenderTargetCubeCreateInfo -- 32 bytes, 4-byte aligned, from render_target.h.
+(defcstruct (cna-render-target-cube-create-info :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (size :uint32 :offset 8)
+  (mip-map :uint8 :offset 12)
+  (reserved :uint8 :offset 13 :count 3)
+  (format :uint32 :offset 16)
+  (depth-format :uint32 :offset 20)
+  (multi-sample-count :int32 :offset 24)
+  (usage :uint32 :offset 28))
+
+(defconstant +sizeof-cna-render-target-cube-create-info+ 32)
+(defconstant +alignof-cna-render-target-cube-create-info+ 4)
+
+;;; CNA_RenderTargetBinding -- 24 bytes, 8-byte aligned, from render_target.h.
+(defcstruct (cna-render-target-binding :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (render-target :uint64 :offset 8)
+  (array-slice :int32 :offset 16)
+  (cube-map-face :uint32 :offset 20))
+
+(defconstant +sizeof-cna-render-target-binding+ 24)
+(defconstant +alignof-cna-render-target-binding+ 8)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -904,6 +930,8 @@
     (cna-texture-cube-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (mip-map 12 1) (reserved-0 13 3) (format 16 4) (reserved-1 20 4)))
     (cna-texture-cube-transfer 56 8 ((struct-size 0 4) (struct-version 4 4) (face 8 4) (level 12 4) (has-rectangle 16 1) (reserved-0 17 3) (rectangle 20 16) (reserved-1 36 4) (start-index 40 8) (element-count 48 8)))
     (cna-texture-cube-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (level-count 12 4) (format 16 4) (reserved 20 4)))
-    (cna-content-manager-create-info 32 8 ((struct-size 0 4) (struct-version 4 4) (root-directory 8 16) (reserved 24 8))))
+    (cna-content-manager-create-info 32 8 ((struct-size 0 4) (struct-version 4 4) (root-directory 8 16) (reserved 24 8)))
+    (cna-render-target-cube-create-info 32 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (mip-map 12 1) (reserved 13 3) (format 16 4) (depth-format 20 4) (multi-sample-count 24 4) (usage 28 4)))
+    (cna-render-target-binding 24 8 ((struct-size 0 4) (struct-version 4 4) (render-target 8 8) (array-slice 16 4) (cube-map-face 20 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

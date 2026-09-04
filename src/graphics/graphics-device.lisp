@@ -26,7 +26,12 @@
    ;; it, so the getters answer from here and cross-check the count CNA reports
    ;; rather than inventing an object. See src/graphics/drawing.lisp.
    (bound-vertex-buffers :initform '() :accessor %bound-vertex-buffers)
-   (bound-index-buffer :initform nil :accessor %bound-index-buffer))
+   (bound-index-buffer :initform nil :accessor %bound-index-buffer)
+   ;; The RENDER-TARGET-BINDINGs currently set, for the same reason and with the
+   ;; same limit: `cna_graphics_device_copy_render_targets' answers handles, and
+   ;; the ABI has no route from a handle back to the object that owns it, so
+   ;; GetRenderTargets answers this record and cross-checks CNA against it.
+   (bound-render-targets :initform '() :accessor %bound-render-targets))
   (:default-initargs :ownership :parent-owned)
   (:documentation
    "The game's graphics device. Instances are produced by the runtime and reached

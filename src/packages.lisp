@@ -426,6 +426,12 @@
    #:dual-texture-effect #:effect-texture-2
    #:skinned-effect #:effect-weights-per-vertex
    #:set-bone-transforms #:get-bone-transforms #:+skinned-effect-max-bones+
+   ;; --- RenderTargetCube and RenderTargetBinding --------------------------
+   #:render-target-cube
+   #:render-target-binding #:make-render-target-binding #:render-target-binding-p
+   #:copy-render-target-binding #:render-target-binding-equal
+   #:render-target-binding-target #:render-target-binding-cube-map-face
+   #:set-render-targets #:get-render-targets
    ;; --- SpriteFont --------------------------------------------------------
    #:sprite-font #:line-spacing #:spacing #:default-character #:characters
    #:measure-string))

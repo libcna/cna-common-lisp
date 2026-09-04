@@ -54,11 +54,24 @@ Owned by the game and disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE, before it."
               (slot cna-lisp.internal.ffi::level-count)
               (surface-format-from-value (slot cna-lisp.internal.ffi::format))))))
 
+(defgeneric %cube-makes-own-storage-p (texture)
+  (:documentation
+   "True when this kind of cube creates its own native storage.
+
+RENDER-TARGET-CUBE is a TEXTURE-CUBE and makes its storage with
+`cna_render_target_cube_create', so the base class's constructor must not make a
+plain cube underneath it first. The same hook TEXTURE-2D has for
+RENDER-TARGET-2D, and defined here rather than beside its one non-default method
+because the base class is what asks.")
+  (:method ((texture texture-cube)) nil))
+
 (defmethod initialize-instance :after ((texture texture-cube)
                                        &key graphics-device size
                                             (mip-map nil) (format :color))
   "TextureCube(GraphicsDevice, Int32, Boolean, SurfaceFormat)."
-  (when graphics-device
+  (when (and graphics-device
+             (not (%cube-makes-own-storage-p texture))
+             (zerop (cna-lisp.internal:handle-of texture)))
     (check-type size (integer 1))
     (check-type format surface-format)
     (let ((device-handle (device-handle-for-child graphics-device

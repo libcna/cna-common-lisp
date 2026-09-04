@@ -1606,6 +1606,26 @@
 (defcfun ("cna_content_manager_unload" %content-manager-unload) :uint32
   (content-manager :uint64))
 
+;;; CNA_Result cna_render_target_cube_create(CNA_Handle graphics_device, const CNA_RenderTargetCubeCreateInfo* create_info, CNA_Handle* out_render_target)
+(defcfun ("cna_render_target_cube_create" %render-target-cube-create) :uint32
+  (graphics-device :uint64) (create-info :pointer) (out-render-target :pointer))
+
+;;; CNA_Result cna_graphics_device_set_render_target_cube(CNA_Handle graphics_device, CNA_Handle render_target, CNA_CubeMapFace cube_map_face)
+(defcfun ("cna_graphics_device_set_render_target_cube" %graphics-device-set-render-target-cube) :uint32
+  (graphics-device :uint64) (render-target :uint64) (cube-map-face :uint32))
+
+;;; CNA_Result cna_graphics_device_set_render_targets(CNA_Handle graphics_device, const CNA_RenderTargetBinding* bindings, uint64_t binding_count)
+(defcfun ("cna_graphics_device_set_render_targets" %graphics-device-set-render-targets) :uint32
+  (graphics-device :uint64) (bindings :pointer) (binding-count :uint64))
+
+;;; CNA_Result cna_graphics_device_get_render_target_count(CNA_Handle graphics_device, uint64_t* out_count)
+(defcfun ("cna_graphics_device_get_render_target_count" %graphics-device-get-render-target-count) :uint32
+  (graphics-device :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_graphics_device_copy_render_targets(CNA_Handle graphics_device, CNA_RenderTargetBinding* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_graphics_device_copy_render_targets" %graphics-device-copy-render-targets) :uint32
+  (graphics-device :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -2004,6 +2024,11 @@
     ("cna_content_manager_load_texture2d" %content-manager-load-texture-2d :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_load_texture_cube" %content-manager-load-texture-cube :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_load_sprite_font" %content-manager-load-sprite-font :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :game :ownership "creates")
-    ("cna_content_manager_unload" %content-manager-unload :uint32 (:uint64) :thread :game :ownership "none"))
+    ("cna_content_manager_unload" %content-manager-unload :uint32 (:uint64) :thread :game :ownership "none")
+    ("cna_render_target_cube_create" %render-target-cube-create :uint32 (:uint64 :pointer :pointer) :thread :game :ownership "creates")
+    ("cna_graphics_device_set_render_target_cube" %graphics-device-set-render-target-cube :uint32 (:uint64 :uint64 :uint32) :thread :game :ownership "none")
+    ("cna_graphics_device_set_render_targets" %graphics-device-set-render-targets :uint32 (:uint64 :pointer :uint64) :thread :game :ownership "none")
+    ("cna_graphics_device_get_render_target_count" %graphics-device-get-render-target-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_graphics_device_copy_render_targets" %graphics-device-copy-render-targets :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "borrows"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

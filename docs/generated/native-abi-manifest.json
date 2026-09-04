@@ -24,9 +24,9 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 398,
-    "structs": 61,
-    "struct_fields": 459,
+    "functions": 403,
+    "structs": 63,
+    "struct_fields": 473,
     "constants": 485,
     "callbacks": 9,
     "by_value_aggregates": 6,
@@ -9952,6 +9952,141 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_content_manager_unload(CNA_Handle content_manager)"
+    },
+    {
+      "name": "cna_render_target_cube_create",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_RenderTargetCubeCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_render_target",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_render_target_cube_create(CNA_Handle graphics_device, const CNA_RenderTargetCubeCreateInfo* create_info, CNA_Handle* out_render_target)"
+    },
+    {
+      "name": "cna_graphics_device_set_render_target_cube",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "render_target",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "cube_map_face",
+          "c_type": "CNA_CubeMapFace",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_render_target_cube(CNA_Handle graphics_device, CNA_Handle render_target, CNA_CubeMapFace cube_map_face)"
+    },
+    {
+      "name": "cna_graphics_device_set_render_targets",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "bindings",
+          "c_type": "const CNA_RenderTargetBinding*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "binding_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_render_targets(CNA_Handle graphics_device, const CNA_RenderTargetBinding* bindings, uint64_t binding_count)"
+    },
+    {
+      "name": "cna_graphics_device_get_render_target_count",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_render_target_count(CNA_Handle graphics_device, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_graphics_device_copy_render_targets",
+      "header": "render_target.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_RenderTargetBinding*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_copy_render_targets(CNA_Handle graphics_device, CNA_RenderTargetBinding* destination, uint64_t capacity, uint64_t* out_count)"
     }
   ],
   "structs": [
@@ -14771,6 +14906,152 @@
       ],
       "header": "content.h",
       "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_RenderTargetCubeCreateInfo",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "size",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "mip_map",
+          "c_type": "CNA_Bool",
+          "offset": 12,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 13,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_format",
+          "c_type": "CNA_DepthFormat",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "multi_sample_count",
+          "c_type": "int32_t",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "usage",
+          "c_type": "CNA_RenderTargetUsage",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "render_target.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_RenderTargetBinding",
+      "size": 24,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "render_target",
+          "c_type": "CNA_Handle",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "array_slice",
+          "c_type": "int32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "cube_map_face",
+          "c_type": "CNA_CubeMapFace",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "render_target.h",
+      "direction": "inout",
       "versioned": true
     }
   ],

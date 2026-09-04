@@ -1065,7 +1065,24 @@
         "SetRenderTarget(RenderTarget2D)": {
           "lisp": "set-render-target",
           "generic": true,
-          "reason": "NIL is XNA's null and restores the back buffer, which is CNA_INVALID_HANDLE to cna_graphics_device_set_render_target2d. The cube overload and the two RenderTargetBinding members need RenderTargetCube and CubeMapFace, which are not projected, and stay missing."
+          "distinguished_by": "dispatch-and-arity",
+          "reason": "One generic function for both overloads, because XNA gives them one name. They are told apart by what the target is and by whether a face was given: a RenderTargetCube requires one, a RenderTarget2D refuses one, and NIL -- XNA's SetRenderTarget(null) -- restores the back buffer. CNA has a route for each shape (cna_graphics_device_set_render_target_2d and _set_render_target_cube) and this chooses between them."
+        },
+        "SetRenderTarget(RenderTargetCube,CubeMapFace)": {
+          "lisp": "set-render-target",
+          "generic": true,
+          "distinguished_by": "dispatch-and-arity",
+          "reason": "One generic function for both overloads, because XNA gives them one name. They are told apart by what the target is and by whether a face was given: a RenderTargetCube requires one, a RenderTarget2D refuses one, and NIL -- XNA's SetRenderTarget(null) -- restores the back buffer. CNA has a route for each shape (cna_graphics_device_set_render_target_2d and _set_render_target_cube) and this chooses between them."
+        },
+        "SetRenderTargets(RenderTargetBinding[])": {
+          "lisp": "set-render-targets",
+          "generic": true,
+          "reason": "XNA's `params RenderTargetBinding[]' is a &REST list; no arguments is XNA's empty array, which restores the back buffer."
+        },
+        "GetRenderTargets()": {
+          "lisp": "get-render-targets",
+          "generic": true,
+          "reason": "Answers the RENDER-TARGET-BINDINGs this binding bound, cross-checked against cna_graphics_device_get_render_target_count and _copy_render_targets. Those answer *handles*, and the ABI has no route from a handle back to the object that owns it, so wrapping them would invent second objects for targets the program already holds -- the same decision the vertex-buffer bindings record. A disagreement between CNA's count or handles and the record is signalled."
         }
       },
       "not_applicable": {
@@ -1077,10 +1094,7 @@
         "Reset(PresentationParameters,GraphicsAdapter)": "Needs PresentationParameters and GraphicsAdapter.",
         "Clear(ClearOptions,Vector4,Single,Int32)": "Needs ClearOptions and Vector4.",
         "Clear(ClearOptions,Color,Single,Int32)": "Needs ClearOptions.",
-        "Present(Nullable`1,Nullable`1,IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected.",
-        "SetRenderTarget(RenderTargetCube,CubeMapFace)": "Needs RenderTargetCube and CubeMapFace, neither of which is projected. Without this entry the default naming rule would resolve it onto SET-RENDER-TARGET, which is the 2D overload, and report it complete.",
-        "SetRenderTargets(RenderTargetBinding[])": "Needs RenderTargetBinding, which carries a CubeMapFace and therefore the whole cube-target closure.",
-        "GetRenderTargets()": "Answers a RenderTargetBinding[], so it needs the same closure SetRenderTargets does."
+        "Present(Nullable`1,Nullable`1,IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected."
       },
       "overload_families": {
         "Present": {
@@ -1276,6 +1290,72 @@
       },
       "not_applicable": {
         "Dispose(Boolean)": "The protected dispose(bool) pattern. Disposal here is MICROSOFT.XNA.FRAMEWORK:DISPOSE, one mechanism for every native object."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.RenderTargetCube": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "render-target-cube",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDevice,Int32,Boolean,SurfaceFormat,DepthFormat)": "make-instance",
+        "new(GraphicsDevice,Int32,Boolean,SurfaceFormat,DepthFormat,Int32,RenderTargetUsage)": "make-instance"
+      },
+      "member_overrides": {
+        "IsContentLost": {
+          "lisp": "is-content-lost",
+          "generic": true,
+          "setf": false,
+          "reason": "The same generic function RENDER-TARGET-2D and the dynamic buffers answer, asked of CNA per read rather than cached."
+        },
+        "RenderTargetUsage": {
+          "lisp": "render-target-usage",
+          "setf": false,
+          "reason": "The usage CNA granted, read back at construction, for the reason RenderTarget2D's records."
+        },
+        "MultiSampleCount": {
+          "lisp": "multi-sample-count",
+          "setf": false,
+          "reason": "The granted sample count, read back at construction."
+        },
+        "DepthStencilFormat": {
+          "lisp": "depth-stencil-format",
+          "setf": false,
+          "reason": "The granted depth format, read back at construction."
+        }
+      },
+      "events": {
+        "ContentLost": {
+          "add": "add-content-lost-handler",
+          "remove": "remove-content-lost-handler"
+        }
+      },
+      "not_applicable": {
+        "Dispose(Boolean)": "The protected dispose(bool) pattern. Disposal here is MICROSOFT.XNA.FRAMEWORK:DISPOSE, one mechanism for every native object."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.RenderTargetBinding": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "render-target-binding",
+      "lisp_kind": "structure",
+      "constructors": {
+        "new(RenderTarget2D)": "make-render-target-binding",
+        "new(RenderTargetCube,CubeMapFace)": "make-render-target-binding"
+      },
+      "member_overrides": {
+        "RenderTarget": {
+          "lisp": "render-target-binding-target",
+          "setf": false,
+          "reason": "XNA types the property as Texture, because it holds either a RenderTarget2D or a RenderTargetCube and Texture is their common base. The accessor answers whichever was bound; the name says `target' rather than `texture' because that is what it is."
+        },
+        "CubeMapFace": {
+          "lisp": "render-target-binding-cube-map-face",
+          "setf": false,
+          "reason": "The face, or NIL for a RenderTarget2D binding. XNA's struct answers CubeMapFace.PositiveX for a 2D binding because a value type cannot be absent; NIL says `no face' without claiming a face that means nothing. Reported partial for exactly that.",
+          "status": "partial"
+        }
+      },
+      "not_applicable": {
+        "op_Implicit(RenderTarget2D)": "An implicit conversion operator. Common Lisp has no operator overloading and no implicit conversion; MAKE-RENDER-TARGET-BINDING of a RenderTarget2D is the same construction written out, which is what the operator was sugar for."
       }
     },
     "Microsoft.Xna.Framework.Graphics.RenderTargetUsage": {

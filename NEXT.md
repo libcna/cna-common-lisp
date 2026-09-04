@@ -96,31 +96,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=145 -->
-<!-- generated:selected members=2243 -->
-<!-- generated:complete types=134 -->
-<!-- generated:partial types=11 -->
+<!-- generated:selected types=147 -->
+<!-- generated:selected members=2256 -->
+<!-- generated:complete types=135 -->
+<!-- generated:partial types=12 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1759 -->
-<!-- generated:partial members=11 -->
-<!-- generated:missing members=58 -->
-<!-- generated:not-applicable members=415 -->
+<!-- generated:complete members=1772 -->
+<!-- generated:partial members=12 -->
+<!-- generated:missing members=55 -->
+<!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 145 types, 2243 members.
+Selection **Foundation 1 and the managed closures**: 147 types, 2256 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **134** |
-| Types partial | **11** |
+| Types complete | **135** |
+| Types partial | **12** |
 | Types missing | **0** |
-| Members complete | **1759** |
-| Members partial | **11** |
-| Members missing | **58** |
-| Members not applicable | **415** |
+| Members complete | **1772** |
+| Members partial | **12** |
+| Members missing | **55** |
+| Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -136,13 +136,13 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=11 --> are partial, and this is where the remaining
+<!-- generated:partial types=12 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Graphics.Texture2D` | 4 | 2 |
@@ -152,6 +152,7 @@ members actually are:
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
@@ -165,7 +166,7 @@ one.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Graphics.Texture2D` | 4 | 2 |
@@ -175,6 +176,7 @@ one.
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
@@ -251,11 +253,7 @@ the graph after each closure instead of following this list once it has moved.
    a service or hands one back**, so `GetService` cannot be answered for the two
    services the runtime registers. That needs a CNA route, not a projection idea.
    `docs/limitations.md` has the full audit.
-3. **`RenderTargetCube` and `RenderTargetBinding`**, now that `TextureCube`
-   exists to derive the first from. They bring `GraphicsDevice`'s last three
-   render-target members: `SetRenderTarget(RenderTargetCube, CubeMapFace)`,
-   `SetRenderTargets` and `GetRenderTargets`.
-4. **Audio, models, media, storage, gamer services, networking.**
+3. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 
@@ -285,6 +283,16 @@ the graph after each closure instead of following this list once it has moved.
   `src/internal/abi-gate.lisp`, not in the manifest: the manifest's
   `admitted_abi_versions` gates the *generator*, the Lisp constant gates the
   *runtime*, and both have to move together.
+
+* **The render-target family is closed.** `RenderTargetCube` and
+  `RenderTargetBinding` went in, and with them `GraphicsDevice`'s last three
+  render-target members. Two things to know: `SetRenderTarget`'s two overloads are
+  **one** generic function with an optional face, because XNA gives them one name;
+  and binding a cube target is renderer-dependent -- HEADLESS accepts it, SOFTWARE
+  refuses with "this renderer does not support RenderTargetCube", and the test
+  checks both branches. `GetRenderTargets` answers the objects this binding bound,
+  cross-checked against CNA's handles, because the ABI has no route from a handle
+  back to an object.
 
 * **A `SpriteFont` is obtainable from a program now, and the evidence is
   pixels.** `ContentManager.Load<SpriteFont>` reads a `.cnj` descriptor and

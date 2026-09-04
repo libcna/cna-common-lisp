@@ -98,6 +98,10 @@
      "The game window's title, reached through the game. GameWindow is not
       projected as a type in this milestone, and the title is the one part of it
       CNA's C ABI exposes without one.")
+    (microsoft.xna.framework.graphics render-target-binding-equal
+     "Structural equality for RenderTargetBinding, for the reason VIEWPORT-EQUAL
+      records: the XNA struct has no Equals of its own, and a projected value type
+      that cannot be compared is awkward to test.")
     (microsoft.xna.framework.graphics viewport-equal
      "Structural equality for Viewport. The XNA struct has no Equals of its own,
       and a projected value type that cannot be compared is awkward to test.")

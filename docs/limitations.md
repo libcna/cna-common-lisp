@@ -143,6 +143,45 @@ overload XNA has not got.
 the `System.IO.Stream` projection. `TEXTURE-2D-FROM-PNG-BYTES` and
 `TEXTURE-2D-FROM-PNG-FILE` stay declared extensions until then.
 
+## Cube render targets exist, and only some renderers will bind one
+
+`RenderTargetCube` and `RenderTargetBinding` complete the render-target family,
+and with them `GraphicsDevice`'s last three members —
+`SetRenderTarget(RenderTargetCube, CubeMapFace)`, `SetRenderTargets` and
+`GetRenderTargets`.
+
+**Creating a cube target works everywhere measured; binding one does not.**
+HEADLESS accepts `SetRenderTarget(cube, face)`; the SOFTWARE rasterizer refuses
+it with `SetRenderTargets: this renderer does not support RenderTargetCube`. That
+is CNA's refusal, it names exactly what is missing, and it arrives *after* the
+target was successfully created — so a program can build one and discover only at
+bind time that this renderer will not have it. The test checks both branches, so
+neither a HEADLESS run that silently stopped binding nor a SOFTWARE run that
+suddenly started would pass unnoticed.
+
+This is the exact inverse of the cube *storage* asymmetry recorded above, where
+SOFTWARE has what HEADLESS lacks. Between them, no single renderer exercises the
+whole `TextureCube` family.
+
+### `GetRenderTargets` answers the objects this binding bound
+
+`cna_graphics_device_copy_render_targets` answers **handles**, and the ABI has no
+route from a handle back to the object that owns it. Wrapping them would invent a
+second `RenderTarget2D` for a target the program already holds, with a second
+lifetime to get wrong. So the device remembers the bindings it was given and
+`GetRenderTargets` answers those, cross-checking CNA's count *and* each handle
+against the record and signalling if they disagree — the same decision, for the
+same reason, that the vertex-buffer bindings record.
+
+### `RenderTargetBinding.CubeMapFace` answers NIL for a 2D target
+
+Reported partial. XNA's struct is a value type and cannot hold "no face", so a
+binding made from a `RenderTarget2D` answers `CubeMapFace.PositiveX` there —
+a real value that means nothing. This answers `NIL`, which says "no face" without
+claiming a face. `MAKE-RENDER-TARGET-BINDING` enforces the same distinction from
+the other side: a cube requires a face and a 2D target refuses one, because those
+are exactly XNA's two constructors.
+
 ## Content: what loads, and the four things that do not follow XNA
 
 `ContentManager` is projected, `Game.Content` with it, and that is what makes a
