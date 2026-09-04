@@ -98,20 +98,37 @@ almost nothing. Instead CNA-Lisp uses the System V AMD64 ABI's own rule:
 > class INTEGER. An aggregate larger than 16 bytes is class MEMORY and is passed
 > on the stack.
 
-CNA-Lisp binds a by-value aggregate parameter **only when every eightbyte is class
-INTEGER and the aggregate is at most 16 bytes**, and then passes one scalar
-argument per eightbyte. Those scalars occupy exactly the argument registers, in
-exactly the order, that the aggregate itself would occupy. So:
+CNA-Lisp binds a by-value aggregate parameter **only when it is at most 16
+bytes**, which is what makes the ABI pass it in registers, and then passes one
+scalar argument per eightbyte, **of the eightbyte's own class**: an integer of
+that width for INTEGER, a C `double` for a whole SSE eightbyte, and a C `float`
+for a trailing four-byte SSE one -- which is the register half the ABI gives a
+lone `float` argument. An eightbyte that is exactly one pointer field is bound as
+`:pointer`, which occupies the same integer register either way and saves turning
+every pointer into an address at the call site.
+
+The integer and SSE argument sequences are assigned independently, so a flattened
+mixed aggregate still lands every piece where the aggregate itself would.
 
 | Aggregate | Size | Eightbyte classes | Bound as |
 | --- | --- | --- | --- |
 | `CNA_Color` | 4 | INTEGER | `:uint32` |
+| `CNA_Rectangle` | 16 | INTEGER INTEGER | `:uint64 :uint64` |
 | `CNA_StringView` | 16 | INTEGER INTEGER | `:pointer :uint64` |
+| `CNA_Vector2` | 8 | SSE | `:double` |
+| `CNA_Vector3` | 12 | SSE SSE | `:double :float` |
+| `CNA_Vector4` | 16 | SSE SSE | `:double :double` |
 
 The generator computes the classification from the field types it read out of the
-headers and the offsets it read out of the ABI baseline. It **refuses** anything
-else -- an SSE eightbyte, or a MEMORY-class aggregate -- and the route that needed
-it is left unbound.
+headers and the offsets it read out of the ABI baseline. It **refuses** a
+MEMORY-class aggregate -- one larger than 16 bytes -- because that travels on the
+stack and no sequence of scalar arguments occupies the same place; the route that
+needed it is shimmed or left unbound.
+
+The SSE half of this rule is newer than the rest. Until the effect surface needed
+it the generator refused every non-INTEGER eightbyte, which was one rule too
+broad: it would have cost `BasicEffect` every colour it has, since a `CNA_Vector3`
+by value is how CNA carries all of them.
 
 This flattening is not taken on trust. `valueprobe.generated.c` defines, for each
 admitted aggregate, a function whose prototype is the real one -- it takes the
@@ -121,7 +138,7 @@ compares byte for byte, including with integer arguments before and after the
 aggregate so that register and stack assignment is exercised rather than only the
 first slot. If the flattening were wrong on some platform, that test fails there.
 
-### Routes the generator refuses, and the one shim
+### Routes the generator refuses, and the four shims
 
 A route that cannot be bound is recorded in the manifest's `shimmed_routes`, and
 the generator **proves** the refusal rather than accepting the claim: it resolves
@@ -131,8 +148,12 @@ route claimed unbindable that could in fact be bound is a generator error.
 | Route | Why |
 | --- | --- |
 | `cna_graphics_device_set_viewport` | takes `CNA_Viewport` (24 bytes) by value: MEMORY class |
+| `cna_effect_matrices_set_world` | takes `CNA_Matrix` (64 bytes) by value: MEMORY class |
+| `cna_effect_matrices_set_view` | the same |
+| `cna_effect_matrices_set_projection` | the same |
 
-For that one route the generator then emits the smallest thing that gets past it,
+Every corresponding *getter* takes a pointer and needs nothing. For each refused
+route the generator emits the smallest thing that gets past it, in
 `tools/native-abi/shim.generated.c`:
 
 ```c
@@ -153,16 +174,18 @@ Four properties make this a shim rather than a second implementation:
   library it already loaded;
 * it holds no state and makes no decision;
 * it is **not the public API** and is not reachable from one: only
-  `(setf viewport)` uses it.
+  `(setf viewport)` and `BasicEffect`'s `World`, `View` and `Projection` setters
+  use it.
 
 It is **optional**. A released CNA-Lisp must load with no C toolchain, so the
 shim is not shipped prebuilt. `CNA_LISP_SHIM` names a build of it;
-`tools/native-abi/verify.sh` produces one; and without it `(setf viewport)`
-signals a `cna-not-supported-error` that names the variable, the command and the
-reason. Nothing else in the binding depends on it, and
-`tests/native/graphics.lisp` asserts both outcomes -- the setter really setting a
-viewport when the shim is present, and the refusal naming all three things when it
-is not.
+`tools/native-abi/verify.sh` produces one; and without it each of those four
+setters signals a `cna-not-supported-error` that names the variable, the command
+and the reason. Nothing else in the binding depends on it, and the suite asserts
+both outcomes -- `tests/native/graphics.lisp` for the viewport and
+`tests/native/effects.lisp` for the matrices -- the setter really setting a value
+when the shim is present, and the refusal naming all three things when it is not.
+The whole suite is run twice in CI, once with the shim and once without.
 
 ## Strings and buffers
 

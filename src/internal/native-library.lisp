@@ -25,6 +25,57 @@
   "The absolute path of the loaded CNA native library, or NIL."
   *native-library-path*)
 
+(defparameter +qualified-host+
+  '(:machine "X86-64" :software "Linux" :implementation "SBCL")
+  "The one host the flattened foreign layer is correct for.
+
+Not a preference and not a support policy: a *correctness* precondition. The
+whole by-value story in docs/native-abi.md is the System V AMD64 ABI's rule, and
+the generator flattened every by-value aggregate according to it -- CNA_Vector3
+travels as a :double and a :float because that is what SysV does with two SSE
+eightbytes. The Microsoft x64 ABI does not do that: a 12-byte aggregate goes by
+*reference* there. Calling a CNA route through the SysV flattening on Windows
+x64 would not be an unqualified configuration, it would be the wrong calling
+convention -- arguments in the wrong registers, silently.
+
+So the refusal is at the native boundary and nowhere earlier. Pure managed
+CNA-Lisp -- the math types, the bounding volumes, the Curve family, the packed
+vectors -- is ordinary ANSI Common Lisp and loads and runs anywhere; it is
+opening the foreign layer that is refused.")
+
+(defun qualified-host-mismatch ()
+  "Which part of the host disagrees with the qualified one, or NIL."
+  (let ((machine (string-upcase (or (machine-type) "")))
+        (software (string-upcase (or (software-type) "")))
+        (implementation (string-upcase (or (lisp-implementation-type) ""))))
+    (cond ((not (search "X86-64" machine))
+           (format nil "the machine is ~a, not x86-64" (machine-type)))
+          ((not (search "LINUX" software))
+           (format nil "the operating system is ~a, not Linux" (software-type)))
+          ((not (search "SBCL" implementation))
+           (format nil "the implementation is ~a, not SBCL"
+                   (lisp-implementation-type)))
+          (t nil))))
+
+(defun check-qualified-host (operation)
+  "Refuse to open the native boundary on a host the flattening is not correct for."
+  (let ((mismatch (qualified-host-mismatch)))
+    (when mismatch
+      (error 'microsoft.xna.framework:cna-not-supported-error
+             :operation operation
+             :format-control
+             "CNA-Lisp's foreign layer is qualified for SBCL on Linux x86-64 only, and ~
+              ~a. This is refused rather than attempted because the refusal is about ~
+              *correctness*, not support: every by-value aggregate in the bound surface ~
+              is flattened according to the System V AMD64 ABI -- a CNA_Vector3 travels ~
+              as a double and a float because that is what SysV does with two SSE ~
+              eightbytes -- and another host ABI passes those arguments somewhere else. ~
+              Calling through the wrong convention would put arguments in the wrong ~
+              registers and report nothing. Everything in CNA-Lisp that touches no ~
+              native route runs here unaffected; see docs/native-abi.md."
+             :format-arguments (list mismatch))))
+  t)
+
 (defun %resolve-requested-path ()
   (let ((raw (uiop:getenv +native-library-environment-variable+)))
     (when (or (null raw) (string= raw ""))
@@ -41,12 +92,17 @@
 (defun ensure-native-library ()
   "Load the CNA C ABI shared library named by CNA_NATIVE_LIBRARY.
 
-Signals CNA-NATIVE-LIBRARY-ERROR naming the exact path attempted when the
-variable is unset, is not absolute, does not name an existing regular file, or
-cannot be loaded. Returns the truename of the loaded library."
+Refuses with CNA-NOT-SUPPORTED-ERROR on a host the foreign layer is not qualified
+for, before anything is loaded -- see CHECK-QUALIFIED-HOST, which is about the
+calling convention and not about support. Then signals CNA-NATIVE-LIBRARY-ERROR
+naming the exact path attempted when the variable is unset, is not absolute, does
+not name an existing regular file, or cannot be loaded. Returns the truename of
+the loaded library."
   (or *native-library-path*
-      (let* ((requested (%resolve-requested-path))
+      (let* ((ignored (check-qualified-host "load-native-library"))
+             (requested (%resolve-requested-path))
              (path (pathname requested)))
+        (declare (ignore ignored))
         (unless (uiop:absolute-pathname-p path)
           (error 'microsoft.xna.framework:cna-native-library-error
                  :operation "resolve-native-library"

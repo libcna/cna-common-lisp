@@ -14,7 +14,11 @@ CNA-Lisp is qualified on exactly one configuration:
   renderer.
 
 No claim is made for any other Common Lisp implementation, for Windows or macOS,
-for a different ABI version, or for a different renderer.
+for a different ABI version, or for a different renderer — and for the host, it
+is stronger than "no claim": the foreign layer **refuses** to open on anything
+but SBCL on Linux x86-64, because the by-value flattening is a System V AMD64
+rule and another host ABI would be a different calling convention rather than an
+untested one. The section below has the detail.
 
 ## HEADLESS proves execution, not pixels — and what does prove pixels
 
@@ -71,6 +75,31 @@ untextured, unlit, unfogged triangle list with no transform. Rotation, scaling,
 tinting, blending, texturing, lighting, fog, indexed and buffer-backed draws and
 every non-identity transform are submitted and accepted, and their pixels are not
 asserted anywhere.
+
+## The foreign layer is qualified for one host, and refuses the others
+
+CNA-Lisp's by-value flattening is the System V AMD64 ABI's rule and only that: a
+`CNA_Vector3` travels as a `:double` and a `:float` because that is what SysV
+does with two SSE eightbytes. The Microsoft x64 ABI passes a 12-byte aggregate by
+*reference*.
+
+So opening the native boundary on another host would not be an unqualified
+configuration — it would be **the wrong calling convention**, putting arguments
+in the wrong registers and reporting nothing. `ensure-native-library` therefore
+refuses anything that is not SBCL on Linux x86-64, with a
+`cna-not-supported-error` that says which of the three facts disagreed and why
+the refusal is about correctness rather than support.
+
+The refusal is at the boundary and nowhere earlier. Everything in CNA-Lisp that
+touches no native route — the math types, the bounding volumes, the `Curve`
+family, the packed vectors, the enumerations, the conditions — is ordinary ANSI
+Common Lisp and loads and runs anywhere.
+
+Lifting this is real work rather than deleting a check: the generator would have
+to classify against the target ABI, the valueprobe would have to be built and run
+there, and the qualification would have to say so. `tests/native/abi-gate.lisp`
+fakes each of the three facts in turn and requires the refusal, because there is
+no honest way to run this suite on a Windows x64 image to find out.
 
 ## No `cffi-libffi`, and what that costs
 
