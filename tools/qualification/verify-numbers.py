@@ -80,8 +80,24 @@ def text(relative):
         return fh.read()
 
 
+def rasterizer_proofs():
+    """The pixel proofs the rasterizer lane requires, from its one registry.
+
+    Not a report: `tools/qualification/rasterizer-proofs.json` is a policy
+    statement about what the lane demands, and `rasterizer.sh` enforces it in
+    both directions -- a required proof the run did not produce fails, and a
+    proof the run produced that the registry does not name fails too. Rendering
+    the count and the list from it is what stops a fourth copy of the list
+    appearing in the prose and going stale, which is exactly what had happened:
+    the script's comment said seven kinds, its loop required eight, and the
+    README said four.
+    """
+    return load("tools/qualification/rasterizer-proofs.json")["proofs"]
+
+
 def facts_of(abi, compat):
     return {
+        "rasterizer proof count": len(rasterizer_proofs()),
         "bound native functions": abi["counts"]["functions"],
         "bound native structs": abi["counts"]["structs"],
         "bound native struct fields": abi["counts"]["struct_fields"],
@@ -251,8 +267,22 @@ def block_scoreboard_headline(abi, compat):
                by_member.get("not-applicable", 0), total["disagreement_total"]))
 
 
+def block_rasterizer_proofs(abi, compat):
+    lines = ["| Proof | What it claims |", "| --- | --- |"]
+    for proof in rasterizer_proofs():
+        lines.append("| `%s` | %s |" % (proof["kind"], proof["claim"]))
+    return "\n".join(lines)
+
+
+def block_rasterizer_proof_kinds(abi, compat):
+    kinds = ["`%s`" % proof["kind"] for proof in rasterizer_proofs()]
+    return "%d kinds -- %s and %s." % (len(kinds), ", ".join(kinds[:-1]), kinds[-1])
+
+
 BLOCKS = {
     "selection": block_selection,
+    "rasterizer-proofs": block_rasterizer_proofs,
+    "rasterizer-proof-kinds": block_rasterizer_proof_kinds,
     "native-abi-headline": block_native_abi_headline,
     "scoreboard-headline": block_scoreboard_headline,
     "scoreboard": block_scoreboard,

@@ -8,34 +8,15 @@
 # run silently took the no-readback branch, which is the way a lane like this
 # quietly stops proving anything.
 #
-# It requires four separate proofs, because they are four separate claims:
-#
-#   clear      GraphicsDevice.Clear reached the back buffer and read back
-#   sprite     a SpriteBatch draw put a known texture's own texels on exactly the
-#              pixels its destination rectangle names, and on none outside it
-#   primitive  a DrawUserPrimitives triangle, through a BasicEffect pass, covered
-#              exactly the pixels its geometry covers and none outside them
-#   render-target-data
-#              every texel of a bound-and-cleared RenderTarget2D read back through
-#              Texture2D.GetData -- which reads a texture and not a back buffer,
-#              so it is the one pixel claim here that does not depend on
-#              GetBackBufferData at all
-#   render-target
-#              a clear into a bound RenderTarget2D left the back buffer untouched,
-#              and the target's own contents then reached the back buffer through
-#              the texture path -- the first evidence here that does not depend on
-#              the back-buffer readback being the only way to see a pixel
-#   stock-effect
-#              a pass applied through an AlphaTestEffect and through a
-#              SkinnedEffect made a primitive draw legal and covered the right
-#              pixels -- that they are usable draw effects, and nothing about the
-#              alpha test or about skinning, neither of which this renderer
-#              applies to the geometry these tests can give it
-#   text       SpriteFont's metrics and SpriteBatch.DrawString's layout put each
-#              glyph of a string at its own advanced position, from its own atlas
-#              cell -- proved with a two-colour atlas, so a pixel says which
-#              glyph reached it, and across a line break, so the line advance is
-#              LineSpacing and not the glyph height
+# **The proofs it requires are not written here.** They are in
+# `tools/qualification/rasterizer-proofs.json`, which is the one place they are
+# written at all: this script requires exactly the kinds that file lists, refuses
+# a run that produces a kind the file does not list, and
+# `tools/qualification/verify-numbers.py` renders the same list and its count into
+# the prose. That is deliberate. The list here used to be a comment, the loop
+# below used to be a second copy of it, and the documents used to be a third --
+# and the three had drifted apart: the comment said seven kinds, the loop
+# required eight, and the README said four.
 #
 # A clear reaching the back buffer says nothing about whether SpriteBatch
 # rasterises, neither says anything about the primitive pipeline, and none of the
@@ -82,13 +63,37 @@ if ! grep -q '^rasterization : ' "$log"; then
     echo "FAIL the runner printed no rasterization line at all" >&2
     exit 1
 fi
-for kind in clear sprite primitive text loaded-text stock-effect render-target render-target-data; do
+registry="$here/rasterizer-proofs.json"
+required=$(python3 -c "import json,sys; print(' '.join(p['kind'] for p in json.load(open(sys.argv[1]))['proofs']))" "$registry")
+
+for kind in $required; do
     if ! grep -q "^rasterization : $kind -- " "$log"; then
         echo "FAIL this lane requires a '$kind' proof and the run did not produce one:" >&2
         grep '^rasterization : ' "$log" >&2 || true
+        echo "     The required set is $registry." >&2
         echo "     Build CNA with -DCNA_GRAPHICS_RENDERER=SOFTWARE (no display needed)." >&2
         exit 1
     fi
+done
+
+# And the other direction, which is what stops the registry going stale: a proof
+# the suite produces and the registry does not name is not required by this lane
+# and does not appear in the prose, so it is a proof nobody is counting.
+# `none` is the runner's marker for a renderer that produced no proof at all, not
+# a kind, so it is excluded here; the required loop above has already failed by
+# then anyway, and this keeps that failure the one that gets reported.
+produced=$(grep '^rasterization : ' "$log" | sed 's/^rasterization : //; s/ --.*//' \
+               | grep -v '^none$' | sort -u)
+for kind in $produced; do
+    case " $required " in
+        *" $kind "*) ;;
+        *)
+            echo "FAIL the run produced a '$kind' proof that $registry does not name." >&2
+            echo "     Add it there, with what it claims, or the lane does not require it" >&2
+            echo "     and no document counts it." >&2
+            exit 1
+            ;;
+    esac
 done
 
 echo
@@ -96,11 +101,12 @@ echo "rasterizer qualification passed"
 grep '^rasterization : ' "$log" | sed 's/^/  /'
 echo "  log $log"
 echo
-echo "  Proved: Clear reached the back buffer; a SpriteBatch draw put a known"
-echo "  texture's own texels on exactly the pixels its destination named; a"
-echo "  DrawUserPrimitives triangle drawn through a BasicEffect pass covered"
-echo "  exactly the pixels its geometry covers; and DrawString laid a string out"
-echo "  glyph by glyph, each from its own atlas cell at its own advanced"
-echo "  position, across a line break."
+echo "  Proved, one claim per required kind, from $registry:"
+python3 -c "
+import json, sys, textwrap
+for proof in json.load(open(sys.argv[1]))['proofs']:
+    print(textwrap.fill(proof['kind'] + ': ' + proof['claim'],
+                        width=76, initial_indent='    ', subsequent_indent='      '))
+" "$registry"
 echo "  Not proved, and not claimed: anything about a physical monitor, and"
 echo "  anything about a GPU renderer -- SOFTWARE rasterises on the CPU."

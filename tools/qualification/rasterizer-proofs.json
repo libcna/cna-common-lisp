@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "description": "The pixel proofs the rasterizer lane requires, and what each one claims. This file is the single source of truth for both the gate and the prose: tools/qualification/rasterizer.sh requires exactly these kinds and refuses a run that produces a kind not listed here, and tools/qualification/verify-numbers.py renders the count and the list into the documents. A proof added to the suite and not to this file is not required by the lane and does not appear in the prose; one added here and not to the suite fails the lane. Neither can drift quietly, which is what the hand-written 'seven kinds' had already done.",
+  "proofs": [
+    {
+      "kind": "clear",
+      "claim": "GraphicsDevice.Clear reached the back buffer and read back"
+    },
+    {
+      "kind": "sprite",
+      "claim": "a SpriteBatch draw put a known texture's own texels on exactly the pixels its destination rectangle names, and on none outside it"
+    },
+    {
+      "kind": "primitive",
+      "claim": "a DrawUserPrimitives triangle, through a BasicEffect pass, covered exactly the pixels its geometry covers and none outside them"
+    },
+    {
+      "kind": "text",
+      "claim": "SpriteFont's metrics and SpriteBatch.DrawString's layout put each glyph of a string at its own advanced position, from its own atlas cell -- proved with a two-colour atlas, so a pixel says which glyph reached it, and across a line break, so the line advance is LineSpacing and not the glyph height"
+    },
+    {
+      "kind": "loaded-text",
+      "claim": "a SpriteFont obtained through ContentManager.Load, from a .cnj descriptor on disk with no test-only producer in the path, drew the same string at the same coordinates as the hand-built font -- so a descriptor that drifted from the suite's glyph rows would put a glyph somewhere else and fail"
+    },
+    {
+      "kind": "stock-effect",
+      "claim": "a pass applied through an AlphaTestEffect and through a SkinnedEffect made a primitive draw legal and covered the right pixels -- that they are usable draw effects, and nothing about the alpha test or about skinning, neither of which this renderer applies to the geometry these tests can give it"
+    },
+    {
+      "kind": "render-target",
+      "claim": "a clear into a bound RenderTarget2D left the back buffer untouched, and the target's own contents then reached the back buffer through the texture path -- the first evidence here that does not depend on the back-buffer readback being the only way to see a pixel"
+    },
+    {
+      "kind": "render-target-data",
+      "claim": "every texel of a bound-and-cleared RenderTarget2D read back through Texture2D.GetData -- which reads a texture and not a back buffer, so it is the one pixel claim here that does not depend on GetBackBufferData at all"
+    }
+  ]
+}

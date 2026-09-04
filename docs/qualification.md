@@ -166,7 +166,7 @@ init only adds nested codec submodules this build disables anyway.
 | Lane | Renderer | What it proves |
 | --- | --- | --- |
 | `Native` | `HEADLESS` | the lifecycle ran, handles were valid, and draw commands were submitted and accepted. **Nothing about pixels**, and the back-buffer readback refuses by name rather than answering zeroes. |
-| `Rasterizer` | `SOFTWARE` | the same suite, plus seven separate kinds of pixel proof — see below. |
+| `Rasterizer` | `SOFTWARE` | the same suite, plus <!-- generated:rasterizer proof count=8 --> separate kinds of pixel proof — see below. |
 
 The rasterizer lane's proofs are kept apart because they are different claims,
 and one of them used to be asserted on the strength of the other:
@@ -187,12 +187,37 @@ The textures are **generated**, not drawn:
 `tools/qualification/make-pixel-fixtures.py` states every texel in source, so the
 expected colours are checkable without opening an image editor.
 
-`tools/qualification/rasterizer.sh` requires **all seven** kinds and fails if any
-is missing, so the lane cannot pass on a clear alone, the sprite path cannot
-stand in for the primitive path — they are different paths through the renderer —
-and neither stands in for text, because one font atlas texel arriving is a
-smaller claim than a string being laid out. Verified in both directions: it exits
-1 against a `HEADLESS` library and 0 against a `SOFTWARE` one.
+**The required set is written down once**, in
+`tools/qualification/rasterizer-proofs.json`, and everything else derives from
+it. `rasterizer.sh` requires exactly those kinds *and* refuses a run that produces
+a kind the registry does not name, so the set cannot drift in either direction;
+`tools/qualification/verify-numbers.py` renders the count and the table below from
+the same file. Before that the list existed in three places — a comment in the
+script, the script's own loop, and the prose — and the three disagreed: the
+comment said seven, the loop required eight, and one document still said four.
+
+<!-- generated-block:rasterizer-proof-kinds -->
+8 kinds -- `clear`, `sprite`, `primitive`, `text`, `loaded-text`, `stock-effect`, `render-target` and `render-target-data`.
+<!-- /generated-block:rasterizer-proof-kinds -->
+
+<!-- generated-block:rasterizer-proofs -->
+| Proof | What it claims |
+| --- | --- |
+| `clear` | GraphicsDevice.Clear reached the back buffer and read back |
+| `sprite` | a SpriteBatch draw put a known texture's own texels on exactly the pixels its destination rectangle names, and on none outside it |
+| `primitive` | a DrawUserPrimitives triangle, through a BasicEffect pass, covered exactly the pixels its geometry covers and none outside them |
+| `text` | SpriteFont's metrics and SpriteBatch.DrawString's layout put each glyph of a string at its own advanced position, from its own atlas cell -- proved with a two-colour atlas, so a pixel says which glyph reached it, and across a line break, so the line advance is LineSpacing and not the glyph height |
+| `loaded-text` | a SpriteFont obtained through ContentManager.Load, from a .cnj descriptor on disk with no test-only producer in the path, drew the same string at the same coordinates as the hand-built font -- so a descriptor that drifted from the suite's glyph rows would put a glyph somewhere else and fail |
+| `stock-effect` | a pass applied through an AlphaTestEffect and through a SkinnedEffect made a primitive draw legal and covered the right pixels -- that they are usable draw effects, and nothing about the alpha test or about skinning, neither of which this renderer applies to the geometry these tests can give it |
+| `render-target` | a clear into a bound RenderTarget2D left the back buffer untouched, and the target's own contents then reached the back buffer through the texture path -- the first evidence here that does not depend on the back-buffer readback being the only way to see a pixel |
+| `render-target-data` | every texel of a bound-and-cleared RenderTarget2D read back through Texture2D.GetData -- which reads a texture and not a back buffer, so it is the one pixel claim here that does not depend on GetBackBufferData at all |
+<!-- /generated-block:rasterizer-proofs -->
+
+So the lane cannot pass on a clear alone, the sprite path cannot stand in for the
+primitive path — they are different paths through the renderer — and neither
+stands in for text, because one font atlas texel arriving is a smaller claim than
+a string being laid out. Verified in both directions: it exits 1 against a
+`HEADLESS` library and 0 against a `SOFTWARE` one.
 
 They are separate jobs on purpose. They support different claims, and a failure
 in one must not take down the other.

@@ -96,12 +96,16 @@ different claims:
   ones — under `HEADLESS` CNA refuses it, and the refusal is asserted by name, so
   the test says which happened instead of quietly proving nothing.
 
-`tools/qualification/rasterizer.sh` requires all seven and fails when any is
-absent; a clear alone is not accepted as evidence about `SpriteBatch`, which it
-briefly was, the sprite path is not accepted as evidence about the primitive
-path, which is a different path through the renderer, and neither is accepted as
-evidence about text layout — a font atlas texel arriving is a smaller claim than
-a string being laid out.
+`tools/qualification/rasterizer.sh` requires
+<!-- generated:rasterizer proof count=8 --> kinds of proof and fails when any is
+absent — and fails as well when a run produces a kind the registry does not name,
+so neither half can drift. The required set is
+`tools/qualification/rasterizer-proofs.json`; `docs/qualification.md` renders it.
+A clear alone is not accepted as evidence about `SpriteBatch`, which it briefly
+was, the sprite path is not accepted as evidence about the primitive path, which
+is a different path through the renderer, and neither is accepted as evidence
+about text layout — a font atlas texel arriving is a smaller claim than a string
+being laid out.
 
 Three things this does *not* establish. It is not a claim about a physical
 monitor; a back buffer is a back buffer. It is one renderer: `SOFTWARE`
