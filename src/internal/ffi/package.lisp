@@ -63,7 +63,7 @@ registry. Private; not part of the published API.")
    #:+result-success+ #:+result-callback+
    ;; utf8 -----------------------------------------------------------------
    #:string-to-utf8-octets #:utf8-octets-to-string #:with-utf8-view
-   #:with-string-view-args #:count-then-copy-string
+   #:count-then-copy-string
    ;; utf16 ----------------------------------------------------------------
    #:utf-16-code-unit #:string-code-units #:code-units-to-string
    #:high-surrogate-p #:low-surrogate-p
