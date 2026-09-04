@@ -646,6 +646,454 @@
 (defcfun ("cna_index_buffer_unsubscribe_content_lost" %index-buffer-unsubscribe-content-lost) :uint32
   (registration :uint64))
 
+;;; CNA_Result cna_basic_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)
+(defcfun ("cna_basic_effect_create" %basic-effect-create) :uint32
+  (graphics-device :uint64) (out-effect :pointer))
+
+;;; CNA_Result cna_effect_create_compiled(CNA_Handle graphics_device, const uint8_t* effect_code, uint64_t effect_code_count, CNA_EffectHandle* out_effect)
+(defcfun ("cna_effect_create_compiled" %effect-create-compiled) :uint32
+  (graphics-device :uint64) (effect-code :pointer) (effect-code-count :uint64) (out-effect :pointer))
+
+;;; CNA_Result cna_effect_destroy(CNA_EffectHandle effect)
+(defcfun ("cna_effect_destroy" %effect-destroy) :uint32
+  (effect :uint64))
+
+;;; CNA_Result cna_effect_dispose(CNA_EffectHandle effect)
+(defcfun ("cna_effect_dispose" %effect-dispose) :uint32
+  (effect :uint64))
+
+;;; CNA_Result cna_effect_clone(CNA_EffectHandle effect, CNA_EffectHandle* out_clone)
+(defcfun ("cna_effect_clone" %effect-clone) :uint32
+  (effect :uint64) (out-clone :pointer))
+
+;;; CNA_Result cna_effect_get_parameters(CNA_EffectHandle effect, CNA_EffectParameterCollectionHandle* out_collection)
+(defcfun ("cna_effect_get_parameters" %effect-get-parameters) :uint32
+  (effect :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_effect_get_techniques(CNA_EffectHandle effect, CNA_EffectTechniqueCollectionHandle* out_collection)
+(defcfun ("cna_effect_get_techniques" %effect-get-techniques) :uint32
+  (effect :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_effect_get_current_technique(CNA_EffectHandle effect, CNA_EffectTechniqueHandle* out_technique)
+(defcfun ("cna_effect_get_current_technique" %effect-get-current-technique) :uint32
+  (effect :uint64) (out-technique :pointer))
+
+;;; CNA_Result cna_effect_set_current_technique(CNA_EffectHandle effect, CNA_EffectTechniqueHandle technique)
+(defcfun ("cna_effect_set_current_technique" %effect-set-current-technique) :uint32
+  (effect :uint64) (technique :uint64))
+
+;;; CNA_Result cna_effect_technique_collection_get_count(CNA_EffectTechniqueCollectionHandle collection, uint64_t* out_count)
+(defcfun ("cna_effect_technique_collection_get_count" %effect-technique-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_effect_technique_collection_get_at(CNA_EffectTechniqueCollectionHandle collection, uint64_t index, CNA_EffectTechniqueHandle* out_technique)
+(defcfun ("cna_effect_technique_collection_get_at" %effect-technique-collection-get-at) :uint32
+  (collection :uint64) (index :uint64) (out-technique :pointer))
+
+;;; CNA_Result cna_effect_technique_collection_destroy(CNA_EffectTechniqueCollectionHandle collection)
+(defcfun ("cna_effect_technique_collection_destroy" %effect-technique-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_effect_technique_get_name_byte_count(CNA_EffectTechniqueHandle technique, uint64_t* out_byte_count)
+(defcfun ("cna_effect_technique_get_name_byte_count" %effect-technique-get-name-byte-count) :uint32
+  (technique :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_technique_copy_name(CNA_EffectTechniqueHandle technique, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_technique_copy_name" %effect-technique-copy-name) :uint32
+  (technique :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_technique_get_identity(CNA_EffectTechniqueHandle technique, uint64_t* out_identity)
+(defcfun ("cna_effect_technique_get_identity" %effect-technique-get-identity) :uint32
+  (technique :uint64) (out-identity :pointer))
+
+;;; CNA_Result cna_effect_technique_get_passes(CNA_EffectTechniqueHandle technique, CNA_EffectPassCollectionHandle* out_collection)
+(defcfun ("cna_effect_technique_get_passes" %effect-technique-get-passes) :uint32
+  (technique :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_effect_technique_get_annotations(CNA_EffectTechniqueHandle technique, CNA_EffectAnnotationCollectionHandle* out_collection)
+(defcfun ("cna_effect_technique_get_annotations" %effect-technique-get-annotations) :uint32
+  (technique :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_effect_technique_destroy(CNA_EffectTechniqueHandle technique)
+(defcfun ("cna_effect_technique_destroy" %effect-technique-destroy) :uint32
+  (technique :uint64))
+
+;;; CNA_Result cna_effect_pass_collection_get_count(CNA_EffectPassCollectionHandle collection, uint64_t* out_count)
+(defcfun ("cna_effect_pass_collection_get_count" %effect-pass-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_effect_pass_collection_get_at(CNA_EffectPassCollectionHandle collection, uint64_t index, CNA_EffectPassHandle* out_pass)
+(defcfun ("cna_effect_pass_collection_get_at" %effect-pass-collection-get-at) :uint32
+  (collection :uint64) (index :uint64) (out-pass :pointer))
+
+;;; CNA_Result cna_effect_pass_collection_destroy(CNA_EffectPassCollectionHandle collection)
+(defcfun ("cna_effect_pass_collection_destroy" %effect-pass-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_effect_pass_get_name_byte_count(CNA_EffectPassHandle pass, uint64_t* out_byte_count)
+(defcfun ("cna_effect_pass_get_name_byte_count" %effect-pass-get-name-byte-count) :uint32
+  (pass :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_pass_copy_name(CNA_EffectPassHandle pass, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_pass_copy_name" %effect-pass-copy-name) :uint32
+  (pass :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_pass_get_annotations(CNA_EffectPassHandle pass, CNA_EffectAnnotationCollectionHandle* out_collection)
+(defcfun ("cna_effect_pass_get_annotations" %effect-pass-get-annotations) :uint32
+  (pass :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_effect_pass_apply(CNA_EffectPassHandle pass)
+(defcfun ("cna_effect_pass_apply" %effect-pass-apply) :uint32
+  (pass :uint64))
+
+;;; CNA_Result cna_effect_pass_destroy(CNA_EffectPassHandle pass)
+(defcfun ("cna_effect_pass_destroy" %effect-pass-destroy) :uint32
+  (pass :uint64))
+
+;;; CNA_Result cna_effect_annotation_collection_get_count(CNA_EffectAnnotationCollectionHandle collection, uint64_t* out_count)
+(defcfun ("cna_effect_annotation_collection_get_count" %effect-annotation-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_effect_annotation_collection_get_at(CNA_EffectAnnotationCollectionHandle collection, uint64_t index, CNA_EffectAnnotationHandle* out_annotation)
+(defcfun ("cna_effect_annotation_collection_get_at" %effect-annotation-collection-get-at) :uint32
+  (collection :uint64) (index :uint64) (out-annotation :pointer))
+
+;;; CNA_Result cna_effect_annotation_collection_destroy(CNA_EffectAnnotationCollectionHandle collection)
+(defcfun ("cna_effect_annotation_collection_destroy" %effect-annotation-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_effect_annotation_get_info(CNA_EffectAnnotationHandle annotation, CNA_EffectAnnotationInfo* out_info)
+(defcfun ("cna_effect_annotation_get_info" %effect-annotation-get-info) :uint32
+  (annotation :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_name_byte_count(CNA_EffectAnnotationHandle annotation, uint64_t* out_byte_count)
+(defcfun ("cna_effect_annotation_get_name_byte_count" %effect-annotation-get-name-byte-count) :uint32
+  (annotation :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_annotation_copy_name(CNA_EffectAnnotationHandle annotation, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_annotation_copy_name" %effect-annotation-copy-name) :uint32
+  (annotation :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_semantic_byte_count(CNA_EffectAnnotationHandle annotation, uint64_t* out_byte_count)
+(defcfun ("cna_effect_annotation_get_semantic_byte_count" %effect-annotation-get-semantic-byte-count) :uint32
+  (annotation :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_annotation_copy_semantic(CNA_EffectAnnotationHandle annotation, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_annotation_copy_semantic" %effect-annotation-copy-semantic) :uint32
+  (annotation :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_value_string_byte_count(CNA_EffectAnnotationHandle annotation, uint64_t* out_byte_count)
+(defcfun ("cna_effect_annotation_get_value_string_byte_count" %effect-annotation-get-value-string-byte-count) :uint32
+  (annotation :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_annotation_copy_value_string(CNA_EffectAnnotationHandle annotation, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_annotation_copy_value_string" %effect-annotation-copy-value-string) :uint32
+  (annotation :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_value_boolean(CNA_EffectAnnotationHandle annotation, CNA_Bool* out_value)
+(defcfun ("cna_effect_annotation_get_value_boolean" %effect-annotation-get-value-boolean) :uint32
+  (annotation :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_value_int32(CNA_EffectAnnotationHandle annotation, int32_t* out_value)
+(defcfun ("cna_effect_annotation_get_value_int32" %effect-annotation-get-value-int-32) :uint32
+  (annotation :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_value_single(CNA_EffectAnnotationHandle annotation, float* out_value)
+(defcfun ("cna_effect_annotation_get_value_single" %effect-annotation-get-value-single) :uint32
+  (annotation :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_value_vector2(CNA_EffectAnnotationHandle annotation, CNA_Vector2* out_value)
+(defcfun ("cna_effect_annotation_get_value_vector2" %effect-annotation-get-value-vector-2) :uint32
+  (annotation :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_value_vector3(CNA_EffectAnnotationHandle annotation, CNA_Vector3* out_value)
+(defcfun ("cna_effect_annotation_get_value_vector3" %effect-annotation-get-value-vector-3) :uint32
+  (annotation :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_value_vector4(CNA_EffectAnnotationHandle annotation, CNA_Vector4* out_value)
+(defcfun ("cna_effect_annotation_get_value_vector4" %effect-annotation-get-value-vector-4) :uint32
+  (annotation :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_annotation_get_value_matrix(CNA_EffectAnnotationHandle annotation, CNA_Matrix* out_value)
+(defcfun ("cna_effect_annotation_get_value_matrix" %effect-annotation-get-value-matrix) :uint32
+  (annotation :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_annotation_destroy(CNA_EffectAnnotationHandle annotation)
+(defcfun ("cna_effect_annotation_destroy" %effect-annotation-destroy) :uint32
+  (annotation :uint64))
+
+;;; CNA_Result cna_effect_parameter_collection_get_count(CNA_EffectParameterCollectionHandle collection, uint64_t* out_count)
+(defcfun ("cna_effect_parameter_collection_get_count" %effect-parameter-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_effect_parameter_collection_get_at(CNA_EffectParameterCollectionHandle collection, uint64_t index, CNA_EffectParameterHandle* out_parameter)
+(defcfun ("cna_effect_parameter_collection_get_at" %effect-parameter-collection-get-at) :uint32
+  (collection :uint64) (index :uint64) (out-parameter :pointer))
+
+;;; CNA_Result cna_effect_parameter_collection_find_name(CNA_EffectParameterCollectionHandle collection, CNA_StringView name, CNA_Bool* out_found, CNA_EffectParameterHandle* out_parameter)
+(defcfun ("cna_effect_parameter_collection_find_name" %effect-parameter-collection-find-name) :uint32
+  (collection :uint64) (name-0 :pointer) (name-1 :uint64) (out-found :pointer) (out-parameter :pointer))
+
+;;; CNA_Result cna_effect_parameter_collection_find_semantic(CNA_EffectParameterCollectionHandle collection, CNA_StringView semantic, CNA_Bool* out_found, CNA_EffectParameterHandle* out_parameter)
+(defcfun ("cna_effect_parameter_collection_find_semantic" %effect-parameter-collection-find-semantic) :uint32
+  (collection :uint64) (semantic-0 :pointer) (semantic-1 :uint64) (out-found :pointer) (out-parameter :pointer))
+
+;;; CNA_Result cna_effect_parameter_collection_destroy(CNA_EffectParameterCollectionHandle collection)
+(defcfun ("cna_effect_parameter_collection_destroy" %effect-parameter-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_effect_parameter_get_info(CNA_EffectParameterHandle parameter, CNA_EffectParameterInfo* out_info)
+(defcfun ("cna_effect_parameter_get_info" %effect-parameter-get-info) :uint32
+  (parameter :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_effect_parameter_get_name_byte_count(CNA_EffectParameterHandle parameter, uint64_t* out_byte_count)
+(defcfun ("cna_effect_parameter_get_name_byte_count" %effect-parameter-get-name-byte-count) :uint32
+  (parameter :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_parameter_copy_name(CNA_EffectParameterHandle parameter, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_parameter_copy_name" %effect-parameter-copy-name) :uint32
+  (parameter :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_parameter_get_semantic_byte_count(CNA_EffectParameterHandle parameter, uint64_t* out_byte_count)
+(defcfun ("cna_effect_parameter_get_semantic_byte_count" %effect-parameter-get-semantic-byte-count) :uint32
+  (parameter :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_parameter_copy_semantic(CNA_EffectParameterHandle parameter, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_parameter_copy_semantic" %effect-parameter-copy-semantic) :uint32
+  (parameter :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_parameter_get_elements(CNA_EffectParameterHandle parameter, CNA_EffectParameterCollectionHandle* out_collection)
+(defcfun ("cna_effect_parameter_get_elements" %effect-parameter-get-elements) :uint32
+  (parameter :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_effect_parameter_get_structure_members(CNA_EffectParameterHandle parameter, CNA_EffectParameterCollectionHandle* out_collection)
+(defcfun ("cna_effect_parameter_get_structure_members" %effect-parameter-get-structure-members) :uint32
+  (parameter :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_effect_parameter_get_annotations(CNA_EffectParameterHandle parameter, CNA_EffectAnnotationCollectionHandle* out_collection)
+(defcfun ("cna_effect_parameter_get_annotations" %effect-parameter-get-annotations) :uint32
+  (parameter :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_effect_parameter_get_value(CNA_EffectParameterHandle parameter, CNA_EffectValueType value_type, void* out_value)
+(defcfun ("cna_effect_parameter_get_value" %effect-parameter-get-value) :uint32
+  (parameter :uint64) (value-type :uint32) (out-value :pointer))
+
+;;; CNA_Result cna_effect_parameter_set_value(CNA_EffectParameterHandle parameter, CNA_EffectValueType value_type, const void* value)
+(defcfun ("cna_effect_parameter_set_value" %effect-parameter-set-value) :uint32
+  (parameter :uint64) (value-type :uint32) (value :pointer))
+
+;;; CNA_Result cna_effect_parameter_get_values(CNA_EffectParameterHandle parameter, CNA_EffectValueType value_type, uint64_t requested_count, void* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_effect_parameter_get_values" %effect-parameter-get-values) :uint32
+  (parameter :uint64) (value-type :uint32) (requested-count :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_effect_parameter_set_values(CNA_EffectParameterHandle parameter, CNA_EffectValueType value_type, const void* values, uint64_t count)
+(defcfun ("cna_effect_parameter_set_values" %effect-parameter-set-values) :uint32
+  (parameter :uint64) (value-type :uint32) (values :pointer) (count :uint64))
+
+;;; CNA_Result cna_effect_parameter_get_value_string_byte_count(CNA_EffectParameterHandle parameter, uint64_t* out_byte_count)
+(defcfun ("cna_effect_parameter_get_value_string_byte_count" %effect-parameter-get-value-string-byte-count) :uint32
+  (parameter :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_parameter_copy_value_string(CNA_EffectParameterHandle parameter, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_parameter_copy_value_string" %effect-parameter-copy-value-string) :uint32
+  (parameter :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_parameter_set_value_string(CNA_EffectParameterHandle parameter, CNA_StringView value)
+(defcfun ("cna_effect_parameter_set_value_string" %effect-parameter-set-value-string) :uint32
+  (parameter :uint64) (value-0 :pointer) (value-1 :uint64))
+
+;;; CNA_Result cna_effect_parameter_get_value_texture(CNA_EffectParameterHandle parameter, CNA_EffectTextureType texture_type, CNA_Handle* out_texture)
+(defcfun ("cna_effect_parameter_get_value_texture" %effect-parameter-get-value-texture) :uint32
+  (parameter :uint64) (texture-type :uint32) (out-texture :pointer))
+
+;;; CNA_Result cna_effect_parameter_set_value_texture(CNA_EffectParameterHandle parameter, CNA_EffectTextureType texture_type, CNA_Handle texture)
+(defcfun ("cna_effect_parameter_set_value_texture" %effect-parameter-set-value-texture) :uint32
+  (parameter :uint64) (texture-type :uint32) (texture :uint64))
+
+;;; CNA_Result cna_effect_parameter_destroy(CNA_EffectParameterHandle parameter)
+(defcfun ("cna_effect_parameter_destroy" %effect-parameter-destroy) :uint32
+  (parameter :uint64))
+
+;;; CNA_Result cna_effect_matrices_get_world(CNA_EffectHandle effect, CNA_Matrix* out_value)
+(defcfun ("cna_effect_matrices_get_world" %effect-matrices-get-world) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_matrices_get_view(CNA_EffectHandle effect, CNA_Matrix* out_value)
+(defcfun ("cna_effect_matrices_get_view" %effect-matrices-get-view) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_matrices_get_projection(CNA_EffectHandle effect, CNA_Matrix* out_value)
+(defcfun ("cna_effect_matrices_get_projection" %effect-matrices-get-projection) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_fog_get_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_effect_fog_get_color" %effect-fog-get-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_fog_set_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_effect_fog_set_color" %effect-fog-set-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_effect_fog_get_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_effect_fog_get_enabled" %effect-fog-get-enabled) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_fog_set_enabled(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_effect_fog_set_enabled" %effect-fog-set-enabled) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_effect_fog_get_start(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_effect_fog_get_start" %effect-fog-get-start) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_fog_set_start(CNA_EffectHandle effect, float value)
+(defcfun ("cna_effect_fog_set_start" %effect-fog-set-start) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_effect_fog_get_end(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_effect_fog_get_end" %effect-fog-get-end) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_fog_set_end(CNA_EffectHandle effect, float value)
+(defcfun ("cna_effect_fog_set_end" %effect-fog-set-end) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_effect_lights_get_ambient_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_effect_lights_get_ambient_color" %effect-lights-get-ambient-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_lights_set_ambient_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_effect_lights_set_ambient_color" %effect-lights-set-ambient-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_effect_lights_get_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_effect_lights_get_enabled" %effect-lights-get-enabled) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_effect_lights_set_enabled(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_effect_lights_set_enabled" %effect-lights-set-enabled) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_effect_lights_get_directional_light(CNA_EffectHandle effect, uint32_t index, CNA_DirectionalLightHandle* out_light)
+(defcfun ("cna_effect_lights_get_directional_light" %effect-lights-get-directional-light) :uint32
+  (effect :uint64) (index :uint32) (out-light :pointer))
+
+;;; CNA_Result cna_effect_lights_enable_default(CNA_EffectHandle effect)
+(defcfun ("cna_effect_lights_enable_default" %effect-lights-enable-default) :uint32
+  (effect :uint64))
+
+;;; CNA_Result cna_directional_light_destroy(CNA_DirectionalLightHandle light)
+(defcfun ("cna_directional_light_destroy" %directional-light-destroy) :uint32
+  (light :uint64))
+
+;;; CNA_Result cna_directional_light_get_diffuse_color(CNA_DirectionalLightHandle light, CNA_Vector3* out_value)
+(defcfun ("cna_directional_light_get_diffuse_color" %directional-light-get-diffuse-color) :uint32
+  (light :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_directional_light_set_diffuse_color(CNA_DirectionalLightHandle light, CNA_Vector3 value)
+(defcfun ("cna_directional_light_set_diffuse_color" %directional-light-set-diffuse-color) :uint32
+  (light :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_directional_light_get_direction(CNA_DirectionalLightHandle light, CNA_Vector3* out_value)
+(defcfun ("cna_directional_light_get_direction" %directional-light-get-direction) :uint32
+  (light :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_directional_light_set_direction(CNA_DirectionalLightHandle light, CNA_Vector3 value)
+(defcfun ("cna_directional_light_set_direction" %directional-light-set-direction) :uint32
+  (light :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_directional_light_get_specular_color(CNA_DirectionalLightHandle light, CNA_Vector3* out_value)
+(defcfun ("cna_directional_light_get_specular_color" %directional-light-get-specular-color) :uint32
+  (light :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_directional_light_set_specular_color(CNA_DirectionalLightHandle light, CNA_Vector3 value)
+(defcfun ("cna_directional_light_set_specular_color" %directional-light-set-specular-color) :uint32
+  (light :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_directional_light_get_enabled(CNA_DirectionalLightHandle light, CNA_Bool* out_value)
+(defcfun ("cna_directional_light_get_enabled" %directional-light-get-enabled) :uint32
+  (light :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_directional_light_set_enabled(CNA_DirectionalLightHandle light, CNA_Bool value)
+(defcfun ("cna_directional_light_set_enabled" %directional-light-set-enabled) :uint32
+  (light :uint64) (value :uint8))
+
+;;; CNA_Result cna_basic_effect_get_alpha(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_basic_effect_get_alpha" %basic-effect-get-alpha) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_basic_effect_set_alpha(CNA_EffectHandle effect, float value)
+(defcfun ("cna_basic_effect_set_alpha" %basic-effect-set-alpha) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_basic_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_basic_effect_get_diffuse_color" %basic-effect-get-diffuse-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_basic_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_basic_effect_set_diffuse_color" %basic-effect-set-diffuse-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_basic_effect_get_emissive_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_basic_effect_get_emissive_color" %basic-effect-get-emissive-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_basic_effect_set_emissive_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_basic_effect_set_emissive_color" %basic-effect-set-emissive-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_basic_effect_get_specular_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_basic_effect_get_specular_color" %basic-effect-get-specular-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_basic_effect_set_specular_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_basic_effect_set_specular_color" %basic-effect-set-specular-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_basic_effect_get_specular_power(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_basic_effect_get_specular_power" %basic-effect-get-specular-power) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_basic_effect_set_specular_power(CNA_EffectHandle effect, float value)
+(defcfun ("cna_basic_effect_set_specular_power" %basic-effect-set-specular-power) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_basic_effect_get_texture(CNA_EffectHandle effect, CNA_Bool* out_has_texture, CNA_Handle* out_texture)
+(defcfun ("cna_basic_effect_get_texture" %basic-effect-get-texture) :uint32
+  (effect :uint64) (out-has-texture :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_basic_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)
+(defcfun ("cna_basic_effect_set_texture" %basic-effect-set-texture) :uint32
+  (effect :uint64) (texture :uint64))
+
+;;; CNA_Result cna_basic_effect_get_texture_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_basic_effect_get_texture_enabled" %basic-effect-get-texture-enabled) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_basic_effect_set_texture_enabled(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_basic_effect_set_texture_enabled" %basic-effect-set-texture-enabled) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_basic_effect_get_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_basic_effect_get_vertex_color_enabled" %basic-effect-get-vertex-color-enabled) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_basic_effect_set_vertex_color_enabled(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_basic_effect_set_vertex_color_enabled" %basic-effect-set-vertex-color-enabled) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_basic_effect_get_prefer_per_pixel_lighting(CNA_EffectHandle effect, CNA_Bool* out_value)
+(defcfun ("cna_basic_effect_get_prefer_per_pixel_lighting" %basic-effect-get-prefer-per-pixel-lighting) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_basic_effect_set_prefer_per_pixel_lighting(CNA_EffectHandle effect, CNA_Bool value)
+(defcfun ("cna_basic_effect_set_prefer_per_pixel_lighting" %basic-effect-set-prefer-per-pixel-lighting) :uint32
+  (effect :uint64) (value :uint8))
+
+;;; CNA_Result cna_sprite_batch_begin_with_effect(CNA_Handle sprite_batch, CNA_SpriteSortMode sort_mode, const CNA_BlendState* blend_state, const CNA_SamplerState* sampler_state, const CNA_DepthStencilState* depth_stencil_state, const CNA_RasterizerState* rasterizer_state, CNA_Handle effect, const CNA_Matrix* transform_matrix)
+(defcfun ("cna_sprite_batch_begin_with_effect" %sprite-batch-begin-with-effect) :uint32
+  (sprite-batch :uint64) (sort-mode :uint32) (blend-state :pointer) (sampler-state :pointer) (depth-stencil-state :pointer) (rasterizer-state :pointer) (effect :uint64) (transform-matrix :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -804,6 +1252,118 @@
     ("cna_vertex_buffer_subscribe_content_lost" %vertex-buffer-subscribe-content-lost :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "none")
     ("cna_vertex_buffer_unsubscribe_content_lost" %vertex-buffer-unsubscribe-content-lost :uint32 (:uint64) :thread :owner :ownership "none")
     ("cna_index_buffer_subscribe_content_lost" %index-buffer-subscribe-content-lost :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "none")
-    ("cna_index_buffer_unsubscribe_content_lost" %index-buffer-unsubscribe-content-lost :uint32 (:uint64) :thread :owner :ownership "none"))
+    ("cna_index_buffer_unsubscribe_content_lost" %index-buffer-unsubscribe-content-lost :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_basic_effect_create" %basic-effect-create :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_create_compiled" %effect-create-compiled :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_destroy" %effect-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_dispose" %effect-dispose :uint32 (:uint64) :thread :game :ownership "none")
+    ("cna_effect_clone" %effect-clone :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_get_parameters" %effect-get-parameters :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_get_techniques" %effect-get-techniques :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_get_current_technique" %effect-get-current-technique :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_set_current_technique" %effect-set-current-technique :uint32 (:uint64 :uint64) :thread :game :ownership "none")
+    ("cna_effect_technique_collection_get_count" %effect-technique-collection-get-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_technique_collection_get_at" %effect-technique-collection-get-at :uint32 (:uint64 :uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_technique_collection_destroy" %effect-technique-collection-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_technique_get_name_byte_count" %effect-technique-get-name-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_technique_copy_name" %effect-technique-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_technique_get_identity" %effect-technique-get-identity :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_technique_get_passes" %effect-technique-get-passes :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_technique_get_annotations" %effect-technique-get-annotations :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_technique_destroy" %effect-technique-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_pass_collection_get_count" %effect-pass-collection-get-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_pass_collection_get_at" %effect-pass-collection-get-at :uint32 (:uint64 :uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_pass_collection_destroy" %effect-pass-collection-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_pass_get_name_byte_count" %effect-pass-get-name-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_pass_copy_name" %effect-pass-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_pass_get_annotations" %effect-pass-get-annotations :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_pass_apply" %effect-pass-apply :uint32 (:uint64) :thread :game :ownership "none")
+    ("cna_effect_pass_destroy" %effect-pass-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_annotation_collection_get_count" %effect-annotation-collection-get-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_collection_get_at" %effect-annotation-collection-get-at :uint32 (:uint64 :uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_annotation_collection_destroy" %effect-annotation-collection-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_annotation_get_info" %effect-annotation-get-info :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_name_byte_count" %effect-annotation-get-name-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_copy_name" %effect-annotation-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_semantic_byte_count" %effect-annotation-get-semantic-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_copy_semantic" %effect-annotation-copy-semantic :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_value_string_byte_count" %effect-annotation-get-value-string-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_copy_value_string" %effect-annotation-copy-value-string :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_value_boolean" %effect-annotation-get-value-boolean :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_value_int32" %effect-annotation-get-value-int-32 :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_value_single" %effect-annotation-get-value-single :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_value_vector2" %effect-annotation-get-value-vector-2 :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_value_vector3" %effect-annotation-get-value-vector-3 :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_value_vector4" %effect-annotation-get-value-vector-4 :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_get_value_matrix" %effect-annotation-get-value-matrix :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_annotation_destroy" %effect-annotation-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_parameter_collection_get_count" %effect-parameter-collection-get-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_collection_get_at" %effect-parameter-collection-get-at :uint32 (:uint64 :uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_parameter_collection_find_name" %effect-parameter-collection-find-name :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :game :ownership "owns")
+    ("cna_effect_parameter_collection_find_semantic" %effect-parameter-collection-find-semantic :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :game :ownership "owns")
+    ("cna_effect_parameter_collection_destroy" %effect-parameter-collection-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_parameter_get_info" %effect-parameter-get-info :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_get_name_byte_count" %effect-parameter-get-name-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_copy_name" %effect-parameter-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_get_semantic_byte_count" %effect-parameter-get-semantic-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_copy_semantic" %effect-parameter-copy-semantic :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_get_elements" %effect-parameter-get-elements :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_parameter_get_structure_members" %effect-parameter-get-structure-members :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_parameter_get_annotations" %effect-parameter-get-annotations :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_parameter_get_value" %effect-parameter-get-value :uint32 (:uint64 :uint32 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_set_value" %effect-parameter-set-value :uint32 (:uint64 :uint32 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_get_values" %effect-parameter-get-values :uint32 (:uint64 :uint32 :uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_set_values" %effect-parameter-set-values :uint32 (:uint64 :uint32 :pointer :uint64) :thread :game :ownership "none")
+    ("cna_effect_parameter_get_value_string_byte_count" %effect-parameter-get-value-string-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_copy_value_string" %effect-parameter-copy-value-string :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_set_value_string" %effect-parameter-set-value-string :uint32 (:uint64 :pointer :uint64) :thread :game :ownership "none")
+    ("cna_effect_parameter_get_value_texture" %effect-parameter-get-value-texture :uint32 (:uint64 :uint32 :pointer) :thread :game :ownership "none")
+    ("cna_effect_parameter_set_value_texture" %effect-parameter-set-value-texture :uint32 (:uint64 :uint32 :uint64) :thread :game :ownership "none")
+    ("cna_effect_parameter_destroy" %effect-parameter-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_effect_matrices_get_world" %effect-matrices-get-world :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_matrices_get_view" %effect-matrices-get-view :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_matrices_get_projection" %effect-matrices-get-projection :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_fog_get_color" %effect-fog-get-color :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_fog_set_color" %effect-fog-set-color :uint32 (:uint64 :double :float) :thread :game :ownership "none")
+    ("cna_effect_fog_get_enabled" %effect-fog-get-enabled :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_fog_set_enabled" %effect-fog-set-enabled :uint32 (:uint64 :uint8) :thread :game :ownership "none")
+    ("cna_effect_fog_get_start" %effect-fog-get-start :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_fog_set_start" %effect-fog-set-start :uint32 (:uint64 :float) :thread :game :ownership "none")
+    ("cna_effect_fog_get_end" %effect-fog-get-end :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_fog_set_end" %effect-fog-set-end :uint32 (:uint64 :float) :thread :game :ownership "none")
+    ("cna_effect_lights_get_ambient_color" %effect-lights-get-ambient-color :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_lights_set_ambient_color" %effect-lights-set-ambient-color :uint32 (:uint64 :double :float) :thread :game :ownership "none")
+    ("cna_effect_lights_get_enabled" %effect-lights-get-enabled :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_lights_set_enabled" %effect-lights-set-enabled :uint32 (:uint64 :uint8) :thread :game :ownership "none")
+    ("cna_effect_lights_get_directional_light" %effect-lights-get-directional-light :uint32 (:uint64 :uint32 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_lights_enable_default" %effect-lights-enable-default :uint32 (:uint64) :thread :game :ownership "none")
+    ("cna_directional_light_destroy" %directional-light-destroy :uint32 (:uint64) :thread :game :ownership "releases")
+    ("cna_directional_light_get_diffuse_color" %directional-light-get-diffuse-color :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_directional_light_set_diffuse_color" %directional-light-set-diffuse-color :uint32 (:uint64 :double :float) :thread :game :ownership "none")
+    ("cna_directional_light_get_direction" %directional-light-get-direction :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_directional_light_set_direction" %directional-light-set-direction :uint32 (:uint64 :double :float) :thread :game :ownership "none")
+    ("cna_directional_light_get_specular_color" %directional-light-get-specular-color :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_directional_light_set_specular_color" %directional-light-set-specular-color :uint32 (:uint64 :double :float) :thread :game :ownership "none")
+    ("cna_directional_light_get_enabled" %directional-light-get-enabled :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_directional_light_set_enabled" %directional-light-set-enabled :uint32 (:uint64 :uint8) :thread :game :ownership "none")
+    ("cna_basic_effect_get_alpha" %basic-effect-get-alpha :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_alpha" %basic-effect-set-alpha :uint32 (:uint64 :float) :thread :game :ownership "none")
+    ("cna_basic_effect_get_diffuse_color" %basic-effect-get-diffuse-color :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_diffuse_color" %basic-effect-set-diffuse-color :uint32 (:uint64 :double :float) :thread :game :ownership "none")
+    ("cna_basic_effect_get_emissive_color" %basic-effect-get-emissive-color :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_emissive_color" %basic-effect-set-emissive-color :uint32 (:uint64 :double :float) :thread :game :ownership "none")
+    ("cna_basic_effect_get_specular_color" %basic-effect-get-specular-color :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_specular_color" %basic-effect-set-specular-color :uint32 (:uint64 :double :float) :thread :game :ownership "none")
+    ("cna_basic_effect_get_specular_power" %basic-effect-get-specular-power :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_specular_power" %basic-effect-set-specular-power :uint32 (:uint64 :float) :thread :game :ownership "none")
+    ("cna_basic_effect_get_texture" %basic-effect-get-texture :uint32 (:uint64 :pointer :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_texture" %basic-effect-set-texture :uint32 (:uint64 :uint64) :thread :game :ownership "none")
+    ("cna_basic_effect_get_texture_enabled" %basic-effect-get-texture-enabled :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_texture_enabled" %basic-effect-set-texture-enabled :uint32 (:uint64 :uint8) :thread :game :ownership "none")
+    ("cna_basic_effect_get_vertex_color_enabled" %basic-effect-get-vertex-color-enabled :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_vertex_color_enabled" %basic-effect-set-vertex-color-enabled :uint32 (:uint64 :uint8) :thread :game :ownership "none")
+    ("cna_basic_effect_get_prefer_per_pixel_lighting" %basic-effect-get-prefer-per-pixel-lighting :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_basic_effect_set_prefer_per_pixel_lighting" %basic-effect-set-prefer-per-pixel-lighting :uint32 (:uint64 :uint8) :thread :game :ownership "none")
+    ("cna_sprite_batch_begin_with_effect" %sprite-batch-begin-with-effect :uint32 (:uint64 :uint32 :pointer :pointer :pointer :pointer :uint64 :pointer) :thread :game :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

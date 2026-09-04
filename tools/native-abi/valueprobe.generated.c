@@ -50,4 +50,40 @@ void cna_lisp_valueprobe_cna_rectangle_after(int32_t before, CNA_Rectangle value
     *out_after = after;
 }
 
-int cna_lisp_valueprobe_count(void) { return 3; }
+void cna_lisp_valueprobe_cna_vector2(CNA_Vector2 value, unsigned char *out)
+{
+    memcpy(out, &value, sizeof(value));
+}
+
+void cna_lisp_valueprobe_cna_vector2_after(int32_t before, CNA_Vector2 value, int32_t after, unsigned char *out, int32_t *out_before, int32_t *out_after)
+{
+    memcpy(out, &value, sizeof(value));
+    *out_before = before;
+    *out_after = after;
+}
+
+void cna_lisp_valueprobe_cna_vector3(CNA_Vector3 value, unsigned char *out)
+{
+    memcpy(out, &value, sizeof(value));
+}
+
+void cna_lisp_valueprobe_cna_vector3_after(int32_t before, CNA_Vector3 value, int32_t after, unsigned char *out, int32_t *out_before, int32_t *out_after)
+{
+    memcpy(out, &value, sizeof(value));
+    *out_before = before;
+    *out_after = after;
+}
+
+void cna_lisp_valueprobe_cna_vector4(CNA_Vector4 value, unsigned char *out)
+{
+    memcpy(out, &value, sizeof(value));
+}
+
+void cna_lisp_valueprobe_cna_vector4_after(int32_t before, CNA_Vector4 value, int32_t after, unsigned char *out, int32_t *out_before, int32_t *out_after)
+{
+    memcpy(out, &value, sizeof(value));
+    *out_before = before;
+    *out_after = after;
+}
+
+int cna_lisp_valueprobe_count(void) { return 6; }

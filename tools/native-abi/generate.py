@@ -276,11 +276,6 @@ def flatten_aggregate(sname, abi):
         raise Error(
             "%s is %d bytes: the System V AMD64 ABI classifies it MEMORY, which CFFI "
             "cannot express without cffi-libffi. Route left unbound." % (sname, size))
-    if any(c != "INTEGER" for c in classes):
-        raise Error(
-            "%s has a non-INTEGER eightbyte (%s): passing it in an SSE register is not "
-            "expressible in CFFI without cffi-libffi. Route left unbound."
-            % (sname, ",".join(classes)))
     # An eightbyte that is exactly one pointer field is bound as :pointer. It
     # occupies the same INTEGER register either way, but CFFI will not accept a
     # foreign pointer where an integer is declared, and turning every pointer
@@ -293,10 +288,20 @@ def flatten_aggregate(sname, abi):
                 pointer_eightbytes[off // 8] = True
     out = []
     remaining = size
-    for index, _ in enumerate(classes):
+    for index, cls in enumerate(classes):
         chunk = min(8, remaining)
         if pointer_eightbytes.get(index):
             out.append(":pointer")
+        elif cls == "SSE":
+            # An SSE eightbyte travels in an SSE register, and the scalar that
+            # occupies exactly that register is a C double for a full eightbyte
+            # and a C float for a trailing half one -- which is how the ABI
+            # passes a lone float argument too. CNA_Vector3's second eightbyte is
+            # the four bytes of z, so it becomes :float and not :double.
+            out.append({4: ":float", 8: ":double"}.get(chunk))
+            if out[-1] is None:
+                raise Error("%s has an SSE eightbyte of %d bytes, which no floating-point "
+                            "scalar occupies exactly" % (sname, chunk))
         else:
             out.append({1: ":uint8", 2: ":uint16", 4: ":uint32", 8: ":uint64"}.get(chunk))
             if out[-1] is None:

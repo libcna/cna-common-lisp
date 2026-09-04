@@ -61,6 +61,7 @@
 (defconstant +alignof-cna-point+ 4)
 
 ;;; CNA_Vector2 -- 8 bytes, 4-byte aligned, from core.h.
+;;; Passed by value as :double (System V AMD64 eightbyte classes: SSE).
 (defcstruct (cna-vector-2 :size 8)
   (x :float :offset 0)
   (y :float :offset 4))
@@ -577,6 +578,51 @@
 (defconstant +sizeof-cna-user-indices+ 24)
 (defconstant +alignof-cna-user-indices+ 8)
 
+;;; CNA_EffectParameterInfo -- 24 bytes, 4-byte aligned, from effects.h.
+(defcstruct (cna-effect-parameter-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (row-count :int32 :offset 8)
+  (column-count :int32 :offset 12)
+  (parameter-class :uint32 :offset 16)
+  (parameter-type :uint32 :offset 20))
+
+(defconstant +sizeof-cna-effect-parameter-info+ 24)
+(defconstant +alignof-cna-effect-parameter-info+ 4)
+
+;;; CNA_EffectAnnotationInfo -- 24 bytes, 4-byte aligned, from effects.h.
+(defcstruct (cna-effect-annotation-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (row-count :int32 :offset 8)
+  (column-count :int32 :offset 12)
+  (parameter-class :uint32 :offset 16)
+  (parameter-type :uint32 :offset 20))
+
+(defconstant +sizeof-cna-effect-annotation-info+ 24)
+(defconstant +alignof-cna-effect-annotation-info+ 4)
+
+;;; CNA_Vector3 -- 12 bytes, 4-byte aligned, from core.h.
+;;; Passed by value as :double :float (System V AMD64 eightbyte classes: SSE SSE).
+(defcstruct (cna-vector-3 :size 12)
+  (x :float :offset 0)
+  (y :float :offset 4)
+  (z :float :offset 8))
+
+(defconstant +sizeof-cna-vector-3+ 12)
+(defconstant +alignof-cna-vector-3+ 4)
+
+;;; CNA_Vector4 -- 16 bytes, 4-byte aligned, from math_values.h.
+;;; Passed by value as :double :double (System V AMD64 eightbyte classes: SSE SSE).
+(defcstruct (cna-vector-4 :size 16)
+  (x :float :offset 0)
+  (y :float :offset 4)
+  (z :float :offset 8)
+  (w :float :offset 12))
+
+(defconstant +sizeof-cna-vector-4+ 16)
+(defconstant +alignof-cna-vector-4+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -621,6 +667,10 @@
     (cna-index-buffer-info 24 4 ((struct-size 0 4) (struct-version 4 4) (index-count 8 4) (index-element-size 12 4) (buffer-usage 16 4) (dynamic 20 1) (is-content-lost 21 1) (has-renderer 22 1) (reserved 23 1)))
     (cna-index-buffer-transfer 32 8 ((struct-size 0 4) (struct-version 4 4) (index-element-size 8 4) (options 12 4) (start-index 16 8) (element-count 24 8)))
     (cna-user-primitives 48 8 ((struct-size 0 4) (struct-version 4 4) (primitive-type 8 4) (vertex-source 12 4) (vertex-data 16 8) (vertex-declaration 24 8) (vertex-offset 32 4) (num-vertices 36 4) (primitive-count 40 4) (reserved 44 4)))
-    (cna-user-indices 24 8 ((struct-size 0 4) (struct-version 4 4) (index-element-size 8 4) (index-offset 12 4) (index-data 16 8))))
+    (cna-user-indices 24 8 ((struct-size 0 4) (struct-version 4 4) (index-element-size 8 4) (index-offset 12 4) (index-data 16 8)))
+    (cna-effect-parameter-info 24 4 ((struct-size 0 4) (struct-version 4 4) (row-count 8 4) (column-count 12 4) (parameter-class 16 4) (parameter-type 20 4)))
+    (cna-effect-annotation-info 24 4 ((struct-size 0 4) (struct-version 4 4) (row-count 8 4) (column-count 12 4) (parameter-class 16 4) (parameter-type 20 4)))
+    (cna-vector-3 12 4 ((x 0 4) (y 4 4) (z 8 4)))
+    (cna-vector-4 16 4 ((x 0 4) (y 4 4) (z 8 4) (w 12 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

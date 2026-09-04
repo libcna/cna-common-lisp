@@ -129,3 +129,78 @@
     (let ((name (xna:clr-type-name game)))
       (is (stringp name))
       (is (string= "Microsoft.Xna.Framework.Game" name)))))
+
+;;; --- the SSE half of the flattening ----------------------------------------
+;;;
+;;; A CNA_Vector3 is three floats, so the System V AMD64 ABI classifies both of
+;;; its eightbytes SSE and passes them in *SSE* registers, not integer ones. The
+;;; generator flattens such an eightbyte to the scalar that occupies exactly that
+;;; register -- a C double for a whole one, a C float for a trailing four-byte
+;;; one. That is a claim about a calling convention, so it is proved the same way
+;;; the integer half is: against a C compiler's own idea of it.
+;;;
+;;; This is what lets the whole effect colour surface bind directly.
+;;; BasicEffect's World, View and Projection setters take a CNA_Matrix, which is
+;;; 64 bytes and therefore MEMORY class, and those three are the shim's.
+
+(cffi:defcfun ("cna_lisp_valueprobe_cna_vector2" %probe-vector-2) :void
+  (value-0 :double) (out :pointer))
+
+(cffi:defcfun ("cna_lisp_valueprobe_cna_vector3" %probe-vector-3) :void
+  (value-0 :double) (value-1 :float) (out :pointer))
+
+(cffi:defcfun ("cna_lisp_valueprobe_cna_vector3_after" %probe-vector-3-after) :void
+  (before :int32) (value-0 :double) (value-1 :float) (after :int32)
+  (out :pointer) (out-before :pointer) (out-after :pointer))
+
+(cffi:defcfun ("cna_lisp_valueprobe_cna_vector4" %probe-vector-4) :void
+  (value-0 :double) (value-1 :double) (out :pointer))
+
+(defun eightbyte-of-floats (a b)
+  "The double whose bits are the two single floats A and B, in that order."
+  (cffi:with-foreign-object (pair :float 2)
+    (setf (cffi:mem-aref pair :float 0) (float a 1.0f0)
+          (cffi:mem-aref pair :float 1) (float b 1.0f0))
+    (cffi:mem-ref pair :double)))
+
+(defun probed-floats (out count)
+  (loop for index below count collect (cffi:mem-aref out :float index)))
+
+(define-valueprobe-test an-sse-eightbyte-pair-arrives-intact
+  ;; CNA_Vector2: one whole SSE eightbyte, so one double.
+  (cffi:with-foreign-object (out :uint8 8)
+    (%probe-vector-2 (eightbyte-of-floats 1.25f0 -8.5f0) out)
+    (is (equal '(1.25f0 -8.5f0) (probed-floats out 2)))))
+
+(define-valueprobe-test a-three-float-aggregate-arrives-intact
+  ;; CNA_Vector3: a whole SSE eightbyte and a trailing half one. Getting the
+  ;; second wrong -- passing it as a double, or in an integer register -- would
+  ;; put rubbish in Z and leave X and Y looking right, so Z is the field the
+  ;; values below make hard to fake.
+  (cffi:with-foreign-object (out :uint8 12)
+    (dolist (triple '((0.0f0 0.0f0 0.0f0)
+                      (1.0f0 2.0f0 3.0f0)
+                      (-0.5f0 1.0f-30 -7.75f0)
+                      (1.0f10 -1.0f10 12345.678f0)))
+      (destructuring-bind (x y z) triple
+        (%probe-vector-3 (eightbyte-of-floats x y) z out)
+        (is (equal triple (probed-floats out 3))
+            "CNA_Vector3 ~a arrived as ~a" triple (probed-floats out 3))))))
+
+(define-valueprobe-test an-sse-aggregate-consumes-exactly-its-own-registers
+  ;; Integers on both sides: the SSE eightbytes must take SSE registers and leave
+  ;; the integer sequence to the integers, which is the half of the ABI rule that
+  ;; makes flattening work at all.
+  (cffi:with-foreign-objects ((out :uint8 12) (before :int32) (after :int32))
+    (%probe-vector-3-after -321 (eightbyte-of-floats 4.5f0 6.25f0) -0.75f0 654
+                           out before after)
+    (is (= -321 (cffi:mem-ref before :int32)))
+    (is (= 654 (cffi:mem-ref after :int32)))
+    (is (equal '(4.5f0 6.25f0 -0.75f0) (probed-floats out 3)))))
+
+(define-valueprobe-test a-sixteen-byte-sse-aggregate-arrives-intact
+  ;; CNA_Vector4: two whole SSE eightbytes, so two doubles.
+  (cffi:with-foreign-object (out :uint8 16)
+    (%probe-vector-4 (eightbyte-of-floats 1.5f0 2.5f0)
+                     (eightbyte-of-floats 3.5f0 4.5f0) out)
+    (is (equal '(1.5f0 2.5f0 3.5f0 4.5f0) (probed-floats out 4)))))
