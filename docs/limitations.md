@@ -143,6 +143,101 @@ overload XNA has not got.
 the `System.IO.Stream` projection. `TEXTURE-2D-FROM-PNG-BYTES` and
 `TEXTURE-2D-FROM-PNG-FILE` stay declared extensions until then.
 
+## Content: what loads, and the four things that do not follow XNA
+
+`ContentManager` is projected, `Game.Content` with it, and that is what makes a
+`SpriteFont` obtainable at all — before it, the only producer in this binding was
+a test-only one and no program written against the public API could draw text.
+
+`Load<T>` is the one place this projection is **closer** to XNA than the C ABI
+can be. CNA spells the generic method as one route per asset type —
+`cna_content_manager_load_texture2d`, `..._load_sprite_font`,
+`..._load_texture_cube` — because a C caller cannot name a type. Common Lisp can,
+so the type stays an argument:
+
+```lisp
+(let ((content (xna:content game)))
+  (setf (content:root-directory content) "Content")
+  (multiple-value-bind (font atlas)
+      (content:load-asset content 'gfx:sprite-font "font")
+    ...))
+```
+
+`LOADABLE-ASSET-TYPES` answers the three types above, which is why `Load` is
+reported **partial**: XNA's is generic over anything with a content reader, and
+the set here is finite because CNA's routes are.
+
+### The asset format is `.cnj`, measured and not assumed
+
+CNA's header says the SpriteFont loader "reads both the `.xnb` font container and
+CNA's own `.cnj` font descriptor". Measured against ABI 0.21.0, a `.cnj` loads
+with or without its extension in the asset name, and the older `.font.json`
+convention its own design notes mention does **not** — it fails with
+`CNA_RESULT_IO`. `tests/fixtures/test-font.cnj` is the descriptor this suite
+uses, and `tools/qualification/make-font-fixture.py` generates the template's.
+
+### `Load<SpriteFont>` answers two objects, because a font is two things
+
+CNA hands back the glyph atlas alongside the font: "handing back only the font
+would leave the atlas alive but unnameable". Both are owned resources, so both
+come back here, and both must be disposed — **the font first**, because a
+SpriteFont keeps its atlas alive and CNA refuses the other order. The binding
+records that parenting, so the wrong order is a diagnosable refusal rather than a
+native failure.
+
+### There is no cache, and XNA has one
+
+XNA's `ContentManager` caches by asset name: `Load<T>("x")` twice answers the
+same instance, and `Unload()` releases it. CNA's ABI has one create-shaped route
+per asset type with no cache in front, so **each call builds a new native
+object**. A program that loads the same font twice owns two fonts and two atlases
+and must dispose all four. `Unload()` is projected and does what CNA's does — it
+drops the manager's own cache and, in CNA's words, "independently owned resource
+handles returned by the manager are not destroyed by this call". Pinned by a
+test, so a CNA that grew a cache would fail rather than pass quietly.
+
+### A loaded `Texture2D` cannot report its size
+
+`Texture2D.Width` and `Height` are reported **partial**, and this is the reason.
+ABI 0.21.0 has no route that answers a texture's dimensions:
+`cna_texture_get_info` answers the level count and the surface format,
+`cna_texture2d_get_storage_info` answers which storage is retained, and neither
+answers a width. A texture decoded through `TEXTURE-2D-FROM-PNG-BYTES` knows its
+size because this binding read it out of the PNG header on the way past; one the
+content manager loaded was never handed to this binding as bytes, so there is
+nothing to have read. `WIDTH` and `HEIGHT` **refuse** on such a texture, with a
+condition naming the missing route. Answering zero would be a lie that draws
+wrong-sized quads.
+
+A `TextureCube` has no such problem: `cna_texturecube_get_info` reports its edge
+size, so a loaded cube is as complete as a constructed one. The asymmetry is
+CNA's.
+
+### Three members of `ContentManager`, and `Game.Content`'s setter
+
+* **Both constructors** take a `System.IServiceProvider`, which this binding
+  cannot produce — the same obstacle `Game.Services` runs into above. CNA's own
+  constructor takes the graphics device instead, and `MAKE-INSTANCE` projects
+  *that*, as a declared extension rather than as either canonical overload.
+* **`ServiceProvider`** is missing for the same reason.
+  `cna_content_manager_get_has_service_provider` reports whether the native
+  manager has one, not what it is.
+* **`ReadAsset` and `OpenStream`** are protected hooks. CNA's loaders read and
+  construct in one route with no callback in between, and no stream object
+  crosses its C boundary.
+* **`Game.Content`'s setter** is not projected, which is why that member is
+  partial. XNA's `Game.Content = m` assigns a reference; CNA's
+  `cna_game_set_content_manager_ext` **copies** — its header says "the canonical
+  setter takes a reference and copies, so this does too: the caller keeps its own
+  manager". Reading the property back would answer a different object than the
+  one assigned, and a setter that silently means something else is worse than a
+  missing one.
+
+A game's own manager is also not disposable: CNA lends it as a borrowed handle
+that "answers the same handle every time, cannot be destroyed, and is released
+with its game". `DISPOSE` on it is refused here with a condition that says so,
+one step before CNA would refuse it.
+
 ## The component engine runs, and two things around it do not
 
 `GameComponent`, `DrawableGameComponent`, `GameComponentCollection`,

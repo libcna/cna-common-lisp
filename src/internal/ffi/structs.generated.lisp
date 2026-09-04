@@ -831,6 +831,16 @@
 (defconstant +sizeof-cna-texture-cube-info+ 24)
 (defconstant +alignof-cna-texture-cube-info+ 4)
 
+;;; CNA_ContentManagerCreateInfo -- 32 bytes, 8-byte aligned, from content.h.
+(defcstruct (cna-content-manager-create-info :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (root-directory (:struct cna-string-view) :offset 8)
+  (reserved :uint64 :offset 24))
+
+(defconstant +sizeof-cna-content-manager-create-info+ 32)
+(defconstant +alignof-cna-content-manager-create-info+ 8)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -893,6 +903,7 @@
     (cna-texture-2d-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (mip-map 16 1) (reserved 17 3) (format 20 4)))
     (cna-texture-cube-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (mip-map 12 1) (reserved-0 13 3) (format 16 4) (reserved-1 20 4)))
     (cna-texture-cube-transfer 56 8 ((struct-size 0 4) (struct-version 4 4) (face 8 4) (level 12 4) (has-rectangle 16 1) (reserved-0 17 3) (rectangle 20 16) (reserved-1 36 4) (start-index 40 8) (element-count 48 8)))
-    (cna-texture-cube-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (level-count 12 4) (format 16 4) (reserved 20 4))))
+    (cna-texture-cube-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (level-count 12 4) (format 16 4) (reserved 20 4)))
+    (cna-content-manager-create-info 32 8 ((struct-size 0 4) (struct-version 4 4) (root-directory 8 16) (reserved 24 8))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

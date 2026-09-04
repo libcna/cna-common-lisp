@@ -1,0 +1,12 @@
+{
+  "cnjVersion": 1,
+  "type": "SpriteFont",
+  "texture": "glyph-atlas-16x8.png",
+  "lineSpacing": 12,
+  "spacing": 0.0,
+  "defaultCharacter": "A",
+  "glyphs": [
+    { "char": 65, "source": [0, 0, 8, 8], "crop": [0, 0, 8, 8], "kerning": [0, 8, 0] },
+    { "char": 66, "source": [8, 0, 8, 8], "crop": [0, 0, 8, 8], "kerning": [0, 8, 0] }
+  ]
+}

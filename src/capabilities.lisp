@@ -55,6 +55,11 @@
       Dictionary<string, string> and adds nothing at all, so every operation on
       one belongs to the BCL dictionary. These two are the reachable half of it:
       read a value, set or remove one, and list the names.")
+    (microsoft.xna.framework.content loadable-asset-types
+     "Which asset types LOAD-ASSET has a native route for. XNA's Load<T> is
+      generic over any type with a content reader and needs no such list; CNA's
+      ABI has one loader per asset type, so the set this binding can honour is
+      finite. Naming it is better than discovering it one failure at a time.")
     (microsoft.xna.framework.graphics renderer-name
      "Which renderer is behind the device. XNA has no equivalent; without it a
       headless qualification run cannot be interpreted.")

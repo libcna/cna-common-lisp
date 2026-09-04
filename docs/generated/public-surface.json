@@ -3073,6 +3073,27 @@
           "documentation": "GameComponentCollection.Contains."
         },
         {
+          "name": "content",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.Content: the content manager this game owns.\n\nThe same object every time, as XNA's field is. It is a facade over the game's\nown manager -- CNA lends that one as a borrowed handle which \"answers the same\nhandle every time, cannot be destroyed, and is released with its game\" -- so it\nis not disposed, and disposing it is refused with a diagnosable condition rather\nthan a native failure.\n\n**XNA's setter is not projected.** `Game.Content = m' assigns a reference there;\nCNA's `cna_game_set_content_manager_ext' *copies*, so reading the property back\nwould answer a different object than the one assigned. docs/limitations.md."
+        },
+        {
           "name": "copy-bounding-box",
           "fbound": true,
           "macro": false,
@@ -17169,7 +17190,7 @@
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "object"
+            "texture"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -17182,7 +17203,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": null
+          "documentation": "Texture2D.Height, in pixels. See WIDTH for when it refuses."
         },
         {
           "name": "index-buffer",
@@ -20973,7 +20994,7 @@
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "object"
+            "texture"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -20986,7 +21007,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": null
+          "documentation": "Texture2D.Width, in pixels.\n\n**Refuses on a content-loaded texture**, and that is CNA's limit rather than a\ndecision here: ABI 0.21.0 has no route that reports a Texture2D's dimensions.\n`cna_texture_get_info' answers the level count and the surface format,\n`cna_texture2d_get_storage_info' answers which storage is retained, and neither\nanswers a width. A texture decoded through TEXTURE-2D-FROM-PNG-BYTES knows its\nsize because this binding read it out of the image header on the way past; a\ntexture the content manager loaded was never handed to this binding as bytes, so\nthere is nothing to have read. Answering zero would be a lie that draws\nwrong-sized quads; refusing says what is missing."
         }
       ]
     },
@@ -23959,6 +23980,123 @@
           "constant": false,
           "value": null,
           "documentation": "SHORT4.TO-VECTOR4."
+        }
+      ]
+    },
+    {
+      "package": "microsoft.xna.framework.content",
+      "symbols": [
+        {
+          "name": "content-manager",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.content:content-manager",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Content.ContentManager: loads assets by logical name.\n\nReached as a game's own manager, which is the usual way:\n\n    (let ((content (microsoft.xna.framework:content game)))\n      (setf (root-directory content) \"Content\")\n      (load-asset content 'microsoft.xna.framework.graphics:sprite-font \"Arial\"))\n\nor built over a graphics device, which is a declared extension -- XNA's two\nconstructors take an `IServiceProvider' and this binding has none:\n\n    (make-instance 'content-manager :graphics-device device\n                                    :root-directory \"Content\")\n\nA game's manager is released with its game and cannot be disposed. One built\nhere is an owned child of the game and must be."
+        },
+        {
+          "name": "load-asset",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "type",
+            "asset-name"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "ContentManager.Load<T>(String): load the asset named ASSET-NAME as TYPE.\n\n    (load-asset content 'microsoft.xna.framework.graphics:sprite-font \"Arial\")\n    (load-asset content 'microsoft.xna.framework.graphics:texture-2d \"logo\")\n\nTYPE is the Lisp type symbol XNA spells as the generic argument, which is the one\nplace this projection is *closer* to XNA than the C ABI can be: `Load<T>' stays a\nsingle member instead of becoming one function per asset type.\n\nThe asset name is logical, resolved against ROOT-DIRECTORY, and its extension is\noptional. LOADABLE-ASSET-TYPES answers which types are loadable.\n\nThe loaded object is owned by the game and disposed with\nMICROSOFT.XNA.FRAMEWORK:DISPOSE, before it. Loading the same name twice answers\ntwo distinct objects here, because CNA's per-asset routes each create one; XNA's\nmanager caches and answers the same instance. That difference is recorded in\ndocs/limitations.md."
+        },
+        {
+          "name": "loadable-asset-types",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The asset types LOAD-ASSET has a native route for, most useful first.\n\nA declared extension. XNA's `Load<T>' is generic over any type with a content\nreader and needs no such list; CNA's ABI has one route per asset type, so the set\nthis binding can honour is finite, and saying which types those are is better\nthan discovering it one failure at a time."
+        },
+        {
+          "name": "root-directory",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "manager"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "ContentManager.RootDirectory: the directory asset names are resolved against."
+        },
+        {
+          "name": "unload",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "ContentManager.Unload(): drop what the manager has cached.\n\nThis does **not** destroy objects already handed out. Every object LOAD-ASSET\nanswered is an owned CNA resource with its own lifetime, and CNA's own note says\nso: \"independently owned resource handles returned by the manager are not\ndestroyed by this call\". Dispose them yourself, as you would any other\nresource."
         }
       ]
     },
@@ -28830,6 +28968,13 @@
         "launch-parameter-names"
       ],
       "reason": "LaunchParameters' own operations. XNA derives the type from\n      Dictionary<string, string> and adds nothing at all, so every operation on\n      one belongs to the BCL dictionary. These two are the reachable half of it:\n      read a value, set or remove one, and list the names."
+    },
+    {
+      "package": "microsoft.xna.framework.content",
+      "symbols": [
+        "loadable-asset-types"
+      ],
+      "reason": "Which asset types LOAD-ASSET has a native route for. XNA's Load<T> is\n      generic over any type with a content reader and needs no such list; CNA's\n      ABI has one loader per asset type, so the set this binding can honour is\n      finite. Naming it is better than discovering it one failure at a time."
     },
     {
       "package": "microsoft.xna.framework.graphics",

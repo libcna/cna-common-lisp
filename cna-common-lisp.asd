@@ -102,6 +102,12 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; The component engine: classes CNA calls back into, and the collection the
    ;; game drives them from. After Game, whose class it extends.
    (:file "runtime/game-components")
+   ;; --- Microsoft.Xna.Framework.Content ------------------------------------
+   ;; The manager first, then the loaders that produce graphics objects, then
+   ;; Game.Content, which needs both GAME and CONTENT-MANAGER to exist.
+   (:file "content/content-manager")
+   (:file "content/content-loaders")
+   (:file "content/game-content")
    ;; --- declared capabilities and deliberate absences ----------------------
    (:file "capabilities"))
   :in-order-to ((test-op (test-op "cna-common-lisp/tests"))))
@@ -153,6 +159,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/game-components")
    ;; The text pixel proofs build on the SpriteFont fixture game.
    (:file "native/sprite-font")
+   (:file "native/content")
    (:file "native/rasterization")
    (:file "native/graphics-resource")
    (:file "native/keyboard")

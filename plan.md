@@ -237,6 +237,13 @@ are pure managed and touch no native route:
   The rasterizer lane's sixth proof uses that: a clear into a bound target leaves
   the back buffer untouched, and the target's own contents then reach the screen
   through the texture path;
+* **content** -- `ContentManager`, `Game.Content`, and `Load<T>` over the three
+  asset types CNA has a route for. This is the member that closes the SpriteFont
+  loop: a font is glyph metrics *and* an atlas, neither of which a program can
+  construct from arguments, so until a content manager existed the only producer
+  was a test-only one. `Load<T>` stays a single member here rather than becoming
+  one function per asset type, because Common Lisp can name a type -- the one
+  place this projection is closer to XNA than the C ABI can be;
 * the component engine -- `GameComponent`, `DrawableGameComponent`,
   `GameComponentCollection` and its two events, `GameComponentCollectionEventArgs`,
   the three `I*` contracts as generic functions, `LaunchParameters`, and
@@ -282,31 +289,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=144 -->
-<!-- generated:selected members=2233 -->
+<!-- generated:selected types=145 -->
+<!-- generated:selected members=2243 -->
 <!-- generated:complete types=134 -->
-<!-- generated:partial types=10 -->
+<!-- generated:partial types=11 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1758 -->
-<!-- generated:partial members=7 -->
-<!-- generated:missing members=56 -->
-<!-- generated:not-applicable members=412 -->
+<!-- generated:complete members=1759 -->
+<!-- generated:partial members=11 -->
+<!-- generated:missing members=58 -->
+<!-- generated:not-applicable members=415 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 144 types, 2233 members.
+Selection **Foundation 1 and the managed closures**: 145 types, 2243 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **134** |
-| Types partial | **10** |
+| Types partial | **11** |
 | Types missing | **0** |
-| Members complete | **1758** |
-| Members partial | **7** |
-| Members missing | **56** |
-| Members not applicable | **412** |
+| Members complete | **1759** |
+| Members partial | **11** |
+| Members missing | **58** |
+| Members not applicable | **415** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

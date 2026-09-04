@@ -677,6 +677,11 @@
       "name": "CNA_TextureCubeInfo",
       "direction": "out",
       "versioned": true
+    },
+    {
+      "name": "CNA_ContentManagerCreateInfo",
+      "direction": "in",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -3028,6 +3033,84 @@
       "name": "cna_environment_map_effect_set_texture",
       "header": "effects.h",
       "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_content_manager_create",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_content_manager_destroy",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "destroys"
+    },
+    {
+      "name": "cna_content_manager_register_builtin_loaders",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_get_content_manager_ext",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_content_manager_set_root_directory",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_content_manager_get_root_directory_size",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_content_manager_copy_root_directory",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_content_manager_get_graphics_device",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_content_manager_get_has_service_provider",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_content_manager_load_texture2d",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_content_manager_load_texture_cube",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_content_manager_load_sprite_font",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_content_manager_unload",
+      "header": "content.h",
+      "thread": "game",
       "ownership": "none"
     }
   ],

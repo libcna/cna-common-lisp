@@ -102,6 +102,26 @@ Owned by the game and disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE, before it."
                 (ignore-errors
                  (cna-lisp.internal.ffi::%texturecube-destroy handle))))))))))
 
+(defun %adopt-loaded-texture-cube (game handle)
+  "Wrap a cube a ContentManager created.
+
+Unlike a Texture2D, a cube *can* report its own shape: `cna_texturecube_get_info'
+answers the edge size, the level count and the format, so a loaded cube is as
+complete as a constructed one."
+  (cna-lisp.internal:with-native-rollback (record)
+    (funcall record (lambda () (cna-lisp.internal.ffi::%texturecube-destroy handle)))
+    (multiple-value-bind (size levels format)
+        (%texture-cube-info handle "load-asset 'texture-cube")
+      (let ((texture (make-instance 'texture-cube
+                                    :handle handle
+                                    :ownership :owned
+                                    :owner game
+                                    :owner-thread (cna-lisp.internal:owner-thread-of game)
+                                    :size size :level-count levels :format format)))
+        (cna-lisp.internal:register-child game texture)
+        (funcall record (lambda () (cna-lisp.internal:unregister-child game texture)))
+        texture))))
+
 (defmethod cna-lisp.internal:destroy-native ((texture texture-cube))
   (cna-lisp.internal:check-result
    (cna-lisp.internal.ffi::%texturecube-destroy (cna-lisp.internal:handle-of texture))

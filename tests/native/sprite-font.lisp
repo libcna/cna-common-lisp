@@ -52,17 +52,30 @@ accidentally fill."
   (:documentation
    "Builds a real CNA SpriteFont over a real Texture2D during LoadContent."))
 
+(defgeneric %build-fixture-font (game device)
+  (:documentation
+   "Answer (values FONT ATLAS) for GAME's fixture font.
+
+A hook, so the same pixel proofs can run against a font that was *loaded* through
+a ContentManager rather than built here. The two paths must put identical pixels
+on the back buffer; if they do not, one of them is wrong, and the rasterization
+suite is where that shows up rather than in a metrics comparison.")
+  (:method ((game sprite-font-game) device)
+    (let ((atlas (gfx:texture-2d-from-png-file
+                  device (fixture-path *glyph-atlas-fixture*))))
+      (values (gfx::%make-sprite-font-from-glyphs
+               atlas (or (rows game) (glyph-atlas-rows))
+               :line-spacing (font-line-spacing game)
+               :spacing (font-spacing game))
+              atlas))))
+
 (defmethod xna:load-content ((game sprite-font-game))
   (call-next-method)
   (handler-case
-      (let* ((device (xna:graphics-device game))
-             (atlas (gfx:texture-2d-from-png-file
-                     device (fixture-path *glyph-atlas-fixture*))))
+      (multiple-value-bind (font atlas)
+          (%build-fixture-font game (xna:graphics-device game))
         (setf (atlas game) atlas
-              (font game) (gfx::%make-sprite-font-from-glyphs
-                           atlas (or (rows game) (glyph-atlas-rows))
-                           :line-spacing (font-line-spacing game)
-                           :spacing (font-spacing game))))
+              (font game) font))
     (error (condition) (setf (build-error game) condition))))
 
 (defmacro with-sprite-font-game ((variable &rest initargs) &body body)

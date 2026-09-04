@@ -121,6 +121,11 @@ stubs:
 * `Texture2D` **made blank and filled by the program**: both constructors and
   the three `SetData` and three `GetData` overloads, accepted only for element
   types whose binary layout the binding can prove;
+* **content**: `ContentManager` and `Game.Content`, which is what makes a
+  `SpriteFont` obtainable -- `(load-asset content 'gfx:sprite-font "font")` is
+  XNA's `Load<SpriteFont>`, with the type as an argument because Common Lisp can
+  name one where C cannot. Texture2D, TextureCube and SpriteFont are the asset
+  types CNA has a route for, and `LOADABLE-ASSET-TYPES` says so;
 * the **component engine**: `GameComponent`, `DrawableGameComponent`,
   `Game.Components` and the collection's two events. A component's behaviour is
   its CLOS methods on the same generic functions a `Game` overrides, and CNA's own
@@ -169,27 +174,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=144 -->
-<!-- generated:selected members=2233 -->
+<!-- generated:selected types=145 -->
+<!-- generated:selected members=2243 -->
 <!-- generated:complete types=134 -->
-<!-- generated:partial types=10 -->
+<!-- generated:partial types=11 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1758 -->
-<!-- generated:partial members=7 -->
-<!-- generated:missing members=56 -->
-<!-- generated:not-applicable members=412 -->
+<!-- generated:complete members=1759 -->
+<!-- generated:partial members=11 -->
+<!-- generated:missing members=58 -->
+<!-- generated:not-applicable members=415 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=385 -->
-<!-- generated:bound native structs=60 -->
+<!-- generated:bound native functions=398 -->
+<!-- generated:bound native structs=61 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **144 XNA types and 2233 members**:
+The generated scoreboard, over a selection of **145 XNA types and 2243 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **134 / 10 / 0** |
-| Members complete / missing | **1758 / 56** |
-| Members not applicable | **412** |
+| Types complete / partial / missing | **134 / 11 / 0** |
+| Members complete / missing | **1759 / 58** |
+| Members not applicable | **415** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -202,7 +207,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **385 native routes** and **60 native structs**,
+The private foreign layer binds **398 native routes** and **61 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

@@ -194,6 +194,7 @@
    #:game
    #:initialize #:load-content #:unload-content
    #:begin-run #:end-run #:update #:begin-draw #:draw #:end-draw #:on-exiting
+   #:content
    #:run #:run-one-frame #:tick #:exit #:suppress-draw #:reset-elapsed-time
    #:graphics-device #:is-active #:is-mouse-visible #:is-fixed-time-step
    #:target-elapsed-time #:inactive-sleep-time #:window-title #:clr-type-name
@@ -428,6 +429,23 @@
    ;; --- SpriteFont --------------------------------------------------------
    #:sprite-font #:line-spacing #:spacing #:default-character #:characters
    #:measure-string))
+
+(defpackage #:microsoft.xna.framework.content
+  (:documentation
+   "Common Lisp projection of the Microsoft.Xna.Framework.Content namespace.
+
+Content is where this binding gets to use the one thing C could not: Common Lisp
+can name a type. XNA's `Load<T>' is generic over the asset type, and the C ABI
+has to spell that as a separate route per asset -- `cna_content_manager_load_
+texture2d', `..._load_sprite_font', `..._load_texture_cube'. LOAD-ASSET takes the
+type as its argument, so `Load<SpriteFont>(name)' reads as
+`(load-asset manager \='sprite-font name)' rather than as a differently-named
+function.")
+  (:use #:cl)
+  (:export
+   ;; --- ContentManager ----------------------------------------------------
+   #:content-manager #:root-directory #:load-asset #:unload
+   #:loadable-asset-types))
 
 (defpackage #:microsoft.xna.framework.graphics.packed-vector
   (:documentation

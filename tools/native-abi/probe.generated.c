@@ -1099,6 +1099,17 @@ _Static_assert(sizeof(((CNA_TextureCubeInfo *)0)->format) == 4, "CNA_TextureCube
 _Static_assert(offsetof(CNA_TextureCubeInfo, reserved) == 20, "CNA_TextureCubeInfo.reserved offset");
 _Static_assert(sizeof(((CNA_TextureCubeInfo *)0)->reserved) == 4, "CNA_TextureCubeInfo.reserved size");
 
+_Static_assert(sizeof(CNA_ContentManagerCreateInfo) == 32, "CNA_ContentManagerCreateInfo size");
+_Static_assert(_Alignof(CNA_ContentManagerCreateInfo) == 8, "CNA_ContentManagerCreateInfo alignment");
+_Static_assert(offsetof(CNA_ContentManagerCreateInfo, struct_size) == 0, "CNA_ContentManagerCreateInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_ContentManagerCreateInfo *)0)->struct_size) == 4, "CNA_ContentManagerCreateInfo.struct_size size");
+_Static_assert(offsetof(CNA_ContentManagerCreateInfo, struct_version) == 4, "CNA_ContentManagerCreateInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_ContentManagerCreateInfo *)0)->struct_version) == 4, "CNA_ContentManagerCreateInfo.struct_version size");
+_Static_assert(offsetof(CNA_ContentManagerCreateInfo, root_directory) == 8, "CNA_ContentManagerCreateInfo.root_directory offset");
+_Static_assert(sizeof(((CNA_ContentManagerCreateInfo *)0)->root_directory) == 16, "CNA_ContentManagerCreateInfo.root_directory size");
+_Static_assert(offsetof(CNA_ContentManagerCreateInfo, reserved) == 24, "CNA_ContentManagerCreateInfo.reserved offset");
+_Static_assert(sizeof(((CNA_ContentManagerCreateInfo *)0)->reserved) == 8, "CNA_ContentManagerCreateInfo.reserved size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1486,6 +1497,19 @@ CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_environment_map
 CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_fresnel_factor)(CNA_EffectHandle, float) = cna_environment_map_effect_set_fresnel_factor;
 CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_specular)(CNA_EffectHandle, CNA_Vector3) = cna_environment_map_effect_set_specular;
 CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_texture)(CNA_EffectHandle, CNA_Handle) = cna_environment_map_effect_set_texture;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_create)(CNA_Handle, const CNA_ContentManagerCreateInfo*, CNA_Handle*) = cna_content_manager_create;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_destroy)(CNA_Handle) = cna_content_manager_destroy;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_register_builtin_loaders)(CNA_Handle) = cna_content_manager_register_builtin_loaders;
+CNA_Result (*const cna_lisp_probe_cna_game_get_content_manager_ext)(CNA_Handle, CNA_Handle*) = cna_game_get_content_manager_ext;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_set_root_directory)(CNA_Handle, CNA_StringView) = cna_content_manager_set_root_directory;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_get_root_directory_size)(CNA_Handle, uint64_t*) = cna_content_manager_get_root_directory_size;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_copy_root_directory)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_content_manager_copy_root_directory;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_get_graphics_device)(CNA_Handle, CNA_Handle*) = cna_content_manager_get_graphics_device;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_get_has_service_provider)(CNA_Handle, CNA_Bool*) = cna_content_manager_get_has_service_provider;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_load_texture2d)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_content_manager_load_texture2d;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_load_texture_cube)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_content_manager_load_texture_cube;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_load_sprite_font)(CNA_Handle, CNA_StringView, CNA_Handle*, CNA_Handle*) = cna_content_manager_load_sprite_font;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_unload)(CNA_Handle) = cna_content_manager_unload;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");

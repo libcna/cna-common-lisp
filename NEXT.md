@@ -96,31 +96,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=144 -->
-<!-- generated:selected members=2233 -->
+<!-- generated:selected types=145 -->
+<!-- generated:selected members=2243 -->
 <!-- generated:complete types=134 -->
-<!-- generated:partial types=10 -->
+<!-- generated:partial types=11 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1758 -->
-<!-- generated:partial members=7 -->
-<!-- generated:missing members=56 -->
-<!-- generated:not-applicable members=412 -->
+<!-- generated:complete members=1759 -->
+<!-- generated:partial members=11 -->
+<!-- generated:missing members=58 -->
+<!-- generated:not-applicable members=415 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 144 types, 2233 members.
+Selection **Foundation 1 and the managed closures**: 145 types, 2243 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **134** |
-| Types partial | **10** |
+| Types partial | **11** |
 | Types missing | **0** |
-| Members complete | **1758** |
-| Members partial | **7** |
-| Members missing | **56** |
-| Members not applicable | **412** |
+| Members complete | **1759** |
+| Members partial | **11** |
+| Members missing | **58** |
+| Members not applicable | **415** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -136,7 +136,7 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=10 --> are partial, and this is where the remaining
+<!-- generated:partial types=11 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
@@ -144,8 +144,9 @@ members actually are:
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
-| `M.X.F.Game` | 6 | 0 |
-| `M.X.F.Graphics.Texture2D` | 4 | 0 |
+| `M.X.F.Game` | 5 | 1 |
+| `M.X.F.Graphics.Texture2D` | 4 | 2 |
+| `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
@@ -166,8 +167,9 @@ one.
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
-| `M.X.F.Game` | 6 | 0 |
-| `M.X.F.Graphics.Texture2D` | 4 | 0 |
+| `M.X.F.Game` | 5 | 1 |
+| `M.X.F.Graphics.Texture2D` | 4 | 2 |
+| `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
@@ -223,12 +225,12 @@ that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
 1. **`System.IO.Stream` and `TitleContainer`**, which unblock
-   `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager` --
-   and with it the only public way to obtain a `SpriteFont`, which is the loop
-   this session opened and did not close. It is first because it is the only item
-   here that closes a loop already open: `SpriteFont` is complete and reachable
-   today only through a test-only producer, and `ContentManager.Load` is what
-   makes it reachable from the template.
+   `Texture2D.FromStream`, `SaveAsPng` and `SaveAsJpeg`, and `ContentManager`'s
+   two protected stream hooks. **The SpriteFont loop it used to gate is closed**:
+   `ContentManager` went in without needing a Stream, because CNA's loaders take
+   an asset name and answer an object rather than handing a stream across the C
+   boundary. What is left for Stream is the image members, which are a smaller
+   prize than they were.
 2. **The device-settings closure**: `Adapter`, `DisplayMode`,
    `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
    `Reset` overloads, `Present`, `GraphicsDevice`'s six events, and
@@ -283,6 +285,23 @@ the graph after each closure instead of following this list once it has moved.
   `src/internal/abi-gate.lisp`, not in the manifest: the manifest's
   `admitted_abi_versions` gates the *generator*, the Lisp constant gates the
   *runtime*, and both have to move together.
+
+* **A `SpriteFont` is obtainable from a program now, and the evidence is
+  pixels.** `ContentManager.Load<SpriteFont>` reads a `.cnj` descriptor and
+  answers the font *and* its atlas -- two owned handles for one asset, disposed
+  font-first. The SOFTWARE lane's new `loaded-text` proof draws "AB" with a
+  loaded font and asserts the same pixels, at the same coordinates, as the proof
+  that uses the hand-built one: a descriptor that drifted from the suite's glyph
+  rows would put a glyph somewhere else and fail. The template draws text through
+  the same path, with `make-font-fixture.py` generating its 95-glyph asset.
+
+* **Measured, not assumed, about content:** `.cnj` loads and the older
+  `.font.json` convention does not (`CNA_RESULT_IO`); there is **no cache**, so
+  two loads of one name are two objects and four things to dispose; and ABI
+  0.21.0 has **no route reporting a Texture2D's width or height**, so a loaded
+  texture refuses both rather than answering a plausible zero. A TextureCube does
+  report its size, which makes the gap look like an oversight in CNA rather than
+  a policy.
 
 * **A component added in `LoadContent` is never initialized, and that is XNA's
   doing.** `Game.Run` sets `inRun` *after* `Initialize()` returns; `Initialize()`

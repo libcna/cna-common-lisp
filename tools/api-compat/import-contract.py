@@ -35,6 +35,7 @@ SELECTED = [
     "Microsoft.Xna.Framework.GameComponentCollectionEventArgs",
     "Microsoft.Xna.Framework.LaunchParameters",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
+    "Microsoft.Xna.Framework.Content.ContentManager",
     "Microsoft.Xna.Framework.Color",
     "Microsoft.Xna.Framework.Point",
     "Microsoft.Xna.Framework.Rectangle",

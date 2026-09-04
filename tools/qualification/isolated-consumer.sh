@@ -120,9 +120,31 @@ for frames in 60 600; do
             expect_pixel pixels 100,149,237,255
             expect_pixel triangle_pixel 255,128,0,255
             expect_pixel render_target_pixel 0,200,90,255
+            # Text is asserted differently, and deliberately. The sample sits
+            # inside a glyph of a real antialiased typeface, so its exact value
+            # depends on the font file and would make this gate a hash of
+            # DejaVu Sans Mono. What must be true is that a glyph reached the
+            # pixel at all: it is not the CornflowerBlue that was cleared there.
+            text_pixel=$(echo "$output" | sed -n 's/^CANARY text_pixel=//p')
+            if [ -z "$text_pixel" ] || [ "$text_pixel" = "not-read" ]; then
+                echo "FAIL $renderer: the $frames-frame canary read no text pixel" >&2
+                exit 1
+            fi
+            if [ "$text_pixel" = "100,149,237,255" ]; then
+                echo "FAIL $renderer: the $frames-frame canary's text pixel is still" \
+                     "the clear colour, so the loaded SpriteFont drew nothing there" >&2
+                exit 1
+            fi
+            # And the font really came from the content pipeline, with the glyph
+            # count the descriptor declares.
+            if ! echo "$output" | grep -q '^CANARY font=95 glyphs, line-spacing 19$'; then
+                echo "FAIL the $frames-frame canary did not load the expected font" >&2
+                echo "$output" | grep '^CANARY font=' >&2
+                exit 1
+            fi
             ;;
         *)
-            for line in pixels triangle_pixel render_target_pixel; do
+            for line in pixels triangle_pixel render_target_pixel text_pixel; do
                 if ! echo "$output" | grep -q "^CANARY $line=not-supported\$"; then
                     echo "FAIL $renderer has no back-buffer readback, so the" \
                          "$frames-frame canary's $line should be not-supported" >&2

@@ -68,6 +68,13 @@
           "generic": true,
           "setf": false,
           "reason": "Answered by identity, as XNA's field is. CNA has no route that reports a game's launch parameters, so it is empty unless the program fills it -- recorded in docs/limitations.md rather than left to be discovered."
+        },
+        "Content": {
+          "lisp": "content",
+          "generic": true,
+          "setf": false,
+          "reason": "The game's own content manager, answered by identity because XNA's is a field. Read-only, and the missing setter is deliberate: XNA's Game.Content = m assigns a reference, and CNA's cna_game_set_content_manager_ext *copies* -- its own header says \"the canonical setter takes a reference and copies, so this does too: the caller keeps its own manager\". Reading the property back would therefore answer a different object than the one assigned, so the member is reported partial rather than projected as something that silently means something else. docs/limitations.md.",
+          "status": "partial"
         }
       },
       "not_applicable": {
@@ -403,6 +410,44 @@
       },
       "unimplemented": {
         "PreparingDeviceSettings": "The only event in the selection that carries data. It needs PreparingDeviceSettingsEventArgs and GraphicsDeviceInformation, neither of which is in the selection, and CNA's non-ext callback for it can only observe the settings where XNA's event exists to change them. Projecting the observing form under the event's name would be a quieter kind of wrong than leaving it missing."
+      }
+    },
+    "Microsoft.Xna.Framework.Content.ContentManager": {
+      "lisp_package": "microsoft.xna.framework.content",
+      "lisp_name": "content-manager",
+      "lisp_kind": "class",
+      "member_overrides": {
+        "Load(String)": {
+          "lisp": "load-asset",
+          "generic": true,
+          "reason": "Load<T> is generic over the asset type, and this is the one place the projection is closer to XNA than the C ABI can be: CNA spells the generic method as one route per asset type -- cna_content_manager_load_texture2d, _load_sprite_font, _load_texture_cube -- because a C caller cannot name a type. Common Lisp can, so the type stays an argument and Load<T> stays one member. Reported partial: the three types above are the ones CNA has a route for, and LOADABLE-ASSET-TYPES answers which.",
+          "status": "partial"
+        },
+        "Unload()": {
+          "lisp": "unload",
+          "generic": true
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "generic": true,
+          "reason": "IDisposable.Dispose, this binding's one deterministic disposal. A game's own manager refuses it, because CNA lends that one as a borrowed handle released with its game.",
+          "package": "microsoft.xna.framework"
+        },
+        "RootDirectory": {
+          "lisp": "root-directory",
+          "generic": true,
+          "setf": true
+        }
+      },
+      "not_applicable": {
+        "Dispose(Boolean)": "XNA's protected Dispose(bool disposing) is the overridable half of disposal. Common Lisp has no protected methods and CNA has no route that calls back into managed code between the two halves, so there is no place in this projection for a subclass to stand.",
+        "ReadAsset(String,Action`1)": "A protected hook a subclass overrides to intercept one asset read. CNA's loaders read and construct in one route with no callback in between, so there is nothing for an override to sit inside.",
+        "OpenStream(String)": "A protected hook answering a System.IO.Stream. No stream object crosses CNA's C boundary -- the header says so of the content manager explicitly -- and System.IO.Stream is not in the selection."
+      },
+      "unimplemented": {
+        "new(IServiceProvider)": "Both of XNA's constructors take a System.IServiceProvider, which this binding cannot produce: see docs/limitations.md on Game.Services, where the obstacle is that CNA's service container has no route that registers a service or hands one back. CNA's own constructor takes the graphics device instead, and MAKE-INSTANCE projects that as a declared extension rather than pretending to be either canonical overload.",
+        "new(IServiceProvider,String)": "Both of XNA's constructors take a System.IServiceProvider, which this binding cannot produce: see docs/limitations.md on Game.Services, where the obstacle is that CNA's service container has no route that registers a service or hands one back. CNA's own constructor takes the graphics device instead, and MAKE-INSTANCE projects that as a declared extension rather than pretending to be either canonical overload.",
+        "ServiceProvider": "The IServiceProvider the manager was built from. There is none: CNA's constructor takes a graphics device, and cna_content_manager_get_has_service_provider reports only whether the native manager has one, not what it is. Answering a service provider this binding cannot represent would be worse than reporting it missing. docs/limitations.md."
       }
     },
     "Microsoft.Xna.Framework.Color": {
@@ -1174,6 +1219,20 @@
             "element-count"
           ],
           "reason": "The mip-level and texel-rectangle overload. :SOURCE is XNA's Nullable<Rectangle> and NIL is its null, meaning the whole level. XNA's SetData<T> and GetData<T> are generic over anything blittable. This projection is as narrow as the buffers': a transfer is accepted only for an element type whose binary layout the binding can prove, and the layouts come from src/graphics/buffer-data.lisp rather than a second opinion. CNA is told the texel *kind* by name, because it distinguishes kinds that share a byte count -- an Alpha8 byte and a raw byte, a Color and an Rgba1010102."
+        },
+        "Width": {
+          "lisp": "width",
+          "generic": true,
+          "setf": false,
+          "status": "partial",
+          "reason": "**Partial, and CNA is why.** ABI 0.21.0 has no route reporting a Texture2D's dimensions: cna_texture_get_info answers the level count and the surface format, cna_texture2d_get_storage_info answers which storage is retained, and neither answers a width. A texture decoded through TEXTURE-2D-FROM-PNG-BYTES knows its size because this binding read it out of the image header on the way past; one the ContentManager loaded was never handed to this binding as bytes, so there is nothing to have read and the reader refuses with a condition naming the missing route rather than answering a plausible zero. docs/limitations.md."
+        },
+        "Height": {
+          "lisp": "height",
+          "generic": true,
+          "setf": false,
+          "status": "partial",
+          "reason": "**Partial, and CNA is why.** ABI 0.21.0 has no route reporting a Texture2D's dimensions: cna_texture_get_info answers the level count and the surface format, cna_texture2d_get_storage_info answers which storage is retained, and neither answers a width. A texture decoded through TEXTURE-2D-FROM-PNG-BYTES knows its size because this binding read it out of the image header on the way past; one the ContentManager loaded was never handed to this binding as bytes, so there is nothing to have read and the reader refuses with a condition naming the missing route rather than answering a plausible zero. docs/limitations.md."
         }
       }
     },

@@ -15,8 +15,8 @@ family. Present so TEXTURE-2D has the superclass the contract gives it; it has n
 members of its own in this milestone."))
 
 (defclass texture-2d (texture)
-  ((width :initarg :width :initform 0 :reader width)
-   (height :initarg :height :initform 0 :reader height)
+  ((width :initarg :width :initform 0 :reader %texture-width)
+   (height :initarg :height :initform 0 :reader %texture-height)
    (level-count :initarg :level-count :initform 1 :reader level-count)
    (format :initarg :format :initform :color :reader format-of))
   (:documentation
@@ -26,6 +26,60 @@ Created from image data through TEXTURE-2D-FROM-PNG-BYTES or
 TEXTURE-2D-FROM-PNG-FILE, which project XNA's Texture2D.FromStream over CNA's
 decode routes. Disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE, before the game
 that owns it."))
+
+(defgeneric width (texture)
+  (:documentation
+   "Texture2D.Width, in pixels.
+
+**Refuses on a content-loaded texture**, and that is CNA's limit rather than a
+decision here: ABI 0.21.0 has no route that reports a Texture2D's dimensions.
+`cna_texture_get_info' answers the level count and the surface format,
+`cna_texture2d_get_storage_info' answers which storage is retained, and neither
+answers a width. A texture decoded through TEXTURE-2D-FROM-PNG-BYTES knows its
+size because this binding read it out of the image header on the way past; a
+texture the content manager loaded was never handed to this binding as bytes, so
+there is nothing to have read. Answering zero would be a lie that draws
+wrong-sized quads; refusing says what is missing."))
+
+(defgeneric height (texture)
+  (:documentation "Texture2D.Height, in pixels. See WIDTH for when it refuses."))
+
+(defun %texture-dimension (texture value name)
+  (or value
+      (error 'microsoft.xna.framework:cna-not-supported-error
+             :operation name
+             :object-type (type-of texture)
+             :format-control
+             "this texture's ~a is not known. It was loaded through a ContentManager, and ~
+              CNA ABI 0.21.0 has no route that reports a Texture2D's dimensions -- ~
+              `cna_texture_get_info' answers the level count and format and nothing else. ~
+              A texture decoded from image bytes knows its size because this binding read ~
+              it from the image header. docs/limitations.md records it."
+             :format-arguments (list name))))
+
+(defmethod width ((texture texture-2d))
+  (%texture-dimension texture (%texture-width texture) "width"))
+
+(defmethod height ((texture texture-2d))
+  (%texture-dimension texture (%texture-height texture) "height"))
+
+(defun %adopt-loaded-texture-2d (game handle)
+  "Wrap a texture a ContentManager created, whose dimensions CNA will not report.
+
+The width and height are NIL rather than zero, so WIDTH and HEIGHT refuse rather
+than answering a plausible wrong number. See WIDTH."
+  (cna-lisp.internal:with-native-rollback (record)
+    (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
+    (let ((texture (make-instance 'texture-2d
+                                  :handle handle
+                                  :ownership :owned
+                                  :owner game
+                                  :owner-thread (cna-lisp.internal:owner-thread-of game)
+                                  :width nil :height nil)))
+      (%read-texture-storage texture)
+      (cna-lisp.internal:register-child game texture)
+      (funcall record (lambda () (cna-lisp.internal:unregister-child game texture)))
+      texture)))
 
 (defun %texture-storage-dimensions (handle)
   "Read a freshly created texture's dimensions and format back out of CNA."
@@ -163,9 +217,11 @@ nothing."
    "dispose" :object-type 'texture-2d))
 
 (defmethod print-object ((texture texture-2d) stream)
+  ;; The raw slots rather than WIDTH and HEIGHT: printing must never signal, and
+  ;; a content-loaded texture has no dimensions to print. See WIDTH.
   (print-unreadable-object (texture stream :type t)
-    (format stream "~dx~d ~a~:[~; disposed~]"
-            (width texture) (height texture) (format-of texture)
+    (format stream "~@[~dx~]~@[~d ~]~a~:[~; disposed~]"
+            (%texture-width texture) (%texture-height texture) (format-of texture)
             (cna-lisp.internal:disposed-state-of texture))))
 
 ;;; --- construction, and the data surface -------------------------------------

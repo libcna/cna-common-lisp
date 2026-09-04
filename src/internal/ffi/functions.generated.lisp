@@ -1554,6 +1554,58 @@
 (defcfun ("cna_environment_map_effect_set_texture" %environment-map-effect-set-texture) :uint32
   (effect :uint64) (texture :uint64))
 
+;;; CNA_Result cna_content_manager_create(CNA_Handle graphics_device, const CNA_ContentManagerCreateInfo* create_info, CNA_Handle* out_content_manager)
+(defcfun ("cna_content_manager_create" %content-manager-create) :uint32
+  (graphics-device :uint64) (create-info :pointer) (out-content-manager :pointer))
+
+;;; CNA_Result cna_content_manager_destroy(CNA_Handle content_manager)
+(defcfun ("cna_content_manager_destroy" %content-manager-destroy) :uint32
+  (content-manager :uint64))
+
+;;; CNA_Result cna_content_manager_register_builtin_loaders(CNA_Handle content_manager)
+(defcfun ("cna_content_manager_register_builtin_loaders" %content-manager-register-builtin-loaders) :uint32
+  (content-manager :uint64))
+
+;;; CNA_Result cna_game_get_content_manager_ext(CNA_Handle game, CNA_Handle* out_content_manager)
+(defcfun ("cna_game_get_content_manager_ext" %game-get-content-manager-ext) :uint32
+  (game :uint64) (out-content-manager :pointer))
+
+;;; CNA_Result cna_content_manager_set_root_directory(CNA_Handle content_manager, CNA_StringView root_directory)
+(defcfun ("cna_content_manager_set_root_directory" %content-manager-set-root-directory) :uint32
+  (content-manager :uint64) (root-directory-0 :pointer) (root-directory-1 :uint64))
+
+;;; CNA_Result cna_content_manager_get_root_directory_size(CNA_Handle content_manager, uint64_t* out_bytes)
+(defcfun ("cna_content_manager_get_root_directory_size" %content-manager-get-root-directory-size) :uint32
+  (content-manager :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_content_manager_copy_root_directory(CNA_Handle content_manager, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_content_manager_copy_root_directory" %content-manager-copy-root-directory) :uint32
+  (content-manager :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_content_manager_get_graphics_device(CNA_Handle content_manager, CNA_Handle* out_graphics_device)
+(defcfun ("cna_content_manager_get_graphics_device" %content-manager-get-graphics-device) :uint32
+  (content-manager :uint64) (out-graphics-device :pointer))
+
+;;; CNA_Result cna_content_manager_get_has_service_provider(CNA_Handle content_manager, CNA_Bool* out_has_service_provider)
+(defcfun ("cna_content_manager_get_has_service_provider" %content-manager-get-has-service-provider) :uint32
+  (content-manager :uint64) (out-has-service-provider :pointer))
+
+;;; CNA_Result cna_content_manager_load_texture2d(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_texture)
+(defcfun ("cna_content_manager_load_texture2d" %content-manager-load-texture-2d) :uint32
+  (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-texture :pointer))
+
+;;; CNA_Result cna_content_manager_load_texture_cube(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_texture)
+(defcfun ("cna_content_manager_load_texture_cube" %content-manager-load-texture-cube) :uint32
+  (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-texture :pointer))
+
+;;; CNA_Result cna_content_manager_load_sprite_font(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_sprite_font, CNA_Handle* out_texture)
+(defcfun ("cna_content_manager_load_sprite_font" %content-manager-load-sprite-font) :uint32
+  (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-sprite-font :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_content_manager_unload(CNA_Handle content_manager)
+(defcfun ("cna_content_manager_unload" %content-manager-unload) :uint32
+  (content-manager :uint64))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -1939,6 +1991,19 @@
     ("cna_environment_map_effect_set_environment_map" %environment-map-effect-set-environment-map :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
     ("cna_environment_map_effect_set_fresnel_factor" %environment-map-effect-set-fresnel-factor :uint32 (:uint64 :float) :thread :owner :ownership "none")
     ("cna_environment_map_effect_set_specular" %environment-map-effect-set-specular :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
-    ("cna_environment_map_effect_set_texture" %environment-map-effect-set-texture :uint32 (:uint64 :uint64) :thread :owner :ownership "none"))
+    ("cna_environment_map_effect_set_texture" %environment-map-effect-set-texture :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_content_manager_create" %content-manager-create :uint32 (:uint64 :pointer :pointer) :thread :game :ownership "creates")
+    ("cna_content_manager_destroy" %content-manager-destroy :uint32 (:uint64) :thread :game :ownership "destroys")
+    ("cna_content_manager_register_builtin_loaders" %content-manager-register-builtin-loaders :uint32 (:uint64) :thread :game :ownership "none")
+    ("cna_game_get_content_manager_ext" %game-get-content-manager-ext :uint32 (:uint64 :pointer) :thread :game :ownership "borrows")
+    ("cna_content_manager_set_root_directory" %content-manager-set-root-directory :uint32 (:uint64 :pointer :uint64) :thread :game :ownership "none")
+    ("cna_content_manager_get_root_directory_size" %content-manager-get-root-directory-size :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_content_manager_copy_root_directory" %content-manager-copy-root-directory :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
+    ("cna_content_manager_get_graphics_device" %content-manager-get-graphics-device :uint32 (:uint64 :pointer) :thread :game :ownership "borrows")
+    ("cna_content_manager_get_has_service_provider" %content-manager-get-has-service-provider :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_content_manager_load_texture2d" %content-manager-load-texture-2d :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
+    ("cna_content_manager_load_texture_cube" %content-manager-load-texture-cube :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
+    ("cna_content_manager_load_sprite_font" %content-manager-load-sprite-font :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :game :ownership "creates")
+    ("cna_content_manager_unload" %content-manager-unload :uint32 (:uint64) :thread :game :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

@@ -24,9 +24,9 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 385,
-    "structs": 60,
-    "struct_fields": 455,
+    "functions": 398,
+    "structs": 61,
+    "struct_fields": 459,
     "constants": 485,
     "callbacks": 9,
     "by_value_aggregates": 6,
@@ -9610,6 +9610,348 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_environment_map_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)"
+    },
+    {
+      "name": "cna_content_manager_create",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_ContentManagerCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_content_manager",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_create(CNA_Handle graphics_device, const CNA_ContentManagerCreateInfo* create_info, CNA_Handle* out_content_manager)"
+    },
+    {
+      "name": "cna_content_manager_destroy",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_destroy(CNA_Handle content_manager)"
+    },
+    {
+      "name": "cna_content_manager_register_builtin_loaders",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_register_builtin_loaders(CNA_Handle content_manager)"
+    },
+    {
+      "name": "cna_game_get_content_manager_ext",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_content_manager",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_get_content_manager_ext(CNA_Handle game, CNA_Handle* out_content_manager)"
+    },
+    {
+      "name": "cna_content_manager_set_root_directory",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "root_directory-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "root_directory-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_set_root_directory(CNA_Handle content_manager, CNA_StringView root_directory)"
+    },
+    {
+      "name": "cna_content_manager_get_root_directory_size",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_get_root_directory_size(CNA_Handle content_manager, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_content_manager_copy_root_directory",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_copy_root_directory(CNA_Handle content_manager, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_content_manager_get_graphics_device",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_graphics_device",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_get_graphics_device(CNA_Handle content_manager, CNA_Handle* out_graphics_device)"
+    },
+    {
+      "name": "cna_content_manager_get_has_service_provider",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_service_provider",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_get_has_service_provider(CNA_Handle content_manager, CNA_Bool* out_has_service_provider)"
+    },
+    {
+      "name": "cna_content_manager_load_texture2d",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "asset_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "asset_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_load_texture2d(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_content_manager_load_texture_cube",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "asset_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "asset_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_load_texture_cube(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_content_manager_load_sprite_font",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "asset_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "asset_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_sprite_font",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_load_sprite_font(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_sprite_font, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_content_manager_unload",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_unload(CNA_Handle content_manager)"
     }
   ],
   "structs": [
@@ -14383,6 +14725,52 @@
       ],
       "header": "texture_volume.h",
       "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_ContentManagerCreateInfo",
+      "size": 32,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "root_directory",
+          "c_type": "CNA_StringView",
+          "offset": 8,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_StringView",
+          "kind": "aggregate"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint64_t",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "content.h",
+      "direction": "in",
       "versioned": true
     }
   ],

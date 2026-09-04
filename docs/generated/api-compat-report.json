@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 144,
-  "member_count": 2233
+  "type_count": 145,
+  "member_count": 2243
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 144,
-  "members": 2233,
+  "types": 145,
+  "members": 2243,
   "types_by_status": {
-   "partial": 10,
+   "partial": 11,
    "complete": 134
   },
   "members_by_status": {
-   "complete": 1758,
-   "missing": 56,
-   "not-applicable": 412,
-   "partial": 7
+   "complete": 1759,
+   "missing": 58,
+   "not-applicable": 415,
+   "partial": 11
   },
-  "diagnostics": 56,
+  "diagnostics": 58,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 56,
+   "missing_member": 58,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -86,7 +86,7 @@
     "Window": "missing",
     "IsActive": "complete",
     "GraphicsDevice": "complete",
-    "Content": "missing",
+    "Content": "partial",
     "Activated": "complete",
     "Deactivated": "complete",
     "Exiting": "complete",
@@ -247,6 +247,23 @@
     "DefaultBackBufferHeight": "missing"
    },
    "lisp": "microsoft.xna.framework:graphics-device-manager"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Content.ContentManager",
+   "status": "partial",
+   "members": {
+    "new(IServiceProvider)": "missing",
+    "new(IServiceProvider,String)": "missing",
+    "Dispose()": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "Unload()": "complete",
+    "Load(String)": "partial",
+    "ReadAsset(String,Action`1)": "not-applicable",
+    "OpenStream(String)": "not-applicable",
+    "ServiceProvider": "missing",
+    "RootDirectory": "complete"
+   },
+   "lisp": "microsoft.xna.framework.content:content-manager"
   },
   {
    "name": "Microsoft.Xna.Framework.Color",
@@ -1398,8 +1415,8 @@
     "GetData(Int32,Nullable`1,!!0[],Int32,Int32)": "complete",
     "Dispose(Boolean)": "not-applicable",
     "Bounds": "complete",
-    "Height": "complete",
-    "Width": "complete"
+    "Height": "partial",
+    "Width": "partial"
    },
    "lisp": "microsoft.xna.framework.graphics:texture-2d"
   },
@@ -3319,11 +3336,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.Content",
-   "detail": "no exported 'content' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GameComponentCollection.new()",
    "detail": "XNA's constructor is public and a standalone collection is legal there, if useless -- a Game makes its own and drives that one. CNA has no route for a collection apart from a game's: `a game owns exactly one component collection, so the collection needs no handle of its own and every route addresses the game's`. So a standalone one is not projected rather than faked."
   },
@@ -3406,6 +3418,21 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DefaultBackBufferHeight",
    "detail": "no exported 'default-back-buffer-height' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Content.ContentManager.new(IServiceProvider)",
+   "detail": "Both of XNA's constructors take a System.IServiceProvider, which this binding cannot produce: see docs/limitations.md on Game.Services, where the obstacle is that CNA's service container has no route that registers a service or hands one back. CNA's own constructor takes the graphics device instead, and MAKE-INSTANCE projects that as a declared extension rather than pretending to be either canonical overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Content.ContentManager.new(IServiceProvider,String)",
+   "detail": "Both of XNA's constructors take a System.IServiceProvider, which this binding cannot produce: see docs/limitations.md on Game.Services, where the obstacle is that CNA's service container has no route that registers a service or hands one back. CNA's own constructor takes the graphics device instead, and MAKE-INSTANCE projects that as a declared extension rather than pretending to be either canonical overload."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Content.ContentManager.ServiceProvider",
+   "detail": "The IServiceProvider the manager was built from. There is none: CNA's constructor takes a graphics device, and cna_content_manager_get_has_service_provider reports only whether the native manager has one, not what it is. Answering a service provider this binding cannot represent would be worse than reporting it missing. docs/limitations.md."
   },
   {
    "category": "missing_member",

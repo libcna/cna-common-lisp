@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=144 -->
-<!-- generated:selected members=2233 -->
+<!-- generated:selected types=145 -->
+<!-- generated:selected members=2243 -->
 <!-- generated:complete types=134 -->
-<!-- generated:partial types=10 -->
+<!-- generated:partial types=11 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1758 -->
-<!-- generated:partial members=7 -->
-<!-- generated:missing members=56 -->
-<!-- generated:not-applicable members=412 -->
+<!-- generated:complete members=1759 -->
+<!-- generated:partial members=11 -->
+<!-- generated:missing members=58 -->
+<!-- generated:not-applicable members=415 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 144 types, 2233 members.
+Selection **Foundation 1 and the managed closures**: 145 types, 2243 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **134** |
-| Types partial | **10** |
+| Types partial | **11** |
 | Types missing | **0** |
-| Members complete | **1758** |
-| Members partial | **7** |
-| Members missing | **56** |
-| Members not applicable | **412** |
+| Members complete | **1759** |
+| Members partial | **11** |
+| Members missing | **58** |
+| Members not applicable | **415** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -143,7 +143,7 @@ collapsed overload family says how each of its overloads is expressed.
 <!-- generated-block:per-type-table -->
 | Type | Status | complete | partial | missing | n/a |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `M.X.F.Game` | **partial** | 30 | 0 | 6 | 2 |
+| `M.X.F.Game` | **partial** | 30 | 1 | 5 | 2 |
 | `M.X.F.GameTime` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.IGameComponent` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.IUpdateable` | **complete** | 5 | 0 | 0 | 0 |
@@ -154,6 +154,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.GameComponentCollectionEventArgs` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.LaunchParameters` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 13 | 0 | 16 | 1 |
+| `M.X.F.Content.ContentManager` | **partial** | 3 | 1 | 3 | 3 |
 | `M.X.F.Color` | **complete** | 161 | 0 | 0 | 4 |
 | `M.X.F.Point` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Rectangle` | **complete** | 24 | 0 | 0 | 9 |
@@ -182,7 +183,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 30 | 1 | 24 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
-| `M.X.F.Graphics.Texture2D` | **partial** | 11 | 0 | 4 | 1 |
+| `M.X.F.Graphics.Texture2D` | **partial** | 9 | 2 | 4 | 1 |
 | `M.X.F.Graphics.RenderTarget2D` | **complete** | 8 | 0 | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetUsage` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.DepthFormat` | **complete** | 4 | 0 | 0 | 1 |
@@ -332,8 +333,9 @@ back-reference.
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
-| `M.X.F.Game` | 6 | 0 |
-| `M.X.F.Graphics.Texture2D` | 4 | 0 |
+| `M.X.F.Game` | 5 | 1 |
+| `M.X.F.Graphics.Texture2D` | 4 | 2 |
+| `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
@@ -366,9 +368,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=385 -->
-<!-- generated:bound native structs=60 -->
-<!-- generated:bound native struct fields=455 -->
+<!-- generated:bound native functions=398 -->
+<!-- generated:bound native structs=61 -->
+<!-- generated:bound native struct fields=459 -->
 <!-- generated:bound native constants=485 -->
 <!-- generated:bound native callbacks=9 -->
 <!-- generated:by-value aggregates=6 -->
@@ -378,9 +380,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 385 |
-| Bound structs | 60 |
-| Bound struct fields | 455 |
+| Bound functions | 398 |
+| Bound structs | 61 |
+| Bound struct fields | 459 |
 | Bound constants | 485 |
 | Bound callback typedefs | 9 |
 | By-value aggregates admitted | 6 |

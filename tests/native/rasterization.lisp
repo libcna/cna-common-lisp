@@ -539,6 +539,80 @@ an 800x480 viewport, the vertices land at (200,360), (200,120) and (600,360)."
                       the first"
                renderer)))))))
 
+(defclass loaded-text-pixel-game (text-pixel-game) ()
+  (:documentation
+   "The same string, the same atlas, and a font that came out of a ContentManager.
+
+The font here is not built by this suite at all: `tests/fixtures/test-font.cnj'
+describes it and `Load<SpriteFont>' parses it. That is the whole point -- every
+other text proof in this file uses a producer no program written against the
+public API can reach."))
+
+(defmethod %build-fixture-font ((game loaded-text-pixel-game) device)
+  (declare (ignore device))
+  (let ((content (xna:content game)))
+    (setf (xna.content:root-directory content) (%content-root))
+    (xna.content:load-asset content 'gfx:sprite-font *font-asset*)))
+
+(define-native-test a-loaded-font-draws-the-same-pixels-a-built-one-does
+  "The loop closes here: text on the back buffer from a font a *program* could
+obtain, with no test-only producer anywhere in the path.
+
+Deliberately the same assertions, at the same coordinates, as
+DRAWING-A-STRING-PUTS-EACH-GLYPH-WHERE-THE-LAYOUT-SAYS. A `.cnj' that drifted
+from GLYPH-ATLAS-ROWS, or a loader that mis-parsed one, would put a glyph
+somewhere else and fail here."
+  (let ((game (make-instance 'loaded-text-pixel-game :exit-after 2
+                             :text "AB" :origin-position (xna:make-vector2 16.0 16.0))))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (when (build-error game) (error (build-error game)))
+           (is (sampled game) "the draw callback never ran")
+           (when (and (sample-error game) (rasterizing-renderer-p (renderer game)))
+             (error (sample-error game)))
+           (let ((renderer (renderer game)))
+             (if (not (rasterizing-renderer-p renderer))
+                 (assert-no-readback game renderer)
+                 (let ((red (xna:make-color 255 0 0 255))
+                       (green (xna:make-color 0 255 0 255))
+                       (background (xna:cornflower-blue)))
+                   (flet ((at (x y) (funcall (samples game) x y)))
+                     (dolist (point '((18 18) (21 21) (18 21)))
+                       (is (xna:color-equal red (at (first point) (second point)))
+                           "(~d,~d) should be inside the loaded font's 'A' and red; it is ~a"
+                           (first point) (second point)
+                           (pixel-list (at (first point) (second point)))))
+                     (dolist (point '((26 18) (29 21) (26 21)))
+                       (is (xna:color-equal green (at (first point) (second point)))
+                           "(~d,~d) should be inside the loaded font's 'B' and green; it ~
+                            is ~a. Red here would mean the .cnj's second glyph names the ~
+                            first one's atlas cell; CornflowerBlue would mean its kerning ~
+                            never advanced the pen."
+                           (first point) (second point)
+                           (pixel-list (at (first point) (second point)))))
+                     (dolist (point '((14 18) (34 18) (18 13) (18 26) (0 0)))
+                       (is (xna:color-equal background (at (first point) (second point)))
+                           "(~d,~d) should still be the CornflowerBlue that was cleared; ~
+                            it is ~a"
+                           (first point) (second point)
+                           (pixel-list (at (first point) (second point)))))
+                     (note-rasterization
+                      :loaded-text
+                      "~a: a SpriteFont obtained through ContentManager.Load -- from a ~
+                       .cnj descriptor on disk, with no test-only producer in the path -- ~
+                       drew 'AB' onto the back buffer with each glyph at the position its ~
+                       loaded metrics say, pixel for pixel identical to the hand-built ~
+                       font's"
+                      renderer))))))
+      (progn
+        (when (font game) (ignore-errors (xna:dispose (font game))))
+        (when (atlas game) (ignore-errors (xna:dispose (atlas game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (xna:dispose game)))))
+
 (define-native-test a-newline-advances-a-drawn-string-by-the-line-spacing
   ;; "A\nA" at (16,16): the first line covers y 16..23 and the second, twelve
   ;; rows down, covers y 28..35. The four rows between them are nobody's.

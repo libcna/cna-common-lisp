@@ -19,6 +19,7 @@
   (:local-nicknames (#:xna   #:microsoft.xna.framework)
                     (#:gfx   #:microsoft.xna.framework.graphics)
                     (#:pv    #:microsoft.xna.framework.graphics.packed-vector)
+                    (#:xna.content #:microsoft.xna.framework.content)
                     (#:input #:microsoft.xna.framework.input)
                     (#:touch #:microsoft.xna.framework.input.touch)
                     (#:int   #:cna-lisp.internal)

@@ -253,6 +253,65 @@ it cannot mask the failure that caused it."
         (unless constructed
           (ignore-errors (cna-lisp.internal.ffi::%sprite-font-destroy handle)))))))
 
+(defun %sprite-font-info (handle operation)
+  "Read a loaded font's character count, spacings and default character.
+
+Only a *loaded* font needs this. A font built here already knows all of it,
+because it was given all of it; one that came out of a `.cnj' was described by
+the asset rather than by the caller, and CNA is the only thing that has read it."
+  (cffi:with-foreign-object (info '(:struct cna-lisp.internal.ffi::cna-sprite-font-info))
+    (cffi:foreign-funcall "memset" :pointer info :int 0
+                          :size cna-lisp.internal.ffi::+sizeof-cna-sprite-font-info+ :void)
+    (macrolet ((slot (name)
+                 `(cffi:foreign-slot-value
+                   info '(:struct cna-lisp.internal.ffi::cna-sprite-font-info) ',name)))
+      (setf (slot cna-lisp.internal.ffi::struct-size)
+            cna-lisp.internal.ffi::+sizeof-cna-sprite-font-info+
+            (slot cna-lisp.internal.ffi::struct-version) 1)
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%sprite-font-get-info handle info)
+       operation :object-type 'sprite-font)
+      (values (slot cna-lisp.internal.ffi::character-count)
+              (slot cna-lisp.internal.ffi::line-spacing)
+              (slot cna-lisp.internal.ffi::spacing)
+              (and (plusp (slot cna-lisp.internal.ffi::has-default-character))
+                   (slot cna-lisp.internal.ffi::default-character))))))
+
+(defun %adopt-loaded-sprite-font (game font-handle atlas-handle)
+  "Wrap the font *and* the atlas one `Load<SpriteFont>' produced.
+
+CNA answers two owned handles for one asset, because \"a SpriteFont is a font
+*and* the texture it draws from, and both have to be reachable\". Both become
+objects here, parented the same way a caller-built font is: the atlas is a child
+of the game, and the font is a child of the *atlas*, so disposing them in the
+wrong order is a diagnosable refusal rather than a native failure.
+
+Answers the font and the atlas, in that order."
+  (let ((operation "load-asset 'sprite-font"))
+    (cna-lisp.internal:with-native-rollback (record)
+      (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy atlas-handle)))
+      (let ((atlas (%adopt-loaded-texture-2d game atlas-handle)))
+        (funcall record (lambda () (cna-lisp.internal.ffi::%sprite-font-destroy font-handle)))
+        (multiple-value-bind (count line-spacing spacing default-character)
+            (%sprite-font-info font-handle operation)
+          (multiple-value-bind (characters bounds cropping kerning)
+              (%read-font-glyph-table font-handle count operation)
+            (let ((font (make-instance 'sprite-font
+                                       :handle font-handle
+                                       :ownership :owned
+                                       :owner atlas
+                                       :owner-thread (cna-lisp.internal:owner-thread-of game)
+                                       :characters characters
+                                       :glyphs bounds
+                                       :cropping cropping
+                                       :kerning kerning
+                                       :line-spacing line-spacing
+                                       :spacing spacing
+                                       :default-character default-character
+                                       :texture atlas)))
+              (cna-lisp.internal:register-child atlas font)
+              (values font atlas))))))))
+
 (defmethod cna-lisp.internal:destroy-native ((font sprite-font))
   (cna-lisp.internal:check-result
    (cna-lisp.internal.ffi::%sprite-font-destroy (cna-lisp.internal:handle-of font))
