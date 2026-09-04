@@ -29,6 +29,11 @@ tools/api-compat/verify.sh --strict
 
 # 5. the isolated consumer, at 60 and 600 frames
 tools/qualification/isolated-consumer.sh ../cna-common-lisp-template
+
+# 6. the rasterizer lane, which needs a CNA built with a rasterising renderer.
+#    -DCNA_GRAPHICS_RENDERER=SOFTWARE is a CPU rasteriser and needs no display.
+CNA_NATIVE_LIBRARY=/absolute/path/to/software/libcna_c_api.so \
+    tools/qualification/rasterizer.sh
 ```
 
 `git log --oneline` answers what has been published; a count written down here
@@ -144,6 +149,24 @@ largest single block is `GraphicsDevice`'s own drawing, render-target, buffer an
 state surface; the state objects are the entry to it, not the whole of it.
 Regenerate this table after every closure rather than reasoning from the last
 one.
+
+## Where the missing members actually are
+
+<!-- generated-block:partial-frontier -->
+| Type | missing members | partial members |
+| --- | ---: | ---: |
+| `M.X.F.Graphics.GraphicsDevice` | 38 | 1 |
+| `M.X.F.GraphicsDeviceManager` | 16 | 0 |
+| `M.X.F.Graphics.Texture2D` | 12 | 0 |
+| `M.X.F.Game` | 8 | 0 |
+| `M.X.F.Graphics.SpriteBatch` | 8 | 0 |
+<!-- /generated-block:partial-frontier -->
+
+`GraphicsDevice` is most of it, and most of *that* is one thing: the drawing
+family -- `DrawPrimitives`, `DrawIndexedPrimitives`, `DrawInstancedPrimitives`,
+the four `DrawUserIndexedPrimitives` and the two `DrawUserPrimitives` -- plus the
+vertex and index buffers they draw from, and the render-target surface. The
+vertex *descriptors* those need are done; the buffers are not.
 
 ## GLOBAL_ACTIONABLE_LOCAL
 
