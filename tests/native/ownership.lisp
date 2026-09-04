@@ -155,6 +155,36 @@ looked at the CNA result code at all."
         :body-value))
     (is (= 1 released) "the release must run exactly once")))
 
+(define-native-test a-transient-handle-that-releases-cleanly-answers-the-body
+  "The ordinary case, stated so the three failing ones are not the only evidence:
+a body that succeeds and a release that succeeds answers all of the body's
+values, and releases once."
+  (let ((released 0))
+    (multiple-value-bind (first second)
+        (int:with-transient-native ((progn (incf released) int::+result-success+)
+                                    "test")
+          (values :one :two))
+      (is (eq :one first))
+      (is (eq :two second)))
+    (is (= 1 released) "the release ran ~d time(s)" released)))
+
+(define-native-test a-transient-handle-keeps-the-bodys-condition-when-the-release-succeeded
+  "A failing body and a clean release: the body's condition is what reaches the
+caller, and the release still happened. The counterpart below is the same claim
+with the release failing too."
+  (let ((released 0))
+    (handler-case
+        (int:with-transient-native ((progn (incf released) int::+result-success+)
+                                    "test")
+          (error 'xna:cna-usage-error :operation "test"
+                                      :format-control "the body failed"))
+      (xna:cna-usage-error (condition)
+        (is (search "body failed" (princ-to-string condition))
+            "the body's condition became ~a" condition))
+      (error (condition)
+        (fail "the body's condition was replaced by ~a" condition)))
+    (is (= 1 released) "the release ran ~d time(s)" released)))
+
 (define-native-test a-transient-handle-keeps-the-bodys-condition-when-the-body-failed
   (let ((released 0))
     (handler-case

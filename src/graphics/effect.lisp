@@ -490,8 +490,12 @@ CNA_Matrix* and need nothing."
   "Why the three matrix setters go through the optional private shim.")
 
 (defclass effect (%native-graphics-resource)
-  ((%techniques :reader effect-techniques)
-   (%parameters :reader effect-parameters)
+  ;; No :READER on the two collection slots: each has an explicit method below
+  ;; that checks liveness first, and a slot reader as well would be a second,
+  ;; unchecked way to the same value -- and, since the explicit method redefines
+  ;; it, a redefinition warning on every load.
+  ((%techniques)
+   (%parameters)
    (%current-technique :initform nil)
    (%native-parts :initform '() :accessor %effect-native-parts
                   :documentation

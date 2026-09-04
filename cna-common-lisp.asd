@@ -143,6 +143,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "unit/game-time")
    (:file "unit/keys")
    (:file "unit/conditions")
+   ;; The rollback machinery is correctness infrastructure and touches no CNA,
+   ;; so it is tested here rather than only through a resource.
+   (:file "unit/rollback")
    (:file "unit/exports")
    (:file "unit/sprite-font")
    (:file "structure/public-surface")
