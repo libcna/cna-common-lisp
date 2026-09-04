@@ -18,19 +18,19 @@
   "types": 127,
   "members": 2067,
   "types_by_status": {
-   "partial": 9,
-   "complete": 118
+   "partial": 8,
+   "complete": 119
   },
   "members_by_status": {
-   "complete": 1604,
-   "missing": 72,
+   "complete": 1610,
+   "missing": 66,
    "not-applicable": 390,
    "partial": 1
   },
-  "diagnostics": 72,
+  "diagnostics": 66,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 72,
+   "missing_member": 66,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1301,7 +1301,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.SpriteBatch",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(GraphicsDevice)": "complete",
     "Dispose(Boolean)": "not-applicable",
@@ -1318,12 +1318,12 @@
     "Draw(Texture2D,Rectangle,Color)": "complete",
     "Draw(Texture2D,Rectangle,Nullable`1,Color)": "complete",
     "Draw(Texture2D,Rectangle,Nullable`1,Color,Single,Vector2,SpriteEffects,Single)": "complete",
-    "DrawString(SpriteFont,String,Vector2,Color)": "missing",
-    "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "missing",
-    "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "missing",
-    "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "missing",
-    "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "missing",
-    "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "missing"
+    "DrawString(SpriteFont,String,Vector2,Color)": "complete",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "complete",
+    "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "complete",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "complete",
+    "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "complete",
+    "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:sprite-batch"
   },
@@ -3311,36 +3311,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.GetData(Int32,Nullable`1,!!0[],Int32,Int32)",
    "detail": "Pixel access is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,String,Vector2,Color)",
-   "detail": "Needs SpriteFont."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,StringBuilder,Vector2,Color)",
-   "detail": "Needs SpriteFont and StringBuilder."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)",
-   "detail": "Needs SpriteFont."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)",
-   "detail": "Needs SpriteFont and StringBuilder."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)",
-   "detail": "Needs SpriteFont."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)",
-   "detail": "Needs SpriteFont and StringBuilder."
   },
   {
    "category": "missing_member",

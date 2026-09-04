@@ -393,7 +393,7 @@
    #:texture-2d-from-png-file #:texture-2d-from-png-bytes
    #:width #:height #:level-count #:format-of #:bounds
    ;; --- SpriteBatch -------------------------------------------------------
-   #:sprite-batch #:begin #:end #:draw-texture
+   #:sprite-batch #:begin #:end #:draw-texture #:draw-string
    ;; --- SpriteFont --------------------------------------------------------
    #:sprite-font #:line-spacing #:spacing #:default-character #:characters
    #:measure-string))

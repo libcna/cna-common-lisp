@@ -1004,6 +1004,120 @@
             "transform-matrix"
           ],
           "reason": "The sixth and seventh Begin parameters, expressed as :EFFECT and :TRANSFORM-MATRIX on the five-parameter shape. They are refused apart from it and from each other's prerequisites: XNA has no Begin taking an Effect without the four states, and none taking a transform without an Effect. A NIL :EFFECT is the default sprite effect, which is what a null Effect means to XNA, and is not the same as leaving the keyword out."
+        },
+        "DrawString(SpriteFont,String,Vector2,Color)": {
+          "lisp": "draw-string",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "position",
+            "color"
+          ],
+          "unified_with": [
+            "DrawString(SpriteFont,StringBuilder,Vector2,Color)"
+          ],
+          "reason": "One Lisp call, and two contract members: XNA's private StringProxy wraps a String or a StringBuilder and the DrawString bodies that follow are identical, and both parameter types project onto STRING. Declared rather than hidden, so neither member can go missing behind the collapse."
+        },
+        "DrawString(SpriteFont,StringBuilder,Vector2,Color)": {
+          "lisp": "draw-string",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "position",
+            "color"
+          ],
+          "unified_with": [
+            "DrawString(SpriteFont,String,Vector2,Color)"
+          ],
+          "reason": "One Lisp call, and two contract members: XNA's private StringProxy wraps a String or a StringBuilder and the DrawString bodies that follow are identical, and both parameter types project onto STRING. Declared rather than hidden, so neither member can go missing behind the collapse."
+        },
+        "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": {
+          "lisp": "draw-string",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "position",
+            "color",
+            "rotation",
+            "origin",
+            "scale",
+            "effects",
+            "layer-depth"
+          ],
+          "discriminator": {
+            "argument": "scale",
+            "lisp_type": "real"
+          },
+          "unified_with": [
+            "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)"
+          ],
+          "reason": "The uniform-scale overload. XNA's own body builds Vector2(scale, scale) and hands it to the same InternalDraw, so the projection takes a real and the per-axis one takes a Vector2; the Lisp type of :SCALE is the only thing that tells the two apart, which is why it is declared. One Lisp call, and two contract members: XNA's private StringProxy wraps a String or a StringBuilder and the DrawString bodies that follow are identical, and both parameter types project onto STRING. Declared rather than hidden, so neither member can go missing behind the collapse."
+        },
+        "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": {
+          "lisp": "draw-string",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "position",
+            "color",
+            "rotation",
+            "origin",
+            "scale",
+            "effects",
+            "layer-depth"
+          ],
+          "discriminator": {
+            "argument": "scale",
+            "lisp_type": "real"
+          },
+          "unified_with": [
+            "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)"
+          ],
+          "reason": "The uniform-scale overload. XNA's own body builds Vector2(scale, scale) and hands it to the same InternalDraw, so the projection takes a real and the per-axis one takes a Vector2; the Lisp type of :SCALE is the only thing that tells the two apart, which is why it is declared. One Lisp call, and two contract members: XNA's private StringProxy wraps a String or a StringBuilder and the DrawString bodies that follow are identical, and both parameter types project onto STRING. Declared rather than hidden, so neither member can go missing behind the collapse."
+        },
+        "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": {
+          "lisp": "draw-string",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "position",
+            "color",
+            "rotation",
+            "origin",
+            "scale",
+            "effects",
+            "layer-depth"
+          ],
+          "discriminator": {
+            "argument": "scale",
+            "lisp_type": "vector2"
+          },
+          "unified_with": [
+            "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)"
+          ],
+          "reason": "The per-axis-scale overload, told from the uniform one by :SCALE being a Vector2 rather than a real. One Lisp call, and two contract members: XNA's private StringProxy wraps a String or a StringBuilder and the DrawString bodies that follow are identical, and both parameter types project onto STRING. Declared rather than hidden, so neither member can go missing behind the collapse."
+        },
+        "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": {
+          "lisp": "draw-string",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "position",
+            "color",
+            "rotation",
+            "origin",
+            "scale",
+            "effects",
+            "layer-depth"
+          ],
+          "discriminator": {
+            "argument": "scale",
+            "lisp_type": "vector2"
+          },
+          "unified_with": [
+            "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)"
+          ],
+          "reason": "The per-axis-scale overload, told from the uniform one by :SCALE being a Vector2 rather than a real. One Lisp call, and two contract members: XNA's private StringProxy wraps a String or a StringBuilder and the DrawString bodies that follow are identical, and both parameter types project onto STRING. Declared rather than hidden, so neither member can go missing behind the collapse."
         }
       },
       "not_applicable": {
@@ -1019,15 +1133,7 @@
           "reason": "All seven texture overloads are one generic function whose keyword combination selects the overload, and only those seven combinations are accepted: :COLOR is required, exactly one of :POSITION and :DESTINATION must be given, the transform group is all-or-nothing, and :SCALE belongs to the position family alone. The two placements take CNA's two different submission routes, because a position and a destination rectangle are not interchangeable."
         }
       },
-      "expected_superclass": "microsoft.xna.framework.graphics:graphics-resource",
-      "unimplemented": {
-        "DrawString(SpriteFont,String,Vector2,Color)": "Needs SpriteFont.",
-        "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "Needs SpriteFont and StringBuilder.",
-        "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont.",
-        "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder.",
-        "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont.",
-        "DrawString(SpriteFont,StringBuilder,Vector2,Color,Single,Vector2,Vector2,SpriteEffects,Single)": "Needs SpriteFont and StringBuilder."
-      }
+      "expected_superclass": "microsoft.xna.framework.graphics:graphics-resource"
     },
     "Microsoft.Xna.Framework.Graphics.SpriteFont": {
       "lisp_package": "microsoft.xna.framework.graphics",

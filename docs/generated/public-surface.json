@@ -13655,6 +13655,45 @@
           "documentation": "GraphicsDevice.DrawPrimitives(PrimitiveType, Int32, Int32)."
         },
         {
+          "name": "draw-string",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "sprite-batch",
+            "sprite-font",
+            "text",
+            "&key",
+            "position",
+            "color",
+            "rotation",
+            "origin",
+            "scale",
+            "effects",
+            "layer-depth"
+          ],
+          "keywords": [
+            "color",
+            "effects",
+            "layer-depth",
+            "origin",
+            "position",
+            "rotation",
+            "scale"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SpriteBatch.DrawString: all six of XNA's overloads.\n\n    (draw-string batch font text :position p :color c)\n    (draw-string batch font text :position p :color c :rotation r :origin o\n                                 :scale s :effects e :layer-depth d)\n\n:POSITION and :COLOR are required, because every overload takes both. :ROTATION,\n:ORIGIN, :SCALE, :EFFECTS and :LAYER-DEPTH are one group -- XNA has no overload\ncarrying some of them and not the others -- so they are all given or none is.\n\n:SCALE is a real for the uniform overload and a Vector2 for the per-axis one,\nwhich is the only thing that tells those two apart; XNA's own scalar overload\nbuilds `Vector2(scale, scale)' and hands it to the same code.\n\nTEXT is a string, and it is laid out as the sequence of UTF-16 code units a\n`System.String' already is. Both of XNA's text overloads land here: after XNA's\nprivate StringProxy the String and StringBuilder bodies are identical.\n\nOnly legal between BEGIN and END, which the per-glyph draws enforce. An empty\nstring draws nothing and refuses nothing, exactly as XNA's loop does."
+        },
+        {
           "name": "draw-texture",
           "fbound": true,
           "macro": false,

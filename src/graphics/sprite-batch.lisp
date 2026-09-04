@@ -4,8 +4,8 @@
 ;;;; second argument is and on which of a dozen optional arguments are present.
 ;;;; Common Lisp cannot express that as one congruent generic function, and this
 ;;;; binding will not pretend otherwise: the texture-drawing overloads are
-;;;; DRAW-TEXTURE with keyword arguments for the optional family, and text
-;;;; drawing will be a separate generic function when SpriteFont arrives. See
+;;;; DRAW-TEXTURE with keyword arguments for the optional family, and the six
+;;;; text overloads are DRAW-STRING, at the end of this file. See
 ;;;; docs/common-lisp-mapping.md for the overload table.
 
 (in-package #:microsoft.xna.framework.graphics)
@@ -414,3 +414,193 @@ sprite."
   (cna-lisp.internal:check-result
    (cna-lisp.internal.ffi::%sprite-batch-destroy (cna-lisp.internal:handle-of batch))
    "dispose" :object-type 'sprite-batch))
+
+;;; --- DrawString --------------------------------------------------------------
+;;;
+;;; Six contract members and one Lisp function. The six divide two ways: the text
+;;; is a `String' or a `StringBuilder', and the placement is the plain
+;;; position-and-colour form or the transformed form with a scalar or a Vector2
+;;; scale. Only the second division is expressible here -- a StringBuilder is
+;;; reached through `Length' and `Chars' and nothing else, which is what a Common
+;;; Lisp string already is -- so the String/StringBuilder pair is a *unified*
+;;; collapse the mapping rules declare and the verifier checks, and the three
+;;; shapes are told apart by keywords and by the type of the scale, exactly as
+;;; DRAW-TEXTURE's are.
+;;;
+;;; XNA implements all six by wrapping the text in a private `StringProxy' and
+;;; calling `SpriteFont::InternalDraw', which walks the glyphs and issues one
+;;; ordinary `SpriteBatch.Draw' per glyph. CNA has a `cna_sprite_batch_draw_string'
+;;; route and this does not use it: the layout below is XNA's, transcribed from
+;;; the assembly, and drawing through the texture path that the rasterizer lane
+;;; has already proved is what makes a text pixel proof mean something.
+
+(defgeneric draw-string (sprite-batch sprite-font text &key)
+  (:documentation
+   "SpriteBatch.DrawString: all six of XNA's overloads.
+
+    (draw-string batch font text :position p :color c)
+    (draw-string batch font text :position p :color c :rotation r :origin o
+                                 :scale s :effects e :layer-depth d)
+
+:POSITION and :COLOR are required, because every overload takes both. :ROTATION,
+:ORIGIN, :SCALE, :EFFECTS and :LAYER-DEPTH are one group -- XNA has no overload
+carrying some of them and not the others -- so they are all given or none is.
+
+:SCALE is a real for the uniform overload and a Vector2 for the per-axis one,
+which is the only thing that tells those two apart; XNA's own scalar overload
+builds `Vector2(scale, scale)' and hands it to the same code.
+
+TEXT is a string, and it is laid out as the sequence of UTF-16 code units a
+`System.String' already is. Both of XNA's text overloads land here: after XNA's
+private StringProxy the String and StringBuilder bodies are identical.
+
+Only legal between BEGIN and END, which the per-glyph draws enforce. An empty
+string draws nothing and refuses nothing, exactly as XNA's loop does."))
+
+(defun %check-draw-string-shape (position color-supplied-p
+                                 rotation origin scale effects layer-depth)
+  "Refuse every keyword combination XNA's DrawString family does not have.
+
+Answers T when the transform group is present. The same discipline as
+%CHECK-DRAW-SHAPE, and for the same reason: a `&key' lambda list accepts
+everything unless something refuses, and accepting a shape XNA lacks would be
+inventing a seventh overload."
+  (flet ((refuse (format-control &rest format-arguments)
+           (error 'microsoft.xna.framework:cna-usage-error
+                  :operation "draw-string"
+                  :format-control format-control
+                  :format-arguments format-arguments)))
+    (unless position
+      (refuse ":POSITION is required: every one of XNA's six DrawString overloads ~
+               places the text at a Vector2."))
+    (unless color-supplied-p
+      (refuse ":COLOR is required: every one of XNA's six DrawString overloads takes ~
+               a colour."))
+    (let ((group (list (and rotation t) (and origin t) (and scale t)
+                       (and effects t) (and layer-depth t))))
+      (cond ((every #'identity group) t)
+            ((some #'identity group)
+             (refuse ":ROTATION, :ORIGIN, :SCALE, :EFFECTS and :LAYER-DEPTH are one ~
+                      group: XNA has no DrawString carrying some of them and not the ~
+                      others. Give all five or none."))
+            (t nil)))))
+
+(defmethod draw-string ((batch sprite-batch) (font sprite-font) (text string)
+                        &key position (color nil color-supplied-p)
+                             (rotation nil) (origin nil) (scale nil)
+                             (effects nil) (layer-depth nil))
+  (let ((transformed (%check-draw-string-shape position color-supplied-p rotation
+                                               origin scale effects layer-depth)))
+    (cna-lisp.internal:check-live font "draw-string")
+    (multiple-value-bind (scale-x scale-y)
+        (if transformed (%sprite-scale-components scale) (values 1.0f0 1.0f0))
+      (%draw-string-glyphs
+       batch font (cna-lisp.internal:string-code-units text) position color
+       (if transformed (coerce rotation 'single-float) 0.0f0)
+       (or origin (microsoft.xna.framework:vector2-zero))
+       scale-x scale-y
+       (if transformed effects :none)
+       (if transformed (coerce layer-depth 'single-float) 0.0f0))))
+  (values))
+
+(defun %draw-string-glyphs (batch font units position color rotation origin
+                            scale-x scale-y effects layer-depth)
+  "SpriteFont::InternalDraw, transcribed.
+
+The parts that are not obvious from a description of text layout, and that the
+assembly settles:
+
+* the origin is applied as a **translation composed with the rotation**, not by
+  passing an origin to the per-glyph Draw -- each glyph is drawn with
+  `Vector2.Zero' as its origin, and the whole text block's origin lives in the
+  matrix;
+* `FlipHorizontally' measures the string, starts the pen at that width, and
+  multiplies every horizontal advance by -1;
+* `FlipVertically' starts the pen at `(measure.Y - lineSpacing) * scale.Y' and
+  *subtracts* the line advance at each newline instead of adding it;
+* a flipped glyph's cropping rectangle is adjusted before it is used --
+  vertically by `lineSpacing - glyph.Height - crop.Y', horizontally by
+  `crop.X - crop.Width';
+* the source rectangle handed to Draw is the **glyph** rectangle and the
+  cropping rectangle only moves the pen;
+* the advance after a glyph is `(kern.Y + kern.Z) * scale.X * flip', which is the
+  glyph's width plus its right bearing, and the left bearing was already paid."
+  (cna-lisp.internal:with-binary32-semantics
+    (let* ((flip-horizontally (logtest (sprite-effects-value effects) 1))
+           (flip-vertically (logtest (sprite-effects-value effects) 2))
+           (line-spacing (%font-line-spacing font))
+           (spacing (%font-spacing font))
+           (transform
+             (microsoft.xna.framework:matrix-multiply
+              (microsoft.xna.framework:matrix-create-translation
+               (* (- (microsoft.xna.framework:vector2-x origin)) scale-x)
+               (* (- (microsoft.xna.framework:vector2-y origin)) scale-y)
+               0.0f0)
+              (microsoft.xna.framework:matrix-create-rotation-z rotation)))
+           (flip (if flip-horizontally -1.0f0 1.0f0))
+           (flip-offset-x
+             (if flip-horizontally
+                 (* (microsoft.xna.framework:vector2-x
+                     (%measure-code-units font units "draw-string"))
+                    scale-x)
+                 0.0f0))
+           (pen-x flip-offset-x)
+           (pen-y (if flip-vertically
+                      (* (- (microsoft.xna.framework:vector2-y
+                             (%measure-code-units font units "draw-string"))
+                            (coerce line-spacing 'single-float))
+                         scale-y)
+                      0.0f0))
+           (first-glyph-of-line t)
+           (texture (%font-texture font)))
+      (dotimes (i (length units))
+        (let ((unit (aref units i)))
+          (cond
+            ((= unit 13))
+            ((= unit 10)
+             (setf first-glyph-of-line t
+                   pen-x flip-offset-x
+                   pen-y (if flip-vertically
+                             (- pen-y (* (coerce line-spacing 'single-float) scale-y))
+                             (+ pen-y (* (coerce line-spacing 'single-float) scale-y)))))
+            (t
+             (let* ((index (%font-required-glyph-index font unit "draw-string"))
+                    (kern (aref (%font-kerning font) index))
+                    (left (microsoft.xna.framework:vector3-x kern))
+                    (glyph (aref (%font-glyphs font) index))
+                    (crop (aref (%font-cropping font) index)))
+               (if first-glyph-of-line
+                   (setf left (microsoft.xna.framework:math-helper-max left 0.0f0))
+                   (setf pen-x (+ pen-x (* (* spacing scale-x) flip))))
+               (setf pen-x (+ pen-x (* (* left scale-x) flip)))
+               (let ((crop-x (microsoft.xna.framework:rectangle-x crop))
+                     (crop-y (microsoft.xna.framework:rectangle-y crop)))
+                 (when flip-vertically
+                   (setf crop-y (- line-spacing
+                                   (microsoft.xna.framework:rectangle-height glyph)
+                                   crop-y)))
+                 (when flip-horizontally
+                   (setf crop-x (- crop-x (microsoft.xna.framework:rectangle-width crop))))
+                 (let ((placed
+                         (microsoft.xna.framework:vector2-add
+                          (microsoft.xna.framework:vector2-transform
+                           (microsoft.xna.framework:make-vector2
+                            (+ pen-x (* (coerce crop-x 'single-float) scale-x))
+                            (+ pen-y (* (coerce crop-y 'single-float) scale-y)))
+                           transform)
+                          position)))
+                   (draw-texture batch texture
+                                 :position placed
+                                 :source glyph
+                                 :color color
+                                 :rotation rotation
+                                 :origin (microsoft.xna.framework:vector2-zero)
+                                 :scale (microsoft.xna.framework:make-vector2 scale-x scale-y)
+                                 :effects effects
+                                 :layer-depth layer-depth)))
+               (setf first-glyph-of-line nil
+                     pen-x (+ pen-x
+                              (* (* (+ (microsoft.xna.framework:vector3-y kern)
+                                       (microsoft.xna.framework:vector3-z kern))
+                                    scale-x)
+                                 flip)))))))))))
