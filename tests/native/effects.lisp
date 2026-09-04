@@ -70,19 +70,43 @@
       (is (null (gfx:collection-item techniques 1000)))
       (is (null (gfx:collection-item techniques "no technique is called this"))))))
 
-(define-native-test a-stock-effect-exposes-no-parameters
-  ;; Recorded rather than worked around: CNA's stock effects carry no reflected
-  ;; parameter graph. The collection is real and empty. If a future CNA reflects
-  ;; BasicEffect's parameters this fails, and that is the point of the test --
-  ;; docs/limitations.md says the answer is always zero today.
-  (with-effect-game (game effect)
-    (declare (ignore game))
-    (let ((parameters (gfx:effect-parameters effect)))
-      (is (typep parameters 'gfx:effect-parameter-collection))
-      (is (= 0 (gfx:collection-count parameters))
-          "CNA now reflects stock effect parameters; docs/limitations.md is stale")
-      (is (null (gfx:collection-elements parameters)))
-      (is (null (gfx:collection-parameter-by-semantic parameters "WORLD"))))))
+(define-native-test an-effects-parameter-collection-is-consistent-with-itself
+  ;; How many parameters a stock effect exposes is a property of the CNA *build*,
+  ;; not a constant: CNA reflects a parameter graph from compiled effect bytecode,
+  ;; and what a natively-constructed BasicEffect carries alongside that has
+  ;; differed between the prebuilt 0.21.0 library used locally and a CNA built
+  ;; from source at the pinned commit. So this asserts what is true of both --
+  ;; the collection is real, its count agrees with its elements, and every
+  ;; parameter in it is well formed and findable by its own name -- and reports
+  ;; the count rather than requiring one.
+  ;;
+  ;; The assertions are outside the game on purpose. A FiveAM check that fails
+  ;; inside a lifecycle callback has no restart to report itself through, and
+  ;; comes out as a type error about a missing restart instead of as the
+  ;; assertion that failed. That is how this test first failed on CI.
+  (let ((count nil) (names nil) (found nil) (semantic-miss :unset) (kind nil))
+    (with-effect-game (game effect)
+      (declare (ignorable game))
+      (let ((parameters (gfx:effect-parameters effect)))
+        (setf kind (type-of parameters)
+              count (gfx:collection-count parameters)
+              names (mapcar #'gfx:effect-parameter-name
+                            (gfx:collection-elements parameters))
+              found (every (lambda (name)
+                             (let ((p (gfx:collection-item parameters name)))
+                               (and p (equal name (gfx:effect-parameter-name p)))))
+                           names)
+              semantic-miss (gfx:collection-parameter-by-semantic
+                             parameters "NO SEMANTIC IS SPELLED LIKE THIS"))))
+    (is (eq 'gfx:effect-parameter-collection kind))
+    (is (= count (length names))
+        "Count says ~d and the collection yielded ~d element(s)" count (length names))
+    (is (every #'stringp names))
+    (is-true found "a parameter was not findable by the name it reports")
+    (is (null semantic-miss))
+    ;; Not an assertion -- a note, so a reader of the log knows which side of the
+    ;; limitation this run was on.
+    (format t "~&effect parameters : ~d on this CNA build~%" count)))
 
 ;;; --- CurrentTechnique's setter, from the IL ----------------------------------------
 

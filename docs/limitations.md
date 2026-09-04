@@ -390,22 +390,31 @@ in two SSE registers; the generator flattens those and
 `SpriteBatch.Begin`'s transform matrix needs no shim either, because CNA's route
 for it takes `const CNA_Matrix*`.
 
-## No effect here has ever had a parameter
+## No effect here has ever had a *reflected* parameter graph
 
-`Effect.Parameters` is real, is CNA's own collection, and is **empty for every
-effect this binding can currently make**. CNA reflects a parameter graph only
-from compiled Direct3D 9 Effect Framework bytecode; its stock effects —
-`BasicEffect` and its siblings — carry none. Loading bytecode needs
-`CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`, which is a renderer property, and
-neither `HEADLESS` nor `SOFTWARE` has it: they refuse the bytecode rather than
+`Effect.Parameters` is real and is CNA's own collection. What it contains for a
+stock effect is a property of the CNA **build**, not a constant: the prebuilt
+0.21.0 library used locally answers an empty collection for a `BasicEffect`, and
+a CNA built from source at the pinned commit does not. That was found by CI,
+which failed a test asserting the count was zero, and the test now asserts what
+is true of both — the collection is real, its count agrees with its elements,
+and every parameter in it is findable by the name it reports — and prints the
+count rather than requiring one.
+
+What is constant is the *reflected* graph: CNA builds one only from compiled
+Direct3D 9 Effect Framework bytecode, and loading that needs
+`CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`, which is a renderer property that
+neither `HEADLESS` nor `SOFTWARE` has. They refuse the bytecode rather than
 quietly drawing with a stock shader.
 
 So `Effect(GraphicsDevice, byte[])` is implemented and reports CNA's refusal
 rather than working around it, and `tests/native/effects.lisp` requires the
-refusal.
+refusal. **No effect with a shader-reflected parameter graph has ever been
+loaded in this repository.**
 
 `EffectParameter`'s fifty-one members are therefore implemented against a surface
-no reachable effect exposes. Rather than leave them written and never once run,
+no reachable effect is guaranteed to expose. Rather than leave them written and
+never once run,
 the test suite builds a parameter collection through CNA's own construction
 routes and round-trips every one of the nine value types, both scalar and array,
 plus the string and texture pairs. **That proves the marshalling and nothing
