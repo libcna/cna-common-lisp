@@ -41,7 +41,8 @@ zeroes. Under `HEADLESS` it therefore refuses, by name.
 
 Under a rasterising renderer it answers. Measured against a CNA built with
 `-DCNA_GRAPHICS_RENDERER=SOFTWARE` — a CPU rasteriser, needing **no display and
-no Xvfb** — in four separate proofs, kept apart because they are four claims:
+no Xvfb** — in five separate kinds of proof, kept apart because they are
+different claims:
 
 * **clear.** Clearing to `CornflowerBlue` reads back `(100, 149, 237, 255)` for
   every pixel of the window asked for.
@@ -74,7 +75,13 @@ no Xvfb** — in four separate proofs, kept apart because they are four claims:
   eight-row glyphs at the clear colour, which a line advance of 8 would have
   filled.
 
-`tools/qualification/rasterizer.sh` requires all four and fails when any is
+* **stock-effect.** A pass applied through an `AlphaTestEffect`, and through a
+  `SkinnedEffect`, makes a `DrawUserPrimitives` triangle legal and puts the
+  triangle's own vertex colour on the pixels its geometry covers. That they are
+  usable *draw* effects, and — as the section above says at length — nothing
+  about the alpha test or about skinning.
+
+`tools/qualification/rasterizer.sh` requires all five and fails when any is
 absent; a clear alone is not accepted as evidence about `SpriteBatch`, which it
 briefly was, the sprite path is not accepted as evidence about the primitive
 path, which is a different path through the renderer, and neither is accepted as
@@ -91,6 +98,64 @@ unrotated, unscaled, untinted text with no origin and no `SpriteEffects`.
 Rotation, scaling, tinting, blending, texturing, lighting, fog, indexed and
 buffer-backed draws, flipped or rotated text and every non-identity transform are
 submitted and accepted, and their pixels are not asserted anywhere.
+
+## Three stock effects, and what their evidence is worth
+
+`AlphaTestEffect`, `DualTextureEffect` and `SkinnedEffect` are implemented and
+complete. Every member of each round-trips through the CNA route the manifest
+binds. **That is state evidence, and state evidence is not shading evidence**,
+which is the distinction this section exists to keep.
+
+| Effect | State round-trip | Reaches pixels | Its own shading |
+| --- | --- | --- | --- |
+| `AlphaTestEffect` | yes, every member | **yes** — a pass applied through it makes a `DrawUserPrimitives` triangle legal and the triangle's vertex colour lands on exactly the pixels its geometry covers | **no** — see below |
+| `SkinnedEffect` | yes, every member | **yes**, the same proof | **no** — see below |
+| `DualTextureEffect` | yes, every member | **no** | no |
+
+### The alpha test is not implemented by the SOFTWARE renderer
+
+Measured, not inferred. CNA's `GpuDrawParams` carries an `alphaTest[4]` vector
+and an `alphaTestEffect` flag, and
+`modules/renderers/software/src/SoftwareRenderer.cpp` contains no reference to
+`alphaTest` at all. So `AlphaFunction` and `ReferenceAlpha` reach the ABI, are
+stored, and read back — and change no pixel: an `AlphaFunction` of `Never` with a
+`ReferenceAlpha` of 128 draws exactly the triangle `Always` draws.
+
+This is an upstream renderer limitation and not a projection defect, and
+`tests/native/rasterization.lisp` pins it in both directions the way the
+`DepthStencilState` divergence is pinned: the state is asserted to round-trip,
+and the *absence* of any pixel that the alpha test decided is stated rather than
+left to be inferred from a passing suite. A CNA whose software renderer grew an
+alpha test would make that test's premise false, which is the point of writing it
+down.
+
+### Skinning needs a vertex layout this milestone does not project
+
+The software renderer *does* implement a bone palette, but only for a skinned
+vertex layout — blend indices and weights, stride 52. None of XNA's four standard
+vertex types carries those, and `VertexPositionNormalTextureSkinned` is not
+projected here. So `SetBoneTransforms` and `GetBoneTransforms` round-trip a
+palette of up to 72 matrices, and replacing bone zero with a translation moves
+nothing drawn from a `VertexPositionColor` array. Correctly so, and with no pixel
+evidence about skinning anywhere in this repository.
+
+### DualTextureEffect has no pixel evidence at all
+
+It needs two things this milestone cannot give it together: both texture layers
+assigned — CNA refuses the draw outright without the second, with
+`"dualTexture=true but texture1 is null"` — and a second texture coordinate,
+which no standard XNA vertex type has. Its state round-trips, including the two
+layers being independent of each other, and nothing here says what it rasterises.
+
+### EnvironmentMapEffect is not implemented, and why
+
+Its `EnvironmentMap` property is a `TextureCube`, and `TextureCube` is not
+projected: it needs the texture `SetData`/`GetData` surface, which `Texture2D`
+does not have here either. A closure is added only when every member of it can be
+finished, tested and measured together, so `EnvironmentMapEffect` waits for
+`TextureCube` rather than being added with one member reported missing. CNA has
+the whole surface for both — `cna_environment_map_effect_*` and
+`cna_texturecube_*` — so this is ordinary local work, not a block.
 
 ## SpriteFont is projected, and cannot yet be obtained
 
@@ -297,8 +362,7 @@ These are absent, and measured as absent, not faked:
 * `GameWindow` as a type -- only the window title is reachable, on `game`;
 * `Model`, `RenderTarget2D`, `Texture3D`, `TextureCube` and the rest of the 3D
   resource surface;
-* the stock effects other than `BasicEffect` — `AlphaTestEffect`,
-  `DualTextureEffect`, `EnvironmentMapEffect`, `SkinnedEffect`;
+* `EnvironmentMapEffect`, the one stock effect still absent — see below;
 * audio, media, storage, gamer services and networking.
 
 The math types are present and complete: `Vector2`, `Vector3`, `Vector4`,

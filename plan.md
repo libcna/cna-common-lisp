@@ -221,7 +221,15 @@ are pure managed and touch no native route:
   the same reason; the native handle it nevertheless owns goes back through the
   binding's own disposal, and the font is a child of its atlas so the two cannot
   be released in the wrong order. With it the rasterizer lane gained its fourth
-  proof.
+  proof;
+* three of the four remaining stock effects -- `AlphaTestEffect`,
+  `DualTextureEffect` and `SkinnedEffect` -- over the same effect machinery, plus
+  the mixin that makes "implements `IEffectLights`" a superclass instead of a
+  hope: the first two implement neither that interface nor any part of it, and a
+  generic function specialised on `Effect` had been giving them an applicable
+  method for a member they have not got. `EnvironmentMapEffect` is the fourth and
+  is deliberately absent: its `EnvironmentMap` is a `TextureCube`, which is not
+  projected, and a closure is added whole or not at all.
 
 ## 6. Measured status
 
@@ -244,31 +252,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=127 -->
-<!-- generated:selected members=2067 -->
-<!-- generated:complete types=119 -->
+<!-- generated:selected types=130 -->
+<!-- generated:selected members=2127 -->
+<!-- generated:complete types=122 -->
 <!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1610 -->
+<!-- generated:complete members=1664 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=66 -->
-<!-- generated:not-applicable members=390 -->
+<!-- generated:not-applicable members=396 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 127 types, 2067 members.
+Selection **Foundation 1 and the managed closures**: 130 types, 2127 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **119** |
+| Types complete | **122** |
 | Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1610** |
+| Members complete | **1664** |
 | Members partial | **1** |
 | Members missing | **66** |
-| Members not applicable | **390** |
+| Members not applicable | **396** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

@@ -57,7 +57,7 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
 | Prose consistency | every generated fact and block matches the reports |
-| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all four proofs -- clear, sprite, primitive and text |
+| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: all five kinds -- clear, sprite, primitive, text and stock-effect |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
@@ -83,7 +83,7 @@ they have never executed is stale.
 | `Lisp` / reference | pure gates on SBCL 2.5.2, installed from the upstream binary release and verified by SHA-256 |
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
-| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all four kinds of pixel proof were obtained |
+| `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless all five kinds of pixel proof were obtained |
 
 The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
 `openeggbert/cna:next` does not currently build from published sources, because
@@ -96,31 +96,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=127 -->
-<!-- generated:selected members=2067 -->
-<!-- generated:complete types=119 -->
+<!-- generated:selected types=130 -->
+<!-- generated:selected members=2127 -->
+<!-- generated:complete types=122 -->
 <!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1610 -->
+<!-- generated:complete members=1664 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=66 -->
-<!-- generated:not-applicable members=390 -->
+<!-- generated:not-applicable members=396 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 127 types, 2067 members.
+Selection **Foundation 1 and the managed closures**: 130 types, 2127 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **119** |
+| Types complete | **122** |
 | Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1610** |
+| Members complete | **1664** |
 | Members partial | **1** |
 | Members missing | **66** |
-| Members not applicable | **390** |
+| Members not applicable | **396** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -218,11 +218,14 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **The rest of the stock effects.** `AlphaTestEffect`, `DualTextureEffect`,
-   `EnvironmentMapEffect` and `SkinnedEffect` are the same shape `BasicEffect`
-   already has -- the three `IEffect*` contracts are generic functions and a new
-   stock effect implements them by inheriting -- over their own CNA routes. The
-   Effect closure did the hard part; this is breadth.
+1. **`TextureCube`, and then `EnvironmentMapEffect`.** Three of the four stock
+   effects landed; the fourth did not, because its `EnvironmentMap` is a
+   `TextureCube` and that type is not projected. `TextureCube` needs the texture
+   `SetData`/`GetData` surface, which `Texture2D` has not got here either, so the
+   honest order is the data surface, then `TextureCube` and `CubeMapFace`, then
+   `EnvironmentMapEffect`, which is nine more members over
+   `cna_environment_map_effect_*`. Do not add `EnvironmentMapEffect` with
+   `EnvironmentMap` reported missing.
 2. **Render targets.** `RenderTarget2D`, `RenderTargetUsage`, `DepthFormat` and
    `GraphicsDevice.SetRenderTarget(s)`. This is the closure that would let the
    rasterizer lane prove things it currently cannot: a render target is readable
@@ -249,6 +252,16 @@ the graph after each closure instead of following this list once it has moved.
   is discrete, local, actionable work: build its headers, run
   `tools/native-abi/generate.py` and `verify.sh` against them, and see what the
   270-odd bound routes say.
+
+* **A state round-trip is not shading evidence, and the gap is now measured.**
+  CNA's software renderer never reads `GpuDrawParams::alphaTest`, so
+  `AlphaTestEffect`'s `AlphaFunction` and `ReferenceAlpha` reach the ABI and
+  change no pixel -- `Never` draws what `Always` draws. Its bone palette works
+  only for a skinned vertex layout no standard XNA vertex type carries.
+  `DualTextureEffect` cannot be drawn at all without both layers *and* a second
+  texture coordinate. All three are recorded in `docs/limitations.md`, and the
+  rasterizer lane's `stock-effect` proof claims only that these are usable *draw*
+  effects. Do not upgrade that claim without new evidence.
 
 * **`System.Char` is a UTF-16 code unit, and a Common Lisp string is not made of
   them.** A CLR string is a sequence of code *units*; a Lisp string is a sequence

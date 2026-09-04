@@ -133,7 +133,7 @@ init only adds nested codec submodules this build disables anyway.
 | Lane | Renderer | What it proves |
 | --- | --- | --- |
 | `Native` | `HEADLESS` | the lifecycle ran, handles were valid, and draw commands were submitted and accepted. **Nothing about pixels**, and the back-buffer readback refuses by name rather than answering zeroes. |
-| `Rasterizer` | `SOFTWARE` | the same suite, plus four separate kinds of pixel proof — see below. |
+| `Rasterizer` | `SOFTWARE` | the same suite, plus five separate kinds of pixel proof — see below. |
 
 The rasterizer lane's proofs are kept apart because they are different claims,
 and one of them used to be asserted on the strength of the other:
@@ -145,13 +145,14 @@ and one of them used to be asserted on the strength of the other:
 | `sprite` | the same with a generated 4×4 texture of four differently-coloured 2×2 quadrants | orientation and sampling are right, not merely placement — a flipped or transposed sample would fail |
 | `primitive` | clear, make a `BasicEffect`, apply its one pass, then one `DrawUserPrimitives` triangle list in clip space — World, View and Projection left at the identity CNA reports as their default, `VertexColorEnabled` on and lighting off — then read four points inside the triangle and five outside it | **the primitive pipeline rasterises**: the vertices' own colour lands on the pixels the geometry covers and on none outside it, and no matrix setter and therefore no optional shim takes part in the proof |
 | `text` | clear, then `DrawString` of `"AB"` at (16,16) with a `SpriteFont` over a generated 16×8 atlas whose two glyph cells are **different colours** — `'A'` red, `'B'` green — under `BlendState.Opaque`, `SamplerState.PointClamp`, `Color.White`, unit scale, no rotation and no origin; then read inside both glyphs and outside the run | **`SpriteFont` metrics and `DrawString` layout reach pixels**: the second glyph reads **green** eight pixels right of the first, which is the advance *and* the per-glyph atlas rectangle in one assertion — red there would mean the second glyph was cut from the first one's cell, and the clear colour would mean the pen never advanced |
+| `stock-effect` | clear, make an `AlphaTestEffect` (then a `SkinnedEffect`), apply its pass, draw the same clip-space triangle through it, read inside and outside | **each is a usable draw effect**: its technique graph, its pass and the draw through it all work, and the triangle's own colour lands where its geometry is. **Not** the alpha test and **not** skinning — `docs/limitations.md` measures why neither is reachable under this renderer |
 | `text` | the same with `"A\nA"` | the line advance is `LineSpacing` (12) and not the glyph height (8): the second line's glyph reads red twelve rows down, and the four rows between the two eight-row glyphs stay the clear colour, which an advance of 8 would have filled |
 
 The textures are **generated**, not drawn:
 `tools/qualification/make-pixel-fixtures.py` states every texel in source, so the
 expected colours are checkable without opening an image editor.
 
-`tools/qualification/rasterizer.sh` requires **all four** kinds and fails if any
+`tools/qualification/rasterizer.sh` requires **all five** kinds and fails if any
 is missing, so the lane cannot pass on a clear alone, the sprite path cannot
 stand in for the primitive path — they are different paths through the renderer —
 and neither stands in for text, because one font atlas texel arriving is a
@@ -183,6 +184,13 @@ text ones are unrotated, unscaled, untinted text with no origin and no
 indexed draws, buffer-backed draws, flipped or rotated text and every
 non-identity transform are submitted and accepted, and no pixel of any of them is
 asserted anywhere.
+
+**Any stock effect's own shading.** The `stock-effect` proof is about the draw
+reaching pixels, not about what the effect computes. The alpha test is not
+implemented by this renderer at all, skinning needs a vertex layout this
+milestone does not project, and `DualTextureEffect` has no pixel evidence
+whatever. Every one of those is measured in `docs/limitations.md` rather than
+left as an unstated gap.
 
 **A real font.** The text proof's atlas is generated: two flat opaque colour
 cells with no antialiasing, chosen so the expected back-buffer value is the texel

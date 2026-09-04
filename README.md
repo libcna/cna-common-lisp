@@ -118,6 +118,10 @@ stubs:
   `DrawUserPrimitives`, `DrawUserIndexedPrimitives` — with XNA's own argument
   validation reproduced from the IL, and, since the effect closure landed, a
   rasterised triangle to show for it;
+* the other **stock effects** -- `AlphaTestEffect`, `DualTextureEffect` and
+  `SkinnedEffect`, complete, over the same effect machinery. Their state
+  round-trips through the CNA routes; what the SOFTWARE renderer does and does
+  not shade with them is measured in `docs/limitations.md` rather than assumed;
 * **`Effect` and `BasicEffect`**: the whole effect object graph — techniques,
   passes, parameters, annotations and their four collections — plus the three
   `IEffect*` contracts as generic functions, `DirectionalLight`, and
@@ -151,27 +155,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=127 -->
-<!-- generated:selected members=2067 -->
-<!-- generated:complete types=119 -->
+<!-- generated:selected types=130 -->
+<!-- generated:selected members=2127 -->
+<!-- generated:complete types=122 -->
 <!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1610 -->
+<!-- generated:complete members=1664 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=66 -->
-<!-- generated:not-applicable members=390 -->
+<!-- generated:not-applicable members=396 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=279 -->
+<!-- generated:bound native functions=322 -->
 <!-- generated:bound native structs=52 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **127 XNA types and 2067 members**:
+The generated scoreboard, over a selection of **130 XNA types and 2127 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **119 / 8 / 0** |
-| Members complete / missing | **1610 / 66** |
-| Members not applicable | **390** |
+| Types complete / partial / missing | **122 / 8 / 0** |
+| Members complete / missing | **1664 / 66** |
+| Members not applicable | **396** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -184,7 +188,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **279 native routes** and **52 native structs**,
+The private foreign layer binds **322 native routes** and **52 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

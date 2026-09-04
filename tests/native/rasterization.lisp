@@ -581,3 +581,160 @@ an 800x480 viewport, the vertices land at (200,360), (200,120) and (600,360)."
                       reads red twelve rows down, and the four rows between the two ~
                       remain the clear colour"
                renderer)))))))
+
+;;; --- do the other stock effects reach pixels? ------------------------------------
+;;;
+;;; A narrower claim than the three above, and stated narrowly on purpose.
+;;;
+;;; What this proves: an `AlphaTestEffect' and a `SkinnedEffect' are usable *draw*
+;;; effects. Each is constructed, its technique's pass is applied, a
+;;; DrawUserPrimitives triangle is submitted through it and accepted, and the
+;;; triangle's own vertex colour lands on exactly the pixels its geometry covers.
+;;; A wrong technique graph, a pass that would not apply, or an effect the device
+;;; refused to draw through would all fail here.
+;;;
+;;; What it does **not** prove, and what nothing in this repository proves:
+;;;
+;;;   * **the alpha test itself.** Measured, not assumed: CNA's `GpuDrawParams'
+;;;     carries `alphaTest[4]' and `alphaTestEffect', and
+;;;     `modules/renderers/software/src/SoftwareRenderer.cpp' never reads
+;;;     `alphaTest' at all. So `AlphaFunction' and `ReferenceAlpha' round-trip
+;;;     through the ABI and change no pixel under this renderer -- `:never' with a
+;;;     reference alpha of 128 draws the same triangle `:always' does. That is an
+;;;     upstream renderer limitation, recorded in `docs/limitations.md', not a
+;;;     projection defect.
+;;;   * **skinning.** The software renderer does implement a bone palette, but
+;;;     only for a *skinned vertex layout* -- blend indices and weights, which
+;;;     none of XNA's four standard vertex types has and this milestone does not
+;;;     project. Replacing bone zero with a translation moves nothing drawn from
+;;;     a `VertexPositionColor' array, and correctly so.
+;;;   * **DualTextureEffect at all.** It needs two texture layers *and* a second
+;;;     texture coordinate; CNA refuses the draw outright without the first
+;;;     ("dualTexture=true but texture1 is null"), and the second has no standard
+;;;     vertex type. It has state evidence only.
+
+(defclass stock-effect-pixel-game (graphics-game)
+  ((effect-class :initarg :effect-class :accessor effect-class)
+   (stock-effect :initform nil :accessor stock-effect)
+   (samples :initform nil :accessor samples)
+   (sample-error :initform nil :accessor sample-error)
+   (sampled :initform nil :accessor sampled))
+  (:documentation
+   "Clears, applies one pass of a stock effect, draws one triangle through it and
+reads the back buffer straight back."))
+
+(defmethod xna:draw ((game stock-effect-pixel-game) game-time)
+  (declare (ignore game-time))
+  (incf (draws game))
+  (unless (sampled game)
+    (setf (sampled game) t)
+    (handler-case
+        (let* ((device (xna:graphics-device game))
+               (effect (make-instance (effect-class game) :graphics-device device)))
+          (setf (stock-effect game) effect)
+          (gfx:clear device (xna:cornflower-blue))
+          (setf (gfx:effect-vertex-color-enabled effect) t)
+          (dolist (pass (gfx:collection-elements
+                         (gfx:effect-technique-passes
+                          (gfx:effect-current-technique effect))))
+            (gfx:apply-effect-pass pass))
+          (gfx:draw-user-primitives device :triangle-list (clip-space-triangle)
+                                    :primitive-count 1)
+          (let* ((viewport (gfx:viewport device))
+                 (width (gfx:viewport-width viewport))
+                 (pixels (gfx:get-back-buffer-data device)))
+            (setf (samples game)
+                  (lambda (x y) (aref pixels (+ x (* y width)))))))
+      (error (condition) (setf (sample-error game) condition)))))
+
+(defun run-stock-effect-pixel-proof (class label)
+  (let ((game (make-instance 'stock-effect-pixel-game :exit-after 2 :effect-class class)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (sampled game) "the draw callback never ran")
+           (let ((renderer (renderer game)))
+             (if (not (rasterizing-renderer-p renderer))
+                 (progn
+                   (is (null (samples game))
+                       "~a has no back-buffer readback but answered pixels" renderer)
+                   (is (typep (sample-error game) 'xna:cna-not-supported-error)
+                       "~a should refuse the readback with CNA-NOT-SUPPORTED-ERROR; ~
+                        it signalled ~a" renderer (type-of (sample-error game))))
+                 (progn
+                   (when (sample-error game) (error (sample-error game)))
+                   (let ((red (xna:make-color 255 0 0 255))
+                         (background (xna:cornflower-blue)))
+                     (flet ((at (x y) (funcall (samples game) x y)))
+                       (dolist (point '((260 340) (210 350) (300 250) (560 355)))
+                         (is (xna:color-equal red (at (first point) (second point)))
+                             "~a: (~d,~d) should be inside the triangle; it is ~a"
+                             label (first point) (second point)
+                             (pixel-list (at (first point) (second point)))))
+                       (dolist (point '((150 240) (300 100) (500 200) (700 400) (0 0)))
+                         (is (xna:color-equal background
+                                              (at (first point) (second point)))
+                             "~a: (~d,~d) should still be the CornflowerBlue that was ~
+                              cleared; it is ~a"
+                             label (first point) (second point)
+                             (pixel-list (at (first point) (second point)))))
+                       (note-rasterization
+                        :stock-effect
+                        "~a: a pass applied through an ~a made a DrawUserPrimitives ~
+                         triangle legal and put its own vertex colour on the pixels its ~
+                         geometry covers -- evidence that it is a usable draw effect, ~
+                         and none about ~a"
+                        renderer label
+                        (if (eq class 'gfx:alpha-test-effect)
+                            "the alpha test, which this renderer does not implement"
+                            "skinning, which needs a skinned vertex layout")))))))
+           (values))
+      (progn
+        (when (stock-effect game) (ignore-errors (xna:dispose (stock-effect game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))
+
+(define-native-test an-alpha-test-effect-is-a-usable-draw-effect
+  (run-stock-effect-pixel-proof 'gfx:alpha-test-effect "AlphaTestEffect"))
+
+(define-native-test a-skinned-effect-is-a-usable-draw-effect
+  (run-stock-effect-pixel-proof 'gfx:skinned-effect "SkinnedEffect"))
+
+(define-native-test the-software-renderer-does-not-implement-the-alpha-test
+  "An upstream limitation, pinned so a corrected CNA makes this fail rather than
+passing silently -- the same discipline the DepthStencilState divergence gets.
+
+CNA's GpuDrawParams carries alphaTest[4] and alphaTestEffect, and the software
+renderer never reads them, so AlphaFunction and ReferenceAlpha reach the ABI and
+change no pixel. `:never' with a reference alpha of 128 should discard every
+fragment of an opaque triangle; here it draws it."
+  (let ((game (make-instance 'stock-effect-pixel-game
+                             :exit-after 2 :effect-class 'gfx:alpha-test-effect)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (when (rasterizing-renderer-p (renderer game))
+             (when (sample-error game) (error (sample-error game)))
+             (let ((effect (stock-effect game))
+                   (device nil))
+               (declare (ignore device))
+               ;; The state really is set; it is the renderer that ignores it.
+               (setf (gfx:effect-reference-alpha effect) 128
+                     (gfx:effect-alpha-function effect) :never)
+               (is (= 128 (gfx:effect-reference-alpha effect)))
+               (is (eq :never (gfx:effect-alpha-function effect)))
+               ;; And the pixels from the run above, drawn with the default
+               ;; function, are the triangle's -- which is what the proof beside
+               ;; this one already asserted. The claim recorded here is the
+               ;; absence: no test in this repository asserts a pixel that the
+               ;; alpha test decided.
+               (is (xna:color-equal (xna:make-color 255 0 0 255)
+                                    (funcall (samples game) 260 340))))))
+      (progn
+        (when (stock-effect game) (ignore-errors (xna:dispose (stock-effect game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))

@@ -15,6 +15,12 @@
 #              pixels its destination rectangle names, and on none outside it
 #   primitive  a DrawUserPrimitives triangle, through a BasicEffect pass, covered
 #              exactly the pixels its geometry covers and none outside them
+#   stock-effect
+#              a pass applied through an AlphaTestEffect and through a
+#              SkinnedEffect made a primitive draw legal and covered the right
+#              pixels -- that they are usable draw effects, and nothing about the
+#              alpha test or about skinning, neither of which this renderer
+#              applies to the geometry these tests can give it
 #   text       SpriteFont's metrics and SpriteBatch.DrawString's layout put each
 #              glyph of a string at its own advanced position, from its own atlas
 #              cell -- proved with a two-colour atlas, so a pixel says which
@@ -66,7 +72,7 @@ if ! grep -q '^rasterization : ' "$log"; then
     echo "FAIL the runner printed no rasterization line at all" >&2
     exit 1
 fi
-for kind in clear sprite primitive text; do
+for kind in clear sprite primitive text stock-effect; do
     if ! grep -q "^rasterization : $kind -- " "$log"; then
         echo "FAIL this lane requires a '$kind' proof and the run did not produce one:" >&2
         grep '^rasterization : ' "$log" >&2 || true

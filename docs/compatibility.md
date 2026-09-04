@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=127 -->
-<!-- generated:selected members=2067 -->
-<!-- generated:complete types=119 -->
+<!-- generated:selected types=130 -->
+<!-- generated:selected members=2127 -->
+<!-- generated:complete types=122 -->
 <!-- generated:partial types=8 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1610 -->
+<!-- generated:complete members=1664 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=66 -->
-<!-- generated:not-applicable members=390 -->
+<!-- generated:not-applicable members=396 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 127 types, 2067 members.
+Selection **Foundation 1 and the managed closures**: 130 types, 2127 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **119** |
+| Types complete | **122** |
 | Types partial | **8** |
 | Types missing | **0** |
-| Members complete | **1610** |
+| Members complete | **1664** |
 | Members partial | **1** |
 | Members missing | **66** |
-| Members not applicable | **390** |
+| Members not applicable | **396** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -229,6 +229,9 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.IEffectFog` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | **partial** | 4 | 0 | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | **partial** | 24 | 0 | 1 | 1 |
+| `M.X.F.Graphics.AlphaTestEffect` | **complete** | 15 | 0 | 0 | 2 |
+| `M.X.F.Graphics.DualTextureEffect` | **complete** | 14 | 0 | 0 | 2 |
+| `M.X.F.Graphics.SkinnedEffect` | **complete** | 25 | 0 | 0 | 2 |
 | `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
@@ -347,10 +350,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=279 -->
+<!-- generated:bound native functions=322 -->
 <!-- generated:bound native structs=52 -->
 <!-- generated:bound native struct fields=384 -->
-<!-- generated:bound native constants=460 -->
+<!-- generated:bound native constants=461 -->
 <!-- generated:bound native callbacks=6 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -359,10 +362,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 279 |
+| Bound functions | 322 |
 | Bound structs | 52 |
 | Bound struct fields | 384 |
-| Bound constants | 460 |
+| Bound constants | 461 |
 | Bound callback typedefs | 6 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
