@@ -467,7 +467,11 @@ def verify_type(report, rules, contract_type, surface, packages, claimed):
     values = list(statuses.values())
     if all(v in ("complete", "not-applicable") for v in values):
         status = "complete"
-    elif any(v == "complete" for v in values):
+    elif any(v in ("complete", "partial") for v in values):
+        # A *partial* member is not an absent one, and a type whose whole
+        # membership is partial used to fall through to "missing" here -- which
+        # said the type had not been projected at all. TitleContainer is the
+        # first type to reach that branch: one member, projected, partial.
         status = "partial"
     else:
         status = "missing"

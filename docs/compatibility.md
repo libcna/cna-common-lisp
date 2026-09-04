@@ -107,29 +107,29 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=147 -->
-<!-- generated:selected members=2256 -->
+<!-- generated:selected types=148 -->
+<!-- generated:selected members=2257 -->
 <!-- generated:complete types=135 -->
-<!-- generated:partial types=12 -->
+<!-- generated:partial types=13 -->
 <!-- generated:missing types=0 -->
 <!-- generated:complete members=1772 -->
-<!-- generated:partial members=16 -->
+<!-- generated:partial members=17 -->
 <!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 147 types, 2256 members.
+Selection **Foundation 1 and the managed closures**: 148 types, 2257 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **135** |
-| Types partial | **12** |
+| Types partial | **13** |
 | Types missing | **0** |
 | Members complete | **1772** |
-| Members partial | **16** |
+| Members partial | **17** |
 | Members missing | **51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
@@ -153,6 +153,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.GameComponentCollection` | **partial** | 2 | 0 | 1 | 4 |
 | `M.X.F.GameComponentCollectionEventArgs` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.LaunchParameters` | **complete** | 1 | 0 | 0 | 0 |
+| `M.X.F.TitleContainer` | **partial** | 0 | 1 | 0 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 13 | 0 | 16 | 1 |
 | `M.X.F.Content.ContentManager` | **partial** | 1 | 3 | 3 | 3 |
 | `M.X.F.Graphics.RenderTargetCube` | **complete** | 7 | 0 | 0 | 1 |
@@ -342,6 +343,7 @@ back-reference.
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.TitleContainer` | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
@@ -371,7 +373,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=405 -->
+<!-- generated:bound native functions=407 -->
 <!-- generated:bound native structs=63 -->
 <!-- generated:bound native struct fields=473 -->
 <!-- generated:bound native constants=487 -->
@@ -383,7 +385,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 405 |
+| Bound functions | 407 |
 | Bound structs | 63 |
 | Bound struct fields | 473 |
 | Bound constants | 487 |

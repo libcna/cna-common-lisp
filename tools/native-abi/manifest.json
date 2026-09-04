@@ -904,6 +904,18 @@
       "ownership": "destroys"
     },
     {
+      "name": "cna_title_location_get_path_size",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_title_location_copy_path",
+      "header": "runtime.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
       "name": "cna_graphics_device_get_viewport",
       "header": "graphics_device.h",
       "thread": "owner",

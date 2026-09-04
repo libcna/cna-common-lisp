@@ -289,29 +289,29 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=147 -->
-<!-- generated:selected members=2256 -->
+<!-- generated:selected types=148 -->
+<!-- generated:selected members=2257 -->
 <!-- generated:complete types=135 -->
-<!-- generated:partial types=12 -->
+<!-- generated:partial types=13 -->
 <!-- generated:missing types=0 -->
 <!-- generated:complete members=1772 -->
-<!-- generated:partial members=16 -->
+<!-- generated:partial members=17 -->
 <!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 147 types, 2256 members.
+Selection **Foundation 1 and the managed closures**: 148 types, 2257 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **135** |
-| Types partial | **12** |
+| Types partial | **13** |
 | Types missing | **0** |
 | Members complete | **1772** |
-| Members partial | **16** |
+| Members partial | **17** |
 | Members missing | **51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |

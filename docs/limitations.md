@@ -890,6 +890,52 @@ now, and `WIDTH` and `HEIGHT` refuse — which is what "report what is actually
 known: nothing" has to mean. This is reachable rather than theoretical: CNA
 decodes JPEG and DDS as well as PNG, and `FromStream` will hand any of them to it.
 
+## `TitleContainer.OpenStream` is partial, and only for two named reasons
+
+Almost all of this member is *validation*, and the validation is XNA's own,
+transcribed from the pinned assembly rather than delegated to CNA or to the host.
+`GetCleanPath` folds slashes to backslashes, collapses `\.\`, strips a leading
+`.\` and a trailing `\.`, and resolves `\..\` segments left to right;
+`IsCleanPathAbsolute` then refuses a rooted path, a leading or trailing `..`, an
+embedded `\..\`, and any of seven characters.
+
+**Those seven were read out of the assembly's static data, not guessed.** XNA's
+`badCharacters` is a seven-element `char[]` initialised from a fourteen-byte blob
+that disassembles as `3A 00 2A 00 3F 00 22 00 3C 00 3E 00 7C 00` — `: * ? " < > |`.
+
+The order of the two steps is the part a reimplementation gets wrong. Cleaning
+happens **first**, so `a/../b` resolves to `b` and is accepted, while `../b` is
+left alone by the cleaning and refused by the check. A validator that searched for
+`..` before cleaning would refuse the first, and would be wrong.
+
+**CNA's route for this exists and is deliberately not used.**
+`cna_title_container_read_ext` reads a whole file, and its own header says why:
+"The canonical operation hands back an open stream. This ABI has no stream handle
+for title content … so the count/copy pair delivers the whole file instead. That
+is a deliberate narrowing: incremental reads over a title stream are not
+available." XNA's member answers a `FileStream` — lazy, seekable, no larger in
+memory than what has been read — and Common Lisp has exactly that in `OPEN`.
+Taking CNA's narrowing would make this member *less* like XNA than the language
+already allows, for no gain: reading a file is not a CNA-owned resource. What does
+come from CNA is the **base path**, through `cna_title_location_copy_path`, so an
+override made through the ABI is honoured exactly as XNA reads `TitleLocation.Path`.
+
+Two things are not reproduced, and they are the whole of why this is partial:
+
+* XNA round-trips the cleaned name through `new Uri(name, UriKind.Relative)` and
+  turns any exception into an `ArgumentException`. No input that survives the
+  checks above has been found to fail that construction — but this binding cannot
+  *evidence* that it rejects nothing, and a step that might reject something is
+  not a step that can be claimed as reproduced.
+* XNA's member is static and needs no game. CNA's title-location routes take a
+  game handle for thread affinity, so this needs the process's one active game —
+  the same shape, and the same reason, as `Keyboard.GetState`.
+
+A name that escapes the title is an **argument** failure; a name that merely names
+nothing is an **IO** failure. That is XNA's distinction between `ArgumentException`
+and `FileNotFoundException`, and collapsing the two would make a traversal attempt
+look like a typo.
+
 ## Texture extent comes from the image, not from CNA
 
 CNA has no route reporting a `Texture2D`'s pixel extent. `width` and `height`

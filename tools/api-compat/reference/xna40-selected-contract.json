@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 147,
-  "member_count": 2256
+  "type_count": 148,
+  "member_count": 2257
  },
  "types": [
   {
@@ -1364,6 +1364,37 @@
      "returnType": null,
      "genericParameters": [],
      "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.TitleContainer",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "OpenStream",
+     "static": true,
+     "access": "public",
+     "returnType": "System.IO.Stream",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "name",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
     }
    ]
   },

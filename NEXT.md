@@ -96,29 +96,29 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=147 -->
-<!-- generated:selected members=2256 -->
+<!-- generated:selected types=148 -->
+<!-- generated:selected members=2257 -->
 <!-- generated:complete types=135 -->
-<!-- generated:partial types=12 -->
+<!-- generated:partial types=13 -->
 <!-- generated:missing types=0 -->
 <!-- generated:complete members=1772 -->
-<!-- generated:partial members=16 -->
+<!-- generated:partial members=17 -->
 <!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 147 types, 2256 members.
+Selection **Foundation 1 and the managed closures**: 148 types, 2257 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **135** |
-| Types partial | **12** |
+| Types partial | **13** |
 | Types missing | **0** |
 | Members complete | **1772** |
-| Members partial | **16** |
+| Members partial | **17** |
 | Members missing | **51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
@@ -136,7 +136,7 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=12 --> are partial, and this is where the remaining
+<!-- generated:partial types=13 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
@@ -151,6 +151,7 @@ members actually are:
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.TitleContainer` | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
@@ -175,6 +176,7 @@ one.
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.TitleContainer` | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |

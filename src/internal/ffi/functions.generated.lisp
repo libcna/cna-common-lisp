@@ -130,6 +130,14 @@
 (defcfun ("cna_game_unsubscribe" %game-unsubscribe) :uint32
   (registration :uint64))
 
+;;; CNA_Result cna_title_location_get_path_size(CNA_Handle game, uint64_t* out_bytes)
+(defcfun ("cna_title_location_get_path_size" %title-location-get-path-size) :uint32
+  (game :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_title_location_copy_path(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_title_location_copy_path" %title-location-copy-path) :uint32
+  (game :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
 ;;; CNA_Result cna_graphics_device_get_viewport(CNA_Handle graphics_device, CNA_Viewport* out_viewport)
 (defcfun ("cna_graphics_device_get_viewport" %graphics-device-get-viewport) :uint32
   (graphics-device :uint64) (out-viewport :pointer))
@@ -1664,6 +1672,8 @@
     ("cna_game_get_graphics_device" %game-get-graphics-device :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows-callback-scoped:graphics-device")
     ("cna_game_subscribe" %game-subscribe :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates")
     ("cna_game_unsubscribe" %game-unsubscribe :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_title_location_get_path_size" %title-location-get-path-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_title_location_copy_path" %title-location-copy-path :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_viewport" %graphics-device-get-viewport :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_clear_rgba" %graphics-device-clear-rgba :uint32 (:uint64 :float :float :float :float) :thread :owner :ownership "none")
     ("cna_graphics_device_present" %graphics-device-present :uint32 (:uint64) :thread :owner :ownership "none")

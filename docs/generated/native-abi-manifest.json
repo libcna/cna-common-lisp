@@ -24,7 +24,7 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 405,
+    "functions": 407,
     "structs": 63,
     "struct_fields": 473,
     "constants": 487,
@@ -769,6 +769,60 @@
       "ownership": "destroys",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_game_unsubscribe(CNA_GameEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_title_location_get_path_size",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_title_location_get_path_size(CNA_Handle game, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_title_location_copy_path",
+      "header": "runtime.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_title_location_copy_path(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)"
     },
     {
       "name": "cna_graphics_device_get_viewport",

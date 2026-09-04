@@ -108,6 +108,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; The component engine: classes CNA calls back into, and the collection the
    ;; game drives them from. After Game, whose class it extends.
    (:file "runtime/game-components")
+   ;; TitleContainer resolves the title location through a game, so it loads
+   ;; after GAME exists.
+   (:file "runtime/title-container")
    ;; --- Microsoft.Xna.Framework.Content ------------------------------------
    ;; The manager first, then the loaders that produce graphics objects, then
    ;; Game.Content, which needs both GAME and CONTENT-MANAGER to exist.
@@ -175,6 +178,8 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/content-atomicity")
    ;; Texture2D's four Stream members, over ordinary Common Lisp streams.
    (:file "native/texture-streams")
+   ;; TitleContainer resolves its base path through a live game.
+   (:file "native/title-container")
    ;; A subclass initializer runs after every base one, including the one that
    ;; took the handle; this proves that costs nothing.
    (:file "native/construction-atomicity")

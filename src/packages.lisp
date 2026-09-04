@@ -190,6 +190,8 @@
    #:game-time #:total-game-time #:elapsed-game-time #:is-running-slowly
    #:total-game-time-seconds #:elapsed-game-time-seconds
    #:+ticks-per-second+
+   ;; --- TitleContainer ----------------------------------------------------
+   #:title-container-open-stream
    ;; --- Game --------------------------------------------------------------
    #:game
    #:initialize #:load-content #:unload-content

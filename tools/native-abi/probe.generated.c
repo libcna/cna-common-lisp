@@ -1175,6 +1175,8 @@ CNA_Result (*const cna_lisp_probe_cna_game_copy_type_name)(CNA_Handle, char*, ui
 CNA_Result (*const cna_lisp_probe_cna_game_get_graphics_device)(CNA_Handle, CNA_Handle*) = cna_game_get_graphics_device;
 CNA_Result (*const cna_lisp_probe_cna_game_subscribe)(CNA_Handle, CNA_GameEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*) = cna_game_subscribe;
 CNA_Result (*const cna_lisp_probe_cna_game_unsubscribe)(CNA_GameEventRegistrationHandle) = cna_game_unsubscribe;
+CNA_Result (*const cna_lisp_probe_cna_title_location_get_path_size)(CNA_Handle, uint64_t*) = cna_title_location_get_path_size;
+CNA_Result (*const cna_lisp_probe_cna_title_location_copy_path)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_title_location_copy_path;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_viewport)(CNA_Handle, CNA_Viewport*) = cna_graphics_device_get_viewport;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_clear_rgba)(CNA_Handle, float, float, float, float) = cna_graphics_device_clear_rgba;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_present)(CNA_Handle) = cna_graphics_device_present;

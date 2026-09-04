@@ -9620,6 +9620,27 @@
           "documentation": "Game.Tick(): one update and, unless drawing was suppressed, one draw. Unlike\nRUN-ONE-FRAME it does not process host events."
         },
         {
+          "name": "title-container-open-stream",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "name"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "TitleContainer.OpenStream(String): a stream over a file in the title's content.\n\n    (with-open-stream (in (title-container-open-stream \"Content/logo.png\"))\n      (gfx:texture-2d-from-stream device in))\n\nThe stream is an ordinary Common Lisp binary input stream and is the **caller's**\nto close, exactly as XNA's `FileStream' is. See `src/framework/streams.lisp' for\nwhat `System.IO.Stream' maps onto and why.\n\nNAME is relative to the title's content location and is validated the way XNA\nvalidates it: an empty name is an argument failure, `a/../b' resolves to `b' and\nis accepted, and anything that could name a file outside the title -- a leading\nseparator, a leading or trailing `..', an embedded `\\..\\', or any of the seven\ncharacters XNA's `badCharacters' holds -- is refused as an argument failure and\nnot as a missing file. A name that survives validation and names nothing is a\n`CNA-IO-ERROR', which is what XNA's `FileNotFoundException' says."
+        },
+        {
           "name": "toggle-full-screen",
           "fbound": true,
           "macro": false,

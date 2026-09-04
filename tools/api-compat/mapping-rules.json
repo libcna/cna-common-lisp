@@ -6807,6 +6807,18 @@
       "lisp_package": "microsoft.xna.framework.graphics",
       "lisp_name": "effect-parameter-type",
       "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.TitleContainer": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "title-container",
+      "lisp_kind": "static",
+      "member_overrides": {
+        "OpenStream(String)": {
+          "lisp": "title-container-open-stream",
+          "reason": "**Partial, and the reasons are exact.** The path validation is XNA's own, transcribed from the assembly rather than delegated: GetCleanPath's slash folding, `.\\` stripping, `\\.\\` collapsing and left-to-right `\\..\\` resolution, then IsCleanPathAbsolute's refusals -- a rooted path, a leading or trailing `..`, an embedded `\\..\\`, and the seven characters its badCharacters array holds, read out of the assembly's static data blob (3A 00 2A 00 3F 00 22 00 3C 00 3E 00 7C 00) rather than guessed. So `a/../b` resolves to `b` and is accepted and `../b` is refused, on both sides. The stream is a real, lazily-read Common Lisp binary input stream over the file, which is what XNA's File.OpenRead answers; CNA's cna_title_container_read_ext is deliberately not used, because its own header calls itself a narrowing -- \"This ABI has no stream handle for title content ... incremental reads over a title stream are not available\" -- and taking it would make this member less like XNA than the language already allows. The base path does come from CNA, through cna_title_location_copy_path, so an override made there is honoured. Two things are not reproduced, and they are why this is partial rather than complete. XNA round-trips the cleaned name through `new Uri(name, UriKind.Relative)` and turns any exception into an ArgumentException; no input that survives the checks above has been found to fail that construction, but this binding cannot evidence that it rejects nothing, so it is not claimed to. And XNA's member is static and needs no game, while CNA's title-location routes take a game handle for thread affinity -- so this needs the process's one active game, exactly as Keyboard.GetState does. docs/limitations.md.",
+          "status": "partial"
+        }
+      }
     }
   }
 }

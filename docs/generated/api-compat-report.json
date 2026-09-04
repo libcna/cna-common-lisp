@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 147,
-  "member_count": 2256
+  "type_count": 148,
+  "member_count": 2257
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 147,
-  "members": 2256,
+  "types": 148,
+  "members": 2257,
   "types_by_status": {
-   "partial": 12,
+   "partial": 13,
    "complete": 135
   },
   "members_by_status": {
    "complete": 1772,
    "missing": 51,
    "not-applicable": 417,
-   "partial": 16
+   "partial": 17
   },
   "diagnostics": 51,
   "diagnostics_by_category": {
@@ -210,6 +210,14 @@
     "new()": "complete"
    },
    "lisp": "microsoft.xna.framework:launch-parameters"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.TitleContainer",
+   "status": "partial",
+   "members": {
+    "OpenStream(String)": "partial"
+   },
+   "projection": "static class: microsoft.xna.framework:title-container-<member>"
   },
   {
    "name": "Microsoft.Xna.Framework.GraphicsDeviceManager",
