@@ -230,11 +230,11 @@ moves with every test added and no report can pin it.
 ### Structural compatibility, as generated
 
 <!-- generated:selected types=126 -->
-<!-- generated:selected members=2057 -->
+<!-- generated:selected members=2061 -->
 <!-- generated:complete types=117 -->
 <!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1594 -->
+<!-- generated:complete members=1598 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=72 -->
 <!-- generated:not-applicable members=390 -->
@@ -250,7 +250,7 @@ Selection **Foundation 1 and the managed closures**: 126 types, 2061 members.
 | Types complete | **117** |
 | Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1594** |
+| Members complete | **1598** |
 | Members partial | **1** |
 | Members missing | **72** |
 | Members not applicable | **390** |

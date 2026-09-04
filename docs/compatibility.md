@@ -89,11 +89,11 @@ genuine absence.
 ## Current measurement
 
 <!-- generated:selected types=126 -->
-<!-- generated:selected members=2057 -->
+<!-- generated:selected members=2061 -->
 <!-- generated:complete types=117 -->
 <!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1594 -->
+<!-- generated:complete members=1598 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=72 -->
 <!-- generated:not-applicable members=390 -->
@@ -109,7 +109,7 @@ Selection **Foundation 1 and the managed closures**: 126 types, 2061 members.
 | Types complete | **117** |
 | Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1594** |
+| Members complete | **1598** |
 | Members partial | **1** |
 | Members missing | **72** |
 | Members not applicable | **390** |
@@ -195,13 +195,13 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.VertexBufferBinding` | **complete** | 7 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Effect` | **partial** | 5 | 0 | 1 | 2 |
 | `M.X.F.Graphics.EffectTechnique` | **complete** | 3 | 0 | 0 | 0 |
-| `M.X.F.Graphics.EffectTechniqueCollection` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectTechniqueCollection` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectPass` | **complete** | 3 | 0 | 0 | 0 |
-| `M.X.F.Graphics.EffectPassCollection` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectPassCollection` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectParameter` | **partial** | 49 | 0 | 2 | 0 |
-| `M.X.F.Graphics.EffectParameterCollection` | **complete** | 4 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectParameterCollection` | **complete** | 5 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectAnnotation` | **complete** | 14 | 0 | 0 | 0 |
-| `M.X.F.Graphics.EffectAnnotationCollection` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.EffectAnnotationCollection` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectParameterClass` | **complete** | 5 | 0 | 0 | 1 |
 | `M.X.F.Graphics.EffectParameterType` | **complete** | 10 | 0 | 0 | 1 |
 | `M.X.F.Graphics.IEffectMatrices` | **complete** | 3 | 0 | 0 | 0 |

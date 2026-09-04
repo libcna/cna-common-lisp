@@ -31,7 +31,11 @@ This is what has actually been run, not what might work.
 | Second lane | the same suite against a **SOFTWARE** renderer, which reads real pixels back out of the back buffer |
 
 No claim is made for another Common Lisp implementation, for Windows or macOS,
-for another ABI version, for a physical monitor, or for a GPU renderer.
+for another ABI version, for a physical monitor, or for a GPU renderer. The host
+is stronger than a missing claim: the foreign layer refuses to open anywhere but
+SBCL on Linux x86-64, because its by-value flattening is a System V AMD64 rule
+and another host ABI would be a different calling convention, not an untested
+one. Everything that touches no native route runs anywhere.
 
 HEADLESS qualifies command submission and the lifecycle. The SOFTWARE lane
 qualifies the three pixel paths it actually tests: a `Clear` reaches the back
@@ -138,11 +142,11 @@ Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
 <!-- generated:selected types=126 -->
-<!-- generated:selected members=2057 -->
+<!-- generated:selected members=2061 -->
 <!-- generated:complete types=117 -->
 <!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1594 -->
+<!-- generated:complete members=1598 -->
 <!-- generated:partial members=1 -->
 <!-- generated:missing members=72 -->
 <!-- generated:not-applicable members=390 -->
@@ -156,7 +160,7 @@ The generated scoreboard, over a selection of **126 XNA types and 2061 members**
 | | |
 | --- | --- |
 | Types complete / partial / missing | **117 / 9 / 0** |
-| Members complete / missing | **1594 / 72** |
+| Members complete / missing | **1598 / 72** |
 | Members not applicable | **390** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->

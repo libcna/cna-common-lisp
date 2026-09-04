@@ -72,10 +72,21 @@ def simple(type_name):
 
 
 def signature(member):
+    """The key one contract member is measured under.
+
+    Parameters belong in it wherever a member *has* them, and that includes a
+    property: an indexer is a property with an argument list, and .NET allows
+    more than one. All four effect collections have `Item(int32)' and
+    `Item(string)'. Keying a property on its bare name collapsed those pairs, one
+    silently overwrote the other, and four selected members were never measured
+    at all -- the report said 2057 where the contract said 2061.
+    """
+    params = member.get("parameters", [])
     if member["kind"] in ("method", "constructor"):
-        params = ",".join(simple(p["type"]) for p in member.get("parameters", []))
         name = "new" if member["kind"] == "constructor" else member["name"]
-        return "%s(%s)" % (name, params)
+        return "%s(%s)" % (name, ",".join(simple(p["type"]) for p in params))
+    if params:
+        return "%s(%s)" % (member["name"], ",".join(simple(p["type"]) for p in params))
     return member["name"]
 
 
@@ -747,6 +758,24 @@ def main(argv):
         "types": report.types,
         "diagnostics": report.diagnostics,
     }
+
+    # Every selected member must be measured. This is not a diagnostic, because a
+    # diagnostic can be zero while the count is wrong: it is the arithmetic that
+    # makes the whole scoreboard mean anything, and a report that fails it is not
+    # written at all. Four members went unmeasured for a milestone because two
+    # indexers on one type shared a key; nothing else in this file would have
+    # noticed.
+    measured = sum(member_status.values())
+    declared = contract["selection"]["member_count"]
+    if measured != declared:
+        sys.exit("error: the selection declares %d members and %d were measured. Some "
+                 "member of some selected type is not being counted -- most likely two "
+                 "members share a signature key. Refusing to write a report that does "
+                 "not add up." % (declared, measured))
+    declared_types = contract["selection"]["type_count"]
+    if len(report.types) != declared_types:
+        sys.exit("error: the selection declares %d types and %d were measured."
+                 % (declared_types, len(report.types)))
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=1)

@@ -1069,13 +1069,13 @@
           "lisp": "get-pressed-keys",
           "reason": "See IsKeyDown."
         },
-        "Item": {
+        "op_Equality(KeyboardState,KeyboardState)": {
+          "lisp": "keyboard-state-equal"
+        },
+        "Item(Keys)": {
           "lisp": "get-key-state",
           "setf": false,
           "reason": "The CLR indexer. Common Lisp has no indexer syntax, so it projects to a named reader."
-        },
-        "op_Equality(KeyboardState,KeyboardState)": {
-          "lisp": "keyboard-state-equal"
         }
       },
       "not_applicable": {
@@ -2694,15 +2694,15 @@
         "Clone()": {
           "lisp": "curve-key-collection-clone"
         },
-        "Item": {
-          "lisp": "curve-key-collection-item",
-          "setf": true
-        },
         "Count": {
           "lisp": "curve-key-collection-count"
         },
         "IsReadOnly": {
           "lisp": "curve-key-collection-is-read-only"
+        },
+        "Item(Int32)": {
+          "lisp": "curve-key-collection-item",
+          "setf": true
         }
       }
     },
@@ -3761,15 +3761,15 @@
         "IsConnected": {
           "lisp": "touch-collection-is-connected"
         },
-        "Item": {
-          "lisp": "touch-collection-item",
-          "setf": true
-        },
         "Count": {
           "lisp": "touch-collection-count"
         },
         "IsReadOnly": {
           "lisp": "touch-collection-is-read-only"
+        },
+        "Item(Int32)": {
+          "lisp": "touch-collection-item",
+          "setf": true
         }
       }
     },
@@ -4022,7 +4022,7 @@
       "lisp_kind": "class",
       "constructors": {},
       "member_overrides": {
-        "Item": {
+        "Item(Int32)": {
           "lisp": "item",
           "generic": true,
           "setf": true,
@@ -4036,7 +4036,7 @@
       "lisp_kind": "class",
       "constructors": {},
       "member_overrides": {
-        "Item": {
+        "Item(Int32)": {
           "lisp": "item",
           "generic": true,
           "setf": true,
@@ -4650,18 +4650,25 @@
           "generic": true,
           "reason": "XNA returns a List<T>.Enumerator, a stateful cursor object. Common Lisp iterates over sequences, so the projection answers a fresh list in order; a cursor object with no Lisp meaning would be a worse mapping than the thing it stands for."
         },
-        "Item": {
-          "lisp": "collection-item",
-          "generic": true,
-          "setf": false,
-          "distinguished_by": "dispatch",
-          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers. It answers NIL for a miss on both, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
-        },
         "Count": {
           "lisp": "collection-count",
           "generic": true,
           "setf": false,
           "reason": "All four effect collections are the same shape and share three generic functions, because they are the same contract four times over and a separate EFFECT-TECHNIQUE-COUNT, EFFECT-PASS-COUNT and so on would be four names for one question."
+        },
+        "Item(Int32)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers, so CLOS dispatch on the argument's type is what tells them apart. Both answer NIL for a miss, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
+        },
+        "Item(String)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers, so CLOS dispatch on the argument's type is what tells them apart. Both answer NIL for a miss, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
         }
       }
     },
@@ -4676,18 +4683,25 @@
           "generic": true,
           "reason": "XNA returns a List<T>.Enumerator, a stateful cursor object. Common Lisp iterates over sequences, so the projection answers a fresh list in order; a cursor object with no Lisp meaning would be a worse mapping than the thing it stands for."
         },
-        "Item": {
-          "lisp": "collection-item",
-          "generic": true,
-          "setf": false,
-          "distinguished_by": "dispatch",
-          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers. It answers NIL for a miss on both, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
-        },
         "Count": {
           "lisp": "collection-count",
           "generic": true,
           "setf": false,
           "reason": "All four effect collections are the same shape and share three generic functions, because they are the same contract four times over and a separate EFFECT-TECHNIQUE-COUNT, EFFECT-PASS-COUNT and so on would be four names for one question."
+        },
+        "Item(Int32)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers, so CLOS dispatch on the argument's type is what tells them apart. Both answer NIL for a miss, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
+        },
+        "Item(String)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers, so CLOS dispatch on the argument's type is what tells them apart. Both answer NIL for a miss, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
         }
       }
     },
@@ -4702,18 +4716,25 @@
           "generic": true,
           "reason": "XNA returns a List<T>.Enumerator, a stateful cursor object. Common Lisp iterates over sequences, so the projection answers a fresh list in order; a cursor object with no Lisp meaning would be a worse mapping than the thing it stands for."
         },
-        "Item": {
-          "lisp": "collection-item",
-          "generic": true,
-          "setf": false,
-          "distinguished_by": "dispatch",
-          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers. It answers NIL for a miss on both, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
-        },
         "Count": {
           "lisp": "collection-count",
           "generic": true,
           "setf": false,
           "reason": "All four effect collections are the same shape and share three generic functions, because they are the same contract four times over and a separate EFFECT-TECHNIQUE-COUNT, EFFECT-PASS-COUNT and so on would be four names for one question."
+        },
+        "Item(Int32)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers, so CLOS dispatch on the argument's type is what tells them apart. Both answer NIL for a miss, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
+        },
+        "Item(String)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers, so CLOS dispatch on the argument's type is what tells them apart. Both answer NIL for a miss, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
         }
       }
     },
@@ -4728,13 +4749,6 @@
           "generic": true,
           "reason": "XNA returns a List<T>.Enumerator, a stateful cursor object. Common Lisp iterates over sequences, so the projection answers a fresh list in order; a cursor object with no Lisp meaning would be a worse mapping than the thing it stands for."
         },
-        "Item": {
-          "lisp": "collection-item",
-          "generic": true,
-          "setf": false,
-          "distinguished_by": "dispatch",
-          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers. It answers NIL for a miss on both, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
-        },
         "Count": {
           "lisp": "collection-count",
           "generic": true,
@@ -4745,6 +4759,20 @@
           "lisp": "collection-parameter-by-semantic",
           "generic": true,
           "reason": "Answers NIL when nothing carries that semantic, which is what XNA's does."
+        },
+        "Item(Int32)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers, so CLOS dispatch on the argument's type is what tells them apart. Both answer NIL for a miss, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
+        },
+        "Item(String)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "One generic function with a method on INTEGER and a method on STRING, which is XNA's two indexers, so CLOS dispatch on the argument's type is what tells them apart. Both answer NIL for a miss, and that is XNA's behaviour read out of the pinned IL rather than a simplification: get_Item(int32) branches on a negative index and on one that is not below Count straight to `ldnull; ret', and get_Item(string) returns null when no name matches."
         }
       }
     },

@@ -16,13 +16,13 @@
  },
  "totals": {
   "types": 126,
-  "members": 2057,
+  "members": 2061,
   "types_by_status": {
    "partial": 9,
    "complete": 117
   },
   "members_by_status": {
-   "complete": 1594,
+   "complete": 1598,
    "missing": 72,
    "not-applicable": 390,
    "partial": 1
@@ -1102,7 +1102,7 @@
     "Remove(CurveKey)": "complete",
     "GetEnumerator()": "complete",
     "Clone()": "complete",
-    "Item": "complete",
+    "Item(Int32)": "complete",
     "Count": "complete",
     "IsReadOnly": "complete"
    },
@@ -1605,7 +1605,7 @@
    "name": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
    "status": "complete",
    "members": {
-    "Item": "complete"
+    "Item(Int32)": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:sampler-state-collection"
   },
@@ -1613,7 +1613,7 @@
    "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
    "status": "complete",
    "members": {
-    "Item": "complete"
+    "Item(Int32)": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:texture-collection"
   },
@@ -1912,7 +1912,8 @@
    "status": "complete",
    "members": {
     "GetEnumerator()": "complete",
-    "Item": "complete",
+    "Item(Int32)": "complete",
+    "Item(String)": "complete",
     "Count": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:effect-technique-collection"
@@ -1932,7 +1933,8 @@
    "status": "complete",
    "members": {
     "GetEnumerator()": "complete",
-    "Item": "complete",
+    "Item(Int32)": "complete",
+    "Item(String)": "complete",
     "Count": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:effect-pass-collection"
@@ -2001,7 +2003,8 @@
    "members": {
     "GetParameterBySemantic(String)": "complete",
     "GetEnumerator()": "complete",
-    "Item": "complete",
+    "Item(Int32)": "complete",
+    "Item(String)": "complete",
     "Count": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:effect-parameter-collection"
@@ -2032,7 +2035,8 @@
    "status": "complete",
    "members": {
     "GetEnumerator()": "complete",
-    "Item": "complete",
+    "Item(Int32)": "complete",
+    "Item(String)": "complete",
     "Count": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:effect-annotation-collection"
@@ -2455,7 +2459,7 @@
     "Equals(Object)": "not-applicable",
     "op_Equality(KeyboardState,KeyboardState)": "complete",
     "op_Inequality(KeyboardState,KeyboardState)": "not-applicable",
-    "Item": "complete"
+    "Item(Keys)": "complete"
    },
    "lisp": "microsoft.xna.framework.input:keyboard-state"
   },
@@ -2669,7 +2673,7 @@
     "Remove(TouchLocation)": "complete",
     "GetEnumerator()": "complete",
     "IsConnected": "complete",
-    "Item": "complete",
+    "Item(Int32)": "complete",
     "Count": "complete",
     "IsReadOnly": "complete"
    },
