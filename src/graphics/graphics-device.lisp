@@ -74,10 +74,10 @@ only time CNA lends the device out."))
   (:documentation
    "GraphicsDevice.Viewport.
 
-The reader is present; the setter is not, and cannot be until CFFI can pass a
-MEMORY-class aggregate. `cna_graphics_device_set_viewport' takes CNA_Viewport by
-value, and at 24 bytes the System V AMD64 ABI passes it on the stack. See
-docs/native-abi.md."))
+The reader is unconditional. The setter needs the optional private shim, because
+`cna_graphics_device_set_viewport' takes CNA_Viewport by value and at 24 bytes the
+System V AMD64 ABI passes it in memory, which CFFI cannot express without
+cffi-libffi. See docs/native-abi.md."))
 
 (defmethod viewport ((device graphics-device))
   (let ((handle (%resolve-device-handle device "viewport")))
@@ -192,3 +192,172 @@ and everything else work regardless."))
 
 Exported to the rest of CNA-Lisp only; a consumer never sees it."
   (%resolve-device-handle device operation))
+
+
+;;; --- the device's own state ---------------------------------------------------
+;;;
+;;; Setting one of these three is XNA's Apply: the state object is copied into the
+;;; device and becomes read-only, permanently, for exactly the reason XNA gives --
+;;; a caller who could still mutate it would be editing a value the device had
+;;; already taken. A null is refused rather than defaulted: XNA's setters throw
+;;; ArgumentNullException, and it is SpriteBatch.Begin, not the device, that turns
+;;; a missing state into AlphaBlend.
+
+(macrolet
+    ((define-state-property (name class getter setter writer reader struct size doc)
+       (let ((operation (string-downcase (symbol-name name)))
+             (setf-operation (format nil "(setf ~(~a~))" name)))
+         `(progn
+            (defgeneric ,name (graphics-device) (:documentation ,doc))
+            (defmethod ,name ((device graphics-device))
+              (let ((handle (%resolve-device-handle device ,operation)))
+                (%with-state-descriptor (pointer ,struct ,size)
+                  (cna-lisp.internal:check-result
+                   (,getter handle pointer)
+                   ,operation :object-type 'graphics-device)
+                  ;; The device answers a *copy*: a caller who mutates it is
+                  ;; describing what to apply next, not editing what is applied.
+                  (,reader pointer))))
+            (defgeneric (setf ,name) (state graphics-device)
+              (:documentation
+               ,(format nil "GraphicsDevice.~a's setter. Refuses NIL, and latches ~
+                             the state object read-only as XNA's Apply does."
+                        (symbol-name name))))
+            (defmethod (setf ,name) (state (device graphics-device))
+              (unless state
+                (error 'microsoft.xna.framework:cna-argument-out-of-range-error
+                       :operation ,setf-operation
+                       :parameter-name ,(string-downcase (symbol-name class))
+                       :object-type 'graphics-device
+                       :format-control
+                       "GraphicsDevice.~a does not accept NIL; XNA throws ~
+                        ArgumentNullException here. SpriteBatch.Begin is where a ~
+                        null state means \"use the default\"."
+                       :format-arguments (list ,(symbol-name name))))
+              (check-type state ,class)
+              (let ((handle (%resolve-device-handle device ,setf-operation)))
+                (%with-state-descriptor (pointer ,struct ,size)
+                  (,writer pointer state)
+                  (cna-lisp.internal:check-result
+                   (,setter handle pointer)
+                   ,setf-operation :object-type 'graphics-device)))
+              (%mark-bound state)
+              state)))))
+  (define-state-property blend-state blend-state
+    cna-lisp.internal.ffi::%graphics-device-get-blend-state
+    cna-lisp.internal.ffi::%graphics-device-set-blend-state
+    %write-blend-state %read-blend-state
+    cna-lisp.internal.ffi::cna-blend-state
+    cna-lisp.internal.ffi::+sizeof-cna-blend-state+
+    "GraphicsDevice.BlendState.")
+  (define-state-property depth-stencil-state depth-stencil-state
+    cna-lisp.internal.ffi::%graphics-device-get-depth-stencil-state
+    cna-lisp.internal.ffi::%graphics-device-set-depth-stencil-state
+    %write-depth-stencil-state %read-depth-stencil-state
+    cna-lisp.internal.ffi::cna-depth-stencil-state
+    cna-lisp.internal.ffi::+sizeof-cna-depth-stencil-state+
+    "GraphicsDevice.DepthStencilState.")
+  (define-state-property rasterizer-state rasterizer-state
+    cna-lisp.internal.ffi::%graphics-device-get-rasterizer-state
+    cna-lisp.internal.ffi::%graphics-device-set-rasterizer-state
+    %write-rasterizer-state %read-rasterizer-state
+    cna-lisp.internal.ffi::cna-rasterizer-state
+    cna-lisp.internal.ffi::+sizeof-cna-rasterizer-state+
+    "GraphicsDevice.RasterizerState."))
+
+;;; --- the three scalar pieces of device state ----------------------------------
+;;;
+;;; XNA keeps these on the device as well as on the state object that carries
+;;; them: applying a BlendState copies its BlendFactor and MultiSampleMask into
+;;; the device, and applying a DepthStencilState copies its ReferenceStencil, but
+;;; each can also be set on its own afterwards.
+
+(macrolet ((define-integer-property (name getter setter doc)
+             (let ((operation (string-downcase (symbol-name name)))
+                   (setf-operation (format nil "(setf ~(~a~))" name)))
+               ;; No DEFGENERIC: BlendState and DepthStencilState carry members of
+               ;; the same names, so the generic function already exists and this
+               ;; adds a method to it. XNA has the same property in a different
+               ;; shape -- applying a BlendState copies its MultiSampleMask into
+               ;; the device -- and one generic function with two methods says
+               ;; that better than two names would. DOC is the member's, kept on
+               ;; the method.
+               `(progn
+                  (defmethod ,name ((device graphics-device))
+                    ,doc
+                    (let ((handle (%resolve-device-handle device ,operation)))
+                      (cffi:with-foreign-object (out :int32)
+                        (cna-lisp.internal:check-result
+                         (,getter handle out) ,operation :object-type 'graphics-device)
+                        (cffi:mem-ref out :int32))))
+                  (defmethod (setf ,name) (value (device graphics-device))
+                    (check-type value (signed-byte 32))
+                    (let ((handle (%resolve-device-handle device ,setf-operation)))
+                      (cna-lisp.internal:check-result
+                       (,setter handle value) ,setf-operation
+                       :object-type 'graphics-device))
+                    value)))))
+  (define-integer-property multi-sample-mask
+      cna-lisp.internal.ffi::%graphics-device-get-multi-sample-mask
+      cna-lisp.internal.ffi::%graphics-device-set-multi-sample-mask
+    "GraphicsDevice.MultiSampleMask.")
+  (define-integer-property reference-stencil
+      cna-lisp.internal.ffi::%graphics-device-get-reference-stencil
+      cna-lisp.internal.ffi::%graphics-device-set-reference-stencil
+    "GraphicsDevice.ReferenceStencil."))
+
+(defmethod blend-factor ((device graphics-device))
+  "GraphicsDevice.BlendFactor. A method on BlendState's generic function, because
+applying a blend state is what copies its factor into the device."
+  (let ((handle (%resolve-device-handle device "blend-factor")))
+    (cffi:with-foreign-object (out '(:struct cna-lisp.internal.ffi::cna-color))
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%graphics-device-get-blend-factor handle out)
+       "blend-factor" :object-type 'graphics-device)
+      (microsoft.xna.framework:color-from-packed-value (cffi:mem-ref out :uint32)))))
+
+(defmethod (setf blend-factor) (color (device graphics-device))
+  (check-type color microsoft.xna.framework:color)
+  (let ((handle (%resolve-device-handle device "(setf blend-factor)")))
+    ;; CNA_Color is one INTEGER eightbyte, so the by-value parameter is the packed
+    ;; value itself; docs/native-abi.md has the flattening rule and its proof.
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%graphics-device-set-blend-factor
+      handle (microsoft.xna.framework:color-packed-value color))
+     "(setf blend-factor)" :object-type 'graphics-device))
+  color)
+
+(defgeneric scissor-rectangle (graphics-device)
+  (:documentation "GraphicsDevice.ScissorRectangle."))
+
+(defmethod scissor-rectangle ((device graphics-device))
+  (let ((handle (%resolve-device-handle device "scissor-rectangle")))
+    (cffi:with-foreign-object (out '(:struct cna-lisp.internal.ffi::cna-rectangle))
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%graphics-device-get-scissor-rectangle handle out)
+       "scissor-rectangle" :object-type 'graphics-device)
+      (macrolet ((slot (name)
+                   `(cffi:foreign-slot-value
+                     out '(:struct cna-lisp.internal.ffi::cna-rectangle) ',name)))
+        (microsoft.xna.framework:make-rectangle
+         (slot cna-lisp.internal.ffi::x) (slot cna-lisp.internal.ffi::y)
+         (slot cna-lisp.internal.ffi::width) (slot cna-lisp.internal.ffi::height))))))
+
+(defgeneric (setf scissor-rectangle) (rectangle graphics-device))
+
+(defmethod (setf scissor-rectangle) (rectangle (device graphics-device))
+  (check-type rectangle microsoft.xna.framework:rectangle)
+  (let ((handle (%resolve-device-handle device "(setf scissor-rectangle)")))
+    ;; CNA_Rectangle is 16 bytes of four int32: two INTEGER eightbytes, so it is
+    ;; passed as two uint64 arguments, x and y in the first and width and height
+    ;; in the second. tools/native-abi/valueprobe.generated.c proves the shape at
+    ;; run time rather than leaving it asserted here.
+    (cffi:with-foreign-object (packed '(:struct cna-lisp.internal.ffi::cna-rectangle))
+      (%write-rectangle packed rectangle)
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%graphics-device-set-scissor-rectangle
+        handle
+        (cffi:mem-aref packed :uint64 0)
+        (cffi:mem-aref packed :uint64 1))
+       "(setf scissor-rectangle)" :object-type 'graphics-device)))
+  rectangle)

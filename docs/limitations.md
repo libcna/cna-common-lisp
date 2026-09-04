@@ -167,6 +167,65 @@ because the contract is what the framework answers, and it is marked as a defect
 wherever it is reproduced -- in the source, in the unit test and in the
 behaviour corpus.
 
+## An upstream CNA defect: DepthStencilState's two stencil masks
+
+**Measured, and CNA's own source confirms it.** XNA's
+`DepthStencilState.StencilMask` and `.StencilWriteMask` default to **-1**, the
+all-ones mask: `DepthStencilState::SetDefaults` in the pinned assembly writes
+`ldc.i4.m1` into `cachedStencilMask` and `cachedStencilWriteMask`. CNA's
+`Microsoft::Xna::Framework::Graphics::DepthStencilState` constructor
+(`modules/graphics/src/Xna/DepthStencilState.cpp`, lines 16-17) initialises both
+to `0x7FFFFFFF`, and so `cna_depth_stencil_state_init` answers **2147483647** for
+every one of its three presets.
+
+The difference is bit 31. As an `Int32` property it is directly observable: a
+game reading `new DepthStencilState().StencilMask` gets -1 in XNA and
+`int.MaxValue` from CNA.
+
+**CNA-Lisp keeps XNA's value.** Its own defaults come from the pinned assembly,
+so a `depth-stencil-state` made here reports -1, and applying it writes -1 into
+the descriptor CNA receives. `tests/native/graphics-state.lisp` pins **both**
+sides: that CNA-Lisp answers -1, and that CNA's preset route answers 2147483647.
+If CNA is corrected, that test fails and says so, which is the point of writing
+the divergence down rather than tolerating it.
+
+One place CNA's value can still be seen: the state a device reports *before*
+anything has been applied to it is CNA's, not CNA-Lisp's, because it was never
+written through this binding. Reading `(gfx:depth-stencil-state device)` on an
+untouched device can therefore answer 2147483647 for the two masks.
+
+**Nothing in CNA has been modified.** This is recorded, not worked around.
+
+## A state object is latched at Begin, and XNA latches the deferred modes at End
+
+XNA's state objects become permanently read-only when they are *applied* to a
+device -- every setter calls `ThrowIfBound`, and `Apply` sets `isBound`.
+`SpriteBatch` applies them in `SetRenderState`, which runs at `Begin` for
+`SpriteSortMode.Immediate` and at `End` for the deferred modes.
+
+CNA's `cna_sprite_batch_begin_with_states` takes the four descriptors **by
+value**, so CNA-Lisp copies them at `begin` and has nothing left to read at
+`end`. It therefore latches them at `begin` for every sort mode.
+
+The one observable difference: mutating a state object between `begin` and `end`
+in a deferred mode is accepted by XNA -- and honoured, because XNA had not read
+it yet -- and refused here. Refusing was chosen over the alternative, which is
+accepting a change that could no longer have any effect.
+
+## The first state-bearing Begin does one-time native work
+
+Measured with the HEADLESS renderer: the first `begin` that carries state
+descriptors takes tens of milliseconds, and every one after it takes under a
+millisecond. The cost is CNA creating its native state objects on first use, not
+anything CNA-Lisp does per call -- the Lisp side allocates four small stack
+descriptors and writes about forty fields.
+
+It matters for one reason: under XNA's default *fixed* time step, a first frame
+that overruns the 60 Hz target is followed by catch-up updates that draw nothing,
+so an exact frame count taken across the warm-up measures the warm-up. Every
+deterministic frame claim in this repository uses variable timing, for exactly
+that reason; see the section above.
+
 ## A graphics resource's Tag is a Lisp slot, not a round trip
 
 XNA's `GraphicsResource.Tag` is `System.Object`: arbitrary consumer data the

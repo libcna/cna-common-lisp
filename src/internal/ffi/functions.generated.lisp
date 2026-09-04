@@ -278,10 +278,6 @@
 (defcfun ("cna_sprite_batch_destroy" %sprite-batch-destroy) :uint32
   (sprite-batch :uint64))
 
-;;; CNA_Result cna_sprite_batch_begin(CNA_Handle sprite_batch, const CNA_SpriteBatchBeginInfo* begin_info)
-(defcfun ("cna_sprite_batch_begin" %sprite-batch-begin) :uint32
-  (sprite-batch :uint64) (begin-info :pointer))
-
 ;;; CNA_Result cna_sprite_batch_submit_many(CNA_Handle sprite_batch, const CNA_SpriteCommand* commands, uint64_t command_count)
 (defcfun ("cna_sprite_batch_submit_many" %sprite-batch-submit-many) :uint32
   (sprite-batch :uint64) (commands :pointer) (command-count :uint64))
@@ -414,6 +410,90 @@
 (defcfun ("cna_touch_panel_set_display_orientation" %touch-panel-set-display-orientation) :uint32
   (game :uint64) (orientation :uint32))
 
+;;; CNA_Result cna_blend_state_init(CNA_BlendStatePreset preset, CNA_BlendState* out_state)
+(defcfun ("cna_blend_state_init" %blend-state-init) :uint32
+  (preset :uint32) (out-state :pointer))
+
+;;; CNA_Result cna_depth_stencil_state_init(CNA_DepthStencilStatePreset preset, CNA_DepthStencilState* out_state)
+(defcfun ("cna_depth_stencil_state_init" %depth-stencil-state-init) :uint32
+  (preset :uint32) (out-state :pointer))
+
+;;; CNA_Result cna_rasterizer_state_init(CNA_RasterizerStatePreset preset, CNA_RasterizerState* out_state)
+(defcfun ("cna_rasterizer_state_init" %rasterizer-state-init) :uint32
+  (preset :uint32) (out-state :pointer))
+
+;;; CNA_Result cna_sampler_state_init(CNA_SamplerStatePreset preset, CNA_SamplerState* out_state)
+(defcfun ("cna_sampler_state_init" %sampler-state-init) :uint32
+  (preset :uint32) (out-state :pointer))
+
+;;; CNA_Result cna_graphics_device_get_blend_state(CNA_Handle graphics_device, CNA_BlendState* out_state)
+(defcfun ("cna_graphics_device_get_blend_state" %graphics-device-get-blend-state) :uint32
+  (graphics-device :uint64) (out-state :pointer))
+
+;;; CNA_Result cna_graphics_device_set_blend_state(CNA_Handle graphics_device, const CNA_BlendState* state)
+(defcfun ("cna_graphics_device_set_blend_state" %graphics-device-set-blend-state) :uint32
+  (graphics-device :uint64) (state :pointer))
+
+;;; CNA_Result cna_graphics_device_get_depth_stencil_state(CNA_Handle graphics_device, CNA_DepthStencilState* out_state)
+(defcfun ("cna_graphics_device_get_depth_stencil_state" %graphics-device-get-depth-stencil-state) :uint32
+  (graphics-device :uint64) (out-state :pointer))
+
+;;; CNA_Result cna_graphics_device_set_depth_stencil_state(CNA_Handle graphics_device, const CNA_DepthStencilState* state)
+(defcfun ("cna_graphics_device_set_depth_stencil_state" %graphics-device-set-depth-stencil-state) :uint32
+  (graphics-device :uint64) (state :pointer))
+
+;;; CNA_Result cna_graphics_device_get_rasterizer_state(CNA_Handle graphics_device, CNA_RasterizerState* out_state)
+(defcfun ("cna_graphics_device_get_rasterizer_state" %graphics-device-get-rasterizer-state) :uint32
+  (graphics-device :uint64) (out-state :pointer))
+
+;;; CNA_Result cna_graphics_device_set_rasterizer_state(CNA_Handle graphics_device, const CNA_RasterizerState* state)
+(defcfun ("cna_graphics_device_set_rasterizer_state" %graphics-device-set-rasterizer-state) :uint32
+  (graphics-device :uint64) (state :pointer))
+
+;;; CNA_Result cna_graphics_device_get_sampler_state(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, CNA_SamplerState* out_state)
+(defcfun ("cna_graphics_device_get_sampler_state" %graphics-device-get-sampler-state) :uint32
+  (graphics-device :uint64) (stage :uint32) (slot :uint32) (out-state :pointer))
+
+;;; CNA_Result cna_graphics_device_set_sampler_state(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, const CNA_SamplerState* state)
+(defcfun ("cna_graphics_device_set_sampler_state" %graphics-device-set-sampler-state) :uint32
+  (graphics-device :uint64) (stage :uint32) (slot :uint32) (state :pointer))
+
+;;; CNA_Result cna_sprite_batch_begin_with_states(CNA_Handle sprite_batch, CNA_SpriteSortMode sort_mode, const CNA_BlendState* blend_state, const CNA_SamplerState* sampler_state, const CNA_DepthStencilState* depth_stencil_state, const CNA_RasterizerState* rasterizer_state)
+(defcfun ("cna_sprite_batch_begin_with_states" %sprite-batch-begin-with-states) :uint32
+  (sprite-batch :uint64) (sort-mode :uint32) (blend-state :pointer) (sampler-state :pointer) (depth-stencil-state :pointer) (rasterizer-state :pointer))
+
+;;; CNA_Result cna_graphics_device_get_blend_factor(CNA_Handle graphics_device, CNA_Color* out_blend_factor)
+(defcfun ("cna_graphics_device_get_blend_factor" %graphics-device-get-blend-factor) :uint32
+  (graphics-device :uint64) (out-blend-factor :pointer))
+
+;;; CNA_Result cna_graphics_device_set_blend_factor(CNA_Handle graphics_device, CNA_Color blend_factor)
+(defcfun ("cna_graphics_device_set_blend_factor" %graphics-device-set-blend-factor) :uint32
+  (graphics-device :uint64) (blend-factor-0 :uint32))
+
+;;; CNA_Result cna_graphics_device_get_multi_sample_mask(CNA_Handle graphics_device, int32_t* out_multi_sample_mask)
+(defcfun ("cna_graphics_device_get_multi_sample_mask" %graphics-device-get-multi-sample-mask) :uint32
+  (graphics-device :uint64) (out-multi-sample-mask :pointer))
+
+;;; CNA_Result cna_graphics_device_set_multi_sample_mask(CNA_Handle graphics_device, int32_t multi_sample_mask)
+(defcfun ("cna_graphics_device_set_multi_sample_mask" %graphics-device-set-multi-sample-mask) :uint32
+  (graphics-device :uint64) (multi-sample-mask :int32))
+
+;;; CNA_Result cna_graphics_device_get_reference_stencil(CNA_Handle graphics_device, int32_t* out_reference_stencil)
+(defcfun ("cna_graphics_device_get_reference_stencil" %graphics-device-get-reference-stencil) :uint32
+  (graphics-device :uint64) (out-reference-stencil :pointer))
+
+;;; CNA_Result cna_graphics_device_set_reference_stencil(CNA_Handle graphics_device, int32_t reference_stencil)
+(defcfun ("cna_graphics_device_set_reference_stencil" %graphics-device-set-reference-stencil) :uint32
+  (graphics-device :uint64) (reference-stencil :int32))
+
+;;; CNA_Result cna_graphics_device_get_scissor_rectangle(CNA_Handle graphics_device, CNA_Rectangle* out_scissor_rectangle)
+(defcfun ("cna_graphics_device_get_scissor_rectangle" %graphics-device-get-scissor-rectangle) :uint32
+  (graphics-device :uint64) (out-scissor-rectangle :pointer))
+
+;;; CNA_Result cna_graphics_device_set_scissor_rectangle(CNA_Handle graphics_device, CNA_Rectangle scissor_rectangle)
+(defcfun ("cna_graphics_device_set_scissor_rectangle" %graphics-device-set-scissor-rectangle) :uint32
+  (graphics-device :uint64) (scissor-rectangle-0 :uint64) (scissor-rectangle-1 :uint64))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -481,7 +561,6 @@
     ("cna_texture_get_info" %texture-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_sprite_batch_create" %sprite-batch-create :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:sprite-batch:child-of-game")
     ("cna_sprite_batch_destroy" %sprite-batch-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:sprite-batch")
-    ("cna_sprite_batch_begin" %sprite-batch-begin :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_sprite_batch_submit_many" %sprite-batch-submit-many :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
     ("cna_sprite_batch_submit_scaled_many" %sprite-batch-submit-scaled-many :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
     ("cna_sprite_batch_end" %sprite-batch-end :uint32 (:uint64) :thread :owner :ownership "none")
@@ -514,6 +593,27 @@
     ("cna_touch_panel_get_display_height" %touch-panel-get-display-height :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_touch_panel_set_display_height" %touch-panel-set-display-height :uint32 (:uint64 :int32) :thread :owner :ownership "none")
     ("cna_touch_panel_get_display_orientation" %touch-panel-get-display-orientation :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
-    ("cna_touch_panel_set_display_orientation" %touch-panel-set-display-orientation :uint32 (:uint64 :uint32) :thread :owner :ownership "none"))
+    ("cna_touch_panel_set_display_orientation" %touch-panel-set-display-orientation :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_blend_state_init" %blend-state-init :uint32 (:uint32 :pointer) :thread :any :ownership "none")
+    ("cna_depth_stencil_state_init" %depth-stencil-state-init :uint32 (:uint32 :pointer) :thread :any :ownership "none")
+    ("cna_rasterizer_state_init" %rasterizer-state-init :uint32 (:uint32 :pointer) :thread :any :ownership "none")
+    ("cna_sampler_state_init" %sampler-state-init :uint32 (:uint32 :pointer) :thread :any :ownership "none")
+    ("cna_graphics_device_get_blend_state" %graphics-device-get-blend-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_blend_state" %graphics-device-set-blend-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_depth_stencil_state" %graphics-device-get-depth-stencil-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_depth_stencil_state" %graphics-device-set-depth-stencil-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_rasterizer_state" %graphics-device-get-rasterizer-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_rasterizer_state" %graphics-device-set-rasterizer-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_sampler_state" %graphics-device-get-sampler-state :uint32 (:uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_sampler_state" %graphics-device-set-sampler-state :uint32 (:uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_sprite_batch_begin_with_states" %sprite-batch-begin-with-states :uint32 (:uint64 :uint32 :pointer :pointer :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_blend_factor" %graphics-device-get-blend-factor :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_blend_factor" %graphics-device-set-blend-factor :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_multi_sample_mask" %graphics-device-get-multi-sample-mask :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_multi_sample_mask" %graphics-device-set-multi-sample-mask :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_reference_stencil" %graphics-device-get-reference-stencil :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_reference_stencil" %graphics-device-set-reference-stencil :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_scissor_rectangle" %graphics-device-get-scissor-rectangle :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_scissor_rectangle" %graphics-device-set-scissor-rectangle :uint32 (:uint64 :uint64 :uint64) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

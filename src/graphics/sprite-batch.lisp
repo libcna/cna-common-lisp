@@ -32,37 +32,118 @@ and disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE before the game is."))
               (cna-lisp.internal:owner-thread-of game)))
       (cna-lisp.internal:register-child game batch))))
 
-(defgeneric begin (sprite-batch)
+(defgeneric begin (sprite-batch &key sort-mode blend-state sampler-state
+                                     depth-stencil-state rasterizer-state)
   (:documentation
-   "SpriteBatch.Begin().
+   "SpriteBatch.Begin: the three overloads whose arguments this milestone has.
 
-Takes no arguments, because XNA's no-argument overload takes none and its next
-one takes a SpriteSortMode *and* a BlendState together. Offering a sort mode on
-its own would be an eighth overload that XNA does not have, and it would have to
-be withdrawn when the state-bearing overloads arrive. Until then the sort mode is
-Deferred, which is what Begin() selects."))
+    (begin batch)                              Begin()
+    (begin batch :sort-mode m :blend-state b)  Begin(SpriteSortMode, BlendState)
+    (begin batch :sort-mode m :blend-state b
+                 :sampler-state s :depth-stencil-state d
+                 :rasterizer-state r)          the five-parameter overload
 
-(defmethod begin ((batch sprite-batch))
-  (cna-lisp.internal:check-usable batch "begin")
-  (when (%begun-p batch)
-    (error 'microsoft.xna.framework:cna-invalid-state-error
-           :operation "begin" :object-type 'sprite-batch
-           :format-control "BEGIN was called twice without an intervening END."))
-  (cffi:with-foreign-object (info '(:struct cna-lisp.internal.ffi::cna-sprite-batch-begin-info))
-    (cffi:foreign-funcall "memset" :pointer info :int 0
-                          :size cna-lisp.internal.ffi::+sizeof-cna-sprite-batch-begin-info+ :void)
-    (macrolet ((slot (name)
-                 `(cffi:foreign-slot-value
-                   info '(:struct cna-lisp.internal.ffi::cna-sprite-batch-begin-info) ',name)))
-      (setf (slot cna-lisp.internal.ffi::struct-size)
-            cna-lisp.internal.ffi::+sizeof-cna-sprite-batch-begin-info+
-            (slot cna-lisp.internal.ffi::struct-version) 1
-            ;; Begin() selects Deferred; the overloads that select anything else
-            ;; need state objects this milestone does not have.
-            (slot cna-lisp.internal.ffi::sort-mode) (sprite-sort-mode-value :deferred)))
-    (cna-lisp.internal:check-result
-     (cna-lisp.internal.ffi::%sprite-batch-begin (cna-lisp.internal:handle-of batch) info)
-     "begin" :object-type 'sprite-batch))
+Only those three keyword shapes are accepted. XNA has no Begin that takes a sort
+mode on its own, none that takes a state without a sort mode, and none that takes
+some of the four states and not the others, so each of those is refused rather
+than quietly treated as one of the overloads that does exist.
+
+A state argument may be NIL, and NIL is not the same as absent: XNA's state
+parameters are nullable and a null selects the framework's default, so
+`:blend-state nil' is `Begin(sortMode, null)' -- the AlphaBlend overload -- while
+leaving `:blend-state' out entirely is a different overload. The defaults a null
+selects are XNA's own, read from SpriteBatch::SetRenderState: **AlphaBlend**,
+**LinearClamp**, **DepthStencilState.None** and **CullCounterClockwise**.
+
+Every state object supplied here becomes read-only, as XNA's do when they reach a
+device. XNA latches them at Begin for `:immediate' and at End for the deferred
+modes, because that is when it applies them; CNA copies the descriptors at Begin,
+so this latches them at Begin for every sort mode. The difference is one
+observable case -- mutating a state between BEGIN and END in a deferred mode --
+and refusing it is preferred to accepting a change that could no longer have any
+effect. `docs/limitations.md' records it.
+
+The two overloads that take an `Effect' are **not** projected: `Effect' does not
+exist in this milestone, and an effect parameter that could only ever be given
+NIL would be a fourth shape XNA does not have. They are measured as missing."))
+
+(defun %refuse-begin (format-control &rest format-arguments)
+  (error 'microsoft.xna.framework:cna-usage-error
+         :operation "begin"
+         :format-control format-control
+         :format-arguments format-arguments))
+
+(defun %check-begin-shape (sort-mode-p blend-p sampler-p depth-p rasterizer-p)
+  "Refuse every keyword combination XNA's Begin family does not have.
+
+Answers :PLAIN, :BLEND or :FULL for the three shapes it accepts."
+  (let ((states (list blend-p sampler-p depth-p rasterizer-p)))
+    (cond ((notany #'identity (cons sort-mode-p states)) :plain)
+          ((not sort-mode-p)
+           (%refuse-begin "a state argument needs :SORT-MODE with it: every XNA Begin ~
+                           that takes a state takes a SpriteSortMode first, and there ~
+                           is no overload that takes one without the other."))
+          ((not blend-p)
+           (%refuse-begin ":SORT-MODE alone is not an XNA overload. Begin() takes nothing ~
+                           and the next one takes a SpriteSortMode *and* a BlendState; ~
+                           pass :BLEND-STATE too, with NIL if you want the default."))
+          ((notany #'identity (list sampler-p depth-p rasterizer-p)) :blend)
+          ((every #'identity (list sampler-p depth-p rasterizer-p)) :full)
+          (t
+           (%refuse-begin ":SAMPLER-STATE, :DEPTH-STENCIL-STATE and :RASTERIZER-STATE are ~
+                           one group: XNA has no Begin carrying some of them and not the ~
+                           others. Give all three or none.")))))
+
+(defmethod begin ((batch sprite-batch)
+                  &key (sort-mode nil sort-mode-p)
+                       (blend-state nil blend-state-p)
+                       (sampler-state nil sampler-state-p)
+                       (depth-stencil-state nil depth-stencil-state-p)
+                       (rasterizer-state nil rasterizer-state-p))
+  ;; Arguments before state, the same order the CNA C ABI documents for itself.
+  (let ((shape (%check-begin-shape sort-mode-p blend-state-p sampler-state-p
+                                   depth-stencil-state-p rasterizer-state-p)))
+    (cna-lisp.internal:check-usable batch "begin")
+    (when (%begun-p batch)
+      (error 'microsoft.xna.framework:cna-invalid-state-error
+             :operation "begin" :object-type 'sprite-batch
+             :format-control "BEGIN was called twice without an intervening END."))
+    ;; Begin() is Begin(Deferred, null, null, null, null) in XNA's own IL, so the
+    ;; three shapes differ only in which arguments the caller supplied, never in
+    ;; what reaches CNA.
+    (let ((sort-mode (if (eq shape :plain) :deferred sort-mode))
+          (blend (or blend-state (blend-state-alpha-blend)))
+          (sampler (or sampler-state (sampler-state-linear-clamp)))
+          (depth (or depth-stencil-state (depth-stencil-state-none)))
+          (rasterizer (or rasterizer-state (rasterizer-state-cull-counter-clockwise))))
+      (check-type sort-mode sprite-sort-mode)
+      (check-type blend blend-state)
+      (check-type sampler sampler-state)
+      (check-type depth depth-stencil-state)
+      (check-type rasterizer rasterizer-state)
+      (%with-state-descriptor (blend-pointer cna-lisp.internal.ffi::cna-blend-state
+                               cna-lisp.internal.ffi::+sizeof-cna-blend-state+)
+        (%with-state-descriptor (sampler-pointer cna-lisp.internal.ffi::cna-sampler-state
+                                 cna-lisp.internal.ffi::+sizeof-cna-sampler-state+)
+          (%with-state-descriptor (depth-pointer
+                                   cna-lisp.internal.ffi::cna-depth-stencil-state
+                                   cna-lisp.internal.ffi::+sizeof-cna-depth-stencil-state+)
+            (%with-state-descriptor (rasterizer-pointer
+                                     cna-lisp.internal.ffi::cna-rasterizer-state
+                                     cna-lisp.internal.ffi::+sizeof-cna-rasterizer-state+)
+              (%write-blend-state blend-pointer blend)
+              (%write-sampler-state sampler-pointer sampler)
+              (%write-depth-stencil-state depth-pointer depth)
+              (%write-rasterizer-state rasterizer-pointer rasterizer)
+              (cna-lisp.internal:check-result
+               (cna-lisp.internal.ffi::%sprite-batch-begin-with-states
+                (cna-lisp.internal:handle-of batch)
+                (sprite-sort-mode-value sort-mode)
+                blend-pointer sampler-pointer depth-pointer rasterizer-pointer)
+               "begin" :object-type 'sprite-batch)))))
+      ;; Only after the native call has been accepted: a Begin that was refused
+      ;; applied nothing, so it must not leave the caller's state objects latched.
+      (mapc #'%mark-bound (list blend sampler depth rasterizer))))
   (setf (%begun-p batch) t)
   (values))
 
@@ -271,35 +352,6 @@ sprite."
        (cna-lisp.internal.ffi::%sprite-batch-submit-scaled-many
         (cna-lisp.internal:handle-of batch) cmd 1)
        "draw-texture" :object-type 'sprite-batch))))
-
-(defun %write-packed-color (pointer struct-name slot-name color)
-  "Store a Color into an aggregate field.
-
-CNA_Color is four bytes in the order R G B A, which is exactly the packed value,
-so one 32-bit store writes it."
-  (setf (cffi:mem-ref (cffi:foreign-slot-pointer pointer (list :struct struct-name) slot-name)
-                      :uint32)
-        (microsoft.xna.framework:color-packed-value color)))
-
-(defun %write-rectangle (pointer rectangle)
-  "Store a Rectangle into an aggregate field."
-  (macrolet ((slot (name)
-               `(cffi:foreign-slot-value
-                 pointer '(:struct cna-lisp.internal.ffi::cna-rectangle) ',name)))
-    (setf (slot cna-lisp.internal.ffi::x) (microsoft.xna.framework:rectangle-x rectangle)
-          (slot cna-lisp.internal.ffi::y) (microsoft.xna.framework:rectangle-y rectangle)
-          (slot cna-lisp.internal.ffi::width) (microsoft.xna.framework:rectangle-width rectangle)
-          (slot cna-lisp.internal.ffi::height)
-          (microsoft.xna.framework:rectangle-height rectangle))))
-
-(defun %write-vector2 (pointer vector2)
-  "Store a Vector2, or zero when there is none."
-  (setf (cffi:foreign-slot-value pointer '(:struct cna-lisp.internal.ffi::cna-vector-2)
-                                 'cna-lisp.internal.ffi::x)
-        (if vector2 (microsoft.xna.framework:vector2-x vector2) 0.0f0)
-        (cffi:foreign-slot-value pointer '(:struct cna-lisp.internal.ffi::cna-vector-2)
-                                 'cna-lisp.internal.ffi::y)
-        (if vector2 (microsoft.xna.framework:vector2-y vector2) 0.0f0)))
 
 (defmethod cna-lisp.internal:destroy-native ((batch sprite-batch))
   (cna-lisp.internal:check-result

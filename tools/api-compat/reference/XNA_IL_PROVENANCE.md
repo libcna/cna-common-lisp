@@ -12,18 +12,28 @@ No Microsoft binary and no disassembly is stored in this repository or
 distributed with it. Only hashes, identities, and the behavioural facts derived
 from them are committed.
 
-## Pinned assembly
+## Pinned assemblies
 
-| | |
-| --- | --- |
-| Assembly | `Microsoft.Xna.Framework.dll`, version 4.0.0.0, public key token `842cf8be1de50553` |
-| Bytes | 679424 |
-| SHA-256 | `38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130` |
+The XNA 4.0 Windows profile is more than one assembly, and the types this
+projection covers are spread across two of them.
 
-The assembly is located **by hash, never by filename**: any copy whose SHA-256
+| Assembly | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `Microsoft.Xna.Framework.dll` 4.0.0.0 | 679424 | `38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130` |
+| `Microsoft.Xna.Framework.Graphics.dll` 4.0.0.0 | 427520 | `560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55` |
+
+Both carry the public key token `842cf8be1de50553`.
+
+`Microsoft.Xna.Framework.dll` holds the value types -- `Color`, `Vector*`,
+`Matrix`, `Quaternion`, `Plane`, the bounding volumes, `Curve`, `MathHelper`.
+`Microsoft.Xna.Framework.Graphics.dll` holds `GraphicsResource`, `Texture2D`,
+`SpriteBatch` and the four graphics state objects. A behavioural question about a
+type is answered by reading the assembly that declares it.
+
+An assembly is located **by hash, never by filename**: any copy whose SHA-256
 matches is equally authoritative, and any copy whose SHA-256 does not match is
-not. The same hash is pinned by the mature CNA-Ruby binding, which is where this
-project's confidence that it is the right binary comes from.
+not. Both hashes are pinned by the mature CNA-Ruby and CNA-Go bindings, which is
+where this project's confidence that they are the right binaries comes from.
 
 ## Disassembly
 
@@ -36,6 +46,11 @@ derived artefact and is not committed.
 sha256sum /path/to/Microsoft.Xna.Framework.dll
 # must print 38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130
 ikdasm /path/to/Microsoft.Xna.Framework.dll > Microsoft.Xna.Framework.il
+
+sha256sum /path/to/Microsoft.Xna.Framework.Graphics.dll
+# must print 560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55
+ikdasm /path/to/Microsoft.Xna.Framework.Graphics.dll \
+    > Microsoft.Xna.Framework.Graphics.il
 ```
 
 ## What was derived from it, and how
@@ -67,3 +82,39 @@ These facts are recorded as `:xna-derived` observations in
 has native routes for most of this arithmetic and they are deliberately not used:
 routing the value types through the C ABI would make the binding's arithmetic
 CNA's rather than XNA's, and would leave nothing to cross-check.
+
+## What the Graphics assembly answered
+
+`src/graphics/state-objects.lisp` was written by reading
+`Microsoft.Xna.Framework.Graphics.dll`, and these are the facts that came out of
+it rather than out of a description:
+
+* **Every setter calls `ThrowIfBound` first.** A state object becomes permanently
+  read-only when it is applied to a device, and the predefined instances are
+  constructed already bound -- their private constructors set `isBound` before
+  anyone can reach them, which is why `BlendState.Opaque.ColorSourceBlend = x`
+  throws `InvalidOperationException`.
+* **The defaults are not the obvious ones.** `RasterizerState`'s
+  `MultiSampleAntiAlias` is **true**; `SamplerState`'s `MaxAnisotropy` is **4**;
+  `DepthStencilState`'s `StencilMask` and `StencilWriteMask` are **-1**, and its
+  `DepthBufferFunction` is `LessEqual`; `BlendState`'s `MultiSampleMask` is -1 and
+  its `BlendFactor` is `Color.White`.
+* **A predefined blend state sets the alpha pair as well as the colour pair.**
+  The private constructor takes two `Blend` values and writes both to
+  `cachedColorSourceBlend`/`cachedColorDestinationBlend` *and* to
+  `cachedAlphaSourceBlend`/`cachedAlphaDestinationBlend`, leaving everything else
+  at the defaults.
+* **A predefined sampler writes one address mode to U, V and W.**
+* **`SpriteBatch.SetRenderState` is where a null state becomes a default**:
+  `BlendState.AlphaBlend`, `SamplerState.LinearClamp` into `SamplerStates[0]`,
+  `DepthStencilState.None` and `RasterizerState.CullCounterClockwise`. It runs at
+  `Begin` for `SpriteSortMode.Immediate` and at `End` for the deferred modes,
+  which is when the states it was given are applied and therefore latched.
+* **`GraphicsDevice`'s state setters throw `ArgumentNullException` for a null.**
+  Only `SpriteBatch.Begin` treats a null as "use the default".
+
+Each of those is a `:xna-derived` observation in `tests/behavior/corpus.lisp` and
+is asserted in `tests/unit/graphics-state.lisp`. **CNA is not the oracle for any
+of them**, and where CNA disagrees -- it does, on both stencil masks -- the
+divergence is recorded in `docs/limitations.md` and pinned by a test rather than
+adopted.

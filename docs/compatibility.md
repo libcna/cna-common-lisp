@@ -82,31 +82,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=77 -->
-<!-- generated:selected members=1632 -->
-<!-- generated:complete types=72 -->
+<!-- generated:selected types=90 -->
+<!-- generated:selected members=1763 -->
+<!-- generated:complete types=85 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1185 -->
+<!-- generated:complete members=1312 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=98 -->
-<!-- generated:not-applicable members=348 -->
+<!-- generated:missing members=89 -->
+<!-- generated:not-applicable members=361 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
+Selection **Foundation 1 and the managed closures**: 90 types, 1763 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **72** |
+| Types complete | **85** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1185** |
+| Members complete | **1312** |
 | Members partial | **1** |
-| Members missing | **98** |
-| Members not applicable | **348** |
+| Members missing | **89** |
+| Members not applicable | **361** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -146,14 +146,27 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 2 | 1 | 52 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 9 | 1 | 45 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 3 | 0 | 12 | 1 |
-| `M.X.F.Graphics.SpriteBatch` | **partial** | 10 | 0 | 10 | 1 |
+| `M.X.F.Graphics.SpriteBatch` | **partial** | 12 | 0 | 8 | 1 |
 | `M.X.F.Graphics.SpriteSortMode` | **complete** | 5 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SpriteEffects` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.SurfaceFormat` | **complete** | 20 | 0 | 0 | 1 |
+| `M.X.F.Graphics.Blend` | **complete** | 13 | 0 | 0 | 1 |
+| `M.X.F.Graphics.BlendFunction` | **complete** | 5 | 0 | 0 | 1 |
+| `M.X.F.Graphics.ColorWriteChannels` | **complete** | 6 | 0 | 0 | 1 |
+| `M.X.F.Graphics.CompareFunction` | **complete** | 8 | 0 | 0 | 1 |
+| `M.X.F.Graphics.StencilOperation` | **complete** | 8 | 0 | 0 | 1 |
+| `M.X.F.Graphics.CullMode` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Graphics.FillMode` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Graphics.TextureAddressMode` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Graphics.TextureFilter` | **complete** | 9 | 0 | 0 | 1 |
+| `M.X.F.Graphics.BlendState` | **complete** | 17 | 0 | 0 | 1 |
+| `M.X.F.Graphics.DepthStencilState` | **complete** | 20 | 0 | 0 | 1 |
+| `M.X.F.Graphics.RasterizerState` | **complete** | 10 | 0 | 0 | 1 |
+| `M.X.F.Graphics.SamplerState` | **complete** | 14 | 0 | 0 | 1 |
 | `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
@@ -238,17 +251,19 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 52 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 45 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
-| `M.X.F.Graphics.SpriteBatch` | 10 | 0 |
 | `M.X.F.Game` | 8 | 0 |
+| `M.X.F.Graphics.SpriteBatch` | 8 | 0 |
 <!-- /generated-block:partial-frontier -->
 
-The counts in that table are the real remaining surface, and they are graphics
-and content: the state objects, the drawing and render-target surface of
-`GraphicsDevice`, `System.IO.Stream`, `SpriteFont`, and the parts of `Game` and
-`GraphicsDeviceManager` that need a component engine or a device-settings type.
+The counts in that table are the real remaining surface. The largest by far is
+`GraphicsDevice`'s own drawing, render-target, vertex- and index-buffer surface;
+the rest is `System.IO.Stream` and the `Texture2D` members that need it,
+`SpriteFont` and `SpriteBatch.DrawString`, the two `Effect`-bearing `Begin`
+overloads, and the parts of `Game` and `GraphicsDeviceManager` that need a
+component engine or a device-settings type.
 
 ## Behaviour, as distinct from structure
 
@@ -268,24 +283,24 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=100 -->
-<!-- generated:bound native structs=28 -->
-<!-- generated:bound native struct fields=191 -->
-<!-- generated:bound native constants=311 -->
+<!-- generated:bound native functions=120 -->
+<!-- generated:bound native structs=31 -->
+<!-- generated:bound native struct fields=239 -->
+<!-- generated:bound native constants=390 -->
 <!-- generated:bound native callbacks=4 -->
-<!-- generated:by-value aggregates=2 -->
+<!-- generated:by-value aggregates=3 -->
 <!-- generated:shimmed routes=1 -->
 <!-- generated:abi version encoded=5376 -->
 
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 100 |
-| Bound structs | 28 |
-| Bound struct fields | 191 |
-| Bound constants | 311 |
+| Bound functions | 120 |
+| Bound structs | 31 |
+| Bound struct fields | 239 |
+| Bound constants | 390 |
 | Bound callback typedefs | 4 |
-| By-value aggregates admitted | 2 |
+| By-value aggregates admitted | 3 |
 | Routes proved unbindable, and shimmed | 1 |
 | Admitted ABI versions | 0.21.0 only (encoded 5376) |
 <!-- /generated-block:native-abi-summary -->

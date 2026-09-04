@@ -182,7 +182,13 @@ are pure managed and touch no native route:
   `CurveContinuity`, `CurveLoopType`, `CurveTangent`;
 * the seventeen `Graphics.PackedVector` types, in their own package;
 * the rest of `Microsoft.Xna.Framework.Input`: `Mouse`, the `GamePad` family and
-  the `Input.Touch` namespace, each over CNA's own routes.
+  the `Input.Touch` namespace, each over CNA's own routes;
+* the graphics state objects -- `BlendState`, `DepthStencilState`,
+  `RasterizerState`, `SamplerState` and their nine enumerations -- with
+  `GraphicsDevice`'s state surface and `SpriteBatch.Begin`'s state-bearing
+  overloads. Their values come from the pinned `Microsoft.Xna.Framework.Graphics`
+  assembly; CNA's own presets are cross-checked against them and disagree on two
+  fields, which `docs/limitations.md` records as an upstream defect.
 
 ## 6. Measured status
 
@@ -205,31 +211,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=77 -->
-<!-- generated:selected members=1632 -->
-<!-- generated:complete types=72 -->
+<!-- generated:selected types=90 -->
+<!-- generated:selected members=1763 -->
+<!-- generated:complete types=85 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1185 -->
+<!-- generated:complete members=1312 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=98 -->
-<!-- generated:not-applicable members=348 -->
+<!-- generated:missing members=89 -->
+<!-- generated:not-applicable members=361 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
+Selection **Foundation 1 and the managed closures**: 90 types, 1763 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **72** |
+| Types complete | **85** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1185** |
+| Members complete | **1312** |
 | Members partial | **1** |
-| Members missing | **98** |
-| Members not applicable | **348** |
+| Members missing | **89** |
+| Members not applicable | **361** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

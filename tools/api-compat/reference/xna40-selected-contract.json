@@ -9,9 +9,9 @@
  },
  "selection": {
   "name": "Foundation 1 and the managed closures",
-  "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. The closures added so far are pure managed and touch no native route: the 3D transform types, the bounding volumes, and the Curve family.",
-  "type_count": 77,
-  "member_count": 1632
+  "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
+  "type_count": 90,
+  "member_count": 1763
  },
  "types": [
   {
@@ -23555,6 +23555,1434 @@
      "static": true,
      "constant": true,
      "value": "19"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.Blend",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "One",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Zero",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "SourceColor",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "InverseSourceColor",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "3"
+    },
+    {
+     "kind": "field",
+     "name": "SourceAlpha",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    },
+    {
+     "kind": "field",
+     "name": "InverseSourceAlpha",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "5"
+    },
+    {
+     "kind": "field",
+     "name": "DestinationColor",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "6"
+    },
+    {
+     "kind": "field",
+     "name": "InverseDestinationColor",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "7"
+    },
+    {
+     "kind": "field",
+     "name": "DestinationAlpha",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "8"
+    },
+    {
+     "kind": "field",
+     "name": "InverseDestinationAlpha",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "9"
+    },
+    {
+     "kind": "field",
+     "name": "BlendFactor",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "10"
+    },
+    {
+     "kind": "field",
+     "name": "InverseBlendFactor",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "11"
+    },
+    {
+     "kind": "field",
+     "name": "SourceAlphaSaturation",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": true,
+     "constant": true,
+     "value": "12"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Add",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Subtract",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "ReverseSubtract",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "Min",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+     "static": true,
+     "constant": true,
+     "value": "3"
+    },
+    {
+     "kind": "field",
+     "name": "Max",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+   "kind": "enum",
+   "flags": true,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "None",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Red",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Green",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "Blue",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    },
+    {
+     "kind": "field",
+     "name": "Alpha",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": true,
+     "constant": true,
+     "value": "8"
+    },
+    {
+     "kind": "field",
+     "name": "All",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": true,
+     "constant": true,
+     "value": "15"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Always",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Never",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Less",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "LessEqual",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": true,
+     "constant": true,
+     "value": "3"
+    },
+    {
+     "kind": "field",
+     "name": "Equal",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    },
+    {
+     "kind": "field",
+     "name": "GreaterEqual",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": true,
+     "constant": true,
+     "value": "5"
+    },
+    {
+     "kind": "field",
+     "name": "Greater",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": true,
+     "constant": true,
+     "value": "6"
+    },
+    {
+     "kind": "field",
+     "name": "NotEqual",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": true,
+     "constant": true,
+     "value": "7"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Keep",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Zero",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Replace",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "Increment",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": true,
+     "constant": true,
+     "value": "3"
+    },
+    {
+     "kind": "field",
+     "name": "Decrement",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    },
+    {
+     "kind": "field",
+     "name": "IncrementSaturation",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": true,
+     "constant": true,
+     "value": "5"
+    },
+    {
+     "kind": "field",
+     "name": "DecrementSaturation",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": true,
+     "constant": true,
+     "value": "6"
+    },
+    {
+     "kind": "field",
+     "name": "Invert",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": true,
+     "constant": true,
+     "value": "7"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.CullMode",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "None",
+     "type": "Microsoft.Xna.Framework.Graphics.CullMode",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "CullClockwiseFace",
+     "type": "Microsoft.Xna.Framework.Graphics.CullMode",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "CullCounterClockwiseFace",
+     "type": "Microsoft.Xna.Framework.Graphics.CullMode",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.FillMode",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Solid",
+     "type": "Microsoft.Xna.Framework.Graphics.FillMode",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "WireFrame",
+     "type": "Microsoft.Xna.Framework.Graphics.FillMode",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Wrap",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Clamp",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Mirror",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Linear",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Point",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "Anisotropic",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "LinearMipPoint",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "3"
+    },
+    {
+     "kind": "field",
+     "name": "PointMipLinear",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    },
+    {
+     "kind": "field",
+     "name": "MinLinearMagPointMipLinear",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "5"
+    },
+    {
+     "kind": "field",
+     "name": "MinLinearMagPointMipPoint",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "6"
+    },
+    {
+     "kind": "field",
+     "name": "MinPointMagLinearMipLinear",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "7"
+    },
+    {
+     "kind": "field",
+     "name": "MinPointMagLinearMipPoint",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": true,
+     "constant": true,
+     "value": "8"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.BlendState",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+   "interfaces": [
+    "System.IDisposable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "MultiSampleMask",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "BlendFactor",
+     "type": "Microsoft.Xna.Framework.Color",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ColorWriteChannels3",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ColorWriteChannels2",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ColorWriteChannels1",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ColorWriteChannels",
+     "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AlphaBlendFunction",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AlphaDestinationBlend",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AlphaSourceBlend",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ColorBlendFunction",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ColorDestinationBlend",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ColorSourceBlend",
+     "type": "Microsoft.Xna.Framework.Graphics.Blend",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "field",
+     "name": "Opaque",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "AlphaBlend",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Additive",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "NonPremultiplied",
+     "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+     "static": true,
+     "constant": false,
+     "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+   "interfaces": [
+    "System.IDisposable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "ReferenceStencil",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "StencilWriteMask",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "StencilMask",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "CounterClockwiseStencilDepthBufferFail",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "CounterClockwiseStencilFail",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "CounterClockwiseStencilPass",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "CounterClockwiseStencilFunction",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "TwoSidedStencilMode",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "StencilDepthBufferFail",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "StencilFail",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "StencilPass",
+     "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "StencilFunction",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "StencilEnable",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DepthBufferFunction",
+     "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DepthBufferWriteEnable",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DepthBufferEnable",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "field",
+     "name": "None",
+     "type": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Default",
+     "type": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "DepthRead",
+     "type": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+     "static": true,
+     "constant": false,
+     "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+   "interfaces": [
+    "System.IDisposable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "SlopeScaleDepthBias",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DepthBias",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "MultiSampleAntiAlias",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "ScissorTestEnable",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FillMode",
+     "type": "Microsoft.Xna.Framework.Graphics.FillMode",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "CullMode",
+     "type": "Microsoft.Xna.Framework.Graphics.CullMode",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "field",
+     "name": "CullNone",
+     "type": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "CullClockwise",
+     "type": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "CullCounterClockwise",
+     "type": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+     "static": true,
+     "constant": false,
+     "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SamplerState",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+   "interfaces": [
+    "System.IDisposable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "MipMapLevelOfDetailBias",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "MaxMipLevel",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "MaxAnisotropy",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AddressW",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AddressV",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AddressU",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Filter",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "field",
+     "name": "PointWrap",
+     "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "PointClamp",
+     "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "LinearWrap",
+     "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "LinearClamp",
+     "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "AnisotropicWrap",
+     "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+     "static": true,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "AnisotropicClamp",
+     "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+     "static": true,
+     "constant": false,
+     "value": null
     }
    ]
   },

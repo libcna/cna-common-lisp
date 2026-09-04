@@ -250,8 +250,51 @@
    #:all-sprite-effects
    #:surface-format #:surface-format-value #:surface-format-from-value
    #:all-surface-format
+   #:blend #:blend-value #:blend-from-value #:all-blend
+   #:blend-function #:blend-function-value #:blend-function-from-value
+   #:all-blend-function
+   #:color-write-channels #:color-write-channels-value
+   #:color-write-channels-from-value #:all-color-write-channels
+   #:compare-function #:compare-function-value #:compare-function-from-value
+   #:all-compare-function
+   #:stencil-operation #:stencil-operation-value #:stencil-operation-from-value
+   #:all-stencil-operation
+   #:cull-mode #:cull-mode-value #:cull-mode-from-value #:all-cull-mode
+   #:fill-mode #:fill-mode-value #:fill-mode-from-value #:all-fill-mode
+   #:texture-address-mode #:texture-address-mode-value
+   #:texture-address-mode-from-value #:all-texture-address-mode
+   #:texture-filter #:texture-filter-value #:texture-filter-from-value
+   #:all-texture-filter
+   ;; --- the graphics state objects ----------------------------------------
+   #:blend-state
+   #:color-source-blend #:color-destination-blend #:color-blend-function
+   #:alpha-source-blend #:alpha-destination-blend #:alpha-blend-function
+   #:color-write-channels-1 #:color-write-channels-2 #:color-write-channels-3
+   #:blend-factor #:multi-sample-mask
+   #:blend-state-opaque #:blend-state-alpha-blend #:blend-state-additive
+   #:blend-state-non-premultiplied
+   #:depth-stencil-state
+   #:depth-buffer-enable #:depth-buffer-write-enable #:depth-buffer-function
+   #:stencil-enable #:stencil-function #:stencil-pass #:stencil-fail
+   #:stencil-depth-buffer-fail #:two-sided-stencil-mode
+   #:counter-clockwise-stencil-function #:counter-clockwise-stencil-pass
+   #:counter-clockwise-stencil-fail #:counter-clockwise-stencil-depth-buffer-fail
+   #:stencil-mask #:stencil-write-mask #:reference-stencil
+   #:depth-stencil-state-none #:depth-stencil-state-default
+   #:depth-stencil-state-depth-read
+   #:rasterizer-state
+   #:scissor-test-enable #:multi-sample-anti-alias
+   #:depth-bias #:slope-scale-depth-bias
+   #:rasterizer-state-cull-none #:rasterizer-state-cull-clockwise
+   #:rasterizer-state-cull-counter-clockwise
+   #:sampler-state
+   #:filter #:address-u #:address-v #:address-w
+   #:max-anisotropy #:max-mip-level #:mip-map-level-of-detail-bias
+   #:sampler-state-point-wrap #:sampler-state-point-clamp
+   #:sampler-state-linear-wrap #:sampler-state-linear-clamp
+   #:sampler-state-anisotropic-wrap #:sampler-state-anisotropic-clamp
    ;; --- GraphicsDevice ----------------------------------------------------
-   #:graphics-device #:clear #:present #:renderer-name
+   #:graphics-device #:clear #:present #:renderer-name #:scissor-rectangle
    ;; --- Texture and Texture2D ---------------------------------------------
    #:texture #:texture-2d
    #:texture-2d-from-png-file #:texture-2d-from-png-bytes

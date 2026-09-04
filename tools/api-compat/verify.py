@@ -195,6 +195,13 @@ DISTINGUISHING_MECHANISMS = frozenset((
     "arity",                 # a trailing optional argument
     "dispatch-and-arity",    # both
     "keywords",              # a declared keyword set, listed per overload
+    # The one overload of a keyword-distinguished family that supplies *no*
+    # keyword. SpriteBatch.Begin() is the case: it is a real overload, it is told
+    # from its siblings by the absence of every keyword they use, and there is no
+    # keyword set to list for it. A family may declare this for at most one
+    # overload, because two overloads that both supply nothing would be the same
+    # call.
+    "no-keywords",
 ))
 
 
@@ -515,6 +522,18 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
                     report.add("wrong_overload_shape",
                                "%s.%s" % (contract_type["name"], sig),
                                "claims to be distinguished by keywords and lists none")
+                if mechanism == "no-keywords" and overrides.get(sig, {}).get("keywords"):
+                    report.add("wrong_overload_shape",
+                               "%s.%s" % (contract_type["name"], sig),
+                               "claims to supply no keyword and then lists some")
+            empty = [signature(m) for m in complete
+                     if overrides.get(signature(m), {}).get("distinguished_by")
+                     == "no-keywords"]
+            if len(empty) > 1:
+                report.add("wrong_overload_shape",
+                           "%s.%s" % (contract_type["name"], family),
+                           "%d overloads claim to supply no keyword; at most one can: %s"
+                           % (len(empty), empty))
     return statuses
 
 

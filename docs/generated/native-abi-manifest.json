@@ -21,12 +21,12 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 100,
-    "structs": 28,
-    "struct_fields": 191,
-    "constants": 311,
+    "functions": 120,
+    "structs": 31,
+    "struct_fields": 239,
+    "constants": 390,
     "callbacks": 4,
-    "by_value_aggregates": 2,
+    "by_value_aggregates": 3,
     "shimmed_routes": 1
   },
   "shim_policy": "A shim exists only for a route the generator has *proved* it cannot bind, it does nothing but reconstruct an aggregate and call through a caller-supplied function pointer, and it is never linked against CNA -- so it cannot drift from the library it forwards to. It is not shipped prebuilt: CNA_LISP_SHIM names it when a maintainer has built it, and the members that need it refuse with an actionable condition when it is absent.",
@@ -1578,28 +1578,6 @@
       "c_prototype": "CNA_Result cna_sprite_batch_destroy(CNA_Handle sprite_batch)"
     },
     {
-      "name": "cna_sprite_batch_begin",
-      "header": "graphics.h",
-      "c_returns": "CNA_Result",
-      "returns": ":uint32",
-      "params": [
-        {
-          "name": "sprite_batch",
-          "c_type": "CNA_Handle",
-          "cffi_type": ":uint64"
-        },
-        {
-          "name": "begin_info",
-          "c_type": "const CNA_SpriteBatchBeginInfo*",
-          "cffi_type": ":pointer"
-        }
-      ],
-      "thread": "owner",
-      "ownership": "none",
-      "string_rule": null,
-      "c_prototype": "CNA_Result cna_sprite_batch_begin(CNA_Handle sprite_batch, const CNA_SpriteBatchBeginInfo* begin_info)"
-    },
-    {
       "name": "cna_sprite_batch_submit_many",
       "header": "graphics.h",
       "c_returns": "CNA_Result",
@@ -2409,6 +2387,519 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_touch_panel_set_display_orientation(CNA_Handle game, CNA_DisplayOrientation orientation)"
+    },
+    {
+      "name": "cna_blend_state_init",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "preset",
+          "c_type": "CNA_BlendStatePreset",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_BlendState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_blend_state_init(CNA_BlendStatePreset preset, CNA_BlendState* out_state)"
+    },
+    {
+      "name": "cna_depth_stencil_state_init",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "preset",
+          "c_type": "CNA_DepthStencilStatePreset",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_DepthStencilState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_depth_stencil_state_init(CNA_DepthStencilStatePreset preset, CNA_DepthStencilState* out_state)"
+    },
+    {
+      "name": "cna_rasterizer_state_init",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "preset",
+          "c_type": "CNA_RasterizerStatePreset",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_RasterizerState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_rasterizer_state_init(CNA_RasterizerStatePreset preset, CNA_RasterizerState* out_state)"
+    },
+    {
+      "name": "cna_sampler_state_init",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "preset",
+          "c_type": "CNA_SamplerStatePreset",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_SamplerState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sampler_state_init(CNA_SamplerStatePreset preset, CNA_SamplerState* out_state)"
+    },
+    {
+      "name": "cna_graphics_device_get_blend_state",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_BlendState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_blend_state(CNA_Handle graphics_device, CNA_BlendState* out_state)"
+    },
+    {
+      "name": "cna_graphics_device_set_blend_state",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "state",
+          "c_type": "const CNA_BlendState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_blend_state(CNA_Handle graphics_device, const CNA_BlendState* state)"
+    },
+    {
+      "name": "cna_graphics_device_get_depth_stencil_state",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_DepthStencilState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_depth_stencil_state(CNA_Handle graphics_device, CNA_DepthStencilState* out_state)"
+    },
+    {
+      "name": "cna_graphics_device_set_depth_stencil_state",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "state",
+          "c_type": "const CNA_DepthStencilState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_depth_stencil_state(CNA_Handle graphics_device, const CNA_DepthStencilState* state)"
+    },
+    {
+      "name": "cna_graphics_device_get_rasterizer_state",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_RasterizerState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_rasterizer_state(CNA_Handle graphics_device, CNA_RasterizerState* out_state)"
+    },
+    {
+      "name": "cna_graphics_device_set_rasterizer_state",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "state",
+          "c_type": "const CNA_RasterizerState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_rasterizer_state(CNA_Handle graphics_device, const CNA_RasterizerState* state)"
+    },
+    {
+      "name": "cna_graphics_device_get_sampler_state",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "stage",
+          "c_type": "CNA_ShaderStage",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "slot",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_SamplerState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_sampler_state(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, CNA_SamplerState* out_state)"
+    },
+    {
+      "name": "cna_graphics_device_set_sampler_state",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "stage",
+          "c_type": "CNA_ShaderStage",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "slot",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "state",
+          "c_type": "const CNA_SamplerState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_sampler_state(CNA_Handle graphics_device, CNA_ShaderStage stage, uint32_t slot, const CNA_SamplerState* state)"
+    },
+    {
+      "name": "cna_sprite_batch_begin_with_states",
+      "header": "graphics_state.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sprite_batch",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "sort_mode",
+          "c_type": "CNA_SpriteSortMode",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "blend_state",
+          "c_type": "const CNA_BlendState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "sampler_state",
+          "c_type": "const CNA_SamplerState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "depth_stencil_state",
+          "c_type": "const CNA_DepthStencilState*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "rasterizer_state",
+          "c_type": "const CNA_RasterizerState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sprite_batch_begin_with_states(CNA_Handle sprite_batch, CNA_SpriteSortMode sort_mode, const CNA_BlendState* blend_state, const CNA_SamplerState* sampler_state, const CNA_DepthStencilState* depth_stencil_state, const CNA_RasterizerState* rasterizer_state)"
+    },
+    {
+      "name": "cna_graphics_device_get_blend_factor",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_blend_factor",
+          "c_type": "CNA_Color*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_blend_factor(CNA_Handle graphics_device, CNA_Color* out_blend_factor)"
+    },
+    {
+      "name": "cna_graphics_device_set_blend_factor",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "blend_factor-0",
+          "c_type": "CNA_Color",
+          "cffi_type": ":uint32",
+          "flattened_from": "CNA_Color",
+          "eightbyte": 0
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_blend_factor(CNA_Handle graphics_device, CNA_Color blend_factor)"
+    },
+    {
+      "name": "cna_graphics_device_get_multi_sample_mask",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_multi_sample_mask",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_multi_sample_mask(CNA_Handle graphics_device, int32_t* out_multi_sample_mask)"
+    },
+    {
+      "name": "cna_graphics_device_set_multi_sample_mask",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "multi_sample_mask",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_multi_sample_mask(CNA_Handle graphics_device, int32_t multi_sample_mask)"
+    },
+    {
+      "name": "cna_graphics_device_get_reference_stencil",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_reference_stencil",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_reference_stencil(CNA_Handle graphics_device, int32_t* out_reference_stencil)"
+    },
+    {
+      "name": "cna_graphics_device_set_reference_stencil",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "reference_stencil",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_reference_stencil(CNA_Handle graphics_device, int32_t reference_stencil)"
+    },
+    {
+      "name": "cna_graphics_device_get_scissor_rectangle",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_scissor_rectangle",
+          "c_type": "CNA_Rectangle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_scissor_rectangle(CNA_Handle graphics_device, CNA_Rectangle* out_scissor_rectangle)"
+    },
+    {
+      "name": "cna_graphics_device_set_scissor_rectangle",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "scissor_rectangle-0",
+          "c_type": "CNA_Rectangle",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_Rectangle",
+          "eightbyte": 0
+        },
+        {
+          "name": "scissor_rectangle-1",
+          "c_type": "CNA_Rectangle",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_Rectangle",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_scissor_rectangle(CNA_Handle graphics_device, CNA_Rectangle scissor_rectangle)"
     }
   ],
   "structs": [
@@ -2599,7 +3090,15 @@
       ],
       "header": "core.h",
       "direction": "inout",
-      "versioned": false
+      "versioned": false,
+      "by_value_flattening": [
+        ":uint64",
+        ":uint64"
+      ],
+      "eightbyte_classes": [
+        "INTEGER",
+        "INTEGER"
+      ]
     },
     {
       "name": "CNA_Point",
@@ -3204,52 +3703,6 @@
       ],
       "header": "texture.h",
       "direction": "out",
-      "versioned": true
-    },
-    {
-      "name": "CNA_SpriteBatchBeginInfo",
-      "size": 16,
-      "align": 4,
-      "fields": [
-        {
-          "name": "struct_size",
-          "c_type": "uint32_t",
-          "offset": 0,
-          "size": 4,
-          "count": null,
-          "cffi_type": ":uint32",
-          "kind": "scalar"
-        },
-        {
-          "name": "struct_version",
-          "c_type": "uint32_t",
-          "offset": 4,
-          "size": 4,
-          "count": null,
-          "cffi_type": ":uint32",
-          "kind": "scalar"
-        },
-        {
-          "name": "sort_mode",
-          "c_type": "CNA_SpriteSortMode",
-          "offset": 8,
-          "size": 4,
-          "count": null,
-          "cffi_type": ":uint32",
-          "kind": "scalar"
-        },
-        {
-          "name": "reserved",
-          "c_type": "uint32_t",
-          "offset": 12,
-          "size": 4,
-          "count": null,
-          "cffi_type": ":uint32",
-          "kind": "scalar"
-        }
-      ],
-      "header": "graphics.h",
-      "direction": "in",
       "versioned": true
     },
     {
@@ -4431,6 +4884,514 @@
       "header": "graphics.h",
       "direction": "in",
       "versioned": true
+    },
+    {
+      "name": "CNA_BlendState",
+      "size": 56,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "alpha_blend_function",
+          "c_type": "CNA_BlendFunction",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "alpha_destination_blend",
+          "c_type": "CNA_Blend",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "alpha_source_blend",
+          "c_type": "CNA_Blend",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "color_blend_function",
+          "c_type": "CNA_BlendFunction",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "color_destination_blend",
+          "c_type": "CNA_Blend",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "color_source_blend",
+          "c_type": "CNA_Blend",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "color_write_channels",
+          "c_type": "CNA_ColorWriteChannels",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "color_write_channels1",
+          "c_type": "CNA_ColorWriteChannels",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "color_write_channels2",
+          "c_type": "CNA_ColorWriteChannels",
+          "offset": 40,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "color_write_channels3",
+          "c_type": "CNA_ColorWriteChannels",
+          "offset": 44,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "blend_factor",
+          "c_type": "CNA_Color",
+          "offset": 48,
+          "size": 4,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Color",
+          "kind": "aggregate"
+        },
+        {
+          "name": "multi_sample_mask",
+          "c_type": "int32_t",
+          "offset": 52,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics_state.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_DepthStencilState",
+      "size": 64,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_buffer_enable",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_buffer_write_enable",
+          "c_type": "CNA_Bool",
+          "offset": 9,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "stencil_enable",
+          "c_type": "CNA_Bool",
+          "offset": 10,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "two_sided_stencil_mode",
+          "c_type": "CNA_Bool",
+          "offset": 11,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_buffer_function",
+          "c_type": "CNA_CompareFunction",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "stencil_function",
+          "c_type": "CNA_CompareFunction",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "stencil_mask",
+          "c_type": "int32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "stencil_write_mask",
+          "c_type": "int32_t",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reference_stencil",
+          "c_type": "int32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "stencil_fail",
+          "c_type": "CNA_StencilOperation",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "stencil_depth_buffer_fail",
+          "c_type": "CNA_StencilOperation",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "stencil_pass",
+          "c_type": "CNA_StencilOperation",
+          "offset": 40,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "counter_clockwise_stencil_function",
+          "c_type": "CNA_CompareFunction",
+          "offset": 44,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "counter_clockwise_stencil_fail",
+          "c_type": "CNA_StencilOperation",
+          "offset": 48,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "counter_clockwise_stencil_depth_buffer_fail",
+          "c_type": "CNA_StencilOperation",
+          "offset": 52,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "counter_clockwise_stencil_pass",
+          "c_type": "CNA_StencilOperation",
+          "offset": 56,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 60,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics_state.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_RasterizerState",
+      "size": 28,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "cull_mode",
+          "c_type": "CNA_CullMode",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "fill_mode",
+          "c_type": "CNA_FillMode",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_bias",
+          "c_type": "float",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "slope_scale_depth_bias",
+          "c_type": "float",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "multi_sample_anti_alias",
+          "c_type": "CNA_Bool",
+          "offset": 24,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "scissor_test_enable",
+          "c_type": "CNA_Bool",
+          "offset": 25,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 26,
+          "size": 2,
+          "count": 2,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics_state.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SamplerState",
+      "size": 40,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "address_u",
+          "c_type": "CNA_TextureAddressMode",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "address_v",
+          "c_type": "CNA_TextureAddressMode",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "address_w",
+          "c_type": "CNA_TextureAddressMode",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "filter",
+          "c_type": "CNA_TextureFilter",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "max_anisotropy",
+          "c_type": "int32_t",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "max_mip_level",
+          "c_type": "int32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "mip_map_level_of_detail_bias",
+          "c_type": "float",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "graphics_state.h",
+      "direction": "inout",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -4528,6 +5489,49 @@
     "CNA_ABI_VERSION_MAJOR": 0,
     "CNA_ABI_VERSION_MINOR": 21,
     "CNA_ABI_VERSION_PATCH": 0,
+    "CNA_BLEND_DESTINATION_ALPHA": 8,
+    "CNA_BLEND_DESTINATION_COLOR": 6,
+    "CNA_BLEND_FACTOR": 10,
+    "CNA_BLEND_FUNCTION_ADD": 0,
+    "CNA_BLEND_FUNCTION_MAX": 3,
+    "CNA_BLEND_FUNCTION_MIN": 4,
+    "CNA_BLEND_FUNCTION_REVERSE_SUBTRACT": 2,
+    "CNA_BLEND_FUNCTION_SUBTRACT": 1,
+    "CNA_BLEND_INVERSE_DESTINATION_ALPHA": 9,
+    "CNA_BLEND_INVERSE_DESTINATION_COLOR": 7,
+    "CNA_BLEND_INVERSE_FACTOR": 11,
+    "CNA_BLEND_INVERSE_SOURCE_ALPHA": 5,
+    "CNA_BLEND_INVERSE_SOURCE_COLOR": 3,
+    "CNA_BLEND_ONE": 0,
+    "CNA_BLEND_SOURCE_ALPHA": 4,
+    "CNA_BLEND_SOURCE_ALPHA_SATURATION": 12,
+    "CNA_BLEND_SOURCE_COLOR": 2,
+    "CNA_BLEND_STATE_PRESET_ADDITIVE": 1,
+    "CNA_BLEND_STATE_PRESET_ALPHA_BLEND": 2,
+    "CNA_BLEND_STATE_PRESET_DEFAULT": 0,
+    "CNA_BLEND_STATE_PRESET_NON_PREMULTIPLIED": 3,
+    "CNA_BLEND_STATE_PRESET_OPAQUE": 4,
+    "CNA_BLEND_ZERO": 1,
+    "CNA_COLOR_WRITE_ALL": 15,
+    "CNA_COLOR_WRITE_ALPHA": 8,
+    "CNA_COLOR_WRITE_BLUE": 4,
+    "CNA_COLOR_WRITE_GREEN": 2,
+    "CNA_COLOR_WRITE_NONE": 0,
+    "CNA_COLOR_WRITE_RED": 1,
+    "CNA_COMPARE_ALWAYS": 0,
+    "CNA_COMPARE_EQUAL": 4,
+    "CNA_COMPARE_GREATER": 6,
+    "CNA_COMPARE_GREATER_EQUAL": 5,
+    "CNA_COMPARE_LESS": 2,
+    "CNA_COMPARE_LESS_EQUAL": 3,
+    "CNA_COMPARE_NEVER": 1,
+    "CNA_COMPARE_NOT_EQUAL": 7,
+    "CNA_CULL_CLOCKWISE_FACE": 1,
+    "CNA_CULL_COUNTER_CLOCKWISE_FACE": 2,
+    "CNA_CULL_NONE": 0,
+    "CNA_DEPTH_STENCIL_STATE_PRESET_DEFAULT": 0,
+    "CNA_DEPTH_STENCIL_STATE_PRESET_DEPTH_READ": 1,
+    "CNA_DEPTH_STENCIL_STATE_PRESET_NONE": 2,
     "CNA_DISPLAY_ORIENTATION_DEFAULT": 0,
     "CNA_DISPLAY_ORIENTATION_LANDSCAPE_LEFT": 1,
     "CNA_DISPLAY_ORIENTATION_LANDSCAPE_RIGHT": 2,
@@ -4547,6 +5551,8 @@
     "CNA_ERROR_CATEGORY_STATE": 3,
     "CNA_ERROR_CATEGORY_THREAD": 8,
     "CNA_FALSE": 0,
+    "CNA_FILL_SOLID": 0,
+    "CNA_FILL_WIREFRAME": 1,
     "CNA_GAMEPAD_BUTTON_A": 4096,
     "CNA_GAMEPAD_BUTTON_B": 8192,
     "CNA_GAMEPAD_BUTTON_BACK": 32,
@@ -4769,6 +5775,7 @@
     "CNA_KEY_Y": 89,
     "CNA_KEY_Z": 90,
     "CNA_KEY_ZOOM": 251,
+    "CNA_MAX_SAMPLERS": 16,
     "CNA_MOUSE_BUTTON_LEFT": 1,
     "CNA_MOUSE_BUTTON_MIDDLE": 2,
     "CNA_MOUSE_BUTTON_NONE": 0,
@@ -4779,6 +5786,10 @@
     "CNA_PLAYER_INDEX_ONE": 0,
     "CNA_PLAYER_INDEX_THREE": 2,
     "CNA_PLAYER_INDEX_TWO": 1,
+    "CNA_RASTERIZER_STATE_PRESET_CULL_CLOCKWISE": 1,
+    "CNA_RASTERIZER_STATE_PRESET_CULL_COUNTER_CLOCKWISE": 2,
+    "CNA_RASTERIZER_STATE_PRESET_CULL_NONE": 3,
+    "CNA_RASTERIZER_STATE_PRESET_DEFAULT": 0,
     "CNA_RESULT_BUFFER_TOO_SMALL": 14,
     "CNA_RESULT_CALLBACK": 9,
     "CNA_RESULT_ENCODING": 11,
@@ -4794,6 +5805,15 @@
     "CNA_RESULT_SHUTTING_DOWN": 13,
     "CNA_RESULT_SUCCESS": 0,
     "CNA_RESULT_THREAD": 8,
+    "CNA_SAMPLER_STATE_PRESET_ANISOTROPIC_CLAMP": 1,
+    "CNA_SAMPLER_STATE_PRESET_ANISOTROPIC_WRAP": 2,
+    "CNA_SAMPLER_STATE_PRESET_DEFAULT": 0,
+    "CNA_SAMPLER_STATE_PRESET_LINEAR_CLAMP": 3,
+    "CNA_SAMPLER_STATE_PRESET_LINEAR_WRAP": 4,
+    "CNA_SAMPLER_STATE_PRESET_POINT_CLAMP": 5,
+    "CNA_SAMPLER_STATE_PRESET_POINT_WRAP": 6,
+    "CNA_SHADER_STAGE_PIXEL": 0,
+    "CNA_SHADER_STAGE_VERTEX": 1,
     "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY": 1,
     "CNA_SPRITE_EFFECT_FLIP_VERTICALLY": 2,
     "CNA_SPRITE_EFFECT_NONE": 0,
@@ -4802,6 +5822,14 @@
     "CNA_SPRITE_SORT_MODE_FRONT_TO_BACK": 4,
     "CNA_SPRITE_SORT_MODE_IMMEDIATE": 1,
     "CNA_SPRITE_SORT_MODE_TEXTURE": 2,
+    "CNA_STENCIL_DECREMENT": 4,
+    "CNA_STENCIL_DECREMENT_SATURATION": 6,
+    "CNA_STENCIL_INCREMENT": 3,
+    "CNA_STENCIL_INCREMENT_SATURATION": 5,
+    "CNA_STENCIL_INVERT": 7,
+    "CNA_STENCIL_KEEP": 0,
+    "CNA_STENCIL_REPLACE": 2,
+    "CNA_STENCIL_ZERO": 1,
     "CNA_SURFACE_FORMAT_ALPHA8": 12,
     "CNA_SURFACE_FORMAT_BC7_EXT": 23,
     "CNA_SURFACE_FORMAT_BC7_SRGB_EXT": 24,
@@ -4829,6 +5857,18 @@
     "CNA_SURFACE_FORMAT_USHORT_EXT": 26,
     "CNA_SURFACE_FORMAT_VECTOR2": 14,
     "CNA_SURFACE_FORMAT_VECTOR4": 15,
+    "CNA_TEXTURE_ADDRESS_CLAMP": 1,
+    "CNA_TEXTURE_ADDRESS_MIRROR": 2,
+    "CNA_TEXTURE_ADDRESS_WRAP": 0,
+    "CNA_TEXTURE_FILTER_ANISOTROPIC": 2,
+    "CNA_TEXTURE_FILTER_LINEAR": 0,
+    "CNA_TEXTURE_FILTER_LINEAR_MIP_POINT": 3,
+    "CNA_TEXTURE_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR": 5,
+    "CNA_TEXTURE_FILTER_MIN_LINEAR_MAG_POINT_MIP_POINT": 6,
+    "CNA_TEXTURE_FILTER_MIN_POINT_MAG_LINEAR_MIP_LINEAR": 7,
+    "CNA_TEXTURE_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT": 8,
+    "CNA_TEXTURE_FILTER_POINT": 1,
+    "CNA_TEXTURE_FILTER_POINT_MIP_LINEAR": 4,
     "CNA_TOUCH_LOCATION_INVALID": 0,
     "CNA_TOUCH_LOCATION_MOVED": 3,
     "CNA_TOUCH_LOCATION_PRESSED": 2,

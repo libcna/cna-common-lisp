@@ -27,6 +27,12 @@ on:
         description: 'CNA branch, tag or commit to build the C ABI from'
         required: false
         default: 'next'
+      sharp_runtime_ref:
+        description: >
+          sharp-runtime branch, tag or commit. CNA does not pin this -- its own
+          CHANGELOG says so -- so the pairing is this workflow's to choose.
+        required: false
+        default: 'next'
 
 concurrency:
   group: native-${{ github.ref }}
@@ -34,6 +40,14 @@ concurrency:
 
 env:
   CNA_REF: ${{ github.event.inputs.cna_ref || 'next' }}
+  # CNA consumes sharp-runtime as a sibling checkout with add_subdirectory and
+  # pins no revision -- "sharp-runtime is the exception and is not pinned by the
+  # build", in CNA's own CHANGELOG, which calls recording the revision a stopgap.
+  # So the pairing is this workflow's to make, and getting it wrong is a compile
+  # error deep in CNA's storage module rather than anything a version check
+  # catches: openeggbert/cna:next needs openeggbert/sharp-runtime:next, and
+  # sharp-runtime's default branch is develop.
+  SHARP_RUNTIME_REF: ${{ github.event.inputs.sharp_runtime_ref || 'next' }}
 
 jobs:
   native:
@@ -63,6 +77,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: openeggbert/sharp-runtime
+          ref: ${{ env.SHARP_RUNTIME_REF }}
           path: sharp-runtime
 
       # CNA's own configure-time message says a non-recursive init is what it
@@ -92,6 +107,7 @@ jobs:
           template=$(git -C cna-common-lisp-template rev-parse HEAD)
           echo "sha=$sha" >> "$GITHUB_OUTPUT"
           echo "CNA_SOURCE_SHA=$sha" >> "$GITHUB_ENV"
+          echo "SHARP_RUNTIME_SHA=$sharp" >> "$GITHUB_ENV"
           {
             echo "### CNA source used for this qualification"
             echo
@@ -99,6 +115,7 @@ jobs:
             echo "| --- | --- |"
             echo "| CNA ref requested | \`${CNA_REF}\` |"
             echo "| CNA commit resolved | \`${sha}\` |"
+            echo "| sharp-runtime ref requested | \`${SHARP_RUNTIME_REF}\` |"
             echo "| sharp-runtime commit | \`${sharp}\` |"
             echo "| template commit | \`${template}\` |"
             echo "| CNA-Lisp commit | \`${GITHUB_SHA}\` |"
@@ -285,6 +302,8 @@ jobs:
                   "commit": os.environ.get("CNA_SOURCE_SHA"),
                   "repository": "openeggbert/cna",
                   "renderer": "HEADLESS",
+                  "sharp_runtime_ref_requested": os.environ.get("SHARP_RUNTIME_REF"),
+                  "sharp_runtime_commit": os.environ.get("SHARP_RUNTIME_SHA"),
                   "platform_backend": "SDL3",
                   "audio_backend": "SDL3",
               },

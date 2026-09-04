@@ -705,7 +705,9 @@
     "Begin()": {
      "lisp": "begin",
      "generic": true,
-     "positional": 1
+     "positional": 1,
+     "distinguished_by": "no-keywords",
+     "reason": "XNA's Begin() is Begin(Deferred, null, null, null, null, null, Matrix.Identity), so it is the member of the family that supplies no keyword at all. The defaults a null selects are read from SpriteBatch::SetRenderState: AlphaBlend, LinearClamp, DepthStencilState.None and CullCounterClockwise."
     },
     "End()": {
      "lisp": "end",
@@ -774,16 +776,35 @@
       "effects",
       "layer-depth"
      ]
+    },
+    "Begin(SpriteSortMode,BlendState)": {
+     "lisp": "begin",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "sort-mode",
+      "blend-state"
+     ]
+    },
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)": {
+     "lisp": "begin",
+     "generic": true,
+     "distinguished_by": "keywords",
+     "keywords": [
+      "sort-mode",
+      "blend-state",
+      "sampler-state",
+      "depth-stencil-state",
+      "rasterizer-state"
+     ]
     }
    },
    "not_applicable": {
     "Dispose(Boolean)": "The protected dispose(bool) pattern."
    },
    "unimplemented": {
-    "Begin(SpriteSortMode,BlendState)": "Needs BlendState.",
-    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)": "Needs the four graphics state objects.",
-    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)": "Needs the state objects and Effect.",
-    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)": "Needs the state objects, Effect and Matrix.",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)": "Needs Effect. The parameter is nullable in XNA, so a projection could accept an :EFFECT that may only ever be NIL -- which would be a fourth Begin shape XNA does not have, distinguishable from the five-parameter overload by nothing a caller could act on. It stays missing until Effect exists.",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)": "Needs Effect, for the same reason. Matrix exists and is complete; the effect parameter is what is absent, and CNA's own route for this overload (cna_sprite_batch_begin_with_effect) takes an Effect handle, so there is nothing to bind it to yet.",
     "DrawString(SpriteFont,String,Vector2,Color)": "Needs SpriteFont.",
     "DrawString(SpriteFont,StringBuilder,Vector2,Color)": "Needs SpriteFont and StringBuilder.",
     "DrawString(SpriteFont,String,Vector2,Color,Single,Vector2,Single,SpriteEffects,Single)": "Needs SpriteFont.",
@@ -794,7 +815,7 @@
    "overload_families": {
     "Begin": {
      "lisp": "begin",
-     "reason": "Only the no-argument overload is projected. XNA's next Begin takes a SpriteSortMode and a BlendState together, so offering a sort mode alone would be an overload XNA does not have."
+     "reason": "Three of XNA's five Begin overloads are projected onto one generic function whose supplied keywords select the overload, and only those three shapes are accepted: none at all is Begin(); :SORT-MODE with :BLEND-STATE is the two-parameter overload; :SORT-MODE, :BLEND-STATE and all three of :SAMPLER-STATE, :DEPTH-STENCIL-STATE and :RASTERIZER-STATE is the five-parameter one. A sort mode on its own, a state without a sort mode, and any partial subset of the three trailing states are each refused with the reason. Supplying a state as NIL is not the same as leaving it out: XNA's state parameters are nullable and a null selects the framework default, so the shape check is on suppliedness. The two Effect-bearing overloads are not projected at all."
     },
     "Draw": {
      "lisp": "draw-texture",
@@ -3653,6 +3674,171 @@
    },
    "not_applicable": {
     "WindowHandle": "An IntPtr naming a native platform window, exactly as Mouse.WindowHandle is, and not applicable for the same reason: a raw platform pointer is not something this projection puts in the public API, and CNA owns the game's window."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.Blend": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "blend",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.BlendFunction": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "blend-function",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.ColorWriteChannels": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "color-write-channels",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.CompareFunction": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "compare-function",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.StencilOperation": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "stencil-operation",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.CullMode": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "cull-mode",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.FillMode": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "fill-mode",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.TextureAddressMode": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "texture-address-mode",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.TextureFilter": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "texture-filter",
+   "lisp_kind": "enum"
+  },
+  "Microsoft.Xna.Framework.Graphics.BlendState": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "blend-state",
+   "lisp_kind": "class",
+   "superclass_note": "XNA's state objects derive from GraphicsResource. CNA-Lisp's do not: GRAPHICS-RESOURCE here is a NATIVE-OBJECT with a CNA handle, and CNA models a state object as a versioned C descriptor with no handle at all -- there is no create route and nothing to destroy. Giving these four a handle they do not have would be a fake. The inherited surface is recorded as a deliberate absence in src/capabilities.lisp; no member of it is in the selected contract for these types, because the contract lists each type's own members.",
+   "constructors": {
+    "new()": "make-instance"
+   },
+   "member_overrides": {
+    "Opaque": {
+     "lisp": "blend-state-opaque",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "AlphaBlend": {
+     "lisp": "blend-state-alpha-blend",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "Additive": {
+     "lisp": "blend-state-additive",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "NonPremultiplied": {
+     "lisp": "blend-state-non-premultiplied",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected Dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. A state object holds no native handle -- CNA models it as a versioned C descriptor, not an object with a lifetime -- so there is nothing to dispose and nothing for the flag to distinguish."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.DepthStencilState": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "depth-stencil-state",
+   "lisp_kind": "class",
+   "superclass_note": "XNA's state objects derive from GraphicsResource. CNA-Lisp's do not: GRAPHICS-RESOURCE here is a NATIVE-OBJECT with a CNA handle, and CNA models a state object as a versioned C descriptor with no handle at all -- there is no create route and nothing to destroy. Giving these four a handle they do not have would be a fake. The inherited surface is recorded as a deliberate absence in src/capabilities.lisp; no member of it is in the selected contract for these types, because the contract lists each type's own members.",
+   "constructors": {
+    "new()": "make-instance"
+   },
+   "member_overrides": {
+    "None": {
+     "lisp": "depth-stencil-state-none",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "Default": {
+     "lisp": "depth-stencil-state-default",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "DepthRead": {
+     "lisp": "depth-stencil-state-depth-read",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected Dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. A state object holds no native handle -- CNA models it as a versioned C descriptor, not an object with a lifetime -- so there is nothing to dispose and nothing for the flag to distinguish."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.RasterizerState": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "rasterizer-state",
+   "lisp_kind": "class",
+   "superclass_note": "XNA's state objects derive from GraphicsResource. CNA-Lisp's do not: GRAPHICS-RESOURCE here is a NATIVE-OBJECT with a CNA handle, and CNA models a state object as a versioned C descriptor with no handle at all -- there is no create route and nothing to destroy. Giving these four a handle they do not have would be a fake. The inherited surface is recorded as a deliberate absence in src/capabilities.lisp; no member of it is in the selected contract for these types, because the contract lists each type's own members.",
+   "constructors": {
+    "new()": "make-instance"
+   },
+   "member_overrides": {
+    "CullNone": {
+     "lisp": "rasterizer-state-cull-none",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "CullClockwise": {
+     "lisp": "rasterizer-state-cull-clockwise",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "CullCounterClockwise": {
+     "lisp": "rasterizer-state-cull-counter-clockwise",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected Dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. A state object holds no native handle -- CNA models it as a versioned C descriptor, not an object with a lifetime -- so there is nothing to dispose and nothing for the flag to distinguish."
+   }
+  },
+  "Microsoft.Xna.Framework.Graphics.SamplerState": {
+   "lisp_package": "microsoft.xna.framework.graphics",
+   "lisp_name": "sampler-state",
+   "lisp_kind": "class",
+   "superclass_note": "XNA's state objects derive from GraphicsResource. CNA-Lisp's do not: GRAPHICS-RESOURCE here is a NATIVE-OBJECT with a CNA handle, and CNA models a state object as a versioned C descriptor with no handle at all -- there is no create route and nothing to destroy. Giving these four a handle they do not have would be a fake. The inherited surface is recorded as a deliberate absence in src/capabilities.lisp; no member of it is in the selected contract for these types, because the contract lists each type's own members.",
+   "constructors": {
+    "new()": "make-instance"
+   },
+   "member_overrides": {
+    "PointWrap": {
+     "lisp": "sampler-state-point-wrap",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "PointClamp": {
+     "lisp": "sampler-state-point-clamp",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "LinearWrap": {
+     "lisp": "sampler-state-linear-wrap",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "LinearClamp": {
+     "lisp": "sampler-state-linear-clamp",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "AnisotropicWrap": {
+     "lisp": "sampler-state-anisotropic-wrap",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    },
+    "AnisotropicClamp": {
+     "lisp": "sampler-state-anisotropic-clamp",
+     "reason": "A `public static initonly' field of the type's own type. It projects as a function taking no arguments, named <type>-<field>, because the bare field names -- None, Default, Opaque, Additive, PointWrap -- are far too general to be package-level function names in the graphics package, and two of the four types would collide on them. The function answers the same object every call, which is what a static readonly field gives, and the object is read-only from construction, which is what XNA's private constructors do by setting isBound before anyone can reach it."
+    }
+   },
+   "not_applicable": {
+    "Dispose(Boolean)": "The protected Dispose(bool disposing) pattern exists to tell a finalizer call from an explicit one. A state object holds no native handle -- CNA models it as a versioned C descriptor, not an object with a lifetime -- so there is nothing to dispose and nothing for the flag to distinguish."
    }
   }
  }

@@ -17,7 +17,16 @@
   (:documentation "A game that does the whole Foundation 1 graphics slice."))
 
 (defmethod initialize-instance :after ((game graphics-game) &key)
-  (setf (manager game) (make-instance 'xna:graphics-device-manager :game game)))
+  (setf (manager game) (make-instance 'xna:graphics-device-manager :game game))
+  ;; Variable timing, for the reason NEXT.md records: a fixed time step does not
+  ;; make a frame count an update count, because a frame that overruns its target
+  ;; is followed by catch-up updates with no draws of their own. This fixture
+  ;; overruns a 60 Hz step on its first frame by a wide margin -- the first
+  ;; state-bearing Begin is where CNA creates its native state objects, measured
+  ;; here at tens of milliseconds once, and under a microsecond every frame after
+  ;; -- so an exact frame claim under fixed timing would be measuring that
+  ;; warm-up rather than the game loop.
+  (setf (xna:is-fixed-time-step game) nil))
 
 (defmethod xna:load-content ((game graphics-game))
   (call-next-method)
@@ -67,6 +76,8 @@
     (is (plusp (gfx:viewport-height (viewport game))))
     (is (typep (texture game) 'gfx:texture-2d))
     (is (typep (batch game) 'gfx:sprite-batch))
+    (is (not (xna:is-fixed-time-step game))
+        "this fixture runs on variable timing; see the fixture's own comment")
     (is (= 3 (updates game)))
     (is (= 2 (draws game)))))
 

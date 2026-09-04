@@ -14,8 +14,8 @@ It works three ways, and each one closes a hole the previous one left open.
        ...rendered content, not to be edited by hand...
        <!-- /generated-block:per-type-table -->
 
-   ``--write`` renders every such region from the reports; with no flag the
-   rendered text must already be what the file says. This is what keeps the
+   ``--write`` restates every fact marker and renders every such region from
+   the reports; with no flag the file must already say what they render. This is what keeps the
    per-type table and the native-ABI summary honest: the summary had drifted to
    69 bound routes while the manifest said 100, and nothing caught it, because
    no single number in it carried a marker.
@@ -187,8 +187,35 @@ def block_selection(abi, compat):
                selection["member_count"]))
 
 
+def block_native_abi_headline(abi, compat):
+    counts = abi["counts"]
+    return ("The private foreign layer binds **%d native routes** and **%d native "
+            "structs**,\nall of them generated from the canonical CNA headers and "
+            "checked by a C compiler." % (counts["functions"], counts["structs"]))
+
+
+def block_scoreboard_headline(abi, compat):
+    selection = compat["selection"]
+    total = compat["totals"]
+    by_type = total["types_by_status"]
+    by_member = total["members_by_status"]
+    return ("The generated scoreboard, over a selection of **%d XNA types and %d "
+            "members**:\n\n| | |\n| --- | --- |\n"
+            "| Types complete / partial / missing | **%d / %d / %d** |\n"
+            "| Members complete / missing | **%d / %d** |\n"
+            "| Members not applicable | **%d** |\n"
+            "| **Disagreement diagnostics** | **%d** |"
+            % (selection["type_count"], selection["member_count"],
+               by_type.get("complete", 0), by_type.get("partial", 0),
+               by_type.get("missing", 0),
+               by_member.get("complete", 0), by_member.get("missing", 0),
+               by_member.get("not-applicable", 0), total["disagreement_total"]))
+
+
 BLOCKS = {
     "selection": block_selection,
+    "native-abi-headline": block_native_abi_headline,
+    "scoreboard-headline": block_scoreboard_headline,
     "scoreboard": block_scoreboard,
     "per-type-table": block_per_type_table,
     "partial-frontier": block_partial_frontier,
@@ -237,16 +264,25 @@ def main():
             name, claimed = match.group(1), int(match.group(2))
             if name not in facts:
                 problems.append("%s: no generated fact named %r" % (document, name))
-            elif facts[name] != claimed:
+            elif facts[name] != claimed and not arguments.write:
                 problems.append("%s: %r is written as %d but generated as %d"
                                 % (document, name, claimed, facts[name]))
 
-        rendered = render_blocks(body, abi, compat, document, problems)
+        rendered = body
+        if arguments.write:
+            def restate(match):
+                name = match.group(1)
+                if name not in facts:
+                    return match.group(0)
+                return "<!-- generated:%s=%d -->" % (name, facts[name])
+            rendered = re.sub(r"<!--\s*generated:([a-z0-9 .-]+)=\d+\s*-->",
+                              restate, rendered)
+        rendered = render_blocks(rendered, abi, compat, document, problems)
         if rendered != body:
             if arguments.write:
                 with open(os.path.join(ROOT, document), "w", encoding="utf-8") as fh:
                     fh.write(rendered)
-                print("rewrote the generated blocks in %s" % document)
+                print("rewrote the generated facts and blocks in %s" % document)
             else:
                 problems.append(
                     "%s: a generated block is not what the reports render; "

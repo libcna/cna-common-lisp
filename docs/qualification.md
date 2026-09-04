@@ -55,6 +55,25 @@ landed. So the `Native` workflow:
 `workflow_dispatch` takes a `cna_ref` input, so a specific CNA commit or tag can
 be qualified on demand without editing the workflow.
 
+### sharp-runtime is CNA's unpinned dependency, and therefore ours
+
+CNA consumes `sharp-runtime` as a *sibling checkout*, with `add_subdirectory` and
+no recorded revision. CNA's own `CHANGELOG.md` says so in as many words --
+"`sharp-runtime` is the exception and is not pinned by the build ... Recording the
+revision here is a stopgap" -- so the pairing is the consumer's to make.
+
+Getting it wrong is not a version error. It is a compile error a long way inside
+CNA: building `openeggbert/cna:next` against `sharp-runtime`'s default `develop`
+branch fails in `modules/storage/src/StorageDevice.cpp` with
+`SetIsolatedStorageRootOverride is not a member of StoragePaths`, eleven minutes
+into the build. `openeggbert/cna:next` needs `openeggbert/sharp-runtime:next`.
+
+So the workflow checks out `sharp-runtime` at `SHARP_RUNTIME_REF`, defaulting to
+`next` alongside CNA's `next`, records the commit it resolved to next to the CNA
+one, and takes a `sharp_runtime_ref` dispatch input for qualifying a different
+pairing. This is not a CNA defect; it is a documented property of how CNA is
+built, and the remedy belongs here.
+
 **An ABI artifact whose CNA commit was not recorded is not qualification
 evidence**, and no document here may describe one as qualified.
 

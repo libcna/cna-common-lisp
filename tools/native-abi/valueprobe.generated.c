@@ -38,4 +38,16 @@ void cna_lisp_valueprobe_cna_color_after(int32_t before, CNA_Color value, int32_
     *out_after = after;
 }
 
-int cna_lisp_valueprobe_count(void) { return 2; }
+void cna_lisp_valueprobe_cna_rectangle(CNA_Rectangle value, unsigned char *out)
+{
+    memcpy(out, &value, sizeof(value));
+}
+
+void cna_lisp_valueprobe_cna_rectangle_after(int32_t before, CNA_Rectangle value, int32_t after, unsigned char *out, int32_t *out_before, int32_t *out_after)
+{
+    memcpy(out, &value, sizeof(value));
+    *out_before = before;
+    *out_after = after;
+}
+
+int cna_lisp_valueprobe_count(void) { return 3; }

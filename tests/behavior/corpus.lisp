@@ -736,7 +736,103 @@
          (= 0.75f0 (xna:vector3-y screen))
          (= 0.75f0 (xna:vector3-z screen)))))
 
+(defobservation "blend-state.defaults" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.BlendState"
+  "SetDefaults writes One/Zero and Add on both the colour and the alpha pair, All
+   on all four write masks, Color.White as the BlendFactor and -1 as the
+   MultiSampleMask."
+  (let ((state (make-instance 'gfx:blend-state)))
+    (and (eq :one (gfx:color-source-blend state))
+         (eq :zero (gfx:color-destination-blend state))
+         (eq :add (gfx:color-blend-function state))
+         (eq :one (gfx:alpha-source-blend state))
+         (eq :zero (gfx:alpha-destination-blend state))
+         (eq :add (gfx:alpha-blend-function state))
+         (equal '(:all) (gfx:color-write-channels state))
+         (xna:color-equal (xna:white) (gfx:blend-factor state))
+         (= -1 (gfx:multi-sample-mask state)))))
+
+(defobservation "blend-state.presets-set-both-pairs" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.BlendState"
+  "The private constructor behind the four predefined states writes its two
+   factors to the colour pair and to the alpha pair, so Additive is
+   SourceAlpha/One on both."
+  (let ((additive (gfx:blend-state-additive)))
+    (and (eq :source-alpha (gfx:color-source-blend additive))
+         (eq :one (gfx:color-destination-blend additive))
+         (eq :source-alpha (gfx:alpha-source-blend additive))
+         (eq :one (gfx:alpha-destination-blend additive)))))
+
+(defobservation "depth-stencil-state.defaults" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.DepthStencilState"
+  "SetDefaults writes LessEqual as the depth comparison and -1 -- the all-ones
+   mask -- as both stencil masks."
+  (let ((state (make-instance 'gfx:depth-stencil-state)))
+    (and (eq :less-equal (gfx:depth-buffer-function state))
+         (= -1 (gfx:stencil-mask state))
+         (= -1 (gfx:stencil-write-mask state))
+         (= 0 (gfx:reference-stencil state)))))
+
+(defobservation "rasterizer-state.antialiases-by-default" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.RasterizerState"
+  "MultiSampleAntiAlias defaults to true, and CullMode to CullCounterClockwiseFace."
+  (let ((state (make-instance 'gfx:rasterizer-state)))
+    (and (eq t (gfx:multi-sample-anti-alias state))
+         (eq :cull-counter-clockwise-face (gfx:cull-mode state))
+         (eq :solid (gfx:fill-mode state)))))
+
+(defobservation "sampler-state.max-anisotropy-is-four" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.SamplerState"
+  "MaxAnisotropy defaults to 4 -- neither 1 nor 16 -- with Linear filtering and
+   Wrap on all three axes."
+  (let ((state (make-instance 'gfx:sampler-state)))
+    (and (= 4 (gfx:max-anisotropy state))
+         (eq :linear (gfx:filter state))
+         (eq :wrap (gfx:address-u state)))))
+
+(defobservation "state-objects.are-latched-when-applied" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.BlendState"
+  "Every setter calls ThrowIfBound, and the predefined instances are constructed
+   already bound, so mutating BlendState.Opaque throws."
+  (handler-case (progn (setf (gfx:color-source-blend (gfx:blend-state-opaque)) :zero) nil)
+    (xna:cna-invalid-state-error () t)))
+
+(defobservation "blend-function.min-is-three" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.BlendFunction"
+  "XNA numbers Min 3 and Max 4."
+  (and (= 3 (gfx:blend-function-value :min))
+       (= 4 (gfx:blend-function-value :max))))
+
+(defobservation "sprite-batch.begin-defaults" :xna-derived
+    "Microsoft.Xna.Framework.Graphics.SpriteBatch"
+  "SetRenderState substitutes AlphaBlend, LinearClamp, DepthStencilState.None and
+   CullCounterClockwise for a null state, which is what Begin() selects."
+  (let ((blend (gfx:blend-state-alpha-blend))
+        (sampler (gfx:sampler-state-linear-clamp))
+        (depth (gfx:depth-stencil-state-none))
+        (rasterizer (gfx:rasterizer-state-cull-counter-clockwise)))
+    (and (eq :inverse-source-alpha (gfx:color-destination-blend blend))
+         (eq :linear (gfx:filter sampler))
+         (eq :clamp (gfx:address-u sampler))
+         (null (gfx:depth-buffer-enable depth))
+         (eq :cull-counter-clockwise-face (gfx:cull-mode rasterizer)))))
+
 ;;; --- ABI-derived ---------------------------------------------------------
+
+(defobservation "abi.blend-function-min-and-max-are-swapped" :abi-derived
+    "CNA_BLEND_FUNCTION_*"
+  "CNA numbers CNA_BLEND_FUNCTION_MAX 3 and CNA_BLEND_FUNCTION_MIN 4, which is
+   the opposite of XNA's Min = 3, Max = 4. The binding translates by name."
+  (and (= 3 ffi::+blend-function-max+)
+       (= 4 ffi::+blend-function-min+)))
+
+(defobservation "abi.state-descriptors-are-versioned" :abi-derived "CNA_BlendState"
+  "Every state descriptor starts with a struct_size and a struct_version, at
+   offsets 0 and 4."
+  (let ((row (assoc 'ffi::cna-blend-state ffi:*native-struct-layouts*)))
+    (and (= 0 (second (assoc 'ffi::struct-size (fourth row))))
+         (= 4 (second (assoc 'ffi::struct-version (fourth row)))))))
+
 
 (defobservation "abi.keys-values" :abi-derived "CNA_KEY_*"
   "Keys carries the Windows virtual-key values: Escape is 27 and A is 65."

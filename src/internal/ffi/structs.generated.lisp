@@ -42,6 +42,7 @@
 (defconstant +alignof-cna-color+ 1)
 
 ;;; CNA_Rectangle -- 16 bytes, 4-byte aligned, from core.h.
+;;; Passed by value as :uint64 :uint64 (System V AMD64 eightbyte classes: INTEGER INTEGER).
 (defcstruct (cna-rectangle :size 16)
   (x :int32 :offset 0)
   (y :int32 :offset 4)
@@ -171,16 +172,6 @@
 
 (defconstant +sizeof-cna-texture-2d-storage-info+ 16)
 (defconstant +alignof-cna-texture-2d-storage-info+ 4)
-
-;;; CNA_SpriteBatchBeginInfo -- 16 bytes, 4-byte aligned, from graphics.h.
-(defcstruct (cna-sprite-batch-begin-info :size 16)
-  (struct-size :uint32 :offset 0)
-  (struct-version :uint32 :offset 4)
-  (sort-mode :uint32 :offset 8)
-  (reserved :uint32 :offset 12))
-
-(defconstant +sizeof-cna-sprite-batch-begin-info+ 16)
-(defconstant +alignof-cna-sprite-batch-begin-info+ 4)
 
 ;;; CNA_SpriteCommand -- 72 bytes, 8-byte aligned, from graphics.h.
 (defcstruct (cna-sprite-command :size 72)
@@ -371,6 +362,82 @@
 (defconstant +sizeof-cna-sprite-scaled-command+ 72)
 (defconstant +alignof-cna-sprite-scaled-command+ 8)
 
+;;; CNA_BlendState -- 56 bytes, 4-byte aligned, from graphics_state.h.
+(defcstruct (cna-blend-state :size 56)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (alpha-blend-function :uint32 :offset 8)
+  (alpha-destination-blend :uint32 :offset 12)
+  (alpha-source-blend :uint32 :offset 16)
+  (color-blend-function :uint32 :offset 20)
+  (color-destination-blend :uint32 :offset 24)
+  (color-source-blend :uint32 :offset 28)
+  (color-write-channels :uint32 :offset 32)
+  (color-write-channels-1 :uint32 :offset 36)
+  (color-write-channels-2 :uint32 :offset 40)
+  (color-write-channels-3 :uint32 :offset 44)
+  (blend-factor (:struct cna-color) :offset 48)
+  (multi-sample-mask :int32 :offset 52))
+
+(defconstant +sizeof-cna-blend-state+ 56)
+(defconstant +alignof-cna-blend-state+ 4)
+
+;;; CNA_DepthStencilState -- 64 bytes, 4-byte aligned, from graphics_state.h.
+(defcstruct (cna-depth-stencil-state :size 64)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (depth-buffer-enable :uint8 :offset 8)
+  (depth-buffer-write-enable :uint8 :offset 9)
+  (stencil-enable :uint8 :offset 10)
+  (two-sided-stencil-mode :uint8 :offset 11)
+  (depth-buffer-function :uint32 :offset 12)
+  (stencil-function :uint32 :offset 16)
+  (stencil-mask :int32 :offset 20)
+  (stencil-write-mask :int32 :offset 24)
+  (reference-stencil :int32 :offset 28)
+  (stencil-fail :uint32 :offset 32)
+  (stencil-depth-buffer-fail :uint32 :offset 36)
+  (stencil-pass :uint32 :offset 40)
+  (counter-clockwise-stencil-function :uint32 :offset 44)
+  (counter-clockwise-stencil-fail :uint32 :offset 48)
+  (counter-clockwise-stencil-depth-buffer-fail :uint32 :offset 52)
+  (counter-clockwise-stencil-pass :uint32 :offset 56)
+  (reserved :uint32 :offset 60))
+
+(defconstant +sizeof-cna-depth-stencil-state+ 64)
+(defconstant +alignof-cna-depth-stencil-state+ 4)
+
+;;; CNA_RasterizerState -- 28 bytes, 4-byte aligned, from graphics_state.h.
+(defcstruct (cna-rasterizer-state :size 28)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (cull-mode :uint32 :offset 8)
+  (fill-mode :uint32 :offset 12)
+  (depth-bias :float :offset 16)
+  (slope-scale-depth-bias :float :offset 20)
+  (multi-sample-anti-alias :uint8 :offset 24)
+  (scissor-test-enable :uint8 :offset 25)
+  (reserved :uint8 :offset 26 :count 2))
+
+(defconstant +sizeof-cna-rasterizer-state+ 28)
+(defconstant +alignof-cna-rasterizer-state+ 4)
+
+;;; CNA_SamplerState -- 40 bytes, 4-byte aligned, from graphics_state.h.
+(defcstruct (cna-sampler-state :size 40)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (address-u :uint32 :offset 8)
+  (address-v :uint32 :offset 12)
+  (address-w :uint32 :offset 16)
+  (filter :uint32 :offset 20)
+  (max-anisotropy :int32 :offset 24)
+  (max-mip-level :int32 :offset 28)
+  (mip-map-level-of-detail-bias :float :offset 32)
+  (reserved :uint32 :offset 36))
+
+(defconstant +sizeof-cna-sampler-state+ 40)
+(defconstant +alignof-cna-sampler-state+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -389,7 +456,6 @@
     (cna-texture-info 16 4 ((struct-size 0 4) (struct-version 4 4) (level-count 8 4) (format 12 4)))
     (cna-texture-2d-decode-info 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (zoom 16 1) (reserved 17 7)))
     (cna-texture-2d-storage-info 16 4 ((struct-size 0 4) (struct-version 4 4) (has-renderer 8 1) (has-cpu-shadow 9 1) (reserved 10 6)))
-    (cna-sprite-batch-begin-info 16 4 ((struct-size 0 4) (struct-version 4 4) (sort-mode 8 4) (reserved 12 4)))
     (cna-sprite-command 72 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (destination 16 16) (source 32 16) (color 48 4) (rotation 52 4) (origin 56 8) (effects 64 4) (layer-depth 68 4)))
     (cna-keyboard-state 40 8 ((struct-size 0 4) (struct-version 4 4) (pressed-key-words 8 32)))
     (cna-mouse-state 32 4 ((struct-size 0 4) (struct-version 4 4) (x 8 4) (y 12 4) (scroll-wheel 16 4) (horizontal-scroll-wheel 20 4) (pressed-buttons 24 4) (reserved 28 4)))
@@ -401,6 +467,10 @@
     (cna-touch-capabilities 16 4 ((struct-size 0 4) (struct-version 4 4) (is-connected 8 1) (reserved 9 3) (maximum-touch-count 12 4)))
     (cna-gesture-sample 64 8 ((struct-size 0 4) (struct-version 4 4) (gesture-type 8 4) (finger-id-ext 12 4) (finger-id-2-ext 16 4) (reserved 20 4) (timestamp-ticks 24 8) (position 32 8) (position-2 40 8) (delta 48 8) (delta-2 56 8)))
     (cna-renderer-info 32 8 ((struct-size 0 4) (struct-version 4 4) (renderer-name-byte-length 8 8) (capability-flags 16 8) (renderer-type 24 4) (max-texture-dimension 28 4)))
-    (cna-sprite-scaled-command 72 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (position 16 8) (source 24 16) (color 40 4) (rotation 44 4) (origin 48 8) (scale 56 8) (effects 64 4) (layer-depth 68 4))))
+    (cna-sprite-scaled-command 72 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (position 16 8) (source 24 16) (color 40 4) (rotation 44 4) (origin 48 8) (scale 56 8) (effects 64 4) (layer-depth 68 4)))
+    (cna-blend-state 56 4 ((struct-size 0 4) (struct-version 4 4) (alpha-blend-function 8 4) (alpha-destination-blend 12 4) (alpha-source-blend 16 4) (color-blend-function 20 4) (color-destination-blend 24 4) (color-source-blend 28 4) (color-write-channels 32 4) (color-write-channels-1 36 4) (color-write-channels-2 40 4) (color-write-channels-3 44 4) (blend-factor 48 4) (multi-sample-mask 52 4)))
+    (cna-depth-stencil-state 64 4 ((struct-size 0 4) (struct-version 4 4) (depth-buffer-enable 8 1) (depth-buffer-write-enable 9 1) (stencil-enable 10 1) (two-sided-stencil-mode 11 1) (depth-buffer-function 12 4) (stencil-function 16 4) (stencil-mask 20 4) (stencil-write-mask 24 4) (reference-stencil 28 4) (stencil-fail 32 4) (stencil-depth-buffer-fail 36 4) (stencil-pass 40 4) (counter-clockwise-stencil-function 44 4) (counter-clockwise-stencil-fail 48 4) (counter-clockwise-stencil-depth-buffer-fail 52 4) (counter-clockwise-stencil-pass 56 4) (reserved 60 4)))
+    (cna-rasterizer-state 28 4 ((struct-size 0 4) (struct-version 4 4) (cull-mode 8 4) (fill-mode 12 4) (depth-bias 16 4) (slope-scale-depth-bias 20 4) (multi-sample-anti-alias 24 1) (scissor-test-enable 25 1) (reserved 26 2)))
+    (cna-sampler-state 40 4 ((struct-size 0 4) (struct-version 4 4) (address-u 8 4) (address-v 12 4) (address-w 16 4) (filter 20 4) (max-anisotropy 24 4) (max-mip-level 28 4) (mip-map-level-of-detail-bias 32 4) (reserved 36 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

@@ -60,6 +60,19 @@ SELECTED = [
     "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
     "Microsoft.Xna.Framework.Graphics.SpriteEffects",
     "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+    "Microsoft.Xna.Framework.Graphics.Blend",
+    "Microsoft.Xna.Framework.Graphics.BlendFunction",
+    "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+    "Microsoft.Xna.Framework.Graphics.CompareFunction",
+    "Microsoft.Xna.Framework.Graphics.StencilOperation",
+    "Microsoft.Xna.Framework.Graphics.CullMode",
+    "Microsoft.Xna.Framework.Graphics.FillMode",
+    "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+    "Microsoft.Xna.Framework.Graphics.TextureFilter",
+    "Microsoft.Xna.Framework.Graphics.BlendState",
+    "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+    "Microsoft.Xna.Framework.Graphics.RasterizerState",
+    "Microsoft.Xna.Framework.Graphics.SamplerState",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
@@ -151,9 +164,11 @@ def main(argv):
                          "graphics device, clear, decode a PNG into a Texture2D, submit a "
                          "SpriteBatch draw, read the keyboard, exit and destroy "
                          "deterministically. The selection then grows one dependency-complete "
-                         "closure at a time, in the order NEXT.md records. The closures "
-                         "added so far are pure managed and touch no native route: the 3D "
-                         "transform types, the bounding volumes, and the Curve family.",
+                         "closure at a time, in the order NEXT.md records. Some of those "
+                         "closures are pure managed and touch no native route -- the 3D "
+                         "transform types, the bounding volumes, the Curve family and the "
+                         "packed vectors; others reach CNA, as the input surface and the "
+                         "graphics state objects do.",
             "type_count": len(types),
             "member_count": members,
         },

@@ -4,9 +4,9 @@
  "profile": "XNA 4.0 Windows runtime",
  "selection": {
   "name": "Foundation 1 and the managed closures",
-  "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. The closures added so far are pure managed and touch no native route: the 3D transform types, the bounding volumes, and the Curve family.",
-  "type_count": 77,
-  "member_count": 1632
+  "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
+  "type_count": 90,
+  "member_count": 1763
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 77,
-  "members": 1632,
+  "types": 90,
+  "members": 1763,
   "types_by_status": {
    "partial": 5,
-   "complete": 72
+   "complete": 85
   },
   "members_by_status": {
-   "complete": 1185,
-   "missing": 98,
-   "not-applicable": 348,
+   "complete": 1312,
+   "missing": 89,
+   "not-applicable": 361,
    "partial": 1
   },
-  "diagnostics": 98,
+  "diagnostics": 89,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 98,
+   "missing_member": 89,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1219,7 +1219,7 @@
     "Dispose()": "missing",
     "Finalize()": "not-applicable",
     "IsDisposed": "missing",
-    "ScissorRectangle": "missing",
+    "ScissorRectangle": "complete",
     "Indices": "missing",
     "Viewport": "partial",
     "DisplayMode": "missing",
@@ -1227,12 +1227,12 @@
     "GraphicsProfile": "missing",
     "Adapter": "missing",
     "PresentationParameters": "missing",
-    "RasterizerState": "missing",
-    "ReferenceStencil": "missing",
-    "DepthStencilState": "missing",
-    "MultiSampleMask": "missing",
-    "BlendFactor": "missing",
-    "BlendState": "missing",
+    "RasterizerState": "complete",
+    "ReferenceStencil": "complete",
+    "DepthStencilState": "complete",
+    "MultiSampleMask": "complete",
+    "BlendFactor": "complete",
+    "BlendState": "complete",
     "VertexTextures": "missing",
     "Textures": "missing",
     "VertexSamplerStates": "missing",
@@ -1306,8 +1306,8 @@
     "new(GraphicsDevice)": "complete",
     "Dispose(Boolean)": "not-applicable",
     "Begin()": "complete",
-    "Begin(SpriteSortMode,BlendState)": "missing",
-    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)": "missing",
+    "Begin(SpriteSortMode,BlendState)": "complete",
+    "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)": "complete",
     "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)": "missing",
     "Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)": "missing",
     "End()": "complete",
@@ -1378,6 +1378,228 @@
     "HdrBlendable": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:surface-format"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.Blend",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "One": "complete",
+    "Zero": "complete",
+    "SourceColor": "complete",
+    "InverseSourceColor": "complete",
+    "SourceAlpha": "complete",
+    "InverseSourceAlpha": "complete",
+    "DestinationColor": "complete",
+    "InverseDestinationColor": "complete",
+    "DestinationAlpha": "complete",
+    "InverseDestinationAlpha": "complete",
+    "BlendFactor": "complete",
+    "InverseBlendFactor": "complete",
+    "SourceAlphaSaturation": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:blend"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Add": "complete",
+    "Subtract": "complete",
+    "ReverseSubtract": "complete",
+    "Min": "complete",
+    "Max": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:blend-function"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "None": "complete",
+    "Red": "complete",
+    "Green": "complete",
+    "Blue": "complete",
+    "Alpha": "complete",
+    "All": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:color-write-channels"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Always": "complete",
+    "Never": "complete",
+    "Less": "complete",
+    "LessEqual": "complete",
+    "Equal": "complete",
+    "GreaterEqual": "complete",
+    "Greater": "complete",
+    "NotEqual": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:compare-function"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Keep": "complete",
+    "Zero": "complete",
+    "Replace": "complete",
+    "Increment": "complete",
+    "Decrement": "complete",
+    "IncrementSaturation": "complete",
+    "DecrementSaturation": "complete",
+    "Invert": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:stencil-operation"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.CullMode",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "None": "complete",
+    "CullClockwiseFace": "complete",
+    "CullCounterClockwiseFace": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:cull-mode"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.FillMode",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Solid": "complete",
+    "WireFrame": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:fill-mode"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Wrap": "complete",
+    "Clamp": "complete",
+    "Mirror": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:texture-address-mode"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Linear": "complete",
+    "Point": "complete",
+    "Anisotropic": "complete",
+    "LinearMipPoint": "complete",
+    "PointMipLinear": "complete",
+    "MinLinearMagPointMipLinear": "complete",
+    "MinLinearMagPointMipPoint": "complete",
+    "MinPointMagLinearMipLinear": "complete",
+    "MinPointMagLinearMipPoint": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:texture-filter"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.BlendState",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "MultiSampleMask": "complete",
+    "BlendFactor": "complete",
+    "ColorWriteChannels3": "complete",
+    "ColorWriteChannels2": "complete",
+    "ColorWriteChannels1": "complete",
+    "ColorWriteChannels": "complete",
+    "AlphaBlendFunction": "complete",
+    "AlphaDestinationBlend": "complete",
+    "AlphaSourceBlend": "complete",
+    "ColorBlendFunction": "complete",
+    "ColorDestinationBlend": "complete",
+    "ColorSourceBlend": "complete",
+    "Opaque": "complete",
+    "AlphaBlend": "complete",
+    "Additive": "complete",
+    "NonPremultiplied": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:blend-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "ReferenceStencil": "complete",
+    "StencilWriteMask": "complete",
+    "StencilMask": "complete",
+    "CounterClockwiseStencilDepthBufferFail": "complete",
+    "CounterClockwiseStencilFail": "complete",
+    "CounterClockwiseStencilPass": "complete",
+    "CounterClockwiseStencilFunction": "complete",
+    "TwoSidedStencilMode": "complete",
+    "StencilDepthBufferFail": "complete",
+    "StencilFail": "complete",
+    "StencilPass": "complete",
+    "StencilFunction": "complete",
+    "StencilEnable": "complete",
+    "DepthBufferFunction": "complete",
+    "DepthBufferWriteEnable": "complete",
+    "DepthBufferEnable": "complete",
+    "None": "complete",
+    "Default": "complete",
+    "DepthRead": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:depth-stencil-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "SlopeScaleDepthBias": "complete",
+    "DepthBias": "complete",
+    "MultiSampleAntiAlias": "complete",
+    "ScissorTestEnable": "complete",
+    "FillMode": "complete",
+    "CullMode": "complete",
+    "CullNone": "complete",
+    "CullClockwise": "complete",
+    "CullCounterClockwise": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:rasterizer-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.SamplerState",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "MipMapLevelOfDetailBias": "complete",
+    "MaxMipLevel": "complete",
+    "MaxAnisotropy": "complete",
+    "AddressW": "complete",
+    "AddressV": "complete",
+    "AddressU": "complete",
+    "Filter": "complete",
+    "PointWrap": "complete",
+    "PointClamp": "complete",
+    "LinearWrap": "complete",
+    "LinearClamp": "complete",
+    "AnisotropicWrap": "complete",
+    "AnisotropicClamp": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:sampler-state"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
@@ -2489,11 +2711,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ScissorRectangle",
-   "detail": "no exported 'scissor-rectangle' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Indices",
    "detail": "no exported 'indices' in microsoft.xna.framework.graphics"
   },
@@ -2521,36 +2738,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.PresentationParameters",
    "detail": "no exported 'presentation-parameters' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.RasterizerState",
-   "detail": "no exported 'rasterizer-state' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ReferenceStencil",
-   "detail": "no exported 'reference-stencil' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DepthStencilState",
-   "detail": "no exported 'depth-stencil-state' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.MultiSampleMask",
-   "detail": "no exported 'multi-sample-mask' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.BlendFactor",
-   "detail": "no exported 'blend-factor' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.BlendState",
-   "detail": "no exported 'blend-state' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",
@@ -2664,23 +2851,13 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState)",
-   "detail": "Needs BlendState."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState)",
-   "detail": "Needs the four graphics state objects."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect)",
-   "detail": "Needs the state objects and Effect."
+   "detail": "Needs Effect. The parameter is nullable in XNA, so a projection could accept an :EFFECT that may only ever be NIL -- which would be a fourth Begin shape XNA does not have, distinguishable from the five-parameter overload by nothing a caller could act on. It stays missing until Effect exists."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(SpriteSortMode,BlendState,SamplerState,DepthStencilState,RasterizerState,Effect,Matrix)",
-   "detail": "Needs the state objects, Effect and Matrix."
+   "detail": "Needs Effect, for the same reason. Matrix exists and is complete; the effect parameter is what is absent, and CNA's own route for this overload (cna_sprite_batch_begin_with_effect) takes an Effect handle, so there is nothing to bind it to yet."
   },
   {
    "category": "missing_member",

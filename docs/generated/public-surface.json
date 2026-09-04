@@ -11481,6 +11481,192 @@
           "documentation": "GraphicsResource.Disposing: the resource is being disposed.\n\nHANDLER is called with the resource. It runs *inside* the disposal, so the\nresource is still addressable but must not be used for new work."
         },
         {
+          "name": "address-u",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SAMPLER-STATE.ADDRESS-U. Defaults to WRAP."
+        },
+        {
+          "name": "address-v",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SAMPLER-STATE.ADDRESS-V. Defaults to WRAP."
+        },
+        {
+          "name": "address-w",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SAMPLER-STATE.ADDRESS-W. Defaults to WRAP."
+        },
+        {
+          "name": "all-blend",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of BLEND, as keywords, in value order."
+        },
+        {
+          "name": "all-blend-function",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of BLEND-FUNCTION, as keywords, in value order."
+        },
+        {
+          "name": "all-color-write-channels",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of COLOR-WRITE-CHANNELS, as keywords, in value order."
+        },
+        {
+          "name": "all-compare-function",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of COMPARE-FUNCTION, as keywords, in value order."
+        },
+        {
+          "name": "all-cull-mode",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of CULL-MODE, as keywords, in value order."
+        },
+        {
+          "name": "all-fill-mode",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of FILL-MODE, as keywords, in value order."
+        },
+        {
           "name": "all-sprite-effects",
           "fbound": true,
           "macro": false,
@@ -11519,6 +11705,25 @@
           "documentation": "Every member of SPRITE-SORT-MODE, as keywords, in value order."
         },
         {
+          "name": "all-stencil-operation",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of STENCIL-OPERATION, as keywords, in value order."
+        },
+        {
           "name": "all-surface-format",
           "fbound": true,
           "macro": false,
@@ -11538,12 +11743,198 @@
           "documentation": "Every member of SURFACE-FORMAT, as keywords, in value order."
         },
         {
+          "name": "all-texture-address-mode",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of TEXTURE-ADDRESS-MODE, as keywords, in value order."
+        },
+        {
+          "name": "all-texture-filter",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of TEXTURE-FILTER, as keywords, in value order."
+        },
+        {
+          "name": "alpha-blend-function",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.ALPHA-BLEND-FUNCTION. Defaults to ADD."
+        },
+        {
+          "name": "alpha-destination-blend",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.ALPHA-DESTINATION-BLEND. Defaults to ZERO."
+        },
+        {
+          "name": "alpha-source-blend",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.ALPHA-SOURCE-BLEND. Defaults to ONE."
+        },
+        {
           "name": "begin",
           "fbound": true,
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "sprite-batch"
+            "sprite-batch",
+            "&key",
+            "sort-mode",
+            "blend-state",
+            "sampler-state",
+            "depth-stencil-state",
+            "rasterizer-state"
+          ],
+          "keywords": [
+            "blend-state",
+            "depth-stencil-state",
+            "rasterizer-state",
+            "sampler-state",
+            "sort-mode"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SpriteBatch.Begin: the three overloads whose arguments this milestone has.\n\n    (begin batch)                              Begin()\n    (begin batch :sort-mode m :blend-state b)  Begin(SpriteSortMode, BlendState)\n    (begin batch :sort-mode m :blend-state b\n                 :sampler-state s :depth-stencil-state d\n                 :rasterizer-state r)          the five-parameter overload\n\nOnly those three keyword shapes are accepted. XNA has no Begin that takes a sort\nmode on its own, none that takes a state without a sort mode, and none that takes\nsome of the four states and not the others, so each of those is refused rather\nthan quietly treated as one of the overloads that does exist.\n\nA state argument may be NIL, and NIL is not the same as absent: XNA's state\nparameters are nullable and a null selects the framework's default, so\n`:blend-state nil' is `Begin(sortMode, null)' -- the AlphaBlend overload -- while\nleaving `:blend-state' out entirely is a different overload. The defaults a null\nselects are XNA's own, read from SpriteBatch::SetRenderState: **AlphaBlend**,\n**LinearClamp**, **DepthStencilState.None** and **CullCounterClockwise**.\n\nEvery state object supplied here becomes read-only, as XNA's do when they reach a\ndevice. XNA latches them at Begin for `:immediate' and at End for the deferred\nmodes, because that is when it applies them; CNA copies the descriptors at Begin,\nso this latches them at Begin for every sort mode. The difference is one\nobservable case -- mutating a state between BEGIN and END in a deferred mode --\nand refusing it is preferred to accepting a change that could no longer have any\neffect. `docs/limitations.md' records it.\n\nThe two overloads that take an `Effect' are **not** projected: `Effect' does not\nexist in this milestone, and an effect parameter that could only ever be given\nNIL would be a fourth shape XNA does not have. They are measured as missing."
+        },
+        {
+          "name": "blend",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.Blend."
+        },
+        {
+          "name": "blend-factor",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.BLEND-FACTOR. Defaults to NIL."
+        },
+        {
+          "name": "blend-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -11556,7 +11947,195 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "SpriteBatch.Begin().\n\nTakes no arguments, because XNA's no-argument overload takes none and its next\none takes a SpriteSortMode *and* a BlendState together. Offering a sort mode on\nits own would be an eighth overload that XNA does not have, and it would have to\nbe withdrawn when the state-bearing overloads arrive. Until then the sort mode is\nDeferred, which is what Begin() selects."
+          "documentation": "The BLEND member a value names."
+        },
+        {
+          "name": "blend-function",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.BlendFunction.\n\nMin is 3 and Max is 4, which is what the pinned contract says and the opposite of\nCNA's own CNA_BLEND_FUNCTION_MAX and CNA_BLEND_FUNCTION_MIN. The public value is\nXNA's."
+        },
+        {
+          "name": "blend-function-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The BLEND-FUNCTION member a value names."
+        },
+        {
+          "name": "blend-function-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a BLEND-FUNCTION member."
+        },
+        {
+          "name": "blend-state",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "state",
+            "graphics-device"
+          ],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:blend-state",
+            "microsoft.xna.framework.graphics:%state-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.BlendState."
+        },
+        {
+          "name": "blend-state-additive",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BlendState.Additive: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "blend-state-alpha-blend",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BlendState.AlphaBlend: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "blend-state-non-premultiplied",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BlendState.NonPremultiplied: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "blend-state-opaque",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BlendState.Opaque: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "blend-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a BLEND member."
         },
         {
           "name": "bounds",
@@ -11602,6 +12181,277 @@
           "documentation": "GraphicsDevice.Clear(Color): clear the current render target to COLOR."
         },
         {
+          "name": "color-blend-function",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.COLOR-BLEND-FUNCTION. Defaults to ADD."
+        },
+        {
+          "name": "color-destination-blend",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.COLOR-DESTINATION-BLEND. Defaults to ZERO."
+        },
+        {
+          "name": "color-source-blend",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.COLOR-SOURCE-BLEND. Defaults to ONE."
+        },
+        {
+          "name": "color-write-channels",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.COLOR-WRITE-CHANNELS. Defaults to (ALL)."
+        },
+        {
+          "name": "color-write-channels-1",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.COLOR-WRITE-CHANNELS-1. Defaults to (ALL)."
+        },
+        {
+          "name": "color-write-channels-2",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.COLOR-WRITE-CHANNELS-2. Defaults to (ALL)."
+        },
+        {
+          "name": "color-write-channels-3",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.COLOR-WRITE-CHANNELS-3. Defaults to (ALL)."
+        },
+        {
+          "name": "color-write-channels-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The COLOR-WRITE-CHANNELS member list a value names."
+        },
+        {
+          "name": "color-write-channels-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a COLOR-WRITE-CHANNELS member. A list of members combines their bits."
+        },
+        {
+          "name": "compare-function",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.CompareFunction."
+        },
+        {
+          "name": "compare-function-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The COMPARE-FUNCTION member a value names."
+        },
+        {
+          "name": "compare-function-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a COMPARE-FUNCTION member."
+        },
+        {
           "name": "copy-viewport",
           "fbound": true,
           "macro": false,
@@ -11621,6 +12471,351 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "counter-clockwise-stencil-depth-buffer-fail",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.COUNTER-CLOCKWISE-STENCIL-DEPTH-BUFFER-FAIL. Defaults to KEEP."
+        },
+        {
+          "name": "counter-clockwise-stencil-fail",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.COUNTER-CLOCKWISE-STENCIL-FAIL. Defaults to KEEP."
+        },
+        {
+          "name": "counter-clockwise-stencil-function",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.COUNTER-CLOCKWISE-STENCIL-FUNCTION. Defaults to ALWAYS."
+        },
+        {
+          "name": "counter-clockwise-stencil-pass",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.COUNTER-CLOCKWISE-STENCIL-PASS. Defaults to KEEP."
+        },
+        {
+          "name": "cull-mode",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "RASTERIZER-STATE.CULL-MODE. Defaults to CULL-COUNTER-CLOCKWISE-FACE."
+        },
+        {
+          "name": "cull-mode-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The CULL-MODE member a value names."
+        },
+        {
+          "name": "cull-mode-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a CULL-MODE member."
+        },
+        {
+          "name": "depth-bias",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "RASTERIZER-STATE.DEPTH-BIAS. Defaults to 0.0."
+        },
+        {
+          "name": "depth-buffer-enable",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.DEPTH-BUFFER-ENABLE. Defaults to T."
+        },
+        {
+          "name": "depth-buffer-function",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.DEPTH-BUFFER-FUNCTION. Defaults to LESS-EQUAL."
+        },
+        {
+          "name": "depth-buffer-write-enable",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.DEPTH-BUFFER-WRITE-ENABLE. Defaults to T."
+        },
+        {
+          "name": "depth-stencil-state",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "state",
+            "graphics-device"
+          ],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:depth-stencil-state",
+            "microsoft.xna.framework.graphics:%state-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DepthStencilState."
+        },
+        {
+          "name": "depth-stencil-state-default",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DepthStencilState.Default: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "depth-stencil-state-depth-read",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DepthStencilState.DepthRead: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "depth-stencil-state-none",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DepthStencilState.None: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
         },
         {
           "name": "draw-texture",
@@ -11684,6 +12879,96 @@
           "constant": false,
           "value": null,
           "documentation": "SpriteBatch.End()."
+        },
+        {
+          "name": "fill-mode",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "RASTERIZER-STATE.FILL-MODE. Defaults to SOLID."
+        },
+        {
+          "name": "fill-mode-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The FILL-MODE member a value names."
+        },
+        {
+          "name": "fill-mode-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a FILL-MODE member."
+        },
+        {
+          "name": "filter",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SAMPLER-STATE.FILTER. Defaults to LINEAR."
         },
         {
           "name": "format-of",
@@ -11913,6 +13198,126 @@
           "documentation": "Viewport(Rectangle): the rectangle's position and size, depth 0 to 1.\n\nA separate name from MAKE-VIEWPORT, as MAKE-PLANE-FROM-VECTOR4 is: one function\ntaking either four integers or one rectangle would be telling two constructors\napart by the run-time type of an argument."
         },
         {
+          "name": "max-anisotropy",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SAMPLER-STATE.MAX-ANISOTROPY. Defaults to 4."
+        },
+        {
+          "name": "max-mip-level",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SAMPLER-STATE.MAX-MIP-LEVEL. Defaults to 0."
+        },
+        {
+          "name": "mip-map-level-of-detail-bias",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SAMPLER-STATE.MIP-MAP-LEVEL-OF-DETAIL-BIAS. Defaults to 0.0."
+        },
+        {
+          "name": "multi-sample-anti-alias",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "RASTERIZER-STATE.MULTI-SAMPLE-ANTI-ALIAS. Defaults to T."
+        },
+        {
+          "name": "multi-sample-mask",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "BLEND-STATE.MULTI-SAMPLE-MASK. Defaults to -1."
+        },
+        {
           "name": "present",
           "fbound": true,
           "macro": false,
@@ -11932,6 +13337,117 @@
           "constant": false,
           "value": null,
           "documentation": "GraphicsDevice.Present()."
+        },
+        {
+          "name": "rasterizer-state",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "state",
+            "graphics-device"
+          ],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:rasterizer-state",
+            "microsoft.xna.framework.graphics:%state-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.RasterizerState."
+        },
+        {
+          "name": "rasterizer-state-cull-clockwise",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "RasterizerState.CullClockwise: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "rasterizer-state-cull-counter-clockwise",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "RasterizerState.CullCounterClockwise: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "rasterizer-state-cull-none",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "RasterizerState.CullNone: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "reference-stencil",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.REFERENCE-STENCIL. Defaults to 0."
         },
         {
           "name": "remove-disposing-handler",
@@ -11975,6 +13491,217 @@
           "constant": false,
           "value": null,
           "documentation": "The name of the renderer behind this device.\n\nA CNA-Lisp addition, not an XNA member: XNA has no equivalent, and knowing which\nrenderer is present is what makes a headless qualification run interpretable."
+        },
+        {
+          "name": "sampler-state",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:sampler-state",
+            "microsoft.xna.framework.graphics:%state-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.SamplerState.\n\nMaxAnisotropy defaults to 4, which is SamplerState::SetDefaults' literal."
+        },
+        {
+          "name": "sampler-state-anisotropic-clamp",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SamplerState.AnisotropicClamp: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "sampler-state-anisotropic-wrap",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SamplerState.AnisotropicWrap: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "sampler-state-linear-clamp",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SamplerState.LinearClamp: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "sampler-state-linear-wrap",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SamplerState.LinearWrap: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "sampler-state-point-clamp",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SamplerState.PointClamp: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "sampler-state-point-wrap",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SamplerState.PointWrap: the predefined instance, read-only as XNA's is.\n\nThe same object every call, which is what a `public static initonly' field gives."
+        },
+        {
+          "name": "scissor-rectangle",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "rectangle",
+            "graphics-device"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.ScissorRectangle."
+        },
+        {
+          "name": "scissor-test-enable",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "RASTERIZER-STATE.SCISSOR-TEST-ENABLE. Defaults to NIL."
+        },
+        {
+          "name": "slope-scale-depth-bias",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "RASTERIZER-STATE.SLOPE-SCALE-DEPTH-BIAS. Defaults to 0.0."
         },
         {
           "name": "sprite-batch",
@@ -12123,6 +13850,235 @@
           "constant": false,
           "value": null,
           "documentation": "The exact value of a SPRITE-SORT-MODE member."
+        },
+        {
+          "name": "stencil-depth-buffer-fail",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.STENCIL-DEPTH-BUFFER-FAIL. Defaults to KEEP."
+        },
+        {
+          "name": "stencil-enable",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.STENCIL-ENABLE. Defaults to NIL."
+        },
+        {
+          "name": "stencil-fail",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.STENCIL-FAIL. Defaults to KEEP."
+        },
+        {
+          "name": "stencil-function",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.STENCIL-FUNCTION. Defaults to ALWAYS."
+        },
+        {
+          "name": "stencil-mask",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.STENCIL-MASK. Defaults to -1."
+        },
+        {
+          "name": "stencil-operation",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.StencilOperation."
+        },
+        {
+          "name": "stencil-operation-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The STENCIL-OPERATION member a value names."
+        },
+        {
+          "name": "stencil-operation-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a STENCIL-OPERATION member."
+        },
+        {
+          "name": "stencil-pass",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.STENCIL-PASS. Defaults to KEEP."
+        },
+        {
+          "name": "stencil-write-mask",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.STENCIL-WRITE-MASK. Defaults to -1."
         },
         {
           "name": "surface-format",
@@ -12307,6 +14263,152 @@
           "documentation": "Decode a PNG file into a real native Texture2D."
         },
         {
+          "name": "texture-address-mode",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.TextureAddressMode."
+        },
+        {
+          "name": "texture-address-mode-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The TEXTURE-ADDRESS-MODE member a value names."
+        },
+        {
+          "name": "texture-address-mode-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a TEXTURE-ADDRESS-MODE member."
+        },
+        {
+          "name": "texture-filter",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.TextureFilter."
+        },
+        {
+          "name": "texture-filter-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The TEXTURE-FILTER member a value names."
+        },
+        {
+          "name": "texture-filter-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a TEXTURE-FILTER member."
+        },
+        {
+          "name": "two-sided-stencil-mode",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "state"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "state"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DEPTH-STENCIL-STATE.TWO-SIDED-STENCIL-MODE. Defaults to NIL."
+        },
+        {
           "name": "viewport",
           "fbound": true,
           "macro": false,
@@ -12333,7 +14435,7 @@
           "type": true,
           "constant": false,
           "value": null,
-          "documentation": "GraphicsDevice.Viewport.\n\nThe reader is present; the setter is not, and cannot be until CFFI can pass a\nMEMORY-class aggregate. `cna_graphics_device_set_viewport' takes CNA_Viewport by\nvalue, and at 24 bytes the System V AMD64 ABI passes it on the stack. See\ndocs/native-abi.md."
+          "documentation": "GraphicsDevice.Viewport.\n\nThe reader is unconditional. The setter needs the optional private shim, because\n`cna_graphics_device_set_viewport' takes CNA_Viewport by value and at 24 bytes the\nSystem V AMD64 ABI passes it in memory, which CFFI cannot express without\ncffi-libffi. See docs/native-abi.md."
         },
         {
           "name": "viewport-aspect-ratio",
@@ -20108,6 +22210,81 @@
       "flat": 0,
       "linear": 1,
       "smooth": 2
+    },
+    "blend": {
+      "one": 0,
+      "zero": 1,
+      "source-color": 2,
+      "inverse-source-color": 3,
+      "source-alpha": 4,
+      "inverse-source-alpha": 5,
+      "destination-color": 6,
+      "inverse-destination-color": 7,
+      "destination-alpha": 8,
+      "inverse-destination-alpha": 9,
+      "blend-factor": 10,
+      "inverse-blend-factor": 11,
+      "source-alpha-saturation": 12
+    },
+    "blend-function": {
+      "add": 0,
+      "subtract": 1,
+      "reverse-subtract": 2,
+      "min": 3,
+      "max": 4
+    },
+    "color-write-channels": {
+      "none": 0,
+      "red": 1,
+      "green": 2,
+      "blue": 4,
+      "alpha": 8,
+      "all": 15
+    },
+    "compare-function": {
+      "always": 0,
+      "never": 1,
+      "less": 2,
+      "less-equal": 3,
+      "equal": 4,
+      "greater-equal": 5,
+      "greater": 6,
+      "not-equal": 7
+    },
+    "stencil-operation": {
+      "keep": 0,
+      "zero": 1,
+      "replace": 2,
+      "increment": 3,
+      "decrement": 4,
+      "increment-saturation": 5,
+      "decrement-saturation": 6,
+      "invert": 7
+    },
+    "cull-mode": {
+      "none": 0,
+      "cull-clockwise-face": 1,
+      "cull-counter-clockwise-face": 2
+    },
+    "fill-mode": {
+      "solid": 0,
+      "wire-frame": 1
+    },
+    "texture-address-mode": {
+      "wrap": 0,
+      "clamp": 1,
+      "mirror": 2
+    },
+    "texture-filter": {
+      "linear": 0,
+      "point": 1,
+      "anisotropic": 2,
+      "linear-mip-point": 3,
+      "point-mip-linear": 4,
+      "min-linear-mag-point-mip-linear": 5,
+      "min-linear-mag-point-mip-point": 6,
+      "min-point-mag-linear-mip-linear": 7,
+      "min-point-mag-linear-mip-point": 8
     }
   },
   "predefined_colors": [
@@ -20450,11 +22627,18 @@
       "reason": "Needs SpriteFont, which is a later closure."
     },
     {
-      "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(state overloads)",
+      "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(Effect overloads)",
       "kind": "member",
       "status": "missing",
       "reason_code": null,
-      "reason": "Needs BlendState, SamplerState, DepthStencilState, RasterizerState\n              and Effect, none of which is in this milestone. BEGIN therefore\n              takes no arguments at all: XNA's next overload takes a\n              SpriteSortMode *and* a BlendState together, so offering a sort mode\n              on its own would be an overload XNA does not have, and it would\n              have to be withdrawn when the real ones arrive."
+      "reason": "The two Effect-bearing Begin overloads need Effect, which is a later\n              closure. The parameter is nullable in XNA, so a projection could\n              accept an :EFFECT that may only ever be NIL -- and that would be a\n              fourth Begin shape XNA does not have, told from the five-parameter\n              one by nothing a caller could act on. The three overloads whose\n              arguments exist are projected; these two are measured as missing."
+    },
+    {
+      "subject": "Microsoft.Xna.Framework.Graphics.BlendState (GraphicsResource base)",
+      "kind": "type",
+      "status": "missing",
+      "reason_code": null,
+      "reason": "The four state objects derive from GraphicsResource in XNA and do\n              not here, and the same is true of DepthStencilState,\n              RasterizerState and SamplerState. CNA-Lisp's GRAPHICS-RESOURCE is a\n              NATIVE-OBJECT with a CNA handle; CNA models a state object as a\n              versioned C descriptor with no handle at all -- no create route, no\n              destroy route, nothing with a lifetime. Giving these four a handle\n              they do not have would be exactly the fake this binding refuses. So\n              the inherited surface -- Name, Tag, GraphicsDevice, the Disposing\n              event and Dispose -- is absent. It is not in the selected contract\n              for these types either, because the contract lists each type's own\n              members, which is why this absence needs recording here rather than\n              appearing in the scoreboard."
     },
     {
       "subject": "Microsoft.Xna.Framework.Game.Components",

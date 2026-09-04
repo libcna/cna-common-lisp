@@ -205,7 +205,21 @@ that a keyword-taking projection accepts no keywords at all."
    (alist-object microsoft.xna.framework::*plane-intersection-type-table*)
    "curve-continuity" (alist-object microsoft.xna.framework::*curve-continuity-table*)
    "curve-loop-type" (alist-object microsoft.xna.framework::*curve-loop-type-table*)
-   "curve-tangent" (alist-object microsoft.xna.framework::*curve-tangent-table*)))
+   "curve-tangent" (alist-object microsoft.xna.framework::*curve-tangent-table*)
+   "blend" (alist-object microsoft.xna.framework.graphics::*blend-table*)
+   "blend-function" (alist-object microsoft.xna.framework.graphics::*blend-function-table*)
+   "color-write-channels"
+   (alist-object microsoft.xna.framework.graphics::*color-write-channels-table*)
+   "compare-function"
+   (alist-object microsoft.xna.framework.graphics::*compare-function-table*)
+   "stencil-operation"
+   (alist-object microsoft.xna.framework.graphics::*stencil-operation-table*)
+   "cull-mode" (alist-object microsoft.xna.framework.graphics::*cull-mode-table*)
+   "fill-mode" (alist-object microsoft.xna.framework.graphics::*fill-mode-table*)
+   "texture-address-mode"
+   (alist-object microsoft.xna.framework.graphics::*texture-address-mode-table*)
+   "texture-filter"
+   (alist-object microsoft.xna.framework.graphics::*texture-filter-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

@@ -80,31 +80,31 @@ reasons.
 
 ## The measured frontier
 
-<!-- generated:selected types=77 -->
-<!-- generated:selected members=1632 -->
-<!-- generated:complete types=72 -->
+<!-- generated:selected types=90 -->
+<!-- generated:selected members=1763 -->
+<!-- generated:complete types=85 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1185 -->
+<!-- generated:complete members=1312 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=98 -->
-<!-- generated:not-applicable members=348 -->
+<!-- generated:missing members=89 -->
+<!-- generated:not-applicable members=361 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
+Selection **Foundation 1 and the managed closures**: 90 types, 1763 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **72** |
+| Types complete | **85** |
 | Types partial | **5** |
 | Types missing | **0** |
-| Members complete | **1185** |
+| Members complete | **1312** |
 | Members partial | **1** |
-| Members missing | **98** |
-| Members not applicable | **348** |
+| Members missing | **89** |
+| Members not applicable | **361** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -114,9 +114,10 @@ Selection **Foundation 1 and the managed closures**: 77 types, 1632 members.
 -- `Vector2`, `Vector3`, `Vector4`, `Quaternion`, `Matrix`, `Plane`, `Ray`,
 `BoundingBox`, `BoundingSphere`, `BoundingFrustum`, `MathHelper`, `Color`,
 `Point`, `Rectangle` -- the `Curve` family, the seventeen packed vector types and
-all six enumerations answer every member of the selected contract, and **so does
+every enumeration answer every member of the selected contract, and **so does
 the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
-`GamePad` family and the touch panel.
+`GamePad` family and the touch panel. So do the four **graphics state objects**
+and the nine enumerations they are built from.
 
 **No selected type is missing.** Five are partial, and this is where the
 remaining members actually are:
@@ -124,11 +125,11 @@ remaining members actually are:
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 52 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 45 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
-| `M.X.F.Graphics.SpriteBatch` | 10 | 0 |
 | `M.X.F.Game` | 8 | 0 |
+| `M.X.F.Graphics.SpriteBatch` | 8 | 0 |
 <!-- /generated-block:partial-frontier -->
 
 Do not describe that as "graphics state objects, `Stream` and `SpriteFont`". The
@@ -157,23 +158,25 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **Graphics state objects** -- `BlendState`, `DepthStencilState`,
-   `RasterizerState`, `SamplerState`, with the enumerations they need
-   (`Blend`, `BlendFunction`, `ColorWriteChannels`, `CompareFunction`,
-   `StencilOperation`, `CullMode`, `FillMode`, `TextureAddressMode`,
-   `TextureFilter`). These are what `SpriteBatch.Begin` and most of
-   `GraphicsDevice`'s state surface need.
-2. **`SpriteBatch.Begin`'s state-bearing overloads**, which the state objects
-   unblock. Only the shapes XNA really has; the `Effect`-bearing ones stay
-   missing until `Effect` exists, and are measured as missing.
-3. **Vertex descriptors and vertex value types**: `VertexElement`,
-   `VertexDeclaration`, `IVertexType`, and the four vertex structs.
-4. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
+1. **`SamplerStateCollection` and `TextureCollection`**, which are the last two
+   state-shaped members of `GraphicsDevice` -- `SamplerStates`,
+   `VertexSamplerStates`, `Textures`, `VertexTextures`. CNA has the routes
+   (`cna_graphics_device_get/set_sampler_state` with a shader stage and a slot,
+   `cna_graphics_device_get/set_texture`); what is missing is the indexed
+   collection type each property answers.
+2. **Vertex descriptors and vertex value types**: `VertexElement`,
+   `VertexDeclaration`, `IVertexType`, and the four vertex structs. These unblock
+   the `DrawUserPrimitives` family, which is the largest single block left in
+   `GraphicsDevice`.
+3. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
    `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
-5. **`System.IO.Stream` and `TitleContainer`**, which unblock
+4. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
-6. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
-7. **Audio, effects, models, media, storage, gamer services, networking.**
+5. **`SpriteFont`**, which unblocks `SpriteBatch.DrawString`'s six overloads.
+6. **`Effect`**, which unblocks `SpriteBatch.Begin`'s remaining two overloads.
+   CNA's route for them (`cna_sprite_batch_begin_with_effect`) already exists and
+   takes an Effect handle, so the type is the whole of what is missing.
+7. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 
@@ -213,6 +216,25 @@ the graph after each closure instead of following this list once it has moved.
   `SpriteBatch.Draw`'s position overloads take
   `cna_sprite_batch_submit_scaled_many`; computing a rectangle from a position
   and a scale loses the fractional position and moves the origin.
+* **CNA is not the oracle, and here is where it was wrong.** CNA's
+  `DepthStencilState` initialises `StencilMask` and `StencilWriteMask` to
+  `0x7FFFFFFF`; XNA's `SetDefaults` writes `-1`. The public value is XNA's, the
+  divergence is in `docs/limitations.md`, and
+  `tests/native/graphics-state.lisp` pins *both* sides so a corrected CNA makes a
+  test fail rather than passing silently. Nothing in CNA was modified.
+* **XNA's `BlendFunction` numbers Min 3 and Max 4; CNA numbers them the other way
+  round.** Every other enumeration in this binding happens to share CNA's
+  numbering, which is exactly why the state enums translate **by name** through
+  explicit tables -- a numeric pass-through would have worked everywhere else and
+  turned a minimum into a maximum here.
+* **A state object is latched at Begin, and XNA latches the deferred modes at
+  End.** CNA's `begin_with_states` copies the descriptors by value, so there is
+  nothing left to read at End. Refusing a mutation between Begin and End was
+  chosen over accepting one that could no longer take effect.
+* **The first state-bearing Begin costs tens of milliseconds**, and every one
+  after it costs nothing measurable: CNA creates its native state objects on
+  first use. Under a fixed time step that warm-up becomes catch-up updates with
+  no draws, which is why the graphics fixture runs on variable timing.
 * **An exported symbol that is neither a mapped member nor a declared extension
   is a diagnostic.** Adding a convenience function means adding an entry to
   `cna-lisp.internal::*binding-extensions*` with the reason it exists. That is the

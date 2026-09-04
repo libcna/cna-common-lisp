@@ -78,6 +78,19 @@ stubs:
   `ButtonState`; the whole `GamePad` family — state, capabilities, vibration,
   the dead-zone modes and the `Buttons` flags enum; and the `Input.Touch`
   namespace, in a package of its own;
+* the four **graphics state objects** — `BlendState`, `DepthStencilState`,
+  `RasterizerState`, `SamplerState` — with their nine enumerations, their sixteen
+  predefined instances, XNA's own defaults read from the pinned Graphics assembly
+  rather than guessed, and XNA's read-only latch: a state object that has been
+  applied refuses every setter, and the predefined ones refuse from the start;
+* `GraphicsDevice`'s state surface over them — `BlendState`,
+  `DepthStencilState`, `RasterizerState`, `BlendFactor`, `MultiSampleMask`,
+  `ReferenceStencil` and `ScissorRectangle`;
+* `SpriteBatch.Begin`'s three state-bearing shapes, and only those three: the
+  parameterless one, the sort-mode-and-blend-state one and the five-parameter
+  one, with a null state meaning the framework default exactly as XNA's
+  `SetRenderState` does. The two `Effect`-bearing overloads are **not** faked and
+  are measured as missing;
 * the CLR **event projection**: `game.Activated += handler` becomes
   `(add-activated-handler game handler)`, over CNA's own subscription routes,
   with the registrations released deterministically with the object. `Game`'s
@@ -88,39 +101,42 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=77 -->
-<!-- generated:selected members=1632 -->
-<!-- generated:complete types=72 -->
+<!-- generated:selected types=90 -->
+<!-- generated:selected members=1763 -->
+<!-- generated:complete types=85 -->
 <!-- generated:partial types=5 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1185 -->
+<!-- generated:complete members=1312 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=98 -->
-<!-- generated:not-applicable members=348 -->
+<!-- generated:missing members=89 -->
+<!-- generated:not-applicable members=361 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=100 -->
-<!-- generated:bound native structs=28 -->
+<!-- generated:bound native functions=120 -->
+<!-- generated:bound native structs=31 -->
 
-The generated scoreboard, over a selection of **77 XNA types and 1632 members**:
+<!-- generated-block:scoreboard-headline -->
+The generated scoreboard, over a selection of **90 XNA types and 1763 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **72 / 5 / 0** |
-| Members complete / missing | **1185 / 98** |
-| Members not applicable | **348** |
+| Types complete / partial / missing | **85 / 5 / 0** |
+| Members complete / missing | **1312 / 89** |
+| Members not applicable | **361** |
 | **Disagreement diagnostics** | **0** |
+<!-- /generated-block:scoreboard-headline -->
 
 Zero disagreement means nothing implemented contradicts the contract, nothing
 private leaked into a public package, every exported symbol is accounted for, no
 mapping rule names a member that does not exist, and every overload family that
 collapses onto one function says how each overload is expressed. It does **not**
-mean the binding is finished: 98 members are missing and are reported as
-missing — but **no selected type is missing entirely** any more.
-`docs/compatibility.md` is the authority.
+mean the binding is finished. Members are still missing and are reported as
+missing; **no selected type is missing entirely**. `docs/compatibility.md` is the
+authority, and its per-type table says exactly where the absences are.
 
-The private foreign layer binds **100 native routes** and **28 native structs**,
-all of them generated from the canonical CNA headers and checked by a C
-compiler.
+<!-- generated-block:native-abi-headline -->
+The private foreign layer binds **120 native routes** and **31 native structs**,
+all of them generated from the canonical CNA headers and checked by a C compiler.
+<!-- /generated-block:native-abi-headline -->
 
 ## Installing
 
