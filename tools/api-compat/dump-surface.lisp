@@ -234,8 +234,14 @@ that a keyword-taking projection accepts no keywords at all."
       (write-json
        (object
         "schema_version" 1
-        "implementation" (format nil "~a ~a" (lisp-implementation-type)
-                                 (lisp-implementation-version))
+        ;; The implementation *family*, not this build of it. The projection is
+        ;; a property of the source, and the dump is byte-identical across SBCL
+        ;; builds -- measured across 2.2.9, 2.5.2 and 2.5.2.debian. Writing the
+        ;; exact version here would make a committed report describe one
+        ;; machine, and every other machine's freshness gate would then fail on
+        ;; a difference that says nothing. The version is a fact about the run,
+        ;; and the run prints it below.
+        "implementation" (lisp-implementation-type)
         "system_version" (asdf:component-version (asdf:find-system "cna-common-lisp"))
         "packages" (mapcar #'package-surface *packages*)
         "enum_tables" (enum-tables)
@@ -245,6 +251,9 @@ that a keyword-taking projection accepts no keywords at all."
         "declared_absences" (absences))
        stream)
       (terpri stream))
-    (format t "~&wrote ~a~%" (namestring path))))
+    (format t "~&wrote ~a~%  dumped by ~a ~a on ~a~%"
+            (namestring path)
+            (lisp-implementation-type) (lisp-implementation-version)
+            (machine-type))))
 
 (main)

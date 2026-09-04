@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "implementation": "SBCL 2.5.2.debian",
+  "implementation": "SBCL",
   "system_version": "0.1.0",
   "packages": [
     {

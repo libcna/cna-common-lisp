@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "implementation": "SBCL 2.5.2.debian",
+ "implementation": "SBCL",
  "profile": "XNA 4.0 Windows runtime",
  "selection": {
   "name": "Foundation 1 and the managed closures",
