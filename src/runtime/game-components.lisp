@@ -47,6 +47,11 @@
 (defclass game-component (cna-lisp.internal:native-object)
   ((%game :initarg :game :reader game-of-component)
    (%token :initform nil :accessor %component-token)
+   (%undo :initform '() :accessor %component-undo
+          :documentation
+          "Undo thunks for the construction steps that have completed, newest
+first. Emptied on commit; run by the INITIALIZE-INSTANCE :AROUND below when
+construction does not finish.")
    (%event-handlers :initform '() :accessor %event-handlers)
    (%initialized :initform nil :accessor %component-initialized-p))
   (:documentation
@@ -113,6 +118,31 @@ registry token, never a Lisp object -- a Lisp object moves."
   (:method ((component drawable-game-component))
     #'cna-lisp.internal.ffi::%drawable-game-component-create))
 
+(defmethod initialize-instance :around ((component game-component) &key)
+  "Make constructing a component all-or-nothing, including a subclass's own share
+of it.
+
+An `:around' rather than an `:unwind-protect' inside the `:after', because
+`call-next-method' here covers *every* initialization method -- including the
+`:after' a subclass writes, which runs last and after the native handle exists.
+A subclass initializer that signals used to leave CNA holding a component the
+caller never received, and the game then refusing to shut down, nowhere near the
+constructor that leaked it.
+
+The undo runs newest-first, which is the reverse of the order the steps were
+taken: forget the component, unregister the child, destroy the native component,
+unregister the token. Only steps that actually completed recorded an undo, and
+the undo is quiet -- the condition that caused the rollback is the one worth
+reporting."
+  (let ((committed nil))
+    (unwind-protect
+         (multiple-value-prog1 (call-next-method)
+           (setf committed t))
+      (if committed
+          (setf (%component-undo component) '())
+          (dolist (thunk (%component-undo component))
+            (ignore-errors (funcall thunk)))))))
+
 (defmethod initialize-instance :after ((component game-component) &key game)
   (unless game
     (error 'cna-usage-error
@@ -122,31 +152,34 @@ registry token, never a Lisp object -- a Lisp object moves."
             constructor takes one too, and the component's Game property is it."))
   (check-type game game)
   (cna-lisp.internal:check-usable game "make-instance 'game-component")
-  (let ((token (cna-lisp.internal:register-callback-target component))
-        (constructed nil))
-    (setf (%component-token component) token)
-    (unwind-protect
-         (cffi:with-foreign-object
-             (callbacks '(:struct cna-lisp.internal.ffi::cna-game-component-callbacks))
-           (%write-component-callbacks callbacks token)
-           (cffi:with-foreign-object (out :uint64)
-             (cna-lisp.internal:check-result
-              (funcall (%component-create-route component)
-                       (cna-lisp.internal:handle-of game) callbacks out)
-              "make-instance 'game-component" :object-type (type-of component))
-             (setf (cna-lisp.internal:handle-of component) (cffi:mem-ref out :uint64)
-                   (slot-value component 'cna-lisp.internal::owner) game
-                   (slot-value component 'cna-lisp.internal::owner-thread)
-                   (cna-lisp.internal:owner-thread-of game))
-             (cna-lisp.internal:register-child game component)
-             (%remember-component (components game) component)
-             (setf constructed t)))
-      ;; A refused creation must not leave a token rooting the component
-      ;; forever: the registry is what keeps a callback target reachable, and an
-      ;; entry CNA can never call is a leak with no other symptom.
-      (unless constructed
-        (cna-lisp.internal:unregister-callback-target token)
-        (setf (%component-token component) nil)))))
+  (flet ((record (thunk) (push thunk (%component-undo component))))
+    ;; The registry is what keeps a callback target reachable, so an entry CNA can
+    ;; never call is a leak with no other symptom.
+    (let ((token (cna-lisp.internal:register-callback-target component)))
+      (setf (%component-token component) token)
+      (record (lambda ()
+                (cna-lisp.internal:unregister-callback-target token)
+                (setf (%component-token component) nil)))
+      (cffi:with-foreign-object
+          (callbacks '(:struct cna-lisp.internal.ffi::cna-game-component-callbacks))
+        (%write-component-callbacks callbacks token)
+        (cffi:with-foreign-object (out :uint64)
+          (cna-lisp.internal:check-result
+           (funcall (%component-create-route component)
+                    (cna-lisp.internal:handle-of game) callbacks out)
+           "make-instance 'game-component" :object-type (type-of component))
+          (let ((handle (cffi:mem-ref out :uint64)))
+            (setf (cna-lisp.internal:handle-of component) handle
+                  (slot-value component 'cna-lisp.internal::owner) game
+                  (slot-value component 'cna-lisp.internal::owner-thread)
+                  (cna-lisp.internal:owner-thread-of game))
+            (record (lambda ()
+                      (cna-lisp.internal.ffi::%game-component-destroy handle)
+                      (setf (cna-lisp.internal:handle-of component) 0))))
+          (cna-lisp.internal:register-child game component)
+          (record (lambda () (cna-lisp.internal:unregister-child game component)))
+          (%remember-component (components game) component)
+          (record (lambda () (%forget-component (components game) component))))))))
 
 (defmethod cna-lisp.internal:destroy-native ((component game-component))
   "Dispose, then release the subscriptions, then release the handle -- in that

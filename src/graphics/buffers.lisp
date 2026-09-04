@@ -186,9 +186,23 @@ VertexDeclaration has no handle of its own to keep."
         (cffi:mem-ref out :uint64)))))
 
 (defmacro %with-native-declaration ((variable declaration operation) &body body)
+  "Hold a transient native VertexDeclaration for the dynamic extent of BODY.
+
+The release is **checked**, not ignored. It used to be wrapped in IGNORE-ERRORS,
+which did not merely swallow a Lisp condition -- it never looked at the CNA result
+code at all, so a declaration CNA refused to take back was a handle nobody would
+ever hear about. That is the same defect the Effect view handles had, one size
+smaller: a handle meant to be short-lived is still a handle CNA is owed.
+
+WITH-TRANSIENT-NATIVE has the ordering: a failure in BODY keeps its own condition
+and the release goes quiet, because the original failure is what matters; a BODY
+that succeeded makes a failing release the news, because nothing else will report
+it."
   `(let ((,variable (%native-declaration ,declaration ,operation)))
-     (unwind-protect (progn ,@body)
-       (ignore-errors (cna-lisp.internal.ffi::%vertex-declaration-destroy ,variable)))))
+     (cna-lisp.internal:with-transient-native
+         ((cna-lisp.internal.ffi::%vertex-declaration-destroy ,variable)
+          ,operation :object-type 'vertex-declaration)
+       ,@body)))
 
 (defmethod initialize-instance :after ((buffer vertex-buffer)
                                        &key graphics-device vertex-declaration

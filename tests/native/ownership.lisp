@@ -137,3 +137,35 @@
     (is (= 4 (updates game))
         "a full collection between frames must not lose the game the registry roots")
     (is (= 4 (draws game)))))
+
+;;; --- a transient native handle, and the result code that used to be dropped ---
+;;;
+;;; These need a real library rather than the pure suite: CHECK-RESULT asks CNA
+;;; for the diagnostic text behind a failing code, so a non-success result cannot
+;;; be constructed without one.
+
+(define-native-test a-transient-handle-reports-a-release-that-failed
+  "The body succeeded, so a refused release is news and nothing else would report
+it. This is the defect the transient VertexDeclaration cleanup had: it never
+looked at the CNA result code at all."
+  (let ((released 0))
+    (signals xna:cna-error
+      (int:with-transient-native ((progn (incf released) int::+result-callback+)
+                                  "test")
+        :body-value))
+    (is (= 1 released) "the release must run exactly once")))
+
+(define-native-test a-transient-handle-keeps-the-bodys-condition-when-the-body-failed
+  (let ((released 0))
+    (handler-case
+        (int:with-transient-native ((progn (incf released) int::+result-callback+)
+                                    "test")
+          (error 'xna:cna-usage-error :operation "test"
+                                      :format-control "the body failed"))
+      (xna:cna-usage-error (condition)
+        (is (search "body failed" (princ-to-string condition))
+            "a failing release masked the body's condition with ~a" condition))
+      (error (condition)
+        (fail "a failing release replaced the body's condition with ~a" condition)))
+    (is (= 1 released) "the release must still run, exactly once")))
+

@@ -424,3 +424,48 @@ it -- which docs/limitations.md records rather than leaving to be discovered."
       (setf (xna:launch-parameter parameters "level") nil)
       (is (null (xna:launch-parameter parameters "level")))
       (is (null (xna:launch-parameter-names parameters))))))
+
+;;; --- a subclass initializer that fails after the native handle exists ------------
+;;;
+;;; The realistic shape of this leak, and the reason the rollback is an `:around'
+;;; rather than an `unwind-protect' inside the `:after': a subclass's own
+;;; `initialize-instance :after' runs *last*, after GAME-COMPONENT's has created
+;;; the native component and registered it as a game child. One that signals used
+;;; to leave CNA holding a component the caller never received.
+
+(define-condition component-construction-blew-up (error) ())
+
+(defclass exploding-component (xna:game-component) ())
+
+(defmethod initialize-instance :after ((component exploding-component) &key)
+  (error 'component-construction-blew-up))
+
+(define-native-test a-failed-component-construction-leaves-nothing-behind
+  ;; As with the Effect rollback, the assertion that matters most is the
+  ;; fixture's teardown: CNA refuses to destroy a game while a child handle is
+  ;; alive, so a leak here shows up there.
+  (let ((signalled nil) (children-after nil) (registry-after nil) (before nil))
+    (with-component-game (game nil)
+      ;; Measured *inside* the fixture: the game itself is a callback target, so a
+      ;; baseline taken before it exists would count the game's own entry as a
+      ;; leak.
+      (setf before (int:callback-registry-count))
+      (handler-case (make-instance 'exploding-component :game game)
+        (component-construction-blew-up () (setf signalled t)))
+      (setf children-after
+            (count-if (lambda (child)
+                        (and (typep child 'xna:game-component)
+                             (not (xna:disposed-p child))))
+                      (int:children-of game))
+            registry-after (int:callback-registry-count))
+      ;; The collection must not be holding it either.
+      (is (zerop (xna:component-count (xna:components game)))
+          "the game's collection kept ~d component(s) after a failed construction"
+          (xna:component-count (xna:components game))))
+    (is-true signalled "the subclass initializer did not signal")
+    (is (= 0 children-after)
+        "the game was left owning ~d live component(s) it never handed out"
+        children-after)
+    (is (= before registry-after)
+        "a failed construction left ~d callback registry entr(y/ies) behind"
+        (- registry-after before))))

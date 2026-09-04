@@ -437,3 +437,81 @@ that happened to be the right size."
       ;; says nothing about what to read.
       (signals xna:cna-argument-out-of-range-error
         (gfx:get-data texture (make-array 0))))))
+
+;;; --- a decode that succeeds and a metadata query that does not -------------------
+;;;
+;;; The decode route creates a real native texture and *then* queries it for its
+;;; level count and format. Before the construction was staged, a failure in that
+;;; query left CNA holding a texture nobody would ever destroy -- and the symptom
+;;; was not here at all: it was the game refusing to shut down, later, far from
+;;; the decode.
+;;;
+;;; The injection is the Effect closure's idiom: a subclass whose overridable step
+;;; signals. %READ-TEXTURE-STORAGE is that step, and it runs after the handle
+;;; exists, which is exactly the window that used to leak.
+
+(define-condition texture-storage-query-blew-up (error) ())
+
+(defclass exploding-texture (gfx:texture-2d) ())
+
+(defmethod gfx::%read-texture-storage ((texture exploding-texture))
+  (error 'texture-storage-query-blew-up))
+
+(defclass exploding-texture-game (graphics-game)
+  ((signalled :initform nil :accessor storage-query-signalled)
+   (children-after :initform nil :accessor textures-after))
+  (:documentation
+   "Decodes a real texture inside LoadContent and then fails the step after the
+handle exists. Inside a callback, because that is the only place a graphics
+device handle is lent."))
+
+(defmethod xna:load-content ((game exploding-texture-game))
+  (call-next-method)
+  (let* ((device (xna:graphics-device game))
+         (bytes (with-open-file (stream (fixture-path "solid-magenta-8.png")
+                                        :element-type '(unsigned-byte 8))
+                  (let ((buffer (make-array (file-length stream)
+                                            :element-type '(unsigned-byte 8))))
+                    (read-sequence buffer stream)
+                    buffer)))
+         (device-handle (gfx::device-handle-for-child device "rollback test")))
+    (cffi:with-foreign-object (buffer :uint8 (length bytes))
+      (dotimes (i (length bytes))
+        (setf (cffi:mem-aref buffer :uint8 i) (aref bytes i)))
+      (cffi:with-foreign-object (out :uint64)
+        ;; Decode for real, so the handle genuinely exists...
+        (int:check-result
+         (ffi::%texture-2d-create-from-encoded-memory
+          device-handle buffer (length bytes) (cffi:null-pointer) out)
+         "decode for the rollback test")
+        ;; ...then fail the step after it.
+        (handler-case
+            (gfx::%make-texture-2d device (cffi:mem-ref out :uint64) 8 8
+                                   :class 'exploding-texture)
+          (texture-storage-query-blew-up ()
+            (setf (storage-query-signalled game) t)))))
+    (setf (textures-after game)
+          (count-if (lambda (child)
+                      (and (typep child 'gfx:texture-2d)
+                           (not (xna:disposed-p child))
+                           (not (eq child (texture game)))))
+                    (int:children-of game)))))
+
+(define-native-test a-failed-texture-metadata-query-gives-the-handle-back
+  ;; The assertion that matters most is the teardown: CNA refuses to destroy a
+  ;; game while any child handle is alive, so a leaked texture fails it -- which
+  ;; is how this class of bug announces itself, far from the decode.
+  (let ((game (make-instance 'exploding-texture-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is-true (storage-query-signalled game)
+                    "the metadata query did not signal")
+           (is (= 0 (textures-after game))
+               "the game was left owning ~d live texture(s) it never handed out"
+               (textures-after game)))
+      (progn
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))

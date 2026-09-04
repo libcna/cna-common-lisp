@@ -128,3 +128,75 @@ generation."))
   (:documentation
    "Release OBJECT's native resource. Called by DISPOSE once the object has been
 checked; specialised by each native-backed class. Must not be called directly."))
+
+;;; --- transactional construction, and transient handles ----------------------
+;;;
+;;; Two shapes, and they want opposite things from a failing cleanup.
+;;;
+;;; **Construction is all-or-nothing.** A native handle acquired part-way through
+;;; building an object must go back if the rest of the building fails, or the
+;;; game is left owning something the caller never received -- which shows up much
+;;; later as a game that will not shut down, nowhere near the constructor that
+;;; leaked it. The undo runs *quietly*: the condition that caused the rollback is
+;;; the one worth reporting, and a second failure on the way out would mask it.
+;;;
+;;; **A transient handle is the other way round.** If the work succeeded and CNA
+;;; then refuses to take the handle back, that refusal is news and nothing else
+;;; will report it. Swallowing it because the handle was only meant to be
+;;; short-lived is how a leak becomes invisible.
+
+(defun call-with-native-rollback (function)
+  "Call FUNCTION with a recorder, and undo what it recorded if it does not finish.
+
+FUNCTION receives one argument: a function of a thunk, which records that thunk
+as the undo for the step just completed and answers it. Steps are undone
+newest-first, which is leaf-first, because a handle acquired later is always the
+child of one acquired earlier.
+
+The undo is quiet on purpose. This runs on the way out of a failure, and a
+condition raised here would replace the one that caused it."
+  (let ((undo '())
+        (committed nil))
+    (flet ((record (thunk) (push thunk undo) thunk))
+      (unwind-protect
+           (multiple-value-prog1 (funcall function #'record)
+             (setf committed t))
+        (unless committed
+          (dolist (thunk undo)
+            (ignore-errors (funcall thunk))))))))
+
+(defmacro with-native-rollback ((record) &body body)
+  "Run BODY transactionally, undoing recorded steps if it does not finish.
+
+    (with-native-rollback (record)
+      (let ((handle (create ...)))
+        (funcall record (lambda () (destroy handle)))
+        ...))
+
+See CALL-WITH-NATIVE-ROLLBACK."
+  `(call-with-native-rollback (lambda (,record) (declare (ignorable ,record)) ,@body)))
+
+(defun call-with-transient-native (body release operation &key object-type)
+  "Run BODY and then give a transient native handle back, exactly once.
+
+If BODY completed, a failing RELEASE is **reported**: the work is done and
+nothing else will say that CNA still holds a handle. If BODY signalled, RELEASE
+runs quietly and the original condition is what reaches the caller.
+
+RELEASE answers a CNA result code, and the point of this function is that the
+code is checked rather than dropped."
+  (let ((completed nil)
+        (values nil))
+    (unwind-protect
+         (progn (setf values (multiple-value-list (funcall body)))
+                (setf completed t))
+      (unless completed
+        (ignore-errors (funcall release))))
+    (check-result (funcall release) operation :object-type object-type)
+    (values-list values)))
+
+(defmacro with-transient-native ((release operation &key object-type) &body body)
+  "Run BODY, then evaluate RELEASE and check its result. See
+CALL-WITH-TRANSIENT-NATIVE."
+  `(call-with-transient-native (lambda () ,@body) (lambda () ,release)
+                               ,operation :object-type ,object-type))

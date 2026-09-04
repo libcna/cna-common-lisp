@@ -78,3 +78,54 @@
   (is (string= "0.7.0" (int:format-abi-version 1792)))
   (multiple-value-bind (major minor patch) (int:decode-abi-version 5376)
     (is (= 0 major)) (is (= 21 minor)) (is (= 0 patch))))
+
+;;; --- the two cleanup shapes, and why they differ ----------------------------
+;;;
+;;; Construction wants a *quiet* undo: the condition that caused the rollback is
+;;; the one worth reporting. A transient handle wants the opposite: if the work
+;;; succeeded and CNA then refuses the handle back, nothing else will say so.
+
+(test a-rollback-undoes-what-completed-newest-first
+  (let ((log '()))
+    (signals simple-error
+      (int:with-native-rollback (record)
+        (push :one log)
+        (funcall record (lambda () (push :undo-one log)))
+        (push :two log)
+        (funcall record (lambda () (push :undo-two log)))
+        (error "the step after two")))
+    (is (equal '(:undo-one :undo-two :two :one) log)
+        "the undo must run newest-first, which is leaf-first; the log is ~s"
+        (reverse log))))
+
+(test a-rollback-that-finishes-undoes-nothing
+  (let ((log '()))
+    (is (eq :value
+            (int:with-native-rollback (record)
+              (funcall record (lambda () (push :undone log)))
+              :value)))
+    (is (null log) "a construction that committed must undo nothing")))
+
+(test a-rollback-does-not-mask-the-condition-that-caused-it
+  "The undo runs on the way out of a failure. A condition raised there would
+replace the one the caller needs to see, so the undo is quiet."
+  (handler-case
+      (int:with-native-rollback (record)
+        (funcall record (lambda () (error "the undo blew up")))
+        (error 'xna:cna-usage-error :operation "test"
+                                    :format-control "the original failure"))
+    (xna:cna-usage-error (condition)
+      (is (search "original failure" (princ-to-string condition))
+          "the caller saw ~a instead of the original failure" condition))
+    (error (condition)
+      (fail "a failing undo replaced the original condition with ~a" condition))))
+
+;;; The two release-failure cases need a real library: CHECK-RESULT asks CNA for
+;;; its diagnostic text, so a non-success code cannot be built without one. They
+;;; are in tests/native/ownership.lisp.
+
+(test a-transient-handle-answers-the-bodys-values
+  (is (equal '(1 2 3)
+             (multiple-value-list
+              (int:with-transient-native (int::+result-success+ "test")
+                (values 1 2 3))))))

@@ -61,17 +61,44 @@ that owns it."))
              (cffi:foreign-slot-value info '(:struct cna-lisp.internal.ffi::cna-texture-info)
                                       'cna-lisp.internal.ffi::format)))))
 
-(defun %make-texture-2d (device handle width height)
-  (multiple-value-bind (levels format) (%texture-storage-dimensions handle)
+(defgeneric %read-texture-storage (texture)
+  (:documentation
+   "Fill TEXTURE's level count and surface format from CNA.
+
+A generic function, and separate from construction, for two reasons. It runs
+*after* the handle is acquired, so it is inside the rollback and a failure here
+gives the handle back. And it is the step a test can make fail: overriding it on
+a subclass is how `tests/native/graphics.lisp' proves the rollback, the same way
+an exploding subclass proves Effect's.")
+  (:method ((texture texture-2d))
+    (multiple-value-bind (levels format)
+        (%texture-storage-dimensions (cna-lisp.internal:handle-of texture))
+      (setf (slot-value texture 'level-count) levels
+            (slot-value texture 'format) format)
+      texture)))
+
+(defun %make-texture-2d (device handle width height &key (class 'texture-2d))
+  "Wrap a freshly decoded native texture, transactionally.
+
+The handle exists before this is called, so everything here is inside a rollback:
+reading the storage metadata is a native call of its own and can fail, and before
+this was staged a failure there left CNA holding a texture nobody would ever
+destroy -- which surfaces much later as a game that will not shut down.
+
+CLASS exists for the failure-injection test and defaults to TEXTURE-2D; nothing
+public passes it."
+  (cna-lisp.internal:with-native-rollback (record)
+    (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
     (let* ((game (cna-lisp.internal:owner-of device))
-           (texture (make-instance 'texture-2d
+           (texture (make-instance class
                                    :handle handle
                                    :ownership :owned
                                    :owner game
                                    :owner-thread (cna-lisp.internal:owner-thread-of game)
-                                   :width width :height height
-                                   :level-count levels :format format)))
+                                   :width width :height height)))
+      (%read-texture-storage texture)
       (cna-lisp.internal:register-child game texture)
+      (funcall record (lambda () (cna-lisp.internal:unregister-child game texture)))
       texture)))
 
 (defun texture-2d-from-png-bytes (graphics-device octets)
