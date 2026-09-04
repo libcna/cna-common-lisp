@@ -1466,6 +1466,94 @@
 (defcfun ("cna_texture2d_get_data" %texture-2d-get-data) :uint32
   (texture :uint64) (data-type :uint32) (transfer :pointer) (destination :pointer) (destination-capacity :uint64) (out-required-elements :pointer))
 
+;;; CNA_Result cna_texturecube_create(CNA_Handle graphics_device, const CNA_TextureCubeCreateInfo* create_info, CNA_Handle* out_texture)
+(defcfun ("cna_texturecube_create" %texturecube-create) :uint32
+  (graphics-device :uint64) (create-info :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_texturecube_destroy(CNA_Handle texture)
+(defcfun ("cna_texturecube_destroy" %texturecube-destroy) :uint32
+  (texture :uint64))
+
+;;; CNA_Result cna_texturecube_get_info(CNA_Handle texture, CNA_TextureCubeInfo* out_info)
+(defcfun ("cna_texturecube_get_info" %texturecube-get-info) :uint32
+  (texture :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_texturecube_set_data(CNA_Handle texture, const CNA_TextureCubeTransfer* transfer, const CNA_Color* data, uint64_t data_capacity)
+(defcfun ("cna_texturecube_set_data" %texturecube-set-data) :uint32
+  (texture :uint64) (transfer :pointer) (data :pointer) (data-capacity :uint64))
+
+;;; CNA_Result cna_texturecube_get_data(CNA_Handle texture, const CNA_TextureCubeTransfer* transfer, CNA_Color* destination, uint64_t destination_capacity, uint64_t* out_required_elements)
+(defcfun ("cna_texturecube_get_data" %texturecube-get-data) :uint32
+  (texture :uint64) (transfer :pointer) (destination :pointer) (destination-capacity :uint64) (out-required-elements :pointer))
+
+;;; CNA_Result cna_environment_map_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)
+(defcfun ("cna_environment_map_effect_create" %environment-map-effect-create) :uint32
+  (graphics-device :uint64) (out-effect :pointer))
+
+;;; CNA_Result cna_environment_map_effect_get_alpha(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_environment_map_effect_get_alpha" %environment-map-effect-get-alpha) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_environment_map_effect_get_amount(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_environment_map_effect_get_amount" %environment-map-effect-get-amount) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_environment_map_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_environment_map_effect_get_diffuse_color" %environment-map-effect-get-diffuse-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_environment_map_effect_get_emissive_color(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_environment_map_effect_get_emissive_color" %environment-map-effect-get-emissive-color) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_environment_map_effect_get_environment_map(CNA_EffectHandle effect, CNA_Bool* out_has_environment_map, CNA_Handle* out_environment_map)
+(defcfun ("cna_environment_map_effect_get_environment_map" %environment-map-effect-get-environment-map) :uint32
+  (effect :uint64) (out-has-environment-map :pointer) (out-environment-map :pointer))
+
+;;; CNA_Result cna_environment_map_effect_get_fresnel_factor(CNA_EffectHandle effect, float* out_value)
+(defcfun ("cna_environment_map_effect_get_fresnel_factor" %environment-map-effect-get-fresnel-factor) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_environment_map_effect_get_specular(CNA_EffectHandle effect, CNA_Vector3* out_value)
+(defcfun ("cna_environment_map_effect_get_specular" %environment-map-effect-get-specular) :uint32
+  (effect :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_environment_map_effect_get_texture(CNA_EffectHandle effect, CNA_Bool* out_has_texture, CNA_Handle* out_texture)
+(defcfun ("cna_environment_map_effect_get_texture" %environment-map-effect-get-texture) :uint32
+  (effect :uint64) (out-has-texture :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_environment_map_effect_set_alpha(CNA_EffectHandle effect, float value)
+(defcfun ("cna_environment_map_effect_set_alpha" %environment-map-effect-set-alpha) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_environment_map_effect_set_amount(CNA_EffectHandle effect, float value)
+(defcfun ("cna_environment_map_effect_set_amount" %environment-map-effect-set-amount) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_environment_map_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_environment_map_effect_set_diffuse_color" %environment-map-effect-set-diffuse-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_environment_map_effect_set_emissive_color(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_environment_map_effect_set_emissive_color" %environment-map-effect-set-emissive-color) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_environment_map_effect_set_environment_map(CNA_EffectHandle effect, CNA_Handle environment_map)
+(defcfun ("cna_environment_map_effect_set_environment_map" %environment-map-effect-set-environment-map) :uint32
+  (effect :uint64) (environment-map :uint64))
+
+;;; CNA_Result cna_environment_map_effect_set_fresnel_factor(CNA_EffectHandle effect, float value)
+(defcfun ("cna_environment_map_effect_set_fresnel_factor" %environment-map-effect-set-fresnel-factor) :uint32
+  (effect :uint64) (value :float))
+
+;;; CNA_Result cna_environment_map_effect_set_specular(CNA_EffectHandle effect, CNA_Vector3 value)
+(defcfun ("cna_environment_map_effect_set_specular" %environment-map-effect-set-specular) :uint32
+  (effect :uint64) (value-0 :double) (value-1 :float))
+
+;;; CNA_Result cna_environment_map_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)
+(defcfun ("cna_environment_map_effect_set_texture" %environment-map-effect-set-texture) :uint32
+  (effect :uint64) (texture :uint64))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -1829,6 +1917,28 @@
     ("cna_game_components_subscribe_removed" %game-components-subscribe-removed :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
     ("cna_texture2d_create" %texture-2d-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-2d:child-of-game")
     ("cna_texture2d_set_data" %texture-2d-set-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64) :thread :owner :ownership "none")
-    ("cna_texture2d_get_data" %texture-2d-get-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64 :pointer) :thread :owner :ownership "none"))
+    ("cna_texture2d_get_data" %texture-2d-get-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_texturecube_create" %texturecube-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-cube:child-of-game")
+    ("cna_texturecube_destroy" %texturecube-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:texture-cube")
+    ("cna_texturecube_get_info" %texturecube-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_texturecube_set_data" %texturecube-set-data :uint32 (:uint64 :pointer :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_texturecube_get_data" %texturecube-get-data :uint32 (:uint64 :pointer :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_create" %environment-map-effect-create :uint32 (:uint64 :pointer) :thread :game :ownership "creates-owned:effect:child-of-game")
+    ("cna_environment_map_effect_get_alpha" %environment-map-effect-get-alpha :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_get_amount" %environment-map-effect-get-amount :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_get_diffuse_color" %environment-map-effect-get-diffuse-color :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_get_emissive_color" %environment-map-effect-get-emissive-color :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_get_environment_map" %environment-map-effect-get-environment-map :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_get_fresnel_factor" %environment-map-effect-get-fresnel-factor :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_get_specular" %environment-map-effect-get-specular :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_get_texture" %environment-map-effect-get-texture :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_set_alpha" %environment-map-effect-set-alpha :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_set_amount" %environment-map-effect-set-amount :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_set_diffuse_color" %environment-map-effect-set-diffuse-color :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_set_emissive_color" %environment-map-effect-set-emissive-color :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_set_environment_map" %environment-map-effect-set-environment-map :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_set_fresnel_factor" %environment-map-effect-set-fresnel-factor :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_set_specular" %environment-map-effect-set-specular :uint32 (:uint64 :double :float) :thread :owner :ownership "none")
+    ("cna_environment_map_effect_set_texture" %environment-map-effect-set-texture :uint32 (:uint64 :uint64) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

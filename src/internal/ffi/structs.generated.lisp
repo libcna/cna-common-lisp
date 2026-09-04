@@ -790,6 +790,47 @@
 (defconstant +sizeof-cna-texture-2d-create-info+ 24)
 (defconstant +alignof-cna-texture-2d-create-info+ 4)
 
+;;; CNA_TextureCubeCreateInfo -- 24 bytes, 4-byte aligned, from texture_volume.h.
+(defcstruct (cna-texture-cube-create-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (size :uint32 :offset 8)
+  (mip-map :uint8 :offset 12)
+  (reserved-0 :uint8 :offset 13 :count 3)
+  (format :uint32 :offset 16)
+  (reserved-1 :uint32 :offset 20))
+
+(defconstant +sizeof-cna-texture-cube-create-info+ 24)
+(defconstant +alignof-cna-texture-cube-create-info+ 4)
+
+;;; CNA_TextureCubeTransfer -- 56 bytes, 8-byte aligned, from texture_volume.h.
+(defcstruct (cna-texture-cube-transfer :size 56)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (face :uint32 :offset 8)
+  (level :int32 :offset 12)
+  (has-rectangle :uint8 :offset 16)
+  (reserved-0 :uint8 :offset 17 :count 3)
+  (rectangle (:struct cna-rectangle) :offset 20)
+  (reserved-1 :uint32 :offset 36)
+  (start-index :uint64 :offset 40)
+  (element-count :uint64 :offset 48))
+
+(defconstant +sizeof-cna-texture-cube-transfer+ 56)
+(defconstant +alignof-cna-texture-cube-transfer+ 8)
+
+;;; CNA_TextureCubeInfo -- 24 bytes, 4-byte aligned, from texture_volume.h.
+(defcstruct (cna-texture-cube-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (size :uint32 :offset 8)
+  (level-count :uint32 :offset 12)
+  (format :uint32 :offset 16)
+  (reserved :uint32 :offset 20))
+
+(defconstant +sizeof-cna-texture-cube-info+ 24)
+(defconstant +alignof-cna-texture-cube-info+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -849,6 +890,9 @@
     (cna-render-target-info 44 4 ((struct-size 0 4) (struct-version 4 4) (kind 8 4) (width 12 4) (height 16 4) (level-count 20 4) (format 24 4) (depth-format 28 4) (multi-sample-count 32 4) (usage 36 4) (is-content-lost 40 1) (renderer-available 41 1) (reserved 42 2)))
     (cna-game-component-callbacks 64 8 ((struct-size 0 4) (struct-version 4 4) (initialize 8 8) (update 16 8) (draw 24 8) (load-content 32 8) (unload-content 40 8) (dispose 48 8) (context 56 8)))
     (cna-texture-2d-transfer 48 8 ((struct-size 0 4) (struct-version 4 4) (level 8 4) (has-rectangle 12 1) (reserved 13 3) (rectangle 16 16) (start-index 32 8) (element-count 40 8)))
-    (cna-texture-2d-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (mip-map 16 1) (reserved 17 3) (format 20 4))))
+    (cna-texture-2d-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (mip-map 16 1) (reserved 17 3) (format 20 4)))
+    (cna-texture-cube-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (mip-map 12 1) (reserved-0 13 3) (format 16 4) (reserved-1 20 4)))
+    (cna-texture-cube-transfer 56 8 ((struct-size 0 4) (struct-version 4 4) (face 8 4) (level 12 4) (has-rectangle 16 1) (reserved-0 17 3) (rectangle 20 16) (reserved-1 36 4) (start-index 40 8) (element-count 48 8)))
+    (cna-texture-cube-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (level-count 12 4) (format 16 4) (reserved 20 4))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

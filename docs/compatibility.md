@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=141 -->
-<!-- generated:selected members=2193 -->
-<!-- generated:complete types=132 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=144 -->
+<!-- generated:selected members=2233 -->
+<!-- generated:complete types=134 -->
+<!-- generated:partial types=10 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1728 -->
-<!-- generated:partial members=1 -->
+<!-- generated:complete members=1758 -->
+<!-- generated:partial members=7 -->
 <!-- generated:missing members=56 -->
-<!-- generated:not-applicable members=408 -->
+<!-- generated:not-applicable members=412 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
+Selection **Foundation 1 and the managed closures**: 144 types, 2233 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **132** |
-| Types partial | **9** |
+| Types complete | **134** |
+| Types partial | **10** |
 | Types missing | **0** |
-| Members complete | **1728** |
-| Members partial | **1** |
+| Members complete | **1758** |
+| Members partial | **7** |
 | Members missing | **56** |
-| Members not applicable | **408** |
+| Members not applicable | **412** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -243,6 +243,9 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.AlphaTestEffect` | **complete** | 15 | 0 | 0 | 2 |
 | `M.X.F.Graphics.DualTextureEffect` | **complete** | 14 | 0 | 0 | 2 |
 | `M.X.F.Graphics.SkinnedEffect` | **complete** | 25 | 0 | 0 | 2 |
+| `M.X.F.Graphics.EnvironmentMapEffect` | **complete** | 22 | 0 | 0 | 2 |
+| `M.X.F.Graphics.TextureCube` | **partial** | 2 | 6 | 0 | 1 |
+| `M.X.F.Graphics.CubeMapFace` | **complete** | 6 | 0 | 0 | 1 |
 | `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
@@ -336,6 +339,7 @@ back-reference.
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
 The counts in that table are the real remaining surface. The largest by far is
@@ -362,10 +366,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=363 -->
-<!-- generated:bound native structs=57 -->
-<!-- generated:bound native struct fields=432 -->
-<!-- generated:bound native constants=479 -->
+<!-- generated:bound native functions=385 -->
+<!-- generated:bound native structs=60 -->
+<!-- generated:bound native struct fields=455 -->
+<!-- generated:bound native constants=485 -->
 <!-- generated:bound native callbacks=9 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -374,10 +378,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 363 |
-| Bound structs | 57 |
-| Bound struct fields | 432 |
-| Bound constants | 479 |
+| Bound functions | 385 |
+| Bound structs | 60 |
+| Bound struct fields | 455 |
+| Bound constants | 485 |
 | Bound callback typedefs | 9 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |

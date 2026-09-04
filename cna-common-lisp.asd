@@ -70,6 +70,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "graphics/viewport")
    (:file "graphics/graphics-device")
    (:file "graphics/texture-2d")
+   (:file "graphics/texture-cube")
    (:file "graphics/buffers")
    ;; RenderTarget2D is a Texture2D and raises a buffer-shaped ContentLost, so
    ;; it loads after both.

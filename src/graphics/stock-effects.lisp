@@ -408,3 +408,137 @@ given."))
   (let ((clone (call-next-method)))
     (setf (%skinned-effect-texture clone) (%skinned-effect-texture effect))
     clone))
+
+;;; --- EnvironmentMapEffect ------------------------------------------------------
+;;;
+;;; The fourth stock effect, and the one that had to wait: its `EnvironmentMap' is
+;;; a `TextureCube', and a closure is added only when every member of it can be
+;;; finished. `TextureCube' exists now, so this does.
+;;;
+;;; Its `IEffectLights' is the partial one. It carries the ambient colour, the
+;;; three directional lights and `EnableDefaultLighting' -- so it is an
+;;; %EFFECT-WITH-LIGHTS -- and it has neither `LightingEnabled', which it
+;;; implements explicitly, nor a specular colour or power, nor
+;;; `PreferPerPixelLighting'. What it has instead is the environment map and the
+;;; three numbers that control how it is blended in.
+
+(defclass environment-map-effect (%effect-with-lights)
+  ((%texture :initform nil :accessor %environment-map-effect-texture)
+   (%environment-map :initform nil :accessor %environment-map-effect-map))
+  (:documentation
+   "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect.
+
+    (make-instance 'environment-map-effect :graphics-device device)
+
+A base texture blended with a reflected cube map. It satisfies IEffectMatrices,
+IEffectFog and IEffectLights, and its lighting surface is the ambient colour, the
+three directional lights and ENABLE-DEFAULT-LIGHTING -- not EFFECT-LIGHTING-ENABLED,
+which XNA implements explicitly on it, and not the specular material surface,
+which it has not got at all."))
+
+(defmethod %effect-takes-code-p ((effect environment-map-effect)) nil)
+
+(defmethod %create-effect-handle ((effect environment-map-effect) device-handle effect-code)
+  (declare (ignore effect-code))
+  (cffi:with-foreign-object (out :uint64)
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%environment-map-effect-create device-handle out)
+     "make-instance 'environment-map-effect" :object-type 'environment-map-effect)
+    (cffi:mem-ref out :uint64)))
+
+(%define-effect-single effect-alpha
+    cna-lisp.internal.ffi::%environment-map-effect-get-alpha
+    cna-lisp.internal.ffi::%environment-map-effect-set-alpha
+    "EnvironmentMapEffect.Alpha"
+    environment-map-effect nil)
+(%define-effect-vector3 effect-diffuse-color
+    cna-lisp.internal.ffi::%environment-map-effect-get-diffuse-color
+    cna-lisp.internal.ffi::%environment-map-effect-set-diffuse-color
+    "EnvironmentMapEffect.DiffuseColor"
+    environment-map-effect nil)
+(%define-effect-vector3 effect-emissive-color
+    cna-lisp.internal.ffi::%environment-map-effect-get-emissive-color
+    cna-lisp.internal.ffi::%environment-map-effect-set-emissive-color
+    "EnvironmentMapEffect.EmissiveColor"
+    environment-map-effect nil)
+(%define-effect-single effect-environment-map-amount
+    cna-lisp.internal.ffi::%environment-map-effect-get-amount
+    cna-lisp.internal.ffi::%environment-map-effect-set-amount
+    "EnvironmentMapEffect.EnvironmentMapAmount: how much of the reflection shows."
+    environment-map-effect)
+(%define-effect-vector3 effect-environment-map-specular
+    cna-lisp.internal.ffi::%environment-map-effect-get-specular
+    cna-lisp.internal.ffi::%environment-map-effect-set-specular
+    "EnvironmentMapEffect.EnvironmentMapSpecular: the specular tint from the map."
+    environment-map-effect)
+(%define-effect-single effect-fresnel-factor
+    cna-lisp.internal.ffi::%environment-map-effect-get-fresnel-factor
+    cna-lisp.internal.ffi::%environment-map-effect-set-fresnel-factor
+    "EnvironmentMapEffect.FresnelFactor: how much the reflection depends on angle."
+    environment-map-effect)
+
+(defmethod effect-texture ((effect environment-map-effect))
+  (%effect-texture-of effect #'cna-lisp.internal.ffi::%environment-map-effect-get-texture
+                      (%environment-map-effect-texture effect) "effect-texture"))
+
+(defmethod (setf effect-texture) (texture (effect environment-map-effect))
+  (setf (%environment-map-effect-texture effect)
+        (%set-effect-texture
+         effect #'cna-lisp.internal.ffi::%environment-map-effect-set-texture
+         texture "(setf effect-texture)")))
+
+(defgeneric effect-environment-map (effect)
+  (:documentation
+   "EnvironmentMapEffect.EnvironmentMap: the cube map that is reflected.
+
+Answers the TEXTURE-CUBE this effect was last given, cross-checked against the
+handle CNA reports -- the same reasoning EFFECT-TEXTURE uses, because the ABI has
+no route from a handle back to the object that names it."))
+
+(defgeneric (setf effect-environment-map) (texture effect)
+  (:documentation "EnvironmentMapEffect.EnvironmentMap's setter. NIL clears it."))
+
+(defmethod effect-environment-map ((effect environment-map-effect))
+  (cna-lisp.internal:check-usable effect "effect-environment-map")
+  (cffi:with-foreign-objects ((out :uint64) (has :uint8))
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%environment-map-effect-get-environment-map
+      (cna-lisp.internal:handle-of effect) has out)
+     "effect-environment-map" :object-type 'environment-map-effect)
+    (let ((native (if (cna-lisp.internal.ffi:cna-true-p (cffi:mem-ref has :uint8))
+                      (cffi:mem-ref out :uint64)
+                      0))
+          (remembered (%environment-map-effect-map effect)))
+      (cond ((zerop native) nil)
+            ((and remembered
+                  (not (microsoft.xna.framework:disposed-p remembered))
+                  (= native (cna-lisp.internal:handle-of remembered)))
+             remembered)
+            (t
+             (error 'microsoft.xna.framework:cna-invalid-state-error
+                    :operation "effect-environment-map"
+                    :object-type 'environment-map-effect
+                    :format-control
+                    "CNA reports an environment map on this effect that this binding ~
+                     did not set. There is no way back from a native handle to the ~
+                     object that names it, so this refuses rather than answering a ~
+                     TextureCube it would have to invent."))))))
+
+(defmethod (setf effect-environment-map) (texture (effect environment-map-effect))
+  (cna-lisp.internal:check-usable effect "(setf effect-environment-map)")
+  (when texture (check-type texture texture-cube))
+  (cna-lisp.internal:check-result
+   (cna-lisp.internal.ffi::%environment-map-effect-set-environment-map
+    (cna-lisp.internal:handle-of effect)
+    (if texture
+        (progn (cna-lisp.internal:check-usable texture "(setf effect-environment-map)")
+               (cna-lisp.internal:handle-of texture))
+        0))
+   "(setf effect-environment-map)" :object-type 'environment-map-effect)
+  (setf (%environment-map-effect-map effect) texture))
+
+(defmethod clone-effect ((effect environment-map-effect))
+  (let ((clone (call-next-method)))
+    (setf (%environment-map-effect-texture clone) (%environment-map-effect-texture effect)
+          (%environment-map-effect-map clone) (%environment-map-effect-map effect))
+    clone))

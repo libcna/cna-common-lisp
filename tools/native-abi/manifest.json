@@ -314,7 +314,13 @@
       "CNA_TEXTURE_DATA_BYTE",
       "CNA_TEXTURE_DATA_SINGLE",
       "CNA_TEXTURE_DATA_VECTOR2",
-      "CNA_TEXTURE_DATA_VECTOR4"
+      "CNA_TEXTURE_DATA_VECTOR4",
+      "CNA_CUBE_MAP_FACE_POSITIVE_X",
+      "CNA_CUBE_MAP_FACE_NEGATIVE_X",
+      "CNA_CUBE_MAP_FACE_POSITIVE_Y",
+      "CNA_CUBE_MAP_FACE_NEGATIVE_Y",
+      "CNA_CUBE_MAP_FACE_POSITIVE_Z",
+      "CNA_CUBE_MAP_FACE_NEGATIVE_Z"
     ],
     "prefix_families": [
       {
@@ -655,6 +661,21 @@
     {
       "name": "CNA_Texture2DCreateInfo",
       "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_TextureCubeCreateInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_TextureCubeTransfer",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_TextureCubeInfo",
+      "direction": "out",
       "versioned": true
     }
   ],
@@ -2874,6 +2895,138 @@
     {
       "name": "cna_texture2d_get_data",
       "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texturecube_create",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "creates-owned:texture-cube:child-of-game"
+    },
+    {
+      "name": "cna_texturecube_destroy",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "destroys:texture-cube"
+    },
+    {
+      "name": "cna_texturecube_get_info",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texturecube_set_data",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texturecube_get_data",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_create",
+      "header": "effects.h",
+      "thread": "game",
+      "ownership": "creates-owned:effect:child-of-game"
+    },
+    {
+      "name": "cna_environment_map_effect_get_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_get_amount",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_get_diffuse_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_get_emissive_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_get_environment_map",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_get_fresnel_factor",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_get_specular",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_get_texture",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_set_alpha",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_set_amount",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_set_diffuse_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_set_emissive_color",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_set_environment_map",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_set_fresnel_factor",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_set_specular",
+      "header": "effects.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_environment_map_effect_set_texture",
+      "header": "effects.h",
       "thread": "owner",
       "ownership": "none"
     }

@@ -258,10 +258,10 @@ either. They carry explicit absences in the mapping rules rather than being left
 to the default naming rule — which would have resolved the cube overload onto
 `SET-RENDER-TARGET`, the 2D one, and reported it complete.
 
-## Three stock effects, and what their evidence is worth
+## The stock effects, and what their evidence is worth
 
-`AlphaTestEffect`, `DualTextureEffect` and `SkinnedEffect` are implemented and
-complete. Every member of each round-trips through the CNA route the manifest
+All four of XNA's other stock effects — `AlphaTestEffect`, `DualTextureEffect`,
+`SkinnedEffect` and `EnvironmentMapEffect` — are implemented and complete. Every member of each round-trips through the CNA route the manifest
 binds. **That is state evidence, and state evidence is not shading evidence**,
 which is the distinction this section exists to keep.
 
@@ -270,6 +270,7 @@ which is the distinction this section exists to keep.
 | `AlphaTestEffect` | yes, every member | **yes** — a pass applied through it makes a `DrawUserPrimitives` triangle legal and the triangle's vertex colour lands on exactly the pixels its geometry covers | **no** — see below |
 | `SkinnedEffect` | yes, every member | **yes**, the same proof | **no** — see below |
 | `DualTextureEffect` | yes, every member | **no** | no |
+| `EnvironmentMapEffect` | yes, every member | **no** | no |
 
 ### The alpha test is not implemented by the SOFTWARE renderer
 
@@ -306,15 +307,36 @@ assigned — CNA refuses the draw outright without the second, with
 which no standard XNA vertex type has. Its state round-trips, including the two
 layers being independent of each other, and nothing here says what it rasterises.
 
-### EnvironmentMapEffect is not implemented, and why
+### EnvironmentMapEffect and TextureCube, and the one thing that is partial
 
-Its `EnvironmentMap` property is a `TextureCube`, and `TextureCube` is not
-projected: it needs the texture `SetData`/`GetData` surface, which `Texture2D`
-does not have here either. A closure is added only when every member of it can be
-finished, tested and measured together, so `EnvironmentMapEffect` waits for
-`TextureCube` rather than being added with one member reported missing. CNA has
-the whole surface for both — `cna_environment_map_effect_*` and
-`cna_texturecube_*` — so this is ordinary local work, not a block.
+Both are complete now — `EnvironmentMapEffect` waited for `TextureCube`, and
+`TextureCube` waited for the texture data surface `Texture2D` gained first — so
+**all four stock effects are implemented**.
+
+`TextureCube` is a `Texture` and deliberately *not* a `Texture2D`: XNA derives it
+straight from `Texture`, because a cube has no single width and height, it has a
+`Size` that is the edge of every face.
+
+Its `SetData` and `GetData` are the only **partial** members in this closure, and
+the reason is CNA's. `cna_texture2d_set_data` names a texel *kind*, so
+`Texture2D`'s projection takes five element types; `cna_texturecube_set_data`
+takes `const CNA_Color*` with no kind argument, so a cube face is transferable
+only as `Color`. XNA's `SetData<T>` is generic over anything blittable, so that
+is a real narrowing of a member rather than a missing one — the six overloads are
+reported partial, and an element type beyond `Color` is refused by name with that
+reason rather than quietly reinterpreted.
+
+**Cube-face storage is a renderer capability**, and CNA says so: creation "may
+succeed even when face storage is unavailable", and a transfer then answers
+`NOT_SUPPORTED`. Measured: `HEADLESS` has none and refuses, and `SOFTWARE` has it
+— under `SOFTWARE` all six faces are written and read back and the test proves
+each keeps its own texels, which is what tells a real face selector from an index
+that is ignored. The test branches and both branches assert: a renderer without
+the storage must refuse *by name*.
+
+`RenderTargetCube` and `RenderTargetBinding` are still absent, and with them
+`GraphicsDevice`'s `SetRenderTarget(RenderTargetCube, CubeMapFace)`,
+`SetRenderTargets` and `GetRenderTargets`.
 
 ## SpriteFont is projected, and cannot yet be obtained
 

@@ -234,6 +234,7 @@ that a keyword-taking projection accepts no keywords at all."
    "render-target-usage"
    (alist-object microsoft.xna.framework.graphics::*render-target-usage-table*)
    "depth-format" (alist-object microsoft.xna.framework.graphics::*depth-format-table*)
+   "cube-map-face" (alist-object microsoft.xna.framework.graphics::*cube-map-face-table*)
    "effect-parameter-class"
    (alist-object microsoft.xna.framework.graphics::*effect-parameter-class-table*)
    "effect-parameter-type"

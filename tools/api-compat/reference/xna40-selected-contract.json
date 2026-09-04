@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 141,
-  "member_count": 2193
+  "type_count": 144,
+  "member_count": 2233
  },
  "types": [
   {
@@ -32094,6 +32094,775 @@
      "static": true,
      "constant": true,
      "value": "72"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.Effect",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IEffectFog",
+    "Microsoft.Xna.Framework.Graphics.IEffectLights",
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IEffectFog",
+    "Microsoft.Xna.Framework.Graphics.IEffectLights",
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "device",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "protected",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "cloneSource",
+       "type": "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Clone",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Graphics.Effect",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "EnableDefaultLighting",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "OnApply",
+     "static": false,
+     "access": "protected-internal",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "World",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "View",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Projection",
+     "type": "Microsoft.Xna.Framework.Matrix",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DiffuseColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "EmissiveColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Alpha",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "AmbientLightColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DirectionalLight0",
+     "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DirectionalLight1",
+     "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DirectionalLight2",
+     "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogEnabled",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogStart",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogEnd",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FogColor",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Texture",
+     "type": "Microsoft.Xna.Framework.Graphics.Texture2D",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "EnvironmentMap",
+     "type": "Microsoft.Xna.Framework.Graphics.TextureCube",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "EnvironmentMapAmount",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "EnvironmentMapSpecular",
+     "type": "Microsoft.Xna.Framework.Vector3",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "FresnelFactor",
+     "type": "System.Single",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.TextureCube",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.Graphics.Texture",
+   "interfaces": [
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDevice",
+       "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "size",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "mipMap",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "format",
+       "type": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "cubeMapFace",
+       "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "cubeMapFace",
+       "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "cubeMapFace",
+       "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "level",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rect",
+       "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "cubeMapFace",
+       "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "cubeMapFace",
+       "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [
+      {
+       "name": "T",
+       "position": 0,
+       "specialConstraints": [
+        "struct",
+        "new"
+       ],
+       "typeConstraints": []
+      }
+     ],
+     "parameters": [
+      {
+       "name": "cubeMapFace",
+       "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "level",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "rect",
+       "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "data",
+       "type": "!!0[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "startIndex",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "elementCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Size",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "PositiveX",
+     "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "NegativeX",
+     "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "PositiveY",
+     "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "NegativeY",
+     "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+     "static": true,
+     "constant": true,
+     "value": "3"
+    },
+    {
+     "kind": "field",
+     "name": "PositiveZ",
+     "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+     "static": true,
+     "constant": true,
+     "value": "4"
+    },
+    {
+     "kind": "field",
+     "name": "NegativeZ",
+     "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+     "static": true,
+     "constant": true,
+     "value": "5"
     }
    ]
   },

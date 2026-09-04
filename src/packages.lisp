@@ -415,6 +415,12 @@
    #:multi-sample-count #:depth-stencil-format #:set-render-target
    #:sprite-batch #:begin #:end #:draw-texture #:draw-string
    ;; --- the other stock effects -------------------------------------------
+   #:texture-cube #:cube-map-face #:texture-cube-size
+   #:cube-map-face-value #:cube-map-face-from-value #:all-cube-map-face
+   #:set-cube-data #:get-cube-data
+   #:environment-map-effect #:effect-environment-map
+   #:effect-environment-map-amount #:effect-environment-map-specular
+   #:effect-fresnel-factor
    #:alpha-test-effect #:effect-alpha-function #:effect-reference-alpha
    #:dual-texture-effect #:effect-texture-2
    #:skinned-effect #:effect-weights-per-vertex

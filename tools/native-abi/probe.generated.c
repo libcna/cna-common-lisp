@@ -1044,6 +1044,61 @@ _Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->reserved) == 3, "CNA_Textu
 _Static_assert(offsetof(CNA_Texture2DCreateInfo, format) == 20, "CNA_Texture2DCreateInfo.format offset");
 _Static_assert(sizeof(((CNA_Texture2DCreateInfo *)0)->format) == 4, "CNA_Texture2DCreateInfo.format size");
 
+_Static_assert(sizeof(CNA_TextureCubeCreateInfo) == 24, "CNA_TextureCubeCreateInfo size");
+_Static_assert(_Alignof(CNA_TextureCubeCreateInfo) == 4, "CNA_TextureCubeCreateInfo alignment");
+_Static_assert(offsetof(CNA_TextureCubeCreateInfo, struct_size) == 0, "CNA_TextureCubeCreateInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_TextureCubeCreateInfo *)0)->struct_size) == 4, "CNA_TextureCubeCreateInfo.struct_size size");
+_Static_assert(offsetof(CNA_TextureCubeCreateInfo, struct_version) == 4, "CNA_TextureCubeCreateInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_TextureCubeCreateInfo *)0)->struct_version) == 4, "CNA_TextureCubeCreateInfo.struct_version size");
+_Static_assert(offsetof(CNA_TextureCubeCreateInfo, size) == 8, "CNA_TextureCubeCreateInfo.size offset");
+_Static_assert(sizeof(((CNA_TextureCubeCreateInfo *)0)->size) == 4, "CNA_TextureCubeCreateInfo.size size");
+_Static_assert(offsetof(CNA_TextureCubeCreateInfo, mip_map) == 12, "CNA_TextureCubeCreateInfo.mip_map offset");
+_Static_assert(sizeof(((CNA_TextureCubeCreateInfo *)0)->mip_map) == 1, "CNA_TextureCubeCreateInfo.mip_map size");
+_Static_assert(offsetof(CNA_TextureCubeCreateInfo, reserved0) == 13, "CNA_TextureCubeCreateInfo.reserved0 offset");
+_Static_assert(sizeof(((CNA_TextureCubeCreateInfo *)0)->reserved0) == 3, "CNA_TextureCubeCreateInfo.reserved0 size");
+_Static_assert(offsetof(CNA_TextureCubeCreateInfo, format) == 16, "CNA_TextureCubeCreateInfo.format offset");
+_Static_assert(sizeof(((CNA_TextureCubeCreateInfo *)0)->format) == 4, "CNA_TextureCubeCreateInfo.format size");
+_Static_assert(offsetof(CNA_TextureCubeCreateInfo, reserved1) == 20, "CNA_TextureCubeCreateInfo.reserved1 offset");
+_Static_assert(sizeof(((CNA_TextureCubeCreateInfo *)0)->reserved1) == 4, "CNA_TextureCubeCreateInfo.reserved1 size");
+
+_Static_assert(sizeof(CNA_TextureCubeTransfer) == 56, "CNA_TextureCubeTransfer size");
+_Static_assert(_Alignof(CNA_TextureCubeTransfer) == 8, "CNA_TextureCubeTransfer alignment");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, struct_size) == 0, "CNA_TextureCubeTransfer.struct_size offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->struct_size) == 4, "CNA_TextureCubeTransfer.struct_size size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, struct_version) == 4, "CNA_TextureCubeTransfer.struct_version offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->struct_version) == 4, "CNA_TextureCubeTransfer.struct_version size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, face) == 8, "CNA_TextureCubeTransfer.face offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->face) == 4, "CNA_TextureCubeTransfer.face size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, level) == 12, "CNA_TextureCubeTransfer.level offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->level) == 4, "CNA_TextureCubeTransfer.level size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, has_rectangle) == 16, "CNA_TextureCubeTransfer.has_rectangle offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->has_rectangle) == 1, "CNA_TextureCubeTransfer.has_rectangle size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, reserved0) == 17, "CNA_TextureCubeTransfer.reserved0 offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->reserved0) == 3, "CNA_TextureCubeTransfer.reserved0 size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, rectangle) == 20, "CNA_TextureCubeTransfer.rectangle offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->rectangle) == 16, "CNA_TextureCubeTransfer.rectangle size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, reserved1) == 36, "CNA_TextureCubeTransfer.reserved1 offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->reserved1) == 4, "CNA_TextureCubeTransfer.reserved1 size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, start_index) == 40, "CNA_TextureCubeTransfer.start_index offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->start_index) == 8, "CNA_TextureCubeTransfer.start_index size");
+_Static_assert(offsetof(CNA_TextureCubeTransfer, element_count) == 48, "CNA_TextureCubeTransfer.element_count offset");
+_Static_assert(sizeof(((CNA_TextureCubeTransfer *)0)->element_count) == 8, "CNA_TextureCubeTransfer.element_count size");
+
+_Static_assert(sizeof(CNA_TextureCubeInfo) == 24, "CNA_TextureCubeInfo size");
+_Static_assert(_Alignof(CNA_TextureCubeInfo) == 4, "CNA_TextureCubeInfo alignment");
+_Static_assert(offsetof(CNA_TextureCubeInfo, struct_size) == 0, "CNA_TextureCubeInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_TextureCubeInfo *)0)->struct_size) == 4, "CNA_TextureCubeInfo.struct_size size");
+_Static_assert(offsetof(CNA_TextureCubeInfo, struct_version) == 4, "CNA_TextureCubeInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_TextureCubeInfo *)0)->struct_version) == 4, "CNA_TextureCubeInfo.struct_version size");
+_Static_assert(offsetof(CNA_TextureCubeInfo, size) == 8, "CNA_TextureCubeInfo.size offset");
+_Static_assert(sizeof(((CNA_TextureCubeInfo *)0)->size) == 4, "CNA_TextureCubeInfo.size size");
+_Static_assert(offsetof(CNA_TextureCubeInfo, level_count) == 12, "CNA_TextureCubeInfo.level_count offset");
+_Static_assert(sizeof(((CNA_TextureCubeInfo *)0)->level_count) == 4, "CNA_TextureCubeInfo.level_count size");
+_Static_assert(offsetof(CNA_TextureCubeInfo, format) == 16, "CNA_TextureCubeInfo.format offset");
+_Static_assert(sizeof(((CNA_TextureCubeInfo *)0)->format) == 4, "CNA_TextureCubeInfo.format size");
+_Static_assert(offsetof(CNA_TextureCubeInfo, reserved) == 20, "CNA_TextureCubeInfo.reserved offset");
+_Static_assert(sizeof(((CNA_TextureCubeInfo *)0)->reserved) == 4, "CNA_TextureCubeInfo.reserved size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1409,6 +1464,28 @@ CNA_Result (*const cna_lisp_probe_cna_game_components_subscribe_removed)(CNA_Han
 CNA_Result (*const cna_lisp_probe_cna_texture2d_create)(CNA_Handle, const CNA_Texture2DCreateInfo*, CNA_Handle*) = cna_texture2d_create;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_set_data)(CNA_Handle, CNA_TextureDataType, const CNA_Texture2DTransfer*, const void*, uint64_t) = cna_texture2d_set_data;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_get_data)(CNA_Handle, CNA_TextureDataType, const CNA_Texture2DTransfer*, void*, uint64_t, uint64_t*) = cna_texture2d_get_data;
+CNA_Result (*const cna_lisp_probe_cna_texturecube_create)(CNA_Handle, const CNA_TextureCubeCreateInfo*, CNA_Handle*) = cna_texturecube_create;
+CNA_Result (*const cna_lisp_probe_cna_texturecube_destroy)(CNA_Handle) = cna_texturecube_destroy;
+CNA_Result (*const cna_lisp_probe_cna_texturecube_get_info)(CNA_Handle, CNA_TextureCubeInfo*) = cna_texturecube_get_info;
+CNA_Result (*const cna_lisp_probe_cna_texturecube_set_data)(CNA_Handle, const CNA_TextureCubeTransfer*, const CNA_Color*, uint64_t) = cna_texturecube_set_data;
+CNA_Result (*const cna_lisp_probe_cna_texturecube_get_data)(CNA_Handle, const CNA_TextureCubeTransfer*, CNA_Color*, uint64_t, uint64_t*) = cna_texturecube_get_data;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_create)(CNA_Handle, CNA_EffectHandle*) = cna_environment_map_effect_create;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_get_alpha)(CNA_EffectHandle, float*) = cna_environment_map_effect_get_alpha;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_get_amount)(CNA_EffectHandle, float*) = cna_environment_map_effect_get_amount;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_get_diffuse_color)(CNA_EffectHandle, CNA_Vector3*) = cna_environment_map_effect_get_diffuse_color;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_get_emissive_color)(CNA_EffectHandle, CNA_Vector3*) = cna_environment_map_effect_get_emissive_color;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_get_environment_map)(CNA_EffectHandle, CNA_Bool*, CNA_Handle*) = cna_environment_map_effect_get_environment_map;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_get_fresnel_factor)(CNA_EffectHandle, float*) = cna_environment_map_effect_get_fresnel_factor;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_get_specular)(CNA_EffectHandle, CNA_Vector3*) = cna_environment_map_effect_get_specular;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_get_texture)(CNA_EffectHandle, CNA_Bool*, CNA_Handle*) = cna_environment_map_effect_get_texture;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_alpha)(CNA_EffectHandle, float) = cna_environment_map_effect_set_alpha;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_amount)(CNA_EffectHandle, float) = cna_environment_map_effect_set_amount;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_diffuse_color)(CNA_EffectHandle, CNA_Vector3) = cna_environment_map_effect_set_diffuse_color;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_emissive_color)(CNA_EffectHandle, CNA_Vector3) = cna_environment_map_effect_set_emissive_color;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_environment_map)(CNA_EffectHandle, CNA_Handle) = cna_environment_map_effect_set_environment_map;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_fresnel_factor)(CNA_EffectHandle, float) = cna_environment_map_effect_set_fresnel_factor;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_specular)(CNA_EffectHandle, CNA_Vector3) = cna_environment_map_effect_set_specular;
+CNA_Result (*const cna_lisp_probe_cna_environment_map_effect_set_texture)(CNA_EffectHandle, CNA_Handle) = cna_environment_map_effect_set_texture;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -1465,6 +1542,12 @@ _Static_assert((int64_t)(CNA_COMPARE_LESS) == INT64_C(2), "CNA_COMPARE_LESS valu
 _Static_assert((int64_t)(CNA_COMPARE_LESS_EQUAL) == INT64_C(3), "CNA_COMPARE_LESS_EQUAL value");
 _Static_assert((int64_t)(CNA_COMPARE_NEVER) == INT64_C(1), "CNA_COMPARE_NEVER value");
 _Static_assert((int64_t)(CNA_COMPARE_NOT_EQUAL) == INT64_C(7), "CNA_COMPARE_NOT_EQUAL value");
+_Static_assert((int64_t)(CNA_CUBE_MAP_FACE_NEGATIVE_X) == INT64_C(1), "CNA_CUBE_MAP_FACE_NEGATIVE_X value");
+_Static_assert((int64_t)(CNA_CUBE_MAP_FACE_NEGATIVE_Y) == INT64_C(3), "CNA_CUBE_MAP_FACE_NEGATIVE_Y value");
+_Static_assert((int64_t)(CNA_CUBE_MAP_FACE_NEGATIVE_Z) == INT64_C(5), "CNA_CUBE_MAP_FACE_NEGATIVE_Z value");
+_Static_assert((int64_t)(CNA_CUBE_MAP_FACE_POSITIVE_X) == INT64_C(0), "CNA_CUBE_MAP_FACE_POSITIVE_X value");
+_Static_assert((int64_t)(CNA_CUBE_MAP_FACE_POSITIVE_Y) == INT64_C(2), "CNA_CUBE_MAP_FACE_POSITIVE_Y value");
+_Static_assert((int64_t)(CNA_CUBE_MAP_FACE_POSITIVE_Z) == INT64_C(4), "CNA_CUBE_MAP_FACE_POSITIVE_Z value");
 _Static_assert((int64_t)(CNA_CULL_CLOCKWISE_FACE) == INT64_C(1), "CNA_CULL_CLOCKWISE_FACE value");
 _Static_assert((int64_t)(CNA_CULL_COUNTER_CLOCKWISE_FACE) == INT64_C(2), "CNA_CULL_COUNTER_CLOCKWISE_FACE value");
 _Static_assert((int64_t)(CNA_CULL_NONE) == INT64_C(0), "CNA_CULL_NONE value");

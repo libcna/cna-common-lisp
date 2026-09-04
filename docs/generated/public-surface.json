@@ -12552,6 +12552,25 @@
           "documentation": "Every member of COMPARE-FUNCTION, as keywords, in value order."
         },
         {
+          "name": "all-cube-map-face",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of CUBE-MAP-FACE, as keywords, in value order."
+        },
+        {
           "name": "all-cull-mode",
           "fbound": true,
           "macro": false,
@@ -14064,6 +14083,67 @@
           "documentation": "DEPTH-STENCIL-STATE.COUNTER-CLOCKWISE-STENCIL-PASS. Defaults to KEEP."
         },
         {
+          "name": "cube-map-face",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.CubeMapFace."
+        },
+        {
+          "name": "cube-map-face-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The CUBE-MAP-FACE member a value names."
+        },
+        {
+          "name": "cube-map-face-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a CUBE-MAP-FACE member."
+        },
+        {
           "name": "cull-mode",
           "fbound": true,
           "macro": false,
@@ -15407,6 +15487,78 @@
           "documentation": "BasicEffect.EmissiveColor"
         },
         {
+          "name": "effect-environment-map",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "texture",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EnvironmentMapEffect.EnvironmentMap: the cube map that is reflected.\n\nAnswers the TEXTURE-CUBE this effect was last given, cross-checked against the\nhandle CNA reports -- the same reasoning EFFECT-TEXTURE uses, because the ABI has\nno route from a handle back to the object that names it."
+        },
+        {
+          "name": "effect-environment-map-amount",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EnvironmentMapEffect.EnvironmentMapAmount: how much of the reflection shows."
+        },
+        {
+          "name": "effect-environment-map-specular",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EnvironmentMapEffect.EnvironmentMapSpecular: the specular tint from the map."
+        },
+        {
           "name": "effect-fog-color",
           "fbound": true,
           "macro": false,
@@ -15501,6 +15653,30 @@
           "constant": false,
           "value": null,
           "documentation": "IEffectFog.FogStart"
+        },
+        {
+          "name": "effect-fresnel-factor",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EnvironmentMapEffect.FresnelFactor: how much the reflection depends on angle."
         },
         {
           "name": "effect-lighting-enabled",
@@ -16569,6 +16745,35 @@
           "documentation": "SpriteBatch.End()."
         },
         {
+          "name": "environment-map-effect",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:environment-map-effect",
+            "microsoft.xna.framework.graphics:%effect-with-lights",
+            "microsoft.xna.framework.graphics:effect",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect.\n\n    (make-instance 'environment-map-effect :graphics-device device)\n\nA base texture blended with a reflected cube map. It satisfies IEffectMatrices,\nIEffectFog and IEffectLights, and its lighting surface is the ambient colour, the\nthree directional lights and ENABLE-DEFAULT-LIGHTING -- not EFFECT-LIGHTING-ENABLED,\nwhich XNA implements explicitly on it, and not the specular material surface,\nwhich it has not got at all."
+        },
+        {
           "name": "fill-mode",
           "fbound": true,
           "macro": false,
@@ -16729,6 +16934,39 @@
           "constant": false,
           "value": null,
           "documentation": "SkinnedEffect.GetBoneTransforms(Int32): the leading COUNT bone transforms.\n\nAnswers a fresh simple vector of COUNT matrices. XNA answers a `Matrix[]', and\nthis copies for the same reason `VertexDeclaration.GetVertexElements' does:\na caller must not be able to reach back into the effect through what it was\ngiven."
+        },
+        {
+          "name": "get-cube-data",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "texture",
+            "face",
+            "into",
+            "&key",
+            "level",
+            "source",
+            "start-index",
+            "element-count"
+          ],
+          "keywords": [
+            "element-count",
+            "level",
+            "source",
+            "start-index"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "TextureCube.GetData, all three overloads, reading into INTO."
         },
         {
           "name": "get-data",
@@ -18134,6 +18372,39 @@
           "documentation": "SkinnedEffect.SetBoneTransforms(Matrix[]).\n\nTRANSFORMS is a sequence of at least one and at most +SKINNED-EFFECT-MAX-BONES+\nmatrices, and it is copied: CNA takes the array by pointer and reads it during\nthe call, so nothing of the caller's is retained."
         },
         {
+          "name": "set-cube-data",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "texture",
+            "face",
+            "data",
+            "&key",
+            "level",
+            "source",
+            "start-index",
+            "element-count"
+          ],
+          "keywords": [
+            "element-count",
+            "level",
+            "source",
+            "start-index"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "TextureCube.SetData, all three overloads, with the face XNA's every overload\ntakes as its first argument.\n\n    (set-cube-data cube :positive-x data)\n    (set-cube-data cube :positive-x data :start-index i :element-count n)\n    (set-cube-data cube :positive-x data :level l :source rect\n                                         :start-index i :element-count n)\n\nDATA is a sequence of COLORs, and only of COLORs: see the file header."
+        },
+        {
           "name": "set-data",
           "fbound": true,
           "macro": false,
@@ -19049,6 +19320,55 @@
           "constant": false,
           "value": null,
           "documentation": "Microsoft.Xna.Framework.Graphics.TextureCollection.\n\nReached through GRAPHICS-DEVICE's TEXTURES and VERTEX-TEXTURES."
+        },
+        {
+          "name": "texture-cube",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:texture-cube",
+            "microsoft.xna.framework.graphics:texture",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.TextureCube: six square faces of one size.\n\n    (make-instance 'texture-cube :graphics-device device :size 8)\n\nA TEXTURE, as XNA's is, and not a TEXTURE-2D: a cube has no single width and\nheight, it has a SIZE that is the edge of every face. Transfers name a\nCUBE-MAP-FACE.\n\nOwned by the game and disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE, before it."
+        },
+        {
+          "name": "texture-cube-size",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "texture-filter",
@@ -28251,6 +28571,14 @@
       "depth-16": 1,
       "depth-24": 2,
       "depth-24-stencil-8": 3
+    },
+    "cube-map-face": {
+      "positive-x": 0,
+      "negative-x": 1,
+      "positive-y": 2,
+      "negative-y": 3,
+      "positive-z": 4,
+      "negative-z": 5
     },
     "effect-parameter-class": {
       "scalar": 0,

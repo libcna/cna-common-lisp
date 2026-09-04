@@ -24,10 +24,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 363,
-    "structs": 57,
-    "struct_fields": 432,
-    "constants": 479,
+    "functions": 385,
+    "structs": 60,
+    "struct_fields": 455,
+    "constants": 485,
     "callbacks": 9,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -9064,6 +9064,552 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_texture2d_get_data(CNA_Handle texture, CNA_TextureDataType data_type, const CNA_Texture2DTransfer* transfer, void* destination, uint64_t destination_capacity, uint64_t* out_required_elements)"
+    },
+    {
+      "name": "cna_texturecube_create",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_TextureCubeCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:texture-cube:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texturecube_create(CNA_Handle graphics_device, const CNA_TextureCubeCreateInfo* create_info, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_texturecube_destroy",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:texture-cube",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texturecube_destroy(CNA_Handle texture)"
+    },
+    {
+      "name": "cna_texturecube_get_info",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_TextureCubeInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texturecube_get_info(CNA_Handle texture, CNA_TextureCubeInfo* out_info)"
+    },
+    {
+      "name": "cna_texturecube_set_data",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_TextureCubeTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data",
+          "c_type": "const CNA_Color*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data_capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texturecube_set_data(CNA_Handle texture, const CNA_TextureCubeTransfer* transfer, const CNA_Color* data, uint64_t data_capacity)"
+    },
+    {
+      "name": "cna_texturecube_get_data",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_TextureCubeTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_Color*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination_capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_required_elements",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texturecube_get_data(CNA_Handle texture, const CNA_TextureCubeTransfer* transfer, CNA_Color* destination, uint64_t destination_capacity, uint64_t* out_required_elements)"
+    },
+    {
+      "name": "cna_environment_map_effect_create",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:effect:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_create(CNA_Handle graphics_device, CNA_EffectHandle* out_effect)"
+    },
+    {
+      "name": "cna_environment_map_effect_get_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_get_alpha(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_environment_map_effect_get_amount",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_get_amount(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_environment_map_effect_get_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_get_diffuse_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_environment_map_effect_get_emissive_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_get_emissive_color(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_environment_map_effect_get_environment_map",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_environment_map",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_environment_map",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_get_environment_map(CNA_EffectHandle effect, CNA_Bool* out_has_environment_map, CNA_Handle* out_environment_map)"
+    },
+    {
+      "name": "cna_environment_map_effect_get_fresnel_factor",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_get_fresnel_factor(CNA_EffectHandle effect, float* out_value)"
+    },
+    {
+      "name": "cna_environment_map_effect_get_specular",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_Vector3*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_get_specular(CNA_EffectHandle effect, CNA_Vector3* out_value)"
+    },
+    {
+      "name": "cna_environment_map_effect_get_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_texture",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_get_texture(CNA_EffectHandle effect, CNA_Bool* out_has_texture, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_environment_map_effect_set_alpha",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_set_alpha(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_environment_map_effect_set_amount",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_set_amount(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_environment_map_effect_set_diffuse_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_set_diffuse_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_environment_map_effect_set_emissive_color",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_set_emissive_color(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_environment_map_effect_set_environment_map",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "environment_map",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_set_environment_map(CNA_EffectHandle effect, CNA_Handle environment_map)"
+    },
+    {
+      "name": "cna_environment_map_effect_set_fresnel_factor",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_set_fresnel_factor(CNA_EffectHandle effect, float value)"
+    },
+    {
+      "name": "cna_environment_map_effect_set_specular",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value-0",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":double",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 0
+        },
+        {
+          "name": "value-1",
+          "c_type": "CNA_Vector3",
+          "cffi_type": ":float",
+          "flattened_from": "CNA_Vector3",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_set_specular(CNA_EffectHandle effect, CNA_Vector3 value)"
+    },
+    {
+      "name": "cna_environment_map_effect_set_texture",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_environment_map_effect_set_texture(CNA_EffectHandle effect, CNA_Handle texture)"
     }
   ],
   "structs": [
@@ -13601,6 +14147,243 @@
       "header": "graphics.h",
       "direction": "in",
       "versioned": true
+    },
+    {
+      "name": "CNA_TextureCubeCreateInfo",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "size",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "mip_map",
+          "c_type": "CNA_Bool",
+          "offset": 12,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved0",
+          "c_type": "uint8_t",
+          "offset": 13,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved1",
+          "c_type": "uint32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture_volume.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_TextureCubeTransfer",
+      "size": 56,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "face",
+          "c_type": "CNA_CubeMapFace",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "level",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "has_rectangle",
+          "c_type": "CNA_Bool",
+          "offset": 16,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved0",
+          "c_type": "uint8_t",
+          "offset": 17,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "rectangle",
+          "c_type": "CNA_Rectangle",
+          "offset": 20,
+          "size": 16,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Rectangle",
+          "kind": "aggregate"
+        },
+        {
+          "name": "reserved1",
+          "c_type": "uint32_t",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "start_index",
+          "c_type": "uint64_t",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "element_count",
+          "c_type": "uint64_t",
+          "offset": 48,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture_volume.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_TextureCubeInfo",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "size",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "level_count",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture_volume.h",
+      "direction": "out",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -13817,6 +14600,12 @@
     "CNA_COMPARE_LESS_EQUAL": 3,
     "CNA_COMPARE_NEVER": 1,
     "CNA_COMPARE_NOT_EQUAL": 7,
+    "CNA_CUBE_MAP_FACE_NEGATIVE_X": 1,
+    "CNA_CUBE_MAP_FACE_NEGATIVE_Y": 3,
+    "CNA_CUBE_MAP_FACE_NEGATIVE_Z": 5,
+    "CNA_CUBE_MAP_FACE_POSITIVE_X": 0,
+    "CNA_CUBE_MAP_FACE_POSITIVE_Y": 2,
+    "CNA_CUBE_MAP_FACE_POSITIVE_Z": 4,
     "CNA_CULL_CLOCKWISE_FACE": 1,
     "CNA_CULL_COUNTER_CLOCKWISE_FACE": 2,
     "CNA_CULL_NONE": 0,

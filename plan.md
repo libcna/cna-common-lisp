@@ -251,7 +251,13 @@ are pure managed and touch no native route:
   three `SetData` and three `GetData` overloads, as narrow as the buffers' and
   over the same proven layouts. With it the rasterizer lane gained a seventh kind
   of proof and the first that does not go through `GetBackBufferData` at all: a
-  render target's texels read straight out of it with `GetData`.
+  render target's texels read straight out of it with `GetData`;
+* `TextureCube`, `CubeMapFace` and `EnvironmentMapEffect`, which completes **all
+  four** of XNA's other stock effects. A cube is a `Texture` and not a
+  `Texture2D`, as XNA has it, and its two transfer families are the closure's only
+  partial members: CNA's cube route takes `const CNA_Color*` with no texel-kind
+  argument, so a face is transferable only as `Color` where XNA's `SetData<T>` is
+  generic.
 
 ## 6. Measured status
 
@@ -274,31 +280,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=141 -->
-<!-- generated:selected members=2193 -->
-<!-- generated:complete types=132 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=144 -->
+<!-- generated:selected members=2233 -->
+<!-- generated:complete types=134 -->
+<!-- generated:partial types=10 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1728 -->
-<!-- generated:partial members=1 -->
+<!-- generated:complete members=1758 -->
+<!-- generated:partial members=7 -->
 <!-- generated:missing members=56 -->
-<!-- generated:not-applicable members=408 -->
+<!-- generated:not-applicable members=412 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
+Selection **Foundation 1 and the managed closures**: 144 types, 2233 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **132** |
-| Types partial | **9** |
+| Types complete | **134** |
+| Types partial | **10** |
 | Types missing | **0** |
-| Members complete | **1728** |
-| Members partial | **1** |
+| Members complete | **1758** |
+| Members partial | **7** |
 | Members missing | **56** |
-| Members not applicable | **408** |
+| Members not applicable | **412** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

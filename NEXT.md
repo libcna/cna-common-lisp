@@ -96,31 +96,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=141 -->
-<!-- generated:selected members=2193 -->
-<!-- generated:complete types=132 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=144 -->
+<!-- generated:selected members=2233 -->
+<!-- generated:complete types=134 -->
+<!-- generated:partial types=10 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1728 -->
-<!-- generated:partial members=1 -->
+<!-- generated:complete members=1758 -->
+<!-- generated:partial members=7 -->
 <!-- generated:missing members=56 -->
-<!-- generated:not-applicable members=408 -->
+<!-- generated:not-applicable members=412 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
+Selection **Foundation 1 and the managed closures**: 144 types, 2233 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **132** |
-| Types partial | **9** |
+| Types complete | **134** |
+| Types partial | **10** |
 | Types missing | **0** |
-| Members complete | **1728** |
-| Members partial | **1** |
+| Members complete | **1758** |
+| Members partial | **7** |
 | Members missing | **56** |
-| Members not applicable | **408** |
+| Members not applicable | **412** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -136,7 +136,7 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=9 --> are partial, and this is where the remaining
+<!-- generated:partial types=10 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
@@ -151,6 +151,7 @@ members actually are:
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
 Do not describe that as "graphics state objects, `Stream` and `SpriteFont`", and
@@ -172,6 +173,7 @@ one.
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
 `GraphicsDevice` is still most of it, but the drawing family is no longer any of
@@ -220,15 +222,7 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **`TextureCube`, and then `EnvironmentMapEffect`.** Three of the four stock
-   effects landed; the fourth did not, because its `EnvironmentMap` is a
-   `TextureCube` and that type is not projected. `TextureCube` needs the texture
-   `SetData`/`GetData` surface, which `Texture2D` has not got here either, so the
-   honest order is the data surface, then `TextureCube` and `CubeMapFace`, then
-   `EnvironmentMapEffect`, which is nine more members over
-   `cna_environment_map_effect_*`. Do not add `EnvironmentMapEffect` with
-   `EnvironmentMap` reported missing.
-2. **`GameServiceContainer` and `Game.Services`**, which need
+1. **`GameServiceContainer` and `Game.Services`**, which need
    `IGraphicsDeviceService` and `IGraphicsDeviceManager` first -- and the first of
    those needs `GraphicsDevice`'s four device-loss events. That is really the
    *device-settings closure*: `Adapter`, `DisplayMode`, `PresentationParameters`,
@@ -236,15 +230,15 @@ the graph after each closure instead of following this list once it has moved.
    `Present`, the five device events, and `GraphicsDeviceManager`'s sixteen, which
    are the same subject seen from the other side. Doing it opens the container as
    a by-product.
-3. **`System.IO.Stream` and `TitleContainer`**, which unblock
+2. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager` --
    and with it the only public way to obtain a `SpriteFont`, which is the loop
    this session opened and did not close.
-4. **`TextureCube` and `CubeMapFace`**, now that `Texture2D`'s data surface
-   exists to copy the shape from. They bring `RenderTargetCube`, and with it
-   `EnvironmentMapEffect` and the three `GraphicsDevice` render-target members
-   that need a `RenderTargetBinding`.
-5. **Audio, models, media, storage, gamer services, networking.**
+3. **`RenderTargetCube` and `RenderTargetBinding`**, now that `TextureCube`
+   exists to derive the first from. They bring `GraphicsDevice`'s last three
+   render-target members: `SetRenderTarget(RenderTargetCube, CubeMapFace)`,
+   `SetRenderTargets` and `GetRenderTargets`.
+4. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
 

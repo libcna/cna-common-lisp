@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 141,
-  "member_count": 2193
+  "type_count": 144,
+  "member_count": 2233
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 141,
-  "members": 2193,
+  "types": 144,
+  "members": 2233,
   "types_by_status": {
-   "partial": 9,
-   "complete": 132
+   "partial": 10,
+   "complete": 134
   },
   "members_by_status": {
-   "complete": 1728,
+   "complete": 1758,
    "missing": 56,
-   "not-applicable": 408,
-   "partial": 1
+   "not-applicable": 412,
+   "partial": 7
   },
   "diagnostics": 56,
   "diagnostics_by_category": {
@@ -2387,6 +2387,67 @@
     "MaxBones": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:skinned-effect"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDevice)": "complete",
+    "new(EnvironmentMapEffect)": "not-applicable",
+    "Clone()": "complete",
+    "EnableDefaultLighting()": "complete",
+    "OnApply()": "not-applicable",
+    "World": "complete",
+    "View": "complete",
+    "Projection": "complete",
+    "DiffuseColor": "complete",
+    "EmissiveColor": "complete",
+    "Alpha": "complete",
+    "AmbientLightColor": "complete",
+    "DirectionalLight0": "complete",
+    "DirectionalLight1": "complete",
+    "DirectionalLight2": "complete",
+    "FogEnabled": "complete",
+    "FogStart": "complete",
+    "FogEnd": "complete",
+    "FogColor": "complete",
+    "Texture": "complete",
+    "EnvironmentMap": "complete",
+    "EnvironmentMapAmount": "complete",
+    "EnvironmentMapSpecular": "complete",
+    "FresnelFactor": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:environment-map-effect"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.TextureCube",
+   "status": "partial",
+   "members": {
+    "new(GraphicsDevice,Int32,Boolean,SurfaceFormat)": "complete",
+    "SetData(CubeMapFace,!!0[])": "partial",
+    "SetData(CubeMapFace,!!0[],Int32,Int32)": "partial",
+    "SetData(CubeMapFace,Int32,Nullable`1,!!0[],Int32,Int32)": "partial",
+    "GetData(CubeMapFace,!!0[])": "partial",
+    "GetData(CubeMapFace,!!0[],Int32,Int32)": "partial",
+    "GetData(CubeMapFace,Int32,Nullable`1,!!0[],Int32,Int32)": "partial",
+    "Dispose(Boolean)": "not-applicable",
+    "Size": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:texture-cube"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "PositiveX": "complete",
+    "NegativeX": "complete",
+    "PositiveY": "complete",
+    "NegativeY": "complete",
+    "PositiveZ": "complete",
+    "NegativeZ": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:cube-map-face"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",

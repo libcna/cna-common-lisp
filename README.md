@@ -131,8 +131,9 @@ stubs:
   `GraphicsDevice.SetRenderTarget`. A target is a `Texture2D`, as XNA's is, so it
   can be drawn back onto the screen -- which is how the qualification reads one
   without depending on back-buffer readback;
-* the other **stock effects** -- `AlphaTestEffect`, `DualTextureEffect` and
-  `SkinnedEffect`, complete, over the same effect machinery. Their state
+* **all four other stock effects** -- `AlphaTestEffect`, `DualTextureEffect`,
+  `SkinnedEffect` and `EnvironmentMapEffect`, with `TextureCube` and
+  `CubeMapFace`, complete, over the same effect machinery. Their state
   round-trips through the CNA routes; what the SOFTWARE renderer does and does
   not shade with them is measured in `docs/limitations.md` rather than assumed;
 * **`Effect` and `BasicEffect`**: the whole effect object graph — techniques,
@@ -168,27 +169,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=141 -->
-<!-- generated:selected members=2193 -->
-<!-- generated:complete types=132 -->
-<!-- generated:partial types=9 -->
+<!-- generated:selected types=144 -->
+<!-- generated:selected members=2233 -->
+<!-- generated:complete types=134 -->
+<!-- generated:partial types=10 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1728 -->
-<!-- generated:partial members=1 -->
+<!-- generated:complete members=1758 -->
+<!-- generated:partial members=7 -->
 <!-- generated:missing members=56 -->
-<!-- generated:not-applicable members=408 -->
+<!-- generated:not-applicable members=412 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=363 -->
-<!-- generated:bound native structs=57 -->
+<!-- generated:bound native functions=385 -->
+<!-- generated:bound native structs=60 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **141 XNA types and 2193 members**:
+The generated scoreboard, over a selection of **144 XNA types and 2233 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **132 / 9 / 0** |
-| Members complete / missing | **1728 / 56** |
-| Members not applicable | **408** |
+| Types complete / partial / missing | **134 / 10 / 0** |
+| Members complete / missing | **1758 / 56** |
+| Members not applicable | **412** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -201,7 +202,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **363 native routes** and **57 native structs**,
+The private foreign layer binds **385 native routes** and **60 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

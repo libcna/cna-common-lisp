@@ -298,3 +298,157 @@ as a game that will not shut down, nowhere near the effect that leaked."
         (signals xna:cna-error
           (gfx:apply-effect-pass
            (gfx:collection-item (gfx:effect-technique-passes technique) 0)))))))
+
+;;; --- TextureCube and EnvironmentMapEffect ---------------------------------------
+;;;
+;;; The fourth stock effect and the type it waited for.
+
+(defclass cube-game (graphics-game)
+  ((cube :initform nil :accessor cube-of)
+   (effect :initform nil :accessor cube-effect)
+   (build-error :initform nil :accessor build-error))
+  (:documentation "Creates a TextureCube and an EnvironmentMapEffect."))
+
+(defmethod xna:load-content ((game cube-game))
+  (call-next-method)
+  (handler-case
+      (let ((device (xna:graphics-device game)))
+        (setf (cube-of game) (make-instance 'gfx:texture-cube
+                                            :graphics-device device :size 4)
+              (cube-effect game) (make-instance 'gfx:environment-map-effect
+                                                :graphics-device device)))
+    (error (condition) (setf (build-error game) condition))))
+
+(defmacro with-cube-game ((game) &body body)
+  `(let ((,game (make-instance 'cube-game :exit-after 2)))
+     (unwind-protect
+          (progn (xna:run ,game)
+                 (when (build-error ,game) (error (build-error ,game)))
+                 ,@body)
+       (progn
+         (when (cube-effect ,game) (ignore-errors (xna:dispose (cube-effect ,game))))
+         (when (cube-of ,game) (ignore-errors (xna:dispose (cube-of ,game))))
+         (when (batch ,game) (ignore-errors (xna:dispose (batch ,game))))
+         (when (texture ,game) (ignore-errors (xna:dispose (texture ,game))))
+         (when (manager ,game) (ignore-errors (xna:dispose (manager ,game))))
+         (ignore-errors (xna:dispose ,game))))))
+
+(define-native-test a-texture-cube-is-a-texture-and-not-a-texture-2d
+  "XNA derives TextureCube from Texture, not from Texture2D: a cube has no single
+width and height, it has a Size that is the edge of every face."
+  (with-cube-game (game)
+    (let ((cube (cube-of game)))
+      (is (typep cube 'gfx:texture))
+      (is (not (typep cube 'gfx:texture-2d))
+          "a TextureCube must not be a Texture2D; XNA's is not")
+      (is (typep cube 'gfx:graphics-resource))
+      (is (= 4 (gfx:texture-cube-size cube))))))
+
+(define-native-test each-cube-face-holds-its-own-texels
+  "Six faces, and writing one must not touch another -- which is what tells a real
+face selector from an index that is ignored.
+
+**Cube-face storage is a renderer capability**, and CNA says so: creation `may
+succeed even when face storage is unavailable`, and a transfer then answers
+NOT_SUPPORTED. So this branches, and both branches are real assertions: a renderer
+without the storage must refuse *by name*, and one with it must keep the faces
+apart. A test that skipped on the refusal would prove nothing on either."
+  (with-cube-game (game)
+    (let ((cube (cube-of game))
+          (red (xna:make-color 255 0 0 255))
+          (blue (xna:make-color 0 0 255 255)))
+      (flet ((fill-face (face colour)
+               (gfx:set-cube-data cube face
+                                  (make-array 16 :initial-element colour)))
+             (read-face (face)
+               (let ((into (make-array 16 :initial-element (xna:make-color 0 0 0 0))))
+                 (gfx:get-cube-data cube face into)
+                 into)))
+        (let ((refusal (handler-case (progn (fill-face :positive-x (xna:make-color 1 2 3 4))
+                                            nil)
+                         (xna:cna-not-supported-error (condition) condition))))
+          (if refusal
+              ;; The honest answer from a renderer with no cube storage, and the
+              ;; only thing such a renderer can be asked to prove.
+              (is (search "cube" (string-downcase (princ-to-string refusal)))
+                  "~a refused a cube transfer without saying it was about cube ~
+                   storage: ~a" (renderer game) refusal)
+              (progn
+                (dolist (face (gfx:all-cube-map-face))
+                  (fill-face face (xna:make-color 1 2 3 4)))
+                (fill-face :positive-x red)
+                (fill-face :negative-z blue)
+                (loop for texel across (read-face :positive-x)
+                      do (is (xna:color-equal red texel)
+                             "+X should be red; it is ~a" (pixel-list texel)))
+                (loop for texel across (read-face :negative-z)
+                      do (is (xna:color-equal blue texel)
+                             "-Z should be blue; it is ~a" (pixel-list texel)))
+                ;; And the four that were not written keep what they had.
+                (dolist (face '(:negative-x :positive-y :negative-y :positive-z))
+                  (loop for texel across (read-face face)
+                        do (is (xna:color-equal (xna:make-color 1 2 3 4) texel)
+                               "~s was not written and should be unchanged; it is ~a"
+                               face (pixel-list texel)))))))))))
+
+(define-native-test a-cube-transfer-takes-colours-and-says-so-when-it-cannot
+  "CNA's cube route takes `const CNA_Color*' with no texel-kind argument, unlike
+the Texture2D route, so a cube face is transferable only as Color. That is a real
+narrowing of XNA's generic member and is refused by name rather than worked
+around; the two families are reported partial for it."
+  (with-cube-game (game)
+    (let ((cube (cube-of game)))
+      (signals xna:cna-usage-error
+        (gfx:set-cube-data cube :positive-x (make-array 4 :initial-element 1.0f0)))
+      (signals xna:cna-usage-error
+        (gfx:set-cube-data cube :positive-x
+                           (make-array 4 :initial-element (xna:make-vector4 1 2 3 4))))
+      ;; And a face that is not a CubeMapFace is refused before CNA sees it.
+      (signals error (gfx:set-cube-data cube :sideways
+                                        (make-array 4 :initial-element (xna:white)))))))
+
+(define-native-test the-environment-map-effect-surface-round-trips
+  (with-cube-game (game)
+    (let ((effect (cube-effect game)))
+      (is (typep effect 'gfx:effect))
+      (setf (gfx:effect-alpha effect) 0.5)
+      (is (= 0.5f0 (gfx:effect-alpha effect)))
+      (setf (gfx:effect-environment-map-amount effect) 0.75)
+      (is (= 0.75f0 (gfx:effect-environment-map-amount effect)))
+      (setf (gfx:effect-fresnel-factor effect) 0.25)
+      (is (= 0.25f0 (gfx:effect-fresnel-factor effect)))
+      (setf (gfx:effect-environment-map-specular effect) (xna:make-vector3 0.1 0.2 0.3))
+      (is (xna:vector3-equal (xna:make-vector3 0.1 0.2 0.3)
+                             (gfx:effect-environment-map-specular effect)))
+      (setf (gfx:effect-diffuse-color effect) (xna:make-vector3 0.4 0.5 0.6))
+      (is (xna:vector3-equal (xna:make-vector3 0.4 0.5 0.6)
+                             (gfx:effect-diffuse-color effect)))
+      (setf (gfx:effect-emissive-color effect) (xna:make-vector3 0.7 0.8 0.9))
+      (is (xna:vector3-equal (xna:make-vector3 0.7 0.8 0.9)
+                             (gfx:effect-emissive-color effect))))))
+
+(define-native-test the-environment-map-effect-holds-a-texture-cube
+  (with-cube-game (game)
+    (let ((effect (cube-effect game))
+          (cube (cube-of game)))
+      (is (null (gfx:effect-environment-map effect)))
+      (setf (gfx:effect-environment-map effect) cube)
+      (is (eq cube (gfx:effect-environment-map effect)))
+      (setf (gfx:effect-environment-map effect) nil)
+      (is (null (gfx:effect-environment-map effect)))
+      ;; A Texture2D is not a cube map.
+      (signals error (setf (gfx:effect-environment-map effect) (texture game))))))
+
+(define-native-test the-environment-map-effect-has-lights-but-not-all-of-them
+  "It implements IEffectLights partially: the ambient colour, the three lights and
+EnableDefaultLighting, and *not* LightingEnabled -- which XNA implements
+explicitly on it -- nor the specular material surface, which it has not got."
+  (with-cube-game (game)
+    (let ((effect (cube-effect game)))
+      (is (typep (gfx:effect-ambient-light-color effect) 'xna:vector3))
+      (is (typep (gfx:directional-light-0 effect) 'gfx:directional-light))
+      (finishes (gfx:enable-default-lighting effect))
+      (signals error (gfx:effect-lighting-enabled effect))
+      (signals error (gfx:effect-specular-color effect))
+      (signals error (gfx:effect-specular-power effect))
+      (signals error (gfx:effect-prefer-per-pixel-lighting effect)))))

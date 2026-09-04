@@ -6419,6 +6419,222 @@
         "OnApply()": "The protected hook a subclass overrides to change effect state just before a pass is applied. CNA applies a pass itself and has no route that calls back into managed code between the two, so there is no place in this projection for a subclass to stand; reported not applicable with that reason rather than projected as something it is not."
       }
     },
+    "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "environment-map-effect",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDevice)": "make-instance"
+      },
+      "member_overrides": {
+        "Clone()": {
+          "lisp": "clone-effect",
+          "generic": true,
+          "reason": "Inherited from Effect; the clone keeps its type."
+        },
+        "EnableDefaultLighting()": {
+          "lisp": "enable-default-lighting",
+          "generic": true,
+          "reason": "IEffectLights' method. The preset's values are CNA's, applied through cna_effect_lights_enable_default."
+        },
+        "World": {
+          "lisp": "effect-world",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and EnvironmentMapEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "View": {
+          "lisp": "effect-view",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and EnvironmentMapEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "Projection": {
+          "lisp": "effect-projection",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and EnvironmentMapEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogEnabled": {
+          "lisp": "effect-fog-enabled",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and EnvironmentMapEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogStart": {
+          "lisp": "effect-fog-start",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and EnvironmentMapEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogEnd": {
+          "lisp": "effect-fog-end",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and EnvironmentMapEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "FogColor": {
+          "lisp": "effect-fog-color",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and EnvironmentMapEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "AmbientLightColor": {
+          "lisp": "effect-ambient-light-color",
+          "generic": true,
+          "setf": true,
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on a class every effect implementing it inherits, and EnvironmentMapEffect answers it by inheriting -- which is what implementing the interface means here."
+        },
+        "DirectionalLight0": {
+          "lisp": "directional-light-0",
+          "generic": true,
+          "setf": false,
+          "reason": "A stable member view of the effect, taken once at construction, exactly as XNA's is a field. Read-only, as XNA's is."
+        },
+        "DirectionalLight1": {
+          "lisp": "directional-light-1",
+          "generic": true,
+          "setf": false,
+          "reason": "A stable member view of the effect, taken once at construction, exactly as XNA's is a field. Read-only, as XNA's is."
+        },
+        "DirectionalLight2": {
+          "lisp": "directional-light-2",
+          "generic": true,
+          "setf": false,
+          "reason": "A stable member view of the effect, taken once at construction, exactly as XNA's is a field. Read-only, as XNA's is."
+        },
+        "DiffuseColor": {
+          "lisp": "effect-diffuse-color",
+          "generic": true,
+          "setf": true
+        },
+        "EmissiveColor": {
+          "lisp": "effect-emissive-color",
+          "generic": true,
+          "setf": true
+        },
+        "Alpha": {
+          "lisp": "effect-alpha",
+          "generic": true,
+          "setf": true
+        },
+        "Texture": {
+          "lisp": "effect-texture",
+          "generic": true,
+          "setf": true
+        },
+        "EnvironmentMap": {
+          "lisp": "effect-environment-map",
+          "generic": true,
+          "setf": true,
+          "reason": "A TextureCube, which is why this effect waited for one. Answers the object the setter remembered, cross-checked against the handle CNA reports."
+        },
+        "EnvironmentMapAmount": {
+          "lisp": "effect-environment-map-amount",
+          "generic": true,
+          "setf": true
+        },
+        "EnvironmentMapSpecular": {
+          "lisp": "effect-environment-map-specular",
+          "generic": true,
+          "setf": true
+        },
+        "FresnelFactor": {
+          "lisp": "effect-fresnel-factor",
+          "generic": true,
+          "setf": true
+        }
+      },
+      "not_applicable": {
+        "new(EnvironmentMapEffect)": "The protected clone constructor. It exists so Clone() can copy; Common Lisp has no protected constructors, and the copying is CLONE-EFFECT's, over CNA's own clone route.",
+        "OnApply()": "The protected hook a subclass overrides to change effect state just before a pass is applied. CNA applies a pass itself and has no route that calls back into managed code between the two."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.TextureCube": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "texture-cube",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDevice,Int32,Boolean,SurfaceFormat)": "make-instance"
+      },
+      "member_overrides": {
+        "SetData(CubeMapFace,!!0[])": {
+          "lisp": "set-cube-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "no-keywords",
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over anything blittable, and Texture2D's projection here takes five element types because cna_texture2d_set_data names a texel *kind*. cna_texturecube_set_data does not: its data parameter is `const CNA_Color*' with no kind argument, so a cube face is transferable only as Color. The member is projected and works; the element types beyond Color are refused with that reason. docs/limitations.md records it."
+        },
+        "SetData(CubeMapFace,!!0[],Int32,Int32)": {
+          "lisp": "set-cube-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "start-index",
+            "element-count"
+          ],
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over anything blittable, and Texture2D's projection here takes five element types because cna_texture2d_set_data names a texel *kind*. cna_texturecube_set_data does not: its data parameter is `const CNA_Color*' with no kind argument, so a cube face is transferable only as Color. The member is projected and works; the element types beyond Color are refused with that reason. docs/limitations.md records it."
+        },
+        "SetData(CubeMapFace,Int32,Nullable`1,!!0[],Int32,Int32)": {
+          "lisp": "set-cube-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "level",
+            "source",
+            "start-index",
+            "element-count"
+          ],
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over anything blittable, and Texture2D's projection here takes five element types because cna_texture2d_set_data names a texel *kind*. cna_texturecube_set_data does not: its data parameter is `const CNA_Color*' with no kind argument, so a cube face is transferable only as Color. The member is projected and works; the element types beyond Color are refused with that reason. docs/limitations.md records it."
+        },
+        "GetData(CubeMapFace,!!0[])": {
+          "lisp": "get-cube-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "no-keywords",
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over anything blittable, and Texture2D's projection here takes five element types because cna_texture2d_set_data names a texel *kind*. cna_texturecube_set_data does not: its data parameter is `const CNA_Color*' with no kind argument, so a cube face is transferable only as Color. The member is projected and works; the element types beyond Color are refused with that reason. docs/limitations.md records it."
+        },
+        "GetData(CubeMapFace,!!0[],Int32,Int32)": {
+          "lisp": "get-cube-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "start-index",
+            "element-count"
+          ],
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over anything blittable, and Texture2D's projection here takes five element types because cna_texture2d_set_data names a texel *kind*. cna_texturecube_set_data does not: its data parameter is `const CNA_Color*' with no kind argument, so a cube face is transferable only as Color. The member is projected and works; the element types beyond Color are refused with that reason. docs/limitations.md records it."
+        },
+        "GetData(CubeMapFace,Int32,Nullable`1,!!0[],Int32,Int32)": {
+          "lisp": "get-cube-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "level",
+            "source",
+            "start-index",
+            "element-count"
+          ],
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over anything blittable, and Texture2D's projection here takes five element types because cna_texture2d_set_data names a texel *kind*. cna_texturecube_set_data does not: its data parameter is `const CNA_Color*' with no kind argument, so a cube face is transferable only as Color. The member is projected and works; the element types beyond Color are refused with that reason. docs/limitations.md records it."
+        },
+        "Size": {
+          "lisp": "texture-cube-size",
+          "generic": true,
+          "setf": false
+        }
+      },
+      "not_applicable": {
+        "Dispose(Boolean)": "The protected dispose(bool) pattern; disposal here is MICROSOFT.XNA.FRAMEWORK:DISPOSE."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.CubeMapFace": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "cube-map-face",
+      "lisp_kind": "enum"
+    },
     "Microsoft.Xna.Framework.Graphics.EffectParameterClass": {
       "lisp_package": "microsoft.xna.framework.graphics",
       "lisp_name": "effect-parameter-class",
