@@ -200,13 +200,182 @@ milestone qualifies."
        (read-sequence bytes stream)
        bytes))))
 
+;;; --- Texture2D.FromStream ---------------------------------------------------
+;;;
+;;; Both overloads, one function, the keywords selecting between them. XNA has
+;;; `FromStream(GraphicsDevice, Stream)' and
+;;; `FromStream(GraphicsDevice, Stream, Int32, Int32, Boolean)', and read from the
+;;; assembly they are the same private constructor with different arguments: the
+;;; two-argument one passes the profile's `MaxTextureSize' for both extents and
+;;; operation 0, the five-argument one passes the caller's extents and
+;;; `zoom ? 3 : 1'. CNA's `CNA_Texture2DDecodeInfo' is exactly the second shape --
+;;; a width, a height and a `zoom' flag documented as "true to cover-and-crop;
+;;; false to fit while preserving aspect ratio" -- and a null one "preserves source
+;;; dimensions", which is the first shape *without* the MaxTextureSize fit.
+
+(defun %decode-info-pointer (info width height zoom)
+  "Fill a CNA_Texture2DDecodeInfo at INFO and answer it."
+  (cffi:foreign-funcall "memset" :pointer info :int 0
+                        :size cna-lisp.internal.ffi::+sizeof-cna-texture-2d-decode-info+
+                        :void)
+  (macrolet ((slot (name)
+               `(cffi:foreign-slot-value
+                 info '(:struct cna-lisp.internal.ffi::cna-texture-2d-decode-info) ',name)))
+    (setf (slot cna-lisp.internal.ffi::struct-size)
+          cna-lisp.internal.ffi::+sizeof-cna-texture-2d-decode-info+
+          (slot cna-lisp.internal.ffi::struct-version) 1
+          (slot cna-lisp.internal.ffi::width) width
+          (slot cna-lisp.internal.ffi::height) height
+          (slot cna-lisp.internal.ffi::zoom) (cna-lisp.internal.ffi:cna-bool-of zoom)))
+  info)
+
+(defun %decode-encoded-texture (graphics-device octets width height zoom resizing)
+  "Decode OCTETS into a native Texture2D, resizing when RESIZING."
+  (let ((operation "texture-2d-from-stream")
+        (n (length octets)))
+    (when (zerop n)
+      (error 'microsoft.xna.framework:cna-argument-error
+             :operation operation :parameter-name "stream"
+             :format-control "the stream held no bytes; there is no image to decode."))
+    (let ((device-handle (device-handle-for-child graphics-device operation)))
+      (cffi:with-foreign-object (buffer :uint8 n)
+        (dotimes (i n) (setf (cffi:mem-aref buffer :uint8 i) (aref octets i)))
+        (cffi:with-foreign-object
+            (info '(:struct cna-lisp.internal.ffi::cna-texture-2d-decode-info))
+          (cffi:with-foreign-object (out :uint64)
+            (cna-lisp.internal:check-result
+             (cna-lisp.internal.ffi::%texture-2d-create-from-encoded-memory
+              device-handle buffer n
+              (if resizing
+                  (%decode-info-pointer info width height zoom)
+                  (cffi:null-pointer))
+              out)
+             operation :object-type 'texture-2d)
+            (let ((handle (cffi:mem-ref out :uint64)))
+              ;; What the finished texture may honestly say about its own extent,
+              ;; which is not the same in all three shapes. Without a decode info
+              ;; CNA preserves the source dimensions, and the image header says
+              ;; what those are. Zooming covers and crops, so the result is
+              ;; exactly what was asked for. *Fitting* answers something no larger
+              ;; than what was asked for and this binding cannot know what -- ABI
+              ;; 0.21.0 reports no texture extent -- so the reader refuses rather
+              ;; than answering the request as though it were the result.
+              (multiple-value-bind (known-width known-height)
+                  (cond ((not resizing) (%decoded-dimensions octets))
+                        (zoom (values width height))
+                        (t (values nil nil)))
+                (%make-texture-2d graphics-device handle known-width known-height)))))))))
+
+(defun texture-2d-from-stream (graphics-device stream
+                               &key (width nil width-supplied)
+                                    (height nil height-supplied)
+                                    (zoom nil zoom-supplied))
+  "Texture2D.FromStream: decode an image a Common Lisp binary stream holds.
+
+    (texture-2d-from-stream device stream)
+    (texture-2d-from-stream device stream :width 64 :height 64 :zoom t)
+
+The first is `FromStream(GraphicsDevice, Stream)'; the second is
+`FromStream(GraphicsDevice, Stream, Int32, Int32, Boolean)'. XNA has no overload
+taking some of the three and not the others, so neither does this: all three or
+none, and anything between is refused rather than treated as one of the two
+shapes that exist. `:ZOOM NIL' is a value and not an absence, exactly as it is a
+`false' and not a missing argument there.
+
+STREAM is read to its end and is **not closed**: it is the caller's, as it is in
+XNA. See `src/framework/streams.lisp' for what a Common Lisp stream has to be."
+  (let ((supplied (count t (list width-supplied height-supplied zoom-supplied))))
+    (unless (or (zerop supplied) (= 3 supplied))
+      (error 'microsoft.xna.framework:cna-argument-error
+             :operation "texture-2d-from-stream"
+             :parameter-name (cond ((not width-supplied) "width")
+                                   ((not height-supplied) "height")
+                                   (t "zoom"))
+             :format-control
+             "XNA has two FromStream overloads and no overload between them: either none ~
+              of :WIDTH, :HEIGHT and :ZOOM, or all three. ~d of the three were given."
+             :format-arguments (list supplied)))
+    (when (plusp supplied)
+      (check-type width (integer 1))
+      (check-type height (integer 1)))
+    (%decode-encoded-texture graphics-device
+                             (microsoft.xna.framework::%read-stream-octets
+                              stream "texture-2d-from-stream")
+                             width height zoom (plusp supplied))))
+
+;;; --- Texture2D.SaveAsPng and SaveAsJpeg -------------------------------------
+
+(defun %save-texture-as (texture stream width height format operation)
+  "Encode TEXTURE at WIDTH by HEIGHT and write the bytes to STREAM.
+
+The count/copy pair, which is how every sized read in this ABI works: ask for the
+byte count, allocate exactly that, copy into it. A capacity that is too small
+performs no partial write, so a count that moved between the two calls is a
+refusal rather than a truncated image."
+  (cna-lisp.internal:check-usable texture operation)
+  (microsoft.xna.framework::%check-stream-argument stream operation :output)
+  (check-type width (integer 1))
+  (check-type height (integer 1))
+  (let ((handle (cna-lisp.internal:handle-of texture)))
+    (cffi:with-foreign-object (out :uint64)
+      (setf (cffi:mem-ref out :uint64) 0)
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%texture-2d-get-encoded-byte-count
+        handle format width height out)
+       operation :object-type (type-of texture))
+      (let ((count (cffi:mem-ref out :uint64)))
+        (when (zerop count)
+          (error 'microsoft.xna.framework:cna-internal-error
+                 :operation operation :object-type (type-of texture)
+                 :format-control "CNA reported an encoded size of zero bytes."))
+        (cffi:with-foreign-object (buffer :uint8 count)
+          (cna-lisp.internal:check-result
+           (cna-lisp.internal.ffi::%texture-2d-copy-encoded
+            handle format width height buffer count out)
+           operation :object-type (type-of texture))
+          (let* ((written (cffi:mem-ref out :uint64))
+                 (octets (make-array written :element-type '(unsigned-byte 8))))
+            (dotimes (i written)
+              (setf (aref octets i) (cffi:mem-aref buffer :uint8 i)))
+            (microsoft.xna.framework::%write-stream-octets stream octets operation))))))
+  (values))
+
+(defgeneric save-as-png (texture stream width height)
+  (:documentation
+   "Texture2D.SaveAsPng(Stream, Int32, Int32): encode this texture as a PNG.
+
+    (with-open-file (out \"shot.png\" :direction :output
+                                     :element-type '(unsigned-byte 8))
+      (save-as-png texture out 64 64))
+
+WIDTH and HEIGHT are the *encoded* extent, which is what XNA's are: the texture is
+resampled to them by CNA. The stream is written and left open, as XNA leaves it."))
+
+(defgeneric save-as-jpeg (texture stream width height)
+  (:documentation
+   "Texture2D.SaveAsJpeg(Stream, Int32, Int32): encode this texture as a JPEG.
+
+The quality is CNA's configured default, which is the same thing XNA's is: the
+member takes no quality argument on either side. See SAVE-AS-PNG."))
+
+(defmethod save-as-png ((texture texture-2d) stream width height)
+  (%save-texture-as texture stream width height
+                    cna-lisp.internal.ffi::+texture-image-format-png+ "save-as-png"))
+
+(defmethod save-as-jpeg ((texture texture-2d) stream width height)
+  (%save-texture-as texture stream width height
+                    cna-lisp.internal.ffi::+texture-image-format-jpeg+ "save-as-jpeg"))
+
 (defun %decoded-dimensions (bytes)
-  "The pixel dimensions a PNG header declares.
+  "The pixel dimensions a PNG header declares, or NIL and NIL for anything else.
 
 CNA has no route that reports a texture's extent, so the extent is read from the
-image the caller supplied rather than invented. A payload that is not a PNG
-answers zero and zero, and WIDTH and HEIGHT then report what is actually known:
-nothing."
+image the caller supplied rather than invented. **A payload that is not a PNG
+answers NIL**, and WIDTH and HEIGHT then refuse -- which is what reporting what
+is actually known, namely nothing, has to mean. It used to answer zero and zero, which is a
+number, and a number is what a caller draws a quad with. CNA decodes JPEG and DDS
+as well as PNG, so this is reachable: a JPEG handed to TEXTURE-2D-FROM-STREAM
+decodes into a real texture whose size this binding has not been told."
   (if (and (>= (length bytes) 24)
            (equalp (subseq bytes 0 8) #(137 80 78 71 13 10 26 10)))
       (flet ((be32 (offset)
@@ -215,7 +384,7 @@ nothing."
                        (ash (aref bytes (+ offset 2)) 8)
                        (aref bytes (+ offset 3)))))
         (values (be32 16) (be32 20)))
-      (values 0 0)))
+      (values nil nil)))
 
 (defun bounds (texture)
   "Texture2D.Bounds."

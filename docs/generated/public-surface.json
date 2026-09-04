@@ -18526,6 +18526,54 @@
           "documentation": "GraphicsDevice.SamplerStates: the pixel-shader sampler collection."
         },
         {
+          "name": "save-as-jpeg",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "texture",
+            "stream",
+            "width",
+            "height"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Texture2D.SaveAsJpeg(Stream, Int32, Int32): encode this texture as a JPEG.\n\nThe quality is CNA's configured default, which is the same thing XNA's is: the\nmember takes no quality argument on either side. See SAVE-AS-PNG."
+        },
+        {
+          "name": "save-as-png",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "texture",
+            "stream",
+            "width",
+            "height"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Texture2D.SaveAsPng(Stream, Int32, Int32): encode this texture as a PNG.\n\n    (with-open-file (out \"shot.png\" :direction :output\n                                     :element-type '(unsigned-byte 8))\n      (save-as-png texture out 64 64))\n\nWIDTH and HEIGHT are the *encoded* extent, which is what XNA's are: the texture is\nresampled to them by CNA. The stream is written and left open, as XNA leaves it."
+        },
+        {
           "name": "scissor-rectangle",
           "fbound": true,
           "macro": false,
@@ -19483,6 +19531,36 @@
           "constant": false,
           "value": null,
           "documentation": "Decode a PNG file into a real native Texture2D."
+        },
+        {
+          "name": "texture-2d-from-stream",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "graphics-device",
+            "stream",
+            "&key",
+            "(width nil width-supplied)",
+            "(height nil height-supplied)",
+            "(zoom nil zoom-supplied)"
+          ],
+          "keywords": [
+            "height",
+            "width",
+            "zoom"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Texture2D.FromStream: decode an image a Common Lisp binary stream holds.\n\n    (texture-2d-from-stream device stream)\n    (texture-2d-from-stream device stream :width 64 :height 64 :zoom t)\n\nThe first is `FromStream(GraphicsDevice, Stream)'; the second is\n`FromStream(GraphicsDevice, Stream, Int32, Int32, Boolean)'. XNA has no overload\ntaking some of the three and not the others, so neither does this: all three or\nnone, and anything between is refused rather than treated as one of the two\nshapes that exist. `:ZOOM NIL' is a value and not an absence, exactly as it is a\n`false' and not a missing argument there.\n\nSTREAM is read to its end and is **not closed**: it is the caller's, as it is in\nXNA. See `src/framework/streams.lisp' for what a Common Lisp stream has to be."
         },
         {
           "name": "texture-address-mode",
@@ -29217,7 +29295,7 @@
         "texture-2d-from-png-bytes",
         "texture-2d-from-png-file"
       ],
-      "reason": "Texture2D.FromStream over CNA's decode routes. The Stream projection this\n      member's real signature needs is not part of this milestone."
+      "reason": "The same CNA decode route TEXTURE-2D-FROM-STREAM uses, reached from a byte\n      vector and from a pathname instead of from a stream. FromStream itself is\n      now projected, so these are no longer standing in for it: they are the two\n      shapes a Lisp caller most often already has, and neither has an XNA member\n      to be confused with."
     },
     {
       "package": "microsoft.xna.framework",

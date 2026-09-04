@@ -1174,12 +1174,6 @@
       "not_applicable": {
         "Dispose(Boolean)": "The protected dispose(bool) pattern."
       },
-      "unimplemented": {
-        "FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "Needs the System.IO.Stream projection. TEXTURE-2D-FROM-PNG-BYTES and TEXTURE-2D-FROM-PNG-FILE are CNA-Lisp additions over the same CNA route, and are declared as extensions rather than claimed as this member.",
-        "FromStream(GraphicsDevice,Stream)": "See the five-argument overload.",
-        "SaveAsJpeg(Stream,Int32,Int32)": "Needs the Stream projection.",
-        "SaveAsPng(Stream,Int32,Int32)": "Needs the Stream projection."
-      },
       "member_overrides": {
         "SetData(!!0[])": {
           "lisp": "set-data",
@@ -1250,6 +1244,32 @@
           "setf": false,
           "status": "partial",
           "reason": "**Partial, and CNA is why.** ABI 0.21.0 has no route reporting a Texture2D's dimensions: cna_texture_get_info answers the level count and the surface format, cna_texture2d_get_storage_info answers which storage is retained, and neither answers a width. A texture decoded through TEXTURE-2D-FROM-PNG-BYTES knows its size because this binding read it out of the image header on the way past; one the ContentManager loaded was never handed to this binding as bytes, so there is nothing to have read and the reader refuses with a condition naming the missing route rather than answering a plausible zero. docs/limitations.md."
+        },
+        "FromStream(GraphicsDevice,Stream)": {
+          "lisp": "texture-2d-from-stream",
+          "reason": "**Partial, and CNA is why.** Read from the assembly, the two-argument overload is the five-argument private constructor called with the graphics profile's MaxTextureSize for both extents and image operation 0 -- so XNA *fits* an oversized image down to what the profile can hold. CNA's decode takes an optional CNA_Texture2DDecodeInfo and a null one \"preserves source dimensions\", which is this overload without that fit, and ABI 0.21.0 reports no maximum texture size for the fit to be computed from -- GraphicsProfile and the whole device-capability surface are themselves missing. An image within the profile's limit decodes identically; one larger than it decodes at its own size here and at the limit there. The extent the finished texture reports is read from the image header on the way past, so a PNG answers its size and a JPEG or a DDS refuses rather than answering a plausible zero. docs/limitations.md.",
+          "status": "partial"
+        },
+        "FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": {
+          "lisp": "texture-2d-from-stream",
+          "reason": "**Partial, and CNA is why.** The requested extent and the zoom/fit choice reach CNA exactly: XNA computes image operation `zoom ? 3 : 1`, and CNA_Texture2DDecodeInfo carries a width, a height and a zoom flag documented as \"true to cover-and-crop; false to fit while preserving aspect ratio\", which is the same pair of operations. What is partial is what the finished texture can say about itself. A zooming decode covers and crops, so the result is exactly the requested extent and WIDTH and HEIGHT answer it; a *fitting* decode answers something no larger than the request and ABI 0.21.0 has no route reporting a texture's extent, so WIDTH and HEIGHT refuse there rather than answering the request as though it were the result. The resampling itself is CNA's and is not asserted to be pixel-identical to XNA's. docs/limitations.md.",
+          "status": "partial"
+        },
+        "SaveAsPng(Stream,Int32,Int32)": {
+          "lisp": "save-as-png",
+          "generic": true,
+          "reason": "SaveAsPng over CNA's cna_texture2d_get_encoded_byte_count and cna_texture2d_copy_encoded, with the PNG format identity. XNA's two argument checks are reproduced in XNA's order -- a null stream, then a stream that cannot be written -- and System.IO.Stream projects onto an ordinary Common Lisp binary stream, which is what this language already has for the same job. Proved by round trip: a two-by-two texture of four different opaque colours is encoded to a file and read back through FromStream with every texel intact, so neither the encoder nor the decoder can pass by doing nothing. The stream is written and left open, as XNA leaves it."
+        },
+        "SaveAsJpeg(Stream,Int32,Int32)": {
+          "lisp": "save-as-jpeg",
+          "generic": true,
+          "reason": "SaveAsJpeg, the same pair of CNA routes with the JPEG format identity. The quality is CNA's configured default, which is as much as XNA's member says too: neither takes a quality argument. No round-trip equality is claimed, because JPEG is lossy; what is proved is that the bytes are a real encoding -- they are a different size from the PNG of the same texture, and they decode back through FromStream into a texture. See SaveAsPng for the stream contract."
+        }
+      },
+      "overload_families": {
+        "FromStream": {
+          "lisp": "texture-2d-from-stream",
+          "reason": "XNA's two FromStream overloads are one generic function whose supplied keywords select between them, and only those two shapes are accepted: none of :WIDTH, :HEIGHT and :ZOOM is FromStream(GraphicsDevice, Stream); all three is FromStream(GraphicsDevice, Stream, Int32, Int32, Boolean). XNA has no overload taking some of the three and not the others, so one or two of them is refused with the reason rather than treated as one of the two that exist. :ZOOM NIL is a value and not an absence, exactly as a `false` is not a missing argument there, so the shape check is on suppliedness."
         }
       }
     },

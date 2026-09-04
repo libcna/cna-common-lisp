@@ -64,8 +64,11 @@
      "Which renderer is behind the device. XNA has no equivalent; without it a
       headless qualification run cannot be interpreted.")
     (microsoft.xna.framework.graphics texture-2d-from-png-bytes texture-2d-from-png-file
-     "Texture2D.FromStream over CNA's decode routes. The Stream projection this
-      member's real signature needs is not part of this milestone.")
+     "The same CNA decode route TEXTURE-2D-FROM-STREAM uses, reached from a byte
+      vector and from a pathname instead of from a stream. FromStream itself is
+      now projected, so these are no longer standing in for it: they are the two
+      shapes a Lisp caller most often already has, and neither has an XNA member
+      to be confused with.")
     (microsoft.xna.framework
      cna-error cna-native-error cna-usage-error
      cna-invalid-argument-error cna-invalid-object-error cna-invalid-state-error

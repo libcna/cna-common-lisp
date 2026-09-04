@@ -24,10 +24,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 403,
+    "functions": 405,
     "structs": 63,
     "struct_fields": 473,
-    "constants": 485,
+    "constants": 487,
     "callbacks": 9,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -1529,6 +1529,90 @@
       "ownership": "destroys:texture-2d",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_texture2d_destroy(CNA_Handle texture)"
+    },
+    {
+      "name": "cna_texture2d_get_encoded_byte_count",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "image_format",
+          "c_type": "CNA_TextureImageFormat",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "target_width",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "target_height",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_get_encoded_byte_count(CNA_Handle texture, CNA_TextureImageFormat image_format, uint32_t target_width, uint32_t target_height, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_texture2d_copy_encoded",
+      "header": "texture.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "image_format",
+          "c_type": "CNA_TextureImageFormat",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "target_width",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "target_height",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "destination",
+          "c_type": "uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture2d_copy_encoded(CNA_Handle texture, CNA_TextureImageFormat image_format, uint32_t target_width, uint32_t target_height, uint8_t* destination, uint64_t capacity, uint64_t* out_byte_count)"
     },
     {
       "name": "cna_texture2d_get_storage_info",
@@ -15675,6 +15759,8 @@
     "CNA_TEXTURE_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT": 8,
     "CNA_TEXTURE_FILTER_POINT": 1,
     "CNA_TEXTURE_FILTER_POINT_MIP_LINEAR": 4,
+    "CNA_TEXTURE_IMAGE_FORMAT_JPEG": 1,
+    "CNA_TEXTURE_IMAGE_FORMAT_PNG": 0,
     "CNA_TOUCH_LOCATION_INVALID": 0,
     "CNA_TOUCH_LOCATION_MOVED": 3,
     "CNA_TOUCH_LOCATION_PRESSED": 2,

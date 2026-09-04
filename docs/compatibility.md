@@ -112,9 +112,9 @@ genuine absence.
 <!-- generated:complete types=135 -->
 <!-- generated:partial types=12 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1770 -->
-<!-- generated:partial members=14 -->
-<!-- generated:missing members=55 -->
+<!-- generated:complete members=1772 -->
+<!-- generated:partial members=16 -->
+<!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
 
@@ -128,9 +128,9 @@ Selection **Foundation 1 and the managed closures**: 147 types, 2256 members.
 | Types complete | **135** |
 | Types partial | **12** |
 | Types missing | **0** |
-| Members complete | **1770** |
-| Members partial | **14** |
-| Members missing | **55** |
+| Members complete | **1772** |
+| Members partial | **16** |
+| Members missing | **51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -185,7 +185,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.GraphicsDevice` | **partial** | 33 | 1 | 21 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
-| `M.X.F.Graphics.Texture2D` | **partial** | 9 | 2 | 4 | 1 |
+| `M.X.F.Graphics.Texture2D` | **partial** | 11 | 4 | 0 | 1 |
 | `M.X.F.Graphics.RenderTarget2D` | **complete** | 8 | 0 | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetUsage` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.DepthFormat` | **complete** | 4 | 0 | 0 | 1 |
@@ -336,7 +336,6 @@ back-reference.
 | `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
-| `M.X.F.Graphics.Texture2D` | 4 | 2 |
 | `M.X.F.Content.ContentManager` | 3 | 3 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
@@ -344,6 +343,7 @@ back-reference.
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
+| `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
@@ -371,10 +371,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=403 -->
+<!-- generated:bound native functions=405 -->
 <!-- generated:bound native structs=63 -->
 <!-- generated:bound native struct fields=473 -->
-<!-- generated:bound native constants=485 -->
+<!-- generated:bound native constants=487 -->
 <!-- generated:bound native callbacks=9 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -383,10 +383,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 403 |
+| Bound functions | 405 |
 | Bound structs | 63 |
 | Bound struct fields | 473 |
-| Bound constants | 485 |
+| Bound constants | 487 |
 | Bound callback typedefs | 9 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |

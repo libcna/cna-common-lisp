@@ -462,6 +462,8 @@
 (defconstant +texture-filter-min-point-mag-linear-mip-point+ 8)
 (defconstant +texture-filter-point+ 1)
 (defconstant +texture-filter-point-mip-linear+ 4)
+(defconstant +texture-image-format-jpeg+ 1)
+(defconstant +texture-image-format-png+ 0)
 (defconstant +touch-location-invalid+ 0)
 (defconstant +touch-location-moved+ 3)
 (defconstant +touch-location-pressed+ 2)

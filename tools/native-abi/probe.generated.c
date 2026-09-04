@@ -1206,6 +1206,8 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_resource_unsubscribe_disposing)(C
 CNA_Result (*const cna_lisp_probe_cna_texture2d_create_from_encoded_memory)(CNA_Handle, const uint8_t*, uint64_t, const CNA_Texture2DDecodeInfo*, CNA_Handle*) = cna_texture2d_create_from_encoded_memory;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_create_from_file_with_device)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_texture2d_create_from_file_with_device;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_destroy)(CNA_Handle) = cna_texture2d_destroy;
+CNA_Result (*const cna_lisp_probe_cna_texture2d_get_encoded_byte_count)(CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint64_t*) = cna_texture2d_get_encoded_byte_count;
+CNA_Result (*const cna_lisp_probe_cna_texture2d_copy_encoded)(CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint8_t*, uint64_t, uint64_t*) = cna_texture2d_copy_encoded;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_get_storage_info)(CNA_Handle, CNA_Texture2DStorageInfo*) = cna_texture2d_get_storage_info;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_get_type_name_byte_count)(CNA_Handle, uint64_t*) = cna_texture2d_get_type_name_byte_count;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_copy_type_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_texture2d_copy_type_name;
@@ -2011,6 +2013,8 @@ _Static_assert((int64_t)(CNA_TEXTURE_FILTER_MIN_POINT_MAG_LINEAR_MIP_LINEAR) == 
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT) == INT64_C(8), "CNA_TEXTURE_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT value");
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_POINT) == INT64_C(1), "CNA_TEXTURE_FILTER_POINT value");
 _Static_assert((int64_t)(CNA_TEXTURE_FILTER_POINT_MIP_LINEAR) == INT64_C(4), "CNA_TEXTURE_FILTER_POINT_MIP_LINEAR value");
+_Static_assert((int64_t)(CNA_TEXTURE_IMAGE_FORMAT_JPEG) == INT64_C(1), "CNA_TEXTURE_IMAGE_FORMAT_JPEG value");
+_Static_assert((int64_t)(CNA_TEXTURE_IMAGE_FORMAT_PNG) == INT64_C(0), "CNA_TEXTURE_IMAGE_FORMAT_PNG value");
 _Static_assert((int64_t)(CNA_TOUCH_LOCATION_INVALID) == INT64_C(0), "CNA_TOUCH_LOCATION_INVALID value");
 _Static_assert((int64_t)(CNA_TOUCH_LOCATION_MOVED) == INT64_C(3), "CNA_TOUCH_LOCATION_MOVED value");
 _Static_assert((int64_t)(CNA_TOUCH_LOCATION_PRESSED) == INT64_C(2), "CNA_TOUCH_LOCATION_PRESSED value");

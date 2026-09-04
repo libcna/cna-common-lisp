@@ -254,6 +254,14 @@
 (defcfun ("cna_texture2d_destroy" %texture-2d-destroy) :uint32
   (texture :uint64))
 
+;;; CNA_Result cna_texture2d_get_encoded_byte_count(CNA_Handle texture, CNA_TextureImageFormat image_format, uint32_t target_width, uint32_t target_height, uint64_t* out_byte_count)
+(defcfun ("cna_texture2d_get_encoded_byte_count" %texture-2d-get-encoded-byte-count) :uint32
+  (texture :uint64) (image-format :uint32) (target-width :uint32) (target-height :uint32) (out-byte-count :pointer))
+
+;;; CNA_Result cna_texture2d_copy_encoded(CNA_Handle texture, CNA_TextureImageFormat image_format, uint32_t target_width, uint32_t target_height, uint8_t* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_texture2d_copy_encoded" %texture-2d-copy-encoded) :uint32
+  (texture :uint64) (image-format :uint32) (target-width :uint32) (target-height :uint32) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
 ;;; CNA_Result cna_texture2d_get_storage_info(CNA_Handle texture, CNA_Texture2DStorageInfo* out_info)
 (defcfun ("cna_texture2d_get_storage_info" %texture-2d-get-storage-info) :uint32
   (texture :uint64) (out-info :pointer))
@@ -1687,6 +1695,8 @@
     ("cna_texture2d_create_from_encoded_memory" %texture-2d-create-from-encoded-memory :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-2d:child-of-game")
     ("cna_texture2d_create_from_file_with_device" %texture-2d-create-from-file-with-device :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:texture-2d:child-of-game")
     ("cna_texture2d_destroy" %texture-2d-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:texture-2d")
+    ("cna_texture2d_get_encoded_byte_count" %texture-2d-get-encoded-byte-count :uint32 (:uint64 :uint32 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_texture2d_copy_encoded" %texture-2d-copy-encoded :uint32 (:uint64 :uint32 :uint32 :uint32 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_texture2d_get_storage_info" %texture-2d-get-storage-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_texture2d_get_type_name_byte_count" %texture-2d-get-type-name-byte-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_texture2d_copy_type_name" %texture-2d-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")

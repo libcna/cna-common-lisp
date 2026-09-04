@@ -808,6 +808,88 @@ template's `--frames 60` and `--frames 600`, and the tests that pin an update
 count -- uses variable timing. A deterministic claim under a fixed step would be
 a claim about how fast the machine happened to be.
 
+## `System.IO.Stream` is a Common Lisp stream, and is not a projected type
+
+`Stream` is **not in the pinned contract**: that snapshot is the XNA profile, and
+`Stream` belongs to the BCL. So there is no selected type here to be complete or
+partial about. What there is, is five XNA members that take or answer one — four
+on `Texture2D` and `TitleContainer.OpenStream` — and a language with its own
+equivalent abstraction.
+
+`System.IO.Stream` therefore maps onto an **ordinary Common Lisp binary stream**.
+A consumer passes a stream from `OPEN`, and `WITH-OPEN-FILE`, `READ-SEQUENCE`,
+`FILE-POSITION` and `CLOSE` all mean what they already mean:
+
+```lisp
+(with-open-file (out "shot.png" :direction :output
+                                :element-type '(unsigned-byte 8))
+  (gfx:save-as-png texture out 64 64))
+```
+
+**`SeekOrigin` is not projected, and needs no entry of its own.** .NET spells
+relative positioning as an enumeration argument to `Stream.Seek`; Common Lisp
+spells it as arithmetic on `FILE-POSITION`. An enumeration to pass to a function
+that does not take one would be a type nobody could use.
+
+**XNA's checks are reproduced in XNA's order.** `Texture2D.SaveAsImage` reads as
+a null check and then a capability check, both `ArgumentException`s naming the
+parameter, and that is what happens here against `INPUT-STREAM-P` and
+`OUTPUT-STREAM-P`. Three things a Common Lisp stream makes different:
+
+* **There is no `Length`, and none is asked for.** `FILE-LENGTH` is a file
+  stream's member and a non-seekable stream answers NIL from `FILE-POSITION`, so
+  reading goes on until `READ-SEQUENCE` returns short. That is end-of-file for
+  every stream kind and the only correct response to a partial read.
+* **A stream has an element type.** .NET has one `Stream` for bytes and for text;
+  Common Lisp does not, so a character stream is refused by name rather than read
+  as something it is not.
+* **A closed stream is an argument failure, not a disposal — on both sides.** A
+  disposed .NET `Stream` answers *false* from `CanRead` and `CanWrite`, so the
+  check XNA reaches first is the capability one and what it throws is
+  `ArgumentException`. Measured on this runtime: SBCL's `INPUT-STREAM-P` answers
+  NIL for a closed stream too. The two agree, and the condition text says so, so
+  the diagnosis is not lost.
+
+**Ownership is the caller's in both directions.** Nothing closes a stream it was
+given — XNA does not either, and a member that closed its argument would break a
+`WITH-OPEN-FILE` around it. There is no leave-open flag because there is nothing
+for one to control.
+
+### `Texture2D.FromStream`'s two overloads are both partial, for different reasons
+
+`SaveAsPng` and `SaveAsJpeg` are **complete**, and the evidence is a round trip: a
+two-by-two texture of four different opaque colours is encoded to a file and read
+back with every texel intact, so neither the encoder nor the decoder can pass by
+doing nothing. The JPEG is not compared texel for texel — it is lossy — but it is
+a different size from the PNG *and* decodes back into a texture, which arbitrary
+bytes would not.
+
+`FromStream` is partial twice over:
+
+* The **two-argument** overload is, read from the assembly, the private
+  constructor called with the graphics profile's `MaxTextureSize` for both
+  extents: XNA *fits* an oversized image down to what the profile can hold. CNA's
+  null decode info "preserves source dimensions", which is this overload without
+  that fit, and ABI 0.21.0 reports no maximum texture size for a fit to be
+  computed from. An image within the limit decodes identically; a larger one
+  decodes at its own size here and at the limit there.
+* The **five-argument** overload reaches CNA exactly — XNA computes
+  `zoom ? 3 : 1` and `CNA_Texture2DDecodeInfo` carries a width, a height and a
+  `zoom` flag meaning "cover-and-crop" against "fit while preserving aspect
+  ratio". What is partial is what the result can say about itself: a *zooming*
+  decode covers and crops, so `WIDTH` answers the requested extent, while a
+  *fitting* decode answers something no larger and 0.21.0 reports no texture
+  extent, so `WIDTH` refuses there.
+
+### The extent a decoded texture reports, and when it refuses
+
+`%DECODED-DIMENSIONS` reads the size out of the **PNG header** on the way past,
+because CNA reports no texture extent. It used to answer zero for a payload that
+was not a PNG, and zero is a number a caller draws a quad with. It answers NIL
+now, and `WIDTH` and `HEIGHT` refuse — which is what "report what is actually
+known: nothing" has to mean. This is reachable rather than theoretical: CNA
+decodes JPEG and DDS as well as PNG, and `FromStream` will hand any of them to it.
+
 ## Texture extent comes from the image, not from CNA
 
 CNA has no route reporting a `Texture2D`'s pixel extent. `width` and `height`

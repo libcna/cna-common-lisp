@@ -101,9 +101,9 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 <!-- generated:complete types=135 -->
 <!-- generated:partial types=12 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1770 -->
-<!-- generated:partial members=14 -->
-<!-- generated:missing members=55 -->
+<!-- generated:complete members=1772 -->
+<!-- generated:partial members=16 -->
+<!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
 
@@ -117,9 +117,9 @@ Selection **Foundation 1 and the managed closures**: 147 types, 2256 members.
 | Types complete | **135** |
 | Types partial | **12** |
 | Types missing | **0** |
-| Members complete | **1770** |
-| Members partial | **14** |
-| Members missing | **55** |
+| Members complete | **1772** |
+| Members partial | **16** |
+| Members missing | **51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -145,7 +145,6 @@ members actually are:
 | `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
-| `M.X.F.Graphics.Texture2D` | 4 | 2 |
 | `M.X.F.Content.ContentManager` | 3 | 3 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
@@ -153,6 +152,7 @@ members actually are:
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
+| `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
@@ -169,7 +169,6 @@ one.
 | `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Game` | 5 | 1 |
-| `M.X.F.Graphics.Texture2D` | 4 | 2 |
 | `M.X.F.Content.ContentManager` | 3 | 3 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
@@ -177,6 +176,7 @@ one.
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
+| `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 

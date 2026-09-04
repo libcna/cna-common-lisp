@@ -407,6 +407,7 @@
    ;; --- Texture and Texture2D ---------------------------------------------
    #:texture #:texture-2d
    #:texture-2d-from-png-file #:texture-2d-from-png-bytes
+   #:texture-2d-from-stream #:save-as-png #:save-as-jpeg
    #:width #:height #:level-count #:format-of #:bounds
    ;; --- SpriteBatch -------------------------------------------------------
    ;; --- RenderTarget2D ----------------------------------------------------

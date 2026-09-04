@@ -180,12 +180,12 @@ placeholder methods that answer a default and claim success.
 <!-- generated:complete types=135 -->
 <!-- generated:partial types=12 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1770 -->
-<!-- generated:partial members=14 -->
-<!-- generated:missing members=55 -->
+<!-- generated:complete members=1772 -->
+<!-- generated:partial members=16 -->
+<!-- generated:missing members=51 -->
 <!-- generated:not-applicable members=417 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=403 -->
+<!-- generated:bound native functions=405 -->
 <!-- generated:bound native structs=63 -->
 
 <!-- generated-block:scoreboard-headline -->
@@ -194,7 +194,7 @@ The generated scoreboard, over a selection of **147 XNA types and 2256 members**
 | | |
 | --- | --- |
 | Types complete / partial / missing | **135 / 12 / 0** |
-| Members complete / missing | **1770 / 55** |
+| Members complete / missing | **1772 / 51** |
 | Members not applicable | **417** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
@@ -208,7 +208,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **403 native routes** and **63 native structs**,
+The private foreign layer binds **405 native routes** and **63 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

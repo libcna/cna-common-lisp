@@ -315,6 +315,8 @@
       "CNA_TEXTURE_DATA_SINGLE",
       "CNA_TEXTURE_DATA_VECTOR2",
       "CNA_TEXTURE_DATA_VECTOR4",
+      "CNA_TEXTURE_IMAGE_FORMAT_PNG",
+      "CNA_TEXTURE_IMAGE_FORMAT_JPEG",
       "CNA_CUBE_MAP_FACE_POSITIVE_X",
       "CNA_CUBE_MAP_FACE_NEGATIVE_X",
       "CNA_CUBE_MAP_FACE_POSITIVE_Y",
@@ -1089,6 +1091,18 @@
       "header": "graphics.h",
       "thread": "owner",
       "ownership": "destroys:texture-2d"
+    },
+    {
+      "name": "cna_texture2d_get_encoded_byte_count",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture2d_copy_encoded",
+      "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
     },
     {
       "name": "cna_texture2d_get_storage_info",

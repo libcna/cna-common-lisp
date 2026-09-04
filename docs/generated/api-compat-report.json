@@ -22,15 +22,15 @@
    "complete": 135
   },
   "members_by_status": {
-   "complete": 1770,
-   "missing": 55,
+   "complete": 1772,
+   "missing": 51,
    "not-applicable": 417,
-   "partial": 14
+   "partial": 16
   },
-  "diagnostics": 55,
+  "diagnostics": 51,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 55,
+   "missing_member": 51,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1430,10 +1430,10 @@
    "members": {
     "new(GraphicsDevice,Int32,Int32)": "complete",
     "new(GraphicsDevice,Int32,Int32,Boolean,SurfaceFormat)": "complete",
-    "FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "missing",
-    "FromStream(GraphicsDevice,Stream)": "missing",
-    "SaveAsJpeg(Stream,Int32,Int32)": "missing",
-    "SaveAsPng(Stream,Int32,Int32)": "missing",
+    "FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "partial",
+    "FromStream(GraphicsDevice,Stream)": "partial",
+    "SaveAsJpeg(Stream,Int32,Int32)": "complete",
+    "SaveAsPng(Stream,Int32,Int32)": "complete",
     "SetData(!!0[])": "complete",
     "SetData(!!0[],Int32,Int32)": "complete",
     "SetData(Int32,Nullable`1,!!0[],Int32,Int32)": "complete",
@@ -3565,26 +3565,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceResetting",
    "detail": "no event projection is declared"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)",
-   "detail": "Needs the System.IO.Stream projection. TEXTURE-2D-FROM-PNG-BYTES and TEXTURE-2D-FROM-PNG-FILE are CNA-Lisp additions over the same CNA route, and are declared as extensions rather than claimed as this member."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream)",
-   "detail": "See the five-argument overload."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SaveAsJpeg(Stream,Int32,Int32)",
-   "detail": "Needs the Stream projection."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.Texture2D.SaveAsPng(Stream,Int32,Int32)",
-   "detail": "Needs the Stream projection."
   },
   {
    "category": "missing_member",

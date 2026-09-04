@@ -35,6 +35,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "internal/callback-registry")
    ;; --- Microsoft.Xna.Framework -------------------------------------------
    (:file "framework/disposable")
+   ;; The narrowed System.IO.Stream bridge: no type of its own, just the checks
+   ;; and the two transfers the XNA members that take a Stream need.
+   (:file "framework/streams")
    (:file "framework/binary32")
    (:file "framework/math-helper")
    (:file "framework/enums")
@@ -170,6 +173,8 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/content")
    ;; The atomicity proofs need the content fixture's root and asset name.
    (:file "native/content-atomicity")
+   ;; Texture2D's four Stream members, over ordinary Common Lisp streams.
+   (:file "native/texture-streams")
    ;; A subclass initializer runs after every base one, including the one that
    ;; took the handle; this proves that costs nothing.
    (:file "native/construction-atomicity")
