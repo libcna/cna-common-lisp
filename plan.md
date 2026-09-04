@@ -236,7 +236,17 @@ are pure managed and touch no native route:
   `RenderTarget2D` derives from `Texture2D` and a target can therefore be drawn.
   The rasterizer lane's sixth proof uses that: a clear into a bound target leaves
   the back buffer untouched, and the target's own contents then reach the screen
-  through the texture path.
+  through the texture path;
+* the component engine -- `GameComponent`, `DrawableGameComponent`,
+  `GameComponentCollection` and its two events, `GameComponentCollectionEventArgs`,
+  the three `I*` contracts as generic functions, `LaunchParameters`, and
+  `Game.Components` and `Game.LaunchParameters`. This is the one place in the
+  binding where the consumer *provides* behaviour rather than consuming it: CNA
+  takes a callback set and supplies the object implementing its C++ interfaces,
+  and a component's behaviour is its CLOS methods on the same generic functions a
+  `Game` specialises. The tests assert counts taken inside CNA's own loop, so an
+  engine that was exported and never wired would fail them. `GameServiceContainer`
+  is deliberately absent: its keys are two interfaces that are not projected.
 
 ## 6. Measured status
 
@@ -259,31 +269,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=133 -->
-<!-- generated:selected members=2145 -->
-<!-- generated:complete types=125 -->
-<!-- generated:partial types=8 -->
+<!-- generated:selected types=141 -->
+<!-- generated:selected members=2193 -->
+<!-- generated:complete types=132 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1680 -->
+<!-- generated:complete members=1720 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=65 -->
-<!-- generated:not-applicable members=399 -->
+<!-- generated:missing members=64 -->
+<!-- generated:not-applicable members=408 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 133 types, 2145 members.
+Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **125** |
-| Types partial | **8** |
+| Types complete | **132** |
+| Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1680** |
+| Members complete | **1720** |
 | Members partial | **1** |
-| Members missing | **65** |
-| Members not applicable | **399** |
+| Members missing | **64** |
+| Members not applicable | **408** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

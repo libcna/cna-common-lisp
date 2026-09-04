@@ -172,6 +172,18 @@ class Abi:
             decl = " ".join(decl.split())
             if not decl:
                 continue
+            # A function-pointer member: `RET (*name)(args)`. The general pattern
+            # below reads the whole declarator as the field name, which is how
+            # CNA_GameComponentCallbacks -- six handlers and a context -- came out
+            # with six fields called things like
+            # "void (*initialize)(void* context)". A function pointer is a
+            # pointer, and every one of these carries an offset and a size the
+            # generated probe asserts against the compiler, so naming it properly
+            # is all that is needed.
+            fp = re.match(r"^(.*?)\s*\(\s*\*\s*(\w+)\s*\)\s*\(.*\)$", decl)
+            if fp:
+                out.append(("void*", fp.group(2), None))
+                continue
             m = re.match(r"^(.*?)\s*(\w+)\s*(\[\s*([^\]]+?)\s*\])?$", decl)
             if not m:
                 out.append(("<unparsed>", decl, None))

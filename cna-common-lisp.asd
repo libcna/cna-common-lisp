@@ -98,6 +98,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "runtime/game-events")
    (:file "runtime/graphics-device-manager")
    (:file "runtime/manager-events")
+   ;; The component engine: classes CNA calls back into, and the collection the
+   ;; game drives them from. After Game, whose class it extends.
+   (:file "runtime/game-components")
    ;; --- declared capabilities and deliberate absences ----------------------
    (:file "capabilities"))
   :in-order-to ((test-op (test-op "cna-common-lisp/tests"))))
@@ -146,6 +149,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/effects")
    (:file "native/stock-effects")
    (:file "native/render-target")
+   (:file "native/game-components")
    ;; The text pixel proofs build on the SpriteFont fixture game.
    (:file "native/sprite-font")
    (:file "native/rasterization")

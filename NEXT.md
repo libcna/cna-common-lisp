@@ -96,31 +96,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=133 -->
-<!-- generated:selected members=2145 -->
-<!-- generated:complete types=125 -->
-<!-- generated:partial types=8 -->
+<!-- generated:selected types=141 -->
+<!-- generated:selected members=2193 -->
+<!-- generated:complete types=132 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1680 -->
+<!-- generated:complete members=1720 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=65 -->
-<!-- generated:not-applicable members=399 -->
+<!-- generated:missing members=64 -->
+<!-- generated:not-applicable members=408 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 133 types, 2145 members.
+Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **125** |
-| Types partial | **8** |
+| Types complete | **132** |
+| Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1680** |
+| Members complete | **1720** |
 | Members partial | **1** |
-| Members missing | **65** |
-| Members not applicable | **399** |
+| Members missing | **64** |
+| Members not applicable | **408** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -136,7 +136,7 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=8 --> are partial, and this is where the remaining
+<!-- generated:partial types=9 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
@@ -145,8 +145,9 @@ members actually are:
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
-| `M.X.F.Game` | 8 | 0 |
+| `M.X.F.Game` | 6 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
+| `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
@@ -165,8 +166,9 @@ one.
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
-| `M.X.F.Game` | 8 | 0 |
+| `M.X.F.Game` | 6 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
+| `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
@@ -226,8 +228,14 @@ the graph after each closure instead of following this list once it has moved.
    `EnvironmentMapEffect`, which is nine more members over
    `cna_environment_map_effect_*`. Do not add `EnvironmentMapEffect` with
    `EnvironmentMap` reported missing.
-2. **Game components and services**: `GameComponent`, `DrawableGameComponent`,
-   `GameComponentCollection`, `GameServiceContainer`, `LaunchParameters`.
+2. **`GameServiceContainer` and `Game.Services`**, which need
+   `IGraphicsDeviceService` and `IGraphicsDeviceManager` first -- and the first of
+   those needs `GraphicsDevice`'s four device-loss events. That is really the
+   *device-settings closure*: `Adapter`, `DisplayMode`, `PresentationParameters`,
+   `GraphicsProfile`, `GraphicsDeviceStatus`, the three `Reset` overloads,
+   `Present`, the five device events, and `GraphicsDeviceManager`'s sixteen, which
+   are the same subject seen from the other side. Doing it opens the container as
+   a by-product.
 3. **`System.IO.Stream` and `TitleContainer`**, which unblock
    `Texture2D.FromStream`, `SaveAsPng`, `SaveAsJpeg`, and then `ContentManager`.
 4. **Audio, models, media, storage, gamer services, networking.**
@@ -260,6 +268,15 @@ the graph after each closure instead of following this list once it has moved.
   `src/internal/abi-gate.lisp`, not in the manifest: the manifest's
   `admitted_abi_versions` gates the *generator*, the Lisp constant gates the
   *runtime*, and both have to move together.
+
+* **A component added in `LoadContent` is never initialized, and that is XNA's
+  doing.** `Game.Run` sets `inRun` *after* `Initialize()` returns; `Initialize()`
+  drains `notYetInitialized` and then calls `LoadContent()` at its very end; and
+  `GameComponentAdded` initializes a component only when `inRun` is already true.
+  So one added there lands on the list after the loop that empties it has
+  finished, and is updated and drawn every frame and initialized never. Read from
+  the pinned Game assembly, measured to be CNA's behaviour too, and pinned by a
+  test. Do not "fix" it.
 
 * **Pixel evidence no longer has to come from the back buffer.** `RenderTarget2D`
   derives from `Texture2D`, so a target's contents can be read by drawing it --

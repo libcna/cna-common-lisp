@@ -221,6 +221,21 @@
    #:cna-not-supported-error #:cna-platform-error #:cna-thread-error
    #:cna-callback-error #:cna-overflow-error #:cna-encoding-error
    #:cna-internal-error #:cna-shutting-down-error #:cna-buffer-too-small-error
+   ;; --- the component engine ----------------------------------------------
+   #:game-component #:drawable-game-component #:game-component-collection
+   #:game-component-collection-event-args #:event-args-game-component
+   #:component-enabled #:update-order #:component-visible #:draw-order
+   #:component-game #:component-dispose
+   #:components #:component-count #:component-at #:components-of
+   #:add-component #:insert-component #:remove-component #:remove-component-at
+   #:clear-components #:contains-component #:component-index
+   #:add-enabled-changed-handler #:remove-enabled-changed-handler
+   #:add-update-order-changed-handler #:remove-update-order-changed-handler
+   #:add-draw-order-changed-handler #:remove-draw-order-changed-handler
+   #:add-visible-changed-handler #:remove-visible-changed-handler
+   #:add-component-added-handler #:remove-component-added-handler
+   #:add-component-removed-handler #:remove-component-removed-handler
+   #:launch-parameters #:launch-parameter #:launch-parameter-names
    #:cna-argument-error #:cna-argument-out-of-range-error #:cna-error-parameter-name
    #:cna-disposed-error #:cna-ownership-error #:cna-scope-error
    #:cna-native-library-error #:cna-abi-rejected-error

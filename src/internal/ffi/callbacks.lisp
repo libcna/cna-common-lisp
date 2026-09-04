@@ -119,3 +119,80 @@ of doing what the registry does exactly."
     (:end-run (callback game-end-run-callback))
     (:unload-content (callback game-unload-content-callback))
     (:exiting (callback game-exiting-callback))))
+
+;;; --- game components -------------------------------------------------------
+;;;
+;;; A component is the one place in this ABI where the consumer *provides*
+;;; behaviour rather than consuming it: CNA's canonical component types are C++
+;;; interfaces, C cannot implement an interface, so CNA takes a callback set and
+;;; supplies the object that implements the interfaces and forwards to it.
+;;;
+;;; None of these returns a result code -- CNA's component handlers return void
+;;; and its own header says so: "a handler that fails has nowhere to report it:
+;;; return normally and record the failure in your own context". So a condition
+;;; raised in a component's method is contained here and re-signalled on the Lisp
+;;; side after the frame, which is the same containment every other callback in
+;;; this binding gets and the reason none of them may unwind through C.
+
+(defvar *component-dispatcher* nil
+  "Function of (KIND TOKEN GAME-TIME-POINTER). Void-returning: a component
+handler has no result code to answer with.")
+
+(defmacro define-component-callback (name kind timed)
+  `(defcallback ,name :void
+       (,@(when timed '((game-time :pointer))) (context :pointer))
+     (let ((dispatcher *component-dispatcher*))
+       (when dispatcher
+         (ignore-errors
+          (funcall dispatcher ,kind (pointer-address context)
+                   ,(if timed 'game-time '(null-pointer))))))))
+
+(define-component-callback component-initialize-callback :initialize nil)
+(define-component-callback component-update-callback :update t)
+(define-component-callback component-draw-callback :draw t)
+(define-component-callback component-load-content-callback :load-content nil)
+(define-component-callback component-unload-content-callback :unload-content nil)
+(define-component-callback component-dispose-callback :dispose nil)
+
+(defun component-callback-pointers ()
+  "The six handler pointers, in CNA_GameComponentCallbacks' own field order."
+  (list (callback component-initialize-callback)
+        (callback component-update-callback)
+        (callback component-draw-callback)
+        (callback component-load-content-callback)
+        (callback component-unload-content-callback)
+        (callback component-dispose-callback)))
+
+(defvar *component-event-dispatcher* nil
+  "Function of one integer token, called when CNA raises a component event.")
+
+(defcallback component-event-callback :void ((context :pointer))
+  (let ((dispatcher *component-event-dispatcher*))
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context))))))
+
+(defun component-event-callback-pointer ()
+  "The one top-level callback CNA is given for every component subscription.
+
+A canonical component event carries nothing but its sender, so CNA's handler
+takes only the context -- and the token in it already names the CLOS object."
+  (callback component-event-callback))
+
+(defvar *component-collection-dispatcher* nil
+  "Function of (TOKEN COMPONENT-HANDLE), called when the game's component
+collection gains or loses a component.")
+
+(defcallback component-collection-callback :void
+    ((component :uint64) (context :pointer))
+  (let ((dispatcher *component-collection-dispatcher*))
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context) component)))))
+
+(defun component-collection-callback-pointer ()
+  "The one top-level callback for ComponentAdded and ComponentRemoved.
+
+Unlike every other event in this binding, this one's argument is not empty:
+`GameComponentCollectionEventArgs' carries the component. CNA passes the handle
+directly rather than a description, so the handle is what reaches the dispatcher
+and the dispatcher resolves it to the component object."
+  (callback component-collection-callback))

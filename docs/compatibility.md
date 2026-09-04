@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=133 -->
-<!-- generated:selected members=2145 -->
-<!-- generated:complete types=125 -->
-<!-- generated:partial types=8 -->
+<!-- generated:selected types=141 -->
+<!-- generated:selected members=2193 -->
+<!-- generated:complete types=132 -->
+<!-- generated:partial types=9 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1680 -->
+<!-- generated:complete members=1720 -->
 <!-- generated:partial members=1 -->
-<!-- generated:missing members=65 -->
-<!-- generated:not-applicable members=399 -->
+<!-- generated:missing members=64 -->
+<!-- generated:not-applicable members=408 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 133 types, 2145 members.
+Selection **Foundation 1 and the managed closures**: 141 types, 2193 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **125** |
-| Types partial | **8** |
+| Types complete | **132** |
+| Types partial | **9** |
 | Types missing | **0** |
-| Members complete | **1680** |
+| Members complete | **1720** |
 | Members partial | **1** |
-| Members missing | **65** |
-| Members not applicable | **399** |
+| Members missing | **64** |
+| Members not applicable | **408** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -143,8 +143,16 @@ collapsed overload family says how each of its overloads is expressed.
 <!-- generated-block:per-type-table -->
 | Type | Status | complete | partial | missing | n/a |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `M.X.F.Game` | **partial** | 28 | 0 | 8 | 2 |
+| `M.X.F.Game` | **partial** | 30 | 0 | 6 | 2 |
 | `M.X.F.GameTime` | **complete** | 6 | 0 | 0 | 0 |
+| `M.X.F.IGameComponent` | **complete** | 1 | 0 | 0 | 0 |
+| `M.X.F.IUpdateable` | **complete** | 5 | 0 | 0 | 0 |
+| `M.X.F.IDrawable` | **complete** | 5 | 0 | 0 | 0 |
+| `M.X.F.GameComponent` | **complete** | 11 | 0 | 0 | 3 |
+| `M.X.F.DrawableGameComponent` | **complete** | 11 | 0 | 0 | 2 |
+| `M.X.F.GameComponentCollection` | **partial** | 2 | 0 | 1 | 4 |
+| `M.X.F.GameComponentCollectionEventArgs` | **complete** | 2 | 0 | 0 | 0 |
+| `M.X.F.LaunchParameters` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 13 | 0 | 16 | 1 |
 | `M.X.F.Color` | **complete** | 161 | 0 | 0 | 4 |
 | `M.X.F.Point` | **complete** | 6 | 0 | 0 | 4 |
@@ -322,8 +330,9 @@ back-reference.
 | `M.X.F.Graphics.GraphicsDevice` | 24 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 16 | 0 |
 | `M.X.F.Graphics.Texture2D` | 12 | 0 |
-| `M.X.F.Game` | 8 | 0 |
+| `M.X.F.Game` | 6 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
+| `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
@@ -353,11 +362,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=328 -->
-<!-- generated:bound native structs=54 -->
-<!-- generated:bound native struct fields=408 -->
-<!-- generated:bound native constants=469 -->
-<!-- generated:bound native callbacks=7 -->
+<!-- generated:bound native functions=360 -->
+<!-- generated:bound native structs=55 -->
+<!-- generated:bound native struct fields=417 -->
+<!-- generated:bound native constants=474 -->
+<!-- generated:bound native callbacks=9 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
 <!-- generated:abi version encoded=5376 -->
@@ -365,11 +374,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 328 |
-| Bound structs | 54 |
-| Bound struct fields | 408 |
-| Bound constants | 469 |
-| Bound callback typedefs | 7 |
+| Bound functions | 360 |
+| Bound structs | 55 |
+| Bound struct fields | 417 |
+| Bound constants | 474 |
+| Bound callback typedefs | 9 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
 | Admitted ABI versions | 0.21.0 only (encoded 5376) |

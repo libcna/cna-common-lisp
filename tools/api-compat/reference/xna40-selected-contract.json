@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 133,
-  "member_count": 2145
+  "type_count": 141,
+  "member_count": 2193
  },
  "types": [
   {
@@ -589,6 +589,780 @@
      "set": false,
      "getAccess": "public",
      "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.IGameComponent",
+   "kind": "interface",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": null,
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "Initialize",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.IUpdateable",
+   "kind": "interface",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": null,
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "Update",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "gameTime",
+       "type": "Microsoft.Xna.Framework.GameTime",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Enabled",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "UpdateOrder",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "EnabledChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "UpdateOrderChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.IDrawable",
+   "kind": "interface",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": null,
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "Draw",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "gameTime",
+       "type": "Microsoft.Xna.Framework.GameTime",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Visible",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DrawOrder",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "VisibleChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "DrawOrderChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameComponent",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [
+    "Microsoft.Xna.Framework.IGameComponent",
+    "Microsoft.Xna.Framework.IUpdateable",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.IGameComponent",
+    "Microsoft.Xna.Framework.IUpdateable",
+    "System.IDisposable"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "game",
+       "type": "Microsoft.Xna.Framework.Game",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Initialize",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Update",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "gameTime",
+       "type": "Microsoft.Xna.Framework.GameTime",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Finalize",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "disposing",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "OnUpdateOrderChanged",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sender",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "args",
+       "type": "System.EventArgs",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "OnEnabledChanged",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sender",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "args",
+       "type": "System.EventArgs",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Enabled",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "UpdateOrder",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Game",
+     "type": "Microsoft.Xna.Framework.Game",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "EnabledChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "UpdateOrderChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "Disposed",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.DrawableGameComponent",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "Microsoft.Xna.Framework.GameComponent",
+   "interfaces": [
+    "Microsoft.Xna.Framework.IDrawable",
+    "Microsoft.Xna.Framework.IGameComponent",
+    "Microsoft.Xna.Framework.IUpdateable",
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "Microsoft.Xna.Framework.IDrawable"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "game",
+       "type": "Microsoft.Xna.Framework.Game",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Initialize",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "disposing",
+       "type": "System.Boolean",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Draw",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "gameTime",
+       "type": "Microsoft.Xna.Framework.GameTime",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "LoadContent",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "UnloadContent",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "OnDrawOrderChanged",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sender",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "args",
+       "type": "System.EventArgs",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "OnVisibleChanged",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sender",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "args",
+       "type": "System.EventArgs",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "Visible",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DrawOrder",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "GraphicsDevice",
+     "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "VisibleChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "DrawOrderChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameComponentCollection",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Collections.ObjectModel.Collection`1[Microsoft.Xna.Framework.IGameComponent]",
+   "interfaces": [
+    "System.Collections.Generic.ICollection`1[Microsoft.Xna.Framework.IGameComponent]",
+    "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.IGameComponent]",
+    "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.IGameComponent]",
+    "System.Collections.Generic.IReadOnlyCollection`1[Microsoft.Xna.Framework.IGameComponent]",
+    "System.Collections.Generic.IReadOnlyList`1[Microsoft.Xna.Framework.IGameComponent]",
+    "System.Collections.ICollection",
+    "System.Collections.IEnumerable",
+    "System.Collections.IList"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "InsertItem",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "index",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "item",
+       "type": "Microsoft.Xna.Framework.IGameComponent",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "RemoveItem",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "index",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "SetItem",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "index",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "item",
+       "type": "Microsoft.Xna.Framework.IGameComponent",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "ClearItems",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "ComponentAdded",
+     "type": "System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "ComponentRemoved",
+     "type": "System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameComponentCollectionEventArgs",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.EventArgs",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "gameComponent",
+       "type": "Microsoft.Xna.Framework.IGameComponent",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "GameComponent",
+     "type": "Microsoft.Xna.Framework.IGameComponent",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.LaunchParameters",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.Collections.Generic.Dictionary`2[System.String,System.String]",
+   "interfaces": [
+    "System.Collections.Generic.ICollection`1[System.Collections.Generic.KeyValuePair`2[System.String,System.String]]",
+    "System.Collections.Generic.IDictionary`2[System.String,System.String]",
+    "System.Collections.Generic.IEnumerable`1[System.Collections.Generic.KeyValuePair`2[System.String,System.String]]",
+    "System.Collections.Generic.IReadOnlyCollection`1[System.Collections.Generic.KeyValuePair`2[System.String,System.String]]",
+    "System.Collections.Generic.IReadOnlyDictionary`2[System.String,System.String]",
+    "System.Collections.ICollection",
+    "System.Collections.IDictionary",
+    "System.Collections.IEnumerable",
+    "System.Runtime.Serialization.IDeserializationCallback",
+    "System.Runtime.Serialization.ISerializable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
      "parameters": []
     }
    ]

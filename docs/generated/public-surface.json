@@ -276,6 +276,72 @@
           "documentation": "Game.Activated: the game gained focus.\n\nHANDLER is called with the game and nothing else, on the thread CNA raises the\nevent on."
         },
         {
+          "name": "add-component",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.Add.\n\nThe collection accepts the same component twice, as XNA's does; CNA does not\ninvent a refusal and neither does this. A component added after the game has\ninitialized is initialized when it is added."
+        },
+        {
+          "name": "add-component-added-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.ComponentAdded.\n\nHANDLER takes **two** arguments -- the collection and a\nGAME-COMPONENT-COLLECTION-EVENT-ARGS -- because unlike every other event in this\nbinding this one's argument is not empty. EVENT-ARGS-GAME-COMPONENT answers the\ncomponent that was added."
+        },
+        {
+          "name": "add-component-removed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.ComponentRemoved. See ADD-COMPONENT-ADDED-HANDLER for\nthe handler's two arguments."
+        },
+        {
           "name": "add-deactivated-handler",
           "fbound": true,
           "macro": false,
@@ -408,6 +474,50 @@
           "documentation": "Game.Disposed: the game was disposed.\n\nA condition signalled from this handler has nowhere to go -- see the file\nheader -- because there is no later native call to report it through."
         },
         {
+          "name": "add-draw-order-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IDrawable.DrawOrderChanged. HANDLER is called with the component."
+        },
+        {
+          "name": "add-enabled-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IUpdateable.EnabledChanged. HANDLER is called with the component."
+        },
+        {
           "name": "add-exiting-handler",
           "fbound": true,
           "macro": false,
@@ -428,6 +538,50 @@
           "constant": false,
           "value": null,
           "documentation": "Game.Exiting: the game is exiting.\n\nThis only observes. ON-EXITING is the overridable step that runs as part of the\nshutdown; a handler here cannot stop it."
+        },
+        {
+          "name": "add-update-order-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IUpdateable.UpdateOrderChanged. HANDLER is called with the component."
+        },
+        {
+          "name": "add-visible-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IDrawable.VisibleChanged. HANDLER is called with the component."
         },
         {
           "name": "all-containment-type",
@@ -1418,6 +1572,27 @@
           "constant": false,
           "value": null,
           "documentation": "BoundingSphere.Transform.\n\nThe radius is scaled by the largest of the three row lengths, so a non-uniform\nscale answers a sphere that still contains the transformed one."
+        },
+        {
+          "name": "clear-components",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.Clear."
         },
         {
           "name": "clr-type-name",
@@ -2618,6 +2793,203 @@
           "documentation": "Color.ToVector4: all four channels as unit floats."
         },
         {
+          "name": "component-at",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "index"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection's indexer: the component at INDEX."
+        },
+        {
+          "name": "component-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.Count."
+        },
+        {
+          "name": "component-dispose",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponent.Dispose(bool) as the hook a subclass overrides.\n\nCalled by CNA when the component is disposed, before its handle is released. XNA\nspells the overridable half of disposal `Dispose(bool disposing)'; Common Lisp\nhas no protected methods, so the hook is its own generic function and DISPOSE\nstays the one operation every native object here answers."
+        },
+        {
+          "name": "component-enabled",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "component"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IUpdateable.Enabled: whether the game calls this component's UPDATE."
+        },
+        {
+          "name": "component-game",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponent.Game: the game this component was created against.\n\nThe Lisp object, cross-checked against the handle CNA reports. CNA's ABI has no\nroute from a game handle back to the CLOS object that owns it, so this compares\nrather than invents -- the same reasoning BasicEffect.Texture uses."
+        },
+        {
+          "name": "component-index",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.IndexOf: the component's position, or NIL.\n\nXNA answers -1 for absent. NIL is this binding's projection of that: a position\nis a non-negative index, and -1 is a sentinel rather than one."
+        },
+        {
+          "name": "component-visible",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "component"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IDrawable.Visible: whether the game calls this component's DRAW."
+        },
+        {
+          "name": "components",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.Components: the collection of components this game drives.\n\nThe same object every time. Add to it with ADD-COMPONENT and the game starts\ndriving what you added -- initializing it there and then if the game has already\ninitialized."
+        },
+        {
+          "name": "components-of",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every component in the collection, in order, as a fresh list.\n\n`Collection<T>' is enumerable; a fresh list is this binding's projection of an\nenumeration, for the same reason GET-VERTEX-ELEMENTS answers a fresh array -- a\ncaller must not be able to reach into the collection through what it was given."
+        },
+        {
           "name": "containment-type",
           "fbound": false,
           "macro": false,
@@ -2677,6 +3049,28 @@
           "constant": false,
           "value": null,
           "documentation": "The exact value of a CONTAINMENT-TYPE member."
+        },
+        {
+          "name": "contains-component",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.Contains."
         },
         {
           "name": "copy-bounding-box",
@@ -3977,6 +4371,56 @@
           "documentation": "Game.Draw(GameTime). Runs once per drawn frame."
         },
         {
+          "name": "draw-order",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "component"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IDrawable.DrawOrder: lower draws first."
+        },
+        {
+          "name": "drawable-game-component",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:drawable-game-component",
+            "microsoft.xna.framework:game-component",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.DrawableGameComponent: a GameComponent that also\ndraws.\n\nAdds DRAW, LOAD-CONTENT and UNLOAD-CONTENT -- again the same generic functions a\nGAME specialises -- and the VISIBLE and DRAW-ORDER properties. The GRAPHICS-DEVICE\nit answers is the game's, and like every other borrowed device it is legal only\ninside a lifecycle callback."
+        },
+        {
           "name": "elapsed-game-time",
           "fbound": true,
           "macro": false,
@@ -4061,6 +4505,27 @@
           "documentation": "Game.EndRun(). Runs once, after the last frame of a run."
         },
         {
+          "name": "event-args-game-component",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "exit",
           "fbound": true,
           "macro": false,
@@ -4107,6 +4572,79 @@
           "constant": false,
           "value": null,
           "documentation": "Microsoft.Xna.Framework.Game.\n\nSubclass it and specialise the lifecycle generic functions -- INITIALIZE,\nLOAD-CONTENT, UPDATE, DRAW, UNLOAD-CONTENT and their neighbours. Creating an\ninstance creates the native CNA game; DISPOSE destroys it, after every resource\nthe game owns has been disposed.\n\nCNA allows one active game per process, so a second live GAME is refused."
+        },
+        {
+          "name": "game-component",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:game-component",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.GameComponent: a piece of a game's behaviour the game\nitself drives.\n\n    (defclass spinner (xna:game-component) ())\n    (defmethod xna:update ((c spinner) game-time) ...)\n\n    (add-component (components game) (make-instance 'spinner :game game))\n\nSubclass it and specialise INITIALIZE and UPDATE -- the same generic functions a\nGAME specialises, because XNA gives them the same names for the same reason.\n\nA component is created against a game and belongs to it; adding it to the game's\nCOMPONENTS collection is what makes the game drive it, and XNA is the same. It is\ndisposed with DISPOSE, before its game."
+        },
+        {
+          "name": "game-component-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:game-component-collection",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.GameComponentCollection: the components a game drives.\n\nReached as `(components game)', which answers the same object every time.\nComponents are added with ADD-COMPONENT and removed with REMOVE-COMPONENT; the\ngame drives every one it holds, in CNA's own order, honouring UPDATE-ORDER,\nDRAW-ORDER, COMPONENT-ENABLED and COMPONENT-VISIBLE.\n\nAdding a component after the game has initialized initializes it there and then,\nwhich is XNA's behaviour and CNA's documented one."
+        },
+        {
+          "name": "game-component-collection-event-args",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:game-component-collection-event-args",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.GameComponentCollectionEventArgs: the argument\nComponentAdded and ComponentRemoved carry.\n\nIts one member is the component that was added or removed."
         },
         {
           "name": "game-time",
@@ -4262,6 +4800,29 @@
           "documentation": "Game.Initialize(). Runs once, before content loads."
         },
         {
+          "name": "insert-component",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "index",
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.Insert."
+        },
+        {
           "name": "is-active",
           "fbound": true,
           "macro": false,
@@ -4374,6 +4935,79 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "launch-parameter",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameters",
+            "name"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "parameters",
+            "name"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The value NAME is bound to, or NIL."
+        },
+        {
+          "name": "launch-parameter-names",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameters"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every bound name, as a fresh list."
+        },
+        {
+          "name": "launch-parameters",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:launch-parameters",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.LaunchParameters: the command line as a string map.\n\nThe same object every time. **CNA has no route that reports a game's launch\nparameters**, so this is empty unless the program fills it; see\ndocs/limitations.md."
         },
         {
           "name": "load-content",
@@ -8482,6 +9116,94 @@
           "documentation": "The `-=' of add-activated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
+          "name": "remove-component",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.Remove. Answers T when the component was there."
+        },
+        {
+          "name": "remove-component-added-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-component-added-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-component-at",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "collection",
+            "index"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameComponentCollection.RemoveAt."
+        },
+        {
+          "name": "remove-component-removed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-component-removed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
           "name": "remove-deactivated-handler",
           "fbound": true,
           "macro": false,
@@ -8614,6 +9336,50 @@
           "documentation": "The `-=' of add-disposed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
+          "name": "remove-draw-order-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-draw-order-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-enabled-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-enabled-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
           "name": "remove-exiting-handler",
           "fbound": true,
           "macro": false,
@@ -8634,6 +9400,50 @@
           "constant": false,
           "value": null,
           "documentation": "The `-=' of add-exiting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-update-order-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-update-order-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-visible-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-visible-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
           "name": "reset-elapsed-time",
@@ -8912,6 +9722,30 @@
           "constant": false,
           "value": null,
           "documentation": "Game.Update(GameTime). Runs once per frame."
+        },
+        {
+          "name": "update-order",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "component"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "component"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IUpdateable.UpdateOrder: lower runs first."
         },
         {
           "name": "vector2",
@@ -27634,6 +28468,30 @@
         "rectangle-contains-coordinates"
       ],
       "reason": "Rectangle.Contains(int, int). Its three arguments cannot share a congruent\n      generic function with the two-argument overloads."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "component-count",
+        "component-at",
+        "components-of",
+        "add-component",
+        "insert-component",
+        "remove-component",
+        "remove-component-at",
+        "clear-components",
+        "contains-component",
+        "component-index"
+      ],
+      "reason": "GameComponentCollection's own operations. XNA inherits them from\n      System.Collections.ObjectModel.Collection<IGameComponent>, so the contract\n      records them on the BCL type rather than on the XNA one and they are not\n      members this projection can map. A collection nothing can be added to would\n      be useless, so they are here, named for what they hold rather than as bare\n      ADD and REMOVE -- the same reason APPLY-EFFECT-PASS is not APPLY.\n      COMPONENT-INDEX answers NIL where XNA's IndexOf answers -1, because a\n      position is a non-negative index and -1 is a sentinel."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "launch-parameter",
+        "launch-parameter-names"
+      ],
+      "reason": "LaunchParameters' own operations. XNA derives the type from\n      Dictionary<string, string> and adds nothing at all, so every operation on\n      one belongs to the BCL dictionary. These two are the reachable half of it:\n      read a value, set or remove one, and list the names."
     },
     {
       "package": "microsoft.xna.framework.graphics",

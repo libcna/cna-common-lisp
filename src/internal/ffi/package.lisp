@@ -29,6 +29,9 @@ by tools/native-abi/generate.py.")
    #:*game-event-dispatcher*
    #:*resource-disposing-dispatcher*
    #:content-lost-callback-pointer
+   #:component-callback-pointers #:*component-dispatcher*
+   #:component-event-callback-pointer #:*component-event-dispatcher*
+   #:component-collection-callback-pointer #:*component-collection-dispatcher*
    #:*buffer-content-lost-dispatcher*
    #:*begin-draw-dispatcher*
    ;; constants the runtime reads by name

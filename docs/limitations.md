@@ -107,6 +107,81 @@ Rotation, scaling, tinting, blending, texturing, lighting, fog, indexed and
 buffer-backed draws, flipped or rotated text and every non-identity transform are
 submitted and accepted, and their pixels are not asserted anywhere.
 
+## The component engine runs, and two things around it do not
+
+`GameComponent`, `DrawableGameComponent`, `GameComponentCollection`,
+`GameComponentCollectionEventArgs`, `IGameComponent`, `IUpdateable`, `IDrawable`
+and `LaunchParameters` are complete, and `Game.Components` and
+`Game.LaunchParameters` with them.
+
+**The engine is CNA's and it is really wired up.** A component is not a list this
+binding walks: `cna_game_components_add` puts it in the collection the game
+drives, and CNA calls `Initialize`, `Update`, `Draw`, `LoadContent` and
+`UnloadContent` in its own order, honouring `UpdateOrder`, `DrawOrder`, `Enabled`
+and `Visible`. The tests assert *counts taken inside the loop* rather than that
+the members exist: a disabled component's update count stays zero, an invisible
+one's draw count stays zero, and two components with different `UpdateOrder`
+values record the order they were actually called in — added in the wrong order
+on purpose, so insertion order cannot pass for ordering.
+
+A component's behaviour is its CLOS methods on the same generic functions a
+`Game` specialises. There is no registration step, because CLOS is the
+registration.
+
+### A component added during LoadContent is never initialized
+
+Surprising, and it is XNA's behaviour rather than CNA's defect. Read from the
+pinned `Microsoft.Xna.Framework.Game` assembly:
+
+* `Game.Run` calls `Initialize()` and sets `inRun = true` **afterwards**;
+* `Game.Initialize()` drains `notYetInitialized` and then, at its very end, calls
+  `LoadContent()`;
+* `Game.GameComponentAdded` initializes the component only `if (inRun)`, and
+  otherwise puts it on `notYetInitialized`.
+
+So a component added inside `LoadContent` arrives after the drain loop has
+finished and while `inRun` is still false: it goes on the list and stays there.
+It is updated and drawn every frame and initialized never. CNA reproduces that
+exactly, measured, and `tests/native/game-components.lisp` pins it — so a CNA
+that changed it would fail rather than pass quietly. Add components in
+`Initialize` or later.
+
+### `GameServiceContainer` and `Game.Services` are not projected
+
+`GameServiceContainer` is keyed by `System.Type`, and the two services XNA's own
+`GraphicsDeviceManager` registers are keyed by `IGraphicsDeviceService` and
+`IGraphicsDeviceManager`. Neither interface is projected here, and the first
+needs `GraphicsDevice`'s four device-loss events, which are not either. A
+container with `AddService`, `RemoveService` and `GetService` could be written in
+an afternoon — it is a dictionary — and it would be four complete members whose
+keys could not name what XNA puts in it. So it waits for those two interfaces
+rather than shipping as a shape.
+
+CNA is worth quoting here, because it made the same call for a stronger reason
+and says so: it has `cna_game_services_contains_ext` and `remove_ext` for the two
+services the runtime registers and **no registration route at all**, because
+"`GameServiceContainer.AddService` stores an object under a *type*, and both
+halves of that are outside C's reach". A future projection has the advantage C
+does not — Common Lisp can name a type — but it still needs the types.
+
+### LaunchParameters is empty unless the program fills it
+
+CNA has no route that reports a game's command line, so `Game.LaunchParameters`
+answers an empty map. The type, its identity across reads and its string-to-string
+storage are all real; what is absent is anything to put in it. `LAUNCH-PARAMETER`,
+its setter and `LAUNCH-PARAMETER-NAMES` are declared extensions, because XNA
+derives the type from `Dictionary<string, string>` and adds nothing, so every
+operation on one belongs to the BCL dictionary rather than to XNA.
+
+### `GameComponentCollection`'s constructor is not projected
+
+XNA's is public and a standalone collection is legal there, if useless — a `Game`
+makes its own and drives that one. CNA has no route for a collection apart from a
+game's: "a game owns exactly one component collection, so the collection needs no
+handle of its own and every route addresses the game's". So a standalone one is
+reported missing rather than faked, and it is the only missing member of the
+type.
+
 ## Render targets, and the one thing they change about the evidence
 
 `RenderTarget2D`, `RenderTargetUsage` and `DepthFormat` are complete, and
@@ -403,7 +478,7 @@ a particular cascade order is the right one.
 
 These are absent, and measured as absent, not faked:
 
-* the game component engine (`GameComponent`, `Game.Components`, services);
+* `GameServiceContainer` and `Game.Services` — see below;
 * `ContentManager` and the XNB pipeline;
 * `GameWindow` as a type -- only the window title is reachable, on `game`;
 * `Model`, `Texture3D`, `TextureCube`, `RenderTargetCube` and the rest of the 3D

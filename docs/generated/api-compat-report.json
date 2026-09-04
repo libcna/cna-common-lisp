@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 133,
-  "member_count": 2145
+  "type_count": 141,
+  "member_count": 2193
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 133,
-  "members": 2145,
+  "types": 141,
+  "members": 2193,
   "types_by_status": {
-   "partial": 8,
-   "complete": 125
+   "partial": 9,
+   "complete": 132
   },
   "members_by_status": {
-   "complete": 1680,
-   "missing": 65,
-   "not-applicable": 399,
+   "complete": 1720,
+   "missing": 64,
+   "not-applicable": 408,
    "partial": 1
   },
-  "diagnostics": 65,
+  "diagnostics": 64,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 65,
+   "missing_member": 64,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -76,8 +76,8 @@
     "Finalize()": "not-applicable",
     "Dispose(Boolean)": "not-applicable",
     "ShowMissingRequirementMessage(Exception)": "missing",
-    "LaunchParameters": "missing",
-    "Components": "missing",
+    "LaunchParameters": "complete",
+    "Components": "complete",
     "Services": "missing",
     "InactiveSleepTime": "complete",
     "IsMouseVisible": "complete",
@@ -106,6 +106,110 @@
     "IsRunningSlowly": "complete"
    },
    "lisp": "microsoft.xna.framework:game-time"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.IGameComponent",
+   "status": "complete",
+   "members": {
+    "Initialize()": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.IUpdateable",
+   "status": "complete",
+   "members": {
+    "Update(GameTime)": "complete",
+    "Enabled": "complete",
+    "UpdateOrder": "complete",
+    "EnabledChanged": "complete",
+    "UpdateOrderChanged": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.IDrawable",
+   "status": "complete",
+   "members": {
+    "Draw(GameTime)": "complete",
+    "Visible": "complete",
+    "DrawOrder": "complete",
+    "VisibleChanged": "complete",
+    "DrawOrderChanged": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameComponent",
+   "status": "complete",
+   "members": {
+    "new(Game)": "complete",
+    "Initialize()": "complete",
+    "Update(GameTime)": "complete",
+    "Dispose()": "complete",
+    "Finalize()": "not-applicable",
+    "Dispose(Boolean)": "complete",
+    "OnUpdateOrderChanged(Object,EventArgs)": "not-applicable",
+    "OnEnabledChanged(Object,EventArgs)": "not-applicable",
+    "Enabled": "complete",
+    "UpdateOrder": "complete",
+    "Game": "complete",
+    "EnabledChanged": "complete",
+    "UpdateOrderChanged": "complete",
+    "Disposed": "complete"
+   },
+   "lisp": "microsoft.xna.framework:game-component"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.DrawableGameComponent",
+   "status": "complete",
+   "members": {
+    "new(Game)": "complete",
+    "Initialize()": "complete",
+    "Dispose(Boolean)": "complete",
+    "Draw(GameTime)": "complete",
+    "LoadContent()": "complete",
+    "UnloadContent()": "complete",
+    "OnDrawOrderChanged(Object,EventArgs)": "not-applicable",
+    "OnVisibleChanged(Object,EventArgs)": "not-applicable",
+    "Visible": "complete",
+    "DrawOrder": "complete",
+    "GraphicsDevice": "complete",
+    "VisibleChanged": "complete",
+    "DrawOrderChanged": "complete"
+   },
+   "lisp": "microsoft.xna.framework:drawable-game-component"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameComponentCollection",
+   "status": "partial",
+   "members": {
+    "new()": "missing",
+    "InsertItem(Int32,IGameComponent)": "not-applicable",
+    "RemoveItem(Int32)": "not-applicable",
+    "SetItem(Int32,IGameComponent)": "not-applicable",
+    "ClearItems()": "not-applicable",
+    "ComponentAdded": "complete",
+    "ComponentRemoved": "complete"
+   },
+   "lisp": "microsoft.xna.framework:game-component-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameComponentCollectionEventArgs",
+   "status": "complete",
+   "members": {
+    "new(IGameComponent)": "complete",
+    "GameComponent": "complete"
+   },
+   "lisp": "microsoft.xna.framework:game-component-collection-event-args"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.LaunchParameters",
+   "status": "complete",
+   "members": {
+    "new()": "complete"
+   },
+   "lisp": "microsoft.xna.framework:launch-parameters"
   },
   {
    "name": "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -3144,16 +3248,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.LaunchParameters",
-   "detail": "no exported 'launch-parameters' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.Components",
-   "detail": "no exported 'components' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Game.Services",
    "detail": "no exported 'services' in microsoft.xna.framework"
   },
@@ -3166,6 +3260,11 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Game.Content",
    "detail": "no exported 'content' in microsoft.xna.framework"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GameComponentCollection.new()",
+   "detail": "XNA's constructor is public and a standalone collection is legal there, if useless -- a Game makes its own and drives that one. CNA has no route for a collection apart from a game's: `a game owns exactly one component collection, so the collection needs no handle of its own and every route addresses the game's`. So a standalone one is not projected rather than faked."
   },
   {
    "category": "missing_member",

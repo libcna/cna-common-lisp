@@ -1326,6 +1326,134 @@
 (defcfun ("cna_render_target_unsubscribe_content_lost" %render-target-unsubscribe-content-lost) :uint32
   (registration :uint64))
 
+;;; CNA_Result cna_game_component_callbacks_init(CNA_GameComponentCallbacks* out_callbacks)
+(defcfun ("cna_game_component_callbacks_init" %game-component-callbacks-init) :uint32
+  (out-callbacks :pointer))
+
+;;; CNA_Result cna_game_component_create(CNA_Handle game, const CNA_GameComponentCallbacks* callbacks, CNA_GameComponentHandle* out_component)
+(defcfun ("cna_game_component_create" %game-component-create) :uint32
+  (game :uint64) (callbacks :pointer) (out-component :pointer))
+
+;;; CNA_Result cna_drawable_game_component_create(CNA_Handle game, const CNA_GameComponentCallbacks* callbacks, CNA_GameComponentHandle* out_component)
+(defcfun ("cna_drawable_game_component_create" %drawable-game-component-create) :uint32
+  (game :uint64) (callbacks :pointer) (out-component :pointer))
+
+;;; CNA_Result cna_game_component_destroy(CNA_GameComponentHandle component)
+(defcfun ("cna_game_component_destroy" %game-component-destroy) :uint32
+  (component :uint64))
+
+;;; CNA_Result cna_game_component_get_is_drawable(CNA_GameComponentHandle component, CNA_Bool* out_drawable)
+(defcfun ("cna_game_component_get_is_drawable" %game-component-get-is-drawable) :uint32
+  (component :uint64) (out-drawable :pointer))
+
+;;; CNA_Result cna_game_component_get_game(CNA_GameComponentHandle component, CNA_Handle* out_game)
+(defcfun ("cna_game_component_get_game" %game-component-get-game) :uint32
+  (component :uint64) (out-game :pointer))
+
+;;; CNA_Result cna_game_component_get_enabled(CNA_GameComponentHandle component, CNA_Bool* out_enabled)
+(defcfun ("cna_game_component_get_enabled" %game-component-get-enabled) :uint32
+  (component :uint64) (out-enabled :pointer))
+
+;;; CNA_Result cna_game_component_set_enabled(CNA_GameComponentHandle component, CNA_Bool enabled)
+(defcfun ("cna_game_component_set_enabled" %game-component-set-enabled) :uint32
+  (component :uint64) (enabled :uint8))
+
+;;; CNA_Result cna_game_component_get_update_order(CNA_GameComponentHandle component, int32_t* out_order)
+(defcfun ("cna_game_component_get_update_order" %game-component-get-update-order) :uint32
+  (component :uint64) (out-order :pointer))
+
+;;; CNA_Result cna_game_component_set_update_order(CNA_GameComponentHandle component, int32_t order)
+(defcfun ("cna_game_component_set_update_order" %game-component-set-update-order) :uint32
+  (component :uint64) (order :int32))
+
+;;; CNA_Result cna_drawable_game_component_get_draw_order(CNA_GameComponentHandle component, int32_t* out_order)
+(defcfun ("cna_drawable_game_component_get_draw_order" %drawable-game-component-get-draw-order) :uint32
+  (component :uint64) (out-order :pointer))
+
+;;; CNA_Result cna_drawable_game_component_set_draw_order(CNA_GameComponentHandle component, int32_t order)
+(defcfun ("cna_drawable_game_component_set_draw_order" %drawable-game-component-set-draw-order) :uint32
+  (component :uint64) (order :int32))
+
+;;; CNA_Result cna_drawable_game_component_get_visible(CNA_GameComponentHandle component, CNA_Bool* out_visible)
+(defcfun ("cna_drawable_game_component_get_visible" %drawable-game-component-get-visible) :uint32
+  (component :uint64) (out-visible :pointer))
+
+;;; CNA_Result cna_drawable_game_component_set_visible(CNA_GameComponentHandle component, CNA_Bool visible)
+(defcfun ("cna_drawable_game_component_set_visible" %drawable-game-component-set-visible) :uint32
+  (component :uint64) (visible :uint8))
+
+;;; CNA_Result cna_drawable_game_component_get_graphics_device(CNA_GameComponentHandle component, CNA_Handle* out_graphics_device)
+(defcfun ("cna_drawable_game_component_get_graphics_device" %drawable-game-component-get-graphics-device) :uint32
+  (component :uint64) (out-graphics-device :pointer))
+
+;;; CNA_Result cna_game_component_initialize(CNA_GameComponentHandle component)
+(defcfun ("cna_game_component_initialize" %game-component-initialize) :uint32
+  (component :uint64))
+
+;;; CNA_Result cna_game_component_update(CNA_GameComponentHandle component, const CNA_GameTime* game_time)
+(defcfun ("cna_game_component_update" %game-component-update) :uint32
+  (component :uint64) (game-time :pointer))
+
+;;; CNA_Result cna_drawable_game_component_draw(CNA_GameComponentHandle component, const CNA_GameTime* game_time)
+(defcfun ("cna_drawable_game_component_draw" %drawable-game-component-draw) :uint32
+  (component :uint64) (game-time :pointer))
+
+;;; CNA_Result cna_game_component_dispose(CNA_GameComponentHandle component)
+(defcfun ("cna_game_component_dispose" %game-component-dispose) :uint32
+  (component :uint64))
+
+;;; CNA_Result cna_game_component_subscribe(CNA_GameComponentHandle component, CNA_GameComponentEvent event, CNA_GameComponentEventCallback callback, void* context, CNA_GameComponentEventRegistrationHandle* out_registration)
+(defcfun ("cna_game_component_subscribe" %game-component-subscribe) :uint32
+  (component :uint64) (event :uint32) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_game_component_unsubscribe(CNA_GameComponentEventRegistrationHandle registration)
+(defcfun ("cna_game_component_unsubscribe" %game-component-unsubscribe) :uint32
+  (registration :uint64))
+
+;;; CNA_Result cna_game_components_get_count(CNA_Handle game, uint64_t* out_count)
+(defcfun ("cna_game_components_get_count" %game-components-get-count) :uint32
+  (game :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_game_components_get_at(CNA_Handle game, uint64_t index, CNA_GameComponentHandle* out_component)
+(defcfun ("cna_game_components_get_at" %game-components-get-at) :uint32
+  (game :uint64) (index :uint64) (out-component :pointer))
+
+;;; CNA_Result cna_game_components_add(CNA_Handle game, CNA_GameComponentHandle component)
+(defcfun ("cna_game_components_add" %game-components-add) :uint32
+  (game :uint64) (component :uint64))
+
+;;; CNA_Result cna_game_components_insert(CNA_Handle game, uint64_t index, CNA_GameComponentHandle component)
+(defcfun ("cna_game_components_insert" %game-components-insert) :uint32
+  (game :uint64) (index :uint64) (component :uint64))
+
+;;; CNA_Result cna_game_components_remove(CNA_Handle game, CNA_GameComponentHandle component, CNA_Bool* out_removed)
+(defcfun ("cna_game_components_remove" %game-components-remove) :uint32
+  (game :uint64) (component :uint64) (out-removed :pointer))
+
+;;; CNA_Result cna_game_components_remove_at(CNA_Handle game, uint64_t index)
+(defcfun ("cna_game_components_remove_at" %game-components-remove-at) :uint32
+  (game :uint64) (index :uint64))
+
+;;; CNA_Result cna_game_components_clear(CNA_Handle game)
+(defcfun ("cna_game_components_clear" %game-components-clear) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_game_components_contains(CNA_Handle game, CNA_GameComponentHandle component, CNA_Bool* out_contains)
+(defcfun ("cna_game_components_contains" %game-components-contains) :uint32
+  (game :uint64) (component :uint64) (out-contains :pointer))
+
+;;; CNA_Result cna_game_components_index_of(CNA_Handle game, CNA_GameComponentHandle component, int32_t* out_index)
+(defcfun ("cna_game_components_index_of" %game-components-index-of) :uint32
+  (game :uint64) (component :uint64) (out-index :pointer))
+
+;;; CNA_Result cna_game_components_subscribe_added(CNA_Handle game, CNA_GameComponentCollectionCallback callback, void* context, CNA_GameComponentEventRegistrationHandle* out_registration)
+(defcfun ("cna_game_components_subscribe_added" %game-components-subscribe-added) :uint32
+  (game :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_game_components_subscribe_removed(CNA_Handle game, CNA_GameComponentCollectionCallback callback, void* context, CNA_GameComponentEventRegistrationHandle* out_registration)
+(defcfun ("cna_game_components_subscribe_removed" %game-components-subscribe-removed) :uint32
+  (game :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -1654,6 +1782,38 @@
     ("cna_render_target_get_info" %render-target-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_set_render_target2d" %graphics-device-set-render-target-2d :uint32 (:uint64 :uint64) :thread :game :ownership "none")
     ("cna_render_target_subscribe_content_lost" %render-target-subscribe-content-lost :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
-    ("cna_render_target_unsubscribe_content_lost" %render-target-unsubscribe-content-lost :uint32 (:uint64) :thread :owner :ownership "releases"))
+    ("cna_render_target_unsubscribe_content_lost" %render-target-unsubscribe-content-lost :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_game_component_callbacks_init" %game-component-callbacks-init :uint32 (:pointer) :thread :any :ownership "none")
+    ("cna_game_component_create" %game-component-create :uint32 (:uint64 :pointer :pointer) :thread :game :ownership "creates-owned:game-component:child-of-game")
+    ("cna_drawable_game_component_create" %drawable-game-component-create :uint32 (:uint64 :pointer :pointer) :thread :game :ownership "creates-owned:game-component:child-of-game")
+    ("cna_game_component_destroy" %game-component-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:game-component")
+    ("cna_game_component_get_is_drawable" %game-component-get-is-drawable :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_component_get_game" %game-component-get-game :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_component_get_enabled" %game-component-get-enabled :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_component_set_enabled" %game-component-set-enabled :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_game_component_get_update_order" %game-component-get-update-order :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_component_set_update_order" %game-component-set-update-order :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_drawable_game_component_get_draw_order" %drawable-game-component-get-draw-order :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_drawable_game_component_set_draw_order" %drawable-game-component-set-draw-order :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_drawable_game_component_get_visible" %drawable-game-component-get-visible :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_drawable_game_component_set_visible" %drawable-game-component-set-visible :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_drawable_game_component_get_graphics_device" %drawable-game-component-get-graphics-device :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows-callback-scoped:graphics-device")
+    ("cna_game_component_initialize" %game-component-initialize :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_game_component_update" %game-component-update :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_drawable_game_component_draw" %drawable-game-component-draw :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_component_dispose" %game-component-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_game_component_subscribe" %game-component-subscribe :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_game_component_unsubscribe" %game-component-unsubscribe :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_game_components_get_count" %game-components-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_components_get_at" %game-components-get-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_components_add" %game-components-add :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_game_components_insert" %game-components-insert :uint32 (:uint64 :uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_game_components_remove" %game-components-remove :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_components_remove_at" %game-components-remove-at :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_game_components_clear" %game-components-clear :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_game_components_contains" %game-components-contains :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_components_index_of" %game-components-index-of :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_components_subscribe_added" %game-components-subscribe-added :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_game_components_subscribe_removed" %game-components-subscribe-removed :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

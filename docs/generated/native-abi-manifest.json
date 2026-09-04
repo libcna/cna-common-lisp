@@ -24,11 +24,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 328,
-    "structs": 54,
-    "struct_fields": 408,
-    "constants": 469,
-    "callbacks": 7,
+    "functions": 360,
+    "structs": 55,
+    "struct_fields": 417,
+    "constants": 474,
+    "callbacks": 9,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
   },
@@ -8214,6 +8214,750 @@
       "ownership": "releases",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_render_target_unsubscribe_content_lost(CNA_RenderTargetEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_game_component_callbacks_init",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_callbacks",
+          "c_type": "CNA_GameComponentCallbacks*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_callbacks_init(CNA_GameComponentCallbacks* out_callbacks)"
+    },
+    {
+      "name": "cna_game_component_create",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callbacks",
+          "c_type": "const CNA_GameComponentCallbacks*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_component",
+          "c_type": "CNA_GameComponentHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:game-component:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_create(CNA_Handle game, const CNA_GameComponentCallbacks* callbacks, CNA_GameComponentHandle* out_component)"
+    },
+    {
+      "name": "cna_drawable_game_component_create",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callbacks",
+          "c_type": "const CNA_GameComponentCallbacks*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_component",
+          "c_type": "CNA_GameComponentHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:game-component:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_drawable_game_component_create(CNA_Handle game, const CNA_GameComponentCallbacks* callbacks, CNA_GameComponentHandle* out_component)"
+    },
+    {
+      "name": "cna_game_component_destroy",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:game-component",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_destroy(CNA_GameComponentHandle component)"
+    },
+    {
+      "name": "cna_game_component_get_is_drawable",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_drawable",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_get_is_drawable(CNA_GameComponentHandle component, CNA_Bool* out_drawable)"
+    },
+    {
+      "name": "cna_game_component_get_game",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_game",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_get_game(CNA_GameComponentHandle component, CNA_Handle* out_game)"
+    },
+    {
+      "name": "cna_game_component_get_enabled",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_enabled",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_get_enabled(CNA_GameComponentHandle component, CNA_Bool* out_enabled)"
+    },
+    {
+      "name": "cna_game_component_set_enabled",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "enabled",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_set_enabled(CNA_GameComponentHandle component, CNA_Bool enabled)"
+    },
+    {
+      "name": "cna_game_component_get_update_order",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_order",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_get_update_order(CNA_GameComponentHandle component, int32_t* out_order)"
+    },
+    {
+      "name": "cna_game_component_set_update_order",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "order",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_set_update_order(CNA_GameComponentHandle component, int32_t order)"
+    },
+    {
+      "name": "cna_drawable_game_component_get_draw_order",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_order",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_drawable_game_component_get_draw_order(CNA_GameComponentHandle component, int32_t* out_order)"
+    },
+    {
+      "name": "cna_drawable_game_component_set_draw_order",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "order",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_drawable_game_component_set_draw_order(CNA_GameComponentHandle component, int32_t order)"
+    },
+    {
+      "name": "cna_drawable_game_component_get_visible",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_visible",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_drawable_game_component_get_visible(CNA_GameComponentHandle component, CNA_Bool* out_visible)"
+    },
+    {
+      "name": "cna_drawable_game_component_set_visible",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "visible",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_drawable_game_component_set_visible(CNA_GameComponentHandle component, CNA_Bool visible)"
+    },
+    {
+      "name": "cna_drawable_game_component_get_graphics_device",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_graphics_device",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows-callback-scoped:graphics-device",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_drawable_game_component_get_graphics_device(CNA_GameComponentHandle component, CNA_Handle* out_graphics_device)"
+    },
+    {
+      "name": "cna_game_component_initialize",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_initialize(CNA_GameComponentHandle component)"
+    },
+    {
+      "name": "cna_game_component_update",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "game_time",
+          "c_type": "const CNA_GameTime*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_update(CNA_GameComponentHandle component, const CNA_GameTime* game_time)"
+    },
+    {
+      "name": "cna_drawable_game_component_draw",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "game_time",
+          "c_type": "const CNA_GameTime*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_drawable_game_component_draw(CNA_GameComponentHandle component, const CNA_GameTime* game_time)"
+    },
+    {
+      "name": "cna_game_component_dispose",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_dispose(CNA_GameComponentHandle component)"
+    },
+    {
+      "name": "cna_game_component_subscribe",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "event",
+          "c_type": "CNA_GameComponentEvent",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_GameComponentEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GameComponentEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_subscribe(CNA_GameComponentHandle component, CNA_GameComponentEvent event, CNA_GameComponentEventCallback callback, void* context, CNA_GameComponentEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_game_component_unsubscribe",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_GameComponentEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_component_unsubscribe(CNA_GameComponentEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_game_components_get_count",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_get_count(CNA_Handle game, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_game_components_get_at",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_component",
+          "c_type": "CNA_GameComponentHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_get_at(CNA_Handle game, uint64_t index, CNA_GameComponentHandle* out_component)"
+    },
+    {
+      "name": "cna_game_components_add",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_add(CNA_Handle game, CNA_GameComponentHandle component)"
+    },
+    {
+      "name": "cna_game_components_insert",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_insert(CNA_Handle game, uint64_t index, CNA_GameComponentHandle component)"
+    },
+    {
+      "name": "cna_game_components_remove",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_removed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_remove(CNA_Handle game, CNA_GameComponentHandle component, CNA_Bool* out_removed)"
+    },
+    {
+      "name": "cna_game_components_remove_at",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_remove_at(CNA_Handle game, uint64_t index)"
+    },
+    {
+      "name": "cna_game_components_clear",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_clear(CNA_Handle game)"
+    },
+    {
+      "name": "cna_game_components_contains",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_contains",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_contains(CNA_Handle game, CNA_GameComponentHandle component, CNA_Bool* out_contains)"
+    },
+    {
+      "name": "cna_game_components_index_of",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_index",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_index_of(CNA_Handle game, CNA_GameComponentHandle component, int32_t* out_index)"
+    },
+    {
+      "name": "cna_game_components_subscribe_added",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_GameComponentCollectionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GameComponentEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_subscribe_added(CNA_Handle game, CNA_GameComponentCollectionCallback callback, void* context, CNA_GameComponentEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_game_components_subscribe_removed",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_GameComponentCollectionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GameComponentEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_components_subscribe_removed(CNA_Handle game, CNA_GameComponentCollectionCallback callback, void* context, CNA_GameComponentEventRegistrationHandle* out_registration)"
     }
   ],
   "structs": [
@@ -12479,6 +13223,123 @@
       "header": "render_target.h",
       "direction": "out",
       "versioned": true
+    },
+    {
+      "name": "CNA_GameComponentCallbacks",
+      "size": 64,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "initialize",
+          "c_type": "void*",
+          "offset": 8,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "update",
+          "c_type": "void*",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "draw",
+          "c_type": "void*",
+          "offset": 24,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "load_content",
+          "c_type": "void*",
+          "offset": 32,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "unload_content",
+          "c_type": "void*",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "dispose",
+          "c_type": "void*",
+          "offset": 48,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "offset": 56,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":pointer",
+          "kind": "pointer"
+        }
+      ],
+      "header": "runtime_components.h",
+      "direction": "in",
+      "versioned": true,
+      "fields_absent_from_baseline": {
+        "initialize": {
+          "offset": 8,
+          "size": 8
+        },
+        "update": {
+          "offset": 16,
+          "size": 8
+        },
+        "draw": {
+          "offset": 24,
+          "size": 8
+        },
+        "load_content": {
+          "offset": 32,
+          "size": 8
+        },
+        "unload_content": {
+          "offset": 40,
+          "size": 8
+        },
+        "dispose": {
+          "offset": 48,
+          "size": 8
+        }
+      }
     }
   ],
   "callbacks": [
@@ -12612,6 +13473,35 @@
         {
           "name": "render_target",
           "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
+      "name": "CNA_GameComponentEventCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
+      "name": "CNA_GameComponentCollectionCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "component",
+          "c_type": "CNA_GameComponentHandle",
           "cffi_type": ":uint64"
         },
         {
@@ -12764,6 +13654,11 @@
     "CNA_GAMEPAD_TYPE_GUITAR": 6,
     "CNA_GAMEPAD_TYPE_UNKNOWN": 0,
     "CNA_GAMEPAD_TYPE_WHEEL": 2,
+    "CNA_GAME_COMPONENT_EVENT_DISPOSED": 4,
+    "CNA_GAME_COMPONENT_EVENT_DRAW_ORDER_CHANGED": 2,
+    "CNA_GAME_COMPONENT_EVENT_ENABLED_CHANGED": 0,
+    "CNA_GAME_COMPONENT_EVENT_UPDATE_ORDER_CHANGED": 1,
+    "CNA_GAME_COMPONENT_EVENT_VISIBLE_CHANGED": 3,
     "CNA_GAME_EVENT_ACTIVATED": 0,
     "CNA_GAME_EVENT_DEACTIVATED": 1,
     "CNA_GAME_EVENT_DISPOSED": 2,

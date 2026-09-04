@@ -9,11 +9,11 @@
     "runtime": 5376
   },
   "files": {
-    "src/internal/ffi/constants.generated.lisp": "9da5871b990dc72de839042d9e5101fb3e6361463b16e98083ce63eb974e4b01",
-    "src/internal/ffi/structs.generated.lisp": "96a15bcbc61cff2e29462c2e9653c1c43971e0043814357f1a71735055d70399",
-    "src/internal/ffi/functions.generated.lisp": "9f96c67edb55f8fb00c5f5fecea9b03b75ddbf2ecbdc42121d4010fea9e83f1b",
+    "src/internal/ffi/constants.generated.lisp": "38c9361dc7f9a93a66e9369138d9c9e6a3e76bf79e2e49ad55a443165e88d4de",
+    "src/internal/ffi/structs.generated.lisp": "d78114b3b807d2c6f64bf02ccd9c8c1924de55bb999133fe032db4d4fb6ee4be",
+    "src/internal/ffi/functions.generated.lisp": "8e638aae690c6fc548a2b7acc54b8696e814c41ebcf551ea1d1a40ce777ac7d3",
     "src/framework/predefined-colors.generated.lisp": "5be663877e30a59cb49eb8e11cc7a4b174ccfa65a2c22df52eec1cc5240b6cb0",
-    "tools/native-abi/probe.generated.c": "b28c62c3a702d5622f63f80770584046e63af29fa86d5e2234c81931eba14a88",
+    "tools/native-abi/probe.generated.c": "dee272b8f99637172bad84d719d79c6c66f6cc314dfdbe6437a755ec9fd8a22f",
     "tools/native-abi/valueprobe.generated.c": "e86674a8d414911a16b249e091c0181bb9d9185ef413cc69ddf65a6ffef6d779",
     "tools/native-abi/shim.generated.c": "053ceb6ed5a6ba9946b78a105bbd85f4383b62c9a355a54067278d684a3654c1"
   }

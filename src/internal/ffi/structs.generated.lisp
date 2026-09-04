@@ -748,6 +748,21 @@
 (defconstant +sizeof-cna-render-target-info+ 44)
 (defconstant +alignof-cna-render-target-info+ 4)
 
+;;; CNA_GameComponentCallbacks -- 64 bytes, 8-byte aligned, from runtime_components.h.
+(defcstruct (cna-game-component-callbacks :size 64)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (initialize :pointer :offset 8)
+  (update :pointer :offset 16)
+  (draw :pointer :offset 24)
+  (load-content :pointer :offset 32)
+  (unload-content :pointer :offset 40)
+  (dispose :pointer :offset 48)
+  (context :pointer :offset 56))
+
+(defconstant +sizeof-cna-game-component-callbacks+ 64)
+(defconstant +alignof-cna-game-component-callbacks+ 8)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -804,6 +819,7 @@
     (cna-sprite-font-create-info 48 8 ((struct-size 0 4) (struct-version 4 4) (texture 8 8) (glyphs 16 8) (glyph-count 24 8) (line-spacing 32 4) (spacing 36 4) (default-character 40 2) (has-default-character 42 1) (reserved 43 5)))
     (cna-sprite-font-info 32 8 ((struct-size 0 4) (struct-version 4 4) (character-count 8 8) (line-spacing 16 4) (spacing 20 4) (default-character 24 2) (has-default-character 26 1) (reserved 27 5)))
     (cna-render-target-2d-create-info 40 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (mip-map 16 1) (reserved-0 17 3) (format 20 4) (depth-format 24 4) (multi-sample-count 28 4) (usage 32 4) (reserved-1 36 4)))
-    (cna-render-target-info 44 4 ((struct-size 0 4) (struct-version 4 4) (kind 8 4) (width 12 4) (height 16 4) (level-count 20 4) (format 24 4) (depth-format 28 4) (multi-sample-count 32 4) (usage 36 4) (is-content-lost 40 1) (renderer-available 41 1) (reserved 42 2))))
+    (cna-render-target-info 44 4 ((struct-size 0 4) (struct-version 4 4) (kind 8 4) (width 12 4) (height 16 4) (level-count 20 4) (format 24 4) (depth-format 28 4) (multi-sample-count 32 4) (usage 36 4) (is-content-lost 40 1) (renderer-available 41 1) (reserved 42 2)))
+    (cna-game-component-callbacks 64 8 ((struct-size 0 4) (struct-version 4 4) (initialize 8 8) (update 16 8) (draw 24 8) (load-content 32 8) (unload-content 40 8) (dispose 48 8) (context 56 8))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

@@ -36,7 +36,11 @@ Both answer the same object, because in CNA they are the same device."))
                    :documentation
                    "One entry per live event subscription: (EVENT FUNCTION TOKEN
 . REGISTRATION-HANDLE). Kept on the game because XNA's -= takes the handler
-itself, so the binding has to be able to find the registration from it."))
+itself, so the binding has to be able to find the registration from it.")
+   ;; Two facades made lazily and answered by identity, because XNA's are fields.
+   ;; Filled in by src/runtime/game-components.lisp, which loads after this.
+   (components :initform nil :accessor %game-components)
+   (launch-parameters :initform nil :accessor %game-launch-parameters))
   (:documentation
    "Microsoft.Xna.Framework.Game.
 

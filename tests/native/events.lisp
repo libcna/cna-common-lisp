@@ -122,13 +122,23 @@
     (is (= 1 (manager-disposed-seen game))
         "and Disposed when the manager itself is disposed")))
 
-(define-native-test one-generic-function-serves-both-types
-  ;; ADD-DISPOSED-HANDLER is one generic function with a method on GAME and one
-  ;; on GRAPHICS-DEVICE-MANAGER. That is the reason the event projection uses
-  ;; generic functions at all, so it is worth asserting rather than assuming.
-  (let ((generic (fdefinition 'xna:add-disposed-handler)))
+(define-native-test one-generic-function-serves-several-types
+  ;; ADD-DISPOSED-HANDLER is one generic function with a method on each type that
+  ;; raises Disposed. That is the reason the event projection uses generic
+  ;; functions at all, so it is worth asserting rather than assuming -- and
+  ;; asserting *which* classes rather than how many, so a type gaining the event
+  ;; strengthens this test instead of breaking it.
+  (let* ((generic (fdefinition 'xna:add-disposed-handler))
+         (classes (mapcar (lambda (method)
+                            (class-name (first (sb-mop:method-specializers method))))
+                          (sb-mop:generic-function-methods generic))))
     (is (typep generic 'generic-function))
-    (is (= 2 (length (sb-mop:generic-function-methods generic))))))
+    (dolist (class '(xna:game xna:graphics-device-manager xna:game-component))
+      (is (member class classes)
+          "~s raises Disposed but ADD-DISPOSED-HANDLER has no method for it" class))
+    (is (>= (length classes) 2)
+        "one generic function has to serve more than one type for this to mean ~
+         anything")))
 
 (define-native-test manager-subscriptions-are-released-with-the-manager
   (let ((before (int:callback-registry-count))

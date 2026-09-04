@@ -98,6 +98,16 @@ managed subscription out of the callback registry, which the ownership tests
 require to be empty after a lifecycle.")
   (:method (object) (declare (ignore object)) t))
 
+(defgeneric %check-event-usable (object operation)
+  (:documentation
+   "Refuse a subscription on an object that cannot take one.
+
+Almost every type that raises an event holds its own handle, so the default is
+NATIVE-OBJECT's own check. A *facade* does not: GAME-COMPONENT-COLLECTION is the
+game's collection and has no handle, so what has to be usable is the game.")
+  (:method ((object cna-lisp.internal:native-object) operation)
+    (cna-lisp.internal:check-usable object operation)))
+
 (defun %subscribe-event (object event function)
   "Subscribe FUNCTION to OBJECT's EVENT, and answer FUNCTION.
 
@@ -107,7 +117,7 @@ all three are generic functions on the object."
   (check-type function (or function symbol))
   (let ((native (%subscribes-natively-p object)))
     (when native
-      (cna-lisp.internal:check-usable object "add-event-handler"))
+      (%check-event-usable object "add-event-handler"))
     (let ((value (or (cdr (assoc event (%event-table object)))
                      (error 'cna-usage-error
                             :operation "add-event-handler"

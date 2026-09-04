@@ -304,7 +304,12 @@
       "CNA_RENDER_TARGET_USAGE_DISCARD_CONTENTS",
       "CNA_RENDER_TARGET_USAGE_PRESERVE_CONTENTS",
       "CNA_RENDER_TARGET_USAGE_PLATFORM_CONTENTS",
-      "CNA_RENDER_TARGET_KIND_2D"
+      "CNA_RENDER_TARGET_KIND_2D",
+      "CNA_GAME_COMPONENT_EVENT_ENABLED_CHANGED",
+      "CNA_GAME_COMPONENT_EVENT_UPDATE_ORDER_CHANGED",
+      "CNA_GAME_COMPONENT_EVENT_DRAW_ORDER_CHANGED",
+      "CNA_GAME_COMPONENT_EVENT_VISIBLE_CHANGED",
+      "CNA_GAME_COMPONENT_EVENT_DISPOSED"
     ],
     "prefix_families": [
       {
@@ -604,6 +609,38 @@
       "name": "CNA_RenderTargetInfo",
       "direction": "out",
       "versioned": true
+    },
+    {
+      "name": "CNA_GameComponentCallbacks",
+      "direction": "in",
+      "versioned": true,
+      "fields_absent_from_baseline": {
+        "initialize": {
+          "offset": 8,
+          "size": 8
+        },
+        "update": {
+          "offset": 16,
+          "size": 8
+        },
+        "draw": {
+          "offset": 24,
+          "size": 8
+        },
+        "load_content": {
+          "offset": 32,
+          "size": 8
+        },
+        "unload_content": {
+          "offset": 40,
+          "size": 8
+        },
+        "dispose": {
+          "offset": 48,
+          "size": 8
+        }
+      },
+      "note": "CNA's abi_baseline.json omits function-pointer members, so the six handlers are declared absent from it and verified by the C compiler instead. struct_size, struct_version and context are in the baseline and are cross-checked against it as usual."
     }
   ],
   "callbacks": [
@@ -627,6 +664,12 @@
     },
     {
       "name": "CNA_RenderTargetContentLostCallback"
+    },
+    {
+      "name": "CNA_GameComponentEventCallback"
+    },
+    {
+      "name": "CNA_GameComponentCollectionCallback"
     }
   ],
   "functions": [
@@ -2608,6 +2651,198 @@
       "header": "render_target.h",
       "thread": "owner",
       "ownership": "releases"
+    },
+    {
+      "name": "cna_game_component_callbacks_init",
+      "header": "runtime_components.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_create",
+      "header": "runtime_components.h",
+      "thread": "game",
+      "ownership": "creates-owned:game-component:child-of-game"
+    },
+    {
+      "name": "cna_drawable_game_component_create",
+      "header": "runtime_components.h",
+      "thread": "game",
+      "ownership": "creates-owned:game-component:child-of-game"
+    },
+    {
+      "name": "cna_game_component_destroy",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "destroys:game-component"
+    },
+    {
+      "name": "cna_game_component_get_is_drawable",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_get_game",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_get_enabled",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_set_enabled",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_get_update_order",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_set_update_order",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_drawable_game_component_get_draw_order",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_drawable_game_component_set_draw_order",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_drawable_game_component_get_visible",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_drawable_game_component_set_visible",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_drawable_game_component_get_graphics_device",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "borrows-callback-scoped:graphics-device"
+    },
+    {
+      "name": "cna_game_component_initialize",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_update",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_drawable_game_component_draw",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_dispose",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_component_subscribe",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_game_component_unsubscribe",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_game_components_get_count",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_get_at",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_add",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_insert",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_remove",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_remove_at",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_clear",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_contains",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_index_of",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_components_subscribe_added",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_game_components_subscribe_removed",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "creates"
     }
   ],
   "shimmed_routes": [

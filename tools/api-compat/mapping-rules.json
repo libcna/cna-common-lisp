@@ -56,6 +56,18 @@
           "lisp": "on-exiting",
           "generic": true,
           "reason": "The CLR event-handler pattern passes a sender and an argument object. A CLOS method on the game needs neither: the game is the receiver, and the exiting notification carries nothing else."
+        },
+        "Components": {
+          "lisp": "components",
+          "generic": true,
+          "setf": false,
+          "reason": "The game's one collection, answered by identity because XNA's is a field."
+        },
+        "LaunchParameters": {
+          "lisp": "launch-parameters",
+          "generic": true,
+          "setf": false,
+          "reason": "Answered by identity, as XNA's field is. CNA has no route that reports a game's launch parameters, so it is empty unless the program fills it -- recorded in docs/limitations.md rather than left to be discovered."
         }
       },
       "not_applicable": {
@@ -94,6 +106,265 @@
         "new()": "make-instance",
         "new(TimeSpan,TimeSpan,Boolean)": "make-instance",
         "new(TimeSpan,TimeSpan)": "make-instance"
+      }
+    },
+    "Microsoft.Xna.Framework.IGameComponent": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "igame-component",
+      "lisp_kind": "interface",
+      "member_overrides": {
+        "Initialize()": {
+          "lisp": "initialize",
+          "generic": true,
+          "reason": "Common Lisp has no interfaces and needs none: the generic function IS the contract, and CLOS dispatches it. This is the same decision the three IEffect* contracts record -- a type satisfies the contract by having methods, with nothing to declare."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.IUpdateable": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "iupdateable",
+      "lisp_kind": "interface",
+      "member_overrides": {
+        "Update(GameTime)": {
+          "lisp": "update",
+          "generic": true,
+          "reason": "Common Lisp has no interfaces and needs none: the generic function IS the contract, and CLOS dispatches it. This is the same decision the three IEffect* contracts record -- a type satisfies the contract by having methods, with nothing to declare."
+        },
+        "Enabled": {
+          "lisp": "component-enabled",
+          "generic": true,
+          "setf": true,
+          "reason": "Common Lisp has no interfaces and needs none: the generic function IS the contract, and CLOS dispatches it. This is the same decision the three IEffect* contracts record -- a type satisfies the contract by having methods, with nothing to declare."
+        },
+        "UpdateOrder": {
+          "lisp": "update-order",
+          "generic": true,
+          "setf": true,
+          "reason": "Common Lisp has no interfaces and needs none: the generic function IS the contract, and CLOS dispatches it. This is the same decision the three IEffect* contracts record -- a type satisfies the contract by having methods, with nothing to declare."
+        }
+      },
+      "events": {
+        "EnabledChanged": {
+          "add": "add-enabled-changed-handler",
+          "remove": "remove-enabled-changed-handler"
+        },
+        "UpdateOrderChanged": {
+          "add": "add-update-order-changed-handler",
+          "remove": "remove-update-order-changed-handler"
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.IDrawable": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "idrawable",
+      "lisp_kind": "interface",
+      "member_overrides": {
+        "Draw(GameTime)": {
+          "lisp": "draw",
+          "generic": true,
+          "reason": "Common Lisp has no interfaces and needs none: the generic function IS the contract, and CLOS dispatches it. This is the same decision the three IEffect* contracts record -- a type satisfies the contract by having methods, with nothing to declare."
+        },
+        "Visible": {
+          "lisp": "component-visible",
+          "generic": true,
+          "setf": true,
+          "reason": "Common Lisp has no interfaces and needs none: the generic function IS the contract, and CLOS dispatches it. This is the same decision the three IEffect* contracts record -- a type satisfies the contract by having methods, with nothing to declare."
+        },
+        "DrawOrder": {
+          "lisp": "draw-order",
+          "generic": true,
+          "setf": true,
+          "reason": "Common Lisp has no interfaces and needs none: the generic function IS the contract, and CLOS dispatches it. This is the same decision the three IEffect* contracts record -- a type satisfies the contract by having methods, with nothing to declare."
+        }
+      },
+      "events": {
+        "VisibleChanged": {
+          "add": "add-visible-changed-handler",
+          "remove": "remove-visible-changed-handler"
+        },
+        "DrawOrderChanged": {
+          "add": "add-draw-order-changed-handler",
+          "remove": "remove-draw-order-changed-handler"
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.GameComponent": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "game-component",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(Game)": "make-instance"
+      },
+      "member_overrides": {
+        "Initialize()": {
+          "lisp": "initialize",
+          "generic": true,
+          "reason": "The same generic function a GAME specialises, because XNA gives them the same name for the same reason. A component's behaviour is its methods; there is no registration step, because CLOS is the registration."
+        },
+        "Update(GameTime)": {
+          "lisp": "update",
+          "generic": true,
+          "reason": "As Initialize(): one generic function, a method per class that answers it."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "generic": true,
+          "reason": "IDisposable.Dispose, which is this binding's one deterministic disposal for every native object."
+        },
+        "Dispose(Boolean)": {
+          "lisp": "component-dispose",
+          "generic": true,
+          "reason": "XNA's protected Dispose(bool disposing) is the overridable half of disposal. Common Lisp has no protected methods, so the hook is its own generic function and DISPOSE stays the one operation. CNA calls it through cna_game_component_dispose, before the handle is released."
+        },
+        "Enabled": {
+          "lisp": "component-enabled",
+          "generic": true,
+          "setf": true
+        },
+        "UpdateOrder": {
+          "lisp": "update-order",
+          "generic": true,
+          "setf": true
+        },
+        "Game": {
+          "lisp": "component-game",
+          "generic": true,
+          "setf": false,
+          "reason": "The Lisp object, cross-checked against the handle CNA reports: the ABI has no route from a game handle back to the CLOS object, so this compares rather than invents."
+        }
+      },
+      "events": {
+        "EnabledChanged": {
+          "add": "add-enabled-changed-handler",
+          "remove": "remove-enabled-changed-handler"
+        },
+        "UpdateOrderChanged": {
+          "add": "add-update-order-changed-handler",
+          "remove": "remove-update-order-changed-handler"
+        },
+        "Disposed": {
+          "add": "add-disposed-handler",
+          "remove": "remove-disposed-handler"
+        }
+      },
+      "not_applicable": {
+        "Finalize()": "The finalizer. No finalizer in this binding ever destroys a CNA object: a finalizer runs on the collector's thread and every CNA handle is thread-affine, so one that called CNA would be calling it from the wrong thread by construction. docs/ownership-and-lifetimes.md.",
+        "OnUpdateOrderChanged(Object,EventArgs)": "The protected On<Event> method a subclass overrides to intercept an event before its handlers run. CNA raises these itself and has no route that calls back into managed code between the two, so there is no place in this projection for a subclass to stand -- the same reason Game's OnActivated and OnDeactivated are not applicable.",
+        "OnEnabledChanged(Object,EventArgs)": "The protected On<Event> method a subclass overrides to intercept an event before its handlers run. CNA raises these itself and has no route that calls back into managed code between the two, so there is no place in this projection for a subclass to stand -- the same reason Game's OnActivated and OnDeactivated are not applicable."
+      },
+      "overload_families": {
+        "Dispose": {
+          "lisp": "dispose and component-dispose",
+          "reason": "XNA's IDisposable.Dispose() and its protected Dispose(bool) are two members that split here rather than collapse. DISPOSE is the binding's one deterministic disposal for every native object; COMPONENT-DISPOSE is the overridable hook the second stands for, and Common Lisp has no protected methods to spell it any other way. CNA calls it through cna_game_component_dispose before releasing the handle."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.DrawableGameComponent": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "drawable-game-component",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(Game)": "make-instance"
+      },
+      "member_overrides": {
+        "Initialize()": {
+          "lisp": "initialize",
+          "generic": true
+        },
+        "Draw(GameTime)": {
+          "lisp": "draw",
+          "generic": true
+        },
+        "LoadContent()": {
+          "lisp": "load-content",
+          "generic": true
+        },
+        "UnloadContent()": {
+          "lisp": "unload-content",
+          "generic": true
+        },
+        "Dispose(Boolean)": {
+          "lisp": "component-dispose",
+          "generic": true
+        },
+        "Visible": {
+          "lisp": "component-visible",
+          "generic": true,
+          "setf": true
+        },
+        "DrawOrder": {
+          "lisp": "draw-order",
+          "generic": true,
+          "setf": true
+        },
+        "GraphicsDevice": {
+          "lisp": "graphics-device",
+          "generic": true,
+          "setf": false,
+          "reason": "The game's device. There is one device in a CNA-Lisp program and one facade for it, so this answers the game's rather than wrapping the borrowed handle a second time."
+        }
+      },
+      "events": {
+        "VisibleChanged": {
+          "add": "add-visible-changed-handler",
+          "remove": "remove-visible-changed-handler"
+        },
+        "DrawOrderChanged": {
+          "add": "add-draw-order-changed-handler",
+          "remove": "remove-draw-order-changed-handler"
+        }
+      },
+      "not_applicable": {
+        "OnDrawOrderChanged(Object,EventArgs)": "The protected On<Event> method a subclass overrides to intercept an event before its handlers run. CNA raises these itself and has no route that calls back into managed code between the two, so there is no place in this projection for a subclass to stand -- the same reason Game's OnActivated and OnDeactivated are not applicable.",
+        "OnVisibleChanged(Object,EventArgs)": "The protected On<Event> method a subclass overrides to intercept an event before its handlers run. CNA raises these itself and has no route that calls back into managed code between the two, so there is no place in this projection for a subclass to stand -- the same reason Game's OnActivated and OnDeactivated are not applicable."
+      }
+    },
+    "Microsoft.Xna.Framework.GameComponentCollection": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "game-component-collection",
+      "lisp_kind": "class",
+      "events": {
+        "ComponentAdded": {
+          "add": "add-component-added-handler",
+          "remove": "remove-component-added-handler"
+        },
+        "ComponentRemoved": {
+          "add": "add-component-removed-handler",
+          "remove": "remove-component-removed-handler"
+        }
+      },
+      "not_applicable": {
+        "InsertItem(Int32,IGameComponent)": "A protected virtual hook of System.Collections.ObjectModel.Collection<T>, which exists so a subclass can intercept a mutation. The collection here is the game's own and CNA owns the storage, so there is nothing for a subclass to intercept and no protected method to override it with.",
+        "RemoveItem(Int32)": "A protected virtual hook of System.Collections.ObjectModel.Collection<T>, which exists so a subclass can intercept a mutation. The collection here is the game's own and CNA owns the storage, so there is nothing for a subclass to intercept and no protected method to override it with.",
+        "SetItem(Int32,IGameComponent)": "A protected virtual hook of System.Collections.ObjectModel.Collection<T>, which exists so a subclass can intercept a mutation. The collection here is the game's own and CNA owns the storage, so there is nothing for a subclass to intercept and no protected method to override it with.",
+        "ClearItems()": "A protected virtual hook of System.Collections.ObjectModel.Collection<T>, which exists so a subclass can intercept a mutation. The collection here is the game's own and CNA owns the storage, so there is nothing for a subclass to intercept and no protected method to override it with."
+      },
+      "unimplemented": {
+        "new()": "XNA's constructor is public and a standalone collection is legal there, if useless -- a Game makes its own and drives that one. CNA has no route for a collection apart from a game's: `a game owns exactly one component collection, so the collection needs no handle of its own and every route addresses the game's`. So a standalone one is not projected rather than faked."
+      }
+    },
+    "Microsoft.Xna.Framework.GameComponentCollectionEventArgs": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "game-component-collection-event-args",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(IGameComponent)": "make-instance"
+      },
+      "member_overrides": {
+        "GameComponent": {
+          "lisp": "event-args-game-component",
+          "generic": true,
+          "setf": false,
+          "reason": "The one event argument in this binding that is not empty. Every other CLR event in the selection carries EventArgs.Empty and its handlers take the sender alone; these two carry the component, so their handlers take the sender and this object."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.LaunchParameters": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "launch-parameters",
+      "lisp_kind": "class",
+      "constructors": {
+        "new()": "make-instance"
       }
     },
     "Microsoft.Xna.Framework.GraphicsDeviceManager": {

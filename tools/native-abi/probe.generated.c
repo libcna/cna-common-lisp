@@ -987,6 +987,27 @@ _Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->renderer_available) == 1, "CN
 _Static_assert(offsetof(CNA_RenderTargetInfo, reserved) == 42, "CNA_RenderTargetInfo.reserved offset");
 _Static_assert(sizeof(((CNA_RenderTargetInfo *)0)->reserved) == 2, "CNA_RenderTargetInfo.reserved size");
 
+_Static_assert(sizeof(CNA_GameComponentCallbacks) == 64, "CNA_GameComponentCallbacks size");
+_Static_assert(_Alignof(CNA_GameComponentCallbacks) == 8, "CNA_GameComponentCallbacks alignment");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, struct_size) == 0, "CNA_GameComponentCallbacks.struct_size offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->struct_size) == 4, "CNA_GameComponentCallbacks.struct_size size");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, struct_version) == 4, "CNA_GameComponentCallbacks.struct_version offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->struct_version) == 4, "CNA_GameComponentCallbacks.struct_version size");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, initialize) == 8, "CNA_GameComponentCallbacks.initialize offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->initialize) == 8, "CNA_GameComponentCallbacks.initialize size");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, update) == 16, "CNA_GameComponentCallbacks.update offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->update) == 8, "CNA_GameComponentCallbacks.update size");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, draw) == 24, "CNA_GameComponentCallbacks.draw offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->draw) == 8, "CNA_GameComponentCallbacks.draw size");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, load_content) == 32, "CNA_GameComponentCallbacks.load_content offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->load_content) == 8, "CNA_GameComponentCallbacks.load_content size");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, unload_content) == 40, "CNA_GameComponentCallbacks.unload_content offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->unload_content) == 8, "CNA_GameComponentCallbacks.unload_content size");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, dispose) == 48, "CNA_GameComponentCallbacks.dispose offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->dispose) == 8, "CNA_GameComponentCallbacks.dispose size");
+_Static_assert(offsetof(CNA_GameComponentCallbacks, context) == 56, "CNA_GameComponentCallbacks.context offset");
+_Static_assert(sizeof(((CNA_GameComponentCallbacks *)0)->context) == 8, "CNA_GameComponentCallbacks.context size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1317,6 +1338,38 @@ CNA_Result (*const cna_lisp_probe_cna_render_target_get_info)(CNA_Handle, CNA_Re
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_render_target2d)(CNA_Handle, CNA_Handle) = cna_graphics_device_set_render_target2d;
 CNA_Result (*const cna_lisp_probe_cna_render_target_subscribe_content_lost)(CNA_Handle, CNA_RenderTargetContentLostCallback, void*, CNA_RenderTargetEventRegistrationHandle*) = cna_render_target_subscribe_content_lost;
 CNA_Result (*const cna_lisp_probe_cna_render_target_unsubscribe_content_lost)(CNA_RenderTargetEventRegistrationHandle) = cna_render_target_unsubscribe_content_lost;
+CNA_Result (*const cna_lisp_probe_cna_game_component_callbacks_init)(CNA_GameComponentCallbacks*) = cna_game_component_callbacks_init;
+CNA_Result (*const cna_lisp_probe_cna_game_component_create)(CNA_Handle, const CNA_GameComponentCallbacks*, CNA_GameComponentHandle*) = cna_game_component_create;
+CNA_Result (*const cna_lisp_probe_cna_drawable_game_component_create)(CNA_Handle, const CNA_GameComponentCallbacks*, CNA_GameComponentHandle*) = cna_drawable_game_component_create;
+CNA_Result (*const cna_lisp_probe_cna_game_component_destroy)(CNA_GameComponentHandle) = cna_game_component_destroy;
+CNA_Result (*const cna_lisp_probe_cna_game_component_get_is_drawable)(CNA_GameComponentHandle, CNA_Bool*) = cna_game_component_get_is_drawable;
+CNA_Result (*const cna_lisp_probe_cna_game_component_get_game)(CNA_GameComponentHandle, CNA_Handle*) = cna_game_component_get_game;
+CNA_Result (*const cna_lisp_probe_cna_game_component_get_enabled)(CNA_GameComponentHandle, CNA_Bool*) = cna_game_component_get_enabled;
+CNA_Result (*const cna_lisp_probe_cna_game_component_set_enabled)(CNA_GameComponentHandle, CNA_Bool) = cna_game_component_set_enabled;
+CNA_Result (*const cna_lisp_probe_cna_game_component_get_update_order)(CNA_GameComponentHandle, int32_t*) = cna_game_component_get_update_order;
+CNA_Result (*const cna_lisp_probe_cna_game_component_set_update_order)(CNA_GameComponentHandle, int32_t) = cna_game_component_set_update_order;
+CNA_Result (*const cna_lisp_probe_cna_drawable_game_component_get_draw_order)(CNA_GameComponentHandle, int32_t*) = cna_drawable_game_component_get_draw_order;
+CNA_Result (*const cna_lisp_probe_cna_drawable_game_component_set_draw_order)(CNA_GameComponentHandle, int32_t) = cna_drawable_game_component_set_draw_order;
+CNA_Result (*const cna_lisp_probe_cna_drawable_game_component_get_visible)(CNA_GameComponentHandle, CNA_Bool*) = cna_drawable_game_component_get_visible;
+CNA_Result (*const cna_lisp_probe_cna_drawable_game_component_set_visible)(CNA_GameComponentHandle, CNA_Bool) = cna_drawable_game_component_set_visible;
+CNA_Result (*const cna_lisp_probe_cna_drawable_game_component_get_graphics_device)(CNA_GameComponentHandle, CNA_Handle*) = cna_drawable_game_component_get_graphics_device;
+CNA_Result (*const cna_lisp_probe_cna_game_component_initialize)(CNA_GameComponentHandle) = cna_game_component_initialize;
+CNA_Result (*const cna_lisp_probe_cna_game_component_update)(CNA_GameComponentHandle, const CNA_GameTime*) = cna_game_component_update;
+CNA_Result (*const cna_lisp_probe_cna_drawable_game_component_draw)(CNA_GameComponentHandle, const CNA_GameTime*) = cna_drawable_game_component_draw;
+CNA_Result (*const cna_lisp_probe_cna_game_component_dispose)(CNA_GameComponentHandle) = cna_game_component_dispose;
+CNA_Result (*const cna_lisp_probe_cna_game_component_subscribe)(CNA_GameComponentHandle, CNA_GameComponentEvent, CNA_GameComponentEventCallback, void*, CNA_GameComponentEventRegistrationHandle*) = cna_game_component_subscribe;
+CNA_Result (*const cna_lisp_probe_cna_game_component_unsubscribe)(CNA_GameComponentEventRegistrationHandle) = cna_game_component_unsubscribe;
+CNA_Result (*const cna_lisp_probe_cna_game_components_get_count)(CNA_Handle, uint64_t*) = cna_game_components_get_count;
+CNA_Result (*const cna_lisp_probe_cna_game_components_get_at)(CNA_Handle, uint64_t, CNA_GameComponentHandle*) = cna_game_components_get_at;
+CNA_Result (*const cna_lisp_probe_cna_game_components_add)(CNA_Handle, CNA_GameComponentHandle) = cna_game_components_add;
+CNA_Result (*const cna_lisp_probe_cna_game_components_insert)(CNA_Handle, uint64_t, CNA_GameComponentHandle) = cna_game_components_insert;
+CNA_Result (*const cna_lisp_probe_cna_game_components_remove)(CNA_Handle, CNA_GameComponentHandle, CNA_Bool*) = cna_game_components_remove;
+CNA_Result (*const cna_lisp_probe_cna_game_components_remove_at)(CNA_Handle, uint64_t) = cna_game_components_remove_at;
+CNA_Result (*const cna_lisp_probe_cna_game_components_clear)(CNA_Handle) = cna_game_components_clear;
+CNA_Result (*const cna_lisp_probe_cna_game_components_contains)(CNA_Handle, CNA_GameComponentHandle, CNA_Bool*) = cna_game_components_contains;
+CNA_Result (*const cna_lisp_probe_cna_game_components_index_of)(CNA_Handle, CNA_GameComponentHandle, int32_t*) = cna_game_components_index_of;
+CNA_Result (*const cna_lisp_probe_cna_game_components_subscribe_added)(CNA_Handle, CNA_GameComponentCollectionCallback, void*, CNA_GameComponentEventRegistrationHandle*) = cna_game_components_subscribe_added;
+CNA_Result (*const cna_lisp_probe_cna_game_components_subscribe_removed)(CNA_Handle, CNA_GameComponentCollectionCallback, void*, CNA_GameComponentEventRegistrationHandle*) = cna_game_components_subscribe_removed;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -1326,6 +1379,8 @@ _Static_assert(sizeof(CNA_GraphicsResourceDisposingCallback) == sizeof(void (*)(
 _Static_assert(sizeof(CNA_VertexBufferContentLostCallback) == sizeof(void (*)(void)), "CNA_VertexBufferContentLostCallback size");
 _Static_assert(sizeof(CNA_IndexBufferContentLostCallback) == sizeof(void (*)(void)), "CNA_IndexBufferContentLostCallback size");
 _Static_assert(sizeof(CNA_RenderTargetContentLostCallback) == sizeof(void (*)(void)), "CNA_RenderTargetContentLostCallback size");
+_Static_assert(sizeof(CNA_GameComponentEventCallback) == sizeof(void (*)(void)), "CNA_GameComponentEventCallback size");
+_Static_assert(sizeof(CNA_GameComponentCollectionCallback) == sizeof(void (*)(void)), "CNA_GameComponentCollectionCallback size");
 
 /* --- constants --- */
 _Static_assert((int64_t)(CNA_ABI_VERSION) == INT64_C(5376), "CNA_ABI_VERSION value");
@@ -1469,6 +1524,11 @@ _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_GAMEPAD) == INT64_C(1), "CNA_GAMEPAD_T
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_GUITAR) == INT64_C(6), "CNA_GAMEPAD_TYPE_GUITAR value");
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_UNKNOWN) == INT64_C(0), "CNA_GAMEPAD_TYPE_UNKNOWN value");
 _Static_assert((int64_t)(CNA_GAMEPAD_TYPE_WHEEL) == INT64_C(2), "CNA_GAMEPAD_TYPE_WHEEL value");
+_Static_assert((int64_t)(CNA_GAME_COMPONENT_EVENT_DISPOSED) == INT64_C(4), "CNA_GAME_COMPONENT_EVENT_DISPOSED value");
+_Static_assert((int64_t)(CNA_GAME_COMPONENT_EVENT_DRAW_ORDER_CHANGED) == INT64_C(2), "CNA_GAME_COMPONENT_EVENT_DRAW_ORDER_CHANGED value");
+_Static_assert((int64_t)(CNA_GAME_COMPONENT_EVENT_ENABLED_CHANGED) == INT64_C(0), "CNA_GAME_COMPONENT_EVENT_ENABLED_CHANGED value");
+_Static_assert((int64_t)(CNA_GAME_COMPONENT_EVENT_UPDATE_ORDER_CHANGED) == INT64_C(1), "CNA_GAME_COMPONENT_EVENT_UPDATE_ORDER_CHANGED value");
+_Static_assert((int64_t)(CNA_GAME_COMPONENT_EVENT_VISIBLE_CHANGED) == INT64_C(3), "CNA_GAME_COMPONENT_EVENT_VISIBLE_CHANGED value");
 _Static_assert((int64_t)(CNA_GAME_EVENT_ACTIVATED) == INT64_C(0), "CNA_GAME_EVENT_ACTIVATED value");
 _Static_assert((int64_t)(CNA_GAME_EVENT_DEACTIVATED) == INT64_C(1), "CNA_GAME_EVENT_DEACTIVATED value");
 _Static_assert((int64_t)(CNA_GAME_EVENT_DISPOSED) == INT64_C(2), "CNA_GAME_EVENT_DISPOSED value");

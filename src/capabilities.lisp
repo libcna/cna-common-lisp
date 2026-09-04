@@ -37,6 +37,24 @@
     (microsoft.xna.framework rectangle-contains-coordinates
      "Rectangle.Contains(int, int). Its three arguments cannot share a congruent
       generic function with the two-argument overloads.")
+    (microsoft.xna.framework
+     component-count component-at components-of add-component insert-component
+     remove-component remove-component-at clear-components contains-component
+     component-index
+     "GameComponentCollection's own operations. XNA inherits them from
+      System.Collections.ObjectModel.Collection<IGameComponent>, so the contract
+      records them on the BCL type rather than on the XNA one and they are not
+      members this projection can map. A collection nothing can be added to would
+      be useless, so they are here, named for what they hold rather than as bare
+      ADD and REMOVE -- the same reason APPLY-EFFECT-PASS is not APPLY.
+      COMPONENT-INDEX answers NIL where XNA's IndexOf answers -1, because a
+      position is a non-negative index and -1 is a sentinel.")
+    (microsoft.xna.framework
+     launch-parameter launch-parameter-names
+     "LaunchParameters' own operations. XNA derives the type from
+      Dictionary<string, string> and adds nothing at all, so every operation on
+      one belongs to the BCL dictionary. These two are the reachable half of it:
+      read a value, set or remove one, and list the names.")
     (microsoft.xna.framework.graphics renderer-name
      "Which renderer is behind the device. XNA has no equivalent; without it a
       headless qualification run cannot be interpreted.")
