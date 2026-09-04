@@ -39,9 +39,18 @@ Locally, the reference runtime is Debian's build of the same upstream release
 ## The CNA source
 
 The intent is to follow a moving branch: `openeggbert/cna`, branch `next`. That
-is where the CNA C ABI 0.21.0 lives, and pinning by preference would mean the
-binding stops noticing the day CNA's ABI moves — which is the one thing this
+is where the CNA C ABI lives, and pinning by preference would mean the binding
+stops noticing the day CNA's ABI moves — which is the one thing this
 qualification exists to notice.
+
+**It has since moved.** CNA bumped the ABI to **0.22.0** on 2026-09-04. This
+binding still admits **0.21.0 only**, which is not an oversight: a version enters
+the admitted set after the whole bound surface has passed the compiler gate
+against that version's headers, and nothing has been run against 0.22.0's. The
+pinned headers and the qualified library are 0.21.0, and the generator refuses a
+baseline that says otherwise — reproducing the gates against a `cna` checkout
+that has moved on needs a 0.21.0 baseline, which `cnanext 2b0c374a1` is the last
+commit to carry. `NEXT.md` records what admitting 0.22.0 would involve.
 
 **As of 2026-09-04 that branch does not build from published sources, so
 `CNA_REF` is pinned to `056e57d478f8e6accfa9124337803e735b39f1e4`.** The reason

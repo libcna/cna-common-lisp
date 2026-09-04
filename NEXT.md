@@ -221,6 +221,20 @@ the graph after each closure instead of following this list once it has moved.
 
 ## Frontier notes worth keeping
 
+* **CNA upstream is now ABI 0.22.0, and this binding admits 0.21.0 only.** The
+  bump landed in `cnanext` on 2026-09-04 (`75847b7f2`), which regenerated
+  `tools/c-api/abi_baseline.json`. Nothing here changed: the admitted set is
+  0.21.0 (encoded 5376), the pinned headers and library are 0.21.0, and a version
+  enters the set only after the whole bound surface has passed the compiler gate
+  against *that version's* headers. Two consequences for anyone reproducing the
+  gates: point `CNA_ABI_BASELINE` at a 0.21.0 baseline -- `cnanext 2b0c374a1` is
+  the last commit carrying one -- rather than at whatever the checkout is on
+  today, or the generator refuses with "supplied headers declare ABI ... which
+  the manifest does not admit", which is the gate doing its job. Admitting 0.22.0
+  is discrete, local, actionable work: build its headers, run
+  `tools/native-abi/generate.py` and `verify.sh` against them, and see what the
+  270-odd bound routes say.
+
 * **A fixed time step does not make a frame count an update count.** Measured:
   catch-up updates follow a frame that overran its target, and a full collection
   between frames is enough. Every deterministic frame claim here uses variable
