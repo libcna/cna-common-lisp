@@ -10,6 +10,11 @@
 # proves nothing about the artifact. So this script checks where CNA-Lisp was
 # actually loaded from and fails if the answer is not the extraction directory.
 #
+# It also checks the three pixels the template reads, in both directions: under a
+# rasterising renderer they must be the exact colours the template drew, and under
+# one with no readback they must all say so. Printing them was not enough -- a
+# consumer that had quietly stopped drawing would have printed whatever it found.
+#
 #   CNA_NATIVE_LIBRARY=/abs/path/libcna_c_api.so \
 #     tools/qualification/isolated-consumer.sh [/path/to/cna-common-lisp-template]
 set -eu
@@ -94,6 +99,39 @@ for frames in 60 600; do
         echo "FAIL the $frames-frame canary left something undisposed" >&2
         exit 1
     fi
+
+    # The three pixels the consumer reads, asserted rather than printed. Which
+    # branch is correct depends on the renderer, and *both* branches are checked:
+    # a lane that only accepted "not-supported" would pass against a rasterising
+    # renderer that had silently stopped drawing, and one that only accepted the
+    # colours could not run under HEADLESS at all.
+    renderer=$(echo "$output" | sed -n 's/^CANARY renderer=//p')
+    case "$renderer" in
+        SOFTWARE|OPENGL33|OPENGLES3|SDL_RENDERER|VULKAN|SDL_GPU|PORTABLEGL|OPENGL4)
+            expect_pixel() {
+                if ! echo "$output" | grep -q "^CANARY $1=$2\$"; then
+                    echo "FAIL $renderer: the $frames-frame canary's $1 should be $2" >&2
+                    echo "$output" | grep "^CANARY $1=" >&2
+                    exit 1
+                fi
+            }
+            # CornflowerBlue, the triangle's own vertex colour, and the colour
+            # that exists nowhere in the frame but inside the render target.
+            expect_pixel pixels 100,149,237,255
+            expect_pixel triangle_pixel 255,128,0,255
+            expect_pixel render_target_pixel 0,200,90,255
+            ;;
+        *)
+            for line in pixels triangle_pixel render_target_pixel; do
+                if ! echo "$output" | grep -q "^CANARY $line=not-supported\$"; then
+                    echo "FAIL $renderer has no back-buffer readback, so the" \
+                         "$frames-frame canary's $line should be not-supported" >&2
+                    echo "$output" | grep "^CANARY $line=" >&2
+                    exit 1
+                fi
+            done
+            ;;
+    esac
 done
 
 echo "== the template stays on the public API =="

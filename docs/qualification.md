@@ -212,6 +212,22 @@ in a back buffer. Nothing here has been displayed to anyone.
 **And no claim is made about a GPU renderer.** `SOFTWARE` rasterises on the CPU.
 Nothing here says an OpenGL or Vulkan renderer would produce the same pixels.
 
+### The isolated consumer asserts its pixels too
+
+`tools/qualification/isolated-consumer.sh` builds a source artifact of CNA-Lisp,
+extracts it somewhere clean, and runs the template against *that* — with a source
+registry naming nothing else and a fresh FASL cache — so a canary that passed
+because ASDF found the developer's working tree would fail instead.
+
+It checks the three pixels the template reads, **in both directions**. Under a
+rasterising renderer they must be exactly the colours the template drew:
+CornflowerBlue for the clear, the triangle's own vertex colour, and the colour
+that exists nowhere in the frame except inside the render target. Under a
+renderer with no readback all three must say `not-supported`. Printing them was
+not enough: a consumer that had quietly stopped drawing would have printed
+whatever it found. Verified by mutation — a wrong expected colour makes the lane
+exit 1 naming the line.
+
 ## What HEADLESS does and does not prove
 
 A HEADLESS run proves:
