@@ -228,13 +228,18 @@ The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
 
-1. **`System.IO.Stream` and `TitleContainer`**, which unblock
-   `Texture2D.FromStream`, `SaveAsPng` and `SaveAsJpeg`, and `ContentManager`'s
-   two protected stream hooks. **The SpriteFont loop it used to gate is closed**:
-   `ContentManager` went in without needing a Stream, because CNA's loaders take
-   an asset name and answer an object rather than handing a stream across the C
-   boundary. What is left for Stream is the image members, which are a smaller
-   prize than they were.
+1. **The content closure's remaining half: `ContentManager`'s cache.** `Unload()`
+   and `Dispose()` are reported **partial**, and the reason is one thing, not two.
+   XNA's `ContentManager` keeps `loadedAssets` and `disposableAssets`; `Unload`
+   walks the second calling `Dispose` on every entry and clears both, and
+   `Dispose` is `Unload` followed by nulling them. Here a loaded asset is an owned
+   child of the *game* rather than of the manager, so `Unload` drops CNA's cache
+   and releases nothing, and two loads of one name are two objects where XNA's are
+   one. Closing it means the manager owning what it loaded and answering the same
+   object for the same name -- and it is `Load<T>`'s transaction that has to gain a
+   cache-insertion step before its commit, which is why the failure-injection
+   tests have a slot for one and no test in it yet. `docs/limitations.md` has the
+   audit and the IL it was read from.
 2. **The device-settings closure**: `Adapter`, `DisplayMode`,
    `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
    `Reset` overloads, `Present`, `GraphicsDevice`'s six events, and
@@ -272,6 +277,21 @@ the graph after each closure instead of following this list once it has moved.
 3. **Audio, models, media, storage, gamer services, networking.**
 
 ## Frontier notes worth keeping
+
+* **`System.IO.Stream` is a Common Lisp stream, and is not a type.** It is not in
+  the pinned contract -- that snapshot is the XNA profile and `Stream` is the BCL's
+  -- so there was never a type here to project. What there was, is members that
+  take one, and they now take an ordinary binary stream from `OPEN`. `SeekOrigin`
+  is not projected for the same kind of reason: .NET spells relative positioning
+  as an enumeration argument and Common Lisp spells it as arithmetic on
+  `FILE-POSITION`. Do not add either as a class.
+
+* **`TitleContainer.OpenStream` does not use CNA's route for it, on purpose.**
+  `cna_title_container_read_ext` reads a whole file and its own header calls that
+  a deliberate narrowing; XNA answers a lazy `FileStream` and Common Lisp has one
+  in `OPEN`. The *base path* still comes from CNA, so an override made there is
+  honoured. The validation is XNA's, transcribed -- and the order matters: cleaning
+  happens before the escape check, so `a/../b` is accepted and `../b` is refused.
 
 * **ABI 0.22.0 has been audited and is still not admitted, for a reason that is
   not about effort.** Measured against `cnanext c4561fd2b`: all 328 bound routes
