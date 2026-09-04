@@ -234,19 +234,32 @@ the graph after each closure instead of following this list once it has moved.
 
 ## Frontier notes worth keeping
 
-* **CNA upstream is now ABI 0.22.0, and this binding admits 0.21.0 only.** The
-  bump landed in `cnanext` on 2026-09-04 (`75847b7f2`), which regenerated
-  `tools/c-api/abi_baseline.json`. Nothing here changed: the admitted set is
-  0.21.0 (encoded 5376), the pinned headers and library are 0.21.0, and a version
-  enters the set only after the whole bound surface has passed the compiler gate
-  against *that version's* headers. Two consequences for anyone reproducing the
-  gates: point `CNA_ABI_BASELINE` at a 0.21.0 baseline -- `cnanext 2b0c374a1` is
-  the last commit carrying one -- rather than at whatever the checkout is on
-  today, or the generator refuses with "supplied headers declare ABI ... which
-  the manifest does not admit", which is the gate doing its job. Admitting 0.22.0
-  is discrete, local, actionable work: build its headers, run
-  `tools/native-abi/generate.py` and `verify.sh` against them, and see what the
-  270-odd bound routes say.
+* **ABI 0.22.0 has been audited and is still not admitted, for a reason that is
+  not about effort.** Measured against `cnanext c4561fd2b`: all 328 bound routes
+  are still exported, the generated foreign layer regenerated against 0.22.0's
+  headers is **identical** but for the two version constants, and the
+  compiler-backed probe passes against them at `-Werror`. The shape of 0.22.0 is
+  the shape already bound, and a C compiler says so.
+
+  What is missing is a library anybody can build. `cna:next` still calls
+  `StoragePaths::SetIsolatedStorageRootOverride`; the sharp-runtime commit adding
+  it, `c419f477`, is on **no remote branch**; `sharp-runtime:next` is still
+  `bd282d101`. A 0.22.0 library exists on this machine only because the
+  unpublished commit is here, and qualifying against it would produce evidence CI
+  could not reproduce. **Do not admit 0.22.0 on local evidence.** The thing that
+  unblocks it is `sharp-runtime:next` catching up; re-measure with
+  `git branch -r --contains c419f477`, and if that is no longer empty, build a
+  HEADLESS and a SOFTWARE 0.22.0 and run the whole gate set before touching the
+  admitted set.
+
+  Two practical notes for reproducing the 0.21.0 gates in the meantime: point
+  `CNA_ABI_BASELINE` at a 0.21.0 baseline -- `cnanext 2b0c374a1` is the last
+  commit carrying one -- rather than at whatever the checkout is on today, or the
+  generator refuses with "supplied headers declare ABI ... which the manifest
+  does not admit", which is the gate doing its job. And the admitted set lives in
+  `src/internal/abi-gate.lisp`, not in the manifest: the manifest's
+  `admitted_abi_versions` gates the *generator*, the Lisp constant gates the
+  *runtime*, and both have to move together.
 
 * **Pixel evidence no longer has to come from the back buffer.** `RenderTarget2D`
   derives from `Texture2D`, so a target's contents can be read by drawing it --

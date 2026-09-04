@@ -44,13 +44,45 @@ stops noticing the day CNA's ABI moves — which is the one thing this
 qualification exists to notice.
 
 **It has since moved.** CNA bumped the ABI to **0.22.0** on 2026-09-04. This
-binding still admits **0.21.0 only**, which is not an oversight: a version enters
-the admitted set after the whole bound surface has passed the compiler gate
-against that version's headers, and nothing has been run against 0.22.0's. The
-pinned headers and the qualified library are 0.21.0, and the generator refuses a
-baseline that says otherwise — reproducing the gates against a `cna` checkout
-that has moved on needs a 0.21.0 baseline, which `cnanext 2b0c374a1` is the last
-commit to carry. `NEXT.md` records what admitting 0.22.0 would involve.
+binding still admits **0.21.0 only**. That is now a *measured* decision rather
+than an untouched one: 0.22.0 has been audited, and the audit is below.
+
+### The ABI 0.22.0 audit, and why it is still not admitted
+
+Audited on 2026-09-04 against `openeggbert/cnanext` at `c4561fd2b`, whose headers
+declare `0.22.0` (encoded **5632**) and whose `tools/c-api/abi_baseline.json`
+agrees.
+
+What was measured, and what it says:
+
+| Step | Result |
+| --- | --- |
+| Every bound route still exported | **all 328**, none absent from the 0.22.0 baseline |
+| The generated foreign layer, regenerated against 0.22.0's headers | **identical** except the two version constants — every prototype, every struct size, alignment, field offset and field size, every other constant and all seven callback typedefs are byte-for-byte the same |
+| Compiler-backed probe against 0.22.0's headers | **passes**, at `-Wall -Wextra -Werror -Wpedantic`, with every static assertion on layout and prototype holding |
+| A 0.22.0 library refused by the gate | yes — `cna-abi-rejected-error`, which is the gate doing its job |
+
+So the *shape* of 0.22.0 is the shape this binding already binds, and a C
+compiler says so. That is the whole of steps one to seven of an admission.
+
+**It is still not admitted, and the reason is reproducibility.** Admission
+requires the whole suite, both qualification renderers and the isolated consumer
+to run against a real 0.22.0 library, and that library must be one anybody —
+including this repository's own CI — can build. As of this audit it is not:
+
+* `openeggbert/cna`'s current `next` still calls
+  `SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride`, twice,
+  in `modules/storage/src/StorageDevice.cpp`;
+* the sharp-runtime commit that adds it, `c419f477`, is **on no remote branch**
+  — `git branch -r --contains c419f477` is empty;
+* `openeggbert/sharp-runtime:next` is still `bd282d101`, unmoved since the
+  previous measurement, and the member is absent from it.
+
+A 0.22.0 library *can* be built on a machine that happens to hold the unpublished
+sharp-runtime commit, and one exists here. Qualifying against it would produce
+evidence nobody else could reproduce and CI could not check, which is not what
+the admitted set means. **The admitted set stays `{0.21.0}`**, and the thing that
+would change it is `sharp-runtime:next` catching up — not more effort here.
 
 **As of 2026-09-04 that branch does not build from published sources, so
 `CNA_REF` is pinned to `056e57d478f8e6accfa9124337803e735b39f1e4`.** The reason
@@ -61,7 +93,8 @@ is measured, not suspected:
   `SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride`;
 * that member does not exist in `openeggbert/sharp-runtime:next` as published
   (`bd282d101640005454639b372f67e119ffa5642b`) — the sharp-runtime commit that
-  adds it has not been pushed;
+  adds it, `c419f477`, has not been pushed, and re-measured on 2026-09-04 is
+  still on no remote branch at all;
 * so the build fails eleven minutes in, in CNA's storage module, with
   `'SetIsolatedStorageRootOverride' is not a member of
   'SharpRuntime::Storage::StoragePaths'`. Workflow run 33841079977 is the
