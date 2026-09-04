@@ -168,4 +168,3 @@ looked at the CNA result code at all."
       (error (condition)
         (fail "a failing release replaced the body's condition with ~a" condition)))
     (is (= 1 released) "the release must still run, exactly once")))
-
