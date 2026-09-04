@@ -160,4 +160,3 @@ remove and NIL when it did not, which is what the original does silently."
      (defmethod ,add ((object ,class) handler) (%subscribe-event object ,event handler))
      (defmethod ,remove ((object ,class) handler)
        (%unsubscribe-event object ,event handler))))
-

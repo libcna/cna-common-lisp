@@ -37,6 +37,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The whitespace gate below walks from the root commit. A shallow
+          # checkout -- the default -- makes `git rev-list --max-parents=0 HEAD`
+          # answer HEAD itself, so the gate compared HEAD to HEAD and passed
+          # without looking at anything. It had never checked a line.
+          fetch-depth: 0
 
       - name: Install the distro SBCL
         if: matrix.runtime == 'distro'
@@ -124,4 +130,12 @@ jobs:
             || { echo "the committed generated reports are stale; regenerate them"; exit 1; }
 
       - name: Whitespace
-        run: git diff --check "$(git rev-list --max-parents=0 HEAD | tail -1)"..HEAD
+        run: |
+          set -eu
+          root=$(git rev-list --max-parents=0 HEAD | tail -1)
+          # A gate that cannot tell "clean" from "looked at nothing" is not a
+          # gate. If the checkout is shallow the range is empty, and that is a
+          # failure of the workflow rather than a pass for the tree.
+          test "$root" != "$(git rev-parse HEAD)" \
+            || { echo "the checkout is shallow; this gate would check nothing"; exit 1; }
+          git diff --check "$root"..HEAD

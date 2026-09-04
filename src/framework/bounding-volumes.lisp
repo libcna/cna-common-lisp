@@ -264,7 +264,7 @@ zero, not the distance to the far side."))
                    (t (let ((perpendicular (- squared (* along along))))
                         (cond ((> perpendicular radius-squared) nil)
                               (t (- along (%sqrt-as-xna
-                                           (- radius-squared perpendicular)))))))))))))) 
+                                           (- radius-squared perpendicular))))))))))))))
 
 (defmethod ray-intersects ((ray ray) (box bounding-box))
   (bounding-box-intersects box ray))
