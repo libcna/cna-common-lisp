@@ -247,7 +247,9 @@ Exported to the rest of CNA-Lisp only; a consumer never sees it."
                   (cna-lisp.internal:check-result
                    (,setter handle pointer)
                    ,setf-operation :object-type 'graphics-device)))
-              (%mark-bound state)
+              ;; XNA's Apply sets _parent as well as isBound, so the state's
+              ;; GraphicsDevice answers the device it was applied to.
+              (%mark-bound state device)
               state)))))
   (define-state-property blend-state blend-state
     cna-lisp.internal.ffi::%graphics-device-get-blend-state

@@ -122,20 +122,6 @@ diagnostic.")
               fourth Begin shape XNA does not have, told from the five-parameter
               one by nothing a caller could act on. The three overloads whose
               arguments exist are projected; these two are measured as missing.")
-    (:type "Microsoft.Xna.Framework.Graphics.BlendState (GraphicsResource base)"
-     :status :missing
-     :reason "The four state objects derive from GraphicsResource in XNA and do
-              not here, and the same is true of DepthStencilState,
-              RasterizerState and SamplerState. CNA-Lisp's GRAPHICS-RESOURCE is a
-              NATIVE-OBJECT with a CNA handle; CNA models a state object as a
-              versioned C descriptor with no handle at all -- no create route, no
-              destroy route, nothing with a lifetime. Giving these four a handle
-              they do not have would be exactly the fake this binding refuses. So
-              the inherited surface -- Name, Tag, GraphicsDevice, the Disposing
-              event and Dispose -- is absent. It is not in the selected contract
-              for these types either, because the contract lists each type's own
-              members, which is why this absence needs recording here rather than
-              appearing in the scoreboard.")
     (:member "Microsoft.Xna.Framework.Game.Components" :status :missing
      :reason "Needs the game component engine.")
     (:member "Microsoft.Xna.Framework.Game.Content" :status :missing

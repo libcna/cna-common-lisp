@@ -85,30 +85,51 @@ mechanism, does not forward-reference the two classes that use it. Each class's
 (defgeneric %subscribe-natively (object value token registration)
   (:documentation "Call OBJECT's own CNA subscribe route."))
 
+(defgeneric %subscribes-natively-p (object)
+  (:documentation
+   "Whether OBJECT's events come from CNA.
+
+They do for everything with a handle. They do not for a GraphicsResource CNA
+models as a descriptor -- a state object, a vertex declaration -- which is a
+GraphicsResource in the contract, raises Disposing like any other, and has no
+native object to subscribe to. Saying so here is what keeps the native path from
+quietly succeeding on a handle that does not exist, and what keeps a purely
+managed subscription out of the callback registry, which the ownership tests
+require to be empty after a lifecycle.")
+  (:method (object) (declare (ignore object)) t))
+
 (defun %subscribe-event (object event function)
   "Subscribe FUNCTION to OBJECT's EVENT, and answer FUNCTION.
 
-One mechanism for every type that raises events: the table and the native route
-are the only things that differ, and both are generic functions on the object."
+One mechanism for every type that raises events: the table, whether the event
+comes from CNA at all, and the native route are the only things that differ, and
+all three are generic functions on the object."
   (check-type function (or function symbol))
-  (cna-lisp.internal:check-usable object "add-event-handler")
-  (let ((value (or (cdr (assoc event (%event-table object)))
-                   (error 'cna-usage-error
-                          :operation "add-event-handler"
-                          :format-control "~s does not raise a ~s event."
-                          :format-arguments (list (type-of object) event))))
-        (token (cna-lisp.internal:register-callback-target (cons object function))))
-    (handler-case
-        (cffi:with-foreign-object (registration :uint64)
-          (cna-lisp.internal:check-result
-           (%subscribe-natively object value token registration)
-           "add-event-handler")
-          (push (list* event function token (cffi:mem-ref registration :uint64))
-                (%event-handlers object))
-          function)
-      (serious-condition (condition)
-        (cna-lisp.internal:unregister-callback-target token)
-        (error condition)))))
+  (let ((native (%subscribes-natively-p object)))
+    (when native
+      (cna-lisp.internal:check-usable object "add-event-handler"))
+    (let ((value (or (cdr (assoc event (%event-table object)))
+                     (error 'cna-usage-error
+                            :operation "add-event-handler"
+                            :format-control "~s does not raise a ~s event."
+                            :format-arguments (list (type-of object) event)))))
+      (unless native
+        ;; No token: there is no C callback to resolve one, and an entry left in
+        ;; the registry would be a leak the ownership tests would report.
+        (push (list* event function nil 0) (%event-handlers object))
+        (return-from %subscribe-event function))
+      (let ((token (cna-lisp.internal:register-callback-target (cons object function))))
+        (handler-case
+            (cffi:with-foreign-object (registration :uint64)
+              (cna-lisp.internal:check-result
+               (%subscribe-natively object value token registration)
+               "add-event-handler")
+              (push (list* event function token (cffi:mem-ref registration :uint64))
+                    (%event-handlers object))
+              function)
+          (serious-condition (condition)
+            (cna-lisp.internal:unregister-callback-target token)
+            (error condition)))))))
 
 (defgeneric %unsubscribe-natively (object registration)
   (:documentation
@@ -127,10 +148,11 @@ different handle type overrides it."))
                         (%event-handlers object))))
     (when entry
       (setf (%event-handlers object) (remove entry (%event-handlers object)))
-      (cna-lisp.internal:unregister-callback-target (third entry))
-      (cna-lisp.internal:check-result
-       (%unsubscribe-natively object (cdddr entry))
-       "remove-event-handler")
+      (when (third entry)
+        (cna-lisp.internal:unregister-callback-target (third entry))
+        (cna-lisp.internal:check-result
+         (%unsubscribe-natively object (cdddr entry))
+         "remove-event-handler"))
       t)))
 
 (defun %release-event-handlers (object)
@@ -139,8 +161,9 @@ different handle type overrides it."))
 Nothing here may signal: it runs on the teardown path, where a condition would
 leave the rest of the object undestroyed."
   (dolist (entry (%event-handlers object))
-    (ignore-errors (%unsubscribe-natively object (cdddr entry)))
-    (ignore-errors (cna-lisp.internal:unregister-callback-target (third entry))))
+    (when (third entry)
+      (ignore-errors (%unsubscribe-natively object (cdddr entry)))
+      (ignore-errors (cna-lisp.internal:unregister-callback-target (third entry)))))
   (setf (%event-handlers object) '())
   nil)
 

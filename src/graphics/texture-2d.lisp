@@ -7,7 +7,7 @@
 
 (in-package #:microsoft.xna.framework.graphics)
 
-(defclass texture (graphics-resource)
+(defclass texture (%native-graphics-resource)
   ()
   (:documentation
    "Microsoft.Xna.Framework.Graphics.Texture: the abstract base of the texture

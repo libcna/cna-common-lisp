@@ -58,11 +58,14 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "runtime/event-machinery")
    (:file "graphics/enums")
    (:file "graphics/native-values")
+   ;; GraphicsResource is the base of the state objects and the vertex
+   ;; declaration as well as of the handle-bearing resources, so it loads before
+   ;; all of them rather than in the middle of them.
+   (:file "graphics/graphics-resource")
    (:file "graphics/state-objects")
    (:file "graphics/vertex-types")
    (:file "graphics/packed-vector")
    (:file "graphics/viewport")
-   (:file "graphics/graphics-resource")
    (:file "graphics/graphics-device")
    (:file "graphics/texture-2d")
    (:file "graphics/state-collections")
@@ -103,6 +106,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "unit/mouse-state")
    (:file "unit/game-pad")
    (:file "unit/touch")
+   (:file "unit/graphics-resource-hierarchy")
    (:file "unit/graphics-state")
    (:file "unit/vertex-types")
    (:file "unit/viewport-projection")

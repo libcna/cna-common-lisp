@@ -146,10 +146,9 @@ these at once and XNA reports the first:
 
 ;;; --- VertexDeclaration ---------------------------------------------------------
 
-(defclass vertex-declaration ()
+(defclass vertex-declaration (%managed-graphics-resource)
   ((elements :reader %declaration-elements)
-   (vertex-stride :reader vertex-stride)
-   (label :initform nil :reader %declaration-label))
+   (vertex-stride :reader vertex-stride))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.VertexDeclaration.
 
@@ -163,9 +162,11 @@ the largest `offset + size' over the elements. With one, the stride is taken as
 given and the elements are validated against it, which is how a vertex with
 padding at the end is declared.
 
-XNA's VertexDeclaration derives from GraphicsResource. This one does not, for the
-reason src/capabilities.lisp records for the state objects: CNA has no handle for
-a vertex declaration, and a handle this binding invented would be a fake."))
+XNA's VertexDeclaration derives from GraphicsResource, and so does this one. It
+holds no CNA handle -- CNA has no vertex-declaration object to create or destroy
+-- and does not need one: XNA's GraphicsResource keeps the name in its own field
+whenever there is no handle, which is precisely this case. Name, Tag,
+GraphicsDevice, IsDisposed, Dispose and Disposing all work."))
 
 (defmethod initialize-instance :after ((declaration vertex-declaration)
                                        &key elements (vertex-stride nil stride-supplied-p))
@@ -249,7 +250,8 @@ The same object every call, as a `public static initonly' field is." sname)
                                                                   collect `(make-vertex-element
                                                                             ,offset ,format ,usage
                                                                             ,index))))))
-                     (setf (slot-value declaration 'label) ,label)
+                     ;; The name XNA's own class constructor gives it.
+                     (setf (graphics-resource-name declaration) ,label)
                      declaration))))
        (defmethod vertex-declaration-of ((value ,name)) (,declaration-fn))
        ',name)))

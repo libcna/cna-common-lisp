@@ -35,22 +35,22 @@
 
 ;;; --- the private base ---------------------------------------------------------
 ;;;
-;;; XNA's state objects derive from GraphicsResource. CNA-Lisp's do not, and the
-;;; reason is not a shortcut: CNA-Lisp's GRAPHICS-RESOURCE is a NATIVE-OBJECT with
-;;; a CNA handle, and CNA models a state object as a versioned C descriptor with
-;;; no handle at all -- there is no cna_blend_state_create and nothing to
-;;; destroy. Giving these four a handle they do not have would be the fake this
-;;; binding does not do. The inherited surface (Name, Tag, GraphicsDevice,
-;;; Disposing, Dispose) is therefore absent, and src/capabilities.lisp records it.
+;;; XNA's state objects derive from GraphicsResource, and so do these. They hold
+;;; no CNA handle -- CNA models a state object as a versioned descriptor, with no
+;;; create route and nothing to destroy -- and they do not need one: XNA's
+;;; GraphicsResource is written for exactly that case, keeping the name in its
+;;; own `_localName' field whenever `_internalHandle' is zero. So they are
+;;; %MANAGED-GRAPHICS-RESOURCEs, with a real Name, Tag, GraphicsDevice,
+;;; IsDisposed, Dispose and Disposing, and nothing fabricated.
+;;;
+;;; What this class adds is the one thing only a state object has: the read-only
+;;; latch that XNA's ThrowIfBound enforces.
 
-(defclass %state-object ()
-  ((bound :initform nil :accessor %state-bound-p)
-   ;; No :initarg. MAKE-INSTANCE is XNA's public constructor for these four,
-   ;; and it takes no arguments there, so it takes none here either.
-   (label :initform nil :reader %state-label))
+(defclass %state-object (%managed-graphics-resource)
+  ((bound :initform nil :accessor %state-bound-p))
   (:documentation
-   "The behaviour XNA's four state objects share: a read-only latch, and a name
-the predefined instances carry."))
+   "The behaviour XNA's four state objects share on top of GraphicsResource: a
+read-only latch, set when the object is applied to a device."))
 
 (defun %throw-if-bound (state operation)
   "XNA's ThrowIfBound: a state object that has been applied is read-only.
@@ -64,12 +64,17 @@ the label when the object is one of the predefined instances, because
            :object-type (type-of state)
            :format-control
            "~a is bound to a graphics device and cannot be modified.~@[ It is ~a.~]"
-           :format-arguments (list (type-of state) (%state-label state)))))
+           :format-arguments (list (type-of state) (graphics-resource-name state)))))
 
-(defun %mark-bound (state)
-  "Latch a state object read-only, as XNA's Apply does. Answers the state."
+(defun %mark-bound (state &optional device)
+  "Latch a state object read-only, as XNA's Apply does. Answers the state.
+
+XNA's Apply does two things: it sets `_parent' to the device and `isBound' to
+true. Both are reproduced, so `GraphicsDevice' answers the device a state was
+applied to and NIL before it was applied to any -- which is what XNA's null is."
   (when state
-    (setf (%state-bound-p state) t))
+    (setf (%state-bound-p state) t)
+    (when device (setf (%resource-device state) device)))
   state)
 
 (defmacro %define-state-class (name (&rest properties) &key documentation)
@@ -224,7 +229,10 @@ The same object every call, which is what a `public static initonly' field gives
          (or ,cache
              (setf ,cache
                    (let ((state (make-instance ',class)))
-                     (setf (slot-value state 'label) ,label)
+                     ;; XNA's private constructor calls GraphicsResource::set_Name
+                     ;; with exactly this string, so it is the resource's Name and
+                     ;; not a second private concept.
+                     (setf (graphics-resource-name state) ,label)
                      ,@initialisation
                      (%mark-bound state))))))))
 

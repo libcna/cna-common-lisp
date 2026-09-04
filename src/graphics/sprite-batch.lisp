@@ -10,7 +10,7 @@
 
 (in-package #:microsoft.xna.framework.graphics)
 
-(defclass sprite-batch (graphics-resource)
+(defclass sprite-batch (%native-graphics-resource)
   ((begun :initform nil :accessor %begun-p))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.SpriteBatch.
@@ -143,7 +143,9 @@ Answers :PLAIN, :BLEND or :FULL for the three shapes it accepts."
                "begin" :object-type 'sprite-batch)))))
       ;; Only after the native call has been accepted: a Begin that was refused
       ;; applied nothing, so it must not leave the caller's state objects latched.
-      (mapc #'%mark-bound (list blend sampler depth rasterizer))))
+      (let ((device (graphics-resource-graphics-device batch)))
+        (dolist (state (list blend sampler depth rasterizer))
+          (%mark-bound state device)))))
   (setf (%begun-p batch) t)
   (values))
 

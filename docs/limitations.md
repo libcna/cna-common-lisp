@@ -34,15 +34,30 @@ which renderers can answer: the route returns `CNA_RESULT_NOT_SUPPORTED` "when
 the active renderer has no honest back-buffer readback" rather than a buffer of
 zeroes. Under `HEADLESS` it therefore refuses, by name.
 
-Under a rasterising renderer it answers. Measured: a CNA built with
+Under a rasterising renderer it answers. Measured against a CNA built with
 `-DCNA_GRAPHICS_RENDERER=SOFTWARE` — a CPU rasteriser, needing **no display and
-no Xvfb** — clears to `CornflowerBlue` and reads back `(100, 149, 237, 255)` for
-every pixel of the window asked for. `tools/qualification/rasterizer.sh` is that
-lane, and it fails rather than passes if the run took the no-readback branch.
+no Xvfb** — in two separate proofs, kept apart because they are two claims:
 
-Two things this does *not* establish. It is not a claim about a physical monitor;
-a back buffer is a back buffer. And it is one renderer: `SOFTWARE` rasterises on
-the CPU, and nothing here says a GPU renderer would produce the same pixels.
+* **clear.** Clearing to `CornflowerBlue` reads back `(100, 149, 237, 255)` for
+  every pixel of the window asked for.
+* **sprite.** Drawing a generated 8×8 fully opaque magenta texture to an 8×8
+  destination at (16,16), with `BlendState.Opaque`, `SamplerState.PointClamp`,
+  `Color.White` and no rotation, scale or origin, puts `(255, 0, 255, 255)` on
+  the pixels from (16,16) to (23,23) and leaves `(15,15)`, `(15,16)`, `(16,15)`,
+  `(24,16)`, `(16,24)` and `(24,24)` at the clear colour. A second texture — four
+  2×2 quadrants in four colours — lands each quadrant on its own pixels, so
+  orientation and sampling are proved and not only placement.
+
+`tools/qualification/rasterizer.sh` requires both and fails when either is
+absent; a clear alone is not accepted as evidence about `SpriteBatch`, which it
+briefly was.
+
+Three things this does *not* establish. It is not a claim about a physical
+monitor; a back buffer is a back buffer. It is one renderer: `SOFTWARE`
+rasterises on the CPU, and nothing here says a GPU renderer would produce the
+same pixels. And it is one draw shape — an axis-aligned, unrotated, unscaled,
+untinted, opaque blit; rotation, scaling, tinting and blending are submitted and
+accepted but their pixels are not asserted anywhere.
 
 ## No `cffi-libffi`, and what that costs
 
@@ -270,6 +285,44 @@ The header's own advice is to cache what you bind and use `bound` to tell
 descriptor for any slot, so a slot that was never set through the collection is
 read once from the device and then answered stably, as XNA's array-backed getter
 does.
+
+## A GraphicsResource without a handle is still a GraphicsResource
+
+Five selected types hold no CNA handle and are `GraphicsResource` subclasses
+anyway: `BlendState`, `DepthStencilState`, `RasterizerState`, `SamplerState` and
+`VertexDeclaration`. CNA models each as a versioned descriptor -- there is no
+create route and nothing to destroy -- and none of that stops them from being
+what the contract says they are.
+
+XNA's own base class is written for the case:
+`GraphicsResource::get_Name` reads the device's cache when `_internalHandle != 0`
+and its own `_localName` field otherwise. `Tag`, `IsDisposed` and `Disposing` are
+ordinary managed fields, and `GraphicsDevice` is `_parent`, which is **null until
+the resource is applied** and is set by `Apply`.
+
+So the projection has one public root and two private branches:
+`%managed-graphics-resource` for the five with no handle, and
+`%native-graphics-resource` -- which also inherits the ownership machinery -- for
+`Texture`, `Texture2D` and `SpriteBatch`. Each branch has exactly one disposal
+mechanism, there is no diamond, and no managed-only resource fabricates a handle.
+
+What that means for a consumer, and it is all measured in
+`tests/unit/graphics-resource-hierarchy.lisp`:
+
+* `graphics-resource-name` on an unapplied state object answers `NIL` and can be
+  set; the predefined instances answer the names XNA's own constructors give
+  them, such as `"BlendState.Opaque"`;
+* `graphics-resource-graphics-device` answers `NIL` before the object has been
+  applied and the device afterwards, which is XNA's null and XNA's `Apply`;
+* `dispose` marks it disposed and raises `Disposing` once, with the resource as
+  the sender, and is idempotent;
+* a managed-only subscription registers **no** callback token, because there is
+  no C callback to resolve one and a token left behind would be a leak.
+
+One thing this does *not* do: disposing a state object does not make it
+unusable. XNA's setters are guarded by `ThrowIfBound` and by nothing else, so a
+disposed but unapplied state object can still be mutated there, and it can here.
+That is XNA's behaviour reproduced, not an oversight.
 
 ## A graphics resource's Tag is a Lisp slot, not a round trip
 

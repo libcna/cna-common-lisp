@@ -102,7 +102,8 @@ first -- before the null check on a setter, as XNA does."))
                   handle (%collection-stage collection) index pointer)
                  "item" :object-type 'sampler-state-collection)
                 ;; Bound, because it is the state the device is already using.
-                (%mark-bound (%read-sampler-state pointer)))))))
+                (%mark-bound (%read-sampler-state pointer)
+                             (%collection-device collection)))))))
 
 (defmethod (setf item) (value (collection sampler-state-collection) index)
   (%check-slot-index collection index "(setf item)")
@@ -126,7 +127,7 @@ first -- before the null check on a setter, as XNA does."))
          (cna-lisp.internal.ffi::%graphics-device-set-sampler-state
           handle (%collection-stage collection) index pointer)
          "(setf item)" :object-type 'sampler-state-collection)))
-    (%mark-bound value)
+    (%mark-bound value (%collection-device collection))
     (setf (aref (%collection-slots collection) index) value))
   value)
 
