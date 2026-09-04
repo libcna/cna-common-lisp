@@ -31,10 +31,16 @@ This is what has actually been run, not what might work.
 | Second lane | the same suite against a **SOFTWARE** renderer, which reads real pixels back out of the back buffer |
 
 No claim is made for another Common Lisp implementation, for Windows or macOS,
-for another ABI version, or for a physical monitor. HEADLESS proves lifecycle and
-command submission; the SOFTWARE lane proves that selected drawing reaches actual
-pixels in a back buffer, and needs no display to do it. `docs/qualification.md`
-defines the claims and `docs/limitations.md` bounds them.
+for another ABI version, for a physical monitor, or for a GPU renderer.
+
+HEADLESS qualifies command submission and the lifecycle. The SOFTWARE lane
+qualifies the two pixel paths it actually tests: a `Clear` reaches the back
+buffer and reads back, and a `SpriteBatch` draw puts a generated opaque texture's
+own texels on exactly the pixels its destination rectangle names — checked at the
+rectangle's corners and at the pixels immediately outside it, with a second,
+four-colour texture proving orientation as well as placement. It needs no display
+to do that. `docs/qualification.md` defines the claims and `docs/limitations.md`
+bounds them.
 
 ## What is implemented
 

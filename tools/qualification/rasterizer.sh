@@ -8,6 +8,15 @@
 # run silently took the no-readback branch, which is the way a lane like this
 # quietly stops proving anything.
 #
+# It requires two separate proofs, because they are two separate claims:
+#
+#   clear    GraphicsDevice.Clear reached the back buffer and read back
+#   sprite   a SpriteBatch draw put a known texture's own texels on exactly the
+#            pixels its destination rectangle names, and on none outside it
+#
+# A clear reaching the back buffer says nothing about whether SpriteBatch
+# rasterises. This script used to accept the first as though it were both.
+#
 #   CNA_NATIVE_LIBRARY=/abs/path/libcna_c_api.so \
 #     tools/qualification/rasterizer.sh
 #
@@ -43,24 +52,25 @@ cd "$root"
 
 grep -E "^(checks passed|failures|not run|rasterization) " "$log" || true
 
-evidence=$(grep '^rasterization : ' "$log" || true)
-if [ -z "$evidence" ]; then
+if ! grep -q '^rasterization : ' "$log"; then
     echo "FAIL the runner printed no rasterization line at all" >&2
     exit 1
 fi
-case "$evidence" in
-    *"back buffer read"*) ;;
-    *)
-        echo "FAIL this lane must reach a rasterising renderer, and did not:" >&2
-        echo "     $evidence" >&2
+for kind in clear sprite; do
+    if ! grep -q "^rasterization : $kind -- " "$log"; then
+        echo "FAIL this lane requires a '$kind' proof and the run did not produce one:" >&2
+        grep '^rasterization : ' "$log" >&2 || true
         echo "     Build CNA with -DCNA_GRAPHICS_RENDERER=SOFTWARE (no display needed)." >&2
         exit 1
-        ;;
-esac
+    fi
+done
 
 echo
 echo "rasterizer qualification passed"
-echo "  $evidence"
+grep '^rasterization : ' "$log" | sed 's/^/  /'
 echo "  log $log"
-echo "  This proves selected drawing reached actual pixels in a back buffer."
-echo "  It is not a claim about a physical monitor."
+echo
+echo "  Proved: Clear reached the back buffer, and a SpriteBatch draw put a known"
+echo "  texture's own texels on exactly the pixels its destination named."
+echo "  Not proved, and not claimed: anything about a physical monitor, and"
+echo "  anything about a GPU renderer -- SOFTWARE rasterises on the CPU."

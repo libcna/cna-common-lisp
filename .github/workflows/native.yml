@@ -4,9 +4,11 @@
 #   native      HEADLESS. Proves the lifecycle ran, handles were valid and draw
 #               commands were submitted and accepted. Proves nothing about pixels.
 #   rasterizer  SOFTWARE, a CPU rasteriser that needs no display and no Xvfb.
-#               Clears to a known colour and reads the back buffer straight back,
-#               so it proves that selected drawing reached actual pixels. Not a
-#               claim about a physical monitor.
+#               Two separate proofs: a Clear reaches the back buffer and reads
+#               back, and a SpriteBatch draw puts a generated opaque texture's own
+#               texels on exactly the pixels its destination names. The lane fails
+#               if either is missing. Not a claim about a physical monitor, and
+#               not a claim about a GPU renderer.
 #
 # Every one of these needs a real CNA C ABI shared library, and most of them need
 # the CNA source it was built from.

@@ -123,8 +123,25 @@ init only adds nested codec submodules this build disables anyway.
 
 | Lane | Renderer | What it proves |
 | --- | --- | --- |
-| `Native` | `HEADLESS` | the lifecycle ran, handles were valid, and draw commands were submitted and accepted. **Nothing about pixels.** |
-| `Rasterizer` | `SOFTWARE` | the same suite, plus: a clear to a known colour is read back out of the back buffer as those exact pixels, from the suite *and* from the template running as an isolated consumer. **Selected drawing reaches actual pixels.** |
+| `Native` | `HEADLESS` | the lifecycle ran, handles were valid, and draw commands were submitted and accepted. **Nothing about pixels**, and the back-buffer readback refuses by name rather than answering zeroes. |
+| `Rasterizer` | `SOFTWARE` | the same suite, plus two separate pixel proofs — see below. |
+
+The rasterizer lane's proofs are kept apart because they are different claims,
+and one of them used to be asserted on the strength of the other:
+
+| Proof | What is actually done | What it establishes |
+| --- | --- | --- |
+| `clear` | clear to CornflowerBlue, read the back buffer | `GraphicsDevice.Clear` reaches the back buffer and the readback returns those pixels |
+| `sprite` | clear, then draw a generated 8×8 fully opaque texture to an 8×8 destination at (16,16) with `BlendState.Opaque`, `SamplerState.PointClamp`, `Color.White`, no rotation/scale/origin — then read the corners of that rectangle *and* the pixels immediately outside it | **`SpriteBatch.Draw` rasterises**: the texture's own texels land on exactly the pixels its destination names, and on none outside them |
+| `sprite` | the same with a generated 4×4 texture of four differently-coloured 2×2 quadrants | orientation and sampling are right, not merely placement — a flipped or transposed sample would fail |
+
+The textures are **generated**, not drawn:
+`tools/qualification/make-pixel-fixtures.py` states every texel in source, so the
+expected colours are checkable without opening an image editor.
+
+`tools/qualification/rasterizer.sh` requires **both** kinds and fails if either
+is missing, so the lane cannot pass on a clear alone. Verified in both directions:
+it exits 1 against a `HEADLESS` library and 0 against a `SOFTWARE` one.
 
 They are separate jobs on purpose. They support different claims, and a failure
 in one must not take down the other.
@@ -136,13 +153,16 @@ That was measured before the lane was written, not assumed.
 
 The lane cannot degrade quietly. `GraphicsDevice.GetBackBufferData` is the member
 that reads pixels, and CNA answers `CNA_RESULT_NOT_SUPPORTED` for a renderer with
-no honest readback rather than a buffer of zeroes — so the test branches on the
+no honest readback rather than a buffer of zeroes — so every test branches on the
 renderer that is actually present and asserts the truth for it, the runner prints
-which branch ran, and `tools/qualification/rasterizer.sh` **fails** if the run
-took the no-readback branch.
+one line per proof that was obtained, and `rasterizer.sh` fails when a required
+proof is absent.
 
 **No claim is made about a physical monitor.** Pixels in a back buffer are pixels
 in a back buffer. Nothing here has been displayed to anyone.
+
+**And no claim is made about a GPU renderer.** `SOFTWARE` rasterises on the CPU.
+Nothing here says an OpenGL or Vulkan renderer would produce the same pixels.
 
 ## What HEADLESS does and does not prove
 

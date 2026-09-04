@@ -28,8 +28,29 @@ The list is a claim about CNA, so it is checked rather than trusted: a renderer
 on it that refuses the readback fails the test, and one not on it that answers
 pixels fails too.")
 
-(defvar *rasterization-evidence* nil
-  "What the last rasterization test observed, for the runner's summary.")
+(defvar *rasterization-evidence* '()
+  "What the rasterization tests actually proved, newest first.
+
+A list of (KIND . DESCRIPTION). KIND is one of:
+
+  :none      a renderer with no back-buffer readback; it refused, honestly
+  :clear     GraphicsDevice.Clear reached the back buffer and read back
+  :sprite    a SpriteBatch draw put the texture's own texels on the right pixels
+
+Kept apart on purpose. `Clear' reaching the back buffer says nothing about
+whether `SpriteBatch.Draw' rasterises, and for a while the prose here claimed the
+second on the strength of the first.")
+
+(defun note-rasterization (kind description &rest arguments)
+  (push (cons kind (apply #'format nil description arguments))
+        *rasterization-evidence*))
+
+(defun rasterization-proved-p (kind)
+  (assoc kind *rasterization-evidence*))
+
+(defun pixel-list (colour)
+  (list (xna:color-r colour) (xna:color-g colour)
+        (xna:color-b colour) (xna:color-a colour)))
 
 (defun rasterizing-renderer-p (name)
   (member name *rasterizing-renderers* :test #'string-equal))
@@ -74,9 +95,8 @@ pixels fails too.")
          ;; ones that were cleared -- CornflowerBlue is (100, 149, 237, 255), and
          ;; a renderer that answered a plausible-looking grey or a zeroed buffer
          ;; would fail here rather than pass quietly.
-         (setf *rasterization-evidence*
-               (format nil "~a: back buffer read, ~d pixel(s)" renderer
-                       (length (or (pixels game) #()))))
+         (note-rasterization :clear "~a: Clear reached the back buffer, ~d pixel(s) read"
+                             renderer (length (or (pixels game) #())))
          (is (null (readback-condition game))
              "~a refused the readback: ~a" renderer (readback-condition game))
          (is (= 32 (length (pixels game)))
@@ -92,9 +112,8 @@ pixels fails too.")
          ;; A renderer with no honest readback must refuse, and say so. A buffer
          ;; of zeroes here would be the one thing worse than the refusal, because
          ;; it would look like evidence.
-         (setf *rasterization-evidence*
-               (format nil "~a: no back-buffer readback, and it refused rather ~
-                            than answering zeroes" renderer))
+         (note-rasterization :none "~a: no back-buffer readback, and it refused ~
+                                    rather than answering zeroes" renderer)
          (is (null (pixels game))
              "~a answered pixels; if it really rasterises, add it to ~
               *RASTERIZING-RENDERERS*" renderer)
@@ -124,3 +143,154 @@ pixels fails too.")
       ;; not the scope error.
       (signals xna:cna-usage-error (gfx:get-back-buffer-data device :start-index 0))
       (signals xna:cna-usage-error (gfx:get-back-buffer-data device :element-count 4)))))
+
+;;; --- does SpriteBatch reach pixels? ----------------------------------------------
+;;;
+;;; The clear test above proves `GraphicsDevice.Clear' reached the back buffer.
+;;; It proves nothing whatever about `SpriteBatch.Draw', and for a while the
+;;; prose in this repository claimed the second on the strength of the first.
+;;; These two close that gap.
+;;;
+;;; Everything about the draw is chosen so that a disagreement can only be the
+;;; rasteriser's:
+;;;
+;;;   * the texture is generated, not drawn -- every texel is stated in
+;;;     tools/qualification/make-pixel-fixtures.py and is fully opaque;
+;;;   * the destination rectangle is the texture's own size, so one texel is one
+;;;     pixel and no filter can interpolate;
+;;;   * PointClamp, so even that is not left to a default;
+;;;   * BlendState.Opaque, so the source colour is what lands;
+;;;   * Color.White as the tint, so nothing is multiplied;
+;;;   * no rotation, no scale, no origin, no layer depth;
+;;;   * integer placement, well away from any viewport edge;
+;;;   * the sampled pixels are whole texels in from nothing -- the test reads the
+;;;     corners of the destination rectangle and the pixels immediately outside
+;;;     it, which is where an off-by-one would show.
+
+(defclass sprite-pixel-game (graphics-game)
+  ((fixture :initarg :fixture :accessor fixture)
+   (destination :initarg :destination :accessor destination)
+   (sprite-texture :initform nil :accessor sprite-texture)
+   (samples :initform nil :accessor samples)
+   (sample-error :initform nil :accessor sample-error)
+   (sampled :initform nil :accessor sampled))
+  (:documentation
+   "Clears to a known colour, draws one known texture at one known rectangle, and
+reads the back buffer straight back."))
+
+(defmethod xna:load-content ((game sprite-pixel-game))
+  (call-next-method)
+  (setf (sprite-texture game)
+        (gfx:texture-2d-from-png-file (xna:graphics-device game)
+                                      (fixture-path (fixture game)))))
+
+(defmethod xna:draw ((game sprite-pixel-game) game-time)
+  (declare (ignore game-time))
+  (incf (draws game))
+  (unless (sampled game)
+    (setf (sampled game) t)
+    (handler-case
+        (let ((device (xna:graphics-device game)))
+          (gfx:clear device (xna:cornflower-blue))
+          (gfx:begin (batch game)
+                     :sort-mode :deferred
+                     :blend-state (gfx:blend-state-opaque)
+                     :sampler-state (gfx:sampler-state-point-clamp)
+                     :depth-stencil-state (gfx:depth-stencil-state-none)
+                     :rasterizer-state (gfx:rasterizer-state-cull-none))
+          (gfx:draw-texture (batch game) (sprite-texture game)
+                            :destination (destination game)
+                            :color (xna:white))
+          (gfx:end (batch game))
+          (let* ((viewport (gfx:viewport device))
+                 (width (gfx:viewport-width viewport))
+                 (pixels (gfx:get-back-buffer-data device)))
+            (setf (samples game)
+                  (lambda (x y) (aref pixels (+ x (* y width)))))))
+      (error (condition) (setf (sample-error game) condition)))))
+
+(defmacro with-sprite-pixel-game ((variable fixture destination) &body body)
+  `(let ((,variable (make-instance 'sprite-pixel-game
+                                   :exit-after 2 :fixture ,fixture
+                                   :destination ,destination)))
+     (unwind-protect
+          (progn (xna:run ,variable)
+                 (is (sampled ,variable) "the draw callback never ran")
+                 ;; A renderer with no readback refuses here, and that refusal is
+                 ;; the branch each test asserts rather than an error to re-raise.
+                 (when (and (sample-error ,variable)
+                            (rasterizing-renderer-p (renderer ,variable)))
+                   (error (sample-error ,variable)))
+                 ,@body)
+       (progn
+         (when (sprite-texture ,variable)
+           (ignore-errors (xna:dispose (sprite-texture ,variable))))
+         (when (batch ,variable) (ignore-errors (xna:dispose (batch ,variable))))
+         (when (texture ,variable) (ignore-errors (xna:dispose (texture ,variable))))
+         (when (manager ,variable) (ignore-errors (xna:dispose (manager ,variable))))
+         (ignore-errors (xna:dispose ,variable))))))
+
+(define-native-test a-sprite-batch-draw-reaches-the-back-buffer
+  (with-sprite-pixel-game (game "solid-magenta-8.png" (xna:make-rectangle 16 16 8 8))
+    (let ((renderer (renderer game)))
+      (if (not (rasterizing-renderer-p renderer))
+          ;; No readback: the draw was still submitted and accepted, and the
+          ;; refusal is what this renderer honestly has to say about pixels.
+          (progn
+            (is (null (samples game))
+                "~a has no back-buffer readback but answered pixels" renderer)
+            (is (typep (sample-error game) 'xna:cna-not-supported-error)
+                "~a should refuse the readback with CNA-NOT-SUPPORTED-ERROR; it ~
+                 signalled ~a" renderer (type-of (sample-error game))))
+          (let ((magenta (xna:make-color 255 0 255 255))
+                (background (xna:cornflower-blue)))
+            (flet ((at (x y) (funcall (samples game) x y)))
+              ;; Inside: the texture's own texels, not something like them.
+              (dolist (point '((16 16) (17 20) (20 17) (23 23) (19 21)))
+                (is (xna:color-equal magenta (at (first point) (second point)))
+                    "(~d,~d) is ~a, not the texture's own (255 0 255 255)"
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              ;; Immediately outside, on all four sides: still the clear colour.
+              ;; This is where an off-by-one in placement would show.
+              (dolist (point '((15 16) (24 16) (16 15) (16 24) (15 15) (24 24)))
+                (is (xna:color-equal background (at (first point) (second point)))
+                    "(~d,~d) is ~a, not the CornflowerBlue that was cleared"
+                    (first point) (second point)
+                    (pixel-list (at (first point) (second point)))))
+              ;; And far away, to catch a draw that covered the whole target.
+              (is (xna:color-equal background (at 0 0)))
+              (is (xna:color-equal background (at 400 240)))
+              (note-rasterization
+               :sprite "~a: an 8x8 opaque texture drawn at (16,16) put its own ~
+                        texels on exactly those pixels, and not one outside them"
+               renderer)))))))
+
+(define-native-test a-sprite-batch-draw-puts-each-texel-where-it-belongs
+  ;; The solid texture proves something was drawn in the right rectangle. It
+  ;; cannot tell a correct sampling from one that is flipped, transposed or off
+  ;; by a texel, because every texel is the same. This one can: four 2x2
+  ;; quadrants in four colours, drawn one-to-one.
+  (with-sprite-pixel-game (game "quadrant-4.png" (xna:make-rectangle 16 16 4 4))
+    (let ((renderer (renderer game)))
+      (unless (rasterizing-renderer-p renderer)
+        (is (typep (sample-error game) 'xna:cna-not-supported-error)
+            "~a should refuse the readback rather than answering zeroes" renderer))
+      (when (rasterizing-renderer-p renderer)
+        (flet ((at (x y) (funcall (samples game) x y)))
+          (dolist (row (list (list 16 16 (xna:make-color 255 0 0 255) "top-left red")
+                             (list 19 16 (xna:make-color 0 255 0 255) "top-right green")
+                             (list 16 19 (xna:make-color 0 0 255 255) "bottom-left blue")
+                             (list 19 19 (xna:make-color 255 255 0 255)
+                                   "bottom-right yellow")))
+            (destructuring-bind (x y expected what) row
+              (is (xna:color-equal expected (at x y))
+                  "(~d,~d) should be the ~a texel; it is ~a"
+                  x y what (pixel-list (at x y)))))
+          (is (xna:color-equal (xna:cornflower-blue) (at 20 20))
+              "the pixel past the sprite's bottom-right corner is not the clear colour")
+          (note-rasterization
+           :sprite "~a: a 4x4 four-quadrant texture landed with every quadrant on ~
+                    its own pixels -- orientation and sampling are right, not only ~
+                    placement"
+           renderer))))))
