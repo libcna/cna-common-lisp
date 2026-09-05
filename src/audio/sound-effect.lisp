@@ -561,8 +561,13 @@ refuses a negative duration and one longer than its own maximum with
        ,docstring
        (let ((operation ,(string-downcase (symbol-name name))))
          (cffi:with-foreign-object (out :float)
-           (cna-lisp.internal:check-result
-            (,route-get (%active-game-handle operation) out) operation)
+           ;; NOT_SUPPORTED reaches these too on a machine with no audio device,
+           ;; and XNA's own static setters route their error code through
+           ;; `Helpers.ThrowExceptionFromErrorCode', which is where
+           ;; NoAudioHardwareException is built. So the same mapping applies here.
+           (%check-audio-result
+            (,route-get (%active-game-handle operation) out) operation
+            :object-type 'sound-effect)
            (cffi:mem-ref out :float))))
      (defun (setf ,name) (value)
        ,docstring
@@ -588,8 +593,9 @@ refuses a negative duration and one longer than its own maximum with
          ;; guessed -- the trap reproduces from a bare `setf' with no Lisp
          ;; comparison anywhere in the path.
          (cna-lisp.internal:with-binary32-semantics
-           (cna-lisp.internal:check-result
-            (,route-set (%active-game-handle operation) v) operation))
+           (%check-audio-result
+            (,route-set (%active-game-handle operation) v) operation
+            :object-type 'sound-effect))
          v))))
 
 (defun %refuse-static (operation value control &rest arguments)

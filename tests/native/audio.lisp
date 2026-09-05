@@ -16,6 +16,22 @@
 ;;;; and CNA's routes need one; the binding resolves the process's one active game
 ;;;; and these tests create one for it to find. The refusal when there is none is
 ;;;; tested too, and that one runs with no game at all.
+;;;;
+;;;; **Every test that needs a playback device branches on whether one opened, and
+;;;; both branches assert.** This is the rasterizer lane's rule applied to audio,
+;;;; and for the same reason: a lane that cannot fail for the right reason proves
+;;;; nothing. `cna_audio_get_capabilities' reports `is_playback_available' as
+;;;; *data* -- it answers `CNA_RESULT_SUCCESS` either way and its header says so --
+;;;; so the branch is a measurement rather than a guess.
+;;;;
+;;;;   playback available    the full behaviour is asserted
+;;;;   playback unavailable  **AUDIO_UNAVAILABLE**: creating an effect must fail
+;;;;                         with exactly NO-AUDIO-HARDWARE-ERROR, and does
+;;;;
+;;;; Neither branch is a skip. A GitHub runner has no sound card and takes the
+;;;; second branch; a developer's machine takes the first. The runner prints which
+;;;; one ran, because a summary that did not say so would let the unavailable
+;;;; branch be read as though the available one had passed.
 
 (in-package #:cna-common-lisp.tests)
 (in-suite native-tests)
@@ -65,13 +81,105 @@ failure from crossing the callback containment layer."
      ;; name it again.
      (declare (ignorable ,variable))
      (unwind-protect (progn ,@body)
-       (ignore-errors (xna:dispose ,variable)))))
+       (%tear-down-audio-game ,variable))))
+
+(defun %tear-down-audio-game (game)
+  "Dispose GAME, and **say so loudly** if it cannot be disposed.
+
+A game that will not go leaves CNA holding the process's one active game, and
+every later test then fails to create one with \"Only one C-owned CNA game may be
+active at a time\". A silent `IGNORE-ERRORS' here turned one unbound variable in
+one test into fifty-four unrelated failures, with nothing in the output pointing
+at the cause. So the refusal is printed, and the game is invalidated anyway so the
+next test can still start."
+  (handler-case (xna:dispose game)
+    (error (condition)
+      (format *debug-io*
+              "~&;; AUDIO FIXTURE: the game could not be disposed -- ~a: ~a~%~
+               ;; A live audio child is the usual reason. Invalidating it so the ~
+               next test can still create one.~%"
+              (type-of condition) condition)
+      (ignore-errors (int:invalidate game)))))
 
 (defmacro with-sound-effect ((variable &rest initargs) &body body)
   "Build a SOUND-EFFECT, run BODY, and dispose it however BODY ends."
   `(let ((,variable (make-instance 'audio:sound-effect ,@initargs)))
      (unwind-protect (progn ,@body)
        (ignore-errors (xna:dispose ,variable)))))
+
+(defvar *audio-evidence* '()
+  "What the audio tests actually proved, newest first: a list of (LEVEL . DESCRIPTION).
+
+  :structural   reached with no device and no game -- enumerations, arithmetic,
+                the condition hierarchy, the listener and emitter defaults
+  :unavailable  a device could not be opened, and creating a SoundEffect failed
+                with exactly NO-AUDIO-HARDWARE-ERROR
+  :state-machine a device opened and the play/pause/resume/stop transitions were
+                observed on it
+
+Kept apart for the reason the rasterization kinds are: proving the unavailable
+branch says nothing about the state machine, and a summary that collapsed them
+would let one be read as the other. **None of them is a claim that a sound was
+heard.**")
+
+(defun note-audio (level description &rest arguments)
+  "Record LEVEL once. Sixteen tests take the unavailable branch and they are all
+the same evidence; the summary says what was proved, not how many tests proved it."
+  (unless (assoc level *audio-evidence*)
+    (push (cons level (apply #'format nil description arguments)) *audio-evidence*)))
+
+(defun audio-proved-p (level)
+  (assoc level *audio-evidence*))
+
+(defun audio-playback-available-p ()
+  "Whether CNA could open a playback device, measured through the active game.
+
+Answers NIL when the capability call itself fails, which is not the same thing --
+but the caller treats both as \"no device\", and the capability test asserts the
+call succeeds separately so a failing probe cannot hide here."
+  (multiple-value-bind (result available) (%probe-audio-capabilities)
+    (and (eql 0 result) available)))
+
+(defun %assert-no-audio-hardware ()
+  "The AUDIO_UNAVAILABLE assertion: building a valid effect fails, and with the
+XNA-visible condition rather than a generic native failure.
+
+This is a **positive qualification of the unavailable branch**, not a skip. The
+effect it tries to build is the one every available-branch test starts from, so
+the two branches are testing the same operation."
+  (signals audio:no-audio-hardware-error
+    (make-instance 'audio:sound-effect :buffer (pcm16-silence 8000)
+                                       :sample-rate +fixture-sample-rate+
+                                       :channels :mono))
+  ;; and it is not merely *some* refusal: a generic native failure would be a
+  ;; different condition, and the hierarchy test pins that they are different.
+  (handler-case
+      (make-instance 'audio:sound-effect :buffer (pcm16-silence 8000)
+                                         :sample-rate +fixture-sample-rate+
+                                         :channels :mono)
+    (audio:no-audio-hardware-error ()
+      (note-audio :unavailable
+                  "no playback device opened, and SoundEffect creation failed with ~
+                   NO-AUDIO-HARDWARE-ERROR -- CNA_RESULT_NOT_SUPPORTED, which its ~
+                   header documents as the machine having no audio hardware")
+      t)
+    (error (condition)
+      (fail "expected NO-AUDIO-HARDWARE-ERROR with no device, got ~a" (type-of condition)))))
+
+(defmacro define-audio-device-test (name docstring &body body)
+  "Define a test that needs a playback device, and say what happened when there is none.
+
+BODY runs with a live game bound to GAME and a device that opened. With no device,
+BODY does not run and the unavailable branch is asserted instead -- which is a
+result, not a skip, and is what a GitHub runner produces.
+
+GAME is bound to that name deliberately rather than to a gensym: two of these
+tests dispose it on purpose, to prove the ownership order refuses them."
+  `(define-native-test ,name ,docstring
+     (with-audio-game (game)
+       (if (audio-playback-available-p)
+           (progn ,@body)
+           (%assert-no-audio-hardware)))))
 
 ;;; --- the capability probe, which is data and not an error -------------------
 
@@ -145,15 +253,19 @@ frames, which at 8000 Hz is half a second, which is 5,000,000 ticks."
   (is (eql 2500000 (audio:sound-effect-get-sample-duration 8000 8000 :stereo)))
   ;; And the two are inverse over a whole number of frames.
   (let ((bytes (audio:sound-effect-get-sample-size-in-bytes 5000000 8000 :mono)))
-    (is (eql 5000000 (audio:sound-effect-get-sample-duration bytes 8000 :mono)))))
+    (is (eql 5000000 (audio:sound-effect-get-sample-duration bytes 8000 :mono))))
+  (note-audio :structural
+              "the enumerations, the sample arithmetic and the condition hierarchy ~
+               were checked with no playback device and no game -- none of them ~
+               needs one"))
 
 ;;; --- construction, and every boundary the IL names ---------------------------
 
-(define-native-test a-sound-effect-is-built-from-pcm16-and-reports-its-duration
+(define-audio-device-test a-sound-effect-is-built-from-pcm16-and-reports-its-duration
   "The short constructor over one second of mono silence at 8000 Hz. One second is
 10,000,000 ticks, and the duration comes from CNA rather than from this
 arithmetic -- so the two agreeing is the assertion."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-silence 8000)
                                :sample-rate +fixture-sample-rate+ :channels :mono)
       (is (eql 10000000 (audio:duration effect)))
@@ -168,14 +280,14 @@ arithmetic -- so the two agreeing is the assertion."
     ;; Stereo: the same byte count is half as many frames, so half the duration.
     (with-sound-effect (effect :buffer (pcm16-silence 4000 :stereo)
                                :sample-rate +fixture-sample-rate+ :channels :stereo)
-      (is (eql 5000000 (audio:duration effect))))))
+      (is (eql 5000000 (audio:duration effect)))))
 
-(define-native-test the-sound-effect-constructor-refuses-exactly-what-xna-refuses
+(define-audio-device-test the-sound-effect-constructor-refuses-exactly-what-xna-refuses
   "Every check is `SoundEffect.FromBuffer' in the pinned assembly, and the order
 matters: which exception a doubly-invalid call gets is decided by the order the
 checks run in. Sample rate first, then channels, then the buffer, then the offset,
 then the count, then the loop region."
-  (with-audio-game (game)
+
     (flet ((build (&rest initargs)
              (apply #'make-instance 'audio:sound-effect initargs)))
       ;; sampleRate < 8000 or > 48000 -> ArgumentOutOfRangeException("sampleRate")
@@ -234,14 +346,14 @@ then the count, then the loop region."
           (is (eql (audio:sound-effect-get-sample-duration 198 8000 :mono)
                    (audio:duration exact))
               "and it agrees with the static computation over the same byte count")
-          (xna:dispose exact))))))
+          (xna:dispose exact)))))
 
-(define-native-test the-loop-region-is-measured-in-frames-and-checked-against-the-range
+(define-audio-device-test the-loop-region-is-measured-in-frames-and-checked-against-the-range
   "loopStart and loopLength are **sample frames**, not bytes: XNA divides the byte
 count by BlockAlign before checking them. So a 100-frame mono range accepts a loop
 of 100 and refuses one of 101, and the same range in stereo holds 50 frames and
 refuses a loop of 51 -- the same byte count, a different limit."
-  (with-audio-game (game)
+
     (flet ((build (&rest initargs)
              (apply #'make-instance 'audio:sound-effect initargs)))
       (let ((mono (pcm16-ramp 100)))
@@ -272,15 +384,15 @@ refuses a loop of 51 -- the same byte count, a different limit."
           (xna:dispose e))
         (signals xna:cna-argument-error
           (build :buffer stereo :offset 0 :count (length stereo)
-                 :sample-rate 8000 :channels :stereo :loop-start 0 :loop-length 51))))))
+                 :sample-rate 8000 :channels :stereo :loop-start 0 :loop-length 51)))))
 
 ;;; --- Name round-trips through CNA -------------------------------------------
 
-(define-native-test a-sound-effects-name-round-trips
+(define-audio-device-test a-sound-effects-name-round-trips
   "XNA's Name setter is a bare `stfld' and takes any string; CNA stores it and
 hands it back. Non-ASCII goes through the same UTF-8 boundary every other name in
 this binding uses."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-silence 100)
                                :sample-rate 8000 :channels :mono)
       (is (string= "" (audio:name effect)))
@@ -289,11 +401,11 @@ this binding uses."
       (setf (audio:name effect) "kroky – přes UTF-8")
       (is (string= "kroky – přes UTF-8" (audio:name effect)))
       (setf (audio:name effect) "")
-      (is (string= "" (audio:name effect))))))
+      (is (string= "" (audio:name effect)))))
 
 ;;; --- the instance state machine ---------------------------------------------
 
-(define-native-test the-instance-state-machine-is-the-one-cna-documents
+(define-audio-device-test the-instance-state-machine-is-the-one-cna-documents
   "Measured rather than assumed, and over a **one-second looped** fixture rather
 than a short one-shot: a 20 ms sound can finish between the call and the
 observation, and a test that raced would be green for the wrong reason. Looping
@@ -301,7 +413,7 @@ means the instance stays PLAYING until something stops it.
 
     :stopped --play--> :playing --pause--> :paused
              --resume--> :playing --stop--> :stopped"
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-ramp 8000)
                                :sample-rate 8000 :channels :mono)
       (let ((instance (audio:create-instance effect)))
@@ -332,16 +444,21 @@ means the instance stays PLAYING until something stops it.
                (is (eq :playing (audio:state instance)))
                (audio:stop instance nil)
                (is (member (audio:state instance) '(:stopped :playing))
-                   "a non-immediate stop leaves the loop and may finish naturally"))
-          (ignore-errors (xna:dispose instance)))))))
+                   "a non-immediate stop leaves the loop and may finish naturally")
+               (note-audio :state-machine
+                           "a playback device opened, and a looped one-second effect ~
+                            went stopped -> playing -> paused -> playing -> stopped ~
+                            through Play, Pause, Resume and Stop. Nothing here is a ~
+                            claim that a sound was heard"))
+          (ignore-errors (xna:dispose instance))))))
 
-(define-native-test is-looped-is-refused-once-playback-has-begun
+(define-audio-device-test is-looped-is-refused-once-playback-has-begun
   "XNA throws InvalidOperationException(InvalidIsLoopedCall) once its packet has
 been submitted, and CNA answers CNA_RESULT_INVALID_STATE 'after playback has
 begun'. The two are the same refusal, so the projected condition is the state
 error either way -- and it is **not** an INSTANCE-PLAY-LIMIT-ERROR, which is the
 distinction the play routes' own error mapping has to preserve."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-ramp 8000)
                                :sample-rate 8000 :channels :mono)
       (let ((instance (audio:create-instance effect)))
@@ -355,16 +472,16 @@ distinction the play routes' own error mapping has to preserve."
                  (audio:instance-play-limit-error ()
                    (fail "a refused IS-LOOPED must not be reported as a play limit"))
                  (xna:cna-invalid-state-error () t)))
-          (ignore-errors (xna:dispose instance)))))))
+          (ignore-errors (xna:dispose instance))))))
 
 ;;; --- the three bounded setters, and the NaN answers --------------------------
 
-(define-native-test instance-setters-enforce-xnas-bounds-and-not-cnas
+(define-audio-device-test instance-setters-enforce-xnas-bounds-and-not-cnas
   "The bounds are XNA's, and the divergence is real in two of the three: CNA's
 volume route is an unclamped pass-through and its pitch route **clamps**, so a
 value of 2.0 would be silently accepted as 2.0 and silently clamped to 1.0
 respectively. XNA throws for both, so the checks run before the route."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-ramp 800)
                                :sample-rate 8000 :channels :mono)
       (let ((instance (audio:create-instance effect))
@@ -390,11 +507,11 @@ respectively. XNA throws for both, so the checks run before the route."
                (signals xna:cna-argument-out-of-range-error (setf (audio:pitch instance) nan))
                (signals xna:cna-argument-out-of-range-error (setf (audio:pan instance) 1.5))
                (signals xna:cna-argument-out-of-range-error (setf (audio:pan instance) nan)))
-          (ignore-errors (xna:dispose instance)))))))
+          (ignore-errors (xna:dispose instance))))))
 
 ;;; --- the four process-wide statics ------------------------------------------
 
-(define-native-test the-static-audio-properties-are-xnas-defaults-and-xnas-guards
+(define-audio-device-test the-static-audio-properties-are-xnas-defaults-and-xnas-guards
   "XNA's static initialiser writes 343.5, 1, 1 and 1, and CNA's own defaults are
 the same four numbers -- measured, not assumed, because a CNA that changed one
 would change this binding's public API silently.
@@ -403,7 +520,7 @@ The NaN answers are the part worth pinning: three of the four compare with an
 unordered branch and refuse a NaN, and **DistanceScale alone stores one**, because
 its guard is `bge.un' and the clamp that follows is ordered. Four properties, three
 NaN refusals and one NaN store, all read from the IL."
-  (with-audio-game (game)
+
     (let ((nan (int:bits-single-float #x7FC00000)))
       ;; the defaults, which are XNA's and CNA's alike
       (is (= 1.0 (audio:sound-effect-master-volume)))
@@ -451,7 +568,7 @@ NaN refusals and one NaN store, all read from the IL."
         (progn (ignore-errors (setf (audio:sound-effect-master-volume) 1.0))
                (ignore-errors (setf (audio:sound-effect-distance-scale) 1.0))
                (ignore-errors (setf (audio:sound-effect-doppler-scale) 1.0))
-               (ignore-errors (setf (audio:sound-effect-speed-of-sound) 343.5)))))))
+               (ignore-errors (setf (audio:sound-effect-speed-of-sound) 343.5))))))
 
 (define-native-test the-static-audio-properties-survive-one-game-and-the-next
   "XNA's four are `static' fields and CNA's routes are process-wide -- its header
@@ -460,16 +577,36 @@ and the game handle is taken for thread affinity only'. So a value set through o
 game is still there when a second game reads it. Measured, because the alternative
 -- a value that resets per game -- would be a divergence worth documenting, and it
 is not what happens."
-  (unwind-protect
-       (progn
-         (with-audio-game (first)
-           (setf (audio:sound-effect-speed-of-sound) 300.0)
-           (is (= 300.0 (audio:sound-effect-speed-of-sound))))
-         (with-audio-game (second)
-           (is (= 300.0 (audio:sound-effect-speed-of-sound))
-               "the value belongs to the process, not to the game it was set through")))
-    (with-audio-game (restore)
-      (ignore-errors (setf (audio:sound-effect-speed-of-sound) 343.5)))))
+  (let ((available (with-audio-game (probe) (audio-playback-available-p))))
+    (if (not available)
+        ;; **Three of the four statics still work with no device, and one does
+        ;; not.** Measured rather than assumed: `DistanceScale', `DopplerScale'
+        ;; and `SpeedOfSound' are 3D parameters CNA keeps in process state and
+        ;; answers without opening anything, while `MasterVolume' reaches the
+        ;; mixer and so answers NOT_SUPPORTED -- which this binding maps to
+        ;; NO-AUDIO-HARDWARE-ERROR, as XNA's own error-code mapping does. So the
+        ;; unavailable branch asserts both halves rather than a blanket refusal.
+        (with-audio-game (none)
+          (signals audio:no-audio-hardware-error (audio:sound-effect-master-volume))
+          (signals audio:no-audio-hardware-error
+            (setf (audio:sound-effect-master-volume) 0.5))
+          (is (= 343.5 (audio:sound-effect-speed-of-sound))
+              "SpeedOfSound is process state and answers with no device")
+          (unwind-protect
+               (progn (setf (audio:sound-effect-speed-of-sound) 300.0)
+                      (is (= 300.0 (audio:sound-effect-speed-of-sound))
+                          "and it round-trips with no device too"))
+            (ignore-errors (setf (audio:sound-effect-speed-of-sound) 343.5))))
+        (unwind-protect
+             (progn
+               (with-audio-game (first)
+                 (setf (audio:sound-effect-speed-of-sound) 300.0)
+                 (is (= 300.0 (audio:sound-effect-speed-of-sound))))
+               (with-audio-game (second)
+                 (is (= 300.0 (audio:sound-effect-speed-of-sound))
+                     "the value belongs to the process, not to the game it was set through")))
+          (with-audio-game (restore)
+            (ignore-errors (setf (audio:sound-effect-speed-of-sound) 343.5)))))))
 
 (define-native-test audio-refuses-cleanly-when-no-game-is-active
   "The one projection limit this closure has, and it is refused rather than
@@ -583,14 +720,14 @@ reasonably assume the other."
 
 ;;; --- Apply3D -----------------------------------------------------------------
 
-(define-native-test apply-3d-submits-both-overloads-and-refuses-an-empty-array
+(define-audio-device-test apply-3d-submits-both-overloads-and-refuses-an-empty-array
   "**This proves submission, not perception.** A successful call means the values
 reached CNA and the route accepted them; where a human would hear the sound is not
 something this or any test here establishes.
 
 Both overloads are exercised because they are two CLOS methods over two different
 CNA routes, and an empty sequence is refused rather than guessed at."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-ramp 8000)
                                :sample-rate 8000 :channels :mono)
       (let ((instance (audio:create-instance effect))
@@ -616,9 +753,9 @@ CNA routes, and an empty sequence is refused rather than guessed at."
                ;; a positioned instance keeps accepting the route while it plays
                (audio:apply-3d instance listener emitter)
                (audio:stop instance))
-          (ignore-errors (xna:dispose instance)))))))
+          (ignore-errors (xna:dispose instance))))))
 
-(define-native-test pan-is-refused-on-an-instance-that-has-played-and-been-positioned
+(define-audio-device-test pan-is-refused-on-an-instance-that-has-played-and-been-positioned
   "XNA's Pan setter throws InvalidOperationException once `is3d' is set, and
 `is3d' is only cleared for an instance that has **never played** -- traced through
 the IL, `isPacketSubmitted' is set on the first Play and cleared only when the
@@ -628,7 +765,7 @@ legal again, which is the part a state-based guess gets wrong.
 CNA's behaviour is the quiet version of the same rule -- its header says a
 positioned instance's pan 'stops reaching the output' -- and silently doing
 nothing is worse than refusing, so XNA wins."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-ramp 8000)
                                :sample-rate 8000 :channels :mono)
       ;; First instance: aim it, pan it while it has never played -- which
@@ -669,11 +806,11 @@ nothing is worse than refusing, so XNA wins."
                ;; only when the voice is deallocated, which nothing but Dispose does
                (audio:stop instance)
                (signals xna:cna-invalid-state-error (setf (audio:pan instance) 0.25)))
-          (ignore-errors (xna:dispose instance)))))))
+          (ignore-errors (xna:dispose instance))))))
 
 ;;; --- where CNA and XNA disagree, and XNA wins --------------------------------
 
-(define-native-test cnas-sample-duration-route-truncates-and-xnas-arithmetic-does-not
+(define-audio-device-test cnas-sample-duration-route-truncates-and-xnas-arithmetic-does-not
   "**A measured divergence, pinned on both sides.** XNA's `GetSampleDuration' is
 `AudioFormat.DurationFromSize': integer-divide the byte count by the block align,
 multiply by 1000 and divide by the sample rate in binary32, and hand the result to
@@ -689,7 +826,7 @@ same treatment `DepthStencilState''s stencil masks get.
 The effect's own duration route is **not** affected: `cna_sound_effect_get_
 duration_ticks' agrees with XNA to the tick, which is why the divergence is
 described as this one computation's and not as CNA's audio generally."
-  (with-audio-game (game)
+
     ;; XNA's answer, which is this binding's.
     (is (eql 125000 (audio:sound-effect-get-sample-duration 200 8000 :mono)))
     ;; CNA's answer, read directly from the route, which is not.
@@ -711,14 +848,14 @@ described as this one computation's and not as CNA's audio generally."
     (with-sound-effect (effect :buffer (pcm16-silence 100)
                                :sample-rate 8000 :channels :mono)
       (is (eql 125000 (audio:duration effect))
-          "cna_sound_effect_get_duration_ticks agrees with XNA to the tick"))))
+          "cna_sound_effect_get_duration_ticks agrees with XNA to the tick")))
 ;;; --- Play, and the two conditions the audio surface owns ---------------------
 
-(define-native-test sound-effect-play-answers-a-boolean-and-checks-its-pan
+(define-audio-device-test sound-effect-play-answers-a-boolean-and-checks-its-pan
   "SoundEffect.Play() is Play(1.0f, 0.0f, 0.0f) in XNA's own IL, and both answer
 whether playback started. The asymmetry in the three-argument form is XNA's and
 CNA's alike: **pan is range-checked and pitch is not**."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-ramp 800)
                                :sample-rate 8000 :channels :mono)
       (is (member (audio:play effect) '(t nil))
@@ -732,16 +869,16 @@ CNA's alike: **pan is range-checked and pitch is not**."
       ;; pitch outside [-1, 1] is *not* refused by Play, unlike the instance
       ;; setter: XNA clamps here and throws there, and both are reproduced.
       (is (member (audio:play effect :volume 1.0 :pitch 5.0 :pan 0.0) '(t nil))
-          "Play clamps pitch rather than refusing it, unlike the instance setter"))))
+          "Play clamps pitch rather than refusing it, unlike the instance setter")))
 
-(define-native-test a-disposed-sound-effect-refuses-rather-than-answering-false
+(define-audio-device-test a-disposed-sound-effect-refuses-rather-than-answering-false
   "CNA's `cna_sound_effect_play' documents 'a disposed effect answers CNA_FALSE
 rather than failing, which is the canonical behavior'. **It is not**:
 SoundEffect.Play opens with an IsDisposed test and throws ObjectDisposedException.
 This binding's disposal check runs first, so the public behaviour is XNA's and
 CNA's CNA_FALSE branch is never reached from here. Recorded in
 docs/limitations.md as a place CNA's header is wrong about XNA."
-  (with-audio-game (game)
+
     (let ((effect (make-instance 'audio:sound-effect :buffer (pcm16-silence 100)
                                                      :sample-rate 8000 :channels :mono)))
       (xna:dispose effect)
@@ -756,7 +893,7 @@ docs/limitations.md as a place CNA's header is wrong about XNA."
       ;; construction and lives in a slot. Adding a disposal guard would refuse a
       ;; program XNA runs.
       (is (eql 125000 (audio:duration effect))
-          "Duration is readable after disposal, because XNA's getter is a bare field read"))))
+          "Duration is readable after disposal, because XNA's getter is a bare field read")))
 
 (define-native-test the-two-audio-conditions-are-distinguishable-from-each-other
   "Three failures have to stay three: no audio hardware, an instance play limit,
@@ -780,12 +917,12 @@ other half."
 
 ;;; --- ownership ---------------------------------------------------------------
 
-(define-native-test the-audio-ownership-graph-is-game-effect-instance
+(define-audio-device-test the-audio-ownership-graph-is-game-effect-instance
   "CNA's own words: an instance is 'an explicitly ordered C child: destroy it
 before its sound effect. It also remains a child of the game that owns the
 effect.' So the order is instance, then effect, then game -- and the binding
 refuses a wrong order before the ABI does, naming both types."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-silence 800)
                                :sample-rate 8000 :channels :mono)
       (let ((instance (audio:create-instance effect)))
@@ -796,13 +933,13 @@ refuses a wrong order before the ABI does, naming both types."
         (xna:dispose instance)
         ;; and now the effect will
         (xna:dispose effect)
-        (is (audio:is-disposed effect))))))
+        (is (audio:is-disposed effect)))))
 
-(define-native-test disposing-an-instance-twice-destroys-its-handle-once
+(define-audio-device-test disposing-an-instance-twice-destroys-its-handle-once
   "Disposal is idempotent at the Lisp level and must not reach CNA twice: a second
 destroy on a released handle is exactly the double-free the ownership machinery
 exists to prevent."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-silence 800)
                                :sample-rate 8000 :channels :mono)
       (let ((instance (audio:create-instance effect)))
@@ -813,14 +950,14 @@ exists to prevent."
         (is (audio:is-disposed instance))
         ;; and the effect is disposable, so nothing is still holding it
         (xna:dispose effect)
-        (is (audio:is-disposed effect))))))
+        (is (audio:is-disposed effect)))))
 
-(define-native-test many-instances-of-one-effect-all-go-back
+(define-audio-device-test many-instances-of-one-effect-all-go-back
   "The registry has to return to its baseline: an effect with several live
 instances releases every one of them, and the game then shuts down cleanly. A
 handle left behind would make the game's own disposal fail, which is the symptom
 this catches."
-  (with-audio-game (game)
+
     (with-sound-effect (effect :buffer (pcm16-silence 800)
                                :sample-rate 8000 :channels :mono)
       (let ((instances (loop repeat 8 collect (audio:create-instance effect))))
@@ -831,4 +968,4 @@ this catches."
         (is (audio:is-disposed effect))))
     ;; The game is disposed by WITH-AUDIO-GAME; that it can be is the assertion.
     (xna:dispose game)
-    (is (xna:disposed-p game))))
+    (is (xna:disposed-p game)))

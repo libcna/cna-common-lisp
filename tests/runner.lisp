@@ -50,6 +50,23 @@
         (unless (rasterization-proved-p :primitive)
           (format t "No primitive draw was proved: the sprite path and the primitive ~
                      path~%are different paths through the renderer.~%"))))
+    ;; What the audio tests actually proved, and which branch they took. A run
+    ;; on a machine with no sound card qualifies the **unavailable** branch and
+    ;; nothing else; saying so is what stops that being read as though the state
+    ;; machine had been exercised. Neither branch is a claim that a sound was
+    ;; heard, and the line says so once rather than each test saying it.
+    (when (native-library-requested-p)
+      (if *audio-evidence*
+          (dolist (entry (reverse *audio-evidence*))
+            (format t "~&audio         : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&audio         : NOT RUN -- no audio test recorded evidence~%"))
+      (when (and (audio-proved-p :unavailable) (not (audio-proved-p :state-machine)))
+        (format t "No playback device opened, so the audio state machine was not~%")
+        (format t "exercised. The unavailable branch is qualified; the available one~%")
+        (format t "is not. SDL_AUDIODRIVER=dummy opens a device without a speaker.~%"))
+      (when (audio-proved-p :state-machine)
+        (format t "No audio claim above is about audible output: a dummy or real~%")
+        (format t "device accepting a state transition is not a sound being heard.~%")))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))
