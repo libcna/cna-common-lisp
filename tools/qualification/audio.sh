@@ -1,0 +1,147 @@
+#!/bin/sh
+# Audio qualification: prove both branches of the audio surface, in separate
+# processes, on a machine with no speaker.
+#
+# **Why separate processes.** SDL's audio driver selection is process-global and
+# latches when audio is first initialised, so the obvious shape --
+#
+#     probe available; setenv; probe unavailable
+#
+# inside one long-lived SBCL image does not work: the second probe answers the
+# first one's driver. Each lane below is therefore its own process with its own
+# environment, and that is the whole reason this script exists rather than a test.
+#
+# **What each lane proves, and what it does not.**
+#
+#   AUDIO_UNAVAILABLE            a driver that does not exist. CNA reports
+#                                is_playback_available FALSE and every route that
+#                                needs a device answers CNA_RESULT_NOT_SUPPORTED,
+#                                which the binding raises as NO-AUDIO-HARDWARE-ERROR.
+#                                Deterministic, needs no hardware, and is a
+#                                *result* rather than a skipped test.
+#
+#   AUDIO_AVAILABLE_STATE_MACHINE  SDL's dummy driver. It still opens a device, so
+#                                the whole play/pause/resume/stop state machine
+#                                runs with no speaker attached. This is the lane
+#                                that qualifies the available branch in CI.
+#
+# **A dummy audio device is not audible hardware, and neither lane is a claim
+# that a sound was heard.** What is proved is that the values reached CNA, that
+# CNA accepted them, and that the observable state changed where CNA exposes one.
+# No test here or anywhere in this repository claims audible correctness; a
+# future hardware qualification would be a different claim with different
+# evidence.
+#
+# The ordinary environment is recorded as well, and **required to be neither**:
+# whether the machine this runs on has a sound card is information, not a gate.
+# A GitHub runner reports no playback device; a developer's laptop reports one.
+# Making the release depend on which would make it depend on hardware.
+#
+#   CNA_NATIVE_LIBRARY=/abs/path/libcna_c_api.so tools/qualification/audio.sh
+set -eu
+
+here=$(cd "$(dirname "$0")" && pwd)
+root=$(cd "$here/../.." && pwd)
+sbcl=${SBCL:-sbcl}
+
+if [ -z "${CNA_NATIVE_LIBRARY:-}" ]; then
+    echo "CNA_NATIVE_LIBRARY must name a qualified CNA C ABI library" >&2
+    exit 2
+fi
+
+mkdir -p "$root/build-probe"
+cd "$root"
+
+# A driver name no SDL build can have. Spelled out rather than something like
+# "none", which SDL might one day accept as a real driver and quietly turn this
+# lane into a second copy of the dummy one.
+missing_driver=definitely-nonexistent-cna-test-driver
+
+run_lane() {
+    lane=$1; driver=$2; expected=$3
+    log="$root/build-probe/audio-$lane.log"
+    echo "== lane $lane: SDL_AUDIODRIVER=${driver:-<unset>} =="
+    if [ -n "$driver" ]; then
+        SDL_AUDIODRIVER="$driver" "$here/with-virtual-screen.sh" "$sbcl" --non-interactive \
+            --load "$HOME/quicklisp/setup.lisp" \
+            --eval '(push (truename ".") asdf:*central-registry*)' \
+            --eval '(asdf:test-system "cna-common-lisp")' > "$log" 2>&1 || {
+                echo "FAIL the suite failed in lane $lane; last lines:" >&2
+                tail -40 "$log" >&2
+                exit 1
+            }
+    else
+        "$here/with-virtual-screen.sh" "$sbcl" --non-interactive \
+            --load "$HOME/quicklisp/setup.lisp" \
+            --eval '(push (truename ".") asdf:*central-registry*)' \
+            --eval '(asdf:test-system "cna-common-lisp")' > "$log" 2>&1 || {
+                echo "FAIL the suite failed in lane $lane; last lines:" >&2
+                tail -40 "$log" >&2
+                exit 1
+            }
+    fi
+
+    grep -E "^(checks passed|failures|not run) " "$log" | sed 's/^/  /'
+    grep -E "^audio +: " "$log" | sed 's/^/  /' || true
+
+    if [ -n "$expected" ]; then
+        if ! grep -q "^audio         : $expected -- " "$log"; then
+            echo "FAIL lane $lane had to reach the '$expected' branch and did not:" >&2
+            grep -E '^audio +: ' "$log" >&2 || echo "  (no audio line at all)" >&2
+            exit 1
+        fi
+        # And the other direction, which is what stops this passing for the wrong
+        # reason: the unavailable lane must NOT have exercised the state machine,
+        # and the dummy lane must NOT have fallen back to the unavailable branch.
+        case "$expected" in
+            unavailable)   forbidden=state-machine ;;
+            state-machine) forbidden=unavailable ;;
+            *)             forbidden= ;;
+        esac
+        if [ -n "$forbidden" ] && grep -q "^audio         : $forbidden -- " "$log"; then
+            echo "FAIL lane $lane reached the '$forbidden' branch as well, so it is not" >&2
+            echo "     qualifying what its name says." >&2
+            exit 1
+        fi
+    fi
+    echo "  log $log"
+    echo
+}
+
+# 1. The unavailable branch, produced deterministically and with no hardware.
+run_lane unavailable "$missing_driver" unavailable
+
+# 2. The available branch, on a device with no speaker behind it.
+run_lane dummy dummy state-machine
+
+# 3. The ordinary environment, recorded and not required to be either.
+echo "== lane ordinary: the environment as it is =="
+ordinary_log="$root/build-probe/audio-ordinary.log"
+"$here/with-virtual-screen.sh" "$sbcl" --non-interactive \
+    --load "$HOME/quicklisp/setup.lisp" \
+    --eval '(push (truename ".") asdf:*central-registry*)' \
+    --eval '(asdf:test-system "cna-common-lisp")' > "$ordinary_log" 2>&1 || {
+        echo "FAIL the suite failed in the ordinary environment; last lines:" >&2
+        tail -40 "$ordinary_log" >&2
+        exit 1
+    }
+grep -E "^(checks passed|failures|not run) " "$ordinary_log" | sed 's/^/  /'
+grep -E "^audio +: " "$ordinary_log" | sed 's/^/  /' || true
+if grep -q '^audio         : state-machine -- ' "$ordinary_log"; then
+    echo "  this machine has a playback device"
+else
+    echo "  this machine has no playback device, which is not a failure"
+fi
+echo "  log $ordinary_log"
+
+echo
+echo "audio qualification passed"
+echo "  AUDIO_UNAVAILABLE              a nonexistent driver: no device, and every"
+echo "                                 route needing one refused with the"
+echo "                                 XNA-visible NO-AUDIO-HARDWARE-ERROR"
+echo "  AUDIO_AVAILABLE_STATE_MACHINE  SDL's dummy driver: a device opened and the"
+echo "                                 play/pause/resume/stop transitions were"
+echo "                                 observed on it"
+echo
+echo "  Not proved, and not claimed: that anything was audible. A dummy audio"
+echo "  device is not a speaker, and no lane here listens to anything."

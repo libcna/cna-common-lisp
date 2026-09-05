@@ -309,6 +309,25 @@ jobs:
                --eval '(push (truename ".") asdf:*central-registry*)' \
                --eval '(asdf:test-system "cna-common-lisp")'
 
+      # ---------------------------------------------------------------- stage 5
+      # A GitHub runner has **no audio device**: measured, and the two runs above
+      # therefore qualify only the unavailable branch of the audio surface. That
+      # is a real result and the runner prints it, but it is not the whole claim.
+      #
+      # This step runs both branches in their own processes, which is the only way
+      # to run them at all: SDL's audio driver selection is process-global and
+      # latches at initialisation, so one image cannot answer for two drivers.
+      # SDL's dummy driver still opens a device, so the whole play/pause/resume/
+      # stop state machine is qualified here with no speaker attached -- and the
+      # script fails if either lane reaches the other one's branch.
+      #
+      # Nothing here is a claim that a sound was heard, and the script says so.
+      - name: Audio qualification, unavailable and dummy-device lanes
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: tools/qualification/audio.sh
+
       - name: Isolated consumer qualification, 60 and 600 frames
         working-directory: cna-common-lisp
         run: |
