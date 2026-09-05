@@ -146,6 +146,14 @@
 (defcfun ("cna_graphics_device_clear_rgba" %graphics-device-clear-rgba) :uint32
   (graphics-device :uint64) (r :float) (g :float) (b :float) (a :float))
 
+;;; CNA_Result cna_graphics_device_get_graphics_profile(CNA_Handle graphics_device, CNA_GraphicsProfile* out_profile)
+(defcfun ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile) :uint32
+  (graphics-device :uint64) (out-profile :pointer))
+
+;;; CNA_Result cna_graphics_device_clear_options(CNA_Handle graphics_device, CNA_ClearOptions options, CNA_Color color, float depth, int32_t stencil)
+(defcfun ("cna_graphics_device_clear_options" %graphics-device-clear-options) :uint32
+  (graphics-device :uint64) (options :uint32) (color-0 :uint32) (depth :float) (stencil :int32))
+
 ;;; CNA_Result cna_graphics_device_present(CNA_Handle graphics_device)
 (defcfun ("cna_graphics_device_present" %graphics-device-present) :uint32
   (graphics-device :uint64))
@@ -205,6 +213,46 @@
 ;;; CNA_Result cna_graphics_device_manager_set_preferred_back_buffer_height(CNA_GraphicsDeviceManagerHandle manager, int32_t height)
 (defcfun ("cna_graphics_device_manager_set_preferred_back_buffer_height" %graphics-device-manager-set-preferred-back-buffer-height) :uint32
   (manager :uint64) (height :int32))
+
+;;; CNA_Result cna_graphics_device_manager_get_graphics_profile(CNA_GraphicsDeviceManagerHandle manager, CNA_GraphicsProfile* out_profile)
+(defcfun ("cna_graphics_device_manager_get_graphics_profile" %graphics-device-manager-get-graphics-profile) :uint32
+  (manager :uint64) (out-profile :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_set_graphics_profile(CNA_GraphicsDeviceManagerHandle manager, CNA_GraphicsProfile profile)
+(defcfun ("cna_graphics_device_manager_set_graphics_profile" %graphics-device-manager-set-graphics-profile) :uint32
+  (manager :uint64) (profile :uint32))
+
+;;; CNA_Result cna_graphics_device_manager_get_prefer_multi_sampling(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool* out_prefer)
+(defcfun ("cna_graphics_device_manager_get_prefer_multi_sampling" %graphics-device-manager-get-prefer-multi-sampling) :uint32
+  (manager :uint64) (out-prefer :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_set_prefer_multi_sampling(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool prefer)
+(defcfun ("cna_graphics_device_manager_set_prefer_multi_sampling" %graphics-device-manager-set-prefer-multi-sampling) :uint32
+  (manager :uint64) (prefer :uint8))
+
+;;; CNA_Result cna_graphics_device_manager_get_preferred_back_buffer_format(CNA_GraphicsDeviceManagerHandle manager, CNA_SurfaceFormat* out_format)
+(defcfun ("cna_graphics_device_manager_get_preferred_back_buffer_format" %graphics-device-manager-get-preferred-back-buffer-format) :uint32
+  (manager :uint64) (out-format :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_set_preferred_back_buffer_format(CNA_GraphicsDeviceManagerHandle manager, CNA_SurfaceFormat format)
+(defcfun ("cna_graphics_device_manager_set_preferred_back_buffer_format" %graphics-device-manager-set-preferred-back-buffer-format) :uint32
+  (manager :uint64) (format :uint32))
+
+;;; CNA_Result cna_graphics_device_manager_get_preferred_depth_stencil_format(CNA_GraphicsDeviceManagerHandle manager, CNA_DepthFormat* out_format)
+(defcfun ("cna_graphics_device_manager_get_preferred_depth_stencil_format" %graphics-device-manager-get-preferred-depth-stencil-format) :uint32
+  (manager :uint64) (out-format :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_set_preferred_depth_stencil_format(CNA_GraphicsDeviceManagerHandle manager, CNA_DepthFormat format)
+(defcfun ("cna_graphics_device_manager_set_preferred_depth_stencil_format" %graphics-device-manager-set-preferred-depth-stencil-format) :uint32
+  (manager :uint64) (format :uint32))
+
+;;; CNA_Result cna_graphics_device_manager_get_supported_orientations(CNA_GraphicsDeviceManagerHandle manager, CNA_DisplayOrientation* out_orientations)
+(defcfun ("cna_graphics_device_manager_get_supported_orientations" %graphics-device-manager-get-supported-orientations) :uint32
+  (manager :uint64) (out-orientations :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_set_supported_orientations(CNA_GraphicsDeviceManagerHandle manager, CNA_DisplayOrientation orientations)
+(defcfun ("cna_graphics_device_manager_set_supported_orientations" %graphics-device-manager-set-supported-orientations) :uint32
+  (manager :uint64) (orientations :uint32))
 
 ;;; CNA_Result cna_graphics_device_manager_get_synchronize_with_vertical_retrace(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool* out_synchronize)
 (defcfun ("cna_graphics_device_manager_get_synchronize_with_vertical_retrace" %graphics-device-manager-get-synchronize-with-vertical-retrace) :uint32
@@ -1676,6 +1724,8 @@
     ("cna_title_location_copy_path" %title-location-copy-path :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_viewport" %graphics-device-get-viewport :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_clear_rgba" %graphics-device-clear-rgba :uint32 (:uint64 :float :float :float :float) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_clear_options" %graphics-device-clear-options :uint32 (:uint64 :uint32 :uint32 :float :int32) :thread :owner :ownership "none")
     ("cna_graphics_device_present" %graphics-device-present :uint32 (:uint64) :thread :owner :ownership "none")
     ("cna_graphics_device_get_renderer_info" %graphics-device-get-renderer-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_copy_renderer_name" %graphics-device-copy-renderer-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
@@ -1691,6 +1741,16 @@
     ("cna_graphics_device_manager_set_preferred_back_buffer_width" %graphics-device-manager-set-preferred-back-buffer-width :uint32 (:uint64 :int32) :thread :owner :ownership "none")
     ("cna_graphics_device_manager_get_preferred_back_buffer_height" %graphics-device-manager-get-preferred-back-buffer-height :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_manager_set_preferred_back_buffer_height" %graphics-device-manager-set-preferred-back-buffer-height :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_get_graphics_profile" %graphics-device-manager-get-graphics-profile :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_set_graphics_profile" %graphics-device-manager-set-graphics-profile :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_get_prefer_multi_sampling" %graphics-device-manager-get-prefer-multi-sampling :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_set_prefer_multi_sampling" %graphics-device-manager-set-prefer-multi-sampling :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_get_preferred_back_buffer_format" %graphics-device-manager-get-preferred-back-buffer-format :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_set_preferred_back_buffer_format" %graphics-device-manager-set-preferred-back-buffer-format :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_get_preferred_depth_stencil_format" %graphics-device-manager-get-preferred-depth-stencil-format :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_set_preferred_depth_stencil_format" %graphics-device-manager-set-preferred-depth-stencil-format :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_get_supported_orientations" %graphics-device-manager-get-supported-orientations :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_set_supported_orientations" %graphics-device-manager-set-supported-orientations :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
     ("cna_graphics_device_manager_get_synchronize_with_vertical_retrace" %graphics-device-manager-get-synchronize-with-vertical-retrace :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_manager_set_synchronize_with_vertical_retrace" %graphics-device-manager-set-synchronize-with-vertical-retrace :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
     ("cna_graphics_device_manager_get_graphics_device" %graphics-device-manager-get-graphics-device :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows-callback-scoped:graphics-device")

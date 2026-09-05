@@ -85,25 +85,109 @@ with a device it could no longer draw through."
 (defun mem-ref-handle (pointer)
   (cffi:mem-ref pointer :uint64))
 
-(defgeneric clear (graphics-device color)
+(defgeneric clear (graphics-device color &key options depth stencil)
   (:documentation
-   "GraphicsDevice.Clear(Color): clear the current render target to COLOR."))
+   "GraphicsDevice.Clear: all three overloads, the keywords selecting between them.
 
-(defmethod clear ((device graphics-device) (color microsoft.xna.framework:color))
-  ;; The device route takes four normalised channels, and XNA's Clear(Color)
-  ;; converts the colour the same way: each byte divided by 255 in binary32,
-  ;; which is exactly Color.ToVector4.
-  (flet ((channel (byte) (/ (coerce byte 'single-float) 255.0f0)))
-    (let ((handle (%resolve-device-handle device "clear")))
-      (cna-lisp.internal:check-result
-       (cna-lisp.internal.ffi::%graphics-device-clear-rgba
-        handle
-        (channel (microsoft.xna.framework:color-r color))
-        (channel (microsoft.xna.framework:color-g color))
-        (channel (microsoft.xna.framework:color-b color))
-        (channel (microsoft.xna.framework:color-a color)))
-       "clear" :object-type 'graphics-device)))
+    (clear device (xna:cornflower-blue))                       Clear(Color)
+    (clear device color  :options \='(:target) :depth 1.0 :stencil 0)
+    (clear device vector :options \='(:target) :depth 1.0 :stencil 0)
+
+XNA has `Clear(Color)', `Clear(ClearOptions, Color, Single, Int32)' and
+`Clear(ClearOptions, Vector4, Single, Int32)' and nothing between them, so either
+all three of :OPTIONS, :DEPTH and :STENCIL or none of them, and a VECTOR4 with
+none is refused -- there is no `Clear(Vector4)' to be.
+
+**A Vector4 is quantised to eight bits per channel, and that is XNA's doing.**
+Its overload is four instructions: `new Color(vector4)' and then the Color
+overload. So the two four-argument forms are one operation, and this reproduces
+that rather than reaching for a float route CNA does have -- taking the float
+route would make the Vector4 form *differ* from XNA."))
+
+(defun %clear-with-options (device color options depth stencil operation)
+  "The Clear(ClearOptions, Color, Single, Int32) overload, which the other is."
+  (check-type stencil (signed-byte 32))
+  (let ((handle (%resolve-device-handle device operation)))
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%graphics-device-clear-options
+      handle
+      (clear-options-value options)
+      ;; CNA_Color is four bytes in R G B A order, which is the packed value, and
+      ;; a by-value one flattens to a single 32-bit argument.
+      (microsoft.xna.framework:color-packed-value color)
+      (coerce depth 'single-float)
+      stencil)
+     operation :object-type 'graphics-device))
   (values))
+
+(defun %check-clear-shape (options-p depth-p stencil-p operation vector-p)
+  "Refuse a keyword set XNA has no overload for."
+  (let ((supplied (count t (list options-p depth-p stencil-p))))
+    (when (and vector-p (zerop supplied))
+      (error 'microsoft.xna.framework:cna-argument-error
+             :operation operation :parameter-name "color"
+             :format-control
+             "XNA has no Clear(Vector4). A Vector4 clear is the four-argument overload, ~
+              so it needs :OPTIONS, :DEPTH and :STENCIL; a bare colour clear takes a ~
+              COLOR."))
+    (unless (or (zerop supplied) (= 3 supplied))
+      (error 'microsoft.xna.framework:cna-argument-error
+             :operation operation
+             :parameter-name (cond ((not options-p) "options")
+                                   ((not depth-p) "depth")
+                                   (t "stencil"))
+             :format-control
+             "XNA's Clear overloads take all three of :OPTIONS, :DEPTH and :STENCIL or ~
+              none of them, and there is no overload between. ~d of the three were given."
+             :format-arguments (list supplied)))
+    (= 3 supplied)))
+
+(defmethod clear ((device graphics-device) (color microsoft.xna.framework:color)
+                  &key (options nil options-p) (depth nil depth-p)
+                       (stencil nil stencil-p))
+  (if (%check-clear-shape options-p depth-p stencil-p "clear" nil)
+      (%clear-with-options device color options depth stencil "clear")
+      ;; Clear(Color) is Clear(DefaultClearOptions, color, 1f, 0) in the assembly,
+      ;; and DefaultClearOptions is derived from the *current* depth-stencil
+      ;; format -- which this binding cannot read, because PresentationParameters
+      ;; is missing. CNA implements the canonical member, so the bare route is
+      ;; what carries it, and the derivation stays CNA's.
+      (flet ((channel (byte) (/ (coerce byte 'single-float) 255.0f0)))
+        (let ((handle (%resolve-device-handle device "clear")))
+          (cna-lisp.internal:check-result
+           (cna-lisp.internal.ffi::%graphics-device-clear-rgba
+            handle
+            (channel (microsoft.xna.framework:color-r color))
+            (channel (microsoft.xna.framework:color-g color))
+            (channel (microsoft.xna.framework:color-b color))
+            (channel (microsoft.xna.framework:color-a color)))
+           "clear" :object-type 'graphics-device))
+        (values))))
+
+(defmethod clear ((device graphics-device) (color microsoft.xna.framework:vector4)
+                  &key (options nil options-p) (depth nil depth-p)
+                       (stencil nil stencil-p))
+  (%check-clear-shape options-p depth-p stencil-p "clear" t)
+  ;; `new Color(vector4)' and then the Color overload, which is all XNA's
+  ;; Vector4 overload is.
+  (%clear-with-options device (microsoft.xna.framework:make-color-from-vector4 color)
+                       options depth stencil "clear"))
+
+(defgeneric graphics-profile (graphics-device)
+  (:documentation
+   "GraphicsDevice.GraphicsProfile: the profile the device was created with.
+
+Get-only, as XNA's is: a device's profile is decided when the device is made.
+`MICROSOFT.XNA.FRAMEWORK:GRAPHICS-PROFILE' is the *manager's* preference, which
+is settable and is the other side of the same subject."))
+
+(defmethod graphics-profile ((device graphics-device))
+  (let ((handle (%resolve-device-handle device "graphics-profile")))
+    (cffi:with-foreign-object (out :uint32)
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%graphics-device-get-graphics-profile handle out)
+       "graphics-profile" :object-type 'graphics-device)
+      (graphics-profile-from-value (cffi:mem-ref out :uint32)))))
 
 (defgeneric viewport (graphics-device)
   (:documentation

@@ -514,3 +514,178 @@
       ;; the two checks and the one that matters.
       (signals xna:cna-error
         (setf (gfx:item (gfx:textures (xna:graphics-device game)) 0) texture)))))
+
+;;; --- the manager's preference surface, and the two static fields -------------
+;;;
+;;; Seven members that were missing until CNA's get/set pairs were bound. The
+;;; interesting half is the enums: a preference is a keyword here, or a *list* of
+;;; them where the enum carries the FlagsAttribute, and the numbers stay private.
+
+(defclass preference-game (counting-game)
+  ((manager :initform nil :accessor preference-manager)
+   (results :initform '() :accessor preference-results)
+   (failure :initform nil :accessor preference-failure))
+  (:documentation "Round-trips every GraphicsDeviceManager preference."))
+
+(defmethod initialize-instance :after ((game preference-game) &key)
+  (setf (preference-manager game)
+        (make-instance 'xna:graphics-device-manager :game game)))
+
+(defmacro %round-trip (game label place value)
+  "Set PLACE to VALUE, read it back, and record both."
+  `(push (list ,label ,value (progn (setf ,place ,value) ,place))
+         (preference-results ,game)))
+
+(defmethod xna:load-content ((game preference-game))
+  (call-next-method)
+  (handler-case
+      (let ((manager (preference-manager game)))
+        (%round-trip game :profile (xna:graphics-profile manager) :reach)
+        (%round-trip game :multi-sampling (xna:prefer-multi-sampling manager) t)
+        (%round-trip game :back-buffer-format
+                     (xna:preferred-back-buffer-format manager) :bgr565)
+        (%round-trip game :depth-format
+                     (xna:preferred-depth-stencil-format manager) :depth-24)
+        ;; A flags enum, so a list -- and a two-member one, so a set that a
+        ;; single-keyword projection could not express at all.
+        (%round-trip game :orientations
+                     (xna:supported-orientations manager)
+                     '(:landscape-left :landscape-right))
+        ;; The empty list is the zero mask, and DisplayOrientation *has* a named
+        ;; zero -- Default = 0 -- so it reads back as (:DEFAULT). Recorded as the
+        ;; two separate values it is, rather than asserted equal.
+        (push (list :orientations-empty '(:default)
+                    (progn (setf (xna:supported-orientations manager) '())
+                           (xna:supported-orientations manager)))
+              (preference-results game)))
+    (error (condition) (setf (preference-failure game) condition))))
+
+(define-native-test the-manager-preferences-round-trip-through-cna
+  "Every preference CNA has a get/set pair for, set and read back.
+
+The values are deliberately not the defaults: a getter that ignored its setter
+and answered whatever CNA started with would pass a test that set :REACH on a
+manager that was already :REACH.
+
+The orientation cases are the ones worth reading. `SupportedOrientations' is a
+flags enum, so it is a **list** -- a two-member set a single-keyword projection
+could not express at all -- and the empty list is the zero mask, which reads back
+as `(:DEFAULT)' because DisplayOrientation has a named zero."
+  (let ((game (make-instance 'preference-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (null (preference-failure game))
+               "the fixture failed: ~a" (preference-failure game))
+           (dolist (row (preference-results game))
+             (destructuring-bind (label wanted got) row
+               (if (listp wanted)
+                   (is (null (set-exclusive-or wanted got))
+                       "~a was set to ~a and read back as ~a" label wanted got)
+                   (is (eql wanted got)
+                       "~a was set to ~a and read back as ~a" label wanted got)))))
+      (progn
+        (when (preference-manager game)
+          (ignore-errors (xna:dispose (preference-manager game))))
+        (xna:dispose game)))))
+
+(test the-default-back-buffer-size-is-the-assemblys-and-not-the-windows
+  "GraphicsDeviceManager.DefaultBackBufferWidth and Height, read from the pinned
+Game assembly's class constructor: `ldc.i4 0x320' and `ldc.i4 0x1e0'.
+
+800 by 480, and the height is the half worth a test. `GameWindow' in the same
+assembly has same-shaped static defaults set two instructions earlier -- 0x320
+and 0x258, 800 by 600 -- so a projection that reasoned about \"the usual XNA
+window size\" instead of reading the field would be wrong by 120 pixels."
+  (is (= 800 (xna:graphics-device-manager-default-back-buffer-width)))
+  (is (= 480 (xna:graphics-device-manager-default-back-buffer-height))))
+
+;;; --- GraphicsDevice.Clear's other two overloads ------------------------------
+
+(defclass clearing-game (counting-game)
+  ((manager :initform nil :accessor clearing-manager)
+   (profile :initform nil :accessor observed-profile)
+   (outcomes :initform '() :accessor clear-outcomes))
+  (:documentation "Calls every Clear shape, legal and illegal."))
+
+(defmethod initialize-instance :after ((game clearing-game) &key)
+  (setf (clearing-manager game)
+        (make-instance 'xna:graphics-device-manager :game game)))
+
+(defun %clear-outcome (game label thunk)
+  (push (cons label
+              (handler-case (progn (funcall thunk) :accepted)
+                (error (condition) (type-of condition))))
+        (clear-outcomes game)))
+
+(defmethod xna:draw ((game clearing-game) game-time)
+  (declare (ignore game-time))
+  (incf (draws game))
+  (when (= 1 (draws game))
+    (let ((device (xna:graphics-device game)))
+      (setf (observed-profile game) (gfx:graphics-profile device))
+      ;; The three shapes XNA has.
+      (%clear-outcome game :color
+                      (lambda () (gfx:clear device (xna:cornflower-blue))))
+      (%clear-outcome game :options-color
+                      (lambda () (gfx:clear device (xna:cornflower-blue)
+                                            :options '(:target) :depth 1.0 :stencil 0)))
+      (%clear-outcome game :options-vector
+                      (lambda () (gfx:clear device (xna:make-vector4 0.0 0.5 1.0 1.0)
+                                            :options '(:target) :depth 1.0 :stencil 0)))
+      ;; The empty mask is legal: XNA's ClearOptions has no named zero, and
+      ;; clearing nothing is what asking for nothing means.
+      (%clear-outcome game :no-options
+                      (lambda () (gfx:clear device (xna:cornflower-blue)
+                                            :options '() :depth 1.0 :stencil 0)))
+      ;; ...and the shapes it has not.
+      (%clear-outcome game :vector-alone
+                      (lambda () (gfx:clear device (xna:make-vector4 0.0 0.5 1.0 1.0))))
+      (%clear-outcome game :partial-keywords
+                      (lambda () (gfx:clear device (xna:cornflower-blue) :options '(:target))))
+      (%clear-outcome game :bad-option
+                      (lambda () (gfx:clear device (xna:cornflower-blue)
+                                            :options '(:not-a-buffer) :depth 1.0 :stencil 0))))))
+
+(define-native-test clear-takes-all-three-overloads-and-only-those
+  "Clear(Color), Clear(ClearOptions, Color, Single, Int32) and its Vector4
+sibling, plus the shapes XNA has no overload for.
+
+The Vector4 form is the one worth stating: XNA's is four instructions --
+`new Color(vector4)' and then the Color overload -- so its eight-bit
+quantisation is XNA's own. CNA has a float clear route and using it here would
+make this member *differ* from XNA rather than match it."
+  (let ((game (make-instance 'clearing-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (dolist (label '(:color :options-color :options-vector :no-options))
+             (is (eq :accepted (cdr (assoc label (clear-outcomes game))))
+                 "~a was refused with ~a" label (cdr (assoc label (clear-outcomes game)))))
+           (is (eq 'xna:cna-argument-error (cdr (assoc :vector-alone (clear-outcomes game))))
+               "a bare Vector4 gave ~a; XNA has no Clear(Vector4)"
+               (cdr (assoc :vector-alone (clear-outcomes game))))
+           (is (eq 'xna:cna-argument-error (cdr (assoc :partial-keywords (clear-outcomes game))))
+               "one keyword of three gave ~a"
+               (cdr (assoc :partial-keywords (clear-outcomes game))))
+           (is (eq 'xna:cna-usage-error (cdr (assoc :bad-option (clear-outcomes game))))
+               "an unknown option keyword gave ~a"
+               (cdr (assoc :bad-option (clear-outcomes game)))))
+      (progn
+        (when (clearing-manager game) (ignore-errors (xna:dispose (clearing-manager game))))
+        (xna:dispose game)))))
+
+(define-native-test the-device-reports-the-profile-it-was-made-with
+  "GraphicsDevice.GraphicsProfile, get-only as XNA's is."
+  (let ((game (make-instance 'clearing-game :exit-after 2))
+        (profile nil))
+    (unwind-protect
+         (progn
+           (setf (xna:is-fixed-time-step game) nil)
+           (xna:run-one-frame game)
+           (setf profile (observed-profile game))
+           (is (member profile (gfx:all-graphics-profile))
+               "the device reported ~a, which is not a GraphicsProfile member" profile))
+      (progn
+        (when (clearing-manager game) (ignore-errors (xna:dispose (clearing-manager game))))
+        (xna:dispose game)))))

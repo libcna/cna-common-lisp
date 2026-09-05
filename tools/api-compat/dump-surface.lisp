@@ -201,6 +201,8 @@ that a keyword-taking projection accepts no keywords at all."
    "sprite-sort-mode" (alist-object microsoft.xna.framework.graphics::*sprite-sort-mode-table*)
    "sprite-effects" (alist-object microsoft.xna.framework.graphics::*sprite-effects-table*)
    "surface-format" (alist-object microsoft.xna.framework.graphics::*surface-format-table*)
+   "graphics-profile" (alist-object microsoft.xna.framework.graphics::*graphics-profile-table*)
+   "clear-options" (alist-object microsoft.xna.framework.graphics::*clear-options-table*)
    "containment-type" (alist-object microsoft.xna.framework::*containment-type-table*)
    "plane-intersection-type"
    (alist-object microsoft.xna.framework::*plane-intersection-type-table*)

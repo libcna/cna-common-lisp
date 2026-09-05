@@ -15,20 +15,31 @@ from them are committed.
 ## Pinned assemblies
 
 The XNA 4.0 Windows profile is more than one assembly, and the types this
-projection covers are spread across two of them.
+projection covers are spread across three of them.
 
 | Assembly | Bytes | SHA-256 |
 | --- | ---: | --- |
 | `Microsoft.Xna.Framework.dll` 4.0.0.0 | 679424 | `38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130` |
 | `Microsoft.Xna.Framework.Graphics.dll` 4.0.0.0 | 427520 | `560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55` |
+| `Microsoft.Xna.Framework.Game.dll` 4.0.0.0 | 74752 | `b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0` |
 
-Both carry the public key token `842cf8be1de50553`.
+All three carry the public key token `842cf8be1de50553`.
 
 `Microsoft.Xna.Framework.dll` holds the value types -- `Color`, `Vector*`,
-`Matrix`, `Quaternion`, `Plane`, the bounding volumes, `Curve`, `MathHelper`.
+`Matrix`, `Quaternion`, `Plane`, the bounding volumes, `Curve`, `MathHelper` --
+and `ContentManager` and `TitleContainer`.
 `Microsoft.Xna.Framework.Graphics.dll` holds `GraphicsResource`, `Texture2D`,
-`SpriteBatch` and the four graphics state objects. A behavioural question about a
-type is answered by reading the assembly that declares it.
+`SpriteBatch` and the four graphics state objects.
+`Microsoft.Xna.Framework.Game.dll` holds `Game`, `GameComponent` and
+`GraphicsDeviceManager`. A behavioural question about a type is answered by
+reading the assembly that declares it.
+
+**The Game assembly was added to this table after the fact, and that is worth
+recording rather than quietly fixing.** Behavioural claims already rested on it --
+that `Game.Run` sets `inRun` *after* `Initialize()` returns, which is why a
+component added in `LoadContent` is never initialized -- and the handoff already
+called it "the pinned Game assembly" while this file pinned only two. A claim
+whose authority is not named here is not sourced, so the authority is now named.
 
 An assembly is located **by hash, never by filename**: any copy whose SHA-256
 matches is equally authoritative, and any copy whose SHA-256 does not match is

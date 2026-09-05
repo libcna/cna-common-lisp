@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 148,
-  "member_count": 2257
+  "type_count": 150,
+  "member_count": 2264
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 148,
-  "members": 2257,
+  "types": 150,
+  "members": 2264,
   "types_by_status": {
    "partial": 13,
-   "complete": 135
+   "complete": 137
   },
   "members_by_status": {
-   "complete": 1774,
-   "missing": 51,
-   "not-applicable": 417,
+   "complete": 1789,
+   "missing": 41,
+   "not-applicable": 419,
    "partial": 15
   },
-  "diagnostics": 51,
+  "diagnostics": 41,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 51,
+   "missing_member": 41,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -220,6 +220,27 @@
    "projection": "static class: microsoft.xna.framework:title-container-<member>"
   },
   {
+   "name": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Reach": "complete",
+    "HiDef": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:graphics-profile"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Target": "complete",
+    "DepthBuffer": "complete",
+    "Stencil": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:clear-options"
+  },
+  {
    "name": "Microsoft.Xna.Framework.GraphicsDeviceManager",
    "status": "partial",
    "members": {
@@ -235,15 +256,15 @@
     "OnDeviceResetting(Object,EventArgs)": "missing",
     "Dispose(Boolean)": "not-applicable",
     "OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "missing",
-    "GraphicsProfile": "missing",
-    "PreferredDepthStencilFormat": "missing",
-    "PreferredBackBufferFormat": "missing",
+    "GraphicsProfile": "complete",
+    "PreferredDepthStencilFormat": "complete",
+    "PreferredBackBufferFormat": "complete",
     "PreferredBackBufferWidth": "complete",
     "PreferredBackBufferHeight": "complete",
     "IsFullScreen": "complete",
     "SynchronizeWithVerticalRetrace": "complete",
-    "PreferMultiSampling": "missing",
-    "SupportedOrientations": "missing",
+    "PreferMultiSampling": "complete",
+    "SupportedOrientations": "complete",
     "GraphicsDevice": "complete",
     "DeviceCreated": "complete",
     "DeviceResetting": "complete",
@@ -251,8 +272,8 @@
     "DeviceDisposing": "complete",
     "PreparingDeviceSettings": "missing",
     "Disposed": "complete",
-    "DefaultBackBufferWidth": "missing",
-    "DefaultBackBufferHeight": "missing"
+    "DefaultBackBufferWidth": "complete",
+    "DefaultBackBufferHeight": "complete"
    },
    "lisp": "microsoft.xna.framework:graphics-device-manager"
   },
@@ -1357,8 +1378,8 @@
     "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32,VertexDeclaration)": "complete",
     "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32)": "complete",
     "DrawUserPrimitives(PrimitiveType,!!0[],Int32,Int32,VertexDeclaration)": "complete",
-    "Clear(ClearOptions,Vector4,Single,Int32)": "missing",
-    "Clear(ClearOptions,Color,Single,Int32)": "missing",
+    "Clear(ClearOptions,Vector4,Single,Int32)": "complete",
+    "Clear(ClearOptions,Color,Single,Int32)": "complete",
     "Clear(Color)": "complete",
     "SetRenderTargets(RenderTargetBinding[])": "complete",
     "SetRenderTarget(RenderTargetCube,CubeMapFace)": "complete",
@@ -1380,7 +1401,7 @@
     "Viewport": "partial",
     "DisplayMode": "missing",
     "GraphicsDeviceStatus": "missing",
-    "GraphicsProfile": "missing",
+    "GraphicsProfile": "complete",
     "Adapter": "missing",
     "PresentationParameters": "missing",
     "RasterizerState": "complete",
@@ -3416,43 +3437,8 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.GraphicsProfile",
-   "detail": "no exported 'graphics-profile' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreferredDepthStencilFormat",
-   "detail": "no exported 'preferred-depth-stencil-format' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreferredBackBufferFormat",
-   "detail": "no exported 'preferred-back-buffer-format' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreferMultiSampling",
-   "detail": "no exported 'prefer-multi-sampling' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.SupportedOrientations",
-   "detail": "no exported 'supported-orientations' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings",
    "detail": "The only event in the selection that carries data. It needs PreparingDeviceSettingsEventArgs and GraphicsDeviceInformation, neither of which is in the selection, and CNA's non-ext callback for it can only observe the settings where XNA's event exists to change them. Projecting the observing form under the event's name would be a quieter kind of wrong than leaving it missing."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DefaultBackBufferWidth",
-   "detail": "no exported 'default-back-buffer-width' in microsoft.xna.framework"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.DefaultBackBufferHeight",
-   "detail": "no exported 'default-back-buffer-height' in microsoft.xna.framework"
   },
   {
    "category": "missing_member",
@@ -3501,16 +3487,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Clear(ClearOptions,Vector4,Single,Int32)",
-   "detail": "Needs ClearOptions and Vector4."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Clear(ClearOptions,Color,Single,Int32)",
-   "detail": "Needs ClearOptions."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Dispose()",
    "detail": "no exported 'dispose' in microsoft.xna.framework.graphics"
   },
@@ -3528,11 +3504,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GraphicsDeviceStatus",
    "detail": "no exported 'graphics-device-status' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GraphicsProfile",
-   "detail": "no exported 'graphics-profile' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",

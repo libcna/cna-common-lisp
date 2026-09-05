@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=148 -->
-<!-- generated:selected members=2257 -->
-<!-- generated:complete types=135 -->
+<!-- generated:selected types=150 -->
+<!-- generated:selected members=2264 -->
+<!-- generated:complete types=137 -->
 <!-- generated:partial types=13 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1774 -->
+<!-- generated:complete members=1789 -->
 <!-- generated:partial members=15 -->
-<!-- generated:missing members=51 -->
-<!-- generated:not-applicable members=417 -->
+<!-- generated:missing members=41 -->
+<!-- generated:not-applicable members=419 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 148 types, 2257 members.
+Selection **Foundation 1 and the managed closures**: 150 types, 2264 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **135** |
+| Types complete | **137** |
 | Types partial | **13** |
 | Types missing | **0** |
-| Members complete | **1774** |
+| Members complete | **1789** |
 | Members partial | **15** |
-| Members missing | **51** |
-| Members not applicable | **417** |
+| Members missing | **41** |
+| Members not applicable | **419** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -154,7 +154,9 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.GameComponentCollectionEventArgs` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.LaunchParameters` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.TitleContainer` | **partial** | 0 | 1 | 0 | 0 |
-| `M.X.F.GraphicsDeviceManager` | **partial** | 13 | 0 | 16 | 1 |
+| `M.X.F.Graphics.GraphicsProfile` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Graphics.ClearOptions` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.GraphicsDeviceManager` | **partial** | 20 | 0 | 9 | 1 |
 | `M.X.F.Content.ContentManager` | **partial** | 3 | 1 | 3 | 3 |
 | `M.X.F.Graphics.RenderTargetCube` | **complete** | 7 | 0 | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetBinding` | **partial** | 3 | 1 | 0 | 1 |
@@ -183,7 +185,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 33 | 1 | 21 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 36 | 1 | 18 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 11 | 4 | 0 | 1 |
@@ -334,8 +336,8 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 21 | 1 |
-| `M.X.F.GraphicsDeviceManager` | 16 | 0 |
+| `M.X.F.Graphics.GraphicsDevice` | 18 | 1 |
+| `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
@@ -373,10 +375,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=407 -->
+<!-- generated:bound native functions=419 -->
 <!-- generated:bound native structs=63 -->
 <!-- generated:bound native struct fields=473 -->
-<!-- generated:bound native constants=487 -->
+<!-- generated:bound native constants=492 -->
 <!-- generated:bound native callbacks=9 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -385,10 +387,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 407 |
+| Bound functions | 419 |
 | Bound structs | 63 |
 | Bound struct fields | 473 |
-| Bound constants | 487 |
+| Bound constants | 492 |
 | Bound callback typedefs | 9 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |

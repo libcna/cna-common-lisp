@@ -317,6 +317,11 @@
       "CNA_TEXTURE_DATA_VECTOR4",
       "CNA_TEXTURE_IMAGE_FORMAT_PNG",
       "CNA_TEXTURE_IMAGE_FORMAT_JPEG",
+      "CNA_CLEAR_OPTION_TARGET",
+      "CNA_CLEAR_OPTION_DEPTH_BUFFER",
+      "CNA_CLEAR_OPTION_STENCIL",
+      "CNA_GRAPHICS_PROFILE_REACH",
+      "CNA_GRAPHICS_PROFILE_HI_DEF",
       "CNA_CUBE_MAP_FACE_POSITIVE_X",
       "CNA_CUBE_MAP_FACE_NEGATIVE_X",
       "CNA_CUBE_MAP_FACE_POSITIVE_Y",
@@ -928,6 +933,18 @@
       "ownership": "none"
     },
     {
+      "name": "cna_graphics_device_get_graphics_profile",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_clear_options",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
       "name": "cna_graphics_device_present",
       "header": "graphics_device.h",
       "thread": "owner",
@@ -1015,6 +1032,66 @@
     },
     {
       "name": "cna_graphics_device_manager_set_preferred_back_buffer_height",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_graphics_profile",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_graphics_profile",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_prefer_multi_sampling",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_prefer_multi_sampling",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_preferred_back_buffer_format",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_preferred_back_buffer_format",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_preferred_depth_stencil_format",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_preferred_depth_stencil_format",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_supported_orientations",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_supported_orientations",
       "header": "runtime_graphics_manager.h",
       "thread": "owner",
       "ownership": "none"

@@ -24,10 +24,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 407,
+    "functions": 419,
     "structs": 63,
     "struct_fields": 473,
-    "constants": 487,
+    "constants": 492,
     "callbacks": 9,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -884,6 +884,67 @@
       "c_prototype": "CNA_Result cna_graphics_device_clear_rgba(CNA_Handle graphics_device, float r, float g, float b, float a)"
     },
     {
+      "name": "cna_graphics_device_get_graphics_profile",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_profile",
+          "c_type": "CNA_GraphicsProfile*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_graphics_profile(CNA_Handle graphics_device, CNA_GraphicsProfile* out_profile)"
+    },
+    {
+      "name": "cna_graphics_device_clear_options",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "options",
+          "c_type": "CNA_ClearOptions",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "color-0",
+          "c_type": "CNA_Color",
+          "cffi_type": ":uint32",
+          "flattened_from": "CNA_Color",
+          "eightbyte": 0
+        },
+        {
+          "name": "depth",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "stencil",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_clear_options(CNA_Handle graphics_device, CNA_ClearOptions options, CNA_Color color, float depth, int32_t stencil)"
+    },
+    {
       "name": "cna_graphics_device_present",
       "header": "graphics_device.h",
       "c_returns": "CNA_Result",
@@ -1212,6 +1273,226 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_manager_set_preferred_back_buffer_height(CNA_GraphicsDeviceManagerHandle manager, int32_t height)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_graphics_profile",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_profile",
+          "c_type": "CNA_GraphicsProfile*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_graphics_profile(CNA_GraphicsDeviceManagerHandle manager, CNA_GraphicsProfile* out_profile)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_graphics_profile",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "profile",
+          "c_type": "CNA_GraphicsProfile",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_graphics_profile(CNA_GraphicsDeviceManagerHandle manager, CNA_GraphicsProfile profile)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_prefer_multi_sampling",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_prefer",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_prefer_multi_sampling(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool* out_prefer)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_prefer_multi_sampling",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "prefer",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_prefer_multi_sampling(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool prefer)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_preferred_back_buffer_format",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_format",
+          "c_type": "CNA_SurfaceFormat*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_preferred_back_buffer_format(CNA_GraphicsDeviceManagerHandle manager, CNA_SurfaceFormat* out_format)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_preferred_back_buffer_format",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_preferred_back_buffer_format(CNA_GraphicsDeviceManagerHandle manager, CNA_SurfaceFormat format)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_preferred_depth_stencil_format",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_format",
+          "c_type": "CNA_DepthFormat*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_preferred_depth_stencil_format(CNA_GraphicsDeviceManagerHandle manager, CNA_DepthFormat* out_format)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_preferred_depth_stencil_format",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_DepthFormat",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_preferred_depth_stencil_format(CNA_GraphicsDeviceManagerHandle manager, CNA_DepthFormat format)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_supported_orientations",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_orientations",
+          "c_type": "CNA_DisplayOrientation*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_supported_orientations(CNA_GraphicsDeviceManagerHandle manager, CNA_DisplayOrientation* out_orientations)"
+    },
+    {
+      "name": "cna_graphics_device_manager_set_supported_orientations",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "orientations",
+          "c_type": "CNA_DisplayOrientation",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_set_supported_orientations(CNA_GraphicsDeviceManagerHandle manager, CNA_DisplayOrientation orientations)"
     },
     {
       "name": "cna_graphics_device_manager_get_synchronize_with_vertical_retrace",
@@ -15393,6 +15674,9 @@
     "CNA_BLEND_ZERO": 1,
     "CNA_BUFFER_USAGE_NONE": 0,
     "CNA_BUFFER_USAGE_WRITE_ONLY": 1,
+    "CNA_CLEAR_OPTION_DEPTH_BUFFER": 2,
+    "CNA_CLEAR_OPTION_STENCIL": 4,
+    "CNA_CLEAR_OPTION_TARGET": 1,
     "CNA_COLOR_WRITE_ALL": 15,
     "CNA_COLOR_WRITE_ALPHA": 8,
     "CNA_COLOR_WRITE_BLUE": 4,
@@ -15536,6 +15820,8 @@
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET": 3,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING": 4,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED": 0,
+    "CNA_GRAPHICS_PROFILE_HI_DEF": 1,
+    "CNA_GRAPHICS_PROFILE_REACH": 0,
     "CNA_INDEX_ELEMENT_SIZE_SIXTEEN_BITS": 0,
     "CNA_INDEX_ELEMENT_SIZE_THIRTY_TWO_BITS": 1,
     "CNA_INVALID_HANDLE": 0,

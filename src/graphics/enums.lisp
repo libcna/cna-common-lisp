@@ -31,6 +31,21 @@
   (copy-alist cna-lisp.internal.ffi:*surface-format-table*)
   :documentation "Microsoft.Xna.Framework.Graphics.SurfaceFormat.")
 
+(microsoft.xna.framework::define-xna-enum graphics-profile
+  '((:reach . 0) (:hi-def . 1))
+  :documentation "Microsoft.Xna.Framework.Graphics.GraphicsProfile.")
+
+(microsoft.xna.framework::define-xna-enum clear-options
+  '((:target . 1) (:depth-buffer . 2) (:stencil . 4))
+  :documentation
+  "Microsoft.Xna.Framework.Graphics.ClearOptions, a flags enum.
+
+Read from the pinned assembly and not from CNA, as every enumeration here is:
+Target = 1, DepthBuffer = 2, Stencil = 4, and CNA_CLEAR_OPTION_* happens to agree.
+The empty list is the legal zero -- XNA's enum has no named zero member, and
+clearing nothing is what an empty mask asks for."
+  :flags t)
+
 
 ;;; --- the enumerations the graphics state objects are built from --------------
 ;;;

@@ -85,7 +85,12 @@ game's GRAPHICS-DEVICE facade rather than a second object with a second lifetime
    "toggle-full-screen" :object-type 'graphics-device-manager)
   (values))
 
-(macrolet ((define-manager-property (name kind getter setter doc)
+(macrolet ((define-manager-property (name kind getter setter doc
+                                    &optional to-value from-value)
+             ;; KIND :ENUM takes the enum's own two conversion functions, so the
+             ;; number never appears here: a preference is a keyword, or a list
+             ;; of them for a flags enum, exactly as it is everywhere else in
+             ;; this projection.
              (let ((op (string-downcase (symbol-name name)))
                    (set-op (format nil "(setf ~(~a~))" name)))
                `(progn
@@ -94,13 +99,15 @@ game's GRAPHICS-DEVICE facade rather than a second object with a second lifetime
                     (cna-lisp.internal:check-usable manager ,op)
                     (cffi:with-foreign-object (out ,(ecase kind
                                                       (:boolean :uint8)
-                                                      (:integer :int32)))
+                                                      (:integer :int32)
+                                                      (:enum :uint32)))
                       (cna-lisp.internal:check-result
                        (,getter (cna-lisp.internal:handle-of manager) out)
                        ,op :object-type 'graphics-device-manager)
                       ,(ecase kind
                          (:boolean '(cna-lisp.internal.ffi:cna-true-p (cffi:mem-ref out :uint8)))
-                         (:integer '(cffi:mem-ref out :int32)))))
+                         (:integer '(cffi:mem-ref out :int32))
+                         (:enum `(,from-value (cffi:mem-ref out :uint32))))))
                   (defgeneric (setf ,name) (value manager))
                   (defmethod (setf ,name) (value (manager graphics-device-manager))
                     (cna-lisp.internal:check-usable manager ,set-op)
@@ -108,7 +115,8 @@ game's GRAPHICS-DEVICE facade rather than a second object with a second lifetime
                      (,setter (cna-lisp.internal:handle-of manager)
                               ,(ecase kind
                                  (:boolean '(cna-lisp.internal.ffi:cna-bool-of value))
-                                 (:integer 'value)))
+                                 (:integer 'value)
+                                 (:enum `(,to-value value))))
                      ,set-op :object-type 'graphics-device-manager)
                     value)))))
   (define-manager-property is-full-screen :boolean
@@ -126,7 +134,60 @@ game's GRAPHICS-DEVICE facade rather than a second object with a second lifetime
   (define-manager-property synchronize-with-vertical-retrace :boolean
     cna-lisp.internal.ffi::%graphics-device-manager-get-synchronize-with-vertical-retrace
     cna-lisp.internal.ffi::%graphics-device-manager-set-synchronize-with-vertical-retrace
-    "GraphicsDeviceManager.SynchronizeWithVerticalRetrace."))
+    "GraphicsDeviceManager.SynchronizeWithVerticalRetrace.")
+  (define-manager-property prefer-multi-sampling :boolean
+    cna-lisp.internal.ffi::%graphics-device-manager-get-prefer-multi-sampling
+    cna-lisp.internal.ffi::%graphics-device-manager-set-prefer-multi-sampling
+    "GraphicsDeviceManager.PreferMultiSampling.")
+  (define-manager-property graphics-profile :enum
+    cna-lisp.internal.ffi::%graphics-device-manager-get-graphics-profile
+    cna-lisp.internal.ffi::%graphics-device-manager-set-graphics-profile
+    "GraphicsDeviceManager.GraphicsProfile: :REACH or :HI-DEF."
+    microsoft.xna.framework.graphics:graphics-profile-value
+    microsoft.xna.framework.graphics:graphics-profile-from-value)
+  (define-manager-property preferred-back-buffer-format :enum
+    cna-lisp.internal.ffi::%graphics-device-manager-get-preferred-back-buffer-format
+    cna-lisp.internal.ffi::%graphics-device-manager-set-preferred-back-buffer-format
+    "GraphicsDeviceManager.PreferredBackBufferFormat, a SurfaceFormat."
+    microsoft.xna.framework.graphics:surface-format-value
+    microsoft.xna.framework.graphics:surface-format-from-value)
+  (define-manager-property preferred-depth-stencil-format :enum
+    cna-lisp.internal.ffi::%graphics-device-manager-get-preferred-depth-stencil-format
+    cna-lisp.internal.ffi::%graphics-device-manager-set-preferred-depth-stencil-format
+    "GraphicsDeviceManager.PreferredDepthStencilFormat, a DepthFormat."
+    microsoft.xna.framework.graphics:depth-format-value
+    microsoft.xna.framework.graphics:depth-format-from-value)
+  (define-manager-property supported-orientations :enum
+    cna-lisp.internal.ffi::%graphics-device-manager-get-supported-orientations
+    cna-lisp.internal.ffi::%graphics-device-manager-set-supported-orientations
+    "GraphicsDeviceManager.SupportedOrientations, a DisplayOrientation flags set.
+
+A *list* of keywords, because DisplayOrientation is a flags enum: `(:landscape-left
+:landscape-right)' is the two-bit mask, and the empty list is `Default', which is
+the named zero."
+    display-orientation-value
+    display-orientation-from-value))
+
+;;; --- the two static fields ---------------------------------------------------
+;;;
+;;; `DefaultBackBufferWidth' and `DefaultBackBufferHeight' are `static initonly'
+;;; fields, not constants and not instance properties, and their values are read
+;;; from the pinned Game assembly's class constructor: `ldc.i4 0x320' and
+;;; `ldc.i4 0x1e0'. Worth reading rather than assuming, because `GameWindow' in
+;;; the same assembly has same-shaped defaults that are **not** the same numbers
+;;; -- 0x320 by 0x258, 800 by 600.
+
+(defun graphics-device-manager-default-back-buffer-width ()
+  "GraphicsDeviceManager.DefaultBackBufferWidth: 800.
+
+A static field, so a function of no arguments rather than a constant: XNA's is
+`static initonly' and not `const', and a constant here would promise an
+immutability the CLR field does not have."
+  800)
+
+(defun graphics-device-manager-default-back-buffer-height ()
+  "GraphicsDeviceManager.DefaultBackBufferHeight: 480. See the width."
+  480)
 
 (defmethod cna-lisp.internal:destroy-native ((manager graphics-device-manager))
   (unwind-protect

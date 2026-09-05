@@ -192,6 +192,12 @@
    #:+ticks-per-second+
    ;; --- TitleContainer ----------------------------------------------------
    #:title-container-open-stream
+   ;; --- GraphicsDeviceManager's preference surface -------------------------
+   #:graphics-profile
+   #:prefer-multi-sampling #:preferred-back-buffer-format
+   #:preferred-depth-stencil-format #:supported-orientations
+   #:graphics-device-manager-default-back-buffer-width
+   #:graphics-device-manager-default-back-buffer-height
    ;; --- Game --------------------------------------------------------------
    #:game
    #:initialize #:load-content #:unload-content
@@ -410,6 +416,10 @@
    #:texture #:texture-2d
    #:texture-2d-from-png-file #:texture-2d-from-png-bytes
    #:texture-2d-from-stream #:save-as-png #:save-as-jpeg
+   #:graphics-profile #:graphics-profile-value #:graphics-profile-from-value
+   #:all-graphics-profile
+   #:clear-options #:clear-options-value #:clear-options-from-value
+   #:all-clear-options
    #:width #:height #:level-count #:format-of #:bounds
    ;; --- SpriteBatch -------------------------------------------------------
    ;; --- RenderTarget2D ----------------------------------------------------

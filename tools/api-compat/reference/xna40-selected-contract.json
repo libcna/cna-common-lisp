@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 148,
-  "member_count": 2257
+  "type_count": 150,
+  "member_count": 2264
  },
  "types": [
   {
@@ -1395,6 +1395,96 @@
        "optional": false
       }
      ]
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Reach",
+     "type": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "HiDef",
+     "type": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+   "kind": "enum",
+   "flags": true,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Target",
+     "type": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    },
+    {
+     "kind": "field",
+     "name": "DepthBuffer",
+     "type": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+     "static": true,
+     "constant": true,
+     "value": "2"
+    },
+    {
+     "kind": "field",
+     "name": "Stencil",
+     "type": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+     "static": true,
+     "constant": true,
+     "value": "4"
     }
    ]
   },

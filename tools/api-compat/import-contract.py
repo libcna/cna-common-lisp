@@ -35,6 +35,8 @@ SELECTED = [
     "Microsoft.Xna.Framework.GameComponentCollectionEventArgs",
     "Microsoft.Xna.Framework.LaunchParameters",
     "Microsoft.Xna.Framework.TitleContainer",
+    "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+    "Microsoft.Xna.Framework.Graphics.ClearOptions",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Content.ContentManager",
     "Microsoft.Xna.Framework.Graphics.RenderTargetCube",

@@ -4738,6 +4738,68 @@
           "documentation": "Microsoft.Xna.Framework.GraphicsDeviceManager.\n\nCreate one in a GAME subclass's INITIALIZE-INSTANCE :AFTER method, as XNA\nconstructs one in the game's constructor:\n\n    (defmethod initialize-instance :after ((game hello-game) &key)\n      (setf (graphics-manager game)\n            (make-instance 'graphics-device-manager :game game)))\n\nDispose it before the game it belongs to."
         },
         {
+          "name": "graphics-device-manager-default-back-buffer-height",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.DefaultBackBufferHeight: 480. See the width."
+        },
+        {
+          "name": "graphics-device-manager-default-back-buffer-width",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.DefaultBackBufferWidth: 800.\n\nA static field, so a function of no arguments rather than a constant: XNA's is\n`static initonly' and not `const', and a constant here would promise an\nimmutability the CLR field does not have."
+        },
+        {
+          "name": "graphics-profile",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "manager"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.GraphicsProfile: :REACH or :HI-DEF."
+        },
+        {
           "name": "gray",
           "fbound": true,
           "macro": false,
@@ -7787,6 +7849,54 @@
           "documentation": "Every predefined XNA colour name CNA-Lisp knows, as keywords."
         },
         {
+          "name": "prefer-multi-sampling",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "manager"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.PreferMultiSampling."
+        },
+        {
+          "name": "preferred-back-buffer-format",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "manager"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.PreferredBackBufferFormat, a SurfaceFormat."
+        },
+        {
           "name": "preferred-back-buffer-height",
           "fbound": true,
           "macro": false,
@@ -7833,6 +7943,30 @@
           "constant": false,
           "value": null,
           "documentation": "GraphicsDeviceManager.PreferredBackBufferWidth."
+        },
+        {
+          "name": "preferred-depth-stencil-format",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "manager"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.PreferredDepthStencilFormat, a DepthFormat."
         },
         {
           "name": "purple",
@@ -9528,6 +9662,30 @@
           "constant": false,
           "value": null,
           "documentation": "Game.RunOneFrame(): process host events and run exactly one frame."
+        },
+        {
+          "name": "supported-orientations",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "manager"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.SupportedOrientations, a DisplayOrientation flags set.\n\nA *list* of keywords, because DisplayOrientation is a flags enum: `(:landscape-left\n:landscape-right)' is the two-bit mask, and the empty list is `Default', which is\nthe named zero."
         },
         {
           "name": "suppress-draw",
@@ -12556,6 +12714,25 @@
           "documentation": "Every member of BUFFER-USAGE, as keywords, in value order."
         },
         {
+          "name": "all-clear-options",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of CLEAR-OPTIONS, as keywords, in value order."
+        },
+        {
           "name": "all-color-write-channels",
           "fbound": true,
           "macro": false,
@@ -12706,6 +12883,25 @@
           "constant": false,
           "value": null,
           "documentation": "Every member of FILL-MODE, as keywords, in value order."
+        },
+        {
+          "name": "all-graphics-profile",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of GRAPHICS-PROFILE, as keywords, in value order."
         },
         {
           "name": "all-index-element-size",
@@ -13488,7 +13684,55 @@
           "generic": true,
           "lambda_list": [
             "graphics-device",
-            "color"
+            "color",
+            "&key",
+            "options",
+            "depth",
+            "stencil"
+          ],
+          "keywords": [
+            "depth",
+            "options",
+            "stencil"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.Clear: all three overloads, the keywords selecting between them.\n\n    (clear device (xna:cornflower-blue))                       Clear(Color)\n    (clear device color  :options ='(:target) :depth 1.0 :stencil 0)\n    (clear device vector :options ='(:target) :depth 1.0 :stencil 0)\n\nXNA has `Clear(Color)', `Clear(ClearOptions, Color, Single, Int32)' and\n`Clear(ClearOptions, Vector4, Single, Int32)' and nothing between them, so either\nall three of :OPTIONS, :DEPTH and :STENCIL or none of them, and a VECTOR4 with\nnone is refused -- there is no `Clear(Vector4)' to be.\n\n**A Vector4 is quantised to eight bits per channel, and that is XNA's doing.**\nIts overload is four instructions: `new Color(vector4)' and then the Color\noverload. So the two four-argument forms are one operation, and this reproduces\nthat rather than reaching for a float route CNA does have -- taking the float\nroute would make the Vector4 form *differ* from XNA."
+        },
+        {
+          "name": "clear-options",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.ClearOptions, a flags enum.\n\nRead from the pinned assembly and not from CNA, as every enumeration here is:\nTarget = 1, DepthBuffer = 2, Stencil = 4, and CNA_CLEAR_OPTION_* happens to agree.\nThe empty list is the legal zero -- XNA's enum has no named zero member, and\nclearing nothing is what an empty mask asks for."
+        },
+        {
+          "name": "clear-options-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -13501,7 +13745,28 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "GraphicsDevice.Clear(Color): clear the current render target to COLOR."
+          "documentation": "The CLEAR-OPTIONS member list a value names."
+        },
+        {
+          "name": "clear-options-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a CLEAR-OPTIONS member. A list of members combines their bits."
         },
         {
           "name": "clone-effect",
@@ -17156,6 +17421,69 @@
           "constant": false,
           "value": null,
           "documentation": "The game's graphics device. Instances are produced by the runtime and reached\nthrough MICROSOFT.XNA.FRAMEWORK:GRAPHICS-DEVICE; a consumer does not create one.\n\nEvery operation on a graphics device is legal only inside a game lifecycle\nmethod -- LOAD-CONTENT, UPDATE, DRAW and their neighbours -- because that is the\nonly time CNA lends the device out."
+        },
+        {
+          "name": "graphics-profile",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.GraphicsProfile: the profile the device was created with.\n\nGet-only, as XNA's is: a device's profile is decided when the device is made.\n`MICROSOFT.XNA.FRAMEWORK:GRAPHICS-PROFILE' is the *manager's* preference, which\nis settable and is the other side of the same subject."
+        },
+        {
+          "name": "graphics-profile-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The GRAPHICS-PROFILE member a value names."
+        },
+        {
+          "name": "graphics-profile-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a GRAPHICS-PROFILE member."
         },
         {
           "name": "graphics-resource",
@@ -28876,6 +29204,15 @@
       "bc7-srgb-ext": 24,
       "byte-ext": 25,
       "ushort-ext": 26
+    },
+    "graphics-profile": {
+      "reach": 0,
+      "hi-def": 1
+    },
+    "clear-options": {
+      "target": 1,
+      "depth-buffer": 2,
+      "stencil": 4
     },
     "containment-type": {
       "disjoint": 0,

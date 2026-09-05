@@ -935,6 +935,61 @@ nothing is an **IO** failure. That is XNA's distinction between `ArgumentExcepti
 and `FileNotFoundException`, and collapsing the two would make a traversal attempt
 look like a typo.
 
+## The device-settings surface, and how much of it CNA has
+
+`GraphicsDeviceManager`'s **preference surface is complete**: `GraphicsProfile`,
+`PreferredBackBufferFormat`, `PreferredDepthStencilFormat`, `PreferMultiSampling`
+and `SupportedOrientations` each have a CNA get/set pair, and each projects as a
+keyword — or a *list* of them for `SupportedOrientations`, because
+`DisplayOrientation` carries the `FlagsAttribute`. The empty list is the zero
+mask and reads back as `(:default)`, because that enum has a named zero.
+
+`DefaultBackBufferWidth` and `DefaultBackBufferHeight` are `static initonly`
+fields, so they are **functions of no arguments** rather than constants: a
+`DEFCONSTANT` would promise an immutability the CLR field has not got. Their
+values are 800 and 480, read from the pinned Game assembly's class constructor
+(`ldc.i4 0x320`, `ldc.i4 0x1e0`) and not assumed — `GameWindow` in the same
+assembly sets same-shaped defaults two instructions earlier and they are **not
+the same numbers**, 800 by 600. A projection that reasoned about "the usual XNA
+window size" would be wrong by 120 pixels.
+
+### `Clear`'s three overloads, and where the quantisation comes from
+
+All three are complete. `Clear(Color)` is the shape with none of `:OPTIONS`,
+`:DEPTH` and `:STENCIL`; the two four-argument overloads take all three and are
+told apart by the colour's type, which is real CLOS dispatch rather than a tag.
+
+**The Vector4 overload quantises to eight bits per channel, and that is XNA's
+doing, not CNA's.** Read from the assembly, `Clear(ClearOptions, Vector4, Single,
+Int32)` is four instructions: `new Color(vector4)`, then the `Color` overload. So
+the two four-argument forms are one operation. CNA *does* have a float clear route
+— `cna_graphics_device_clear_rgba` — and reaching for it here would make this
+member **differ** from XNA rather than match it. This is the shape of decision the
+`DepthStencilState` divergence has the other way round: there CNA was wrong and
+XNA won; here CNA offers something better and XNA still wins, because matching is
+the job.
+
+One thing `Clear(Color)` cannot reproduce exactly and does not claim to: in the
+assembly it is `Clear(DefaultClearOptions, color, 1f, 0)`, and
+`DefaultClearOptions` is derived from the *current* depth-stencil format — `Target`
+alone, `Target|DepthBuffer` when there is a depth buffer, and all three when the
+format is `Depth24Stencil8`. That state is `PresentationParameters`, which is
+missing. CNA implements the canonical member, so `cna_graphics_device_clear_rgba`
+carries it and the derivation stays CNA's rather than being guessed here.
+
+### What is still missing from the device, and why
+
+`GraphicsDevice.GraphicsProfile` is complete — `cna_graphics_device_get_graphics_profile`
+answers it, get-only as XNA's is. The rest of the device-settings surface is not,
+and each has its own reason rather than one shared one: `Adapter`, `DisplayMode`,
+`PresentationParameters` and `GraphicsDeviceStatus` each need a **type** that is
+not in the selection yet, the three `Reset` overloads and `Present` need
+`PresentationParameters` with them, and the six device events need CNA
+subscription routes this binding has not audited. `GraphicsDeviceManager`'s
+remaining ten are the five protected `On*` raisers, `PreparingDeviceSettings` and
+its event args, and `FindBestDevice`/`RankDevices`/`CanResetDevice`, which are the
+device-selection algorithm rather than a setting.
+
 ## Texture extent comes from the image, not from CNA
 
 CNA has no route reporting a `Texture2D`'s pixel extent. `width` and `height`

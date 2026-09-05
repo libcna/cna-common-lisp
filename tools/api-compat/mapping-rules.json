@@ -410,6 +410,46 @@
       },
       "unimplemented": {
         "PreparingDeviceSettings": "The only event in the selection that carries data. It needs PreparingDeviceSettingsEventArgs and GraphicsDeviceInformation, neither of which is in the selection, and CNA's non-ext callback for it can only observe the settings where XNA's event exists to change them. Projecting the observing form under the event's name would be a quieter kind of wrong than leaving it missing."
+      },
+      "member_overrides": {
+        "GraphicsProfile": {
+          "lisp": "graphics-profile",
+          "generic": true,
+          "setf": true,
+          "reason": "GraphicsDeviceManager.GraphicsProfile over CNA's get/set pair. A keyword, :REACH or :HI-DEF, read from the pinned assembly's enum: Reach = 0, HiDef = 1, which CNA happens to agree with."
+        },
+        "PreferredBackBufferFormat": {
+          "lisp": "preferred-back-buffer-format",
+          "generic": true,
+          "setf": true,
+          "reason": "A SurfaceFormat keyword, over CNA's get/set pair."
+        },
+        "PreferredDepthStencilFormat": {
+          "lisp": "preferred-depth-stencil-format",
+          "generic": true,
+          "setf": true,
+          "reason": "A DepthFormat keyword, over CNA's get/set pair."
+        },
+        "PreferMultiSampling": {
+          "lisp": "prefer-multi-sampling",
+          "generic": true,
+          "setf": true,
+          "reason": "A boolean, over CNA's get/set pair."
+        },
+        "SupportedOrientations": {
+          "lisp": "supported-orientations",
+          "generic": true,
+          "setf": true,
+          "reason": "A DisplayOrientation *list*, because that enum has the FlagsAttribute: (:landscape-left :landscape-right) is the two-bit mask and the empty list is Default, which is the named zero."
+        },
+        "DefaultBackBufferWidth": {
+          "lisp": "graphics-device-manager-default-back-buffer-width",
+          "reason": "A `static initonly` field, so a function of no arguments rather than a constant: a DEFCONSTANT here would promise an immutability the CLR field has not got. The value is read from the pinned Game assembly's class constructor -- `ldc.i4 0x320`, 800 -- and not assumed, because GameWindow in the same assembly has same-shaped defaults that are a different pair of numbers."
+        },
+        "DefaultBackBufferHeight": {
+          "lisp": "graphics-device-manager-default-back-buffer-height",
+          "reason": "The height, `ldc.i4 0x1e0`, 480. See the width."
+        }
       }
     },
     "Microsoft.Xna.Framework.Content.ContentManager": {
@@ -901,7 +941,10 @@
       "member_overrides": {
         "Clear(Color)": {
           "lisp": "clear",
-          "generic": true
+          "generic": true,
+          "distinguished_by": "no-keywords",
+          "reason": "Clear(Color) is the shape with none of :OPTIONS, :DEPTH and :STENCIL. In the assembly it is Clear(DefaultClearOptions, color, 1f, 0), and DefaultClearOptions is derived from the *current* depth-stencil format -- which this binding cannot read, because PresentationParameters is missing. CNA implements the canonical member, so cna_graphics_device_clear_rgba carries it and the derivation stays CNA's.",
+          "positional": 2
         },
         "Present()": {
           "lisp": "present",
@@ -1084,6 +1127,41 @@
           "lisp": "get-render-targets",
           "generic": true,
           "reason": "Answers the RENDER-TARGET-BINDINGs this binding bound, cross-checked against cna_graphics_device_get_render_target_count and _copy_render_targets. Those answer *handles*, and the ABI has no route from a handle back to the object that owns it, so wrapping them would invent second objects for targets the program already holds -- the same decision the vertex-buffer bindings record. A disagreement between CNA's count or handles and the record is signalled."
+        },
+        "Clear(ClearOptions,Color,Single,Int32)": {
+          "lisp": "clear",
+          "generic": true,
+          "reason": "The four-argument Clear, over cna_graphics_device_clear_options, which takes the same mask, colour, depth and stencil. One generic function with Clear(Color), the supplied keywords selecting the overload: all three of :OPTIONS, :DEPTH and :STENCIL or none, because XNA has no overload between them.",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "options",
+            "depth",
+            "stencil"
+          ],
+          "discriminator": {
+            "argument": "color",
+            "lisp_type": "microsoft.xna.framework:color"
+          }
+        },
+        "Clear(ClearOptions,Vector4,Single,Int32)": {
+          "lisp": "clear",
+          "generic": true,
+          "reason": "The Vector4 form, dispatched on the colour's type. **Its eight-bit quantisation is XNA's own**, not a limit taken from CNA: read from the assembly, this overload is four instructions -- `new Color(vector4)` and then the Color overload -- so the two four-argument forms are one operation. CNA does have a float clear route, and using it here would make this member *differ* from XNA rather than match it.",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "options",
+            "depth",
+            "stencil"
+          ],
+          "discriminator": {
+            "argument": "color",
+            "lisp_type": "microsoft.xna.framework:vector4"
+          }
+        },
+        "GraphicsProfile": {
+          "lisp": "graphics-profile",
+          "generic": true,
+          "reason": "GraphicsDevice.GraphicsProfile over cna_graphics_device_get_graphics_profile. Get-only, as XNA's is: a device's profile is decided when the device is made. The settable side of the same subject is GraphicsDeviceManager.GraphicsProfile, which is a different member on a different type and is separately complete."
         }
       },
       "not_applicable": {
@@ -1093,8 +1171,6 @@
         "Reset()": "Device reset is not projected.",
         "Reset(PresentationParameters)": "Needs PresentationParameters.",
         "Reset(PresentationParameters,GraphicsAdapter)": "Needs PresentationParameters and GraphicsAdapter.",
-        "Clear(ClearOptions,Vector4,Single,Int32)": "Needs ClearOptions and Vector4.",
-        "Clear(ClearOptions,Color,Single,Int32)": "Needs ClearOptions.",
         "Present(Nullable`1,Nullable`1,IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected."
       },
       "overload_families": {
@@ -1104,7 +1180,7 @@
         },
         "Clear": {
           "lisp": "clear",
-          "reason": "Only Clear(Color) is projected."
+          "reason": "XNA's three Clear overloads are one generic function. Clear(Color) is the shape with none of :OPTIONS, :DEPTH and :STENCIL; the two four-argument overloads take all three and are told apart by the type of the colour, which is real CLOS dispatch on a COLOR against a VECTOR4 rather than a tag. One or two of the three keywords is refused, and so is a VECTOR4 with none of them -- there is no Clear(Vector4)."
         },
         "GetBackBufferData": {
           "lisp": "get-back-buffer-data",
@@ -6817,6 +6893,16 @@
           "status": "partial"
         }
       }
+    },
+    "Microsoft.Xna.Framework.Graphics.GraphicsProfile": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "graphics-profile",
+      "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.Graphics.ClearOptions": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "clear-options",
+      "lisp_kind": "enum"
     }
   }
 }

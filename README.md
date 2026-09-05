@@ -184,27 +184,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=148 -->
-<!-- generated:selected members=2257 -->
-<!-- generated:complete types=135 -->
+<!-- generated:selected types=150 -->
+<!-- generated:selected members=2264 -->
+<!-- generated:complete types=137 -->
 <!-- generated:partial types=13 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1774 -->
+<!-- generated:complete members=1789 -->
 <!-- generated:partial members=15 -->
-<!-- generated:missing members=51 -->
-<!-- generated:not-applicable members=417 -->
+<!-- generated:missing members=41 -->
+<!-- generated:not-applicable members=419 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=407 -->
+<!-- generated:bound native functions=419 -->
 <!-- generated:bound native structs=63 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **148 XNA types and 2257 members**:
+The generated scoreboard, over a selection of **150 XNA types and 2264 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **135 / 13 / 0** |
-| Members complete / missing | **1774 / 51** |
-| Members not applicable | **417** |
+| Types complete / partial / missing | **137 / 13 / 0** |
+| Members complete / missing | **1789 / 41** |
+| Members not applicable | **419** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -217,7 +217,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **407 native routes** and **63 native structs**,
+The private foreign layer binds **419 native routes** and **63 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

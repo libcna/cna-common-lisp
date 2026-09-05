@@ -1179,6 +1179,8 @@ CNA_Result (*const cna_lisp_probe_cna_title_location_get_path_size)(CNA_Handle, 
 CNA_Result (*const cna_lisp_probe_cna_title_location_copy_path)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_title_location_copy_path;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_viewport)(CNA_Handle, CNA_Viewport*) = cna_graphics_device_get_viewport;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_clear_rgba)(CNA_Handle, float, float, float, float) = cna_graphics_device_clear_rgba;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_graphics_profile)(CNA_Handle, CNA_GraphicsProfile*) = cna_graphics_device_get_graphics_profile;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_clear_options)(CNA_Handle, CNA_ClearOptions, CNA_Color, float, int32_t) = cna_graphics_device_clear_options;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_present)(CNA_Handle) = cna_graphics_device_present;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_renderer_info)(CNA_Handle, CNA_RendererInfo*) = cna_graphics_device_get_renderer_info;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_copy_renderer_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_graphics_device_copy_renderer_name;
@@ -1194,6 +1196,16 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_preferred_back
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_preferred_back_buffer_width)(CNA_GraphicsDeviceManagerHandle, int32_t) = cna_graphics_device_manager_set_preferred_back_buffer_width;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_preferred_back_buffer_height)(CNA_GraphicsDeviceManagerHandle, int32_t*) = cna_graphics_device_manager_get_preferred_back_buffer_height;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_preferred_back_buffer_height)(CNA_GraphicsDeviceManagerHandle, int32_t) = cna_graphics_device_manager_set_preferred_back_buffer_height;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_graphics_profile)(CNA_GraphicsDeviceManagerHandle, CNA_GraphicsProfile*) = cna_graphics_device_manager_get_graphics_profile;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_graphics_profile)(CNA_GraphicsDeviceManagerHandle, CNA_GraphicsProfile) = cna_graphics_device_manager_set_graphics_profile;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_prefer_multi_sampling)(CNA_GraphicsDeviceManagerHandle, CNA_Bool*) = cna_graphics_device_manager_get_prefer_multi_sampling;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_prefer_multi_sampling)(CNA_GraphicsDeviceManagerHandle, CNA_Bool) = cna_graphics_device_manager_set_prefer_multi_sampling;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_preferred_back_buffer_format)(CNA_GraphicsDeviceManagerHandle, CNA_SurfaceFormat*) = cna_graphics_device_manager_get_preferred_back_buffer_format;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_preferred_back_buffer_format)(CNA_GraphicsDeviceManagerHandle, CNA_SurfaceFormat) = cna_graphics_device_manager_set_preferred_back_buffer_format;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_preferred_depth_stencil_format)(CNA_GraphicsDeviceManagerHandle, CNA_DepthFormat*) = cna_graphics_device_manager_get_preferred_depth_stencil_format;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_preferred_depth_stencil_format)(CNA_GraphicsDeviceManagerHandle, CNA_DepthFormat) = cna_graphics_device_manager_set_preferred_depth_stencil_format;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_supported_orientations)(CNA_GraphicsDeviceManagerHandle, CNA_DisplayOrientation*) = cna_graphics_device_manager_get_supported_orientations;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_supported_orientations)(CNA_GraphicsDeviceManagerHandle, CNA_DisplayOrientation) = cna_graphics_device_manager_set_supported_orientations;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_synchronize_with_vertical_retrace)(CNA_GraphicsDeviceManagerHandle, CNA_Bool*) = cna_graphics_device_manager_get_synchronize_with_vertical_retrace;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_synchronize_with_vertical_retrace)(CNA_GraphicsDeviceManagerHandle, CNA_Bool) = cna_graphics_device_manager_set_synchronize_with_vertical_retrace;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_graphics_device)(CNA_GraphicsDeviceManagerHandle, CNA_Handle*) = cna_graphics_device_manager_get_graphics_device;
@@ -1595,6 +1607,9 @@ _Static_assert((int64_t)(CNA_BLEND_STATE_PRESET_OPAQUE) == INT64_C(4), "CNA_BLEN
 _Static_assert((int64_t)(CNA_BLEND_ZERO) == INT64_C(1), "CNA_BLEND_ZERO value");
 _Static_assert((int64_t)(CNA_BUFFER_USAGE_NONE) == INT64_C(0), "CNA_BUFFER_USAGE_NONE value");
 _Static_assert((int64_t)(CNA_BUFFER_USAGE_WRITE_ONLY) == INT64_C(1), "CNA_BUFFER_USAGE_WRITE_ONLY value");
+_Static_assert((int64_t)(CNA_CLEAR_OPTION_DEPTH_BUFFER) == INT64_C(2), "CNA_CLEAR_OPTION_DEPTH_BUFFER value");
+_Static_assert((int64_t)(CNA_CLEAR_OPTION_STENCIL) == INT64_C(4), "CNA_CLEAR_OPTION_STENCIL value");
+_Static_assert((int64_t)(CNA_CLEAR_OPTION_TARGET) == INT64_C(1), "CNA_CLEAR_OPTION_TARGET value");
 _Static_assert((int64_t)(CNA_COLOR_WRITE_ALL) == INT64_C(15), "CNA_COLOR_WRITE_ALL value");
 _Static_assert((int64_t)(CNA_COLOR_WRITE_ALPHA) == INT64_C(8), "CNA_COLOR_WRITE_ALPHA value");
 _Static_assert((int64_t)(CNA_COLOR_WRITE_BLUE) == INT64_C(4), "CNA_COLOR_WRITE_BLUE value");
@@ -1738,6 +1753,8 @@ _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING) == 
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET) == INT64_C(3), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING) == INT64_C(4), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED) == INT64_C(0), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED value");
+_Static_assert((int64_t)(CNA_GRAPHICS_PROFILE_HI_DEF) == INT64_C(1), "CNA_GRAPHICS_PROFILE_HI_DEF value");
+_Static_assert((int64_t)(CNA_GRAPHICS_PROFILE_REACH) == INT64_C(0), "CNA_GRAPHICS_PROFILE_REACH value");
 _Static_assert((int64_t)(CNA_INDEX_ELEMENT_SIZE_SIXTEEN_BITS) == INT64_C(0), "CNA_INDEX_ELEMENT_SIZE_SIXTEEN_BITS value");
 _Static_assert((int64_t)(CNA_INDEX_ELEMENT_SIZE_THIRTY_TWO_BITS) == INT64_C(1), "CNA_INDEX_ELEMENT_SIZE_THIRTY_TWO_BITS value");
 _Static_assert((int64_t)(CNA_INVALID_HANDLE) == INT64_C(0), "CNA_INVALID_HANDLE value");
