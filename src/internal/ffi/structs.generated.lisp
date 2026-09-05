@@ -930,6 +930,68 @@
 (defconstant +sizeof-cna-render-target-binding+ 24)
 (defconstant +alignof-cna-render-target-binding+ 8)
 
+;;; CNA_AudioCapabilities -- 16 bytes, 4-byte aligned, from audio.h.
+(defcstruct (cna-audio-capabilities :size 16)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (is-playback-available :uint8 :offset 8)
+  (reserved-0 :uint8 :offset 9 :count 3)
+  (reserved-1 :uint32 :offset 12))
+
+(defconstant +sizeof-cna-audio-capabilities+ 16)
+(defconstant +alignof-cna-audio-capabilities+ 4)
+
+;;; CNA_SoundEffectCreateInfo -- 24 bytes, 8-byte aligned, from audio.h.
+(defcstruct (cna-sound-effect-create-info :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (sample-rate :uint32 :offset 8)
+  (channels :uint32 :offset 12)
+  (reserved :uint64 :offset 16))
+
+(defconstant +sizeof-cna-sound-effect-create-info+ 24)
+(defconstant +alignof-cna-sound-effect-create-info+ 8)
+
+;;; CNA_SoundEffectInstanceInfo -- 32 bytes, 4-byte aligned, from audio.h.
+(defcstruct (cna-sound-effect-instance-info :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (state :uint32 :offset 8)
+  (is-looped :uint8 :offset 12)
+  (reserved-0 :uint8 :offset 13 :count 3)
+  (volume :float :offset 16)
+  (pitch :float :offset 20)
+  (pan :float :offset 24)
+  (reserved-1 :uint32 :offset 28))
+
+(defconstant +sizeof-cna-sound-effect-instance-info+ 32)
+(defconstant +alignof-cna-sound-effect-instance-info+ 4)
+
+;;; CNA_AudioListener -- 56 bytes, 4-byte aligned, from audio.h.
+(defcstruct (cna-audio-listener :size 56)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (forward (:struct cna-vector-3) :offset 8)
+  (position (:struct cna-vector-3) :offset 20)
+  (up (:struct cna-vector-3) :offset 32)
+  (velocity (:struct cna-vector-3) :offset 44))
+
+(defconstant +sizeof-cna-audio-listener+ 56)
+(defconstant +alignof-cna-audio-listener+ 4)
+
+;;; CNA_AudioEmitter -- 60 bytes, 4-byte aligned, from audio.h.
+(defcstruct (cna-audio-emitter :size 60)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (doppler-scale :float :offset 8)
+  (forward (:struct cna-vector-3) :offset 12)
+  (position (:struct cna-vector-3) :offset 24)
+  (up (:struct cna-vector-3) :offset 36)
+  (velocity (:struct cna-vector-3) :offset 48))
+
+(defconstant +sizeof-cna-audio-emitter+ 60)
+(defconstant +alignof-cna-audio-emitter+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -999,6 +1061,11 @@
     (cna-texture-cube-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (level-count 12 4) (format 16 4) (reserved 20 4)))
     (cna-content-manager-create-info 32 8 ((struct-size 0 4) (struct-version 4 4) (root-directory 8 16) (reserved 24 8)))
     (cna-render-target-cube-create-info 32 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (mip-map 12 1) (reserved 13 3) (format 16 4) (depth-format 20 4) (multi-sample-count 24 4) (usage 28 4)))
-    (cna-render-target-binding 24 8 ((struct-size 0 4) (struct-version 4 4) (render-target 8 8) (array-slice 16 4) (cube-map-face 20 4))))
+    (cna-render-target-binding 24 8 ((struct-size 0 4) (struct-version 4 4) (render-target 8 8) (array-slice 16 4) (cube-map-face 20 4)))
+    (cna-audio-capabilities 16 4 ((struct-size 0 4) (struct-version 4 4) (is-playback-available 8 1) (reserved-0 9 3) (reserved-1 12 4)))
+    (cna-sound-effect-create-info 24 8 ((struct-size 0 4) (struct-version 4 4) (sample-rate 8 4) (channels 12 4) (reserved 16 8)))
+    (cna-sound-effect-instance-info 32 4 ((struct-size 0 4) (struct-version 4 4) (state 8 4) (is-looped 12 1) (reserved-0 13 3) (volume 16 4) (pitch 20 4) (pan 24 4) (reserved-1 28 4)))
+    (cna-audio-listener 56 4 ((struct-size 0 4) (struct-version 4 4) (forward 8 12) (position 20 12) (up 32 12) (velocity 44 12)))
+    (cna-audio-emitter 60 4 ((struct-size 0 4) (struct-version 4 4) (doppler-scale 8 4) (forward 12 12) (position 24 12) (up 36 12) (velocity 48 12))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

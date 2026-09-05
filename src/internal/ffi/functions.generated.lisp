@@ -1846,6 +1846,154 @@
 (defcfun ("cna_graphics_device_copy_render_targets" %graphics-device-copy-render-targets) :uint32
   (graphics-device :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
 
+;;; CNA_Result cna_audio_get_capabilities(CNA_Handle game, CNA_AudioCapabilities* out_capabilities)
+(defcfun ("cna_audio_get_capabilities" %audio-get-capabilities) :uint32
+  (game :uint64) (out-capabilities :pointer))
+
+;;; CNA_Result cna_sound_effect_create_pcm16_range_ext(CNA_Handle game, const CNA_SoundEffectCreateInfo* create_info, const uint8_t* pcm_bytes, uint64_t byte_count, int32_t offset, int32_t count, int32_t loop_start, int32_t loop_length, CNA_Handle* out_sound_effect)
+(defcfun ("cna_sound_effect_create_pcm16_range_ext" %sound-effect-create-pcm-16-range-ext) :uint32
+  (game :uint64) (create-info :pointer) (pcm-bytes :pointer) (byte-count :uint64) (offset :int32) (count :int32) (loop-start :int32) (loop-length :int32) (out-sound-effect :pointer))
+
+;;; CNA_Result cna_sound_effect_create_from_encoded_ext(CNA_Handle game, const uint8_t* bytes, uint64_t byte_count, CNA_Handle* out_sound_effect)
+(defcfun ("cna_sound_effect_create_from_encoded_ext" %sound-effect-create-from-encoded-ext) :uint32
+  (game :uint64) (bytes :pointer) (byte-count :uint64) (out-sound-effect :pointer))
+
+;;; CNA_Result cna_sound_effect_destroy(CNA_Handle sound_effect)
+(defcfun ("cna_sound_effect_destroy" %sound-effect-destroy) :uint32
+  (sound-effect :uint64))
+
+;;; CNA_Result cna_sound_effect_get_is_disposed(CNA_Handle sound_effect, CNA_Bool* out_disposed)
+(defcfun ("cna_sound_effect_get_is_disposed" %sound-effect-get-is-disposed) :uint32
+  (sound-effect :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_sound_effect_get_duration_ticks(CNA_Handle sound_effect, int64_t* out_duration_ticks)
+(defcfun ("cna_sound_effect_get_duration_ticks" %sound-effect-get-duration-ticks) :uint32
+  (sound-effect :uint64) (out-duration-ticks :pointer))
+
+;;; CNA_Result cna_sound_effect_get_name_size(CNA_Handle sound_effect, uint64_t* out_bytes)
+(defcfun ("cna_sound_effect_get_name_size" %sound-effect-get-name-size) :uint32
+  (sound-effect :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_sound_effect_copy_name(CNA_Handle sound_effect, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_sound_effect_copy_name" %sound-effect-copy-name) :uint32
+  (sound-effect :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_sound_effect_set_name(CNA_Handle sound_effect, CNA_StringView name)
+(defcfun ("cna_sound_effect_set_name" %sound-effect-set-name) :uint32
+  (sound-effect :uint64) (name-0 :pointer) (name-1 :uint64))
+
+;;; CNA_Result cna_sound_effect_play(CNA_Handle sound_effect, CNA_Bool* out_played)
+(defcfun ("cna_sound_effect_play" %sound-effect-play) :uint32
+  (sound-effect :uint64) (out-played :pointer))
+
+;;; CNA_Result cna_sound_effect_play_with_settings(CNA_Handle sound_effect, float volume, float pitch, float pan, CNA_Bool* out_played)
+(defcfun ("cna_sound_effect_play_with_settings" %sound-effect-play-with-settings) :uint32
+  (sound-effect :uint64) (volume :float) (pitch :float) (pan :float) (out-played :pointer))
+
+;;; CNA_Result cna_sound_effect_get_sample_duration_ticks(int32_t size_in_bytes, int32_t sample_rate, CNA_AudioChannels channels, int64_t* out_ticks)
+(defcfun ("cna_sound_effect_get_sample_duration_ticks" %sound-effect-get-sample-duration-ticks) :uint32
+  (size-in-bytes :int32) (sample-rate :int32) (channels :uint32) (out-ticks :pointer))
+
+;;; CNA_Result cna_sound_effect_get_sample_size_in_bytes(int64_t duration_ticks, int32_t sample_rate, CNA_AudioChannels channels, int32_t* out_bytes)
+(defcfun ("cna_sound_effect_get_sample_size_in_bytes" %sound-effect-get-sample-size-in-bytes) :uint32
+  (duration-ticks :int64) (sample-rate :int32) (channels :uint32) (out-bytes :pointer))
+
+;;; CNA_Result cna_sound_effect_get_master_volume(CNA_Handle game, float* out_volume)
+(defcfun ("cna_sound_effect_get_master_volume" %sound-effect-get-master-volume) :uint32
+  (game :uint64) (out-volume :pointer))
+
+;;; CNA_Result cna_sound_effect_set_master_volume(CNA_Handle game, float volume)
+(defcfun ("cna_sound_effect_set_master_volume" %sound-effect-set-master-volume) :uint32
+  (game :uint64) (volume :float))
+
+;;; CNA_Result cna_sound_effect_get_distance_scale(CNA_Handle game, float* out_scale)
+(defcfun ("cna_sound_effect_get_distance_scale" %sound-effect-get-distance-scale) :uint32
+  (game :uint64) (out-scale :pointer))
+
+;;; CNA_Result cna_sound_effect_set_distance_scale(CNA_Handle game, float scale)
+(defcfun ("cna_sound_effect_set_distance_scale" %sound-effect-set-distance-scale) :uint32
+  (game :uint64) (scale :float))
+
+;;; CNA_Result cna_sound_effect_get_doppler_scale(CNA_Handle game, float* out_scale)
+(defcfun ("cna_sound_effect_get_doppler_scale" %sound-effect-get-doppler-scale) :uint32
+  (game :uint64) (out-scale :pointer))
+
+;;; CNA_Result cna_sound_effect_set_doppler_scale(CNA_Handle game, float scale)
+(defcfun ("cna_sound_effect_set_doppler_scale" %sound-effect-set-doppler-scale) :uint32
+  (game :uint64) (scale :float))
+
+;;; CNA_Result cna_sound_effect_get_speed_of_sound(CNA_Handle game, float* out_speed)
+(defcfun ("cna_sound_effect_get_speed_of_sound" %sound-effect-get-speed-of-sound) :uint32
+  (game :uint64) (out-speed :pointer))
+
+;;; CNA_Result cna_sound_effect_set_speed_of_sound(CNA_Handle game, float speed)
+(defcfun ("cna_sound_effect_set_speed_of_sound" %sound-effect-set-speed-of-sound) :uint32
+  (game :uint64) (speed :float))
+
+;;; CNA_Result cna_sound_effect_create_instance(CNA_Handle sound_effect, CNA_Handle* out_instance)
+(defcfun ("cna_sound_effect_create_instance" %sound-effect-create-instance) :uint32
+  (sound-effect :uint64) (out-instance :pointer))
+
+;;; CNA_Result cna_sound_effect_instance_destroy(CNA_Handle instance)
+(defcfun ("cna_sound_effect_instance_destroy" %sound-effect-instance-destroy) :uint32
+  (instance :uint64))
+
+;;; CNA_Result cna_sound_effect_instance_get_is_disposed(CNA_Handle instance, CNA_Bool* out_disposed)
+(defcfun ("cna_sound_effect_instance_get_is_disposed" %sound-effect-instance-get-is-disposed) :uint32
+  (instance :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_sound_effect_instance_play(CNA_Handle instance)
+(defcfun ("cna_sound_effect_instance_play" %sound-effect-instance-play) :uint32
+  (instance :uint64))
+
+;;; CNA_Result cna_sound_effect_instance_pause(CNA_Handle instance)
+(defcfun ("cna_sound_effect_instance_pause" %sound-effect-instance-pause) :uint32
+  (instance :uint64))
+
+;;; CNA_Result cna_sound_effect_instance_resume(CNA_Handle instance)
+(defcfun ("cna_sound_effect_instance_resume" %sound-effect-instance-resume) :uint32
+  (instance :uint64))
+
+;;; CNA_Result cna_sound_effect_instance_stop(CNA_Handle instance, CNA_Bool immediate)
+(defcfun ("cna_sound_effect_instance_stop" %sound-effect-instance-stop) :uint32
+  (instance :uint64) (immediate :uint8))
+
+;;; CNA_Result cna_sound_effect_instance_get_info(CNA_Handle instance, CNA_SoundEffectInstanceInfo* out_info)
+(defcfun ("cna_sound_effect_instance_get_info" %sound-effect-instance-get-info) :uint32
+  (instance :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_sound_effect_instance_set_volume(CNA_Handle instance, float volume)
+(defcfun ("cna_sound_effect_instance_set_volume" %sound-effect-instance-set-volume) :uint32
+  (instance :uint64) (volume :float))
+
+;;; CNA_Result cna_sound_effect_instance_set_pitch(CNA_Handle instance, float pitch)
+(defcfun ("cna_sound_effect_instance_set_pitch" %sound-effect-instance-set-pitch) :uint32
+  (instance :uint64) (pitch :float))
+
+;;; CNA_Result cna_sound_effect_instance_set_pan(CNA_Handle instance, float pan)
+(defcfun ("cna_sound_effect_instance_set_pan" %sound-effect-instance-set-pan) :uint32
+  (instance :uint64) (pan :float))
+
+;;; CNA_Result cna_sound_effect_instance_set_is_looped(CNA_Handle instance, CNA_Bool is_looped)
+(defcfun ("cna_sound_effect_instance_set_is_looped" %sound-effect-instance-set-is-looped) :uint32
+  (instance :uint64) (is-looped :uint8))
+
+;;; CNA_Result cna_sound_effect_instance_apply_3d(CNA_Handle instance, const CNA_AudioListener* listener, const CNA_AudioEmitter* emitter)
+(defcfun ("cna_sound_effect_instance_apply_3d" %sound-effect-instance-apply-3d) :uint32
+  (instance :uint64) (listener :pointer) (emitter :pointer))
+
+;;; CNA_Result cna_sound_effect_instance_apply_3d_multi_ext(CNA_Handle instance, const CNA_AudioListener* listeners, uint64_t listener_count, const CNA_AudioEmitter* emitter)
+(defcfun ("cna_sound_effect_instance_apply_3d_multi_ext" %sound-effect-instance-apply-3d-multi-ext) :uint32
+  (instance :uint64) (listeners :pointer) (listener-count :uint64) (emitter :pointer))
+
+;;; CNA_Result cna_audio_listener_init(CNA_AudioListener* out_listener)
+(defcfun ("cna_audio_listener_init" %audio-listener-init) :uint32
+  (out-listener :pointer))
+
+;;; CNA_Result cna_audio_emitter_init(CNA_AudioEmitter* out_emitter)
+(defcfun ("cna_audio_emitter_init" %audio-emitter-init) :uint32
+  (out-emitter :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -2304,6 +2452,43 @@
     ("cna_graphics_device_set_render_target_cube" %graphics-device-set-render-target-cube :uint32 (:uint64 :uint64 :uint32) :thread :game :ownership "none")
     ("cna_graphics_device_set_render_targets" %graphics-device-set-render-targets :uint32 (:uint64 :pointer :uint64) :thread :game :ownership "none")
     ("cna_graphics_device_get_render_target_count" %graphics-device-get-render-target-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
-    ("cna_graphics_device_copy_render_targets" %graphics-device-copy-render-targets :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "borrows"))
+    ("cna_graphics_device_copy_render_targets" %graphics-device-copy-render-targets :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "borrows")
+    ("cna_audio_get_capabilities" %audio-get-capabilities :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_sound_effect_create_pcm16_range_ext" %sound-effect-create-pcm-16-range-ext :uint32 (:uint64 :pointer :pointer :uint64 :int32 :int32 :int32 :int32 :pointer) :thread :owner :ownership "creates-owned:sound-effect:child-of-game")
+    ("cna_sound_effect_create_from_encoded_ext" %sound-effect-create-from-encoded-ext :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:sound-effect:child-of-game")
+    ("cna_sound_effect_destroy" %sound-effect-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:sound-effect")
+    ("cna_sound_effect_get_is_disposed" %sound-effect-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_get_duration_ticks" %sound-effect-get-duration-ticks :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_get_name_size" %sound-effect-get-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_copy_name" %sound-effect-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_set_name" %sound-effect-set-name :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_sound_effect_play" %sound-effect-play :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_play_with_settings" %sound-effect-play-with-settings :uint32 (:uint64 :float :float :float :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_get_sample_duration_ticks" %sound-effect-get-sample-duration-ticks :uint32 (:int32 :int32 :uint32 :pointer) :thread :any :ownership "none")
+    ("cna_sound_effect_get_sample_size_in_bytes" %sound-effect-get-sample-size-in-bytes :uint32 (:int64 :int32 :uint32 :pointer) :thread :any :ownership "none")
+    ("cna_sound_effect_get_master_volume" %sound-effect-get-master-volume :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_sound_effect_set_master_volume" %sound-effect-set-master-volume :uint32 (:uint64 :float) :thread :game :ownership "none")
+    ("cna_sound_effect_get_distance_scale" %sound-effect-get-distance-scale :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_sound_effect_set_distance_scale" %sound-effect-set-distance-scale :uint32 (:uint64 :float) :thread :game :ownership "none")
+    ("cna_sound_effect_get_doppler_scale" %sound-effect-get-doppler-scale :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_sound_effect_set_doppler_scale" %sound-effect-set-doppler-scale :uint32 (:uint64 :float) :thread :game :ownership "none")
+    ("cna_sound_effect_get_speed_of_sound" %sound-effect-get-speed-of-sound :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_sound_effect_set_speed_of_sound" %sound-effect-set-speed-of-sound :uint32 (:uint64 :float) :thread :game :ownership "none")
+    ("cna_sound_effect_create_instance" %sound-effect-create-instance :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:sound-effect-instance:child-of-sound-effect")
+    ("cna_sound_effect_instance_destroy" %sound-effect-instance-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:sound-effect-instance")
+    ("cna_sound_effect_instance_get_is_disposed" %sound-effect-instance-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_play" %sound-effect-instance-play :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_pause" %sound-effect-instance-pause :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_resume" %sound-effect-instance-resume :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_stop" %sound-effect-instance-stop :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_get_info" %sound-effect-instance-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_set_volume" %sound-effect-instance-set-volume :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_set_pitch" %sound-effect-instance-set-pitch :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_set_pan" %sound-effect-instance-set-pan :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_set_is_looped" %sound-effect-instance-set-is-looped :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_apply_3d" %sound-effect-instance-apply-3d :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_sound_effect_instance_apply_3d_multi_ext" %sound-effect-instance-apply-3d-multi-ext :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_audio_listener_init" %audio-listener-init :uint32 (:pointer) :thread :any :ownership "none")
+    ("cna_audio_emitter_init" %audio-emitter-init :uint32 (:pointer) :thread :any :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

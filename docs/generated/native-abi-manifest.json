@@ -24,10 +24,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 458,
-    "structs": 67,
-    "struct_fields": 512,
-    "constants": 506,
+    "functions": 495,
+    "structs": 72,
+    "struct_fields": 544,
+    "constants": 511,
     "callbacks": 10,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -11627,6 +11627,899 @@
       "ownership": "borrows",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_copy_render_targets(CNA_Handle graphics_device, CNA_RenderTargetBinding* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_audio_get_capabilities",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_capabilities",
+          "c_type": "CNA_AudioCapabilities*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_audio_get_capabilities(CNA_Handle game, CNA_AudioCapabilities* out_capabilities)"
+    },
+    {
+      "name": "cna_sound_effect_create_pcm16_range_ext",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_SoundEffectCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "pcm_bytes",
+          "c_type": "const uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "offset",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "loop_start",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "loop_length",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_sound_effect",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:sound-effect:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_create_pcm16_range_ext(CNA_Handle game, const CNA_SoundEffectCreateInfo* create_info, const uint8_t* pcm_bytes, uint64_t byte_count, int32_t offset, int32_t count, int32_t loop_start, int32_t loop_length, CNA_Handle* out_sound_effect)"
+    },
+    {
+      "name": "cna_sound_effect_create_from_encoded_ext",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "bytes",
+          "c_type": "const uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_sound_effect",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:sound-effect:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_create_from_encoded_ext(CNA_Handle game, const uint8_t* bytes, uint64_t byte_count, CNA_Handle* out_sound_effect)"
+    },
+    {
+      "name": "cna_sound_effect_destroy",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:sound-effect",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_destroy(CNA_Handle sound_effect)"
+    },
+    {
+      "name": "cna_sound_effect_get_is_disposed",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_is_disposed(CNA_Handle sound_effect, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_sound_effect_get_duration_ticks",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_duration_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_duration_ticks(CNA_Handle sound_effect, int64_t* out_duration_ticks)"
+    },
+    {
+      "name": "cna_sound_effect_get_name_size",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_name_size(CNA_Handle sound_effect, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_sound_effect_copy_name",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_copy_name(CNA_Handle sound_effect, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_sound_effect_set_name",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_set_name(CNA_Handle sound_effect, CNA_StringView name)"
+    },
+    {
+      "name": "cna_sound_effect_play",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_played",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_play(CNA_Handle sound_effect, CNA_Bool* out_played)"
+    },
+    {
+      "name": "cna_sound_effect_play_with_settings",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "volume",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "pitch",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "pan",
+          "c_type": "float",
+          "cffi_type": ":float"
+        },
+        {
+          "name": "out_played",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_play_with_settings(CNA_Handle sound_effect, float volume, float pitch, float pan, CNA_Bool* out_played)"
+    },
+    {
+      "name": "cna_sound_effect_get_sample_duration_ticks",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "size_in_bytes",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "sample_rate",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "channels",
+          "c_type": "CNA_AudioChannels",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_sample_duration_ticks(int32_t size_in_bytes, int32_t sample_rate, CNA_AudioChannels channels, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_sound_effect_get_sample_size_in_bytes",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "duration_ticks",
+          "c_type": "int64_t",
+          "cffi_type": ":int64"
+        },
+        {
+          "name": "sample_rate",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "channels",
+          "c_type": "CNA_AudioChannels",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_sample_size_in_bytes(int64_t duration_ticks, int32_t sample_rate, CNA_AudioChannels channels, int32_t* out_bytes)"
+    },
+    {
+      "name": "cna_sound_effect_get_master_volume",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_volume",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_master_volume(CNA_Handle game, float* out_volume)"
+    },
+    {
+      "name": "cna_sound_effect_set_master_volume",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "volume",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_set_master_volume(CNA_Handle game, float volume)"
+    },
+    {
+      "name": "cna_sound_effect_get_distance_scale",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_scale",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_distance_scale(CNA_Handle game, float* out_scale)"
+    },
+    {
+      "name": "cna_sound_effect_set_distance_scale",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "scale",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_set_distance_scale(CNA_Handle game, float scale)"
+    },
+    {
+      "name": "cna_sound_effect_get_doppler_scale",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_scale",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_doppler_scale(CNA_Handle game, float* out_scale)"
+    },
+    {
+      "name": "cna_sound_effect_set_doppler_scale",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "scale",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_set_doppler_scale(CNA_Handle game, float scale)"
+    },
+    {
+      "name": "cna_sound_effect_get_speed_of_sound",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_speed",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_get_speed_of_sound(CNA_Handle game, float* out_speed)"
+    },
+    {
+      "name": "cna_sound_effect_set_speed_of_sound",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "speed",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_set_speed_of_sound(CNA_Handle game, float speed)"
+    },
+    {
+      "name": "cna_sound_effect_create_instance",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "sound_effect",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_instance",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:sound-effect-instance:child-of-sound-effect",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_create_instance(CNA_Handle sound_effect, CNA_Handle* out_instance)"
+    },
+    {
+      "name": "cna_sound_effect_instance_destroy",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:sound-effect-instance",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_destroy(CNA_Handle instance)"
+    },
+    {
+      "name": "cna_sound_effect_instance_get_is_disposed",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_get_is_disposed(CNA_Handle instance, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_sound_effect_instance_play",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_play(CNA_Handle instance)"
+    },
+    {
+      "name": "cna_sound_effect_instance_pause",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_pause(CNA_Handle instance)"
+    },
+    {
+      "name": "cna_sound_effect_instance_resume",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_resume(CNA_Handle instance)"
+    },
+    {
+      "name": "cna_sound_effect_instance_stop",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "immediate",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_stop(CNA_Handle instance, CNA_Bool immediate)"
+    },
+    {
+      "name": "cna_sound_effect_instance_get_info",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_SoundEffectInstanceInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_get_info(CNA_Handle instance, CNA_SoundEffectInstanceInfo* out_info)"
+    },
+    {
+      "name": "cna_sound_effect_instance_set_volume",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "volume",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_set_volume(CNA_Handle instance, float volume)"
+    },
+    {
+      "name": "cna_sound_effect_instance_set_pitch",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "pitch",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_set_pitch(CNA_Handle instance, float pitch)"
+    },
+    {
+      "name": "cna_sound_effect_instance_set_pan",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "pan",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_set_pan(CNA_Handle instance, float pan)"
+    },
+    {
+      "name": "cna_sound_effect_instance_set_is_looped",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "is_looped",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_set_is_looped(CNA_Handle instance, CNA_Bool is_looped)"
+    },
+    {
+      "name": "cna_sound_effect_instance_apply_3d",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "listener",
+          "c_type": "const CNA_AudioListener*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "emitter",
+          "c_type": "const CNA_AudioEmitter*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_apply_3d(CNA_Handle instance, const CNA_AudioListener* listener, const CNA_AudioEmitter* emitter)"
+    },
+    {
+      "name": "cna_sound_effect_instance_apply_3d_multi_ext",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "listeners",
+          "c_type": "const CNA_AudioListener*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "listener_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "emitter",
+          "c_type": "const CNA_AudioEmitter*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_sound_effect_instance_apply_3d_multi_ext(CNA_Handle instance, const CNA_AudioListener* listeners, uint64_t listener_count, const CNA_AudioEmitter* emitter)"
+    },
+    {
+      "name": "cna_audio_listener_init",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_listener",
+          "c_type": "CNA_AudioListener*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_audio_listener_init(CNA_AudioListener* out_listener)"
+    },
+    {
+      "name": "cna_audio_emitter_init",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_emitter",
+          "c_type": "CNA_AudioEmitter*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_audio_emitter_init(CNA_AudioEmitter* out_emitter)"
     }
   ],
   "structs": [
@@ -16984,6 +17877,344 @@
       "header": "render_target.h",
       "direction": "inout",
       "versioned": true
+    },
+    {
+      "name": "CNA_AudioCapabilities",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_playback_available",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved0",
+          "c_type": "uint8_t",
+          "offset": 9,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved1",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "audio.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SoundEffectCreateInfo",
+      "size": 24,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "sample_rate",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "channels",
+          "c_type": "CNA_AudioChannels",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint64_t",
+          "offset": 16,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "audio.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SoundEffectInstanceInfo",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "state",
+          "c_type": "CNA_SoundState",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_looped",
+          "c_type": "CNA_Bool",
+          "offset": 12,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved0",
+          "c_type": "uint8_t",
+          "offset": 13,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "volume",
+          "c_type": "float",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "pitch",
+          "c_type": "float",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "pan",
+          "c_type": "float",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved1",
+          "c_type": "uint32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "audio.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_AudioListener",
+      "size": 56,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "forward",
+          "c_type": "CNA_Vector3",
+          "offset": 8,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        },
+        {
+          "name": "position",
+          "c_type": "CNA_Vector3",
+          "offset": 20,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        },
+        {
+          "name": "up",
+          "c_type": "CNA_Vector3",
+          "offset": 32,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        },
+        {
+          "name": "velocity",
+          "c_type": "CNA_Vector3",
+          "offset": 44,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        }
+      ],
+      "header": "audio.h",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_AudioEmitter",
+      "size": 60,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "doppler_scale",
+          "c_type": "float",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "forward",
+          "c_type": "CNA_Vector3",
+          "offset": 12,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        },
+        {
+          "name": "position",
+          "c_type": "CNA_Vector3",
+          "offset": 24,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        },
+        {
+          "name": "up",
+          "c_type": "CNA_Vector3",
+          "offset": 36,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        },
+        {
+          "name": "velocity",
+          "c_type": "CNA_Vector3",
+          "offset": 48,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        }
+      ],
+      "header": "audio.h",
+      "direction": "inout",
+      "versioned": true
     }
   ],
   "callbacks": [
@@ -17178,6 +18409,8 @@
     "CNA_ABI_VERSION_MAJOR": 0,
     "CNA_ABI_VERSION_MINOR": 21,
     "CNA_ABI_VERSION_PATCH": 0,
+    "CNA_AUDIO_CHANNELS_MONO": 1,
+    "CNA_AUDIO_CHANNELS_STEREO": 2,
     "CNA_BLEND_DESTINATION_ALPHA": 8,
     "CNA_BLEND_DESTINATION_COLOR": 6,
     "CNA_BLEND_FACTOR": 10,
@@ -17581,6 +18814,9 @@
     "CNA_SHADER_STAGE_PIXEL": 0,
     "CNA_SHADER_STAGE_VERTEX": 1,
     "CNA_SKINNED_EFFECT_MAX_BONES": 72,
+    "CNA_SOUND_STATE_PAUSED": 1,
+    "CNA_SOUND_STATE_PLAYING": 0,
+    "CNA_SOUND_STATE_STOPPED": 2,
     "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY": 1,
     "CNA_SPRITE_EFFECT_FLIP_VERTICALLY": 2,
     "CNA_SPRITE_EFFECT_NONE": 0,

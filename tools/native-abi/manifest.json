@@ -341,7 +341,12 @@
       "CNA_CUBE_MAP_FACE_POSITIVE_Y",
       "CNA_CUBE_MAP_FACE_NEGATIVE_Y",
       "CNA_CUBE_MAP_FACE_POSITIVE_Z",
-      "CNA_CUBE_MAP_FACE_NEGATIVE_Z"
+      "CNA_CUBE_MAP_FACE_NEGATIVE_Z",
+      "CNA_AUDIO_CHANNELS_MONO",
+      "CNA_AUDIO_CHANNELS_STEREO",
+      "CNA_SOUND_STATE_PLAYING",
+      "CNA_SOUND_STATE_PAUSED",
+      "CNA_SOUND_STATE_STOPPED"
     ],
     "prefix_families": [
       {
@@ -731,6 +736,31 @@
     },
     {
       "name": "CNA_RenderTargetBinding",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_AudioCapabilities",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SoundEffectCreateInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_SoundEffectInstanceInfo",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_AudioListener",
+      "direction": "inout",
+      "versioned": true
+    },
+    {
+      "name": "CNA_AudioEmitter",
       "direction": "inout",
       "versioned": true
     }
@@ -3526,6 +3556,228 @@
       "header": "render_target.h",
       "thread": "game",
       "ownership": "borrows"
+    },
+    {
+      "name": "cna_audio_get_capabilities",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_create_pcm16_range_ext",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "creates-owned:sound-effect:child-of-game"
+    },
+    {
+      "name": "cna_sound_effect_create_from_encoded_ext",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "creates-owned:sound-effect:child-of-game"
+    },
+    {
+      "name": "cna_sound_effect_destroy",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "destroys:sound-effect"
+    },
+    {
+      "name": "cna_sound_effect_get_is_disposed",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_get_duration_ticks",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_get_name_size",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_copy_name",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_set_name",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_play",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_play_with_settings",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_get_sample_duration_ticks",
+      "header": "audio.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_get_sample_size_in_bytes",
+      "header": "audio.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_get_master_volume",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_set_master_volume",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_get_distance_scale",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_set_distance_scale",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_get_doppler_scale",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_set_doppler_scale",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_get_speed_of_sound",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_set_speed_of_sound",
+      "header": "audio.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_create_instance",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "creates-owned:sound-effect-instance:child-of-sound-effect"
+    },
+    {
+      "name": "cna_sound_effect_instance_destroy",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "destroys:sound-effect-instance"
+    },
+    {
+      "name": "cna_sound_effect_instance_get_is_disposed",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_play",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_pause",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_resume",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_stop",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_get_info",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_set_volume",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_set_pitch",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_set_pan",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_set_is_looped",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_apply_3d",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_sound_effect_instance_apply_3d_multi_ext",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_audio_listener_init",
+      "header": "audio.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_audio_emitter_init",
+      "header": "audio.h",
+      "thread": "any",
+      "ownership": "none"
     }
   ],
   "shimmed_routes": [

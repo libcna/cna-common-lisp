@@ -1234,6 +1234,85 @@ _Static_assert(sizeof(((CNA_RenderTargetBinding *)0)->array_slice) == 4, "CNA_Re
 _Static_assert(offsetof(CNA_RenderTargetBinding, cube_map_face) == 20, "CNA_RenderTargetBinding.cube_map_face offset");
 _Static_assert(sizeof(((CNA_RenderTargetBinding *)0)->cube_map_face) == 4, "CNA_RenderTargetBinding.cube_map_face size");
 
+_Static_assert(sizeof(CNA_AudioCapabilities) == 16, "CNA_AudioCapabilities size");
+_Static_assert(_Alignof(CNA_AudioCapabilities) == 4, "CNA_AudioCapabilities alignment");
+_Static_assert(offsetof(CNA_AudioCapabilities, struct_size) == 0, "CNA_AudioCapabilities.struct_size offset");
+_Static_assert(sizeof(((CNA_AudioCapabilities *)0)->struct_size) == 4, "CNA_AudioCapabilities.struct_size size");
+_Static_assert(offsetof(CNA_AudioCapabilities, struct_version) == 4, "CNA_AudioCapabilities.struct_version offset");
+_Static_assert(sizeof(((CNA_AudioCapabilities *)0)->struct_version) == 4, "CNA_AudioCapabilities.struct_version size");
+_Static_assert(offsetof(CNA_AudioCapabilities, is_playback_available) == 8, "CNA_AudioCapabilities.is_playback_available offset");
+_Static_assert(sizeof(((CNA_AudioCapabilities *)0)->is_playback_available) == 1, "CNA_AudioCapabilities.is_playback_available size");
+_Static_assert(offsetof(CNA_AudioCapabilities, reserved0) == 9, "CNA_AudioCapabilities.reserved0 offset");
+_Static_assert(sizeof(((CNA_AudioCapabilities *)0)->reserved0) == 3, "CNA_AudioCapabilities.reserved0 size");
+_Static_assert(offsetof(CNA_AudioCapabilities, reserved1) == 12, "CNA_AudioCapabilities.reserved1 offset");
+_Static_assert(sizeof(((CNA_AudioCapabilities *)0)->reserved1) == 4, "CNA_AudioCapabilities.reserved1 size");
+
+_Static_assert(sizeof(CNA_SoundEffectCreateInfo) == 24, "CNA_SoundEffectCreateInfo size");
+_Static_assert(_Alignof(CNA_SoundEffectCreateInfo) == 8, "CNA_SoundEffectCreateInfo alignment");
+_Static_assert(offsetof(CNA_SoundEffectCreateInfo, struct_size) == 0, "CNA_SoundEffectCreateInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_SoundEffectCreateInfo *)0)->struct_size) == 4, "CNA_SoundEffectCreateInfo.struct_size size");
+_Static_assert(offsetof(CNA_SoundEffectCreateInfo, struct_version) == 4, "CNA_SoundEffectCreateInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_SoundEffectCreateInfo *)0)->struct_version) == 4, "CNA_SoundEffectCreateInfo.struct_version size");
+_Static_assert(offsetof(CNA_SoundEffectCreateInfo, sample_rate) == 8, "CNA_SoundEffectCreateInfo.sample_rate offset");
+_Static_assert(sizeof(((CNA_SoundEffectCreateInfo *)0)->sample_rate) == 4, "CNA_SoundEffectCreateInfo.sample_rate size");
+_Static_assert(offsetof(CNA_SoundEffectCreateInfo, channels) == 12, "CNA_SoundEffectCreateInfo.channels offset");
+_Static_assert(sizeof(((CNA_SoundEffectCreateInfo *)0)->channels) == 4, "CNA_SoundEffectCreateInfo.channels size");
+_Static_assert(offsetof(CNA_SoundEffectCreateInfo, reserved) == 16, "CNA_SoundEffectCreateInfo.reserved offset");
+_Static_assert(sizeof(((CNA_SoundEffectCreateInfo *)0)->reserved) == 8, "CNA_SoundEffectCreateInfo.reserved size");
+
+_Static_assert(sizeof(CNA_SoundEffectInstanceInfo) == 32, "CNA_SoundEffectInstanceInfo size");
+_Static_assert(_Alignof(CNA_SoundEffectInstanceInfo) == 4, "CNA_SoundEffectInstanceInfo alignment");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, struct_size) == 0, "CNA_SoundEffectInstanceInfo.struct_size offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->struct_size) == 4, "CNA_SoundEffectInstanceInfo.struct_size size");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, struct_version) == 4, "CNA_SoundEffectInstanceInfo.struct_version offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->struct_version) == 4, "CNA_SoundEffectInstanceInfo.struct_version size");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, state) == 8, "CNA_SoundEffectInstanceInfo.state offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->state) == 4, "CNA_SoundEffectInstanceInfo.state size");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, is_looped) == 12, "CNA_SoundEffectInstanceInfo.is_looped offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->is_looped) == 1, "CNA_SoundEffectInstanceInfo.is_looped size");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, reserved0) == 13, "CNA_SoundEffectInstanceInfo.reserved0 offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->reserved0) == 3, "CNA_SoundEffectInstanceInfo.reserved0 size");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, volume) == 16, "CNA_SoundEffectInstanceInfo.volume offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->volume) == 4, "CNA_SoundEffectInstanceInfo.volume size");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, pitch) == 20, "CNA_SoundEffectInstanceInfo.pitch offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->pitch) == 4, "CNA_SoundEffectInstanceInfo.pitch size");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, pan) == 24, "CNA_SoundEffectInstanceInfo.pan offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->pan) == 4, "CNA_SoundEffectInstanceInfo.pan size");
+_Static_assert(offsetof(CNA_SoundEffectInstanceInfo, reserved1) == 28, "CNA_SoundEffectInstanceInfo.reserved1 offset");
+_Static_assert(sizeof(((CNA_SoundEffectInstanceInfo *)0)->reserved1) == 4, "CNA_SoundEffectInstanceInfo.reserved1 size");
+
+_Static_assert(sizeof(CNA_AudioListener) == 56, "CNA_AudioListener size");
+_Static_assert(_Alignof(CNA_AudioListener) == 4, "CNA_AudioListener alignment");
+_Static_assert(offsetof(CNA_AudioListener, struct_size) == 0, "CNA_AudioListener.struct_size offset");
+_Static_assert(sizeof(((CNA_AudioListener *)0)->struct_size) == 4, "CNA_AudioListener.struct_size size");
+_Static_assert(offsetof(CNA_AudioListener, struct_version) == 4, "CNA_AudioListener.struct_version offset");
+_Static_assert(sizeof(((CNA_AudioListener *)0)->struct_version) == 4, "CNA_AudioListener.struct_version size");
+_Static_assert(offsetof(CNA_AudioListener, forward) == 8, "CNA_AudioListener.forward offset");
+_Static_assert(sizeof(((CNA_AudioListener *)0)->forward) == 12, "CNA_AudioListener.forward size");
+_Static_assert(offsetof(CNA_AudioListener, position) == 20, "CNA_AudioListener.position offset");
+_Static_assert(sizeof(((CNA_AudioListener *)0)->position) == 12, "CNA_AudioListener.position size");
+_Static_assert(offsetof(CNA_AudioListener, up) == 32, "CNA_AudioListener.up offset");
+_Static_assert(sizeof(((CNA_AudioListener *)0)->up) == 12, "CNA_AudioListener.up size");
+_Static_assert(offsetof(CNA_AudioListener, velocity) == 44, "CNA_AudioListener.velocity offset");
+_Static_assert(sizeof(((CNA_AudioListener *)0)->velocity) == 12, "CNA_AudioListener.velocity size");
+
+_Static_assert(sizeof(CNA_AudioEmitter) == 60, "CNA_AudioEmitter size");
+_Static_assert(_Alignof(CNA_AudioEmitter) == 4, "CNA_AudioEmitter alignment");
+_Static_assert(offsetof(CNA_AudioEmitter, struct_size) == 0, "CNA_AudioEmitter.struct_size offset");
+_Static_assert(sizeof(((CNA_AudioEmitter *)0)->struct_size) == 4, "CNA_AudioEmitter.struct_size size");
+_Static_assert(offsetof(CNA_AudioEmitter, struct_version) == 4, "CNA_AudioEmitter.struct_version offset");
+_Static_assert(sizeof(((CNA_AudioEmitter *)0)->struct_version) == 4, "CNA_AudioEmitter.struct_version size");
+_Static_assert(offsetof(CNA_AudioEmitter, doppler_scale) == 8, "CNA_AudioEmitter.doppler_scale offset");
+_Static_assert(sizeof(((CNA_AudioEmitter *)0)->doppler_scale) == 4, "CNA_AudioEmitter.doppler_scale size");
+_Static_assert(offsetof(CNA_AudioEmitter, forward) == 12, "CNA_AudioEmitter.forward offset");
+_Static_assert(sizeof(((CNA_AudioEmitter *)0)->forward) == 12, "CNA_AudioEmitter.forward size");
+_Static_assert(offsetof(CNA_AudioEmitter, position) == 24, "CNA_AudioEmitter.position offset");
+_Static_assert(sizeof(((CNA_AudioEmitter *)0)->position) == 12, "CNA_AudioEmitter.position size");
+_Static_assert(offsetof(CNA_AudioEmitter, up) == 36, "CNA_AudioEmitter.up offset");
+_Static_assert(sizeof(((CNA_AudioEmitter *)0)->up) == 12, "CNA_AudioEmitter.up size");
+_Static_assert(offsetof(CNA_AudioEmitter, velocity) == 48, "CNA_AudioEmitter.velocity offset");
+_Static_assert(sizeof(((CNA_AudioEmitter *)0)->velocity) == 12, "CNA_AudioEmitter.velocity size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1694,6 +1773,43 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_render_target_cube)(CN
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_render_targets)(CNA_Handle, const CNA_RenderTargetBinding*, uint64_t) = cna_graphics_device_set_render_targets;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_render_target_count)(CNA_Handle, uint64_t*) = cna_graphics_device_get_render_target_count;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_copy_render_targets)(CNA_Handle, CNA_RenderTargetBinding*, uint64_t, uint64_t*) = cna_graphics_device_copy_render_targets;
+CNA_Result (*const cna_lisp_probe_cna_audio_get_capabilities)(CNA_Handle, CNA_AudioCapabilities*) = cna_audio_get_capabilities;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_create_pcm16_range_ext)(CNA_Handle, const CNA_SoundEffectCreateInfo*, const uint8_t*, uint64_t, int32_t, int32_t, int32_t, int32_t, CNA_Handle*) = cna_sound_effect_create_pcm16_range_ext;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_create_from_encoded_ext)(CNA_Handle, const uint8_t*, uint64_t, CNA_Handle*) = cna_sound_effect_create_from_encoded_ext;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_destroy)(CNA_Handle) = cna_sound_effect_destroy;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_is_disposed)(CNA_Handle, CNA_Bool*) = cna_sound_effect_get_is_disposed;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_duration_ticks)(CNA_Handle, int64_t*) = cna_sound_effect_get_duration_ticks;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_name_size)(CNA_Handle, uint64_t*) = cna_sound_effect_get_name_size;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_copy_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_sound_effect_copy_name;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_set_name)(CNA_Handle, CNA_StringView) = cna_sound_effect_set_name;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_play)(CNA_Handle, CNA_Bool*) = cna_sound_effect_play;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_play_with_settings)(CNA_Handle, float, float, float, CNA_Bool*) = cna_sound_effect_play_with_settings;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_sample_duration_ticks)(int32_t, int32_t, CNA_AudioChannels, int64_t*) = cna_sound_effect_get_sample_duration_ticks;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_sample_size_in_bytes)(int64_t, int32_t, CNA_AudioChannels, int32_t*) = cna_sound_effect_get_sample_size_in_bytes;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_master_volume)(CNA_Handle, float*) = cna_sound_effect_get_master_volume;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_set_master_volume)(CNA_Handle, float) = cna_sound_effect_set_master_volume;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_distance_scale)(CNA_Handle, float*) = cna_sound_effect_get_distance_scale;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_set_distance_scale)(CNA_Handle, float) = cna_sound_effect_set_distance_scale;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_doppler_scale)(CNA_Handle, float*) = cna_sound_effect_get_doppler_scale;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_set_doppler_scale)(CNA_Handle, float) = cna_sound_effect_set_doppler_scale;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_get_speed_of_sound)(CNA_Handle, float*) = cna_sound_effect_get_speed_of_sound;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_set_speed_of_sound)(CNA_Handle, float) = cna_sound_effect_set_speed_of_sound;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_create_instance)(CNA_Handle, CNA_Handle*) = cna_sound_effect_create_instance;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_destroy)(CNA_Handle) = cna_sound_effect_instance_destroy;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_get_is_disposed)(CNA_Handle, CNA_Bool*) = cna_sound_effect_instance_get_is_disposed;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_play)(CNA_Handle) = cna_sound_effect_instance_play;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_pause)(CNA_Handle) = cna_sound_effect_instance_pause;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_resume)(CNA_Handle) = cna_sound_effect_instance_resume;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_stop)(CNA_Handle, CNA_Bool) = cna_sound_effect_instance_stop;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_get_info)(CNA_Handle, CNA_SoundEffectInstanceInfo*) = cna_sound_effect_instance_get_info;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_set_volume)(CNA_Handle, float) = cna_sound_effect_instance_set_volume;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_set_pitch)(CNA_Handle, float) = cna_sound_effect_instance_set_pitch;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_set_pan)(CNA_Handle, float) = cna_sound_effect_instance_set_pan;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_set_is_looped)(CNA_Handle, CNA_Bool) = cna_sound_effect_instance_set_is_looped;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_apply_3d)(CNA_Handle, const CNA_AudioListener*, const CNA_AudioEmitter*) = cna_sound_effect_instance_apply_3d;
+CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_apply_3d_multi_ext)(CNA_Handle, const CNA_AudioListener*, uint64_t, const CNA_AudioEmitter*) = cna_sound_effect_instance_apply_3d_multi_ext;
+CNA_Result (*const cna_lisp_probe_cna_audio_listener_init)(CNA_AudioListener*) = cna_audio_listener_init;
+CNA_Result (*const cna_lisp_probe_cna_audio_emitter_init)(CNA_AudioEmitter*) = cna_audio_emitter_init;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -1712,6 +1828,8 @@ _Static_assert((int64_t)(CNA_ABI_VERSION) == INT64_C(5376), "CNA_ABI_VERSION val
 _Static_assert((int64_t)(CNA_ABI_VERSION_MAJOR) == INT64_C(0), "CNA_ABI_VERSION_MAJOR value");
 _Static_assert((int64_t)(CNA_ABI_VERSION_MINOR) == INT64_C(21), "CNA_ABI_VERSION_MINOR value");
 _Static_assert((int64_t)(CNA_ABI_VERSION_PATCH) == INT64_C(0), "CNA_ABI_VERSION_PATCH value");
+_Static_assert((int64_t)(CNA_AUDIO_CHANNELS_MONO) == INT64_C(1), "CNA_AUDIO_CHANNELS_MONO value");
+_Static_assert((int64_t)(CNA_AUDIO_CHANNELS_STEREO) == INT64_C(2), "CNA_AUDIO_CHANNELS_STEREO value");
 _Static_assert((int64_t)(CNA_BLEND_DESTINATION_ALPHA) == INT64_C(8), "CNA_BLEND_DESTINATION_ALPHA value");
 _Static_assert((int64_t)(CNA_BLEND_DESTINATION_COLOR) == INT64_C(6), "CNA_BLEND_DESTINATION_COLOR value");
 _Static_assert((int64_t)(CNA_BLEND_FACTOR) == INT64_C(10), "CNA_BLEND_FACTOR value");
@@ -2115,6 +2233,9 @@ _Static_assert((int64_t)(CNA_SET_DATA_NO_OVERWRITE) == INT64_C(2), "CNA_SET_DATA
 _Static_assert((int64_t)(CNA_SHADER_STAGE_PIXEL) == INT64_C(0), "CNA_SHADER_STAGE_PIXEL value");
 _Static_assert((int64_t)(CNA_SHADER_STAGE_VERTEX) == INT64_C(1), "CNA_SHADER_STAGE_VERTEX value");
 _Static_assert((int64_t)(CNA_SKINNED_EFFECT_MAX_BONES) == INT64_C(72), "CNA_SKINNED_EFFECT_MAX_BONES value");
+_Static_assert((int64_t)(CNA_SOUND_STATE_PAUSED) == INT64_C(1), "CNA_SOUND_STATE_PAUSED value");
+_Static_assert((int64_t)(CNA_SOUND_STATE_PLAYING) == INT64_C(0), "CNA_SOUND_STATE_PLAYING value");
+_Static_assert((int64_t)(CNA_SOUND_STATE_STOPPED) == INT64_C(2), "CNA_SOUND_STATE_STOPPED value");
 _Static_assert((int64_t)(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY) == INT64_C(1), "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY value");
 _Static_assert((int64_t)(CNA_SPRITE_EFFECT_FLIP_VERTICALLY) == INT64_C(2), "CNA_SPRITE_EFFECT_FLIP_VERTICALLY value");
 _Static_assert((int64_t)(CNA_SPRITE_EFFECT_NONE) == INT64_C(0), "CNA_SPRITE_EFFECT_NONE value");
