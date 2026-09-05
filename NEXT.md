@@ -356,17 +356,45 @@ The shim stays optional -- a release must load with no C toolchain -- so without
 `CNA_LISP_SHIM` the setter refuses with a condition naming the variable, the
 command that builds one, and the reason. That is a packaging limit, not a blocker.
 
-## Audio has landed, and what it is
+## Audio has landed, and it is not 8/8 complete
 
-The `SoundEffect` closure is **selected and complete**: eight types, 57 members,
-all eight complete, in the scoreboard above. This section is what a future reader
-needs to know about it that the scoreboard does not say. `docs/limitations.md` has
-the four CNA/XNA divergences and the projection limit; this is the shape.
+**Read this before the table.** The first Audio milestone reported eight types and
+57 members with every one complete. A re-audit against the pinned assembly found
+that several of those claims were the implementation's rather than XNA's, and the
+corrected scoreboard is **six complete types and two partial**: 50 complete
+members, 2 partial, 5 not applicable. Nothing was removed -- the surface is the
+same size -- and two members are now described accurately instead of generously:
+
+| Member | Why partial |
+| --- | --- |
+| `SoundEffect.Duration` | CNA's per-effect duration route does not quantise to whole milliseconds and XNA always does. Computed exactly where the format is known -- both constructors and `FromStream` -- and taken from the route for a `ContentManager`-loaded effect, where 0.21.0 reports no format to compute from |
+| `SoundEffectInstance.Apply3D(AudioListener[], AudioEmitter)` | CNA's own header: several listeners are combined by taking the **nearest**, where XACT computes a per-listener output matrix. A different function of the array, not an approximation of one. The single-listener overload is complete on its own evidence |
+
+Six other corrections landed with them and changed behaviour rather than wording:
+the two constructors and both `Play` overloads now have exactly XNA's shapes,
+`Play` validates all three of its settings from the setter IL rather than one of
+them, `TimeSpan.FromMilliseconds` is reproduced as the millisecond rounding it is,
+`GetSampleSizeInBytes` has the upper bound and the overflow rethrow it documented
+and lacked, `FromStream` reads the wave shape XNA reads rather than whatever CNA
+can decode, and `SoundEffect.Dispose` cascades to its live instances because the
+pinned `Dispose(bool)` does. `docs/limitations.md` has all of them.
+
+**Foundation 1 was not reopened**, and its release decision stands on the
+qualification recorded above; three of those corrections did reach shared
+machinery -- the overload-shape helper, the disposal seam and the condition
+`CAUSE` slot -- and each is additive. What changed for a Foundation 1 *caller* is
+four keyword shapes that were accepted and are not XNA's: `:OFFSET-IN-BYTES`
+without a window, `GetBackBufferData`'s `:SOURCE` without one, and the two
+user-primitive draws' vertex and index offsets, which every XNA overload takes and
+none defaults.
+
+This section is what a future reader needs to know about Audio that the scoreboard
+does not say.
 
 | Type | Members | Notes |
 | --- | ---: | --- |
-| `SoundEffect` | 17 | two constructors, `FromStream`, `CreateInstance`, two `Play` overloads, four process-wide statics, two static sample computations |
-| `SoundEffectInstance` | 16 | the transport, four bounded properties, both `Apply3D` overloads. **Not sealed in XNA** -- `DynamicSoundEffectInstance` derives from it -- and not sealed here |
+| `SoundEffect` | 17 | two constructors, `FromStream`, `CreateInstance`, two `Play` overloads, four process-wide statics, two static sample computations. **Partial**: `Duration` |
+| `SoundEffectInstance` | 16 | the transport, four bounded properties, both `Apply3D` overloads. **Not sealed in XNA** -- `DynamicSoundEffectInstance` derives from it -- and not sealed here. **Partial**: the array `Apply3D` |
 | `AudioListener` | 5 | a plain managed object; no handle |
 | `AudioEmitter` | 6 | the same, plus `DopplerScale` |
 | `SoundState` | 4 | `Playing` 0, `Paused` 1, `Stopped` 2 |
@@ -387,7 +415,11 @@ is its own inverse and no program can observe it. Reproducing it would match XNA
 storage and break XNA's public behaviour.
 
 **The ownership graph is `Game -> SoundEffect -> SoundEffectInstance`**, which is
-what CNA documents, enforced before the ABI sees a wrong order. Four failure
+what CNA documents, enforced before the ABI sees a wrong order -- except that
+`SoundEffect.Dispose` **cascades to its instances**, because the pinned
+`Dispose(bool)` does, and `ContentManager.Unload` inherits that by calling the
+same `DISPOSE`. The game does not cascade, so the two directions of the graph are
+deliberately not the same. Four failure
 states are pinned by `tests/native/audio.lisp` -- a subclass initializer signalling
 after each of the two handles exists, a load whose cache insertion fails, and a
 load whose duration read fails -- and each must give every handle back exactly
@@ -513,9 +545,14 @@ decision and the reason it is not an oversight.
 * **Whoever receives a handle from CNA records its destruction** -- one asset load,
   one ledger. A constructor taking an existing handle records it; the loader that
   obtained it does not record it twice.
-* **Disposal is not cascaded.** CNA requires children destroyed before parents and
-  this binding reports a live child rather than deciding when a program's
-  resources die.
+* **Default ownership does not cascade; a public type may do so only where pinned
+  XNA semantics require it.** CNA requires children destroyed before parents, and
+  `DISPOSE-OWNED-CHILDREN`'s default reports a live child rather than deciding
+  when a program's resources die. `SoundEffect` is the one override, and it is not
+  a convenience: `SoundEffect.Dispose(bool)` in the pinned assembly disposes every
+  live `SoundEffectInstance` before releasing its own handle, so refusing there
+  would refuse a call XNA accepts. This used to read "disposal is not cascaded",
+  full stop, which described the code and not the contract.
 * **`cna_game_destroy` answers `CNA_RESULT_CALLBACK` for a latched earlier
   failure**, not only for a failing shutdown callback. The two are distinguished
   by whether a condition was freshly contained; the alternative masks the original

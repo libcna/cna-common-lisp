@@ -1344,7 +1344,7 @@ The count used to read "ten" because it counted `PreparingDeviceSettingsEventArg
 — a type, and not one of this type's members. The generated frontier table in
 `docs/compatibility.md` is what to count from.
 
-## Disposal is not cascaded
+## Disposal does not cascade by default, and one type overrides that
 
 CNA requires children to be destroyed before their parent. XNA's `Game.Dispose`
 does not destroy every `Texture2D` a program made -- the finalizer thread dealt
@@ -1352,9 +1352,27 @@ with those -- so a straight port that relies on finalization will find that
 CNA-Lisp refuses to dispose the game while those resources are alive.
 
 CNA-Lisp reports that as `cna-ownership-error` naming the live children, instead
-of cascading. Cascading would mean the binding deciding when a program's
-resources die, which is not the binding's decision, and there is no evidence that
-a particular cascade order is the right one.
+of cascading. Cascading on its own initiative would mean the binding deciding when
+a program's resources die, which is not the binding's decision, and there is no
+evidence that a particular cascade order is the right one.
+
+**That is a default and not an invariant, and the wording used to say otherwise.**
+`SoundEffect.Dispose(bool)` in the pinned assembly takes a snapshot of its
+`children` list and calls `Dispose()` on every live `SoundEffectInstance` in it,
+then drains its instance pool the same way, and only then releases its own native
+handle. Refusing there would refuse a call XNA accepts, so `SoundEffect`
+specialises `DISPOSE-OWNED-CHILDREN` and does what the assembly does. Every other
+type takes the default refusal.
+
+The rule is therefore: **default ownership does not cascade; a public type may do
+so only where pinned XNA semantics require it.** Reproducing XNA here also
+satisfies CNA rather than fighting it -- each instance's voice is deallocated
+before the effect's handle is released, which is the child-before-parent order CNA
+documents.
+
+`ContentManager.Unload` inherits the same behaviour because it calls the same
+`DISPOSE`. That is deliberate: the two paths to releasing a loaded effect must not
+grow two ownership semantics, and there is one implementation between them.
 
 ## Audio: four places CNA and XNA disagree, and XNA wins in each
 
@@ -1416,23 +1434,52 @@ not signal. The four static setters, `Play`'s settings triple and `Apply3D` run
 their native calls under `WITH-BINARY32-SEMANTICS` for that reason, which is what
 the CLR does and what XNA's storing a NaN presumes.
 
-### `GetSampleDuration` truncates in CNA and rounds in XNA
+### Every XNA duration is a whole millisecond, and neither CNA route agrees
 
-`cna_sound_effect_get_sample_duration_ticks` answers **120000** ticks for 200
-bytes of mono PCM16 at 8000 Hz. XNA answers **125000**, which is the exact 12.5 ms
-those 100 frames hold: `AudioFormat.DurationFromSize` divides by the block align,
-computes the milliseconds in binary32 and hands the result to
-`TimeSpan.FromMilliseconds`, which rounds rather than truncating.
+`AudioFormat.DurationFromSize` divides the byte count by the block align, computes
+the milliseconds in binary32, and hands the result to `TimeSpan.FromMilliseconds`.
+What that last step does is the whole of this section. It is `TimeSpan.Interval(v, 1)`
+in the pinned mscorlib:
+
+    millis = v + (v >= 0 ? 0.5 : -0.5)
+    ticks  = (long)millis * 10000
+
+The half is added to the **millisecond** count and the `conv.i8` truncates *that*,
+before the multiplication by 10000. So every duration XNA reports is a whole
+number of milliseconds, rounded half away from zero, and 200 bytes of mono PCM16
+at 8000 Hz -- 100 frames, 12.5 ms -- is **130000** ticks.
+
+**This document previously said 125000, and that was wrong.** It called 125000
+"the exact 12.5 ms those 100 frames hold", which is true of the frames and is not
+what `TimeSpan.FromMilliseconds` returns. Two divergences follow from the
+correction, and both are measured against 0.21.0:
+
+| | 100 mono frames @ 8000 Hz | 1000 stereo frames @ 22050 Hz |
+| --- | ---: | ---: |
+| XNA | **130000** | **450000** |
+| `cna_sound_effect_get_sample_duration_ticks` | 120000 | — |
+| `cna_sound_effect_get_duration_ticks` | 125000 | 453514 |
+
+CNA's *static* route truncates to whole milliseconds where XNA rounds. CNA's
+*per-effect* route does not quantise at all -- it answers the exact tick count --
+so the note that used to say it "agrees with XNA to the tick" was agreeing with
+the old, wrong arithmetic.
 
 So the two static sample computations are done here rather than through CNA — the
 same decision the math types make, for the same reason: "CNA has routes for all of
 it, and using them would make the binding's arithmetic CNA's rather than XNA's."
-The routes stay bound and `tests/native/audio.lisp` asserts both answers.
+The routes stay bound and `tests/native/audio.lisp` asserts all three answers, so
+a corrected CNA fails a test rather than passing silently.
 
-**The effect's own duration route is not affected.**
-`cna_sound_effect_get_duration_ticks` agrees with XNA to the tick, which is why
-this is described as one computation's divergence and not as CNA's audio
-generally.
+**`SoundEffect.Duration` is partial because of the second row.** Wherever this
+binding knows the format it computes XNA's answer instead of reading the route --
+both constructors, and `FromStream`, which parses the wave header on the way past
+— and those are exact. A `SoundEffect` obtained through `ContentManager.Load` was
+never handed to this binding as bytes, and ABI 0.21.0 has no route reporting an
+effect's sample rate, channel count or data length, so there is nothing to compute
+from. Its duration is CNA's tick count and can differ from XNA's by up to half a
+millisecond. Answering it is better than refusing a member XNA always answers;
+calling it complete would be claiming an agreement that was measured to be false.
 
 ## Audio has no game argument, and that is a projection limit
 
@@ -1471,6 +1518,74 @@ The consequence is that **this route's NOT_SUPPORTED cannot be mapped to
 such file", and the result code alone does not distinguish them. It stays the
 generic native condition, and a test asserts that a missing file is *not* reported
 as missing hardware.
+
+### `FromStream` reads one wave shape, and CNA's decoder reads more
+
+`cna_sound_effect_create_from_encoded_ext` says so in its own header: "whatever
+the audio backend can decode is accepted, which is more than the raw PCM the other
+creation routes take." `SoundEffect.FromStream` is not that member. XNA hands the
+stream to a private `WavFile` whose parser accepts exactly this:
+
+* a `RIFF` chunk whose declared size is the stream's length minus eight;
+* the form `WAVE`;
+* a `fmt ` chunk of at least sixteen bytes declaring format tag **1** — PCM —
+  one or two channels, a rate in [8000, 48000], 8 or 16 bits per sample, and a
+  block alignment equal to `channels * bits / 8`;
+* a `data` chunk **after** it, of at least one sample frame.
+
+Unknown chunks are skipped and an odd-length chunk's pad byte is consumed, so
+`LIST`, `smpl` and `fact` cost nothing. Everything else is refused, and
+`src/audio/wave.lisp` is that parser transcribed instruction by instruction.
+
+**A 32-bit IEEE-float WAV is the case worth naming**, because it is well-formed,
+SDL decodes it, and XNA does not read it: `ParseFormat` refuses every format tag
+but 1. `tests/native/audio.lisp` asserts *both* halves — the binding refuses the
+bytes and CNA decodes the same bytes in the same test — because only the pair is
+evidence that the refusal is the projection narrowing rather than CNA agreeing.
+
+**The two rejection exceptions are XNA's two, and which one a caller gets depends
+on how far the parse got.** `ParseWavHeader` runs outside the chunk loop, so a
+stream that is not RIFF, whose declared size disagrees with its length, or whose
+form is not WAVE throws `InvalidOperationException` — `CNA-USAGE-ERROR` here.
+Everything below the header is raised inside
+`try { ReadChunk(); } catch (object) { break; }`, so it merely ends the loop and
+the caller sees `ArgumentException(InvalidWaveStream)` — `CNA-ARGUMENT-ERROR` —
+from the `format == null || buffer == null` test that follows. An empty stream is
+`ArgumentNullException` from `WavFile`'s own length test, before the parser runs.
+
+**And a malformed wave is no longer reported as missing hardware.**
+`CNA_RESULT_NOT_SUPPORTED` means both "no audio device" and "these bytes cannot be
+decoded", and mapping both onto `NO-AUDIO-HARDWARE-ERROR` told a program with a
+broken asset that its machine had no sound card. Validating first removes the
+ambiguity; what remains of it is settled by asking
+`cna_audio_get_capabilities` whether a playback device exists, so a wave XNA
+accepts that CNA cannot decode on a machine that *has* a device is reported as the
+decoder divergence it is rather than as absent hardware.
+
+### `Apply3D`'s array overload is partial, and CNA's header says why
+
+`cna_sound_effect_instance_apply_3d_multi_ext`: "XACT computes per-listener output
+matrices; this runtime's mixer has a single stereo gain pair and no equivalent. So
+every listener is evaluated and the **nearest** one — the listener that hears the
+emitter loudest — decides the applied attenuation, pan and Doppler."
+
+That is a different function of the listener array from XNA's, not an
+approximation of it within a tolerance, and no argument this binding can pass
+makes the two agree. The member is `CNA_0_21_ABI_LIMIT`.
+
+**The single-listener overload is unaffected**, and the IL is why:
+`Apply3D(AudioListener, AudioEmitter)` is `Apply3D(new[] { listener }, emitter)` —
+it builds a one-element array and calls the same private path. The nearest of one
+listener is that listener, so there is nothing to approximate and the overload
+stays complete.
+
+**XNA's behaviour for an empty array cannot be established from the pinned
+assembly.** `UnsafeApply3D` pins its listener block, passes a null pointer and a
+count of zero when the array is empty, and hands both to XACT: the managed IL
+neither throws nor decides, and the outcome is inside a native boundary the
+assembly does not contain. CNA refuses a count of zero and this binding adopts
+that refusal — a binding-defined outcome standing in for an unknown one, which is
+legitimate for a partial member and was not while the member was called complete.
 
 ## What the audio tests prove, and what they do not
 
