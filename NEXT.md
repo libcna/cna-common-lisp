@@ -109,6 +109,79 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 `sharp_runtime_ref` for checking whether the two repositories have caught up.
 `docs/qualification.md` has the policy and the evidence.
 
+## Foundation 1 release readiness
+
+**`FOUNDATION_1_RELEASE_READY = yes`**, decided at the audit this section
+records, and the decision is about the *foundation as a coherent milestone*, not
+about the scoreboard reaching zero. It never will: 39 of the 54 non-complete
+members are held up by CNA 0.21.0 and 6 by types the profile has not selected.
+
+The eight conditions, and what each rests on:
+
+| Condition | Evidence |
+| --- | --- |
+| All gates green | the 24 in "Reproduce the state" and below, re-run at the audit; the suite reports no failure and nothing not run in all three native configurations, and in the fourth it reports the native layer as not run rather than as passed |
+| No known ownership or lifetime defect | ownership stress, construction atomicity over twelve resource families, content transaction rollback at four injection points, callback registry empty after each cycle |
+| Zero structural disagreements | `verify.py --strict`, now over 18 diagnostic categories rather than 16 |
+| No stale live-state documentation | the audit below found seven classes of it and closed each; three new gates keep them closed |
+| Admitted ABI set truthful | 0.21.0 only. 0.22.0 is audited, shape-identical, and **correctly not admitted** -- the blocker is reproducibility, re-measured a third time and unchanged |
+| CI green | both workflows, on the commits this section lands with |
+| Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must now also be *described* |
+| Every non-complete member has a concrete reason | 54 of 54, each naming a route or an IL fact, each now also in one of seven categories, with **zero** in either implementable category |
+
+That last row is the one to re-read before believing this. `IMPLEMENTABLE_AND_HIGH_VALUE`
+is empty, and it is empty as a *measurement*: `docs/compatibility.md` renders the
+count and `verify.py` refuses a frontier member that has no category. Nothing in
+the selected profile is both unblocked and worth doing. That is what makes this a
+milestone rather than a pause.
+
+**No tag was created.** This repository has no tags and no documented
+version/tagging policy, and inventing one at a release audit would be the wrong
+place for that decision. The proposed version is the one
+`cna-common-lisp.asd` already carries -- **0.1.0** -- which is honest for a first
+qualified foundation that projects a selected subset and says so. The choice is
+the project's.
+
+### What the audit actually found
+
+The generated machinery had become much stronger than the hand-written prose, and
+the gap is where every finding was.
+
+* **`*DECLARED-ABSENCES*` had gone stale in seven of eight entries** -- and it is
+  *data*, dumped into a generated report, so it read as measured. Four named
+  something by then complete; three still said "missing" about a member that had
+  become partial. Nothing had ever read it back. Now `verify.py` does, on both
+  the subject and the status.
+* **`docs/limitations.md` still listed five landed closures as absent** in "Not
+  implemented in this milestone", and three more paragraphs said "absent" about
+  something projected.
+* **`README.md` said the SOFTWARE lane qualifies "four pixel paths"** when the
+  registry it enforces has eight, and **listed three loadable asset types** when
+  `LOADABLE-ASSET-TYPES` answers four. Both are rendered from their registries
+  now.
+* **`docs/qualification.md`'s proof table never grew a `loaded-text` row**: the
+  count marker moved from seven to eight and the prose beside it did not.
+* **`plan.md`'s closure list read as live status** when it is a chronological
+  record, so two overtaken claims in it read as current constraints.
+* **The template's README said its canary proves nothing about "content
+  pipelines"** while the canary loads a `SpriteFont` through `Game.Content`, and
+  its example output was four fields behind the program.
+
+Three gates were added, and each was verified by breaking it: a stale declared
+absence, an uncategorised frontier member, a required pixel proof with no
+description, a loader that lands without a documentation change, and a CANARY
+field the README does not document all now fail.
+
+### The extraordinary claims, re-read
+
+Six claims that a reader might reasonably disbelieve were re-opened against the
+hash-checked assemblies rather than against the comments asserting them, and
+**all six stand**. The half-precision format is the one that needed it most and
+`tools/api-compat/reference/XNA_IL_PROVENANCE.md` now carries its IL: `Pack`
+saturates everything above `wMaxNormal` as an unsigned comparison, so both
+infinities and every NaN go, and `Unpack` has no case for exponent 31, so
+`0x7FFF` reads back as 131008.0. No implementation changed.
+
 ## The measured frontier
 
 <!-- generated:selected types=157 -->
@@ -358,12 +431,14 @@ the graph after each closure instead of following this list once it has moved.
   would produce evidence CI could not reproduce. **Do not admit 0.22.0 on local
   evidence.**
 
-  Re-measured after fetching both remotes, and **unchanged in every part that
-  matters**: `cna:next` has moved on to `34c5a9d4a` and *still* makes that call,
-  in `modules/storage/src/StorageDevice.cpp`, twice;
+  Re-measured again at the Foundation 1 release audit, and **unchanged in every
+  part that matters**: `cna:next` has moved on to `e1d3aa5d5` and *still* makes
+  that call, in `modules/storage/src/StorageDevice.cpp`, at lines 87 and 290;
   `sharp-runtime:next` is still `bd282d101`; and
   `git branch -r --contains c419f477` is still **empty**. Those three commands are
-  the whole re-check, and the last one is the cheapest. If it ever prints a
+  the whole re-check, and the last one is the cheapest. Three re-measurements
+  now, across three different `cna:next` commits, have moved nothing: the
+  blocker is the unpushed sharp-runtime commit and only that. If it ever prints a
   branch, build a HEADLESS and a SOFTWARE 0.22.0 and run the whole gate set before
   touching the admitted set -- which lives in `src/internal/abi-gate.lisp` for the
   runtime and in the manifest's `admitted_abi_versions` for the generator, and both
