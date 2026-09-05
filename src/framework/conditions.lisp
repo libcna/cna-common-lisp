@@ -51,7 +51,12 @@ library's, and a Common Lisp condition is what it projects onto, the same rule
                    (or (cna-error-native-message condition)
                        "the CNA native runtime reported a failure"))))
      (let ((type (cna-error-object-type condition)))
-       (when type (format stream " [~a]" type))))))
+       (when type (format stream " [~a]" type)))
+     ;; The cause is named, not swallowed: a condition that carries one and does
+     ;; not say so is worse than one that carries none, because the information
+     ;; is there and the reader cannot see it.
+     (let ((cause (cna-error-cause condition)))
+       (when cause (format stream " Caused by ~a: ~a" (type-of cause) cause))))))
 
 (define-condition cna-usage-error (cna-error) ()
   (:documentation "A CNA-Lisp contract was broken by the calling program."))

@@ -31,6 +31,29 @@
 
 (in-package #:microsoft.xna.framework.audio)
 
+(defun %report-audio-condition (condition stream default-control)
+  "Report CONDITION, preferring a message the caller supplied over DEFAULT-CONTROL.
+
+**Both of these types declare the CLR's three-constructor set**, and the second
+constructor takes a message. A `:report' that ignored `:FORMAT-CONTROL' and always
+printed its own sentence would store that message and never show it, which makes
+`new(String)' a constructor this projection accepts and does not express -- the
+same defect `new(String, Exception)' had before CNA-ERROR gained a CAUSE slot, and
+found the same way, by writing the constructor-shape test.
+
+So a supplied message wins, the built-in explanation is what `new()' prints, and
+the cause is named after either. CNA's own diagnostic text is appended when it has
+any, because it says which route answered."
+  (let ((control (xna::%cna-error-format-control condition)))
+    (format stream "~@[~a: ~]" (xna:cna-error-operation condition))
+    (if control
+        (apply #'format stream control (xna::%cna-error-format-arguments condition))
+        (format stream default-control))
+    (let ((message (xna:cna-error-native-message condition)))
+      (when message (format stream " ~a" message)))
+    (let ((cause (xna:cna-error-cause condition)))
+      (when cause (format stream " Caused by ~a: ~a" (type-of cause) cause)))))
+
 (define-condition no-audio-hardware-error (xna:cna-not-supported-error) ()
   (:documentation
    "No audio playback device could be opened.
@@ -47,12 +70,11 @@ hardware, which is how the unavailable branch is qualified rather than skipped.
 It is a subtype of `CNA-NOT-SUPPORTED-ERROR', so a handler for that catches it.")
   (:report
    (lambda (condition stream)
-     (format stream "~@[~a: ~]no audio playback device is available. ~
-                     CNA answered CNA_RESULT_NOT_SUPPORTED, which its header ~
-                     documents as the machine having no audio hardware this ~
-                     build can open.~@[ ~a~]"
-             (xna:cna-error-operation condition)
-             (xna:cna-error-native-message condition)))))
+     (%report-audio-condition
+      condition stream
+      "no audio playback device is available. CNA answered ~
+       CNA_RESULT_NOT_SUPPORTED, which its header documents as the machine ~
+       having no audio hardware this build can open."))))
 
 (define-condition instance-play-limit-error (xna:cna-invalid-state-error) ()
   (:documentation
@@ -70,7 +92,7 @@ one: the two play routes are the only place it is raised, so a refused
 `IS-LOOPED' setter or a refused `APPLY-3D' stays the plain state error it is.")
   (:report
    (lambda (condition stream)
-     (format stream "~@[~a: ~]the sound effect could not be played because too ~
-                     many instances are already playing.~@[ ~a~]"
-             (xna:cna-error-operation condition)
-             (xna:cna-error-native-message condition)))))
+     (%report-audio-condition
+      condition stream
+      "the sound effect could not be played because too many instances are ~
+       already playing."))))

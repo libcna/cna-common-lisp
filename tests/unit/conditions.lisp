@@ -129,3 +129,49 @@ replace the one the caller needs to see, so the undo is quiet."
              (multiple-value-list
               (int:with-transient-native (int::+result-success+ "test")
                 (values 1 2 3))))))
+
+;;; --- the CLR three-constructor set, and where its second argument goes -------
+
+(test the-two-audio-exception-types-express-all-three-clr-constructors
+  "`NoAudioHardwareException' and `InstancePlayLimitException' each declare
+`new()', `new(String)' and `new(String, Exception)', and all three collapse onto
+MAKE-CONDITION. The collapse is only honest if each one's arguments have
+somewhere to go, and the third one's second argument did not until CNA-ERROR
+gained a CAUSE slot: the reason used to say the inner exception \"is the condition
+a handler already has in scope\", which is a statement about the dynamic
+environment rather than about the argument.
+
+`System.Exception' is not projected as a type -- it is the base-class library's,
+and a Common Lisp condition is what it projects onto, the same rule
+`System.IO.Stream' is read under -- so CAUSE holds a condition."
+  (dolist (class '(audio:no-audio-hardware-error audio:instance-play-limit-error))
+    ;; new()
+    (let ((bare (make-condition class)))
+      (is (null (xna:cna-error-cause bare)) "new() carries no cause")
+      (is (plusp (length (princ-to-string bare)))
+          "and still reports something a program can print"))
+    ;; new(String)
+    (let ((with-message (make-condition class :format-control "a message")))
+      (is (search "a message" (princ-to-string with-message)))
+      (is (null (xna:cna-error-cause with-message))))
+    ;; new(String, Exception)
+    (let* ((inner (make-condition 'simple-error
+                                  :format-control "the native call failed"))
+           (wrapped (make-condition class :format-control "outer"
+                                          :cause inner)))
+      (is (eq inner (xna:cna-error-cause wrapped))
+          "the inner exception is the condition itself, not a string made from it")
+      (is (search "the native call failed"
+                  (princ-to-string (xna:cna-error-cause wrapped)))))))
+
+(test every-cna-condition-can-carry-a-cause
+  "CAUSE is on CNA-ERROR rather than on the two audio classes, because the CLR
+puts `innerException' on `System.Exception' and every exception this binding
+projects inherits it. Putting it on the leaves would have made the two audio
+types special for a reason that is not theirs."
+  (let ((inner (make-condition 'simple-error :format-control "inner")))
+    (dolist (class '(xna:cna-invalid-state-error xna:cna-argument-error
+                     xna:cna-not-supported-error xna:cna-usage-error))
+      (is (eq inner (xna:cna-error-cause
+                     (make-condition class :operation "x" :cause inner)))
+          "~a cannot carry a cause" class))))
