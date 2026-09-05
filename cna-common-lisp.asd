@@ -23,6 +23,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "internal/ffi/functions.generated")
    ;; --- conditions come before anything that can fail ---------------------
    (:file "framework/conditions")
+   ;; Keyword sets that name a CLR overload and nothing else. Before everything
+   ;; that collapses an overload family, which is most of the graphics surface.
+   (:file "framework/overloads")
    ;; --- private runtime ---------------------------------------------------
    (:file "internal/float-semantics")
    (:file "internal/results")

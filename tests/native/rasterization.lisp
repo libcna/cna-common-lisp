@@ -74,7 +74,11 @@ second on the strength of the first.")
       (gfx:clear device (cleared game))
       (handler-case
           (setf (pixels game)
-                (gfx:get-back-buffer-data device :source (xna:make-rectangle 0 0 8 4)))
+                ;; The rectangle belongs to XNA's third overload, which also
+                ;; takes the window; there is no GetBackBufferData(Rectangle?, T[]).
+                (gfx:get-back-buffer-data device
+                                          :source (xna:make-rectangle 0 0 8 4)
+                                          :start-index 0 :element-count 32))
         (error (condition) (setf (readback-condition game) condition))))))
 
 (defmacro with-readback-game ((variable colour) &body body)
@@ -144,7 +148,15 @@ second on the strength of the first.")
       ;; The shape is checked before the device, so this is the usage error and
       ;; not the scope error.
       (signals xna:cna-usage-error (gfx:get-back-buffer-data device :start-index 0))
-      (signals xna:cna-usage-error (gfx:get-back-buffer-data device :element-count 4)))))
+      (signals xna:cna-usage-error (gfx:get-back-buffer-data device :element-count 4))
+      ;; And :SOURCE on its own, which is the same defect one argument along:
+      ;; XNA's rectangle overload takes the window too, so a region with no
+      ;; window is a fourth shape that does not exist.
+      (signals xna:cna-usage-error
+        (gfx:get-back-buffer-data device :source (xna:make-rectangle 0 0 2 2)))
+      (signals xna:cna-usage-error
+        (gfx:get-back-buffer-data device :source (xna:make-rectangle 0 0 2 2)
+                                         :start-index 0)))))
 
 ;;; --- does SpriteBatch reach pixels? ----------------------------------------------
 ;;;
@@ -356,7 +368,7 @@ an 800x480 viewport, the vertices land at (200,360), (200,120) and (600,360)."
                             (gfx:effect-current-technique effect))))
               (gfx:apply-effect-pass pass))
             (gfx:draw-user-primitives device :triangle-list (clip-space-triangle)
-                                      :primitive-count 1))
+                                      :vertex-offset 0 :primitive-count 1))
           (let* ((viewport (gfx:viewport device))
                  (width (gfx:viewport-width viewport))
                  (pixels (gfx:get-back-buffer-data device)))
@@ -713,7 +725,7 @@ reads the back buffer straight back."))
                           (gfx:effect-current-technique effect))))
             (gfx:apply-effect-pass pass))
           (gfx:draw-user-primitives device :triangle-list (clip-space-triangle)
-                                    :primitive-count 1)
+                                    :vertex-offset 0 :primitive-count 1)
           (let* ((viewport (gfx:viewport device))
                  (width (gfx:viewport-width viewport))
                  (pixels (gfx:get-back-buffer-data device)))

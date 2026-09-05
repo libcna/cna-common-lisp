@@ -390,14 +390,22 @@ Nothing native outlives the call: the packed bytes are stack-allocated for its
 duration, which is what XNA's own user-primitive path does."))
 
 (defmethod draw-user-primitives ((device graphics-device) primitive-type data
-                                 &key (vertex-offset 0) primitive-count
+                                 &key ((:vertex-offset vertex-offset) 0 vertex-offset-p)
+                                      primitive-count
                                       vertex-declaration)
   (let ((operation "draw-user-primitives"))
     (check-type primitive-type primitive-type)
-    (unless primitive-count
+    ;; Both of XNA's overloads are `(PrimitiveType, T[], int vertexOffset,
+    ;; int primitiveCount)' with the declaration appended, so *both* name the
+    ;; vertex offset and neither has a default for it. Leaving it out here used
+    ;; to mean zero, which is a three-argument call XNA cannot express.
+    (unless (and vertex-offset-p primitive-count)
       (error 'microsoft.xna.framework:cna-usage-error
              :operation operation
-             :format-control ":PRIMITIVE-COUNT is required; XNA has no overload without it."))
+             :format-control
+             ":VERTEX-OFFSET and :PRIMITIVE-COUNT are both required; every XNA ~
+              DrawUserPrimitives overload takes both, and neither has a default. ~
+              Pass :VERTEX-OFFSET 0 to start at the beginning."))
     (check-type vertex-offset (integer 0))
     (check-type primitive-count (signed-byte 32))
     (%check-primitive-count operation primitive-count)
@@ -467,17 +475,26 @@ defaults to sixteen bits, which is what XNA's Int16 overload uses.
 
 (defmethod draw-user-indexed-primitives ((device graphics-device) primitive-type
                                          data indices
-                                         &key (vertex-offset 0) num-vertices
-                                              (index-offset 0) primitive-count
+                                         &key ((:vertex-offset vertex-offset) 0
+                                               vertex-offset-p)
+                                              num-vertices
+                                              ((:index-offset index-offset) 0
+                                               index-offset-p)
+                                              primitive-count
                                               vertex-declaration)
   (let ((operation "draw-user-indexed-primitives"))
     (check-type primitive-type primitive-type)
-    (unless (and num-vertices primitive-count)
+    ;; All four overloads take vertexOffset, numVertices, indexOffset and
+    ;; primitiveCount positionally, and none of the four has a default; the two
+    ;; offsets defaulting to zero here made twelve shapes out of four.
+    (unless (and vertex-offset-p num-vertices index-offset-p primitive-count)
       (error 'microsoft.xna.framework:cna-usage-error
              :operation operation
              :format-control
-             ":NUM-VERTICES and :PRIMITIVE-COUNT are both required; every XNA ~
-              DrawUserIndexedPrimitives overload takes both."))
+             ":VERTEX-OFFSET, :NUM-VERTICES, :INDEX-OFFSET and :PRIMITIVE-COUNT ~
+              are all required; every XNA DrawUserIndexedPrimitives overload ~
+              takes all four, and none of them has a default. Pass an offset of ~
+              0 to start at the beginning."))
     (check-type vertex-offset (integer 0))
     (check-type index-offset (integer 0))
     (check-type num-vertices (signed-byte 32))

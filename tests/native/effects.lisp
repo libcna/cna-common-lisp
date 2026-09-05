@@ -377,7 +377,7 @@
               (draw-outcome
                (lambda ()
                  (gfx:draw-user-primitives device :triangle-list vertices
-                                           :primitive-count 1))))))
+                                           :vertex-offset 0 :primitive-count 1))))))
     (is (eq :accepted outcome)
         "a draw with an applied effect pass was refused: ~a" outcome)))
 

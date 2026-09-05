@@ -542,7 +542,7 @@ CNA-NOT-SUPPORTED-ERROR rather than answering zeroes -- which is what makes the
 member usable as evidence that pixels were produced. See docs/limitations.md."))
 
 (defmethod get-back-buffer-data ((device graphics-device)
-                                 &key source
+                                 &key (source nil source-p)
                                       (start-index nil start-index-p)
                                       (element-count nil element-count-p))
   (when (and (or start-index-p element-count-p)
@@ -552,6 +552,20 @@ member usable as evidence that pixels were produced. See docs/limitations.md."))
            :format-control
            ":START-INDEX and :ELEMENT-COUNT are one group: XNA has no ~
             GetBackBufferData overload that carries one without the other."))
+  ;; XNA's three overloads are `GetBackBufferData(T[])',
+  ;; `GetBackBufferData(T[], int, int)' and
+  ;; `GetBackBufferData(Rectangle?, T[], int, int)'. The rectangle belongs to the
+  ;; last, which also takes the window; a rectangle on its own is a fourth shape
+  ;; that does not exist, and used to be accepted here with the window inferred
+  ;; from the rectangle's area.
+  (when (and source-p (not (and start-index-p element-count-p)))
+    (error 'microsoft.xna.framework:cna-usage-error
+           :operation "get-back-buffer-data"
+           :format-control
+           ":SOURCE belongs to the overload that also takes :START-INDEX and ~
+            :ELEMENT-COUNT. XNA's rectangle overload adds a source region to the ~
+            windowed one; there is none that names a region and reads the whole ~
+            back buffer into an unwindowed array."))
   (when source (check-type source microsoft.xna.framework:rectangle))
   (let* ((viewport (viewport device))
          (pixels (if element-count-p

@@ -381,14 +381,31 @@ rather say it that way."))
 ;;; has no such overload on VertexBuffer, and CNA's own routes say a non-None
 ;;; option "requires a supported dynamic-buffer overload".
 
-(defun %check-transfer-shape (operation start-index-p element-count-p)
+(defun %check-transfer-shape (operation start-index-p element-count-p
+                              &optional offset-p)
+  "Refuse a transfer keyword set XNA has no overload for.
+
+XNA's buffer transfers are `SetData(T[])', `SetData(T[], int, int)' and
+`SetData(int, T[], int, int)' -- and the third *extends* the second rather than
+replacing it, so `:OFFSET-IN-BYTES' without `:START-INDEX' and `:ELEMENT-COUNT'
+is a fourth shape that does not exist. It used to be accepted, with the window
+defaulting to the whole array: a byte offset into the buffer and no window into
+the caller's, which is a combination no XNA program can write."
   (when (and (or start-index-p element-count-p)
              (not (and start-index-p element-count-p)))
     (error 'microsoft.xna.framework:cna-usage-error
            :operation operation
            :format-control
            ":START-INDEX and :ELEMENT-COUNT are one group: XNA has no SetData or ~
-            GetData overload that carries one without the other.")))
+            GetData overload that carries one without the other."))
+  (when (and offset-p (not (and start-index-p element-count-p)))
+    (error 'microsoft.xna.framework:cna-usage-error
+           :operation operation
+           :format-control
+           ":OFFSET-IN-BYTES belongs to the overload that also takes :START-INDEX ~
+            and :ELEMENT-COUNT. XNA's third transfer overload adds a byte offset ~
+            to the windowed one; there is none that names a byte offset and then ~
+            transfers the whole array.")))
 
 (defun %check-options-shape (buffer options options-p operation dynamic-class)
   (when (and options-p (not (typep buffer dynamic-class)))
@@ -426,7 +443,7 @@ rather say it that way."))
            ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
             rectangle. A buffer has neither."))
   (let ((operation "set-data"))
-    (%check-transfer-shape operation start-index-p element-count-p)
+    (%check-transfer-shape operation start-index-p element-count-p offset-p)
     (when (and stride-p (not offset-p))
       (error 'microsoft.xna.framework:cna-usage-error
              :operation operation
@@ -488,7 +505,7 @@ rather say it that way."))
            ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
             rectangle. A buffer has neither."))
   (let ((operation "get-data"))
-    (%check-transfer-shape operation start-index-p element-count-p)
+    (%check-transfer-shape operation start-index-p element-count-p offset-p)
     (cna-lisp.internal:check-usable buffer operation)
     (multiple-value-bind (sample size) (%sequence-layout into operation)
       (let* ((start (if start-index-p start-index 0))
@@ -573,7 +590,7 @@ says nothing about its width, so it is taken as the buffer's."
            ":VERTEX-STRIDE is a vertex-buffer parameter; an index buffer's element ~
             width is its IndexElementSize."))
   (let ((operation "set-data"))
-    (%check-transfer-shape operation start-index-p element-count-p)
+    (%check-transfer-shape operation start-index-p element-count-p offset-p)
     (let ((options (%check-options-shape buffer options options-p operation
                                          'dynamic-index-buffer)))
       (cna-lisp.internal:check-usable buffer operation)
@@ -634,7 +651,7 @@ says nothing about its width, so it is taken as the buffer's."
             binding: CNA's index read route takes a transfer window and no byte ~
             offset."))
   (let ((operation "get-data"))
-    (%check-transfer-shape operation start-index-p element-count-p)
+    (%check-transfer-shape operation start-index-p element-count-p offset-p)
     (cna-lisp.internal:check-usable buffer operation)
     (let* ((width (%check-index-width buffer into operation))
            (start (if start-index-p start-index 0))

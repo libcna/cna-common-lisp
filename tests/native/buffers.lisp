@@ -333,10 +333,20 @@
           (vertices (triangle-vertices)))
       ;; Two triangles need six vertices and there are three.
       (signals xna:cna-argument-out-of-range-error
-        (gfx:draw-user-primitives device :triangle-list vertices :primitive-count 2))
+        (gfx:draw-user-primitives device :triangle-list vertices
+                                  :vertex-offset 0 :primitive-count 2))
       ;; A sequence with no inferable declaration and no :VERTEX-DECLARATION.
       (signals xna:cna-usage-error
         (gfx:draw-user-primitives device :triangle-list (vector 1.0f0 2.0f0 3.0f0)
+                                  :vertex-offset 0 :primitive-count 1))
+      ;; :PRIMITIVE-COUNT and :VERTEX-OFFSET are both required, because every XNA
+      ;; DrawUserPrimitives overload takes both positionally and neither has a
+      ;; default. Each missing on its own is refused, and so is the pair.
+      (signals xna:cna-usage-error
+        (gfx:draw-user-primitives device :triangle-list vertices
+                                  :vertex-offset 0))
+      (signals xna:cna-usage-error
+        (gfx:draw-user-primitives device :triangle-list vertices
                                   :primitive-count 1))
       (signals xna:cna-usage-error
         (gfx:draw-user-primitives device :triangle-list vertices)))))
@@ -377,14 +387,15 @@
         ;; And the user-primitive ones, which need no buffer at all.
         (is (refusal (lambda ()
                        (gfx:draw-user-primitives device :triangle-list vertices
-                                                 :primitive-count 1))
+                                                 :vertex-offset 0 :primitive-count 1))
                      "draw-user-primitives"))
         (is (refusal (lambda ()
                        (gfx:draw-user-indexed-primitives
                         device :triangle-list vertices
                         (make-array 3 :element-type '(unsigned-byte 16)
                                       :initial-contents '(0 1 2))
-                        :num-vertices 3 :primitive-count 1))
+                        :vertex-offset 0 :num-vertices 3
+                        :index-offset 0 :primitive-count 1))
                      "draw-user-indexed-primitives")))
       (gfx:set-vertex-buffer device nil))))
 
