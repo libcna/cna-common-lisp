@@ -1090,6 +1090,18 @@
       "ownership": "destroys:graphics-device-event-registration"
     },
     {
+      "name": "cna_graphics_device_reset",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_reset_with_parameters",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
       "name": "cna_graphics_device_get_is_disposed",
       "header": "graphics_device.h",
       "thread": "owner",

@@ -20174,6 +20174,33 @@
           "documentation": "The name of the renderer behind this device.\n\nA CNA-Lisp addition, not an XNA member: XNA has no equivalent, and knowing which\nrenderer is present is what makes a headless qualification run interpretable."
         },
         {
+          "name": "reset-graphics-device",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "&key",
+            "presentation-parameters",
+            "adapter"
+          ],
+          "keywords": [
+            "adapter",
+            "presentation-parameters"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.Reset: all three overloads, the keywords selecting between them.\n\n    (reset-graphics-device device)\n    (reset-graphics-device device :presentation-parameters p)\n    (reset-graphics-device device :presentation-parameters p :adapter a)\n\nNamed for its type rather than as a bare `RESET', for the reason CLONE-EFFECT is\nnot `CLONE': a very general verb does not go into a package consumers use\nunqualified.\n\n`Reset()' goes to `cna_graphics_device_reset'; the other two go to\n`cna_graphics_device_reset_with_parameters', whose adapter argument is a\n**pointer** -- null keeps the current adapter, which is exactly what XNA's\ntwo-argument overload means by not taking one. An :ADAPTER without\n:PRESENTATION-PARAMETERS is refused, because XNA has no such overload.\n\nA renderer that cannot reset answers `CNA_RESULT_NOT_SUPPORTED', which reaches\nthe caller as a CNA-NOT-SUPPORTED-ERROR rather than as a silent no-op."
+        },
+        {
           "name": "sampler-state",
           "fbound": false,
           "macro": false,

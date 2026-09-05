@@ -24,7 +24,7 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 452,
+    "functions": 454,
     "structs": 67,
     "struct_fields": 512,
     "constants": 506,
@@ -1381,6 +1381,50 @@
       "ownership": "destroys:graphics-device-event-registration",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_unsubscribe(CNA_GraphicsDeviceEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_graphics_device_reset",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_reset(CNA_Handle graphics_device)"
+    },
+    {
+      "name": "cna_graphics_device_reset_with_parameters",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "parameters",
+          "c_type": "const CNA_PresentationParameters*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "const uint32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_reset_with_parameters(CNA_Handle graphics_device, const CNA_PresentationParameters* parameters, const uint32_t* adapter_index)"
     },
     {
       "name": "cna_graphics_device_get_is_disposed",

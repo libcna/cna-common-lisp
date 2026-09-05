@@ -22,15 +22,15 @@
    "complete": 141
   },
   "members_by_status": {
-   "complete": 1849,
-   "missing": 40,
+   "complete": 1852,
+   "missing": 37,
    "not-applicable": 424,
    "partial": 19
   },
-  "diagnostics": 40,
+  "diagnostics": 37,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 40,
+   "missing_member": 37,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1483,9 +1483,9 @@
     "new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "missing",
     "Present(Nullable`1,Nullable`1,IntPtr)": "missing",
     "Present()": "complete",
-    "Reset()": "missing",
-    "Reset(PresentationParameters)": "missing",
-    "Reset(PresentationParameters,GraphicsAdapter)": "missing",
+    "Reset()": "complete",
+    "Reset(PresentationParameters)": "complete",
+    "Reset(PresentationParameters,GraphicsAdapter)": "complete",
     "DrawPrimitives(PrimitiveType,Int32,Int32)": "complete",
     "DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)": "complete",
     "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": "missing",
@@ -3615,27 +3615,12 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.new(GraphicsAdapter,GraphicsProfile,PresentationParameters)",
-   "detail": "The device as an object a program constructs. A CNA-Lisp program never constructs one: CNA creates the device with the game and lends it for a callback's duration, and there is no create route to project. Constructing one would also need a GraphicsAdapter, which is not in the selection."
+   "detail": "The device as an object a program constructs, which a CNA-Lisp program never does: CNA creates the device with the game and lends it for a callback's duration. **cna_graphics_device_create does exist**, so this is a design decision rather than a missing capability -- supporting it means a second kind of GraphicsDevice, an owned one with a handle of its own alongside the parent-owned facade, and every device operation learning which it has. That is a closure of its own, not a member to add."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Present(Nullable`1,Nullable`1,IntPtr)",
    "detail": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Reset()",
-   "detail": "Device reset is not projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Reset(PresentationParameters)",
-   "detail": "Needs PresentationParameters."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Reset(PresentationParameters,GraphicsAdapter)",
-   "detail": "Needs PresentationParameters and GraphicsAdapter."
   },
   {
    "category": "missing_member",
@@ -3645,7 +3630,7 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Dispose()",
-   "detail": "CNA refuses this by design and says why: cna_graphics_device_dispose 'reports that C cannot dispose the graphics device owned by the active game', because 'disposing it through a borrowed handle would leave that game drawing into a destroyed device'. cna_game_destroy performs the canonical disposal. %CHECK-DISPOSABLE refuses it here for the same reason, one step earlier, and the refusal costs the facade nothing."
+   "detail": "CNA refuses this for a game's device by design and says why: cna_graphics_device_dispose 'reports that C cannot dispose the graphics device owned by the active game', because 'disposing it through a borrowed handle would leave that game drawing into a destroyed device'. cna_game_destroy performs the canonical disposal. %CHECK-DISPOSABLE refuses it here for the same reason, one step earlier, and the refusal costs the facade nothing. cna_graphics_device_destroy accepts only a *caller-created* device, so this member arrives with the constructor above or not at all."
   },
   {
    "category": "missing_member",

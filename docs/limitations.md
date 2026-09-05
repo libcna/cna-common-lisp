@@ -1157,10 +1157,17 @@ pins it as one.
 * **`Adapter`** needs `GraphicsAdapter`, which is not in the selection.
   `cna_graphics_device_get_adapter_index` answers an index into CNA's own adapter
   queries, so the route is there and the type is not.
-* **The three `Reset` overloads and `Present`** are device-lifetime operations
-  rather than settings. `cna_graphics_device_present` exists; the `Reset` family
-  needs a decision about what resetting means for a device CNA lends rather than
-  lets a program construct.
+* Nothing about `Reset` or `Present` — **both are complete**, and the entry that
+  used to stand here was wrong. It said the `Reset` family "needs a decision about
+  what resetting means for a device CNA lends", which was speculation rather than
+  a measurement: `cna_graphics_device_reset` and
+  `cna_graphics_device_reset_with_parameters` were there all along. The three
+  overloads are one generic function now, and the second route's adapter argument
+  is a *pointer* whose null means "keep the current adapter" — which is exactly
+  what XNA's one-argument overload means by not taking one.
+
+  It is left recorded rather than quietly deleted, because it is the same mistake
+  `Game.Services` made: a confident reason written without reading the routes.
 * **Two of the six device events**, and only the two that carry a payload.
   `ResourceCreated` and `ResourceDestroyed` have routes, and CNA's own header is
   the reason to be careful: "the canonical event is raised from the
@@ -1168,8 +1175,17 @@ pins it as one.
   construction: its concrete type does not exist yet and no member of it can" be
   used. Projecting that needs a decision about what object a handler is handed,
   and a half-built resource is not it.
-* **`new(...)`, `Dispose`, `IsDisposed` and `Disposing`** are the device as an
-  object a program constructs, which a CNA-Lisp program never does.
+* **`new(...)` and `Dispose()`** are the device as an object a program constructs,
+  which a CNA-Lisp program never does. `IsDisposed` and `Disposing` are complete;
+  these two are not, and **not because CNA lacks the routes** —
+  `cna_graphics_device_create` and `cna_graphics_device_destroy` both exist, and
+  the destroy explicitly accepts only a *caller-created* device and refuses a
+  game's borrowed one, which is the same rule this binding enforces. What they
+  need is a second kind of `GraphicsDevice`: an owned one with a handle of its
+  own, alongside the parent-owned facade, and every device operation learning
+  which of the two it has. That is a closure of its own rather than two members to
+  add, and it is written down here so the next reader starts from the routes
+  rather than from an assumption.
 
 `GraphicsDeviceManager`'s remaining ten are the five protected `On*` raisers,
 `PreparingDeviceSettings` and its event args, and

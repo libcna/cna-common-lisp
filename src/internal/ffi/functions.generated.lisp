@@ -226,6 +226,14 @@
 (defcfun ("cna_graphics_device_unsubscribe" %graphics-device-unsubscribe) :uint32
   (registration :uint64))
 
+;;; CNA_Result cna_graphics_device_reset(CNA_Handle graphics_device)
+(defcfun ("cna_graphics_device_reset" %graphics-device-reset) :uint32
+  (graphics-device :uint64))
+
+;;; CNA_Result cna_graphics_device_reset_with_parameters(CNA_Handle graphics_device, const CNA_PresentationParameters* parameters, const uint32_t* adapter_index)
+(defcfun ("cna_graphics_device_reset_with_parameters" %graphics-device-reset-with-parameters) :uint32
+  (graphics-device :uint64) (parameters :pointer) (adapter-index :pointer))
+
 ;;; CNA_Result cna_graphics_device_get_is_disposed(CNA_Handle graphics_device, CNA_Bool* out_is_disposed)
 (defcfun ("cna_graphics_device_get_is_disposed" %graphics-device-get-is-disposed) :uint32
   (graphics-device :uint64) (out-is-disposed :pointer))
@@ -1876,6 +1884,8 @@
     ("cna_graphics_device_get_status" %graphics-device-get-status :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_subscribe_event" %graphics-device-subscribe-event :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates-owned:graphics-device-event-registration:child-of-game")
     ("cna_graphics_device_unsubscribe" %graphics-device-unsubscribe :uint32 (:uint64) :thread :owner :ownership "destroys:graphics-device-event-registration")
+    ("cna_graphics_device_reset" %graphics-device-reset :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_graphics_device_reset_with_parameters" %graphics-device-reset-with-parameters :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_is_disposed" %graphics-device-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_adapter_get_count" %graphics-adapter-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_adapter_get_info" %graphics-adapter-get-info :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")

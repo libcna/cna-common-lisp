@@ -167,3 +167,58 @@ that word."
       (progn
         (when (adapter-manager game) (ignore-errors (xna:dispose (adapter-manager game))))
         (xna:dispose game)))))
+
+;;; --- GraphicsDevice.Reset ------------------------------------------------------
+
+(defclass resetting-game (adapter-game)
+  ((outcomes :initform '() :accessor reset-outcomes))
+  (:documentation "Calls every Reset shape, legal and illegal."))
+
+(defmethod xna:load-content ((game resetting-game))
+  (call-next-method)
+  (let ((device (xna:graphics-device game)))
+    (flet ((note (label thunk)
+             (push (cons label
+                         (handler-case (progn (funcall thunk) :accepted)
+                           (error (condition) (type-of condition))))
+                   (reset-outcomes game))))
+      (let ((parameters (gfx:presentation-parameters device))
+            (adapter (gfx:adapter device)))
+        (note :bare (lambda () (gfx:reset-graphics-device device)))
+        (note :with-parameters
+              (lambda () (gfx:reset-graphics-device
+                          device :presentation-parameters parameters)))
+        (note :with-adapter
+              (lambda () (gfx:reset-graphics-device
+                          device :presentation-parameters parameters :adapter adapter)))
+        ;; The shape XNA has not got.
+        (note :adapter-alone
+              (lambda () (gfx:reset-graphics-device device :adapter adapter)))))))
+
+(define-native-test reset-takes-all-three-overloads-and-only-those
+  "GraphicsDevice.Reset's three overloads, over cna_graphics_device_reset and
+cna_graphics_device_reset_with_parameters.
+
+A renderer that cannot reset answers CNA_RESULT_NOT_SUPPORTED, which reaches the
+caller as a condition rather than as a silent no-op -- so the three legal shapes
+are asserted to be *either* accepted or refused for that reason, and never to
+fail as an argument error. An adapter without parameters is an argument error on
+every renderer, because XNA has no such overload and nothing reaches CNA."
+  (let ((game (make-instance 'resetting-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (null (adapter-failure game))
+               "the fixture failed: ~a" (adapter-failure game))
+           (dolist (label '(:bare :with-parameters :with-adapter))
+             (let ((outcome (cdr (assoc label (reset-outcomes game)))))
+               (is (member outcome '(:accepted xna:cna-not-supported-error))
+                   "~a gave ~a; a legal Reset either works or says the renderer ~
+                    cannot" label outcome)))
+           (is (eq 'xna:cna-argument-error
+                   (cdr (assoc :adapter-alone (reset-outcomes game))))
+               "an adapter without parameters gave ~a"
+               (cdr (assoc :adapter-alone (reset-outcomes game)))))
+      (progn
+        (when (adapter-manager game) (ignore-errors (xna:dispose (adapter-manager game))))
+        (ignore-errors (xna:dispose game))))))

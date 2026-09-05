@@ -116,9 +116,9 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 <!-- generated:complete types=141 -->
 <!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1849 -->
+<!-- generated:complete members=1852 -->
 <!-- generated:partial members=19 -->
-<!-- generated:missing members=40 -->
+<!-- generated:missing members=37 -->
 <!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
 
@@ -132,9 +132,9 @@ Selection **Foundation 1 and the managed closures**: 157 types, 2332 members.
 | Types complete | **141** |
 | Types partial | **16** |
 | Types missing | **0** |
-| Members complete | **1849** |
+| Members complete | **1852** |
 | Members partial | **19** |
-| Members missing | **40** |
+| Members missing | **37** |
 | Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -158,8 +158,8 @@ members actually are:
 | Type | missing members | partial members |
 | --- | ---: | ---: |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | 9 | 1 |
 | `M.X.F.GameWindow` | 7 | 0 |
+| `M.X.F.Graphics.GraphicsDevice` | 6 | 1 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
@@ -186,8 +186,8 @@ one.
 | Type | missing members | partial members |
 | --- | ---: | ---: |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | 9 | 1 |
 | `M.X.F.GameWindow` | 7 | 0 |
+| `M.X.F.Graphics.GraphicsDevice` | 6 | 1 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |

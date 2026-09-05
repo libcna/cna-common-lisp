@@ -435,7 +435,7 @@
    #:graphics-device-status #:graphics-device-status-value
    #:graphics-device-status-from-value #:all-graphics-device-status
    ;; --- GraphicsAdapter ----------------------------------------------------
-   #:graphics-adapter #:adapter
+   #:graphics-adapter #:adapter #:reset-graphics-device
    #:graphics-adapter-adapters #:graphics-adapter-default-adapter
    #:graphics-adapter-description #:graphics-adapter-device-name
    #:graphics-adapter-is-default-adapter #:graphics-adapter-is-wide-screen

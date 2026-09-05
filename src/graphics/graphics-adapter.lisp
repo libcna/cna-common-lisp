@@ -455,3 +455,59 @@ same enumeration `GRAPHICS-ADAPTER-ADAPTERS' walks."))
 (defmethod print-object ((adapter graphics-adapter) stream)
   (print-unreadable-object (adapter stream :type t)
     (format stream "~d" (%adapter-index adapter))))
+
+;;; --- GraphicsDevice.Reset -------------------------------------------------------
+;;;
+;;; Here rather than in graphics-device.lisp because the three-argument overload
+;;; takes a GRAPHICS-ADAPTER, and that class is declared above.
+
+(defgeneric reset-graphics-device (graphics-device
+                                   &key presentation-parameters adapter)
+  (:documentation
+   "GraphicsDevice.Reset: all three overloads, the keywords selecting between them.
+
+    (reset-graphics-device device)
+    (reset-graphics-device device :presentation-parameters p)
+    (reset-graphics-device device :presentation-parameters p :adapter a)
+
+Named for its type rather than as a bare `RESET', for the reason CLONE-EFFECT is
+not `CLONE': a very general verb does not go into a package consumers use
+unqualified.
+
+`Reset()' goes to `cna_graphics_device_reset'; the other two go to
+`cna_graphics_device_reset_with_parameters', whose adapter argument is a
+**pointer** -- null keeps the current adapter, which is exactly what XNA's
+two-argument overload means by not taking one. An :ADAPTER without
+:PRESENTATION-PARAMETERS is refused, because XNA has no such overload.
+
+A renderer that cannot reset answers `CNA_RESULT_NOT_SUPPORTED', which reaches
+the caller as a CNA-NOT-SUPPORTED-ERROR rather than as a silent no-op."))
+
+(defmethod reset-graphics-device ((device graphics-device)
+                                  &key (presentation-parameters nil parameters-p)
+                                       (adapter nil adapter-p))
+  (when (and adapter-p (not parameters-p))
+    (error 'microsoft.xna.framework:cna-argument-error
+           :operation "reset-graphics-device" :parameter-name "adapter"
+           :format-control
+           "XNA has no Reset overload taking an adapter without presentation ~
+            parameters. Pass :PRESENTATION-PARAMETERS with :ADAPTER."))
+  (let ((handle (%resolve-device-handle device "reset-graphics-device")))
+    (if (not parameters-p)
+        (cna-lisp.internal:check-result
+         (cna-lisp.internal.ffi::%graphics-device-reset handle)
+         "reset-graphics-device" :object-type 'graphics-device)
+        (progn
+          (check-type presentation-parameters presentation-parameters)
+          (when adapter-p (check-type adapter graphics-adapter))
+          (cffi:with-foreign-objects
+              ((native '(:struct cna-lisp.internal.ffi::cna-presentation-parameters))
+               (index :uint32))
+            (%write-presentation-parameters native presentation-parameters)
+            (when adapter-p
+              (setf (cffi:mem-ref index :uint32) (%adapter-index adapter)))
+            (cna-lisp.internal:check-result
+             (cna-lisp.internal.ffi::%graphics-device-reset-with-parameters
+              handle native (if adapter-p index (cffi:null-pointer)))
+             "reset-graphics-device" :object-type 'graphics-device)))))
+  (values))
