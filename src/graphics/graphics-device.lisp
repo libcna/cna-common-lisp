@@ -31,7 +31,12 @@
    ;; same limit: `cna_graphics_device_copy_render_targets' answers handles, and
    ;; the ABI has no route from a handle back to the object that owns it, so
    ;; GetRenderTargets answers this record and cross-checks CNA against it.
-   (bound-render-targets :initform '() :accessor %bound-render-targets))
+   (bound-render-targets :initform '() :accessor %bound-render-targets)
+   ;; The device raises four payload-free events of its own. It is a facade with
+   ;; no handle, so the subscriptions live here and the *game* releases them:
+   ;; CNA requires every registration released before `cna_game_destroy'
+   ;; succeeds, and the game is what performs that destroy.
+   (event-handlers :initform '() :accessor microsoft.xna.framework::%event-handlers))
   (:default-initargs :ownership :parent-owned)
   (:documentation
    "The game's graphics device. Instances are produced by the runtime and reached

@@ -420,7 +420,9 @@
    #:all-graphics-profile
    #:clear-options #:clear-options-value #:clear-options-from-value
    #:all-clear-options
-   #:is-disposed
+   #:is-disposed #:add-device-lost-handler #:remove-device-lost-handler
+   #:add-device-reset-handler #:remove-device-reset-handler
+   #:add-device-resetting-handler #:remove-device-resetting-handler
    #:present-interval #:present-interval-value #:present-interval-from-value
    #:all-present-interval
    #:graphics-device-status #:graphics-device-status-value

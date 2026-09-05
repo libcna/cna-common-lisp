@@ -830,3 +830,113 @@ here, which is the point: a list restated in Lisp is a list that can drift."
         (is (= 640 (gfx:back-buffer-width parameters)))
         (is-true (gfx:is-full-screen parameters)))
       (skip "CNA_NATIVE_LIBRARY is not set; the defaults come from CNA")))
+
+;;; --- the four events the device raises ---------------------------------------
+
+(defclass device-event-game (counting-game)
+  ((manager :initform nil :accessor device-event-manager)
+   (subscribed :initform nil :accessor subscribed-ok)
+   (registry-after-subscribe :initform nil :accessor registry-after-subscribe)
+   (registry-after-remove :initform nil :accessor registry-after-remove)
+   (outside-scope :initform nil :accessor outside-scope-outcome)
+   (unknown-event :initform nil :accessor unknown-event-outcome)
+   (disposing-seen :initform 0 :accessor disposing-seen)
+   (failure :initform nil :accessor device-event-failure))
+  (:documentation "Subscribes to the device's own events from inside a callback."))
+
+(defmethod initialize-instance :after ((game device-event-game) &key)
+  (setf (device-event-manager game)
+        (make-instance 'xna:graphics-device-manager :game game)))
+
+(defmethod xna:load-content ((game device-event-game))
+  (call-next-method)
+  (handler-case
+      (let ((device (xna:graphics-device game))
+            (before (int:callback-registry-count)))
+        ;; All four, so a table entry that named the wrong CNA identity would
+        ;; fail here rather than silently subscribe to the wrong event.
+        (let ((handlers
+                (list (gfx:add-disposing-handler
+                       device (lambda (d) (declare (ignore d))
+                                (incf (disposing-seen game))))
+                      (gfx:add-device-lost-handler device (lambda (d) (declare (ignore d))))
+                      (gfx:add-device-reset-handler device (lambda (d) (declare (ignore d))))
+                      (gfx:add-device-resetting-handler
+                       device (lambda (d) (declare (ignore d)))))))
+          (setf (subscribed-ok game) (every #'functionp handlers)
+                (registry-after-subscribe game) (- (int:callback-registry-count) before))
+          ;; ...and removing them empties the registry again.
+          (gfx:remove-device-lost-handler device (second handlers))
+          (gfx:remove-device-reset-handler device (third handlers))
+          (gfx:remove-device-resetting-handler device (fourth handlers))
+          (setf (registry-after-remove game) (- (int:callback-registry-count) before)))
+        ;; An event this type does not raise is refused by CLOS, before anything
+        ;; reaches CNA: each event is its own generic function, so a device has
+        ;; no method for the game's Activated and there is nothing to look up.
+        (setf (unknown-event-outcome game)
+              (handler-case (progn (xna:add-activated-handler device (lambda (d) d))
+                                   :accepted)
+                (error (condition) (type-of condition)))))
+    (error (condition) (setf (device-event-failure game) condition))))
+
+(define-native-test the-device-raises-its-own-four-events
+  "GraphicsDevice.Disposing, DeviceLost, DeviceReset and DeviceResetting, over
+cna_graphics_device_subscribe_event.
+
+Three of the four pairs are shared generic functions -- Disposing is
+GraphicsResource's and the two reset events are GraphicsDeviceManager's -- so
+subscribing through them on a *device* is also the check that the shared name
+reaches the right table. **These are the device's own DeviceReset and
+DeviceResetting, not IGraphicsDeviceService's same-named pair.**
+
+The last subscription is deliberately left in place: CNA requires every
+registration released before cna_game_destroy succeeds, and the game releasing
+the device's is what the clean teardown below proves."
+  (let ((game (make-instance 'device-event-game :exit-after 2))
+        (teardown nil))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (null (device-event-failure game))
+               "the fixture failed: ~a" (device-event-failure game))
+           (is-true (subscribed-ok game) "not every subscription answered its handler")
+           (is (= 4 (registry-after-subscribe game))
+               "four subscriptions added ~d registry entry/entries"
+               (registry-after-subscribe game))
+           (is (= 1 (registry-after-remove game))
+               "removing three of four left ~d entry/entries"
+               (registry-after-remove game))
+           ;; Asking a device for an event it does not raise is a *name* error
+           ;; and not a runtime refusal, because the projection gives each event
+           ;; its own generic function -- so CLOS answers before anything reaches
+           ;; the event table or CNA. That is the right answer and is pinned as
+           ;; one rather than wrapped in a condition of this binding's own.
+           (is (eq 'sb-pcl::no-applicable-method-error (unknown-event-outcome game))
+               "an event the device does not raise gave ~a"
+               (unknown-event-outcome game)))
+      (progn
+        (when (device-event-manager game)
+          (ignore-errors (xna:dispose (device-event-manager game))))
+        (handler-case (xna:dispose game)
+          (error (condition) (setf teardown condition)))
+        (is (null teardown)
+            "the game would not shut down with a live device subscription: ~a"
+            teardown)
+        (is (zerop (int:callback-registry-count))
+            "teardown left ~d registry entry/entries"
+            (int:callback-registry-count))))))
+
+(define-native-test subscribing-to-a-device-event-outside-a-callback-is-refused
+  "The subscription is made through the borrowed handle, so it needs the callback
+scope the handle is lent in -- exactly as every other device operation does."
+  (let ((game (make-instance 'device-event-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (signals xna:cna-scope-error
+             (gfx:add-device-lost-handler (xna:graphics-device game)
+                                          (lambda (d) (declare (ignore d))))))
+      (progn
+        (when (device-event-manager game)
+          (ignore-errors (xna:dispose (device-event-manager game))))
+        (ignore-errors (xna:dispose game))))))

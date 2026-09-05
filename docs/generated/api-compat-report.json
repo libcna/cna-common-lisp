@@ -22,15 +22,15 @@
    "complete": 140
   },
   "members_by_status": {
-   "complete": 1817,
-   "missing": 38,
+   "complete": 1821,
+   "missing": 34,
    "not-applicable": 422,
    "partial": 15
   },
-  "diagnostics": 38,
+  "diagnostics": 34,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 38,
+   "missing_member": 34,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1470,12 +1470,12 @@
     "Textures": "complete",
     "VertexSamplerStates": "complete",
     "SamplerStates": "complete",
-    "Disposing": "missing",
+    "Disposing": "complete",
     "ResourceDestroyed": "missing",
     "ResourceCreated": "missing",
-    "DeviceLost": "missing",
-    "DeviceReset": "missing",
-    "DeviceResetting": "missing"
+    "DeviceLost": "complete",
+    "DeviceReset": "complete",
+    "DeviceResetting": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:graphics-device"
   },
@@ -3558,11 +3558,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Disposing",
-   "detail": "CNA has the route -- cna_graphics_device_subscribe_event with CNA_GRAPHICS_DEVICE_EVENT_DISPOSING -- so this is implementable and not yet implemented. What it needs is somewhere to keep the registration: the device is a parent-owned facade with no handle of its own, and CNA requires every registration to be released before cna_game_destroy succeeds, so the game has to release the device's subscriptions as part of its own teardown. Recorded as the next implementable step rather than as a limit."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceDestroyed",
    "detail": "cna_graphics_device_subscribe_resource_destroyed exists. Same payload question as ResourceCreated, from the other end of the resource's life."
   },
@@ -3570,21 +3565,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceCreated",
    "detail": "cna_graphics_device_subscribe_resource_created exists, and carries a payload the other four device events do not. CNA's own header is the reason to be careful with it: 'the canonical event is raised from the graphics-resource base constructor, so the reported object is still under construction: its concrete type does not exist yet and no member of it can' be used. Projecting that needs a decision about what object a handler is handed, and inventing a half-built resource is not it."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceLost",
-   "detail": "See Disposing: CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST, same mechanism, same registration-lifetime question."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceReset",
-   "detail": "See Disposing: CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET. **This is GraphicsDevice's own event, not IGraphicsDeviceService's same-named one** -- those five are already complete on GraphicsDeviceManager, and confusing the two is the mistake docs/limitations.md records under Game.Services."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceResetting",
-   "detail": "See DeviceReset, and the same warning about the name collision."
   },
   {
    "category": "missing_member",

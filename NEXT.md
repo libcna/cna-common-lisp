@@ -105,9 +105,9 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 <!-- generated:complete types=140 -->
 <!-- generated:partial types=14 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1817 -->
+<!-- generated:complete members=1821 -->
 <!-- generated:partial members=15 -->
-<!-- generated:missing members=38 -->
+<!-- generated:missing members=34 -->
 <!-- generated:not-applicable members=422 -->
 <!-- generated:disagreement total=0 -->
 
@@ -121,9 +121,9 @@ Selection **Foundation 1 and the managed closures**: 154 types, 2292 members.
 | Types complete | **140** |
 | Types partial | **14** |
 | Types missing | **0** |
-| Members complete | **1817** |
+| Members complete | **1821** |
 | Members partial | **15** |
-| Members missing | **38** |
+| Members missing | **34** |
 | Members not applicable | **422** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -146,7 +146,7 @@ members actually are:
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 14 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 10 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
@@ -172,7 +172,7 @@ one.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 14 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 10 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
@@ -243,10 +243,8 @@ the graph after each closure instead of following this list once it has moved.
    Read `unimplemented` in `tools/api-compat/mapping-rules.json` before assuming
    anything about what is left.
 
-   The three worth knowing: **`GraphicsDevice`'s four payload-free events** have
-   routes (`cna_graphics_device_subscribe_event`) and need only somewhere to keep
-   the registration, since the device is a facade with no handle and CNA requires
-   every registration released before `cna_game_destroy`; **`Game.Window`** needs
+   The first of the three has since been done -- `GraphicsDevice`'s four
+   payload-free events are complete. Two left: **`Game.Window`** needs
    only the `GameWindow` type, because `runtime_window.h` is a full window surface
    keyed by the game handle; and **`GraphicsDevice.Adapter`** needs `GraphicsAdapter`,
    whose thirteen CNA routes all take a *callback-scoped device handle* -- so

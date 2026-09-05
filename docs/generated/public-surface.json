@@ -12563,6 +12563,72 @@
           "documentation": "DynamicVertexBuffer.ContentLost and DynamicIndexBuffer.ContentLost.\n\nHANDLER is called with the buffer. **CNA does not raise this today**: its buffer\ninfo reports content loss as always false, so a subscription is accepted, held\nand released correctly and is never invoked. See docs/limitations.md."
         },
         {
+          "name": "add-device-lost-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DeviceLost: the device was lost.\n\nHANDLER is called with the device. Subscribing is legal only inside a game\nlifecycle method, because that is when CNA lends the handle the subscription is\nmade through."
+        },
+        {
+          "name": "add-device-reset-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DeviceReset: the device finished resetting.\n\n**The device's own event, not `IGraphicsDeviceService`'s same-named one** --\nthat is `MICROSOFT.XNA.FRAMEWORK:ADD-DEVICE-RESET-HANDLER', on the manager."
+        },
+        {
+          "name": "add-device-resetting-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DeviceResetting: the device is about to reset. See DeviceReset\nfor why this is a different function from the manager's same-named one."
+        },
+        {
           "name": "add-disposing-handler",
           "fbound": true,
           "macro": false,
@@ -18945,6 +19011,72 @@
           "constant": false,
           "value": null,
           "documentation": "The `-=' of add-content-lost-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-device-lost-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-device-lost-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-device-reset-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-device-reset-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-device-resetting-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-device-resetting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
           "name": "remove-disposing-handler",

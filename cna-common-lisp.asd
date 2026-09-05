@@ -110,6 +110,10 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "runtime/game-events")
    (:file "runtime/graphics-device-manager")
    (:file "runtime/manager-events")
+   ;; The graphics device's own four events. After manager-events, because three
+   ;; of the four pairs are shared with types declared there and in
+   ;; graphics-resource, and a method needs its generic function to exist.
+   (:file "graphics/graphics-device-events")
    ;; The component engine: classes CNA calls back into, and the collection the
    ;; game drives them from. After Game, whose class it extends.
    (:file "runtime/game-components")

@@ -74,6 +74,17 @@ Disposing event. Void-returning, like the game event dispatcher.")
     (when dispatcher
       (ignore-errors (funcall dispatcher (pointer-address context))))))
 
+(defvar *graphics-device-event-dispatcher* nil
+  "Function of one integer token, called when CNA raises one of the graphics
+device's four payload-free events. Void-returning, like the others.")
+
+(defcallback graphics-device-event-callback :void ((graphics-device :uint64)
+                                                   (context :pointer))
+  (declare (ignore graphics-device))
+  (let ((dispatcher *graphics-device-event-dispatcher*))
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context))))))
+
 (defvar *buffer-content-lost-dispatcher* nil
   "Function of one integer token, called when CNA raises a ContentLost event.
 Void-returning, like the other event dispatchers.")
@@ -93,6 +104,15 @@ three routes that raise a ContentLost -- the vertex buffer's, the index buffer's
 and the render target's -- have the same shape, (handle, context) returning void,
 so one callback serves all of them."
   (callback buffer-content-lost-callback))
+
+(defun graphics-device-event-callback-pointer ()
+  "The one top-level callback CNA is given for every device-event subscription.
+
+`CNA_GraphicsDeviceEventCallback' has the same (handle, context) shape the
+Disposing and ContentLost callbacks do, and the handle is ignored for the same
+reason: the token already names the CLOS object, and the graphics device does not
+keep a handle to be compared against anyway."
+  (callback graphics-device-event-callback))
 
 (defun resource-disposing-callback-pointer ()
   "The one top-level callback CNA is given for every Disposing subscription.

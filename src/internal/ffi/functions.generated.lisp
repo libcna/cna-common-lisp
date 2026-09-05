@@ -174,6 +174,14 @@
 (defcfun ("cna_graphics_device_get_status" %graphics-device-get-status) :uint32
   (graphics-device :uint64) (out-status :pointer))
 
+;;; CNA_Result cna_graphics_device_subscribe_event(CNA_Handle graphics_device, CNA_GraphicsDeviceEvent device_event, CNA_GraphicsDeviceEventCallback callback, void* context, CNA_GraphicsDeviceEventRegistrationHandle* out_registration)
+(defcfun ("cna_graphics_device_subscribe_event" %graphics-device-subscribe-event) :uint32
+  (graphics-device :uint64) (device-event :uint32) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_graphics_device_unsubscribe(CNA_GraphicsDeviceEventRegistrationHandle registration)
+(defcfun ("cna_graphics_device_unsubscribe" %graphics-device-unsubscribe) :uint32
+  (registration :uint64))
+
 ;;; CNA_Result cna_graphics_device_get_is_disposed(CNA_Handle graphics_device, CNA_Bool* out_is_disposed)
 (defcfun ("cna_graphics_device_get_is_disposed" %graphics-device-get-is-disposed) :uint32
   (graphics-device :uint64) (out-is-disposed :pointer))
@@ -1763,6 +1771,8 @@
     ("cna_graphics_device_set_presentation_parameters" %graphics-device-set-presentation-parameters :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_display_mode" %graphics-device-get-display-mode :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_status" %graphics-device-get-status :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_subscribe_event" %graphics-device-subscribe-event :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates-owned:graphics-device-event-registration:child-of-game")
+    ("cna_graphics_device_unsubscribe" %graphics-device-unsubscribe :uint32 (:uint64) :thread :owner :ownership "destroys:graphics-device-event-registration")
     ("cna_graphics_device_get_is_disposed" %graphics-device-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_clear_options" %graphics-device-clear-options :uint32 (:uint64 :uint32 :uint32 :float :int32) :thread :owner :ownership "none")

@@ -1205,10 +1205,6 @@
         "Dispose()": "CNA refuses this by design and says why: cna_graphics_device_dispose 'reports that C cannot dispose the graphics device owned by the active game', because 'disposing it through a borrowed handle would leave that game drawing into a destroyed device'. cna_game_destroy performs the canonical disposal. %CHECK-DISPOSABLE refuses it here for the same reason, one step earlier, and the refusal costs the facade nothing.",
         "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": "Needs an instanced vertex stream, and ABI 0.21.0 has **no instanced draw route at all** -- searched, not assumed. The vertex-buffer binding surface has no instance frequency either, so there is nothing to draw instanced from even if the draw existed.",
         "Adapter": "Needs GraphicsAdapter, which is not in the selection. The route to reach it exists -- cna_graphics_adapter_get_info and its neighbours, indexed by cna_graphics_device_get_adapter_index -- so this is a type that has not been projected rather than a capability CNA lacks. Note that every adapter route takes a **callback-scoped device handle**, so the projection would inherit a scope rule XNA's static GraphicsAdapter.Adapters has not got; that is the design question to settle before starting, not an obstacle.",
-        "Disposing": "CNA has the route -- cna_graphics_device_subscribe_event with CNA_GRAPHICS_DEVICE_EVENT_DISPOSING -- so this is implementable and not yet implemented. What it needs is somewhere to keep the registration: the device is a parent-owned facade with no handle of its own, and CNA requires every registration to be released before cna_game_destroy succeeds, so the game has to release the device's subscriptions as part of its own teardown. Recorded as the next implementable step rather than as a limit.",
-        "DeviceLost": "See Disposing: CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST, same mechanism, same registration-lifetime question.",
-        "DeviceReset": "See Disposing: CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET. **This is GraphicsDevice's own event, not IGraphicsDeviceService's same-named one** -- those five are already complete on GraphicsDeviceManager, and confusing the two is the mistake docs/limitations.md records under Game.Services.",
-        "DeviceResetting": "See DeviceReset, and the same warning about the name collision.",
         "ResourceCreated": "cna_graphics_device_subscribe_resource_created exists, and carries a payload the other four device events do not. CNA's own header is the reason to be careful with it: 'the canonical event is raised from the graphics-resource base constructor, so the reported object is still under construction: its concrete type does not exist yet and no member of it can' be used. Projecting that needs a decision about what object a handler is handed, and inventing a half-built resource is not it.",
         "ResourceDestroyed": "cna_graphics_device_subscribe_resource_destroyed exists. Same payload question as ResourceCreated, from the other end of the resource's life."
       },
@@ -1236,6 +1232,28 @@
         "DrawUserIndexedPrimitives": {
           "lisp": "draw-user-indexed-primitives",
           "reason": "Four overloads. Two axes: whether a VertexDeclaration is supplied, and whether the indices are Int16 or Int32 -- and the second is the index array's own element type here, which is what tells them apart in C# too."
+        }
+      },
+      "events": {
+        "Disposing": {
+          "add": "add-disposing-handler",
+          "remove": "remove-disposing-handler",
+          "reason": "Over cna_graphics_device_subscribe_event with CNA_GRAPHICS_DEVICE_EVENT_DISPOSING. The generic function is GraphicsResource's -- one name, two types, which is what a CLOS projection of two same-named CLR members looks like."
+        },
+        "DeviceLost": {
+          "add": "add-device-lost-handler",
+          "remove": "remove-device-lost-handler",
+          "reason": "The only one of the four whose generic function is the device's alone."
+        },
+        "DeviceReset": {
+          "add": "add-device-reset-handler",
+          "remove": "remove-device-reset-handler",
+          "reason": "**The device's own DeviceReset, not IGraphicsDeviceService's same-named event** -- that one is complete on GraphicsDeviceManager, which is the type that implements the interface. They share a generic function here because they share a name there, and mistaking one for the other is a mistake docs/limitations.md records under Game.Services."
+        },
+        "DeviceResetting": {
+          "add": "add-device-resetting-handler",
+          "remove": "remove-device-resetting-handler",
+          "reason": "See DeviceReset, including the warning about the name collision."
         }
       }
     },

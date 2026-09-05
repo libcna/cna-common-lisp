@@ -329,6 +329,10 @@
       "CNA_GRAPHICS_DEVICE_STATUS_NORMAL",
       "CNA_GRAPHICS_DEVICE_STATUS_LOST",
       "CNA_GRAPHICS_DEVICE_STATUS_NOT_RESET",
+      "CNA_GRAPHICS_DEVICE_EVENT_DISPOSING",
+      "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST",
+      "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET",
+      "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING",
       "CNA_CUBE_MAP_FACE_POSITIVE_X",
       "CNA_CUBE_MAP_FACE_NEGATIVE_X",
       "CNA_CUBE_MAP_FACE_POSITIVE_Y",
@@ -732,6 +736,9 @@
       "name": "CNA_GraphicsResourceDisposingCallback"
     },
     {
+      "name": "CNA_GraphicsDeviceEventCallback"
+    },
+    {
       "name": "CNA_VertexBufferContentLostCallback"
     },
     {
@@ -990,6 +997,18 @@
       "header": "graphics_device.h",
       "thread": "owner",
       "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_subscribe_event",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "creates-owned:graphics-device-event-registration:child-of-game"
+    },
+    {
+      "name": "cna_graphics_device_unsubscribe",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "destroys:graphics-device-event-registration"
     },
     {
       "name": "cna_graphics_device_get_is_disposed",

@@ -1014,6 +1014,38 @@ the assembly — the same static method `Viewport.TitleSafeArea` calls — so th
 arithmetic lives in one place here too, and a test asserts the two answer the same
 rectangle.
 
+### The device raises four events, and they are its own
+
+`Disposing`, `DeviceLost`, `DeviceReset` and `DeviceResetting`, over
+`cna_graphics_device_subscribe_event`. Two things about them are worth writing
+down, because both are decisions rather than mechanics.
+
+**A subscription needs the callback scope; releasing one does not.** The device is
+a facade with no handle, and the subscribe route wants the borrowed,
+callback-scoped one — so `add-device-lost-handler` outside a lifecycle method is a
+`CNA-SCOPE-ERROR`, exactly as every other device operation is. Unsubscribing is
+different: `cna_graphics_device_unsubscribe` takes only the registration. That
+asymmetry is what makes the teardown possible at all, because CNA requires every
+registration to be **released before `cna_game_destroy` succeeds** and the game
+destroys itself outside any callback. The game's `DESTROY-NATIVE :before` releases
+the device's subscriptions along with the component collection's, and the test
+leaves one subscription live on purpose so that a clean shutdown is the proof.
+
+**`DeviceReset` and `DeviceResetting` are the device's own**, and are *not* the
+same-named pair on `IGraphicsDeviceService`, which is complete on
+`GraphicsDeviceManager`. They are two different events on two different types, so
+they project onto two different generic functions in two different packages:
+`GFX:ADD-DEVICE-RESET-HANDLER` is the device's and
+`XNA:ADD-DEVICE-RESET-HANDLER` is the manager's. One XNA namespace is one Common
+Lisp package, and that rule is what keeps the two readable apart. `Disposing` is
+*not* like this — `GraphicsResource.Disposing` is in the same namespace, so it
+really is one generic function with two methods.
+
+Asking a device for an event it does not raise is a **name** error rather than a
+runtime refusal: each event is its own generic function, so CLOS answers before
+anything reaches the event table or CNA. That is the right answer and the test
+pins it as one.
+
 ### What is still missing from the device, and why
 
 `GraphicsProfile`, `DisplayMode`, `GraphicsDeviceStatus` and
@@ -1026,12 +1058,13 @@ rectangle.
   rather than settings. `cna_graphics_device_present` exists; the `Reset` family
   needs a decision about what resetting means for a device CNA lends rather than
   lets a program construct.
-* **The six device events** — `Disposing`, `ResourceCreated`, `ResourceDestroyed`,
-  `DeviceLost`, `DeviceReset`, `DeviceResetting` — need CNA subscription routes
-  this binding has not audited. Note that `DeviceReset` and `DeviceResetting` here
-  are `GraphicsDevice`'s *own*, not `IGraphicsDeviceService`'s same-named pair,
-  which are already complete on `GraphicsDeviceManager`; confusing the two is the
-  mistake `Game.Services` records above.
+* **Two of the six device events**, and only the two that carry a payload.
+  `ResourceCreated` and `ResourceDestroyed` have routes, and CNA's own header is
+  the reason to be careful: "the canonical event is raised from the
+  graphics-resource base constructor, so the reported object is still under
+  construction: its concrete type does not exist yet and no member of it can" be
+  used. Projecting that needs a decision about what object a handler is handed,
+  and a half-built resource is not it.
 * **`new(...)`, `Dispose`, `IsDisposed` and `Disposing`** are the device as an
   object a program constructs, which a CNA-Lisp program never does.
 

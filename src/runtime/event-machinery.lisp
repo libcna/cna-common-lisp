@@ -32,6 +32,22 @@
 
 (in-package #:microsoft.xna.framework)
 
+(defparameter *graphics-device-event-values*
+  (list (cons :disposing
+              cna-lisp.internal.ffi::+graphics-device-event-disposing+)
+        (cons :device-lost
+              cna-lisp.internal.ffi::+graphics-device-event-device-lost+)
+        (cons :device-reset
+              cna-lisp.internal.ffi::+graphics-device-event-device-reset+)
+        (cons :device-resetting
+              cna-lisp.internal.ffi::+graphics-device-event-device-resetting+))
+  "GraphicsDevice's four payload-free events.
+
+`DeviceReset' and `DeviceResetting' are **the device's own**, not the
+same-named pair on `IGraphicsDeviceService' -- those two are complete on
+GRAPHICS-DEVICE-MANAGER, and mistaking one set for the other is a mistake this
+project has already made once and written down.")
+
 (defparameter *graphics-device-manager-event-values*
   (list (cons :disposed
               cna-lisp.internal.ffi::+graphics-device-manager-event-disposed+)

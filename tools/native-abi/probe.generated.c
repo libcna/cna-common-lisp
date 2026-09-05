@@ -1230,6 +1230,8 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_presentation_parameter
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_presentation_parameters)(CNA_Handle, const CNA_PresentationParameters*) = cna_graphics_device_set_presentation_parameters;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_display_mode)(CNA_Handle, CNA_DisplayMode*) = cna_graphics_device_get_display_mode;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_status)(CNA_Handle, CNA_GraphicsDeviceStatus*) = cna_graphics_device_get_status;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_subscribe_event)(CNA_Handle, CNA_GraphicsDeviceEvent, CNA_GraphicsDeviceEventCallback, void*, CNA_GraphicsDeviceEventRegistrationHandle*) = cna_graphics_device_subscribe_event;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_unsubscribe)(CNA_GraphicsDeviceEventRegistrationHandle) = cna_graphics_device_unsubscribe;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_is_disposed)(CNA_Handle, CNA_Bool*) = cna_graphics_device_get_is_disposed;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_graphics_profile)(CNA_Handle, CNA_GraphicsProfile*) = cna_graphics_device_get_graphics_profile;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_clear_options)(CNA_Handle, CNA_ClearOptions, CNA_Color, float, int32_t) = cna_graphics_device_clear_options;
@@ -1623,6 +1625,7 @@ _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA
 _Static_assert(sizeof(CNA_GameBeginDrawCallback) == sizeof(void (*)(void)), "CNA_GameBeginDrawCallback size");
 _Static_assert(sizeof(CNA_GameEventCallback) == sizeof(void (*)(void)), "CNA_GameEventCallback size");
 _Static_assert(sizeof(CNA_GraphicsResourceDisposingCallback) == sizeof(void (*)(void)), "CNA_GraphicsResourceDisposingCallback size");
+_Static_assert(sizeof(CNA_GraphicsDeviceEventCallback) == sizeof(void (*)(void)), "CNA_GraphicsDeviceEventCallback size");
 _Static_assert(sizeof(CNA_VertexBufferContentLostCallback) == sizeof(void (*)(void)), "CNA_VertexBufferContentLostCallback size");
 _Static_assert(sizeof(CNA_IndexBufferContentLostCallback) == sizeof(void (*)(void)), "CNA_IndexBufferContentLostCallback size");
 _Static_assert(sizeof(CNA_RenderTargetContentLostCallback) == sizeof(void (*)(void)), "CNA_RenderTargetContentLostCallback size");
@@ -1800,6 +1803,10 @@ _Static_assert((int64_t)(CNA_GESTURE_TYPE_PINCH) == INT64_C(64), "CNA_GESTURE_TY
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_PINCH_COMPLETE) == INT64_C(512), "CNA_GESTURE_TYPE_PINCH_COMPLETE value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_TAP) == INT64_C(1), "CNA_GESTURE_TYPE_TAP value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_VERTICAL_DRAG) == INT64_C(16), "CNA_GESTURE_TYPE_VERTICAL_DRAG value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST) == INT64_C(1), "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET) == INT64_C(2), "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING) == INT64_C(3), "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_EVENT_DISPOSING) == INT64_C(0), "CNA_GRAPHICS_DEVICE_EVENT_DISPOSING value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED) == INT64_C(1), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING) == INT64_C(2), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET) == INT64_C(3), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET value");

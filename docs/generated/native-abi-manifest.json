@@ -24,11 +24,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 427,
+    "functions": 429,
     "structs": 65,
     "struct_fields": 492,
-    "constants": 499,
-    "callbacks": 9,
+    "constants": 503,
+    "callbacks": 10,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
   },
@@ -1031,6 +1031,60 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_get_status(CNA_Handle graphics_device, CNA_GraphicsDeviceStatus* out_status)"
+    },
+    {
+      "name": "cna_graphics_device_subscribe_event",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "device_event",
+          "c_type": "CNA_GraphicsDeviceEvent",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_GraphicsDeviceEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GraphicsDeviceEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:graphics-device-event-registration:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_subscribe_event(CNA_Handle graphics_device, CNA_GraphicsDeviceEvent device_event, CNA_GraphicsDeviceEventCallback callback, void* context, CNA_GraphicsDeviceEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_graphics_device_unsubscribe",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_GraphicsDeviceEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:graphics-device-event-registration",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_unsubscribe(CNA_GraphicsDeviceEventRegistrationHandle registration)"
     },
     {
       "name": "cna_graphics_device_get_is_disposed",
@@ -15926,6 +15980,23 @@
       ]
     },
     {
+      "name": "CNA_GraphicsDeviceEventCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
       "name": "CNA_VertexBufferContentLostCallback",
       "returns": ":void",
       "c_returns": "void",
@@ -16177,6 +16248,10 @@
     "CNA_GESTURE_TYPE_PINCH_COMPLETE": 512,
     "CNA_GESTURE_TYPE_TAP": 1,
     "CNA_GESTURE_TYPE_VERTICAL_DRAG": 16,
+    "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST": 1,
+    "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET": 2,
+    "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING": 3,
+    "CNA_GRAPHICS_DEVICE_EVENT_DISPOSING": 0,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED": 1,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING": 2,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET": 3,

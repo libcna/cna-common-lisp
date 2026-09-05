@@ -25,9 +25,11 @@ by tools/native-abi/generate.py.")
    #:lifecycle-callback-pointer
    #:game-event-callback-pointer
    #:resource-disposing-callback-pointer
+   #:graphics-device-event-callback-pointer
    #:*lifecycle-dispatcher*
    #:*game-event-dispatcher*
    #:*resource-disposing-dispatcher*
+   #:*graphics-device-event-dispatcher*
    #:content-lost-callback-pointer
    #:component-callback-pointers #:*component-dispatcher*
    #:component-event-callback-pointer #:*component-event-dispatcher*
