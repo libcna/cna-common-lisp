@@ -143,9 +143,13 @@ of them uses. Accepting is not having: a texture's method refuses
 refuses `:LEVEL` and `:SOURCE`, because silently ignoring one would invent an
 overload XNA has not got.
 
-`Texture2D.FromStream`, `SaveAsPng` and `SaveAsJpeg` remain absent: all four need
-the `System.IO.Stream` projection. `TEXTURE-2D-FROM-PNG-BYTES` and
-`TEXTURE-2D-FROM-PNG-FILE` stay declared extensions until then.
+`Texture2D`'s four stream members are no longer absent: the `System.IO.Stream`
+projection landed, and a Common Lisp binary stream from `OPEN` is what they take.
+`SaveAsPng` and `SaveAsJpeg` are **complete**; both `FromStream` overloads are
+**partial**, for the two reasons the section on `System.IO.Stream` sets out below
+rather than for want of a stream. `TEXTURE-2D-FROM-PNG-BYTES` and
+`TEXTURE-2D-FROM-PNG-FILE` remain declared extensions, now as conveniences beside
+the contract members rather than as substitutes for them.
 
 ## Cube render targets exist, and only some renderers will bind one
 
@@ -593,14 +597,17 @@ does not set it. The `ContentLost` subscription and its release are real and are
 exercised; the raise is CNA's to make and neither qualification renderer ever
 will.
 
-**Three of `GraphicsDevice`'s render-target members are still absent**, and for
-one reason: `SetRenderTarget(RenderTargetCube, CubeMapFace)`,
-`SetRenderTargets(RenderTargetBinding[])` and `GetRenderTargets()` all need
-`RenderTargetCube` and `CubeMapFace`, and `RenderTargetCube` derives from
-`TextureCube`, which needs the texture data surface `Texture2D` has not got here
-either. They carry explicit absences in the mapping rules rather than being left
-to the default naming rule — which would have resolved the cube overload onto
-`SET-RENDER-TARGET`, the 2D one, and reported it complete.
+**`GraphicsDevice`'s render-target surface is complete.** For one milestone
+`SetRenderTarget(RenderTargetCube, CubeMapFace)`,
+`SetRenderTargets(RenderTargetBinding[])` and `GetRenderTargets()` were absent
+together, because all three need `RenderTargetCube` and `CubeMapFace` and
+`RenderTargetCube` derives from `TextureCube`, which needed the texture data
+surface. That closure landed and so did these. What is worth keeping from it is
+the mechanism: they carried **explicit** absences in the mapping rules rather
+than being left to the default naming rule, which would have resolved the cube
+overload onto `SET-RENDER-TARGET`, the 2D one, and reported it complete when
+nothing implemented it. An absence that the naming rule can satisfy by accident
+has to be declared.
 
 ## The stock effects, and what their evidence is worth
 
@@ -678,9 +685,12 @@ each keeps its own texels, which is what tells a real face selector from an inde
 that is ignored. The test branches and both branches assert: a renderer without
 the storage must refuse *by name*.
 
-`RenderTargetCube` and `RenderTargetBinding` are still absent, and with them
-`GraphicsDevice`'s `SetRenderTarget(RenderTargetCube, CubeMapFace)`,
-`SetRenderTargets` and `GetRenderTargets`.
+`RenderTargetCube` is complete and `RenderTargetBinding` is partial in one
+member, and with them `GraphicsDevice`'s
+`SetRenderTarget(RenderTargetCube, CubeMapFace)`, `SetRenderTargets` and
+`GetRenderTargets` are all complete. The two subsections above are what remains
+true of this family: which renderers will bind a cube target, and what
+`GetRenderTargets` can answer.
 
 ## SpriteFont has no constructor, and that is XNA's shape
 
@@ -1332,12 +1342,25 @@ a particular cascade order is the right one.
 These are absent, and measured as absent, not faked:
 
 * `GameServiceContainer` and `Game.Services` — see below;
-* `ContentManager` and the XNB pipeline;
-* `GameWindow` as a type -- only the window title is reachable, on `game`;
-* `Model`, `Texture3D`, `TextureCube`, `RenderTargetCube` and the rest of the 3D
-  resource surface;
-* `EnvironmentMapEffect`, the one stock effect still absent — see below;
-* audio, media, storage, gamer services and networking.
+* whole XNA namespaces outside the selected profile: **audio, media, storage,
+  gamer services and networking**;
+* the rest of the 3D resource surface — `Model`, `Texture3D`, and the
+  `EffectParameter` member that needs one.
+
+**This list is the one place in this file that must name only what is absent
+now**, and it had stopped doing that. It carried `ContentManager` and the XNB
+pipeline, `GameWindow` as a type, `TextureCube`, `RenderTargetCube` and
+`EnvironmentMapEffect` for as long as it took each of those closures to land,
+and none of the five was removed when its closure did. Every one of them is
+projected today: `ContentManager` and `GameWindow` are partial, `TextureCube` is
+partial, and `RenderTargetCube`, `EnvironmentMapEffect` and `GameComponent` are
+complete. The generated per-type table in `docs/compatibility.md` is the
+authority, and a sentence here that disagrees with it is a defect in this file.
+
+The absences that stayed on that list after being answered are the reason
+`verify.py` now measures `*DECLARED-ABSENCES*` against the report and calls a
+survivor `stale_declared_absence`. Prose cannot be checked that way; a list this
+short can at least be kept next to the check that can.
 
 The math types are present and complete: `Vector2`, `Vector3`, `Vector4`,
 `Quaternion`, `Matrix`, `Plane`, `Ray`, `BoundingBox`, `BoundingSphere`,

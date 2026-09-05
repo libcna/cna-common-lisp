@@ -170,15 +170,21 @@ sprite game:
 `SpriteSortMode`, `SpriteEffects`, `SurfaceFormat`, `PlayerIndex`, `Keyboard`,
 `KeyboardState`, `KeyState`, `Keys`, and the condition hierarchy.
 
-`GameWindow` is not implemented as a type; only the window title is reachable,
-on `game`, and that is recorded as a deliberate absence.
-
 The selection then grows one **dependency-complete closure** at a time, in the
 order `NEXT.md` records, and never by a member here and a member there. A closure
 is added only when every member of it can be finished, tested and measured
 together, because a half-implemented family reports its own cross-product members
-as missing anyway and hides which absences are real. The closures added so far
-are pure managed and touch no native route:
+as missing anyway and hides which absences are real.
+
+**The list below is a chronological record of the closures as they landed, not a
+statement of current status.** Each entry says what was true when it was written
+-- "the fourth stock effect is absent", "the rasterizer lane gained its third
+proof" -- and later closures have answered several of those. The current status
+is the generated scoreboard in section 6 and the per-type table in
+`docs/compatibility.md`; nothing here may be read as a live constraint. Where an
+entry's claim has since been overtaken, the entry says so inline rather than
+being rewritten, because the order these were added in is the thing this list is
+for.
 
 * the 3D transform types -- `Vector3`, `Vector4`, `Quaternion`, `Matrix`,
   `Plane`, `MathHelper`;
@@ -228,8 +234,10 @@ are pure managed and touch no native route:
   hope: the first two implement neither that interface nor any part of it, and a
   generic function specialised on `Effect` had been giving them an applicable
   method for a member they have not got. `EnvironmentMapEffect` is the fourth and
-  is deliberately absent: its `EnvironmentMap` is a `TextureCube`, which is not
-  projected, and a closure is added whole or not at all;
+  was deliberately absent at this point: its `EnvironmentMap` is a `TextureCube`,
+  which was not projected then, and a closure is added whole or not at all.
+  **Overtaken:** the `TextureCube` closure below brought both in, and all four
+  other stock effects are complete;
 * the render-target closure -- `RenderTarget2D`, `RenderTargetUsage`,
   `DepthFormat` and `GraphicsDevice.SetRenderTarget` -- which is the first thing
   here whose contents can be read without `GetBackBufferData`, because
@@ -237,8 +245,10 @@ are pure managed and touch no native route:
   The rasterizer lane's sixth proof uses that: a clear into a bound target leaves
   the back buffer untouched, and the target's own contents then reach the screen
   through the texture path;
-* **content** -- `ContentManager`, `Game.Content`, and `Load<T>` over the three
-  asset types CNA has a route for. This is the member that closes the SpriteFont
+* **content** -- `ContentManager`, `Game.Content`, and `Load<T>` over the asset
+  types CNA has a route for, which were three at this point and are four since
+  `Load<Effect>` landed; `LOADABLE-ASSET-TYPES` is the live answer and the
+  README renders it. This is the member that closes the SpriteFont
   loop: a font is glyph metrics *and* an atlas, neither of which a program can
   construct from arguments, so until a content manager existed the only producer
   was a test-only one. `Load<T>` stays a single member here rather than becoming
@@ -252,10 +262,12 @@ are pure managed and touch no native route:
   takes a callback set and supplies the object implementing its C++ interfaces,
   and a component's behaviour is its CLOS methods on the same generic functions a
   `Game` specialises. The tests assert counts taken inside CNA's own loop, so an
-  engine that was exported and never wired would fail them. `Game.Services`
-  is deliberately absent: CNA's service container has no route that registers a
-  service or hands one back, so `GetService` could not be answered for the two
-  services the runtime registers;
+  engine that was exported and never wired would fail them. `Game.Services` is
+  deliberately absent, and the reason has since been re-audited route by route
+  against 0.21.0: CNA's container has `contains_ext` and `remove_ext` over a
+  closed two-member enum, no get route at all, and no registration route **by
+  explicit decision**, so `GetService` cannot be answered *from CNA*.
+  `docs/limitations.md` carries the audit and the one option it leaves open;
 * `Texture2D`'s own construction and data surface -- both constructors and the
   three `SetData` and three `GetData` overloads, as narrow as the buffers' and
   over the same proven layouts. With it the rasterizer lane gained a seventh kind
