@@ -185,9 +185,12 @@ functions, never a callback table:
 | `Game.OnExiting` | `on-exiting` | does nothing |
 
 The default methods do what XNA's base implementations do **for a game with no
-components**: nothing, except that `BeginDraw` answers true. The component
-engine that would give them more to do is not implemented, and is reported as
-missing rather than faked.
+components**: nothing, except that `BeginDraw` answers true. With components the
+engine gives them more to do, and it is CNA's own — `cna_game_components_add` puts
+a component in the collection the game drives, and CNA calls `Initialize`,
+`Update`, `Draw`, `LoadContent` and `UnloadContent` in its order, honouring
+`UpdateOrder`, `DrawOrder`, `Enabled` and `Visible`. See "The component engine
+runs, and two things around it do not" in `docs/limitations.md`.
 
 `initialize` is CNA-Lisp's name for `Game.Initialize`. It is a distinct symbol
 from `cl:initialize-instance`, and a subclass that wants to build its own state

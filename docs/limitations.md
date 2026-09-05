@@ -481,9 +481,10 @@ that changed it would fail rather than pass quietly. Add components in
 
 ### `Game.Services` is not projected, and not for the reason this file used to give
 
-`Game.Services` is in the selection and is **missing**. `GameServiceContainer`
-itself is not in the selection at all — it arrives with the device-settings
-closure.
+`Game.Services` is in the selection and is **missing**, categorised
+`PUBLIC_OBJECT_MODEL_CLOSURE`. `GameServiceContainer` itself is not in the
+selection at all, and is not scheduled: the device-settings closure it was once
+said to arrive with has landed without it.
 
 An earlier version of this section said the blocker was that
 `IGraphicsDeviceService` and `IGraphicsDeviceManager` are not projected, and that
@@ -541,11 +542,11 @@ either.
 
 What stops that being done here and now is scope, not doubt: `GameServiceContainer`
 is **not in the selection**, and putting it there means importing the type from the
-pinned contract and reading its three members out of the IL. That is the
-device-settings closure's work, and it is listed there rather than done early. A
-Lisp dictionary *on its own* — one that answered a program's own services and
-invented the two canonical ones — remains refused, because inventing them is the
-part that would be wrong.
+pinned contract and reading its three members out of the IL. That is a closure of
+its own and it is not scheduled — the device-settings closure this was once
+assigned to has landed, and did not take it. A Lisp dictionary *on its own* — one
+that answered a program's own services and invented the two canonical ones —
+remains refused, because inventing them is the part that would be wrong.
 
 
 ### LaunchParameters is empty unless the program fills it
@@ -791,10 +792,11 @@ destroyed until this SpriteFont is destroyed" — so disposing them in the wrong
 order is a refusal naming both types instead of a native failure later. The game
 still refuses while the texture lives, so CNA's ordering holds transitively.
 
-`ContentManager` has arrived, and `Unload` is **not** yet the thing that disposes
-both: CNA's unload does not destroy what it handed out, which is why `Unload()`
-and `Dispose()` are reported partial above. Disposal is the caller's, font first.
-No public `Texture2D` atlas is exposed for a SpriteFont, because XNA exposes none.
+**`Unload` is what disposes both**, in the right order, when the font came from
+`ContentManager.Load<SpriteFont>` — see "The cache is XNA's, and now so is
+`Unload`" above, which is the authority on that. A font a test built by hand is
+still the caller's to dispose, font first. No public `Texture2D` atlas is exposed
+for a SpriteFont, because XNA exposes none.
 
 ## The foreign layer is qualified for one host, and refuses the others
 
@@ -1169,20 +1171,25 @@ out of CNA at the moment it is asked, exactly as the graphics device resolves it
 handle per call.
 
 `PresentationParameters` is a **snapshot and not a live view**, and the difference
-is one a program cannot currently act on: XNA's property answers the device's own
-object, and mutating that changes nothing there either until a `Reset` — which is
-not projected, so nothing here could act on it. `MAKE-INSTANCE` with no arguments
+is smaller than it sounds: XNA's property answers the device's own object, and
+mutating that changes nothing there either until a `Reset`. `Reset` *is* projected
+— all three overloads — so the way to apply changed settings is the same on both
+sides: mutate a parameters object and hand it to `Reset`. What a program cannot do
+here is mutate the object the getter answered and expect the device to have seen
+it, because that object is a copy. `MAKE-INSTANCE` with no arguments
 is XNA's parameterless constructor and its defaults come from
 `cna_presentation_parameters_init` rather than being restated in Lisp, because a
 list of numbers restated is a list of numbers that can drift. `Clone` goes through
 `cna_presentation_parameters_clone` for the same reason: a field a later struct
 version adds is copied by the routine that knows about it.
 
-**`DeviceWindowHandle` is missing, and CNA refuses it by design.**
-`cna_graphics_device_get_device_window_handle` answers `CNA_RESULT_NOT_SUPPORTED`
-after validating the device — a native window handle is not something the stable C
-boundary hands out — and an `IntPtr` is not a thing this projection has to hand
-one back in.
+**`DeviceWindowHandle` is missing, and CNA refuses it by design.** The route is
+`cna_graphics_device_get_native_window_handle` — there is no
+`cna_graphics_device_get_device_window_handle`, and the reason that named one was
+corrected in the audit table further down this file and left wrong here until the
+second documentation audit. It answers `CNA_RESULT_NOT_SUPPORTED` after validating
+the device — a native window handle is not something the stable C boundary hands
+out — and an `IntPtr` is not a thing this projection has to hand one back in.
 
 **There is no `DISPLAY-MODE-EQUAL`, and CNA having a route for one is not a
 reason.** `cna_display_mode_equals` compares two modes by width, height and
@@ -1231,14 +1238,52 @@ pins it as one.
 
 ### What is still missing from the device, and why
 
-`GraphicsProfile`, `DisplayMode`, `GraphicsDeviceStatus` and
-`PresentationParameters` are complete. What is left is four different things:
+`GraphicsProfile`, `DisplayMode`, `GraphicsDeviceStatus`, `PresentationParameters`,
+`Adapter`, the three `Reset` overloads, `Present()` and `DrawInstancedPrimitives`
+are all complete. The device's five missing members are **two** things, and both
+are closures rather than members. Its one partial member, `Viewport`'s setter, is
+the by-value aggregate the optional shim exists for and is treated separately
+above.
 
-* **`Adapter`** needs `GraphicsAdapter`, which is not in the selection.
-  `cna_graphics_device_get_adapter_index` answers an index into CNA's own adapter
-  queries, so the route is there and the type is not.
-* Nothing about `Reset` or `Present` — **both are complete**, and the entry that
-  used to stand here was wrong. It said the `Reset` family "needs a decision about
+* **Two of the six device events**, and only the two that carry a payload.
+  `ResourceCreated` and `ResourceDestroyed` have routes, and CNA's own header is
+  the reason to be careful: "the canonical event is raised from the
+  graphics-resource base constructor, so the reported object is still under
+  construction: its concrete type does not exist yet and no member of it can" be
+  used. Projecting that needs a decision about what object a handler is handed,
+  and a half-built resource is not it.
+* **`new(...)` and `Dispose()`** are the device as an object a program constructs,
+  which a CNA-Lisp program never does. `IsDisposed` and `Disposing` are complete;
+  these two are not, and **not because CNA lacks the routes** —
+  `cna_graphics_device_create` and `cna_graphics_device_destroy` both exist, and
+  the destroy explicitly accepts only a *caller-created* device and refuses a
+  game's borrowed one, which is the same rule this binding enforces. What they
+  need is a second kind of `GraphicsDevice`: an owned one with a handle of its
+  own, alongside the parent-owned facade, and every device operation learning
+  which of the two it has. That is a closure of its own rather than two members to
+  add, and it is written down here so the next reader starts from the routes
+  rather than from an assumption.
+
+  **`Present(Nullable, Nullable, IntPtr)` sits with these two**, and is the third
+  of the five: `cna_graphics_device_present` takes no arguments beyond the device,
+  and an `IntPtr` override window is not a thing this projection can express. It is
+  counted here rather than given a bullet because it needs the same two decisions.
+
+
+#### Historical finding / retired limitation: three reasons that were wrong
+
+Everything in this subsection describes absences that have since closed, and is
+kept because *how* the reasons were wrong is the useful part. Nothing here is a
+current limitation.
+
+* **`Adapter` was listed here as blocked** and is complete, and so is `GraphicsAdapter` with
+  `DisplayModeCollection`. The entry that used to stand here said the type "is not
+  in the selection", which was true when written and had been false for a closure
+  by the time the second documentation audit read it. "The adapter surface is
+  complete, and needs a device to reach" above is the current statement, including
+  the two static members that are partial and why.
+* **`Reset` and `Present` were listed here as blocked** and are complete. The entry
+  was wrong. It said the `Reset` family "needs a decision about
   what resetting means for a device CNA lends", which was speculation rather than
   a measurement: `cna_graphics_device_reset` and
   `cna_graphics_device_reset_with_parameters` were there all along. The three
@@ -1248,7 +1293,7 @@ pins it as one.
 
   It is left recorded rather than quietly deleted, because it is the same mistake
   `Game.Services` made: a confident reason written without reading the routes.
-* Nothing about `DrawInstancedPrimitives` either — **it is complete**, and the
+* **`DrawInstancedPrimitives` was listed here as blocked** and is complete. The
   reason that used to stand for it was the third instance of that same mistake,
   and the most explicit one. It read: "ABI 0.21.0 has **no instanced draw route
   at all** — searched, not assumed". The search it claimed had happened had not.
@@ -1292,38 +1337,12 @@ pins it as one.
   `GraphicsAdapter.MonitorHandle`, `GameWindow.Handle`,
   `EffectParameter.GetValueTexture3D` (`Texture3D` is not in the selection),
   `GraphicsDevice.new`/`Dispose`, and the eleven protected raisers.
-* **Two of the six device events**, and only the two that carry a payload.
-  `ResourceCreated` and `ResourceDestroyed` have routes, and CNA's own header is
-  the reason to be careful: "the canonical event is raised from the
-  graphics-resource base constructor, so the reported object is still under
-  construction: its concrete type does not exist yet and no member of it can" be
-  used. Projecting that needs a decision about what object a handler is handed,
-  and a half-built resource is not it.
-* **`new(...)` and `Dispose()`** are the device as an object a program constructs,
-  which a CNA-Lisp program never does. `IsDisposed` and `Disposing` are complete;
-  these two are not, and **not because CNA lacks the routes** —
-  `cna_graphics_device_create` and `cna_graphics_device_destroy` both exist, and
-  the destroy explicitly accepts only a *caller-created* device and refuses a
-  game's borrowed one, which is the same rule this binding enforces. What they
-  need is a second kind of `GraphicsDevice`: an owned one with a handle of its
-  own, alongside the parent-owned facade, and every device operation learning
-  which of the two it has. That is a closure of its own rather than two members to
-  add, and it is written down here so the next reader starts from the routes
-  rather than from an assumption.
-
-`GraphicsDeviceManager`'s remaining ten are the five protected `On*` raisers,
-`PreparingDeviceSettings` and its event args, and
-`FindBestDevice`/`RankDevices`/`CanResetDevice`, which are the device-selection
-algorithm rather than a setting.
-
-## Texture extent comes from the image, not from CNA
-
-CNA has no route reporting a `Texture2D`'s pixel extent. `width` and `height`
-therefore report what the PNG header of the supplied image declared. For a
-payload that is not a PNG they report zero, which is the truth: nothing about the
-extent is known.
-
-`level-count` and `format-of` come from CNA's own `cna_texture_get_info`.
+`GraphicsDeviceManager`'s remaining nine are the five protected `On*` raisers, the
+`PreparingDeviceSettings` event, and `FindBestDevice`/`RankDevices`/
+`CanResetDevice`, which are the device-selection algorithm rather than a setting.
+The count used to read "ten" because it counted `PreparingDeviceSettingsEventArgs`
+— a type, and not one of this type's members. The generated frontier table in
+`docs/compatibility.md` is what to count from.
 
 ## Disposal is not cascaded
 

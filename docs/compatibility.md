@@ -372,11 +372,11 @@ back-reference.
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
-The counts in that table are the real remaining surface. The largest by far is
-`GraphicsDevice`'s own render-target and remaining state surface; the rest is
-`System.IO.Stream` and the `Texture2D` members that need it, and the parts of
-`Game` and `GraphicsDeviceManager` that need a component engine, a content
-manager or a device-settings type.
+The counts in that table are the real remaining surface, and the table is where to
+read it: a sentence here naming which type is largest has gone stale twice, both
+times because the closure it described had landed. The render-target family,
+`System.IO.Stream`, the content manager, the device-settings types and the
+component engine were each named here as remaining after each had closed.
 
 ## Why each non-complete member is non-complete
 
