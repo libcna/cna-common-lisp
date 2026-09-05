@@ -398,7 +398,88 @@ the graph after each closure instead of following this list once it has moved.
    enter the selection and its three members have to come out of the IL first. A
    Lisp dictionary on its own, inventing the two canonical services, stays refused.
    `docs/limitations.md` has the full audit.
-2. **Audio, models, media, storage, gamer services, networking.**
+2. **Audio** -- the next closure, and measured rather than guessed. See below.
+3. Models, media, storage, gamer services, networking.
+
+## The next closure is Audio, and here is what it is made of
+
+**Nothing here is implemented and the selection has not grown.** This section is
+the measurement that a dependency-complete Audio closure needs before any of it
+is designed, done at the Foundation 1 release audit because the answer decides
+whether Audio is the right next closure. It is: both authorities are already
+pinned, CNA's ABI is complete for it, and the qualification levels are reachable.
+
+**Do not add these types to `SELECTED` until the implementation lands with
+them.** A selected type with nothing behind it is a *missing type*, and "no
+selected type is missing" is a property the Foundation 1 release statement uses.
+This closure goes in whole, as every closure here does.
+
+### Both authorities are already pinned
+
+`Microsoft.Xna.Framework.Audio.SoundEffect` and `SoundEffectInstance` are in
+**`Microsoft.Xna.Framework.dll`** -- the assembly this project already pins by
+SHA-256 and already reads behaviour from. No new assembly has to be found or
+hashed. The 257-type contract snapshot carries **19 Audio types**, so the
+structural authority is in place too.
+
+### What CNA 0.21.0 actually has
+
+`modules/c-api/include/CNA/C/audio.h` is 1241 lines and exports **74 routes**.
+Inventoried whole rather than by guessing names, they fall into five families:
+
+| Family | Routes | Enough for the XNA type? |
+| --- | ---: | --- |
+| `cna_sound_effect_*` | 24 | yes -- both `create_pcm16` forms, `from_encoded_ext`, `from_asset_ext`, `create_instance`, the four statics, duration, name, disposal |
+| `cna_sound_effect_instance_*` | 15 | yes -- play/pause/resume/stop, volume/pitch/pan/looping, `get_info`, `apply_3d` and `apply_3d_multi_ext` |
+| `cna_dynamic_sound_effect_instance_*` | 12 | a later closure; depends on this one |
+| `cna_microphone_*` | 18 | a later closure, and needs hardware |
+| `cna_audio_listener_init`, `cna_audio_emitter_init`, `cna_audio_get_capabilities`, `cna_audio_unsubscribe_ext` | 4 | yes |
+
+`cna_content_manager_load_sound_effect` exists as well, so
+`ContentManager.Load<SoundEffect>` is the canonical fifth loader route rather
+than something to invent -- and `LOADABLE-ASSET-TYPES` and the README's rendered
+block will pick it up on their own.
+
+### The dependency-complete selection this suggests
+
+Eight types, about 57 members: **`SoundEffect`** (17), **`SoundEffectInstance`**
+(16), **`AudioListener`** (5), **`AudioEmitter`** (6), **`SoundState`** (4),
+**`AudioChannels`** (3), and the two exceptions **`NoAudioHardwareException`**
+and **`InstancePlayLimitException`** (3 each). Their dependencies are already
+selected or already solved: `Vector3` and `TimeSpan`, and a `Stream` for
+`SoundEffect.FromStream`, which is an ordinary Common Lisp binary stream here.
+
+The other eleven Audio types stay out, and for reasons rather than by omission:
+`AudioEngine`, `SoundBank`, `WaveBank`, `Cue`, `AudioCategory` and
+`RendererDetail` are XACT, and **CNA has no route for any of them**;
+`DynamicSoundEffectInstance` and the three `Microphone` types have full CNA route
+families but are each a closure of their own, and the microphone one needs
+hardware.
+
+### The qualification levels are reachable, and this was measured
+
+The task a sound test usually fails is being green because nothing happened.
+CNA's design makes that avoidable: `cna_audio_get_capabilities` reports
+`is_playback_available` as **data**, returning `CNA_RESULT_SUCCESS` either way,
+and its header says so. Probed against the qualified HEADLESS library:
+
+| Environment | Result | `is_playback_available` |
+| --- | --- | --- |
+| as the suite runs it | `SUCCESS` | **TRUE** -- a real device opens, even under HEADLESS |
+| `SDL_AUDIODRIVER=dummy` | `SUCCESS` | **TRUE** -- SDL's dummy driver still opens a device, so this is *not* how to reach the unavailable branch |
+| `SDL_AUDIODRIVER=nonexistent-driver` | `SUCCESS` | **FALSE** |
+
+So all three levels are reachable and none of them has to be a skip:
+`AUDIO_STRUCTURAL` needs no device; `AUDIO_UNAVAILABLE` is produced
+**deterministically, in CI, with no hardware** by naming a driver that does not
+exist, and asserts the capability report and the `NOT_SUPPORTED` behaviour behind
+it; and `AUDIO_PLAYBACK_AVAILABLE` is reachable here and must be *measured* on
+the CI runner rather than assumed either way. Reproduce with a probe against
+`cna_game_create` plus `cna_audio_get_capabilities`; it needs a game handle, so
+it is not a two-line probe.
+
+**Nothing above is a claim that a sound was heard, and no test may make one.** A
+state transition, a duration and a native acceptance are what this can prove.
 
 ## Frontier notes worth keeping
 
