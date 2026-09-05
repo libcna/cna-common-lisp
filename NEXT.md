@@ -1,8 +1,10 @@
 # CNA-Lisp continuation handoff
 
 `plan.md` is the architecture and the rules. This file is *where the work stands*
-and *what to do next*. Everything numbered here is generated; reproduce it rather
-than trusting it.
+and *what to do next*, and nothing else: when a closure lands, the prose that
+described it as future work is **deleted** rather than left to age. Everything
+numbered here is generated; reproduce it rather than trusting it. Git history
+holds the states this file used to describe.
 
 ## Reproduce the state
 
@@ -100,6 +102,12 @@ they have never executed is stale.
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
 | `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless every kind of pixel proof its registry requires was obtained, and fails too on a kind the registry does not name |
 
+**A run has three outcomes and they are three, not two.** `success` is evidence.
+`failure` is evidence of a defect. `cancelled` is **neither** -- the workflows use
+`cancel-in-progress`, so pushing again kills the run in flight, and a run that was
+killed proves nothing in either direction. Cite a run by id and conclusion, never
+by "the last run"; `gh run list` prints all three fields.
+
 The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
 `openeggbert/cna:next` does not currently build from published sources, because
 its storage module calls a `sharp-runtime` member that has not been pushed. The
@@ -109,31 +117,40 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 `sharp_runtime_ref` for checking whether the two repositories have caught up.
 `docs/qualification.md` has the policy and the evidence.
 
-## Foundation 1 release readiness
+## Foundation 1 is release-ready, and frozen
 
-**`FOUNDATION_1_RELEASE_READY = yes`**, decided at the audit this section
-records, and the decision is about the *foundation as a coherent milestone*, not
-about the scoreboard reaching zero. It never will: 39 of the 54 non-complete
-members are held up by CNA 0.21.0 and 6 by types the profile has not selected.
+**`FOUNDATION_1_RELEASE_READY = yes`.** The decision is about the *foundation as a
+coherent milestone*, not about the scoreboard reaching zero. It never will: of the
+54 non-complete members, 39 are held up by CNA 0.21.0, 6 by types the profile has
+not selected, 5 by the Common Lisp projection, 3 by an object-model closure and 1
+by a missing proof. The category table below is the whole of that, generated.
 
 The eight conditions, and what each rests on:
 
 | Condition | Evidence |
 | --- | --- |
-| All gates green | the 24 in "Reproduce the state" and below, re-run at the audit; the suite reports no failure and nothing not run in all three native configurations, and in the fourth it reports the native layer as not run rather than as passed |
+| All gates green | the gates in "Reproduce the state" and the table above, re-run at each audit; the suite reports no failure and nothing not run in all three native configurations, and in the fourth it reports the native layer as not run rather than as passed |
 | No known ownership or lifetime defect | ownership stress, construction atomicity over twelve resource families, content transaction rollback at four injection points, callback registry empty after each cycle |
-| Zero structural disagreements | `verify.py --strict`, now over 18 diagnostic categories rather than 16 |
-| No stale live-state documentation | the audit below found seven classes of it and closed each; three new gates keep them closed |
-| Admitted ABI set truthful | 0.21.0 only. 0.22.0 is audited, shape-identical, and **correctly not admitted** -- the blocker is reproducibility, re-measured a third time and unchanged |
-| CI green | both workflows, on the commits this section lands with |
-| Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must now also be *described* |
-| Every non-complete member has a concrete reason | 54 of 54, each naming a route or an IL fact, each now also in one of seven categories, with **zero** in either implementable category |
+| Zero structural disagreements | `verify.py --strict`, over <!-- generated:diagnostic categories=18 --> diagnostic categories |
+| No stale live-state documentation | two audits; the second is recorded below, and found what the first left behind |
+| Admitted ABI set truthful | 0.21.0 only. 0.22.0 is audited, shape-identical, and **correctly not admitted** -- the blocker is reproducibility, re-measured a fourth time and unchanged |
+| CI green | both workflows, `success` and not `cancelled`, on the commits this section lands with |
+| Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must also be *described* |
+| Every non-complete member has a concrete reason | 54 of 54, each naming a route or an IL fact, each in one of seven categories, with **zero** in either implementable category |
 
-That last row is the one to re-read before believing this. `IMPLEMENTABLE_AND_HIGH_VALUE`
-is empty, and it is empty as a *measurement*: `docs/compatibility.md` renders the
-count and `verify.py` refuses a frontier member that has no category. Nothing in
-the selected profile is both unblocked and worth doing. That is what makes this a
-milestone rather than a pause.
+That last row is the one to re-read before believing this.
+<!-- generated:high-value frontier members=0 --> members are
+`IMPLEMENTABLE_AND_HIGH_VALUE`, and that is a *measurement*:
+`docs/compatibility.md` renders the count and `verify.py` refuses a frontier
+member that has no category. Nothing in the selected profile is both unblocked and
+worth doing. That is what makes this a milestone rather than a pause.
+
+**Foundation 1 is frozen.** The 35 missing members are not work in progress. The
+owned `GraphicsDevice`, `GameServiceContainer`, an `IntPtr` projection and the
+protected `On<Event>` raisers each have a measured reason in
+`tools/api-compat/mapping-rules.json`, and reducing the missing count for its own
+sake is explicitly not the next task. A selected, qualified subset is what this
+milestone is.
 
 **No tag was created.** This repository has no tags and no documented
 version/tagging policy, and inventing one at a release audit would be the wrong
@@ -142,35 +159,42 @@ place for that decision. The proposed version is the one
 qualified foundation that projects a selected subset and says so. The choice is
 the project's.
 
-### What the audit actually found
+### What the two documentation audits found
 
 The generated machinery had become much stronger than the hand-written prose, and
-the gap is where every finding was.
+the gap is where every finding was, both times.
 
-* **`*DECLARED-ABSENCES*` had gone stale in seven of eight entries** -- and it is
-  *data*, dumped into a generated report, so it read as measured. Four named
-  something by then complete; three still said "missing" about a member that had
-  become partial. Nothing had ever read it back. Now `verify.py` does, on both
-  the subject and the status.
-* **`docs/limitations.md` still listed five landed closures as absent** in "Not
-  implemented in this milestone", and three more paragraphs said "absent" about
-  something projected.
-* **`README.md` said the SOFTWARE lane qualifies "four pixel paths"** when the
-  registry it enforces has eight, and **listed three loadable asset types** when
-  `LOADABLE-ASSET-TYPES` answers four. Both are rendered from their registries
-  now.
-* **`docs/qualification.md`'s proof table never grew a `loaded-text` row**: the
-  count marker moved from seven to eight and the prose beside it did not.
-* **`plan.md`'s closure list read as live status** when it is a chronological
-  record, so two overtaken claims in it read as current constraints.
-* **The template's README said its canary proves nothing about "content
-  pipelines"** while the canary loads a `SpriteFont` through `Game.Content`, and
-  its example output was four fields behind the program.
+The **first** audit found `*DECLARED-ABSENCES*` stale in seven of eight entries,
+five landed closures still listed as absent in `docs/limitations.md`, a README
+claiming four pixel paths where the registry has eight and three loadable asset
+types where the loader table answers four, a proof table missing a row its count
+had already been moved for, `plan.md`'s chronological list reading as live status,
+and a template README four fields behind its own program. It added three gates,
+each verified by breaking it.
 
-Three gates were added, and each was verified by breaking it: a stale declared
-absence, an uncategorised frontier member, a required pixel proof with no
-description, a loader that lands without a documentation change, and a CANARY
-field the README does not document all now fail.
+The **second** audit was run because the release statement's own "no stale
+live-state documentation" condition was not yet true: this file still described a
+frontier two closures old, and `docs/limitations.md` carried eight claims that the
+generated report contradicts. Both are fixed, and the shape of the mistake is
+worth keeping:
+
+* **a landed closure leaves its "what to do next" entry behind.** The
+  device-settings closure landed whole and its future-work paragraph stayed, still
+  naming `Adapter`, `Reset` and `Present` as the work to do.
+* **a corrected claim gets corrected in one place.** `DeviceWindowHandle`'s route
+  name was fixed in an audit table and left wrong in the paragraph that states it;
+  `Texture2D`'s extent was documented twice, once as a refusal and once as a zero,
+  which is the answer the code was changed away from.
+* **a forward reference outlives the thing it points at.** Two paragraphs said
+  `GameServiceContainer` "arrives with the device-settings closure". It did not,
+  and that closure is over.
+
+The remedy is structural rather than a checker: a closure's landing commit deletes
+the prose that described it as future, this file carries **one** generation of
+next-work, and `docs/limitations.md` marks a retained historical finding as
+historical in its own heading. `verify.py` and `verify-numbers.py` already refuse
+every *number* that drifts; what neither can check is a paragraph, so the paragraph
+count is kept low on purpose.
 
 ### The extraordinary claims, re-read
 
@@ -223,9 +247,9 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 `GamePad` family and the touch panel. So do the four **graphics state objects**
 and the nine enumerations they are built from.
 
-**No selected type is missing.**
-<!-- generated:partial types=16 --> are partial, and this is where the remaining
-members actually are:
+**No selected type is missing**, and that is a property the release statement
+uses: a selected type with nothing behind it would be one. Every remaining absence
+is a member of a type that is otherwise there, and this is where they are:
 
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
@@ -248,171 +272,67 @@ members actually are:
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
-Do not describe that as "graphics state objects, `Stream` and `SpriteFont`", and
-do not describe it as the drawing family either -- both of those closed.
-Regenerate this table after every closure rather than reasoning from the last
-one.
+That table is the authority on where the frontier is. **Do not restate it in
+prose** -- a per-type sentence beside it is exactly what went stale twice, once
+describing "graphics state objects, `Stream` and `SpriteFont`" and once
+`Texture2D`'s twelve members and `Game`'s eight, both long after those numbers
+had moved. Regenerate the table after every closure and read it there.
 
-## Where the missing members actually are
+### Why each absence is an absence
 
-<!-- generated-block:partial-frontier -->
-| Type | missing members | partial members |
-| --- | ---: | ---: |
-| `M.X.F.GraphicsDeviceManager` | 9 | 0 |
-| `M.X.F.GameWindow` | 7 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
-| `M.X.F.Game` | 4 | 1 |
-| `M.X.F.Content.ContentManager` | 3 | 1 |
-| `M.X.F.GameComponentCollection` | 1 | 0 |
-| `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
-| `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
-| `M.X.F.Graphics.Effect` | 1 | 0 |
-| `M.X.F.Graphics.EffectParameter` | 1 | 0 |
-| `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
-| `M.X.F.Graphics.BasicEffect` | 1 | 0 |
-| `M.X.F.TitleContainer` | 0 | 1 |
-| `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
-| `M.X.F.Graphics.Texture2D` | 0 | 4 |
-| `M.X.F.Graphics.TextureCube` | 0 | 6 |
-<!-- /generated-block:partial-frontier -->
+<!-- generated-block:frontier-categories -->
+| Category | Members | What it means |
+| --- | ---: | --- |
+| `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
+| `CNA_0_21_ABI_LIMIT` | **39** | CNA 0.21.0 has no route for the member, or its route cannot express what the member means. |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against 0.21.0, but only as a new closure in this binding's object model rather than as a member. |
+| `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
+| `QUALIFICATION_LIMIT` | **1** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
+| `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
+| `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
+<!-- /generated-block:frontier-categories -->
 
-`GraphicsDevice` is still the largest single entry, but almost nothing of what
-used to be listed here is left. The drawing family is complete, render targets
-are complete, the whole device-settings surface is complete -- `Adapter`,
-`DisplayMode`, `PresentationParameters`, `GraphicsProfile`,
-`GraphicsDeviceStatus`, the three `Reset` overloads, `Present` and the device's
-four events -- and so are `Clear`'s three overloads and
-`DrawInstancedPrimitives`. What remains is two things, not four:
+This table replaces a boolean called `GLOBAL_ACTIONABLE_LOCAL`, which was retired
+because it was made to carry two different facts and got one of them wrong. The
+two facts are:
 
-* **`new(...)` and `Dispose()`**, which are the device as an object a program
-  constructs -- something a CNA-Lisp program never does, since CNA lends the
-  device. Both CNA routes exist; what they need is a second kind of
-  `GraphicsDevice` beside the parent-owned facade, which is a closure of its own.
-  `Present(Nullable, Nullable, IntPtr)` sits with them, needing `IntPtr`.
-* **`ResourceCreated` and `ResourceDestroyed`**, the only two device events that
-  carry a payload, and the payload is the problem: CNA raises the first from the
-  graphics-resource base constructor, so the object it reports does not have its
-  concrete type yet.
+* **`SELECTED_PROFILE_IMPLEMENTABLE_NOW = 0`.** Inside the selected profile,
+  nothing is both unblocked and worth doing. The two implementable categories are
+  empty, and that is the release condition.
+* **Local work remains, and it is profile expansion.** Growing the selection into
+  Audio is entirely this repository's work and needs nothing from anybody. So
+  "there is no more local work" would be false.
 
-`Texture2D`'s twelve are `SetData`/`GetData` (three each), two constructors, and
-the four members that need `System.IO.Stream`: `FromStream` twice, `SaveAsPng`
-and `SaveAsJpeg`.
+What the retired boolean actually claimed -- **"there is nothing externally
+blocked at all"** -- was false when it was written. Thirty-nine selected members
+are classified `CNA_0_21_ABI_LIMIT`: they need a CNA release, not a commit here.
+Six more need a type the profile has not selected, which is a profile decision
+rather than an implementation. Say which category, not which boolean.
 
-`Game`'s eight are the component engine (`Components`, `Services`,
-`LaunchParameters`), `Content`, `Window` as a type, and three protected `On*`
-methods.
+The one thing the retired section got right is worth keeping.
+`GraphicsDevice.Viewport`'s setter was once recorded as an external blocker on the
+grounds that CFFI cannot pass a 24-byte aggregate by value. That was a true fact
+and a wrong conclusion: a tiny private shim for a *proved* ABI impedance mismatch
+is the permitted remedy, the generator emits one, and the setter works through it.
+The shim stays optional -- a release must load with no C toolchain -- so without
+`CNA_LISP_SHIM` the setter refuses with a condition naming the variable, the
+command that builds one, and the reason. That is a packaging limit, not a blocker.
 
-## GLOBAL_ACTIONABLE_LOCAL
+## What to do next: Audio
 
-**GLOBAL_ACTIONABLE_LOCAL is not zero**, and there is **nothing externally
-blocked at all**. Every remaining absence is local work.
+**One closure, and this file carries one.** When Audio lands, this section is
+replaced by the next closure rather than added to.
 
-`GraphicsDevice.Viewport`'s setter used to be recorded here as the one external
-blocker, on the grounds that CFFI cannot pass a 24-byte aggregate by value. That
-was a true fact and a wrong conclusion: a tiny private shim for a *proved* ABI
-impedance mismatch is exactly the permitted remedy, and the generator now emits
-one. The setter works through it. The shim stays optional -- a release must load
-with no C toolchain -- so without `CNA_LISP_SHIM` the setter refuses with a
-condition naming the variable, the command that builds one, and the reason. That
-is a packaging limit, not a blocker.
+Audio is next because it was measured to be, at the Foundation 1 release audit,
+and the measurement said three things: both authorities are already pinned, CNA's
+ABI is complete for it, and all of its qualification levels are reachable in CI
+with no audio hardware.
 
-## What to do next, in order
-
-The order follows the public-signature dependency graph: each step is a closure
-that can be finished, tested and measured before the next one starts. Regenerate
-the graph after each closure instead of following this list once it has moved.
-
-0. **Every remaining absence now carries a stated reason**, and the mapping rules
-   are where they live rather than this file. Twenty-six of the thirty-nine
-   missing members had none until they were audited route by route against
-   0.21.0's headers, and the audit changed what several of them *are*: three
-   turned out to be implementable and are recorded as next steps rather than as
-   limits, and one -- `GraphicsDevice.IsDisposed` -- was implemented on the spot.
-   Read `unimplemented` in `tools/api-compat/mapping-rules.json` before assuming
-   anything about what is left.
-
-   **All three have since been done**: `GraphicsDevice`'s four payload-free
-   events, `Game.Window` with the whole `GameWindow` type, and
-   `GraphicsDevice.Adapter` with `GraphicsAdapter` and `DisplayModeCollection`.
-   The scope question the audit flagged for the adapter was settled the way it
-   asked to be -- the instance members are complete and the two XNA makes *static*
-   are reported partial, because every CNA adapter route takes a callback-scoped
-   device handle and XNA's answer before a device exists.
-
-   What is left is what the audit found genuinely blocked: protected raisers with
-   no callback to be raised from, types CNA cannot represent (`IServiceProvider`,
-   `IntPtr`, `GraphicsDeviceInformation`, `Texture3D`), and the device as an
-   object a program constructs.
-
-   `DrawInstancedPrimitives` was on that list and should not have been: its
-   declared reason claimed 0.21.0 had no instanced draw route, and 0.21.0 has
-   one. It is complete now, and `docs/limitations.md` records the mistake with
-   the two others of its kind rather than deleting it.
-
-   **Every declared reason has since been re-read, one at a time, against
-   0.21.0's headers and the pinned IL — the missing and the partial both.** That
-   sweep was started because three reasons turned out false in quick succession,
-   and it found seven more wrong and two members that were not blocked at all:
-   `EffectParameter.GetValueTextureCube` and `ContentManager.Load<Effect>`, both
-   now complete. `docs/limitations.md` carries the whole audit, including the
-   reasons that survived it unchanged — those are named too, so that a reader can
-   tell a checked reason from an unchecked one.
-
-   **So the reasons in `mapping-rules.json` are now measurements rather than
-   claims.** If one of them turns out wrong again, the thing to fix is not only
-   the member: it is that a route was named without being read. Three of the ten
-   said "CNA has no route" about a route that existed, which is the wording to
-   distrust first.
-
-1. **The device-settings closure**: `Adapter`, `DisplayMode`,
-   `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
-   `Reset` overloads, `Present`, `GraphicsDevice`'s six events, and
-   `GraphicsDeviceManager`'s sixteen remaining members, which are the same subject
-   seen from the other side. It brings `GameServiceContainer` into the selection.
-
-   **`Game.Services` is where that closure gets hard**, and it is worth knowing
-   why before starting. Re-audited against the pinned metadata:
-   `IGraphicsDeviceService`'s five members -- the `GraphicsDevice` property and the
-   `DeviceCreated`, `DeviceDisposing`, `DeviceReset` and `DeviceResetting` events
-   -- are *already complete*, on `GraphicsDeviceManager`, the type that implements
-   the interface; and `IGraphicsDeviceManager`'s `CreateDevice`, `BeginDraw` and
-   `EndDraw` each have a CNA route. An earlier note here claimed the blocker was
-   those interfaces and `GraphicsDevice`'s device-loss events; it had confused
-   `GraphicsDevice`'s own same-named `DeviceReset`/`DeviceResetting` with the
-   service interface's. **Do not reintroduce that reason.**
-
-   Re-audited again against 0.21.0's headers, route by route: CNA's container has
-   `contains_ext` and `remove_ext` over a closed two-member enum, **no get route
-   at all, and no registration route by explicit decision** -- "a route that
-   accepted an opaque token instead would satisfy neither side: native code asking
-   for `IGraphicsDeviceService` needs a vtable, not a `void*`". CNA's own advice is
-   that a consumer keep its own container beside this one.
-
-   So `GetService` cannot be answered *from CNA*. It might be answerable from
-   *here*: the binding holds the manager CNA registers as both canonical services,
-   so a container could answer both keys from the record, ask `contains_ext` first,
-   route a removal through `remove_ext` so the two sides stay in step, and keep a
-   program's own services in a Lisp dictionary -- which is where CNA says they
-   belong and where XNA keeps them too. That is a real option and it is this
-   closure's work, not a shortcut to take earlier: `GameServiceContainer` has to
-   enter the selection and its three members have to come out of the IL first. A
-   Lisp dictionary on its own, inventing the two canonical services, stays refused.
-   `docs/limitations.md` has the full audit.
-2. **Audio** -- the next closure, and measured rather than guessed. See below.
-3. Models, media, storage, gamer services, networking.
-
-## The next closure is Audio, and here is what it is made of
-
-**Nothing here is implemented and the selection has not grown.** This section is
-the measurement that a dependency-complete Audio closure needs before any of it
-is designed, done at the Foundation 1 release audit because the answer decides
-whether Audio is the right next closure. It is: both authorities are already
-pinned, CNA's ABI is complete for it, and the qualification levels are reachable.
-
-**Do not add these types to `SELECTED` until the implementation lands with
-them.** A selected type with nothing behind it is a *missing type*, and "no
-selected type is missing" is a property the Foundation 1 release statement uses.
-This closure goes in whole, as every closure here does.
+**Nothing here is implemented and the selection has not grown.** Do not add these
+types to `SELECTED` until the implementation lands with them: a selected type with
+nothing behind it is a missing type, and "no selected type is missing" is a
+property the release statement uses. This closure goes in whole, as every closure
+here does.
 
 ### Both authorities are already pinned
 
@@ -440,14 +360,23 @@ Inventoried whole rather than by guessing names, they fall into five families:
 than something to invent -- and `LOADABLE-ASSET-TYPES` and the README's rendered
 block will pick it up on their own.
 
+**Do not conclude a route is absent from one guessed name.** That mistake was made
+three times in the graphics closure, each time about a route that was in the
+header. Inventory the family.
+
 ### The dependency-complete selection this suggests
 
-Eight types, about 57 members: **`SoundEffect`** (17), **`SoundEffectInstance`**
-(16), **`AudioListener`** (5), **`AudioEmitter`** (6), **`SoundState`** (4),
-**`AudioChannels`** (3), and the two exceptions **`NoAudioHardwareException`**
-and **`InstancePlayLimitException`** (3 each). Their dependencies are already
-selected or already solved: `Vector3` and `TimeSpan`, and a `Stream` for
-`SoundEffect.FromStream`, which is an ordinary Common Lisp binary stream here.
+Eight types: **`SoundEffect`**, **`SoundEffectInstance`**, **`AudioListener`**,
+**`AudioEmitter`**, **`SoundState`**, **`AudioChannels`**, and the two exceptions
+**`NoAudioHardwareException`** and **`InstancePlayLimitException`**. Their
+dependencies are already selected or already solved: `Vector3` and `TimeSpan`, and
+a `Stream` for `SoundEffect.FromStream`, which is an ordinary Common Lisp binary
+stream here.
+
+The member counts that used to stand here were an estimate from a planning pass
+and are deliberately not repeated: extract the exact signatures from the pinned
+contract when the implementation starts, and let the generated report carry the
+numbers from then on.
 
 The other eleven Audio types stay out, and for reasons rather than by omission:
 `AudioEngine`, `SoundBank`, `WaveBank`, `Cue`, `AudioCategory` and
@@ -469,233 +398,140 @@ and its header says so. Probed against the qualified HEADLESS library:
 | `SDL_AUDIODRIVER=dummy` | `SUCCESS` | **TRUE** -- SDL's dummy driver still opens a device, so this is *not* how to reach the unavailable branch |
 | `SDL_AUDIODRIVER=nonexistent-driver` | `SUCCESS` | **FALSE** |
 
-So all three levels are reachable and none of them has to be a skip:
-`AUDIO_STRUCTURAL` needs no device; `AUDIO_UNAVAILABLE` is produced
-**deterministically, in CI, with no hardware** by naming a driver that does not
-exist, and asserts the capability report and the `NOT_SUPPORTED` behaviour behind
-it; and `AUDIO_PLAYBACK_AVAILABLE` is reachable here and must be *measured* on
-the CI runner rather than assumed either way. Reproduce with a probe against
-`cna_game_create` plus `cna_audio_get_capabilities`; it needs a game handle, so
-it is not a two-line probe.
+So every level is reachable and none has to be a skip. **SDL's audio driver
+selection is process-global and latches at initialisation**, so the available and
+unavailable branches cannot be qualified in one image: the unavailable lane has to
+be its own process, with its own environment.
 
 **Nothing above is a claim that a sound was heard, and no test may make one.** A
-state transition, a duration and a native acceptance are what this can prove.
+state transition, a duration and a native acceptance are what this can prove. A
+dummy audio device is not audible hardware.
 
-## Frontier notes worth keeping
+### After Audio
 
-* **`System.IO.Stream` is a Common Lisp stream, and is not a type.** It is not in
-  the pinned contract -- that snapshot is the XNA profile and `Stream` is the BCL's
-  -- so there was never a type here to project. What there was, is members that
-  take one, and they now take an ordinary binary stream from `OPEN`. `SeekOrigin`
-  is not projected for the same kind of reason: .NET spells relative positioning
-  as an enumeration argument and Common Lisp spells it as arithmetic on
-  `FILE-POSITION`. Do not add either as a class.
+Models, media, storage, gamer services and networking are the remaining
+namespaces. **Measure the next one rather than starting it**: Audio is a large
+enough milestone to audit before expanding again, and the measurement is what
+decides which comes next.
 
-* **`TitleContainer.OpenStream` does not use CNA's route for it, on purpose.**
-  `cna_title_container_read_ext` reads a whole file and its own header calls that
-  a deliberate narrowing; XNA answers a lazy `FileStream` and Common Lisp has one
-  in `OPEN`. The *base path* still comes from CNA, so an override made there is
-  honoured. The validation is XNA's, transcribed -- and the order matters: cleaning
-  happens before the escape check, so `a/../b` is accepted and `../b` is refused.
+## Architectural facts a future agent must not undo
 
-* **ABI 0.22.0 has been audited and is still not admitted, for a reason that is
-  not about effort.** Measured against `cnanext c4561fd2b`: all 328 bound routes
-  are still exported, the generated foreign layer regenerated against 0.22.0's
-  headers is **identical** but for the two version constants, and the
-  compiler-backed probe passes against them at `-Werror`. The shape of 0.22.0 is
-  the shape already bound, and a C compiler says so.
+Each of these was arrived at by measurement and each has cost a mistake at least
+once. `docs/limitations.md` carries the full reasoning; what is here is the
+decision and the reason it is not an oversight.
 
-  What is missing is a library anybody can build. `cna:next` still calls
-  `StoragePaths::SetIsolatedStorageRootOverride`; the sharp-runtime commit adding
-  it, `c419f477`, is on **no remote branch**. A 0.22.0 library exists on this
-  machine only because the unpublished commit is here, and qualifying against it
-  would produce evidence CI could not reproduce. **Do not admit 0.22.0 on local
-  evidence.**
+**About the ABI**
 
-  Re-measured again at the Foundation 1 release audit, and **unchanged in every
-  part that matters**: `cna:next` has moved on to `e1d3aa5d5` and *still* makes
-  that call, in `modules/storage/src/StorageDevice.cpp`, at lines 87 and 290;
-  `sharp-runtime:next` is still `bd282d101`; and
-  `git branch -r --contains c419f477` is still **empty**. Those three commands are
-  the whole re-check, and the last one is the cheapest. Three re-measurements
-  now, across three different `cna:next` commits, have moved nothing: the
-  blocker is the unpushed sharp-runtime commit and only that. If it ever prints a
-  branch, build a HEADLESS and a SOFTWARE 0.22.0 and run the whole gate set before
-  touching the admitted set -- which lives in `src/internal/abi-gate.lisp` for the
-  runtime and in the manifest's `admitted_abi_versions` for the generator, and both
-  have to move together.
+* **ABI 0.22.0 is audited, shape-identical, and correctly not admitted.** All 328
+  bound routes are still exported, the foreign layer regenerated against 0.22.0's
+  headers is identical but for two version constants, and the compiler probe
+  passes at `-Werror`. What is missing is a library anybody can build: `cna:next`
+  calls `StoragePaths::SetIsolatedStorageRootOverride` and the sharp-runtime
+  commit adding it, `c419f477`, is on **no remote branch**. Re-measured a fourth
+  time at this audit and unchanged -- `cna:next` has moved on to `cb2c90208` and
+  still makes that call, `sharp-runtime:next` is still `bd282d101`, and
+  `git branch -r --contains c419f477` is still empty. That last command is the
+  whole cheap re-check. **Do not admit 0.22.0 on local evidence.** The admitted
+  set lives in `src/internal/abi-gate.lisp` for the runtime and in the manifest's
+  `admitted_abi_versions` for the generator, and both move together.
+* To reproduce the 0.21.0 gates, point `CNA_ABI_BASELINE` at a 0.21.0 baseline --
+  `cnanext 2b0c374a1` is the last commit carrying one -- rather than at whatever
+  the checkout is on today, or the generator refuses with "supplied headers
+  declare ABI ... which the manifest does not admit", which is the gate working.
+* **A private shim is the permitted remedy for a proved ABI impedance mismatch**,
+  and it stays optional: a release must load with no C toolchain.
 
-  Two practical notes for reproducing the 0.21.0 gates in the meantime: point
-  `CNA_ABI_BASELINE` at a 0.21.0 baseline -- `cnanext 2b0c374a1` is the last
-  commit carrying one -- rather than at whatever the checkout is on today, or the
-  generator refuses with "supplied headers declare ABI ... which the manifest
-  does not admit", which is the gate doing its job. And the admitted set lives in
-  `src/internal/abi-gate.lisp`, not in the manifest: the manifest's
-  `admitted_abi_versions` gates the *generator*, the Lisp constant gates the
-  *runtime*, and both have to move together.
+**About the object model**
 
-* **The render-target family is closed.** `RenderTargetCube` and
-  `RenderTargetBinding` went in, and with them `GraphicsDevice`'s last three
-  render-target members. Two things to know: `SetRenderTarget`'s two overloads are
-  **one** generic function with an optional face, because XNA gives them one name;
-  and binding a cube target is renderer-dependent -- HEADLESS accepts it, SOFTWARE
-  refuses with "this renderer does not support RenderTargetCube", and the test
-  checks both branches. `GetRenderTargets` answers the objects this binding bound,
-  cross-checked against CNA's handles, because the ABI has no route from a handle
-  back to an object.
-
-* **A `SpriteFont` is obtainable from a program now, and the evidence is
-  pixels.** `ContentManager.Load<SpriteFont>` reads a `.cnj` descriptor and
-  answers the font *and* its atlas -- two owned handles for one asset, disposed
-  font-first. The SOFTWARE lane's new `loaded-text` proof draws "AB" with a
-  loaded font and asserts the same pixels, at the same coordinates, as the proof
-  that uses the hand-built one: a descriptor that drifted from the suite's glyph
-  rows would put a glyph somewhere else and fail. The template draws text through
-  the same path, with `make-font-fixture.py` generating its 95-glyph asset.
-
-* **Measured, not assumed, about content:** `.cnj` loads and the older
-  `.font.json` convention does not (`CNA_RESULT_IO`); and ABI 0.21.0 has **no
-  route reporting a Texture2D's width or height**, so a loaded texture refuses
-  both rather than answering a plausible zero. A TextureCube does report its
-  size, which makes the gap look like an oversight in CNA rather than a policy.
-
-* **The cache is this binding's, in front of CNA's route, which is where XNA's is
-  too.** CNA's ABI has one create-shaped route per asset type and no cache; the
-  manager here keeps XNA's two collections, so `Load<T>` twice answers one object,
-  `Unload` disposes what it loaded, and `Game.Content.Dispose()` is `Unload` plus
-  being finished -- which is all XNA's `Dispose` is, since it has nothing native to
-  destroy. Do not restore the note that said there is no cache and that two loads
-  are four things to dispose.
-
-* **A component added in `LoadContent` is never initialized, and that is XNA's
-  doing.** `Game.Run` sets `inRun` *after* `Initialize()` returns; `Initialize()`
-  drains `notYetInitialized` and then calls `LoadContent()` at its very end; and
-  `GameComponentAdded` initializes a component only when `inRun` is already true.
-  So one added there lands on the list after the loop that empties it has
-  finished, and is updated and drawn every frame and initialized never. Read from
-  the pinned Game assembly, measured to be CNA's behaviour too, and pinned by a
-  test. Do not "fix" it.
-
-* **Pixel evidence no longer has to come from the back buffer.** `RenderTarget2D`
-  derives from `Texture2D`, so a target's contents can be read by drawing it --
-  on any renderer that can draw at all. The `render-target` proof uses the
-  back-buffer readback to check itself, because that is what this renderer
-  offers; what changed is that the mechanism is no longer the only one. The next
-  renderer added to the lane does not need `GetBackBufferData` to be qualified
-  for anything but `clear`.
-
-* **A state round-trip is not shading evidence, and the gap is now measured.**
-  CNA's software renderer never reads `GpuDrawParams::alphaTest`, so
-  `AlphaTestEffect`'s `AlphaFunction` and `ReferenceAlpha` reach the ABI and
-  change no pixel -- `Never` draws what `Always` draws. Its bone palette works
-  only for a skinned vertex layout no standard XNA vertex type carries.
-  `DualTextureEffect` cannot be drawn at all without both layers *and* a second
-  texture coordinate. All three are recorded in `docs/limitations.md`, and the
-  rasterizer lane's `stock-effect` proof claims only that these are usable *draw*
-  effects. Do not upgrade that claim without new evidence.
-
-* **`System.Char` is a UTF-16 code unit, and a Common Lisp string is not made of
-  them.** A CLR string is a sequence of code *units*; a Lisp string is a sequence
-  of code *points*. They agree across the BMP and disagree above it, where
-  U+1F600 is one character here and two `char`s there -- and XNA looks each of
-  those two up in the glyph table separately. So `System.Char` projects onto an
-  integer in [0, 65535] and text is converted to code units before it is measured
-  or drawn. Do not "simplify" that to iterating the string's characters.
-
-* **A projection may narrow, but it may not lose an overload.**
-  `MeasureString(String)` and `MeasureString(StringBuilder)` are one Lisp call,
-  because XNA's own `StringProxy` makes them one code path and a Lisp string
-  expresses both. That is declared with `distinguished_by: "unified"`, each names
-  the other, and the verifier refuses a collapse that names nobody. The same
-  question found three older collapses nothing had declared -- `SpriteBatch.Draw`'s
-  two scale overloads, `DrawUserIndexedPrimitives`'s two index widths, and the
-  sixteen array transforms that claimed `arity` when there are two of each arity.
-
-* **SpriteFont has no public constructor here, and does not need one.** XNA gives
-  it none either: a font comes from `ContentManager.Load<SpriteFont>`, and it does
-  here too. CNA has `cna_sprite_font_create`, and projecting *that* as a public
-  constructor would invent a member XNA has not got, so the producer stays
-  unexported and test-only. The template draws text through the public content
-  path and must not be given an internal route to do so; the SOFTWARE lane's
-  `loaded-text` proof and the template's own `text_pixel` are what say it works.
-
-* **CNA is stricter than XNA about a SpriteFont's spacing, and XNA wins.**
-  `cna_sprite_font_set_spacing` requires a finite value; XNA's setter is a bare
-  `stfld` and stores a NaN. LineSpacing, Spacing and DefaultCharacter are managed
-  fields here for that reason -- XNA's are too -- so the three CNA setters are
-  **not bound at all** rather than bound and worked around. The cost is exact and
-  is in `docs/limitations.md`: the native font keeps the values it was created
-  with, and nothing in CNA-Lisp reads them.
-
-* **A fixed time step does not make a frame count an update count.** Measured:
-  catch-up updates follow a frame that overran its target, and a full collection
-  between frames is enough. Every deterministic frame claim here uses variable
-  timing. Do not "fix" a test that sets `is-fixed-time-step` to false.
-* **`cna_game_destroy` answers `CNA_RESULT_CALLBACK` for a latched earlier
-  failure**, not only for a failing shutdown callback. CNA-Lisp distinguishes the
-  two by whether a condition was freshly contained; the alternative masks the
-  original condition behind an unwind. `tests/native/ownership.lisp` pins both
-  directions.
 * **The graphics device must never keep its handle.** It is lent for a callback's
   duration. `graphics-device` resolves a fresh borrowed handle per operation, and
   a device operation outside a callback is refused before anything reaches the
-  ABI.
-* **Behaviour comes from the IL, not from a description of the behaviour.** The
-  pinned assembly is recorded by SHA-256 in
+  ABI. The adapter, the window and the content manager are facades on the same
+  rule.
+* **`System.IO.Stream` is a Common Lisp stream, and is not a type.** It is the
+  BCL's, not the XNA profile's, so there was never a type here to project --
+  members that take one take an ordinary binary stream from `OPEN`. `SeekOrigin`
+  is not projected either: .NET spells relative positioning as an enumeration and
+  Common Lisp spells it as arithmetic on `FILE-POSITION`. Do not add either class.
+* **`System.Char` is a UTF-16 code unit, and a Lisp string is not made of them.**
+  It projects onto an integer in [0, 65535], and text is converted to code units
+  before it is measured or drawn -- XNA looks up each of a surrogate pair's two
+  `char`s separately. Do not "simplify" that to iterating the string's characters.
+* **A projection may narrow, but it may not lose an overload.** A collapse must be
+  declared with the mechanism that distinguishes its members, each naming the
+  others, and the verifier refuses one that names nobody.
+* **An exported symbol that is neither a mapped member nor a declared extension is
+  a diagnostic.** A convenience function needs an entry in
+  `cna-lisp.internal::*binding-extensions*` with the reason it exists. That is
+  what keeps the scoreboard honest; it is not paperwork to route around.
+* **Projecting a CNA route that XNA has no member for invents API.**
+  `cna_sprite_font_create` and `cna_display_mode_equals` are both unbound for that
+  reason. CNA having a route is not an argument.
+
+**About ownership**
+
+* **Whoever receives a handle from CNA records its destruction** -- one asset load,
+  one ledger. A constructor taking an existing handle records it; the loader that
+  obtained it does not record it twice.
+* **Disposal is not cascaded.** CNA requires children destroyed before parents and
+  this binding reports a live child rather than deciding when a program's
+  resources die.
+* **`cna_game_destroy` answers `CNA_RESULT_CALLBACK` for a latched earlier
+  failure**, not only for a failing shutdown callback. The two are distinguished
+  by whether a condition was freshly contained; the alternative masks the original
+  condition behind an unwind. `tests/native/ownership.lisp` pins both directions.
+* **The cache is this binding's, in front of CNA's route, which is where XNA's is
+  too.** `Load<T>` twice answers one object, `Unload` disposes what it loaded, and
+  `Game.Content.Dispose()` is `Unload` plus being finished. Do not restore the note
+  that said there is no cache.
+
+**About behaviour**
+
+* **Behaviour comes from the IL, not from a description of it.** The pinned
+  assembly is recorded by SHA-256 in
   `tools/api-compat/reference/XNA_IL_PROVENANCE.md`. Reading it is what caught
   that `Math.Min(+0.0f, -0.0f)` answers `-0.0f`, that `Clamp` passes a NaN
   through, and that `ToRadians` multiplies by a constant rather than dividing by
   180 -- three things a reimplementation from first principles gets wrong.
-* **A by-reference overload of a pure computation is not applicable, not
-  missing.** It exists in XNA to avoid copying a value type; the value it computes
-  is the by-value overload's, and Common Lisp passes a reference already. Each
-  one carries its reason in the mapping rules.
-* **A `&key` lambda list accepts everything unless something refuses.** That is
-  how `draw-texture` came to accept combinations XNA has no overload for, and how
-  `begin` came to offer a `Begin(SpriteSortMode)` that does not exist. The rules
-  now carry a keyword set per overload and the verifier checks it; do not add a
-  keyword without adding it to the rules and refusing the shapes it does not
-  belong to.
-* **A mapping rule keyed on a signature no member produces is silently ignored.**
-  It is now a `stale_mapping_rule` diagnostic. When adding rules, take the
-  signature from the generated report, not from a listing script.
-* **A position and a destination rectangle are not interchangeable.**
-  `SpriteBatch.Draw`'s position overloads take
-  `cna_sprite_batch_submit_scaled_many`; computing a rectangle from a position
-  and a scale loses the fractional position and moves the origin.
-* **CNA is not the oracle, and here is where it was wrong.** CNA's
-  `DepthStencilState` initialises `StencilMask` and `StencilWriteMask` to
-  `0x7FFFFFFF`; XNA's `SetDefaults` writes `-1`. The public value is XNA's, the
-  divergence is in `docs/limitations.md`, and
-  `tests/native/graphics-state.lisp` pins *both* sides so a corrected CNA makes a
-  test fail rather than passing silently. Nothing in CNA was modified.
-* **XNA's `BlendFunction` numbers Min 3 and Max 4; CNA numbers them the other way
-  round.** Every other enumeration in this binding happens to share CNA's
-  numbering, which is exactly why the state enums translate **by name** through
-  explicit tables -- a numeric pass-through would have worked everywhere else and
-  turned a minimum into a maximum here.
-* **A state object is latched at Begin, and XNA latches the deferred modes at
-  End.** CNA's `begin_with_states` copies the descriptors by value, so there is
-  nothing left to read at End. Refusing a mutation between Begin and End was
-  chosen over accepting one that could no longer take effect.
-* **The first state-bearing Begin costs tens of milliseconds**, and every one
-  after it costs nothing measurable: CNA creates its native state objects on
-  first use. Under a fixed time step that warm-up becomes catch-up updates with
-  no draws, which is why the graphics fixture runs on variable timing.
+* **CNA is not the oracle, and XNA wins publicly.** CNA's `DepthStencilState`
+  initialises both stencil masks to `0x7FFFFFFF`; XNA's `SetDefaults` writes `-1`.
+  The public value is XNA's and `tests/native/graphics-state.lisp` pins *both*
+  sides, so a corrected CNA fails a test rather than passing silently. Likewise
+  `BlendFunction` numbers Min 3 and Max 4 in XNA and the other way round in CNA,
+  which is why the state enums translate **by name**.
+* **CNA is stricter than XNA about a SpriteFont's spacing**, so the three CNA
+  setters are not bound at all rather than bound and worked around.
+* **A component added in `LoadContent` is never initialized, and that is XNA's
+  doing.** `Game.Run` sets `inRun` after `Initialize()` returns, and `Initialize()`
+  calls `LoadContent()` at its very end. Read from the pinned assembly, measured
+  to be CNA's behaviour too, and pinned by a test. Do not "fix" it.
+* **A state object is latched at Begin.** CNA's `begin_with_states` copies the
+  descriptors by value, so refusing a mutation between Begin and End was chosen
+  over accepting one that could no longer take effect.
+* **A fixed time step does not make a frame count an update count.** Catch-up
+  updates follow a frame that overran its target, and a full collection between
+  frames is enough. Every deterministic frame claim here uses variable timing. Do
+  not "fix" a test that sets `is-fixed-time-step` to false.
+
+**About the evidence**
+
 * **A qualification lane that cannot fail for the right reason proves nothing.**
-  The rasterizer lane runs the same suite against a SOFTWARE-renderer CNA, and
-  the trap it avoids is passing while silently taking the no-readback branch. So
-  the test branches on the renderer that is present and asserts the truth for
-  each, the runner prints which branch ran, and
-  `tools/qualification/rasterizer.sh` fails when the branch was the wrong one.
-  Verified by pointing it at a HEADLESS library: it exits 1.
-* **An exported symbol that is neither a mapped member nor a declared extension
-  is a diagnostic.** Adding a convenience function means adding an entry to
-  `cna-lisp.internal::*binding-extensions*` with the reason it exists. That is the
-  mechanism that keeps the scoreboard honest; it is not paperwork to route around.
-* **A number in prose is a claim.** `tools/qualification/verify-numbers.py` now
-  checks three ways: `<!-- generated:name=N -->` facts, whole
-  `<!-- generated-block:name -->` regions rendered from the reports, and outright
-  refusals for figures that belong to a run rather than to the repository. The
-  native-ABI summary in `docs/compatibility.md` had drifted to 69 bound routes
-  while the manifest said 100, because no single number in it carried a marker.
+  The rasterizer lane's trap is passing while silently taking the no-readback
+  branch, so every test branches on the renderer present and asserts the truth for
+  each, and `rasterizer.sh` fails when the branch was wrong. Verified by pointing
+  it at a HEADLESS library: it exits 1.
+* **A state round-trip is not shading evidence.** CNA's software renderer never
+  reads `GpuDrawParams::alphaTest`, so `AlphaTestEffect`'s parameters reach the ABI
+  and change no pixel. The `stock-effect` proof claims only that these are usable
+  *draw* effects. Do not upgrade that claim without new evidence.
+* **A number in prose is a claim.** `tools/qualification/verify-numbers.py` checks
+  `<!-- generated:name=N -->` facts, whole `<!-- generated-block:name -->` regions
+  rendered from the reports, and refuses figures that belong to a run rather than
+  to the repository.
+* **A mapping rule keyed on a signature no member produces is silently ignored**,
+  and is now a `stale_mapping_rule` diagnostic. Take a signature from the generated
+  report, not from a listing script.
+* **A declared reason is a claim about the ABI and has to be measured like one.**
+  Ten declared reasons were found wrong at the route-by-route audit, and three of
+  them said "CNA has no route" about a route that existed. That is the wording to
+  distrust first, and the reason to read the header rather than the reason.
