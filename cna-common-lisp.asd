@@ -136,6 +136,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "audio/conditions")
    (:file "audio/enums")
    (:file "audio/spatial")
+   ;; The RIFF/WAVE shape FromStream accepts. Before sound-effect, which calls it
+   ;; before CNA's decoder -- which accepts more than XNA does.
+   (:file "audio/wave")
    ;; SoundEffect names SOUND-EFFECT-INSTANCE in CREATE-INSTANCE and the instance
    ;; names SOUND-EFFECT in its owner slot, so the two are mutually recursive at
    ;; run time and orderable at load time: the effect first, because the instance

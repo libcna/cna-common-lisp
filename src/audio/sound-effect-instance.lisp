@@ -294,9 +294,33 @@ having to detect the state itself."
 
 ;;; --- the transport ---------------------------------------------------------
 
-(defmethod play ((instance sound-effect-instance) &key &allow-other-keys)
-  "SoundEffectInstance.Play(). Answers no value, as XNA's `void' does."
+(defmethod play ((instance sound-effect-instance)
+                 &rest settings &key &allow-other-keys)
+  "SoundEffectInstance.Play(). Answers no value, as XNA's `void' does.
+
+**It takes no argument, and this refuses every keyword rather than ignoring it.**
+`PLAY' is one generic function shared with `SOUND-EFFECT', whose long overload is
+spelled `:VOLUME :PITCH :PAN', and CLOS lambda-list congruence therefore forces
+this method to *accept* those three names. Accepting is not having: XNA's
+`SoundEffectInstance' has a single `Play()' and three separate properties, so
+
+    (play instance :volume 0.5)
+
+is not a quieter way of setting the volume -- it is a member that does not exist,
+and silently discarding the 0.5 would be the worst of the three possible answers.
+An instance's volume is set through `(setf (volume instance) 0.5)', which is what
+XNA's property is.
+
+The same rule and the same reason as the buffer/texture split in SET-DATA: a
+generic function shared between classes must refuse the other class's keywords by
+name rather than let congruence turn them into no-ops."
   (let ((operation "play"))
+    (when settings
+      (xna::%check-overload-keywords
+       operation
+       (loop for (key nil) on settings by #'cddr
+             collect (string-downcase (symbol-name key)))
+       '((:plain)) :object-type 'sound-effect-instance))
     (cna-lisp.internal:check-usable instance operation)
     (%check-audio-result
      (cna-lisp.internal.ffi::%sound-effect-instance-play

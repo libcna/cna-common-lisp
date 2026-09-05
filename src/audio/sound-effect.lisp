@@ -116,11 +116,6 @@ construction ledger makes a failing subclass initializer give the handle back.")
 
 ;;; --- constructor validation, transcribed ----------------------------------
 
-(defconstant +minimum-sample-rate+ 8000
-  "SoundEffect's lowest accepted sample rate: `0x1f40' in the pinned IL.")
-(defconstant +maximum-sample-rate+ 48000
-  "SoundEffect's highest accepted sample rate: `0xbb80' in the pinned IL.")
-
 (defun %check-sample-rate (sample-rate operation)
   "`sampleRate < 8000 || sampleRate > 48000' -> ArgumentOutOfRangeException(\"sampleRate\")."
   (unless (and (integerp sample-rate)
@@ -145,6 +140,28 @@ than a type error."
            :object-type 'sound-effect
            :format-control "channels must be :MONO or :STEREO; ~s was given."
            :format-arguments (list channels))))
+
+(defun %check-buffer-presence (buffer operation)
+  "`buffer == null || buffer.Length == 0' -> ArgumentException(InvalidAudioBuffer).
+
+The three-argument constructor's **own** check, which runs before it calls
+`FromBuffer' and therefore before FromBuffer's sample-rate test. That ordering is
+observable: `new(null, 1, AudioChannels.Mono)' is an `ArgumentException' about
+the buffer in XNA, not an `ArgumentOutOfRangeException' about the rate. The
+seven-argument constructor has no such pre-check and takes FromBuffer's order.
+
+%CHECK-BUFFER repeats the same two tests later, and adds the alignment one; this
+is not redundant, it is the earlier of two different positions in the order."
+  (unless (and buffer
+               (typep buffer '(vector (unsigned-byte 8)))
+               (plusp (length buffer)))
+    (error 'xna:cna-argument-error
+           :operation operation :parameter-name "buffer"
+           :object-type 'sound-effect
+           :format-control
+           "buffer must be a non-empty (VECTOR (UNSIGNED-BYTE 8)); ~
+            ~:[nothing~;~:*~s~] was given."
+           :format-arguments (list buffer))))
 
 (defun %check-buffer (buffer block-align operation)
   "`buffer == null || buffer.Length == 0 || !IsAligned(buffer.Length)'
@@ -249,10 +266,54 @@ to be able to open. Nothing public overrides it.")
        operation :object-type 'sound-effect)
       (cffi:mem-ref ticks :int64))))
 
+(defparameter *sound-effect-constructor-overloads*
+  '((:short "buffer" "sample-rate" "channels")
+    (:long "buffer" "offset" "count" "sample-rate" "channels"
+           "loop-start" "loop-length"))
+  "XNA's two public SoundEffect constructors, as the keyword sets that spell them.
+
+    SoundEffect(Byte[], Int32, AudioChannels)
+    SoundEffect(Byte[], Int32, Int32, Int32, AudioChannels, Int32, Int32)
+
+There is nothing between them. `:OFFSET' alone, `:COUNT' alone, `:OFFSET' with
+`:COUNT' and no loop region, and every other partial combination are call shapes
+XNA has not got, and %CHECK-OVERLOAD-KEYWORDS refuses each of them rather than
+defaulting the difference -- which is what a `&key' lambda list with `(offset 0)'
+and `(loop-length 0)' did instead, quietly turning four illegal calls into the
+seven-argument constructor.")
+
+(defparameter *native-object-initargs*
+  '(:handle :ownership :owner :owner-generation :owner-thread :%known-duration)
+  "The private initargs, which are not part of any XNA constructor.
+
+They are how a handle CNA already gave us is adopted -- `ContentManager.Load' and
+`FromStream' both arrive that way -- so the exact-shape check has to be able to
+tell an adoption from a public call rather than refusing everything that is not
+one of XNA's two shapes. Making internal construction impossible would be a worse
+bug than the one being fixed.")
+
+(defun %sound-effect-supplied-initargs (initargs)
+  "The keywords of INITARGS that belong to a public constructor, as strings.
+
+Anything NATIVE-OBJECT declares is filtered out; everything else is a keyword the
+caller chose, including one no constructor names -- which is the case a bare
+`&allow-other-keys' swallowed."
+  (loop for (key nil) on initargs by #'cddr
+        unless (member key *native-object-initargs*)
+          collect (string-downcase (symbol-name key))))
+
+(defun %check-overload-shape (operation supplied)
+  "Which of XNA's two constructors SUPPLIED names, or a refusal naming both."
+  (xna::%check-overload-keywords operation supplied
+                                 *sound-effect-constructor-overloads*
+                                 :object-type 'sound-effect))
+
 (defmethod initialize-instance :after
     ((effect sound-effect)
-     &key buffer (offset 0) (count nil count-supplied) sample-rate channels
-          (loop-start 0) (loop-length 0) &allow-other-keys)
+     &rest initargs
+     &key buffer (offset 0) count sample-rate channels
+          (loop-start 0) (loop-length 0)
+          ((:%known-duration known-duration) nil) &allow-other-keys)
   "SoundEffect(byte[], int, AudioChannels) and its seven-argument sibling.
 
 Both XNA constructors funnel into `FromBuffer', so both funnel into this: the
@@ -269,17 +330,38 @@ caller received the handle from CNA and has already recorded its destruction in
 its own ledger, so nothing here may record it a second time -- see
 %ADOPT-LOADED-SOUND-EFFECT. All that is left is the duration, which is read once
 and kept, because XNA's `Duration' is a field its constructor fills in."
-  (let ((operation "make-instance sound-effect"))
+  (let ((operation "make-instance sound-effect")
+        (supplied (%sound-effect-supplied-initargs initargs)))
     (if (plusp (cna-lisp.internal:handle-of effect))
-        (setf (slot-value effect 'duration)
-              (%read-sound-effect-duration
-               effect (cna-lisp.internal:handle-of effect) operation))
-        (let ((game (%active-game operation)))
+        (progn
+          ;; An adoption carries no constructor argument, and one supplied here
+          ;; would be silently ignored -- the handle already decides the format.
+          (when supplied
+            (error 'xna:cna-usage-error
+                   :operation operation :object-type 'sound-effect
+                   :format-control
+                   "a SOUND-EFFECT built over a handle CNA has already produced ~
+                    takes none of XNA's constructor arguments, and ~{:~a~^, ~} ~
+                    would be ignored. That path is FromStream's and the content ~
+                    loader's; a program builds one with :BUFFER."
+                   :format-arguments (list (mapcar #'string-upcase supplied))))
+          (setf (slot-value effect 'duration)
+                (or known-duration
+                    (%read-sound-effect-duration
+                     effect (cna-lisp.internal:handle-of effect) operation))))
+        (let ((shape (%check-overload-shape operation supplied)))
+          ;; The short constructor rejects a null or empty buffer *before*
+          ;; FromBuffer runs, so it beats the sample rate: `new(null, 1, :MONO)'
+          ;; is ArgumentException there and would be ArgumentOutOfRangeException
+          ;; if this were left to FromBuffer's order. The long one has no such
+          ;; pre-check and takes FromBuffer's order exactly.
+          (when (eq shape :short) (%check-buffer-presence buffer operation))
           (%check-sample-rate sample-rate operation)
           (%check-channels channels operation)
           (let ((block-align (%block-align channels)))
             (%check-buffer buffer block-align operation)
-            (let ((count (if count-supplied count (length buffer))))
+            (let ((count (if (eq shape :long) count (length buffer)))
+                  (game (%active-game operation)))
               (%check-offset offset buffer block-align operation)
               (%check-count offset count buffer block-align operation)
               (multiple-value-bind (start len)
@@ -287,6 +369,7 @@ and kept, because XNA's `Duration' is a field its constructor fills in."
                                       (floor count block-align) operation)
                 (%create-sound-effect effect game buffer offset count sample-rate
                                       channels start len operation))))))))
+
 
 (defun %create-sound-effect (effect game buffer offset count sample-rate channels
                              loop-start loop-length operation)
@@ -318,10 +401,16 @@ and kept, because XNA's `Duration' is a field its constructor fills in."
            operation :object-type 'sound-effect)
           (let ((handle (cffi:mem-ref out :uint64)))
             (%adopt-sound-effect effect game handle)
+            ;; **Computed, not read.** See %READ-SOUND-EFFECT-DURATION: XNA's
+            ;; constructor fills `Duration' in from `AudioFormat.DurationFromSize'
+            ;; -- the same computation `GetSampleDuration' is -- and CNA's route
+            ;; answers an exact tick count where XNA quantises to a whole
+            ;; millisecond. The format is known here, so the exact answer is
+            ;; available and there is no reason to take the approximate one.
             (setf (slot-value effect 'duration)
-                  (%read-sound-effect-duration effect handle operation))))))))
+                  (sound-effect-get-sample-duration count sample-rate channels))))))))
 
-(defun %adopt-loaded-sound-effect (game handle record)
+(defun %adopt-loaded-sound-effect (game handle record &optional known-duration)
   "Build the CLOS SoundEffect over a handle the caller's transaction already owns.
 
 RECORD is that transaction's recorder, and the division of labour is the rule
@@ -343,6 +432,7 @@ disposed object rather than a live-looking one over a dead handle."
                                :handle handle
                                :ownership :owned
                                :owner game
+                               :%known-duration known-duration
                                :owner-thread (cna-lisp.internal:owner-thread-of game))))
     (cna-lisp.internal:register-child game effect)
     (funcall record (lambda () (cna-lisp.internal:invalidate effect)))
@@ -350,45 +440,119 @@ disposed object rather than a live-looking one over a dead handle."
 
 ;;; --- FromStream ------------------------------------------------------------
 
+(defun %playback-device-available-p ()
+  "Whether CNA reports a playback device, as data rather than as a failure.
+
+`cna_audio_get_capabilities' succeeds either way and answers
+`is_playback_available' as a field, which is what makes it usable to tell two
+meanings of one result code apart. Answers NIL when the probe itself fails, which
+is the conservative direction: an unanswerable question is not evidence that a
+device exists."
+  (let ((game (cna-lisp.internal:active-game)))
+    (and game
+         (cffi:with-foreign-object
+             (caps '(:struct cna-lisp.internal.ffi::cna-audio-capabilities))
+           (cffi:foreign-funcall
+            "memset" :pointer caps :int 0
+            :size cna-lisp.internal.ffi::+sizeof-cna-audio-capabilities+ :void)
+           (setf (cffi:foreign-slot-value
+                  caps '(:struct cna-lisp.internal.ffi::cna-audio-capabilities)
+                  'cna-lisp.internal.ffi::struct-size)
+                 cna-lisp.internal.ffi::+sizeof-cna-audio-capabilities+
+                 (cffi:foreign-slot-value
+                  caps '(:struct cna-lisp.internal.ffi::cna-audio-capabilities)
+                  'cna-lisp.internal.ffi::struct-version)
+                 1)
+           (and (= (cna-lisp.internal.ffi::%audio-get-capabilities
+                    (cna-lisp.internal:handle-of game) caps)
+                   cna-lisp.internal.ffi::+result-success+)
+                (not (zerop (cffi:foreign-slot-value
+                             caps '(:struct cna-lisp.internal.ffi::cna-audio-capabilities)
+                             'cna-lisp.internal.ffi::is-playback-available))))))))
+
 (defun sound-effect-from-stream (stream)
   "SoundEffect.FromStream(Stream).
 
 STREAM is an ordinary Common Lisp binary stream, which is what `System.IO.Stream'
-projects onto here -- see `docs/limitations.md'. XNA reads it to the end and
-decodes whatever it holds; `cna_sound_effect_create_from_encoded_ext' takes the
-bytes CNA would have read, because \"the canonical operation takes a C++ stream
-and reads it to the end, so C takes the bytes it would have read\".
+projects onto here -- see `docs/limitations.md'. XNA reads it to the end;
+`cna_sound_effect_create_from_encoded_ext' takes the bytes CNA would have read,
+because \"the canonical operation takes a C++ stream and reads it to the end, so C
+takes the bytes it would have read\".
 
-Whatever the audio backend can decode is accepted, which is more than the raw
-PCM the constructors take. A payload it cannot decode answers
-`CNA_RESULT_NOT_SUPPORTED', which is the same code a machine with no audio device
-answers -- so this signals NO-AUDIO-HARDWARE-ERROR for both, and the condition's
-report carries CNA's own message, which distinguishes them."
+**The bytes are checked against XNA's wave contract before CNA sees them, and
+that is the whole point of `audio/wave.lisp'.** CNA's route accepts \"whatever the
+audio backend can decode ... which is more than the raw PCM the other creation
+routes take\" -- its own header says so -- and XNA accepts one shape: a RIFF/WAVE
+file whose `fmt ' chunk declares uncompressed PCM, one or two channels, 8 or 16
+bits and a rate in [8000, 48000], followed by a `data' chunk. Handing an Ogg
+straight to CNA and answering with a SoundEffect because SDL could decode it
+would be adding a capability to `FromStream' that XNA has not got, which is the
+one thing this projection does not do.
+
+**Three different failures, three different conditions.** They used to be one:
+
+  not RIFF/WAVE, or a declared size that disagrees with the stream
+      CNA-USAGE-ERROR, XNA's InvalidOperationException from ParseWavHeader
+
+  a wave file XNA will not read -- non-PCM, wrong channel count, wrong rate,
+  wrong sample width, no fmt chunk, no data chunk, data before fmt
+      CNA-ARGUMENT-ERROR, XNA's ArgumentException(InvalidWaveStream)
+
+  a wave file XNA accepts, on a machine with no playback device
+      NO-AUDIO-HARDWARE-ERROR, XNA's NoAudioHardwareException
+
+The third used to swallow the other two, because `CNA_RESULT_NOT_SUPPORTED' is
+the code for \"no audio hardware\" *and* for \"cannot decode these bytes\", and
+mapping both onto NO-AUDIO-HARDWARE-ERROR told a program with a malformed asset
+that its machine had no sound card. Validating first removes the ambiguity, and
+what remains of it is settled by asking CNA whether a playback device exists."
   (let* ((operation "sound-effect-from-stream")
-         (game (%active-game operation))
          (bytes (xna::%read-stream-octets stream operation)))
-    (when (zerop (length bytes))
-      (error 'xna:cna-argument-error
-             :operation operation :parameter-name "stream"
-             :object-type 'sound-effect
-             :format-control
-             "the stream held no bytes. CNA's decode route refuses a zero byte ~
-              count, and there is nothing for XNA's decoder to read either."))
-    (cffi:with-foreign-object (raw :uint8 (length bytes))
-      (dotimes (i (length bytes))
-        (setf (cffi:mem-aref raw :uint8 i) (aref bytes i)))
-      (cffi:with-foreign-object (out :uint64)
-        (%check-audio-result
-         (cna-lisp.internal.ffi::%sound-effect-create-from-encoded-ext
-          (cna-lisp.internal:handle-of game) raw (length bytes) out)
-         operation :object-type 'sound-effect)
-        (let ((handle (cffi:mem-ref out :uint64)))
-          ;; This function received the handle, so this ledger records its
-          ;; destruction and the adoption records only the Lisp state.
-          (cna-lisp.internal:with-native-rollback (record)
-            (funcall record
-                     (lambda () (cna-lisp.internal.ffi::%sound-effect-destroy handle)))
-            (%adopt-loaded-sound-effect game handle record)))))))
+    ;; Before the game is resolved: XNA's FromStream parses the stream in the
+    ;; constructor and needs no device to refuse a stream that is not a wave file.
+    (multiple-value-bind (channels sample-rate bits data-length)
+        (%check-wave-stream bytes operation)
+      (declare (ignore bits))
+     (let ((game (%active-game operation))
+           ;; XNA's FromStream fills `Duration' in from `WavFile.Duration', which
+           ;; is `format.DurationFromSize(Data.Length)' -- the same computation
+           ;; the constructors use. The parse above knows all three arguments, so
+           ;; this is XNA's exact answer rather than CNA's approximation of it.
+           (known (sound-effect-get-sample-duration
+                   data-length sample-rate
+                   (if (= channels 2) :stereo :mono))))
+      (cffi:with-foreign-object (raw :uint8 (length bytes))
+        (dotimes (i (length bytes))
+          (setf (cffi:mem-aref raw :uint8 i) (aref bytes i)))
+        (cffi:with-foreign-object (out :uint64)
+          (let ((code (cna-lisp.internal.ffi::%sound-effect-create-from-encoded-ext
+                       (cna-lisp.internal:handle-of game) raw (length bytes) out)))
+            (when (and (= code cna-lisp.internal.ffi::+result-not-supported+)
+                       (%playback-device-available-p))
+              ;; The bytes are a wave file XNA reads and a device exists, so this
+              ;; is neither of the two meanings the result code carries. Saying
+              ;; NO-AUDIO-HARDWARE-ERROR here would be a false statement about the
+              ;; machine; the honest answer is that CNA could not decode something
+              ;; XNA can, which is a divergence and not a program error.
+              (error 'xna:cna-not-supported-error
+                     :operation operation :object-type 'sound-effect
+                     :%result code
+                     :native-message (cna-lisp.internal:last-native-message)
+                     :format-control
+                     "CNA could not decode a wave stream this binding has checked ~
+                      against XNA's own WavFile contract, and a playback device is ~
+                      present -- so this is not the no-audio-hardware branch of ~
+                      CNA_RESULT_NOT_SUPPORTED. It is a decoder divergence between ~
+                      CNA and XNA; please report it with the stream.~@[ ~a~]"
+                     :format-arguments (list (cna-lisp.internal:last-native-message))))
+            (%check-audio-result code operation :object-type 'sound-effect))
+          (let ((handle (cffi:mem-ref out :uint64)))
+            ;; This function received the handle, so this ledger records its
+            ;; destruction and the adoption records only the Lisp state.
+            (cna-lisp.internal:with-native-rollback (record)
+              (funcall record
+                       (lambda () (cna-lisp.internal.ffi::%sound-effect-destroy handle)))
+              (%adopt-loaded-sound-effect game handle record known)))))))))
 
 ;;; --- readers ---------------------------------------------------------------
 
@@ -428,13 +592,30 @@ is alive."
 
 ;;; --- Play ------------------------------------------------------------------
 
-(defmethod play ((effect sound-effect) &key (volume nil volume-supplied) pitch pan)
+(defparameter *sound-effect-play-overloads*
+  '((:plain)
+    (:settings "volume" "pitch" "pan"))
+  "XNA's two Play overloads, as the keyword sets that spell them.
+
+    Play()
+    Play(Single, Single, Single)
+
+The three settings are **one indivisible overload**, not three options. `:VOLUME'
+alone, `:PITCH' alone, `:PAN' alone and the three pairs are six call shapes XNA
+has not got, and each of them used to be accepted here: the method decided it had
+been given the long overload from whether `:VOLUME' was supplied, and defaulted
+the other two to 0.0. `Play()' *is* `Play(1f, 0f, 0f)' -- that is its whole body
+in the pinned IL -- but that makes the no-argument form a shorthand for the full
+triple, not a licence for the six shapes between them.")
+
+(defmethod play ((effect sound-effect)
+                 &key (volume nil volume-p) (pitch nil pitch-p) (pan nil pan-p))
   "SoundEffect.Play() and SoundEffect.Play(float, float, float).
 
 One generic function with an optional settings triple, because XNA gives the two
-overloads one name and the no-argument form is exactly
-`Play(1.0f, 0.0f, 0.0f)' -- which is what its IL does, and what this does when
-no settings are given.
+overloads one name and the no-argument form is exactly `Play(1.0f, 0.0f, 0.0f)' --
+which is what its IL does, and what this does when no settings are given. The
+triple is all-or-nothing; see *SOUND-EFFECT-PLAY-OVERLOADS*.
 
 Answers T when playback started and NIL when it did not. A disposed effect
 signals `CNA-DISPOSED-ERROR' rather than answering NIL: CNA's route documents the
@@ -442,29 +623,61 @@ signals `CNA-DISPOSED-ERROR' rather than answering NIL: CNA's route documents th
 `IsDisposed' test and throws. See the file header.
 
 `INSTANCE-PLAY-LIMIT-ERROR' is signalled when the platform's voice limit is
-reached, which is XNA's `InstancePlayLimitException'. The asymmetry in the
-three-argument form is CNA's and XNA's alike: **pan is range-checked and pitch is
-clamped**, so a pan outside [-1, 1] is refused and a pitch outside it is not."
-  (let ((operation "play"))
+reached, which is XNA's `InstancePlayLimitException'.
+
+**All three values are range-checked, and that is read from the IL rather than
+inferred.** `Play(float, float, float)' performs no validation of its own: its
+body takes an instance from the pool and calls `set_Volume', `set_Pitch' and
+`set_Pan' on it, in that order, before `Play()'. So the rules are exactly those
+three setters' -- volume in [0, 1], pitch in [-1, 1], pan in [-1, 1], each
+comparing with `blt.un'/`bgt.un' so that a NaN takes the throwing branch -- and
+the *order* is theirs too, which decides which parameter a doubly-invalid call is
+told about. This previously checked `pan' only and documented pitch as clamped;
+that was CNA's behaviour rather than XNA's, and CNA's clamp is exactly why the
+check has to happen here."
+  (let ((operation "play")
+        (shape (xna::%check-overload-keywords
+                "play" (xna::%supplied-keywords "volume" volume-p "pitch" pitch-p
+                                                "pan" pan-p)
+                *sound-effect-play-overloads* :object-type 'sound-effect)))
     (cna-lisp.internal:check-usable effect operation)
     (cffi:with-foreign-object (played :uint32)
       (%check-audio-result
        (cna-lisp.internal:with-binary32-semantics
-        (if volume-supplied
-           (let ((v (xna::f volume)) (p (xna::f (or pitch 0.0f0)))
-                 (n (xna::f (or pan 0.0f0))))
-             (when (or (cna-lisp.internal:nan-p n) (< n -1.0f0) (> n 1.0f0))
-               (error 'xna:cna-argument-out-of-range-error
-                      :operation operation :parameter-name "pan"
-                      :object-type 'sound-effect
-                      :format-control "pan must be in [-1, 1]; ~a was given."
-                      :format-arguments (list n)))
-             (cna-lisp.internal.ffi::%sound-effect-play-with-settings
-              (cna-lisp.internal:handle-of effect) v p n played))
-           (cna-lisp.internal.ffi::%sound-effect-play
-            (cna-lisp.internal:handle-of effect) played)))
+        (if (eq shape :settings)
+            ;; set_Volume, then set_Pitch, then set_Pan -- the order Play calls
+            ;; them in, so a call wrong in two of them reports the first.
+            (let ((v (%check-play-setting volume 0.0f0 1.0f0 "volume" operation))
+                  (p (%check-play-setting pitch -1.0f0 1.0f0 "pitch" operation))
+                  (n (%check-play-setting pan -1.0f0 1.0f0 "pan" operation)))
+              (cna-lisp.internal.ffi::%sound-effect-play-with-settings
+               (cna-lisp.internal:handle-of effect) v p n played))
+            (cna-lisp.internal.ffi::%sound-effect-play
+             (cna-lisp.internal:handle-of effect) played)))
        operation :object-type 'sound-effect :limit-is-play-limit t)
       (not (zerop (cffi:mem-ref played :uint32))))))
+
+(defun %check-play-setting (value low high parameter operation)
+  "One of Play's three settings, by the rule its SoundEffectInstance setter applies.
+
+The setters are `blt.un low' then `bgt.un high', both to one
+`ArgumentOutOfRangeException(\"value\")', so a NaN is refused along with anything
+outside the closed range. The NaN test is written out rather than left to the
+comparison for the reason %CHECK-UNIT-RANGE gives: SBCL leaves the invalid flag
+accrued after a masked comparison, and the next operation would trap on it."
+  (let ((v (xna::f value)))
+    (when (or (cna-lisp.internal:nan-p v) (< v low) (> v high))
+      (error 'xna:cna-argument-out-of-range-error
+             :operation operation :parameter-name parameter
+             :object-type 'sound-effect
+             :format-control
+             "~a must be in [~a, ~a] and not NaN; ~a was given. Play does not ~
+              validate its own arguments: it assigns them to a pooled ~
+              SoundEffectInstance, so this is that setter's range. CNA clamps ~
+              pitch instead of refusing it, which is why the check is here and ~
+              not left to the route."
+             :format-arguments (list parameter low high v)))
+    v))
 
 ;;; --- CreateInstance --------------------------------------------------------
 
@@ -479,6 +692,52 @@ before the game."
   (make-instance 'sound-effect-instance :sound-effect effect))
 
 ;;; --- disposal --------------------------------------------------------------
+
+(defmethod xna::dispose-owned-children ((effect sound-effect) children)
+  "SoundEffect.Dispose disposes its live instances, and this is the one type that does.
+
+**Read from the pinned IL, not from the documentation sentence about it.**
+`SoundEffect.Dispose(bool)' sets its own `disposed' field, takes a snapshot of its
+`children' list, and calls `Dispose()' on every weak reference in it that is still
+a live `SoundEffectInstance' -- then drains its instance pool the same way, and
+only then releases its own native handle. So the observable behaviour after
+
+    effect = ...;  instance = effect.CreateInstance();  effect.Dispose();
+
+is: `effect.IsDisposed' is true, `instance.IsDisposed' is **also** true, and every
+member of the instance that opens with an `IsDisposed' test -- `State',
+`Play', `Pause', `Resume', `Stop', `Apply3D' and the three settings' setters --
+throws `ObjectDisposedException'. The three *getters* do not: `get_Volume',
+`get_Pitch' and `get_Pan' are a bare `ldfld' with no check, and answer the last
+value stored. Disposing the instance afterwards is legal and does nothing, because
+`SoundEffectInstance.Dispose(bool)' returns early when already disposed.
+
+`CNA-DISPOSED-ERROR' is this binding's `ObjectDisposedException', and it is what
+the instance's operations answer here for the same reason.
+
+**The child order is CNA's requirement and XNA's behaviour at once.** Each
+instance's voice is deallocated before the effect's handle is released, which is
+the \"destroyed after all instances created from it and before the game\" ordering
+CNA documents -- so reproducing XNA here does not fight the ABI, it satisfies it.
+
+DISPOSE is used rather than a private teardown so that one instance failing to
+release cannot leave the rest alive: each child goes through the same idempotent,
+ledger-aware path a program's own `(dispose instance)' would."
+  (dolist (child children)
+    (xna:dispose child))
+  ;; The children unregistered themselves through INVALIDATE, so nothing is left
+  ;; for DISPOSE's own check to find. Asserting it rather than assuming it: a
+  ;; child that survived would be destroyed by CNA in the wrong order.
+  (let ((left (xna::%live-owned-children effect)))
+    (when left
+      (error 'xna:cna-ownership-error
+             :operation "dispose" :object-type 'sound-effect
+             :format-control
+             "~d SoundEffectInstance(s) were still live after the cascade that ~
+              should have disposed them. CNA destroys an instance before its ~
+              effect and refuses the other order, so the effect is not destroyed."
+             :format-arguments (list (length left)))))
+  (values))
 
 (defmethod cna-lisp.internal:destroy-native ((effect sound-effect))
   (cna-lisp.internal:check-result
@@ -513,28 +772,136 @@ before the game."
 ;;;
 ;;; Neither takes a game: XNA's are static and this needs no CNA at all.
 
-(defun %ticks-from-milliseconds (milliseconds)
-  "System.TimeSpan.FromMilliseconds, which rounds half away from zero.
+(defconstant +int32-minimum+ -2147483648)
+(defconstant +int32-maximum+ 2147483647
+  "Int32's bounds. Both static sample computations take or answer one, and Common
+Lisp integers do not, so where XNA's arithmetic is `checked' this binding has to
+say so explicitly -- see %CHECKED-INT32 -- and where XNA's *parameter* is an
+Int32 the range is part of the contract rather than an accident of C#.")
 
-.NET computes `(long)(value * TicksPerMillisecond + (value >= 0 ? 0.5 : -0.5))'.
-The rounding is why 12.5 ms is exactly 125000 ticks rather than 124999, and why
-truncating -- which is what CNA's route does -- is a different answer."
-  (let ((scaled (* (coerce milliseconds 'double-float) 10000.0d0)))
-    (truncate (+ scaled (if (minusp scaled) -0.5d0 0.5d0)))))
+(defconstant +maximum-duration-milliseconds+ 2147483647
+  "The largest TimeSpan `GetSampleSizeInBytes' accepts, in whole milliseconds.
+
+`ldc.r8 2147483647; ble.un.s' in the pinned IL -- `Int32.MaxValue' as a float64,
+compared against `duration.TotalMilliseconds'. The comparison is `<=', so exactly
+2147483647 ms is accepted and anything above it is refused.")
+
+(defconstant +maximum-duration-ticks+ 21474836470000
+  "The same bound as a tick count, which is the unit this projection uses.
+
+`TimeSpan.TotalMilliseconds' is `(double)_ticks * 0.0001' -- clamped to
++-922337203685477, far outside anything relevant here -- so the largest accepted
+tick count is the largest whose product with 0.0001 is at most 2147483647.0.
+Computed rather than assumed: 21474836470000 ticks multiply to exactly
+2147483647.0 and 21474836470001 to 2147483647.0001001, so the boundary is exact
+and the tick above it is refused.")
+
+(defun %total-milliseconds (ticks)
+  "System.TimeSpan.get_TotalMilliseconds, which **multiplies by 0.0001**.
+
+Not `ticks / 10000.0'. The two differ in the last place for many tick counts --
+3 ticks are 0.00030000000000000003 one way and 0.0003 the other -- and this
+binding reproduces the operation the IL performs rather than the one the algebra
+suggests, for the reason `MathHelper.ToRadians' multiplies by a constant instead
+of dividing by 180. No input inside the accepted range was found where the
+difference changes a byte count, and that is a measurement rather than a reason
+to write the other one.
+
+The clamp is XNA's too, and unreachable from the caller: the duration guard
+refuses long before +-922337203685477 ms."
+  (let ((v (* (coerce ticks 'double-float) 0.0001d0)))
+    (cond ((> v 922337203685477.0d0) 922337203685477.0d0)
+          ((< v -922337203685477.0d0) -922337203685477.0d0)
+          (t v))))
+
+(defun %checked-int32 (value duration operation)
+  "One of `SizeFromDuration''s three checked operations, or XNA's rethrow.
+
+`conv.ovf.i4', `add.ovf' and `mul.ovf' each raise `OverflowException', and
+`SoundEffect.GetSampleSizeInBytes' wraps the whole computation in
+`try { ... } catch (OverflowException) { throw new ArgumentOutOfRangeException(\"duration\"); }'.
+So an overflow is reported to the caller as a *duration* that is out of range,
+not as an arithmetic failure -- which is the one thing a Common Lisp
+transcription gets wrong for free, because its integers do not overflow and the
+computation simply answers a bignum."
+  (unless (<= +int32-minimum+ value +int32-maximum+)
+    (error 'xna:cna-argument-out-of-range-error
+           :operation operation :parameter-name "duration"
+           :object-type 'sound-effect
+           :format-control
+           "~d tick(s) at this rate and channel count needs ~d bytes, which is ~
+            outside Int32. XNA computes the size with checked arithmetic and ~
+            turns the OverflowException into an ArgumentOutOfRangeException ~
+            about the duration, so a size that cannot be counted is a duration ~
+            that is too long."
+           :format-arguments (list duration value)))
+  value)
+
+(defun %ticks-from-milliseconds (milliseconds)
+  "System.TimeSpan.FromMilliseconds, which rounds the **milliseconds** and then scales.
+
+Read from the pinned mscorlib rather than from the algebra, and the two are not
+the same operation. `FromMilliseconds(v)' is `Interval(v, 1)', whose body is
+
+    millis = v * 1 + (v >= 0 ? 0.5 : -0.5)
+    if (millis > 922337203685477 || !(millis >= -922337203685477)) throw OverflowException
+    ticks  = (long)millis * 10000
+
+-- so the half is added to the **millisecond** count and the `conv.i8' truncates
+*that*, before the multiplication by 10000. It is round-half-away-from-zero to a
+whole millisecond, not to a whole tick, and the result is therefore always a
+multiple of 10000 ticks.
+
+**This was previously computed as `(long)(v * 10000 + 0.5)', and that is a
+different number.** 12.5 ms is 130000 ticks in XNA and 125000 under the old
+arithmetic; the comment beside it claimed 125000 was \"the exact 12.5 ms the
+buffer holds\", which is true of the buffer and false of `TimeSpan.FromMilliseconds'.
+XNA quantises to whole milliseconds here just as CNA's route does -- what the two
+disagree about is the direction, CNA truncating 12.5 to 12 and XNA rounding it to
+13 -- so the divergence is one rounding rule rather than a lost precision, and
+`tests/native/audio.lisp' pins all three numbers.
+
+A NaN cannot reach this: XNA throws `ArgumentException(Arg_CannotBeNaN)' for one,
+and the only caller divides by a sample rate already checked to be in
+[8000, 48000]."
+  (let* ((v (coerce milliseconds 'double-float))
+         (millis (+ v (if (minusp v) -0.5d0 0.5d0))))
+    (when (or (> millis 922337203685477.0d0)
+              (not (>= millis -922337203685477.0d0)))
+      (error 'xna:cna-overflow-error
+             :operation "sound-effect-get-sample-duration"
+             :object-type 'sound-effect
+             :format-control
+             "~a milliseconds is more than a TimeSpan can hold; XNA answers ~
+              OverflowException from TimeSpan.FromMilliseconds."
+             :format-arguments (list v)))
+    (* (truncate millis) 10000)))
 
 (defun sound-effect-get-sample-duration (size-in-bytes sample-rate channels)
   "SoundEffect.GetSampleDuration(int, int, AudioChannels), in 100-nanosecond ticks.
 
 TimeSpan is projected as an exact tick count throughout this binding rather than
 as a type, so this answers an integer. A size of zero answers zero, which is
-`TimeSpan.Zero' and XNA's own early return."
+`TimeSpan.Zero' and XNA's own early return.
+
+Three guards in the pinned IL's order -- a negative size is
+`ArgumentException(\"sizeInBytes\")', then the sample rate, then the channels --
+and, unlike `GetSampleSizeInBytes', **no overflow path**: the IL has no `checked'
+region and no `catch', because `sizeInBytes' is an `Int32' and the largest one
+divides down to about 1.3e8 milliseconds, far inside a TimeSpan. That bound is
+part of the contract rather than an accident of C#, so a size outside Int32 is
+refused here: Common Lisp would otherwise accept an integer XNA cannot be
+handed and answer a duration no XNA program can obtain."
   (let ((operation "sound-effect-get-sample-duration"))
-    (unless (and (integerp size-in-bytes) (<= 0 size-in-bytes))
+    (unless (and (integerp size-in-bytes)
+                 (<= 0 size-in-bytes +int32-maximum+))
       (error 'xna:cna-argument-error
              :operation operation :parameter-name "size-in-bytes"
              :object-type 'sound-effect
-             :format-control "size-in-bytes must not be negative; ~s was given."
-             :format-arguments (list size-in-bytes)))
+             :format-control
+             "size-in-bytes is an Int32 and must not be negative; it must lie in ~
+              [0, ~d] and ~s was given."
+             :format-arguments (list +int32-maximum+ size-in-bytes)))
     (%check-sample-rate sample-rate operation)
     (%check-channels channels operation)
     (if (zerop size-in-bytes)
@@ -547,25 +914,59 @@ as a type, so this answers an integer. A size of zero answers zero, which is
 (defun sound-effect-get-sample-size-in-bytes (duration sample-rate channels)
   "SoundEffect.GetSampleSizeInBytes(TimeSpan, int, AudioChannels).
 
-DURATION is a tick count, for the reason GetSampleDuration answers one. XNA
-refuses a negative duration and one longer than its own maximum with
-`ArgumentOutOfRangeException'; a zero duration answers zero bytes."
+DURATION is a tick count, for the reason GetSampleDuration answers one.
+
+**Four guards, in the pinned IL's order**, because which parameter a call wrong
+in two of them is told about is decided by that order:
+
+    TotalMilliseconds < 0                  -> ArgumentOutOfRangeException(\"duration\")
+    TotalMilliseconds > 2147483647         -> ArgumentOutOfRangeException(\"duration\")
+    sampleRate outside [8000, 48000]       -> ArgumentOutOfRangeException(\"sampleRate\")
+    channels outside [1, 2]                -> ArgumentOutOfRangeException(\"channels\")
+
+then `duration == TimeSpan.Zero' answers 0, and only then is the size computed --
+inside a `checked' region whose overflow becomes the *duration* exception again.
+The upper bound and the overflow were both documented here and neither was
+implemented; a duration of a thousand years answered a bignum.
+
+NaN does not arise: a TimeSpan is an Int64 tick count, so there is no float to be
+one, and inventing a NaN branch would be inventing a rule."
   (let ((operation "sound-effect-get-sample-size-in-bytes"))
-    (unless (and (integerp duration) (<= 0 duration))
+    (unless (integerp duration)
       (error 'xna:cna-argument-out-of-range-error
              :operation operation :parameter-name "duration"
              :object-type 'sound-effect
-             :format-control "duration must not be negative; ~s was given."
+             :format-control
+             "duration is a TimeSpan, which this binding projects as a whole ~
+              number of 100-nanosecond ticks; ~s is not one."
              :format-arguments (list duration)))
-    (%check-sample-rate sample-rate operation)
-    (%check-channels channels operation)
-    (if (zerop duration)
-        0
-        (let* ((total-milliseconds (/ (coerce duration 'double-float) 10000.0d0))
-               (per-millisecond (xna::f (/ (xna::f sample-rate) 1000.0f0)))
-               (n (truncate (* total-milliseconds (coerce per-millisecond 'double-float))))
-               (channel-count (%channel-count channels)))
-          (* (+ n (mod n channel-count)) (%block-align channels))))))
+    (let ((total-milliseconds (%total-milliseconds duration)))
+      (when (or (< total-milliseconds 0.0d0)
+                (> total-milliseconds
+                   (coerce +maximum-duration-milliseconds+ 'double-float)))
+        (error 'xna:cna-argument-out-of-range-error
+               :operation operation :parameter-name "duration"
+               :object-type 'sound-effect
+               :format-control
+               "duration must be a tick count in [0, ~d] -- that is [0, ~d] ~
+                milliseconds, which is Int32.MaxValue and XNA's own upper bound; ~
+                ~s was given."
+               :format-arguments (list +maximum-duration-ticks+
+                                       +maximum-duration-milliseconds+ duration)))
+      (%check-sample-rate sample-rate operation)
+      (%check-channels channels operation)
+      (if (zerop duration)
+          0
+          (let* ((per-millisecond (xna::f (/ (xna::f sample-rate) 1000.0f0)))
+                 (n (%checked-int32
+                     (truncate (* total-milliseconds
+                                  (coerce per-millisecond 'double-float)))
+                     duration operation))
+                 (channel-count (%channel-count channels))
+                 (aligned (%checked-int32 (+ n (mod n channel-count))
+                                          duration operation)))
+            (%checked-int32 (* aligned (%block-align channels))
+                            duration operation))))))
 
 ;;; --- the four process-wide statics -----------------------------------------
 ;;;

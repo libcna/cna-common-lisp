@@ -34,6 +34,17 @@ Note that the values are 1 and 2 rather than 0 and 1, so the member doubles as
 the channel count -- which is what makes `GetSampleDuration' and
 `GetSampleSizeInBytes' arithmetic rather than a lookup, there and here.")
 
+(defconstant +minimum-sample-rate+ 8000
+  "The lowest sample rate the audio surface accepts: `0x1f40' in the pinned IL.")
+(defconstant +maximum-sample-rate+ 48000
+  "The highest sample rate the audio surface accepts: `0xbb80' in the pinned IL.
+
+The same pair of bounds appears in four places in the pinned assembly and is one
+fact rather than four: `SoundEffect.FromBuffer', `GetSampleDuration',
+`GetSampleSizeInBytes' and `WavFile.ParseFormat' all compare against `0x1f40' and
+`0xbb80'. They live here, beside the channel arithmetic, because the wave parser
+needs them and is loaded before SoundEffect is.")
+
 (defun %channel-count (channels)
   "The number of interleaved channels AUDIO-CHANNELS names.
 
