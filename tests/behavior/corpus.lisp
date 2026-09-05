@@ -611,13 +611,42 @@
     "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle"
   "XNA's 16-bit half has no infinity and no NaN: an exponent of 31 means 2^16
    rather than a special value, so the format reaches 131008 where IEEE 754
-   binary16 stops at 65504, and anything larger saturates there."
-  (and (= 65504.0f0 (pv:half-single-to-single (pv:make-half-single 65504.0)))
-       (= 70016.0f0 (pv:half-single-to-single (pv:make-half-single 70000.0)))
-       (= 131008.0f0 (pv:half-single-to-single (pv:make-half-single 200000.0)))
-       (= 131008.0f0 (pv:half-single-to-single
-                      (pv:make-half-single
-                       (cna-lisp.internal:bits-single-float #x7F800000))))))
+   binary16 stops at 65504, and anything larger saturates there.
+
+   Read from HalfUtils::Pack and ::Unpack in the pinned assembly, and the two
+   halves of the claim are in different methods. Pack compares the magnitude
+   bits against wMaxNormal = 0x47FFEFFF and, above it, answers sign | 0x7FFF --
+   an unsigned integer comparison, so an infinity and a NaN both exceed it and
+   both saturate. Unpack has *no* branch for an exponent of 31: it rebiases
+   31 - 15 + 127 = 143 like any other, which is 2^16, so 0x7FFF reads back as
+   131008.0 rather than as an infinity. Everything else about the format is
+   binary16 -- the subnormal path and the round-to-nearest-even are the ordinary
+   ones -- which is why only the top exponent tells the two apart."
+  (flet ((round-trip (bits)
+           (pv:half-single-to-single
+            (pv:make-half-single (cna-lisp.internal:bits-single-float bits))))
+         (packed (bits)
+           (pv:half-single-packed-value
+            (pv:make-half-single (cna-lisp.internal:bits-single-float bits)))))
+    (and
+     ;; binary16's largest finite is representable and is *not* this format's
+     ;; largest: the exponent above it is still a number here.
+     (= 65504.0f0 (pv:half-single-to-single (pv:make-half-single 65504.0)))
+     (= #x7BFF (pv:half-single-packed-value (pv:make-half-single 65504.0)))
+     (= 70016.0f0 (pv:half-single-to-single (pv:make-half-single 70000.0)))
+     (= 131008.0f0 (pv:half-single-to-single (pv:make-half-single 200000.0)))
+     ;; Neither infinity survives, and the sign does.
+     (= #x7FFF (packed #x7F800000)) (=  131008.0f0 (round-trip #x7F800000))
+     (= #xFFFF (packed #xFF800000)) (= -131008.0f0 (round-trip #xFF800000))
+     ;; Nor does a NaN: it is above wMaxNormal unsigned, so it saturates too.
+     (= #x7FFF (packed #x7FC00000)) (= 131008.0f0 (round-trip #x7FC00000))
+     ;; wMaxNormal itself already rounds up to the saturated pattern, so the
+     ;; boundary is not observable from the answer -- only from the IL.
+     (= #x7FFF (packed #x47FFEFFF))
+     ;; The subnormal and smallest-normal paths are binary16's own.
+     (= #x0400 (packed #x38800000))
+     (= 5.9604645e-8 (pv:half-single-to-single
+                      (pv:make-half-single 5.9604645e-8))))))
 
 (defobservation "packedvector.signed-normalised-reserves-a-code-point" :xna-derived
     "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2"

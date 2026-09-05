@@ -94,6 +94,71 @@ has native routes for most of this arithmetic and they are deliberately not used
 routing the value types through the C ABI would make the binding's arithmetic
 CNA's rather than XNA's, and would leave nothing to cross-check.
 
+## The half-precision format, which is the least believable claim here
+
+CNA-Lisp says XNA's 16-bit half is **not** IEEE 754 binary16. That is unusual
+enough that it should not rest on a source comment, so the evidence is written
+out. Both methods are `Microsoft.Xna.Framework.Graphics.PackedVector.HalfUtils`
+in `Microsoft.Xna.Framework.dll` -- a `private abstract sealed` class, so it is
+not in the contract and only its effects are observable.
+
+`Pack(float32)` reads the argument's bits, keeps the sign as bit 15, and
+compares the magnitude against the literal field `wMaxNormal = 0x47FFEFFF`:
+
+```
+IL_001b:  ldloc.0                       // value bits & 0x7FFFFFFF
+IL_001c:  ldc.i4     0x47ffefff
+IL_0021:  ble.un.s   IL_002e            // <= : the ordinary paths
+IL_0023:  ldloc.2                       // sign
+IL_0024:  ldc.i4     0x7fff
+IL_0029:  or                            // saturate
+```
+
+The comparison is unsigned over `uint32`, so an infinity (`0x7F800000`) and
+every NaN (above it) both exceed `wMaxNormal` and both take the saturating
+branch. **Nothing anywhere in `Pack` produces a non-finite pattern**, and
+nothing tests for one on the way in.
+
+`Unpack(uint16)` is where the other half of the claim lives. It branches once,
+on whether the exponent field is zero, and the non-zero branch has **no case
+for an exponent of 31**:
+
+```
+IL_005f:  ldarg.0
+IL_0060:  ldc.i4     0x8000
+IL_0065:  and
+IL_0066:  ldc.i4.s   16
+IL_0068:  shl                           // sign
+IL_0069:  ldarg.0
+IL_006a:  ldc.i4.s   10
+IL_006c:  shr
+IL_006d:  ldc.i4.s   31
+IL_006f:  and
+IL_0070:  ldc.i4.s   15
+IL_0072:  sub                           // - cExpBias
+IL_0073:  ldc.i4.s   127
+IL_0075:  add                           // + binary32 bias
+IL_0076:  ldc.i4.s   23
+IL_0078:  shl
+```
+
+So exponent 31 rebiases to 143 like any other, which is 2^16, and `0x7FFF`
+becomes `0x47FFE000` -- **131008.0**. IEEE 754 binary16 would read the same
+pattern as a NaN.
+
+Everything else about the format *is* binary16: the zero-exponent branch does
+the ordinary subnormal renormalisation down to 2^-24, and both `Pack` paths
+round to nearest with the even tie-break. **Only the top exponent distinguishes
+the two formats**, which is exactly why the claim is easy to disbelieve and
+worth pinning.
+
+Measured against the implementation, and asserted in
+`packedvector.half-is-not-binary16`: `65504` packs to `0x7BFF` and is *not* the
+maximum; `+Inf` packs to `0x7FFF` and `-Inf` to `0xFFFF`, so the sign survives
+saturation and the infinity does not; a quiet NaN packs to `0x7FFF`; and
+`wMaxNormal` itself already rounds up to `0x7FFF`, so the boundary is visible in
+the IL and not in the answers.
+
 ## What the Graphics assembly answered
 
 `src/graphics/state-objects.lisp` was written by reading
@@ -154,3 +219,35 @@ is asserted in `tests/unit/graphics-state.lisp` and
 of them**, and where CNA disagrees -- it does, on both stencil masks -- the
 divergence is recorded in `docs/limitations.md` and pinned by a test rather than
 adopted.
+
+## The release audit: the extraordinary claims, re-read
+
+Before calling Foundation 1 release-ready, the handful of claims that are
+surprising enough that a reader might reasonably doubt them were re-opened
+against the pinned assemblies rather than against the source comments that
+assert them. Each is recorded with what the IL actually says, so that a later
+reader can tell a checked claim from an inherited one.
+
+Both assemblies were re-hashed first. `Microsoft.Xna.Framework.dll` is
+`38e7093f…ca130` and `Microsoft.Xna.Framework.Graphics.dll` is `560080fc…e9f55`,
+matching the table above.
+
+| Claim | Verdict | What the IL says |
+| --- | --- | --- |
+| XNA's 16-bit half is not IEEE 754 binary16 | **stands** | see the section above: `Pack` saturates everything above `wMaxNormal` including both infinities and every NaN, and `Unpack` has no case for exponent 31 |
+| `Color` multiplication truncates in 16.16 fixed point | **stands** | `op_Multiply` scales by `65536.0f`, clamps the factor into `[0, 0xFFFFFF]`, multiplies each byte as an integer and shifts right by 16 — a floor, not a round — then clamps each channel at `0xFF`. Half of white is 127 |
+| `DepthStencilState`'s stencil masks default to -1 | **stands** | `SetDefaults` emits `ldc.i4.m1` into both `cachedStencilMask` and `cachedStencilWriteMask`. CNA writes `0x7FFFFFFF`; the divergence is real and XNA is the authority |
+| `SpriteBatch` turns a null state into a specific default | **stands** | `SetRenderState` branches on each null and loads `BlendState::AlphaBlend`, `DepthStencilState::None`, `RasterizerState::CullCounterClockwise` and `SamplerState::LinearClamp`, the last into `SamplerStates[0]` |
+| `Matrix.Decompose` fills its outputs even when it answers false | **stands** | the failing branch writes `Quaternion::get_Identity()` into the rotation and `ldc.i4.0` into the result. Scale and translation were written earlier and are not undone |
+| `System.Char` is a UTF-16 code unit, and a surrogate pair is two glyph lookups | **stands** | the measure and draw loops index `StringProxy::get_Item(int32)`, whose return type is `char`, and pass each one to `GetIndexForCharacter(char)`. Nothing combines a surrogate pair anywhere in the path |
+
+`StringProxy` also settles a structural question rather than a behavioural one:
+it holds *either* a `string` or a `StringBuilder` and answers `Length` and
+`get_Item` over whichever it has, so the `String` and `StringBuilder` overloads
+really are one code path in the original. That is the evidence for the
+`distinguished_by: "unified"` collapse the verifier requires a reason for.
+
+**Nothing in this round changed an implementation.** Six claims were re-read and
+six survived; what changed is that the half claim now carries its IL rather than
+a comment asserting it, and that this table exists so the next audit knows which
+claims have already been checked and against what.
