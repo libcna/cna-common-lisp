@@ -24,11 +24,30 @@
    (jpeg-decoded :initform nil :accessor jpeg-decoded-texture)
    (resized :initform nil :accessor resized-texture)
    (fitted :initform nil :accessor fitted-texture)
+   (fitted-texels :initform nil :accessor fitted-texel-count)
+   (wide-fitted-texels :initform nil :accessor wide-fitted-texel-count)
    (plain :initform nil :accessor plain-texture)
    (refusals :initform '() :accessor refusals)
    (failure :initform nil :accessor stream-failure))
   (:documentation
    "Encodes a known texture to disk and decodes it back, inside a callback."))
+
+(defun %fitted-texel-count (texture)
+  "How many texels TEXTURE holds, found by asking GET-DATA to fill arrays.
+
+A decoded texture that was *fitted* cannot report its width or height -- 0.21.0
+has no route for it -- but GET-DATA reads the whole texture, so the smallest
+array it will fill is the texel count. Doubling until it is accepted finds that
+count without needing the extent, and the count is what the fit's behaviour shows
+up in."
+  (loop for count = 1 then (* 2 count)
+        while (<= count 65536)
+        do (let ((buffer (make-array count :initial-element
+                                     (xna:make-color 0 0 0 0))))
+             (when (handler-case (progn (gfx:get-data texture buffer) t)
+                     (error () nil))
+               (return count)))
+        finally (return nil)))
 
 (defun %note-refusal (game label thunk)
   "Run THUNK and record the condition type it signalled, or :ACCEPTED."
@@ -92,6 +111,34 @@ round trip that transposed or flipped the image would not pass.")
                        (with-open-file (in png :element-type '(unsigned-byte 8))
                          (gfx:texture-2d-from-stream device in
                                                      :width 8 :height 8 :zoom nil)))
+                 ;; **How many texels a fitting decode actually produced.** The
+                 ;; texture cannot report its extent, but GET-DATA reads the whole
+                 ;; of it, so the size of the array it fills is the extent's area.
+                 ;; That is the only way to see the fit from the public API, and
+                 ;; what it shows is the surprising part: CNA's fit *enlarges*.
+                 (setf (fitted-texel-count game)
+                       (%fitted-texel-count (fitted-texture game)))
+                 ;; ...and with a non-square source, to see the aspect ratio too.
+                 (let ((wide (make-instance 'gfx:texture-2d :graphics-device device
+                                                            :width 4 :height 2))
+                       (wide-png (%scratch-path "texture-stream-wide.png")))
+                   (unwind-protect
+                        (progn
+                          (gfx:set-data wide (concatenate 'vector *stream-texels*
+                                                          *stream-texels*))
+                          (with-open-file (out wide-png :direction :output
+                                                        :element-type '(unsigned-byte 8)
+                                                        :if-exists :supersede)
+                            (gfx:save-as-png wide out 4 2))
+                          (let ((decoded (with-open-file (in wide-png
+                                                             :element-type '(unsigned-byte 8))
+                                           (gfx:texture-2d-from-stream
+                                            device in :width 8 :height 8 :zoom nil))))
+                            (unwind-protect
+                                 (setf (wide-fitted-texel-count game)
+                                       (%fitted-texel-count decoded))
+                              (xna:dispose decoded))))
+                     (xna:dispose wide)))
                  ;; and the shapes that must be refused
                  (%note-refusal game :partial-overload
                                 (lambda ()
@@ -221,3 +268,29 @@ is not."
       ;; fires here and the two agree.
       (is (eq 'xna:cna-argument-error (outcome :closed-stream))
           "a closed stream gave ~a" (outcome :closed-stream)))))
+
+(define-native-test a-fitting-decode-scales-in-both-directions
+  "**CNA's fit enlarges as readily as it shrinks**, which is not what the word
+suggests and is why the two-argument overload does not apply XNA's cap.
+
+XNA's two-argument `FromStream' is the private constructor called with the
+profile's MaxTextureSize for both extents -- 2048 for Reach, 4096 for HiDef, read
+from the pinned assembly -- and image operation 0. Applying that here would mean
+passing those extents to a CNA decode with `zoom' false, and this test is what
+says why that would be wrong: a 2x2 source fitted into 8x8 comes back holding
+**64** texels, not 4. An 8x8 PNG would come back 2048x2048.
+
+The aspect ratio is preserved while it scales: a 4x2 source fitted into 8x8 comes
+back holding 32 texels, which is 8x4 and not 8x8. So `zoom' false is a
+scale-to-fit and `zoom' true is a cover-and-crop, exactly as CNA's header says --
+the header simply does not say that the scaling goes both ways.
+
+XNA's own fit happens inside a P/Invoke the pinned assembly does not contain, so
+whether *it* enlarges is not answerable from the pinned authority. That is the
+whole reason this member is partial rather than complete."
+  (with-texture-stream-game (game)
+    (is (eql 64 (fitted-texel-count game))
+        "a 2x2 source fitted into 8x8 held ~a texel(s)" (fitted-texel-count game))
+    (is (eql 32 (wide-fitted-texel-count game))
+        "a 4x2 source fitted into 8x8 held ~a texel(s), so the aspect ratio was ~
+         not preserved" (wide-fitted-texel-count game))))

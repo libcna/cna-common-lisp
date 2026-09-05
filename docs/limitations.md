@@ -867,18 +867,38 @@ bytes would not.
 
 * The **two-argument** overload is, read from the assembly, the private
   constructor called with the graphics profile's `MaxTextureSize` for both
-  extents: XNA *fits* an oversized image down to what the profile can hold. CNA's
-  null decode info "preserves source dimensions", which is this overload without
-  that fit, and ABI 0.21.0 reports no maximum texture size for a fit to be
-  computed from. An image within the limit decodes identically; a larger one
-  decodes at its own size here and at the limit there.
+  extents and image operation 0: XNA caps an oversized image at what the profile
+  can hold. CNA's null decode info "preserves source dimensions", which is this
+  overload without that cap. An image within the limit decodes identically; a
+  larger one decodes at its own size here and at the limit there.
+
+  **The cap is not applied, and the reason is the fit rather than the number.**
+  The number is available twice over: `ProfileCapabilities.MaxTextureSize` is
+  `0x800` for `Reach` and `0x1000` for `HiDef`, hardcoded in the pinned assembly,
+  and `GraphicsProfile` is projected. What is not available is what XNA's fit
+  *does* — it happens inside `UnsafeNativeMethods::DecodeStreamToTexture`, a
+  P/Invoke into unmanaged code the pinned assembly does not contain, with the
+  extents passed by reference and rewritten on the way out. And CNA's fit is
+  measured: a decode info with `zoom` false **scales in both directions**. A 16×8
+  PNG fitted into 64×64 comes back 64×32; into 4×4 it comes back 4×2. Passing
+  `MaxTextureSize` here would therefore return a 2048×2048 texture for an 8×8
+  PNG, and no reading of this member says it should.
+
+  The entry that used to stand here said "ABI 0.21.0 reports no maximum texture
+  size for a fit to be computed from". That was wrong —
+  `cna_graphics_device_get_renderer_limit_ext` answers
+  `CNA_RENDERER_LIMIT_MAX_TEXTURE_DIMENSION` and `CNA_RendererInfo` carries
+  `max_texture_dimension` — and it was also beside the point, because XNA uses
+  the profile constant and not a device limit.
 * The **five-argument** overload reaches CNA exactly — XNA computes
   `zoom ? 3 : 1` and `CNA_Texture2DDecodeInfo` carries a width, a height and a
   `zoom` flag meaning "cover-and-crop" against "fit while preserving aspect
-  ratio". What is partial is what the result can say about itself: a *zooming*
-  decode covers and crops, so `WIDTH` answers the requested extent, while a
-  *fitting* decode answers something no larger and 0.21.0 reports no texture
-  extent, so `WIDTH` refuses there.
+  ratio". Measured against 0.21.0: a 16×8 PNG zoomed into 64×64 comes back 64×64,
+  and fitted into 64×64 comes back 64×32 — so the fit enlarges as readily as it
+  shrinks, which is worth knowing before asking for one. What is partial is what
+  the result can say about itself: a *zooming* decode covers and crops, so `WIDTH`
+  answers the requested extent, while a *fitting* decode answers something no
+  larger and 0.21.0 reports no texture extent, so `WIDTH` refuses there.
 
 ### The extent a decoded texture reports, and when it refuses
 
