@@ -124,15 +124,7 @@ symbol that is neither a mapped XNA member nor a declared extension is a
 diagnostic.")
 
 (defparameter *declared-absences*
-  '((:type "Microsoft.Xna.Framework.GameComponent" :status :missing
-     :reason "The game component engine is not part of Foundation 1.")
-    (:type "Microsoft.Xna.Framework.GameWindow" :status :missing
-     :reason "Only the window title is reachable in this milestone, and it is
-              projected on GAME as WINDOW-TITLE; the window type itself is not
-              implemented.")
-    (:type "Microsoft.Xna.Framework.Content.ContentManager" :status :missing
-     :reason "Content and XNB are a later closure.")
-    (:member "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport.set"
+  '((:member "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport.set"
      :status :partial
      :reason-code "by-value-aggregate-needs-shim"
      :reason "cna_graphics_device_set_viewport takes CNA_Viewport (24 bytes) by
@@ -142,21 +134,20 @@ diagnostic.")
               private shim that takes the aggregate by pointer and the real route
               by function pointer; the setter goes through it. The shim is
               optional and not shipped prebuilt, so without CNA_LISP_SHIM the
-              setter refuses with an actionable condition. See docs/native-abi.md.")
-    (:member "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString"
-     :status :missing
-     :reason "Needs SpriteFont, which is a later closure.")
-    (:member "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(Effect overloads)"
-     :status :missing
-     :reason "The two Effect-bearing Begin overloads need Effect, which is a later
-              closure. The parameter is nullable in XNA, so a projection could
-              accept an :EFFECT that may only ever be NIL -- and that would be a
-              fourth Begin shape XNA does not have, told from the five-parameter
-              one by nothing a caller could act on. The three overloads whose
-              arguments exist are projected; these two are measured as missing.")
-    (:member "Microsoft.Xna.Framework.Game.Components" :status :missing
-     :reason "Needs the game component engine.")
-    (:member "Microsoft.Xna.Framework.Game.Content" :status :missing
-     :reason "Needs ContentManager."))
+              setter refuses with an actionable condition. See docs/native-abi.md."))
   "Absences CNA-Lisp has decided on, rather than not reached yet. Each carries the
-reason it is absent; an externally blocked entry carries the evidence too.")
+reason it is absent; an externally blocked entry carries the evidence too.
+
+**Every entry is checked against the generated report.** `verify.py`'s
+`stale_declared_absence` requires the subject to still be absent *and* the status
+here to be the status the report measures, because this table went stale in
+silence once: seven of its eight entries survived the closures that answered
+them, four naming something by then complete and three still calling `GameWindow`,
+`ContentManager` and `Game.Content` missing after each had become partial. A
+reason that has been answered is deleted rather than reworded -- Git keeps it, and
+`docs/limitations.md` keeps the ones worth remembering.
+
+The reasons for the members that are merely *not reached yet* are not here. They
+live one per member in `tools/api-compat/mapping-rules.json`, which carries one
+for every missing member and every partial one; this table is only for absences
+that are a decision.")

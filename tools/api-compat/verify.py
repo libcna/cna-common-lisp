@@ -40,6 +40,7 @@ CATEGORIES = [
     "private_implementation_leak",
     "unmeasured_category",
     "stale_mapping_rule",
+    "stale_declared_absence",
     "wrong_overload_shape",
 ]
 
@@ -830,6 +831,70 @@ def verify_unexpected(report, rules, surface, packages, claimed):
                        "exported but neither a mapped XNA member nor a declared extension")
 
 
+def verify_declared_absences(report, surface, statuses):
+    """A declared absence must still be one, and must be the *kind* it claims.
+
+    `*DECLARED-ABSENCES*` records the absences the binding decided on, with the
+    reason for each. Nothing read it back, and it went stale exactly the way
+    prose does: seven of its eight entries described a state that had stopped
+    being true. Four named something now wholly complete -- `GameComponent`,
+    `SpriteBatch.DrawString`, the two Effect-bearing `Begin` overloads and
+    `Game.Components`. Three more still called `GameWindow`, `ContentManager`
+    and `Game.Content` **missing** when each had become partial, carrying
+    reasons -- "the window type itself is not implemented", "Content and XNB are
+    a later closure", "Needs ContentManager" -- that had outlived the closures
+    which answered them.
+
+    A machine-readable table of live-state claims that nothing checks is worse
+    than the prose it was meant to be safer than, because it is dumped into a
+    generated report and so reads as measured. So it is measured now, and on
+    both axes: the subject must still be absent, and the status the entry
+    declares must be the status the report measures. The remedy for a
+    diagnostic here is to delete the entry or correct its status and reason --
+    never to relax this check, since an absence that stopped being one has
+    nothing left to explain.
+    """
+    def mismatch(subject, declared, measured):
+        report.add("stale_declared_absence", subject,
+                   "declared %s, but the report measures it %s; correct the entry "
+                   "or delete it" % (declared, measured))
+
+    for entry in surface.get("declared_absences", []):
+        subject = entry["subject"]
+        declared = entry["status"]
+        if entry["kind"] == "type":
+            measured = statuses["types"].get(subject)
+            if measured is None:
+                report.add("stale_declared_absence", subject,
+                           "a declared absence names a type the selection has not got")
+            elif measured != declared:
+                mismatch(subject, declared, measured)
+            continue
+        # A member subject is Type.Member, sometimes with a trailing accessor
+        # (`.set`) or a parenthetical naming which overloads it covers.
+        name = subject.split("(", 1)[0]
+        for accessor in (".set", ".get"):
+            if name.endswith(accessor):
+                name = name[:-len(accessor)]
+        type_name, _, family = name.rpartition(".")
+        members = statuses["members"].get(type_name)
+        if members is None:
+            report.add("stale_declared_absence", subject,
+                       "a declared absence names a type the selection has not got")
+            continue
+        measured = set(status for signature, status in members.items()
+                       if signature.split("(", 1)[0] == family)
+        if not measured:
+            report.add("stale_declared_absence", subject,
+                       "a declared absence names a member %r has not got" % type_name)
+        elif declared == "missing" and measured != {"missing"}:
+            # Every overload the entry covers has to still be missing. One that
+            # landed makes the reason wrong for the whole family.
+            mismatch(subject, declared, "/".join(sorted(measured)))
+        elif declared == "partial" and measured == {"complete"}:
+            mismatch(subject, declared, "complete")
+
+
 def verify_leaks(report, packages):
     """No exported name may mention an ABI concept.
 
@@ -884,6 +949,10 @@ def main(argv):
             verify_type(report, rules, contract_type, surface, packages, claimed))
     verify_unexpected(report, rules, surface, packages, claimed)
     verify_leaks(report, packages)
+    verify_declared_absences(
+        report, surface,
+        {"types": {entry["name"]: entry["status"] for entry in report.types},
+         "members": {entry["name"]: entry["members"] for entry in report.types}})
 
     by_status = {}
     member_status = {}

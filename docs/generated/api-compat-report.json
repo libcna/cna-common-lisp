@@ -44,6 +44,7 @@
    "private_implementation_leak": 0,
    "unmeasured_category": 0,
    "stale_mapping_rule": 0,
+   "stale_declared_absence": 0,
    "wrong_overload_shape": 0
   },
   "disagreement_total": 0

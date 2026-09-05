@@ -48,20 +48,30 @@ python3 tools/api-compat/verify.py --strict
 
 ## Diagnostic categories
 
-<!-- generated:diagnostic categories=16 --> categories are measured.
+<!-- generated:diagnostic categories=17 --> categories are measured.
 <!-- generated:absence categories=2 --> of them mean *absence*; the other
-<!-- generated:disagreement categories=14 --> mean **disagreement** -- the
+<!-- generated:disagreement categories=15 --> mean **disagreement** -- the
 binding claiming something that is not so, or hiding something.
 
+<!-- generated-block:diagnostic-categories -->
 | Absence | Disagreement |
 | --- | --- |
-| `missing_type` | `wrong_package`, `wrong_kind`, `wrong_superclass` |
-| `missing_member` | `wrong_generic_function_shape`, `wrong_lambda_list` |
-| | `wrong_accessor_mutability`, `overload_mapping_mismatch` |
-| | `event_mapping_mismatch`, `enum_mismatch` |
-| | `unexpected_public_symbol`, `private_implementation_leak` |
-| | `unmeasured_category`, `stale_mapping_rule` |
-| | `wrong_overload_shape` |
+| `missing_type` | `wrong_package` |
+| `missing_member` | `wrong_kind` |
+|  | `wrong_superclass` |
+|  | `wrong_generic_function_shape` |
+|  | `wrong_lambda_list` |
+|  | `wrong_accessor_mutability` |
+|  | `overload_mapping_mismatch` |
+|  | `event_mapping_mismatch` |
+|  | `enum_mismatch` |
+|  | `unexpected_public_symbol` |
+|  | `private_implementation_leak` |
+|  | `unmeasured_category` |
+|  | `stale_mapping_rule` |
+|  | `stale_declared_absence` |
+|  | `wrong_overload_shape` |
+<!-- /generated-block:diagnostic-categories -->
 
 Two of those exist because "zero diagnostics" was once true and still not enough.
 

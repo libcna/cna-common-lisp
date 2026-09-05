@@ -322,6 +322,26 @@ def block_loadable_asset_type_names(abi, compat):
     return "%s and %s" % (", ".join(names[:-1]), names[-1])
 
 
+def block_diagnostic_categories(abi, compat):
+    """The two lists of diagnostic categories, from the report's own tally.
+
+    Hand-maintained until `stale_declared_absence` was added and the table did
+    not grow with the count above it -- which is the drift this file exists to
+    stop, appearing in the very table that enumerates how drift is caught.
+    """
+    categories = compat["totals"]["diagnostics_by_category"]
+    absence = [name for name in categories
+               if name in ("missing_type", "missing_member")]
+    disagreement = [name for name in categories
+                    if name not in ("missing_type", "missing_member")]
+    lines = ["| Absence | Disagreement |", "| --- | --- |"]
+    for index in range(max(len(absence), len(disagreement))):
+        left = "`%s`" % absence[index] if index < len(absence) else ""
+        right = "`%s`" % disagreement[index] if index < len(disagreement) else ""
+        lines.append("| %s | %s |" % (left, right))
+    return "\n".join(lines)
+
+
 BLOCKS = {
     "selection": block_selection,
     "rasterizer-proofs": block_rasterizer_proofs,
@@ -334,6 +354,7 @@ BLOCKS = {
     "per-type-table": block_per_type_table,
     "partial-frontier": block_partial_frontier,
     "native-abi-summary": block_native_abi_summary,
+    "diagnostic-categories": block_diagnostic_categories,
 }
 
 BLOCK_RE = re.compile(

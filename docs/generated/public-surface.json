@@ -31373,60 +31373,11 @@
   ],
   "declared_absences": [
     {
-      "subject": "Microsoft.Xna.Framework.GameComponent",
-      "kind": "type",
-      "status": "missing",
-      "reason_code": null,
-      "reason": "The game component engine is not part of Foundation 1."
-    },
-    {
-      "subject": "Microsoft.Xna.Framework.GameWindow",
-      "kind": "type",
-      "status": "missing",
-      "reason_code": null,
-      "reason": "Only the window title is reachable in this milestone, and it is\n              projected on GAME as WINDOW-TITLE; the window type itself is not\n              implemented."
-    },
-    {
-      "subject": "Microsoft.Xna.Framework.Content.ContentManager",
-      "kind": "type",
-      "status": "missing",
-      "reason_code": null,
-      "reason": "Content and XNB are a later closure."
-    },
-    {
       "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport.set",
       "kind": "member",
       "status": "partial",
       "reason_code": "by-value-aggregate-needs-shim",
       "reason": "cna_graphics_device_set_viewport takes CNA_Viewport (24 bytes) by\n              value. The System V AMD64 ABI classifies it MEMORY, which CFFI\n              cannot pass without cffi-libffi -- a dependency a released CNA-Lisp\n              must not have. The generator proves that refusal and emits a tiny\n              private shim that takes the aggregate by pointer and the real route\n              by function pointer; the setter goes through it. The shim is\n              optional and not shipped prebuilt, so without CNA_LISP_SHIM the\n              setter refuses with an actionable condition. See docs/native-abi.md."
-    },
-    {
-      "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString",
-      "kind": "member",
-      "status": "missing",
-      "reason_code": null,
-      "reason": "Needs SpriteFont, which is a later closure."
-    },
-    {
-      "subject": "Microsoft.Xna.Framework.Graphics.SpriteBatch.Begin(Effect overloads)",
-      "kind": "member",
-      "status": "missing",
-      "reason_code": null,
-      "reason": "The two Effect-bearing Begin overloads need Effect, which is a later\n              closure. The parameter is nullable in XNA, so a projection could\n              accept an :EFFECT that may only ever be NIL -- and that would be a\n              fourth Begin shape XNA does not have, told from the five-parameter\n              one by nothing a caller could act on. The three overloads whose\n              arguments exist are projected; these two are measured as missing."
-    },
-    {
-      "subject": "Microsoft.Xna.Framework.Game.Components",
-      "kind": "member",
-      "status": "missing",
-      "reason_code": null,
-      "reason": "Needs the game component engine."
-    },
-    {
-      "subject": "Microsoft.Xna.Framework.Game.Content",
-      "kind": "member",
-      "status": "missing",
-      "reason_code": null,
-      "reason": "Needs ContentManager."
     }
   ]
 }
