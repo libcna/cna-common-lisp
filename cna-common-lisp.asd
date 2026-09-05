@@ -126,6 +126,19 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; TitleContainer resolves the title location through a game, so it loads
    ;; after GAME exists.
    (:file "runtime/title-container")
+   ;; --- Microsoft.Xna.Framework.Audio --------------------------------------
+   ;; The two exceptions first: they are conditions, and a condition has to exist
+   ;; before the code that signals it. Then the enumerations, then the two
+   ;; spatial value holders, which name Vector3 and nothing else.
+   (:file "audio/conditions")
+   (:file "audio/enums")
+   (:file "audio/spatial")
+   ;; SoundEffect names SOUND-EFFECT-INSTANCE in CREATE-INSTANCE and the instance
+   ;; names SOUND-EFFECT in its owner slot, so the two are mutually recursive at
+   ;; run time and orderable at load time: the effect first, because the instance
+   ;; specialises on its class.
+   (:file "audio/sound-effect")
+   (:file "audio/sound-effect-instance")
    ;; --- Microsoft.Xna.Framework.Content ------------------------------------
    ;; The manager first, then the loaders that produce graphics objects, then
    ;; Game.Content, which needs both GAME and CONTENT-MANAGER to exist.
@@ -193,6 +206,8 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/content")
    ;; The atomicity proofs need the content fixture's root and asset name.
    (:file "native/content-atomicity")
+   ;; The SoundEffect closure: fixtures generated here, no sample audio stored.
+   (:file "native/audio")
    ;; Texture2D's four Stream members, over ordinary Common Lisp streams.
    (:file "native/texture-streams")
    ;; TitleContainer resolves its base path through a live game.

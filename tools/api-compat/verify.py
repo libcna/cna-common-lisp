@@ -646,9 +646,19 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
             report.add("missing_member", subject,
                        "this constructor signature is not projected")
             continue
-        if expected == "make-instance":
+        if expected in ("make-instance", "make-condition"):
             # A reference type is constructed with MAKE-INSTANCE, so the projection
             # is the class itself plus its initargs.
+            #
+            # MAKE-CONDITION is the same statement about a *condition* class, and
+            # is here for the two Audio exceptions. Common Lisp gives a condition
+            # class no per-class constructor function any more than it gives one
+            # to a standard class: `(make-condition 'no-audio-hardware-error
+            # :format-control "...")' and `(error 'no-audio-hardware-error ...)'
+            # are how one is made and signalled, both taking the class name. So
+            # the projection of `new NoAudioHardwareException(msg)' is the
+            # condition class plus its initargs, exactly as MAKE-INSTANCE is the
+            # projection of a reference type's constructor.
             statuses[sig] = "complete"
             continue
         # A member may project onto a symbol in another package -- GraphicsResource's

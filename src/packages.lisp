@@ -673,3 +673,56 @@ namespace: seventeen packed value types and nothing else.")
    #:game-pad-capabilities-has-voice-support
    ;; --- GamePad -----------------------------------------------------------
    #:game-pad-get-state #:game-pad-get-capabilities #:game-pad-set-vibration))
+
+(defpackage #:microsoft.xna.framework.audio
+  (:documentation
+   "Common Lisp projection of the Microsoft.Xna.Framework.Audio namespace.
+
+The **selected** part of it: `SoundEffect' and `SoundEffectInstance', the
+`AudioListener' and `AudioEmitter' that position one in space, the `SoundState'
+and `AudioChannels' enumerations, and the two exceptions XNA's audio surface
+raises on its own behalf. XACT -- `AudioEngine', `SoundBank', `WaveBank', `Cue',
+`AudioCategory' and `RendererDetail' -- is not selected, and CNA has no route for
+any of it. `DynamicSoundEffectInstance' and the microphone family have full CNA
+route families and are each a closure of their own.
+
+**No public member of this package takes a game.** XNA's audio API has no game
+argument -- its constructors and its four static properties take none -- and CNA's
+routes need a game handle for lifetime and thread affinity. The gap is closed the
+way `Keyboard.GetState' closes it: CNA permits one active game per process, so
+there is exactly one game a static audio operation could mean, and CNA-Lisp
+resolves it. With no live game the operation signals `CNA-INVALID-STATE-ERROR'
+naming what is missing, which is a projection limit and is written down in
+`docs/limitations.md' as one.")
+  (:use #:cl)
+  (:local-nicknames (#:xna #:microsoft.xna.framework))
+  ;; `AudioListener.Position' and `AudioEmitter.Position' are reference-type
+  ;; members, so the naming rule makes them the bare reader POSITION -- and
+  ;; `CL:POSITION' is a standard sequence function. Shadowing is the honest
+  ;; answer: it keeps the projected name the rule's name, and a program that
+  ;; wants the sequence function still has `CL:POSITION' by its own package
+  ;; qualifier. The alternative -- renaming the member to AUDIO-LISTENER-POSITION
+  ;; -- would apply the *value type* rule to a class, and this binding has one
+  ;; naming rule per kind on purpose.
+  (:shadow #:position)
+  (:export
+   ;; --- enumerations ------------------------------------------------------
+   #:sound-state #:sound-state-value #:sound-state-from-value #:all-sound-state
+   #:audio-channels #:audio-channels-value #:audio-channels-from-value
+   #:all-audio-channels
+   ;; --- the two exceptions XNA's audio surface raises ----------------------
+   #:no-audio-hardware-error #:instance-play-limit-error
+   ;; --- AudioListener and AudioEmitter -------------------------------------
+   #:audio-listener #:audio-emitter
+   #:position #:velocity #:forward #:up #:doppler-scale
+   ;; --- SoundEffect --------------------------------------------------------
+   #:sound-effect
+   #:name #:duration #:is-disposed #:create-instance #:play
+   #:sound-effect-from-stream
+   #:sound-effect-get-sample-duration #:sound-effect-get-sample-size-in-bytes
+   #:sound-effect-master-volume #:sound-effect-distance-scale
+   #:sound-effect-doppler-scale #:sound-effect-speed-of-sound
+   ;; --- SoundEffectInstance -------------------------------------------------
+   #:sound-effect-instance
+   #:state #:is-looped #:volume #:pitch #:pan
+   #:pause #:resume #:stop #:apply-3d))

@@ -30506,6 +30506,920 @@
           "documentation": "TouchPanel.ReadGesture."
         }
       ]
+    },
+    {
+      "package": "microsoft.xna.framework.audio",
+      "symbols": [
+        {
+          "name": "all-audio-channels",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of AUDIO-CHANNELS, as keywords, in value order."
+        },
+        {
+          "name": "all-sound-state",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of SOUND-STATE, as keywords, in value order."
+        },
+        {
+          "name": "apply-3d",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance",
+            "listeners",
+            "emitter"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SoundEffectInstance.Apply3D(AudioListener, AudioEmitter) and its array overload.\n\n**Two CLR overloads, two CLOS methods**, told apart by the declared type of the\nsecond argument: one `AUDIO-LISTENER', or a sequence of them. That is ordinary\nCLOS dispatch rather than a `TYPECASE' inside one method, so the two overloads\nstay two things a program can specialise and the projection loses neither.\n\nLISTENERS is one listener or a sequence. A single listener takes\n`cna_sound_effect_instance_apply_3d'; a sequence takes `..._apply_3d_multi_ext'.\n\n**An empty sequence is refused**, and that is CNA's decision, adopted: XNA reaches\nXACT with a count of zero and surfaces whatever XACT returns, which is not an\nestablished outcome, so a count of zero is a condition here rather than a guess.\n\n**Aim before you play.** An instance that is already playing and was never\npositioned is refused by CNA with `CNA_RESULT_INVALID_STATE', because the audio\npacket was submitted on the first `PLAY' and the choice between 3D and pan is\nfixed for that playback. Position first and then play, or stop, position and play\nagain.\n\n**What this proves and does not.** A successful call means the values reached CNA\nand the route accepted them. It is not a claim about where a human would hear the\nsound; no test here makes one. How several listeners combine is CNA's own\napproximation -- it evaluates each and lets the **nearest** decide -- and its\nheader says so; that is not XACT's per-listener output matrix and must not be\ndescribed as one."
+        },
+        {
+          "name": "audio-channels",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.AudioChannels: how many interleaved channels PCM data carries.\n\nNote that the values are 1 and 2 rather than 0 and 1, so the member doubles as\nthe channel count -- which is what makes `GetSampleDuration' and\n`GetSampleSizeInBytes' arithmetic rather than a lookup, there and here."
+        },
+        {
+          "name": "audio-channels-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The AUDIO-CHANNELS member a value names."
+        },
+        {
+          "name": "audio-channels-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a AUDIO-CHANNELS member."
+        },
+        {
+          "name": "audio-emitter",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:audio-emitter",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.AudioEmitter: where a sound is, and how it moves.\n\nAn `AudioListener' with one property more, and that property is the only one on\neither type that refuses a value. See `(setf doppler-scale)'."
+        },
+        {
+          "name": "audio-listener",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:audio-listener",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.AudioListener: where the ears are, and how they move.\n\n`(make-instance ='audio-listener)' is XNA's parameterless constructor, and its\nfour properties are the ordinary readers and `SETF' writers XNA's are. None of\nthem validates: XNA's four setters are bare `stfld' after the handedness flip, so\nany Vector3 is stored, NaN and infinity included, and this stores them too.\n\nThe type is not sealed in XNA and is not sealed here; it holds no native handle,\nso nothing needs disposing."
+        },
+        {
+          "name": "create-instance",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "doppler-scale",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "emitter"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "duration",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "forward",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "instance-play-limit-error",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": true,
+          "metaclass": "condition-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:instance-play-limit-error",
+            "microsoft.xna.framework:cna-invalid-state-error",
+            "microsoft.xna.framework:cna-native-error",
+            "microsoft.xna.framework:cna-error",
+            "common-lisp:error",
+            "common-lisp:serious-condition",
+            "common-lisp:condition",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Too many sound effect instances are already playing.\n\nCNA-Lisp's projection of Microsoft.Xna.Framework.Audio.InstancePlayLimitException.\n\nXNA raises it from `SoundEffect.Play' when the platform's voice limit is reached;\nCNA answers `CNA_RESULT_INVALID_STATE' from `cna_sound_effect_play' and\n`cna_sound_effect_play_with_settings' for the same reason, and its header says so\nin the same words -- \"when too many instances are already playing\".\n\nIt is a subtype of `CNA-INVALID-STATE-ERROR'. Not every invalid state is this\none: the two play routes are the only place it is raised, so a refused\n`IS-LOOPED' setter or a refused `APPLY-3D' stays the plain state error it is."
+        },
+        {
+          "name": "is-disposed",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "is-looped",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "name",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "effect"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "no-audio-hardware-error",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": true,
+          "metaclass": "condition-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:no-audio-hardware-error",
+            "microsoft.xna.framework:cna-not-supported-error",
+            "microsoft.xna.framework:cna-native-error",
+            "microsoft.xna.framework:cna-error",
+            "common-lisp:error",
+            "common-lisp:serious-condition",
+            "common-lisp:condition",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "No audio playback device could be opened.\n\nCNA-Lisp's projection of Microsoft.Xna.Framework.Audio.NoAudioHardwareException.\n\nThis is a statement about the *machine and its audio backend*, not about the\nprogram: `cna_audio_get_capabilities' reports `is_playback_available' as data and\nsucceeds either way, and the creation routes answer `CNA_RESULT_NOT_SUPPORTED'\nwhen there is no device to put a sound on. A run under\n`SDL_AUDIODRIVER=nonexistent-driver' reaches this deterministically and with no\nhardware, which is how the unavailable branch is qualified rather than skipped.\n\nIt is a subtype of `CNA-NOT-SUPPORTED-ERROR', so a handler for that catches it."
+        },
+        {
+          "name": "pan",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "pause",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "pitch",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "play",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "effect",
+            "&key",
+            "volume",
+            "pitch",
+            "pan",
+            "&allow-other-keys"
+          ],
+          "keywords": [
+            "pan",
+            "pitch",
+            "volume"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "position",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "resume",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "sound-effect",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:sound-effect",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.SoundEffect: a decoded sound, and the source of instances.\n\nTwo public constructors, both taking PCM16 bytes:\n\n    (make-instance 'sound-effect :buffer bytes :sample-rate 22050 :channels :mono)\n    (make-instance 'sound-effect :buffer bytes :offset 0 :count 4410\n                                 :sample-rate 22050 :channels :stereo\n                                 :loop-start 0 :loop-length 0)\n\nand a third way in, `SOUND-EFFECT-FROM-STREAM', which is XNA's static\n`FromStream' over an ordinary Common Lisp binary stream. Neither constructor\ntakes a game: see the file header.\n\nThe effect is a child of the active game and the parent of every instance it\ncreates. CNA requires that ordering -- \"destroyed after all instances created\nfrom it and before the game\" -- and this binding enforces it before the ABI\ndoes, so a wrong order is a condition naming both types rather than a native\nfailure later.\n\n`sealed' in XNA. CLOS has no `sealed', so a subclass is possible; the\nconstruction ledger makes a failing subclass initializer give the handle back."
+        },
+        {
+          "name": "sound-effect-distance-scale",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SoundEffect.DistanceScale: the process-wide 3D distance scale. Defaults to 1.0.\n\nRefuses a negative value. **Accepts NaN**, alone among the four, because XNA's\nguard is `bge.un' and a NaN takes its accepting branch -- and then survives the\nclamp below, whose comparison is ordered. A value in [0, float.Epsilon] is raised\nto `float.Epsilon' rather than refused, because a zero scale would divide by zero\nin the attenuation."
+        },
+        {
+          "name": "sound-effect-doppler-scale",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SoundEffect.DopplerScale: the process-wide Doppler multiplier. Defaults to 1.0.\n\nRefuses a negative value **and NaN**. Zero is accepted, and so is infinity. Note\nthat `AudioEmitter.DopplerScale' -- the per-emitter one -- has the same range and\nthe opposite NaN answer; both are read from the IL and both are pinned."
+        },
+        {
+          "name": "sound-effect-from-stream",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "stream"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SoundEffect.FromStream(Stream).\n\nSTREAM is an ordinary Common Lisp binary stream, which is what `System.IO.Stream'\nprojects onto here -- see `docs/limitations.md'. XNA reads it to the end and\ndecodes whatever it holds; `cna_sound_effect_create_from_encoded_ext' takes the\nbytes CNA would have read, because \"the canonical operation takes a C++ stream\nand reads it to the end, so C takes the bytes it would have read\".\n\nWhatever the audio backend can decode is accepted, which is more than the raw\nPCM the constructors take. A payload it cannot decode answers\n`CNA_RESULT_NOT_SUPPORTED', which is the same code a machine with no audio device\nanswers -- so this signals NO-AUDIO-HARDWARE-ERROR for both, and the condition's\nreport carries CNA's own message, which distinguishes them."
+        },
+        {
+          "name": "sound-effect-get-sample-duration",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "size-in-bytes",
+            "sample-rate",
+            "channels"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SoundEffect.GetSampleDuration(int, int, AudioChannels), in 100-nanosecond ticks.\n\nTimeSpan is projected as an exact tick count throughout this binding rather than\nas a type, so this answers an integer. A size of zero answers zero, which is\n`TimeSpan.Zero' and XNA's own early return."
+        },
+        {
+          "name": "sound-effect-get-sample-size-in-bytes",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "duration",
+            "sample-rate",
+            "channels"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SoundEffect.GetSampleSizeInBytes(TimeSpan, int, AudioChannels).\n\nDURATION is a tick count, for the reason GetSampleDuration answers one. XNA\nrefuses a negative duration and one longer than its own maximum with\n`ArgumentOutOfRangeException'; a zero duration answers zero bytes."
+        },
+        {
+          "name": "sound-effect-instance",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:sound-effect-instance",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.SoundEffectInstance: one controllable playback.\n\nObtained from `(create-instance effect)', which is XNA's `SoundEffect.CreateInstance()'.\nThere is no public constructor in XNA and none here.\n\nThe measured state machine, against CNA 0.21.0 -- a fresh instance is `:STOPPED',\nand every transition below was observed rather than assumed:\n\n    :stopped --play--> :playing --pause--> :paused\n    :paused  --resume--> :playing --stop--> :stopped\n\n`IS-LOOPED' may only be set **before playback has begun**; afterwards CNA answers\n`CNA_RESULT_INVALID_STATE' and XNA throws `InvalidOperationException', which is\nthe same refusal, so the projected condition is `CNA-INVALID-STATE-ERROR'."
+        },
+        {
+          "name": "sound-effect-master-volume",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SoundEffect.MasterVolume: the process-wide volume every effect is scaled by.\n\nAccepts [0, 1]. Refuses everything outside it **and NaN**, which XNA refuses\nbecause its range test branches on an unordered comparison. Defaults to 1.0."
+        },
+        {
+          "name": "sound-effect-speed-of-sound",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "SoundEffect.SpeedOfSound: the process-wide speed of sound. Defaults to 343.5.\n\nRefuses zero, a negative value **and NaN**: XNA's guard is `ble.un', so the only\naccepted values are strictly positive. 343.5 is XNA's own static initialiser and\nCNA's own default, measured to agree."
+        },
+        {
+          "name": "sound-state",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.SoundState: what a SoundEffectInstance is doing."
+        },
+        {
+          "name": "sound-state-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The SOUND-STATE member a value names."
+        },
+        {
+          "name": "sound-state-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a SOUND-STATE member."
+        },
+        {
+          "name": "state",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "stop",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance",
+            "&optional",
+            "(immediate)"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "up",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "velocity",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "volume",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "instance"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        }
+      ]
     }
   ],
   "enum_tables": {
@@ -31001,6 +31915,15 @@
       "texture-2d": 7,
       "texture-3d": 8,
       "texture-cube": 9
+    },
+    "sound-state": {
+      "playing": 0,
+      "paused": 1,
+      "stopped": 2
+    },
+    "audio-channels": {
+      "mono": 1,
+      "stereo": 2
     }
   },
   "predefined_colors": [

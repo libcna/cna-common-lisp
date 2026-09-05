@@ -118,31 +118,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=157 -->
-<!-- generated:selected members=2332 -->
-<!-- generated:complete types=141 -->
+<!-- generated:selected types=165 -->
+<!-- generated:selected members=2389 -->
+<!-- generated:complete types=149 -->
 <!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1854 -->
+<!-- generated:complete members=1906 -->
 <!-- generated:partial members=19 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=424 -->
+<!-- generated:not-applicable members=429 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 157 types, 2332 members.
+Selection **Foundation 1 and the managed closures**: 165 types, 2389 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **141** |
+| Types complete | **149** |
 | Types partial | **16** |
 | Types missing | **0** |
-| Members complete | **1854** |
+| Members complete | **1906** |
 | Members partial | **19** |
 | Members missing | **35** |
-| Members not applicable | **424** |
+| Members not applicable | **429** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -311,6 +311,14 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Input.Mouse` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Input.MouseState` | **complete** | 10 | 0 | 0 | 4 |
 | `M.X.F.Input.ButtonState` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Audio.SoundEffect` | **complete** | 16 | 0 | 0 | 1 |
+| `M.X.F.Audio.SoundEffectInstance` | **complete** | 14 | 0 | 0 | 2 |
+| `M.X.F.Audio.AudioListener` | **complete** | 5 | 0 | 0 | 0 |
+| `M.X.F.Audio.AudioEmitter` | **complete** | 6 | 0 | 0 | 0 |
+| `M.X.F.Audio.SoundState` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Audio.AudioChannels` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Audio.NoAudioHardwareException` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Audio.InstancePlayLimitException` | **complete** | 3 | 0 | 0 | 0 |
 <!-- /generated-block:per-type-table -->
 
 ### Not applicable, and why so many
@@ -449,10 +457,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=458 -->
-<!-- generated:bound native structs=67 -->
-<!-- generated:bound native struct fields=512 -->
-<!-- generated:bound native constants=506 -->
+<!-- generated:bound native functions=495 -->
+<!-- generated:bound native structs=72 -->
+<!-- generated:bound native struct fields=544 -->
+<!-- generated:bound native constants=511 -->
 <!-- generated:bound native callbacks=10 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -461,10 +469,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 458 |
-| Bound structs | 67 |
-| Bound struct fields | 512 |
-| Bound constants | 506 |
+| Bound functions | 495 |
+| Bound structs | 72 |
+| Bound struct fields | 544 |
+| Bound constants | 511 |
 | Bound callback typedefs | 10 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |

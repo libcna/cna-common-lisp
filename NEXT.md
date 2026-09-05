@@ -222,31 +222,31 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 ## The measured frontier
 
-<!-- generated:selected types=157 -->
-<!-- generated:selected members=2332 -->
-<!-- generated:complete types=141 -->
+<!-- generated:selected types=165 -->
+<!-- generated:selected members=2389 -->
+<!-- generated:complete types=149 -->
 <!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1854 -->
+<!-- generated:complete members=1906 -->
 <!-- generated:partial members=19 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=424 -->
+<!-- generated:not-applicable members=429 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 157 types, 2332 members.
+Selection **Foundation 1 and the managed closures**: 165 types, 2389 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **141** |
+| Types complete | **149** |
 | Types partial | **16** |
 | Types missing | **0** |
-| Members complete | **1854** |
+| Members complete | **1906** |
 | Members partial | **19** |
 | Members missing | **35** |
-| Members not applicable | **424** |
+| Members not applicable | **429** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 157,
-  "member_count": 2332
+  "type_count": 165,
+  "member_count": 2389
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,16 +15,16 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 157,
-  "members": 2332,
+  "types": 165,
+  "members": 2389,
   "types_by_status": {
    "partial": 16,
-   "complete": 141
+   "complete": 149
   },
   "members_by_status": {
-   "complete": 1854,
+   "complete": 1906,
    "missing": 35,
-   "not-applicable": 424,
+   "not-applicable": 429,
    "partial": 19
   },
   "diagnostics": 35,
@@ -3481,6 +3481,119 @@
     "Pressed": "complete"
    },
    "lisp": "microsoft.xna.framework.input:button-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.SoundEffect",
+   "status": "complete",
+   "members": {
+    "new(Byte[],Int32,AudioChannels)": "complete",
+    "new(Byte[],Int32,Int32,Int32,AudioChannels,Int32,Int32)": "complete",
+    "FromStream(Stream)": "complete",
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "CreateInstance()": "complete",
+    "Play()": "complete",
+    "Play(Single,Single,Single)": "complete",
+    "GetSampleSizeInBytes(TimeSpan,Int32,AudioChannels)": "complete",
+    "GetSampleDuration(Int32,Int32,AudioChannels)": "complete",
+    "IsDisposed": "complete",
+    "Name": "complete",
+    "Duration": "complete",
+    "MasterVolume": "complete",
+    "SpeedOfSound": "complete",
+    "DopplerScale": "complete",
+    "DistanceScale": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:sound-effect"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "Dispose(Boolean)": "not-applicable",
+    "Play()": "complete",
+    "Stop()": "complete",
+    "Stop(Boolean)": "complete",
+    "Pause()": "complete",
+    "Resume()": "complete",
+    "Apply3D(AudioListener,AudioEmitter)": "complete",
+    "Apply3D(AudioListener[],AudioEmitter)": "complete",
+    "IsDisposed": "complete",
+    "Volume": "complete",
+    "Pitch": "complete",
+    "Pan": "complete",
+    "IsLooped": "complete",
+    "State": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:sound-effect-instance"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.AudioListener",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Position": "complete",
+    "Velocity": "complete",
+    "Forward": "complete",
+    "Up": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:audio-listener"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.AudioEmitter",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Position": "complete",
+    "Velocity": "complete",
+    "Forward": "complete",
+    "Up": "complete",
+    "DopplerScale": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:audio-emitter"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.SoundState",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Playing": "complete",
+    "Paused": "complete",
+    "Stopped": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:sound-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.AudioChannels",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Mono": "complete",
+    "Stereo": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:audio-channels"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.NoAudioHardwareException",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "new(String)": "complete",
+    "new(String,Exception)": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:no-audio-hardware-error"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.InstancePlayLimitException",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "new(String)": "complete",
+    "new(String,Exception)": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:instance-play-limit-error"
   }
  ],
  "diagnostics": [

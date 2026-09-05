@@ -7298,6 +7298,281 @@
           "reason": "XNA's indexer answers an IEnumerable<DisplayMode>, so it is a **filter** rather than a lookup: the modes whose format matches, and an empty vector when none do."
         }
       }
+    },
+    "Microsoft.Xna.Framework.Audio.SoundState": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "sound-state",
+      "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.Audio.AudioChannels": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "audio-channels",
+      "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.Audio.NoAudioHardwareException": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "no-audio-hardware-error",
+      "lisp_kind": "class",
+      "expected_superclass": "microsoft.xna.framework:cna-not-supported-error",
+      "constructors": {
+        "new()": "make-condition",
+        "new(String)": "make-condition",
+        "new(String,Exception)": "make-condition"
+      },
+      "member_overrides": {
+        "new()": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new(String)",
+            "new(String,Exception)"
+          ],
+          "reason": "A Common Lisp condition is made by MAKE-CONDITION or signalled by ERROR, and one call expresses all three CLR constructors: the message is the :FORMAT-CONTROL initarg and the inner exception is the condition a handler already has in scope. Three constructors that differ only in which optional argument they carry are one call here, and each names the others so none can go missing behind the collapse. XNA's own exception type, sealed, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base. That base is not in the selection and has no counterpart to project, but the *role* it plays does: CNA-LISP.INTERNAL's CNA-NATIVE-ERROR is the same idea, and this condition subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class and both work."
+        },
+        "new(String)": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new()",
+            "new(String,Exception)"
+          ],
+          "reason": "See new(). XNA's own exception type, sealed, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base. That base is not in the selection and has no counterpart to project, but the *role* it plays does: CNA-LISP.INTERNAL's CNA-NATIVE-ERROR is the same idea, and this condition subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class and both work."
+        },
+        "new(String,Exception)": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new()",
+            "new(String)"
+          ],
+          "reason": "See new(). XNA's own exception type, sealed, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base. That base is not in the selection and has no counterpart to project, but the *role* it plays does: CNA-LISP.INTERNAL's CNA-NATIVE-ERROR is the same idea, and this condition subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class and both work."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Audio.InstancePlayLimitException": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "instance-play-limit-error",
+      "lisp_kind": "class",
+      "expected_superclass": "microsoft.xna.framework:cna-invalid-state-error",
+      "constructors": {
+        "new()": "make-condition",
+        "new(String)": "make-condition",
+        "new(String,Exception)": "make-condition"
+      },
+      "member_overrides": {
+        "new()": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new(String)",
+            "new(String,Exception)"
+          ],
+          "reason": "A Common Lisp condition is made by MAKE-CONDITION or signalled by ERROR, and one call expresses all three CLR constructors: the message is the :FORMAT-CONTROL initarg and the inner exception is the condition a handler already has in scope. Three constructors that differ only in which optional argument they carry are one call here, and each names the others so none can go missing behind the collapse. XNA's own exception type, sealed, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base. That base is not in the selection and has no counterpart to project, but the *role* it plays does: CNA-LISP.INTERNAL's CNA-NATIVE-ERROR is the same idea, and this condition subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class and both work."
+        },
+        "new(String)": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new()",
+            "new(String,Exception)"
+          ],
+          "reason": "See new(). XNA's own exception type, sealed, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base. That base is not in the selection and has no counterpart to project, but the *role* it plays does: CNA-LISP.INTERNAL's CNA-NATIVE-ERROR is the same idea, and this condition subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class and both work."
+        },
+        "new(String,Exception)": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new()",
+            "new(String)"
+          ],
+          "reason": "See new(). XNA's own exception type, sealed, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base. That base is not in the selection and has no counterpart to project, but the *role* it plays does: CNA-LISP.INTERNAL's CNA-NATIVE-ERROR is the same idea, and this condition subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class and both work."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Audio.AudioListener": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "audio-listener",
+      "lisp_kind": "class",
+      "constructors": {
+        "new()": "make-instance"
+      },
+      "member_overrides": {
+        "new()": {
+          "lisp": "make-instance",
+          "reason": "The parameterless CLR constructor is MAKE-INSTANCE with no initargs, and the defaults it installs are the pinned IL's."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Audio.AudioEmitter": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "audio-emitter",
+      "lisp_kind": "class",
+      "constructors": {
+        "new()": "make-instance"
+      },
+      "member_overrides": {
+        "new()": {
+          "lisp": "make-instance",
+          "reason": "The parameterless CLR constructor is MAKE-INSTANCE with no initargs, and the defaults it installs are the pinned IL's."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Audio.SoundEffect": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "sound-effect",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(Byte[],Int32,AudioChannels)": "make-instance",
+        "new(Byte[],Int32,Int32,Int32,AudioChannels,Int32,Int32)": "make-instance"
+      },
+      "member_overrides": {
+        "new(Byte[],Int32,AudioChannels)": {
+          "lisp": "make-instance",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "buffer",
+            "sample-rate",
+            "channels"
+          ],
+          "reason": "The short constructor: MAKE-INSTANCE with :BUFFER, :SAMPLE-RATE and :CHANNELS and no range or loop keywords. XNA's own body checks the buffer and then calls FromBuffer with offset 0, the whole length and an empty loop region, so the two constructors are one code path there too -- but they are two members and stay two here, told apart by which keywords are supplied."
+        },
+        "new(Byte[],Int32,Int32,Int32,AudioChannels,Int32,Int32)": {
+          "lisp": "make-instance",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "buffer",
+            "offset",
+            "count",
+            "sample-rate",
+            "channels",
+            "loop-start",
+            "loop-length"
+          ],
+          "reason": "The canonical seven-argument constructor, over cna_sound_effect_create_pcm16_range_ext. Supplying :OFFSET, :COUNT, :LOOP-START or :LOOP-LENGTH selects it; the keyword set is declared so the verifier refuses a combination XNA has no overload for."
+        },
+        "FromStream(Stream)": {
+          "lisp": "sound-effect-from-stream",
+          "generic": false,
+          "reason": "A static method on a non-static class, so the naming rule makes it <class>-<member>. System.IO.Stream is an ordinary Common Lisp binary stream here and is not a projected type -- see docs/limitations.md."
+        },
+        "GetSampleDuration(Int32,Int32,AudioChannels)": {
+          "lisp": "sound-effect-get-sample-duration",
+          "generic": false,
+          "reason": "Static, so <class>-<member>. Answers 100-nanosecond ticks, because System.TimeSpan is projected as an exact tick count throughout this binding rather than as a type. Pure: CNA's route takes no game handle and its header says why."
+        },
+        "GetSampleSizeInBytes(TimeSpan,Int32,AudioChannels)": {
+          "lisp": "sound-effect-get-sample-size-in-bytes",
+          "generic": false,
+          "reason": "Static, so <class>-<member>. Takes 100-nanosecond ticks for the same reason GetSampleDuration answers them."
+        },
+        "MasterVolume": {
+          "lisp": "sound-effect-master-volume",
+          "generic": false,
+          "setf": true,
+          "reason": "A static property of a non-static class, so <class>-<member> with a SETF expander. Process-wide in XNA and in CNA alike -- CNA's routes take a game handle 'for thread affinity only', which its header states, so the value does not belong to the game it is read through."
+        },
+        "SpeedOfSound": {
+          "lisp": "sound-effect-speed-of-sound",
+          "generic": false,
+          "setf": true,
+          "reason": "Static; see MasterVolume. Refuses zero and negatives and NaN, which is XNA's ble.un guard."
+        },
+        "DopplerScale": {
+          "lisp": "sound-effect-doppler-scale",
+          "generic": false,
+          "setf": true,
+          "reason": "Static; see MasterVolume. Refuses negatives and NaN, which is XNA's blt.un guard -- and note that AudioEmitter.DopplerScale, the per-emitter property of the same name, stores a NaN instead."
+        },
+        "DistanceScale": {
+          "lisp": "sound-effect-distance-scale",
+          "generic": false,
+          "setf": true,
+          "reason": "Static; see MasterVolume. The one of the four that stores a NaN, because XNA's guard is bge.un and the clamp that follows it is ordered; a value in [0, float.Epsilon] is raised to float.Epsilon."
+        },
+        "Play()": {
+          "lisp": "play",
+          "generic": true,
+          "distinguished_by": "no-keywords",
+          "unified_with": [
+            "Play(Single,Single,Single)"
+          ],
+          "reason": "The overload that supplies no keyword at all, told from its sibling by the absence of :VOLUME. XNA gives the two overloads one name and its no-argument body is literally Play(1.0f, 0.0f, 0.0f), so one generic function with an optional settings triple loses neither."
+        },
+        "Play(Single,Single,Single)": {
+          "lisp": "play",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "volume",
+            "pitch",
+            "pan"
+          ],
+          "unified_with": [
+            "Play()"
+          ],
+          "reason": "See Play(). The asymmetry is XNA's and CNA's alike: pan is range-checked and pitch is not."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "MICROSOFT.XNA.FRAMEWORK:DISPOSE, the binding's one deterministic disposal generic function. Disposal is one operation for every native object rather than one per type, so the symbol lives in the framework package and this rule says so -- the same statement GraphicsResource's Dispose() makes."
+        }
+      },
+      "not_applicable": {}
+    },
+    "Microsoft.Xna.Framework.Audio.SoundEffectInstance": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "sound-effect-instance",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "Stop()": {
+          "lisp": "stop",
+          "generic": true,
+          "distinguished_by": "arity",
+          "unified_with": [
+            "Stop(Boolean)"
+          ],
+          "reason": "One generic function with an optional flag, because XNA gives the two overloads one name and its no-argument body is Stop(true)."
+        },
+        "Stop(Boolean)": {
+          "lisp": "stop",
+          "generic": true,
+          "distinguished_by": "arity",
+          "unified_with": [
+            "Stop()"
+          ],
+          "reason": "See Stop(). False means 'stop looping and finish naturally', which is CNA's own wording for the same flag."
+        },
+        "Apply3D(AudioListener,AudioEmitter)": {
+          "lisp": "apply-3d",
+          "generic": true,
+          "distinguished_by": "dispatch",
+          "unified_with": [
+            "Apply3D(AudioListener[],AudioEmitter)"
+          ],
+          "reason": "Two CLOS methods on one generic function, specialised on AUDIO-LISTENER and on SEQUENCE. That is real dispatch rather than a TYPECASE inside one method, so each overload stays something a program can specialise. This one takes cna_sound_effect_instance_apply_3d."
+        },
+        "Apply3D(AudioListener[],AudioEmitter)": {
+          "lisp": "apply-3d",
+          "generic": true,
+          "distinguished_by": "dispatch",
+          "unified_with": [
+            "Apply3D(AudioListener,AudioEmitter)"
+          ],
+          "reason": "The SEQUENCE method, over cna_sound_effect_instance_apply_3d_multi_ext. An empty sequence is refused rather than guessed at: XNA reaches XACT with a count of zero and surfaces whatever XACT returns, an outcome this binding has not established."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "MICROSOFT.XNA.FRAMEWORK:DISPOSE, the binding's one deterministic disposal generic function. Disposal is one operation for every native object rather than one per type, so the symbol lives in the framework package and this rule says so -- the same statement GraphicsResource's Dispose() makes."
+        }
+      },
+      "not_applicable": {
+        "Dispose(Boolean)": "The protected disposing/finalizing overload. CNA-Lisp has no finalizer that touches a native resource by policy, so the boolean it exists to carry -- 'am I being called from Dispose or from the finalizer' -- has only one possible answer here and nothing to express."
+      }
     }
   },
   "frontier_category_kinds": {

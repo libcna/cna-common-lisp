@@ -27,7 +27,8 @@
     "MICROSOFT.XNA.FRAMEWORK.GRAPHICS.PACKED-VECTOR"
     "MICROSOFT.XNA.FRAMEWORK.CONTENT"
     "MICROSOFT.XNA.FRAMEWORK.INPUT"
-    "MICROSOFT.XNA.FRAMEWORK.INPUT.TOUCH"))
+    "MICROSOFT.XNA.FRAMEWORK.INPUT.TOUCH"
+    "MICROSOFT.XNA.FRAMEWORK.AUDIO"))
 
 ;;; --- a very small JSON writer -------------------------------------------
 ;;; CNA-Lisp has no JSON dependency and does not need one for this.
@@ -244,7 +245,9 @@ that a keyword-taking projection accepts no keywords at all."
    "effect-parameter-class"
    (alist-object microsoft.xna.framework.graphics::*effect-parameter-class-table*)
    "effect-parameter-type"
-   (alist-object microsoft.xna.framework.graphics::*effect-parameter-type-table*)))
+   (alist-object microsoft.xna.framework.graphics::*effect-parameter-type-table*)
+   "sound-state" (alist-object microsoft.xna.framework.audio::*sound-state-table*)
+   "audio-channels" (alist-object microsoft.xna.framework.audio::*audio-channels-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

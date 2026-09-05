@@ -181,6 +181,20 @@ SELECTED = [
     "Microsoft.Xna.Framework.Input.Mouse",
     "Microsoft.Xna.Framework.Input.MouseState",
     "Microsoft.Xna.Framework.Input.ButtonState",
+    # --- Microsoft.Xna.Framework.Audio -----------------------------------
+    # The dependency-complete SoundEffect closure: eight types, and every type
+    # they need is already above. XACT (AudioEngine, SoundBank, WaveBank, Cue,
+    # AudioCategory, RendererDetail) stays out because CNA has no route for any
+    # of it; DynamicSoundEffectInstance and the three Microphone types have full
+    # CNA route families and are each a closure of their own.
+    "Microsoft.Xna.Framework.Audio.SoundEffect",
+    "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
+    "Microsoft.Xna.Framework.Audio.AudioListener",
+    "Microsoft.Xna.Framework.Audio.AudioEmitter",
+    "Microsoft.Xna.Framework.Audio.SoundState",
+    "Microsoft.Xna.Framework.Audio.AudioChannels",
+    "Microsoft.Xna.Framework.Audio.NoAudioHardwareException",
+    "Microsoft.Xna.Framework.Audio.InstancePlayLimitException",
 ]
 
 

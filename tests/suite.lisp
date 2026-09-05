@@ -22,6 +22,7 @@
                     (#:xna.content #:microsoft.xna.framework.content)
                     (#:input #:microsoft.xna.framework.input)
                     (#:touch #:microsoft.xna.framework.input.touch)
+                    (#:audio #:microsoft.xna.framework.audio)
                     (#:int   #:cna-lisp.internal)
                     (#:ffi   #:cna-lisp.internal.ffi))
   (:shadow #:run-all-tests)
