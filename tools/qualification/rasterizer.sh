@@ -38,6 +38,9 @@ set -eu
 here=$(cd "$(dirname "$0")" && pwd)
 root=$(cd "$here/../.." && pwd)
 sbcl=${SBCL:-sbcl}
+# The suite runs on an Xvfb display when there is a real one to keep off, and
+# unchanged when there is none -- which is how CI runs it. See
+# tools/qualification/with-virtual-screen.sh.
 log="$root/build-probe/rasterizer-qualification.log"
 
 if [ -z "${CNA_NATIVE_LIBRARY:-}" ]; then
@@ -48,7 +51,7 @@ fi
 mkdir -p "$root/build-probe"
 echo "== running the suite against $CNA_NATIVE_LIBRARY =="
 cd "$root"
-"$sbcl" --non-interactive \
+"$here/with-virtual-screen.sh" "$sbcl" --non-interactive \
     --load "$HOME/quicklisp/setup.lisp" \
     --eval '(push (truename ".") asdf:*central-registry*)' \
     --eval '(asdf:test-system "cna-common-lisp")' > "$log" 2>&1 || {

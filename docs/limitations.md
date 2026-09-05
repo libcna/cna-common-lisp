@@ -935,6 +935,71 @@ nothing is an **IO** failure. That is XNA's distinction between `ArgumentExcepti
 and `FileNotFoundException`, and collapsing the two would make a traversal attempt
 look like a typo.
 
+## The adapter surface is complete, and needs a device to reach
+
+`GraphicsAdapter` is projected, and so is `DisplayModeCollection` with it, so
+`GraphicsDevice.Adapter` is complete. The instance members are complete too:
+reading an adapter's description or negotiating a format from inside a draw is
+exactly as available here as it is in XNA.
+
+**The two static members are partial, and the scope is why.**
+`GraphicsAdapter.Adapters` and `.DefaultAdapter` are *static* in XNA and answer
+before any device exists — that is how an XNA program picks the adapter it then
+creates a device on. **Every** CNA adapter route takes a callback-scoped
+graphics-device handle, so here they need a live game *and* a lifecycle method to
+be inside, and by then the device has been created. The capability is there; the
+moment it is available at is not, and the test asserts the refusal outside a
+callback rather than leaving a caller to discover it.
+
+An adapter holds **no handle**: CNA names one by a zero-based index into its own
+enumeration, so the class is that index plus the game to ask through, and every
+reader resolves the borrowed device handle per call — which is also what makes the
+scope rule enforce itself.
+
+Three smaller things, each measured rather than assumed:
+
+* **`Revision` and `SubSystemId` are partial**, and CNA says why in its own
+  struct: "current CNA returns zero". They answer zero on every adapter rather
+  than the adapter's revision. The zero is CNA's answer passed through, not a
+  number invented here. `VendorId` and `DeviceId` are *not* partial, because there
+  zero is documented as meaning "unavailable" rather than "not implemented" —
+  a distinction worth keeping.
+* **`UseNullDevice` and `UseReferenceDevice` are written together.** XNA's are two
+  static properties; CNA carries both per adapter and sets them with one route
+  that takes the pair. So each setter reads its sibling back first, and a test
+  checks that setting one does not silently clear the other.
+* **`MonitorHandle` is missing because CNA refuses it**, in the same words it
+  refuses `PresentationParameters.DeviceWindowHandle`: the native-monitor-handle
+  mapping is "unavailable at the stable C boundary".
+
+`QueryBackBufferFormat` and `QueryRenderTargetFormat` are a `bool` and three `out`
+parameters in XNA, so they answer **four values with the boolean first** — the
+projection `TouchCollection.FindById` already uses for that shape. CNA answers all
+three in one `CNA_GraphicsFormatSelection`.
+
+## The test suite runs on a virtual screen, and CI runs on none
+
+CNA's SDL3 platform initialises the host's windowing stack **even under the
+HEADLESS renderer** — the GTK warnings in a test log are it doing so — and the
+suite creates and destroys a game hundreds of times. On a machine with a desktop
+that is hundreds of window-system round trips against the screen someone is using.
+
+`tools/qualification/with-virtual-screen.sh` runs a command on a fresh Xvfb
+display, and the two qualification scripts route themselves through it. It is
+deliberately **conditional**:
+
+| | |
+| --- | --- |
+| `DISPLAY` set, `xvfb-run` present | a fresh Xvfb display |
+| `DISPLAY` unset | unchanged — there is nothing to keep off |
+| `xvfb-run` absent | unchanged, with one note on stderr |
+| `CNA_LISP_NO_XVFB` set | unchanged, for watching the windows |
+
+The second row is the one that matters. The `Native` workflow runs with **no
+`DISPLAY` at all**, and that is a property worth keeping rather than an accident:
+it is what proves the SOFTWARE renderer is a CPU rasteriser that needs no display.
+A wrapper that *required* Xvfb would have quietly ended that proof.
+
 ## `Game.Window` is a facade too, and needs no callback scope
 
 `GameWindow` is projected, and like `Game.Content` and the graphics device it is a

@@ -42,6 +42,8 @@ SELECTED = [
     "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus",
     "Microsoft.Xna.Framework.Graphics.DisplayMode",
     "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+    "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
+    "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Content.ContentManager",
     "Microsoft.Xna.Framework.Graphics.RenderTargetCube",

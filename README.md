@@ -184,26 +184,26 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=155 -->
-<!-- generated:selected members=2312 -->
-<!-- generated:complete types=140 -->
-<!-- generated:partial types=15 -->
+<!-- generated:selected types=157 -->
+<!-- generated:selected members=2332 -->
+<!-- generated:complete types=141 -->
+<!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1833 -->
-<!-- generated:partial members=15 -->
+<!-- generated:complete members=1849 -->
+<!-- generated:partial members=19 -->
 <!-- generated:missing members=40 -->
 <!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=440 -->
-<!-- generated:bound native structs=65 -->
+<!-- generated:bound native functions=452 -->
+<!-- generated:bound native structs=67 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **155 XNA types and 2312 members**:
+The generated scoreboard, over a selection of **157 XNA types and 2332 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **140 / 15 / 0** |
-| Members complete / missing | **1833 / 40** |
+| Types complete / partial / missing | **141 / 16 / 0** |
+| Members complete / missing | **1849 / 40** |
 | Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
@@ -217,7 +217,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **440 native routes** and **65 native structs**,
+The private foreign layer binds **452 native routes** and **67 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

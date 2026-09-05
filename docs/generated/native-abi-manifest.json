@@ -24,9 +24,9 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 440,
-    "structs": 65,
-    "struct_fields": 492,
+    "functions": 452,
+    "structs": 67,
+    "struct_fields": 512,
     "constants": 506,
     "callbacks": 10,
     "by_value_aggregates": 6,
@@ -1403,6 +1403,420 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_get_is_disposed(CNA_Handle graphics_device, CNA_Bool* out_is_disposed)"
+    },
+    {
+      "name": "cna_graphics_adapter_get_count",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_get_count(CNA_Handle graphics_device, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_graphics_adapter_get_info",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_GraphicsAdapterInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_get_info(CNA_Handle graphics_device, uint32_t adapter_index, CNA_GraphicsAdapterInfo* out_info)"
+    },
+    {
+      "name": "cna_graphics_adapter_copy_description",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_copy_description(CNA_Handle graphics_device, uint32_t adapter_index, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_graphics_adapter_copy_device_name",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_copy_device_name(CNA_Handle graphics_device, uint32_t adapter_index, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_graphics_adapter_get_current_display_mode",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_mode",
+          "c_type": "CNA_DisplayMode*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_get_current_display_mode(CNA_Handle graphics_device, uint32_t adapter_index, CNA_DisplayMode* out_mode)"
+    },
+    {
+      "name": "cna_graphics_adapter_get_display_mode_count",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "filter_by_format",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_get_display_mode_count(CNA_Handle graphics_device, uint32_t adapter_index, CNA_Bool filter_by_format, CNA_SurfaceFormat format, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_graphics_adapter_copy_display_modes",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "filter_by_format",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_DisplayMode*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_copy_display_modes(CNA_Handle graphics_device, uint32_t adapter_index, CNA_Bool filter_by_format, CNA_SurfaceFormat format, CNA_DisplayMode* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_graphics_adapter_set_device_preferences",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "use_null_device",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        },
+        {
+          "name": "use_reference_device",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_set_device_preferences(CNA_Handle graphics_device, uint32_t adapter_index, CNA_Bool use_null_device, CNA_Bool use_reference_device)"
+    },
+    {
+      "name": "cna_graphics_adapter_is_profile_supported",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "profile",
+          "c_type": "CNA_GraphicsProfile",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_supported",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_is_profile_supported(CNA_Handle graphics_device, uint32_t adapter_index, CNA_GraphicsProfile profile, CNA_Bool* out_supported)"
+    },
+    {
+      "name": "cna_graphics_adapter_query_render_target_format",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "profile",
+          "c_type": "CNA_GraphicsProfile",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "depth_format",
+          "c_type": "CNA_DepthFormat",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "multi_sample_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_selection",
+          "c_type": "CNA_GraphicsFormatSelection*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_query_render_target_format(CNA_Handle graphics_device, uint32_t adapter_index, CNA_GraphicsProfile profile, CNA_SurfaceFormat format, CNA_DepthFormat depth_format, int32_t multi_sample_count, CNA_GraphicsFormatSelection* out_selection)"
+    },
+    {
+      "name": "cna_graphics_adapter_query_backbuffer_format",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "profile",
+          "c_type": "CNA_GraphicsProfile",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "depth_format",
+          "c_type": "CNA_DepthFormat",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "multi_sample_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_selection",
+          "c_type": "CNA_GraphicsFormatSelection*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_adapter_query_backbuffer_format(CNA_Handle graphics_device, uint32_t adapter_index, CNA_GraphicsProfile profile, CNA_SurfaceFormat format, CNA_DepthFormat depth_format, int32_t multi_sample_count, CNA_GraphicsFormatSelection* out_selection)"
+    },
+    {
+      "name": "cna_graphics_device_get_adapter_index",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_adapter_index",
+          "c_type": "uint32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_adapter_index(CNA_Handle graphics_device, uint32_t* out_adapter_index)"
     },
     {
       "name": "cna_graphics_device_get_graphics_profile",
@@ -11172,6 +11586,206 @@
       "eightbyte_classes": [
         "INTEGER"
       ]
+    },
+    {
+      "name": "CNA_GraphicsAdapterInfo",
+      "size": 48,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_default_adapter",
+          "c_type": "CNA_Bool",
+          "offset": 12,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_wide_screen",
+          "c_type": "CNA_Bool",
+          "offset": 13,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "use_null_device",
+          "c_type": "CNA_Bool",
+          "offset": 14,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "use_reference_device",
+          "c_type": "CNA_Bool",
+          "offset": 15,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "vendor_id",
+          "c_type": "int32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "device_id",
+          "c_type": "int32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "revision",
+          "c_type": "int32_t",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "subsystem_id",
+          "c_type": "int32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "description_byte_length",
+          "c_type": "uint64_t",
+          "offset": 32,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "device_name_byte_length",
+          "c_type": "uint64_t",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "display.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GraphicsFormatSelection",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "exact_match",
+          "c_type": "CNA_Bool",
+          "offset": 8,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 9,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_format",
+          "c_type": "CNA_DepthFormat",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "multi_sample_count",
+          "c_type": "int32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "display.h",
+      "direction": "out",
+      "versioned": true
     },
     {
       "name": "CNA_DisplayMode",

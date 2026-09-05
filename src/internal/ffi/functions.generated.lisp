@@ -230,6 +230,54 @@
 (defcfun ("cna_graphics_device_get_is_disposed" %graphics-device-get-is-disposed) :uint32
   (graphics-device :uint64) (out-is-disposed :pointer))
 
+;;; CNA_Result cna_graphics_adapter_get_count(CNA_Handle graphics_device, uint64_t* out_count)
+(defcfun ("cna_graphics_adapter_get_count" %graphics-adapter-get-count) :uint32
+  (graphics-device :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_graphics_adapter_get_info(CNA_Handle graphics_device, uint32_t adapter_index, CNA_GraphicsAdapterInfo* out_info)
+(defcfun ("cna_graphics_adapter_get_info" %graphics-adapter-get-info) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (out-info :pointer))
+
+;;; CNA_Result cna_graphics_adapter_copy_description(CNA_Handle graphics_device, uint32_t adapter_index, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_graphics_adapter_copy_description" %graphics-adapter-copy-description) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_graphics_adapter_copy_device_name(CNA_Handle graphics_device, uint32_t adapter_index, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_graphics_adapter_copy_device_name" %graphics-adapter-copy-device-name) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_graphics_adapter_get_current_display_mode(CNA_Handle graphics_device, uint32_t adapter_index, CNA_DisplayMode* out_mode)
+(defcfun ("cna_graphics_adapter_get_current_display_mode" %graphics-adapter-get-current-display-mode) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (out-mode :pointer))
+
+;;; CNA_Result cna_graphics_adapter_get_display_mode_count(CNA_Handle graphics_device, uint32_t adapter_index, CNA_Bool filter_by_format, CNA_SurfaceFormat format, uint64_t* out_count)
+(defcfun ("cna_graphics_adapter_get_display_mode_count" %graphics-adapter-get-display-mode-count) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (filter-by-format :uint8) (format :uint32) (out-count :pointer))
+
+;;; CNA_Result cna_graphics_adapter_copy_display_modes(CNA_Handle graphics_device, uint32_t adapter_index, CNA_Bool filter_by_format, CNA_SurfaceFormat format, CNA_DisplayMode* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_graphics_adapter_copy_display_modes" %graphics-adapter-copy-display-modes) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (filter-by-format :uint8) (format :uint32) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_graphics_adapter_set_device_preferences(CNA_Handle graphics_device, uint32_t adapter_index, CNA_Bool use_null_device, CNA_Bool use_reference_device)
+(defcfun ("cna_graphics_adapter_set_device_preferences" %graphics-adapter-set-device-preferences) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (use-null-device :uint8) (use-reference-device :uint8))
+
+;;; CNA_Result cna_graphics_adapter_is_profile_supported(CNA_Handle graphics_device, uint32_t adapter_index, CNA_GraphicsProfile profile, CNA_Bool* out_supported)
+(defcfun ("cna_graphics_adapter_is_profile_supported" %graphics-adapter-is-profile-supported) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (profile :uint32) (out-supported :pointer))
+
+;;; CNA_Result cna_graphics_adapter_query_render_target_format(CNA_Handle graphics_device, uint32_t adapter_index, CNA_GraphicsProfile profile, CNA_SurfaceFormat format, CNA_DepthFormat depth_format, int32_t multi_sample_count, CNA_GraphicsFormatSelection* out_selection)
+(defcfun ("cna_graphics_adapter_query_render_target_format" %graphics-adapter-query-render-target-format) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (profile :uint32) (format :uint32) (depth-format :uint32) (multi-sample-count :int32) (out-selection :pointer))
+
+;;; CNA_Result cna_graphics_adapter_query_backbuffer_format(CNA_Handle graphics_device, uint32_t adapter_index, CNA_GraphicsProfile profile, CNA_SurfaceFormat format, CNA_DepthFormat depth_format, int32_t multi_sample_count, CNA_GraphicsFormatSelection* out_selection)
+(defcfun ("cna_graphics_adapter_query_backbuffer_format" %graphics-adapter-query-backbuffer-format) :uint32
+  (graphics-device :uint64) (adapter-index :uint32) (profile :uint32) (format :uint32) (depth-format :uint32) (multi-sample-count :int32) (out-selection :pointer))
+
+;;; CNA_Result cna_graphics_device_get_adapter_index(CNA_Handle graphics_device, uint32_t* out_adapter_index)
+(defcfun ("cna_graphics_device_get_adapter_index" %graphics-device-get-adapter-index) :uint32
+  (graphics-device :uint64) (out-adapter-index :pointer))
+
 ;;; CNA_Result cna_graphics_device_get_graphics_profile(CNA_Handle graphics_device, CNA_GraphicsProfile* out_profile)
 (defcfun ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile) :uint32
   (graphics-device :uint64) (out-profile :pointer))
@@ -1829,6 +1877,18 @@
     ("cna_graphics_device_subscribe_event" %graphics-device-subscribe-event :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates-owned:graphics-device-event-registration:child-of-game")
     ("cna_graphics_device_unsubscribe" %graphics-device-unsubscribe :uint32 (:uint64) :thread :owner :ownership "destroys:graphics-device-event-registration")
     ("cna_graphics_device_get_is_disposed" %graphics-device-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_get_count" %graphics-adapter-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_get_info" %graphics-adapter-get-info :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_copy_description" %graphics-adapter-copy-description :uint32 (:uint64 :uint32 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_copy_device_name" %graphics-adapter-copy-device-name :uint32 (:uint64 :uint32 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_get_current_display_mode" %graphics-adapter-get-current-display-mode :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_get_display_mode_count" %graphics-adapter-get-display-mode-count :uint32 (:uint64 :uint32 :uint8 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_copy_display_modes" %graphics-adapter-copy-display-modes :uint32 (:uint64 :uint32 :uint8 :uint32 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_set_device_preferences" %graphics-adapter-set-device-preferences :uint32 (:uint64 :uint32 :uint8 :uint8) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_is_profile_supported" %graphics-adapter-is-profile-supported :uint32 (:uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_query_render_target_format" %graphics-adapter-query-render-target-format :uint32 (:uint64 :uint32 :uint32 :uint32 :uint32 :int32 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_adapter_query_backbuffer_format" %graphics-adapter-query-backbuffer-format :uint32 (:uint64 :uint32 :uint32 :uint32 :uint32 :int32 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_adapter_index" %graphics-device-get-adapter-index :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_clear_options" %graphics-device-clear-options :uint32 (:uint64 :uint32 :uint32 :float :int32) :thread :owner :ownership "none")
     ("cna_graphics_device_present" %graphics-device-present :uint32 (:uint64) :thread :owner :ownership "none")

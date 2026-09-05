@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 155,
-  "member_count": 2312
+  "type_count": 157,
+  "member_count": 2332
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 155,
-  "members": 2312,
+  "types": 157,
+  "members": 2332,
   "types_by_status": {
-   "partial": 15,
-   "complete": 140
+   "partial": 16,
+   "complete": 141
   },
   "members_by_status": {
-   "complete": 1833,
+   "complete": 1849,
    "missing": 40,
    "not-applicable": 424,
-   "partial": 15
+   "partial": 19
   },
   "diagnostics": 40,
   "diagnostics_by_category": {
@@ -322,6 +322,40 @@
     "Bounds": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:presentation-parameters"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
+   "status": "partial",
+   "members": {
+    "QueryBackBufferFormat(GraphicsProfile,SurfaceFormat,DepthFormat,Int32,SurfaceFormat&,DepthFormat&,Int32&)": "complete",
+    "QueryRenderTargetFormat(GraphicsProfile,SurfaceFormat,DepthFormat,Int32,SurfaceFormat&,DepthFormat&,Int32&)": "complete",
+    "IsProfileSupported(GraphicsProfile)": "complete",
+    "UseReferenceDevice": "complete",
+    "UseNullDevice": "complete",
+    "MonitorHandle": "missing",
+    "SupportedDisplayModes": "complete",
+    "CurrentDisplayMode": "complete",
+    "IsWideScreen": "complete",
+    "IsDefaultAdapter": "complete",
+    "Revision": "partial",
+    "SubSystemId": "partial",
+    "DeviceId": "complete",
+    "VendorId": "complete",
+    "DeviceName": "complete",
+    "Description": "complete",
+    "DefaultAdapter": "partial",
+    "Adapters": "partial"
+   },
+   "lisp": "microsoft.xna.framework.graphics:graphics-adapter"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
+   "status": "complete",
+   "members": {
+    "GetEnumerator()": "complete",
+    "Item(SurfaceFormat)": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:display-mode-collection"
   },
   {
    "name": "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -1485,7 +1519,7 @@
     "DisplayMode": "complete",
     "GraphicsDeviceStatus": "complete",
     "GraphicsProfile": "complete",
-    "Adapter": "missing",
+    "Adapter": "complete",
     "PresentationParameters": "complete",
     "RasterizerState": "complete",
     "ReferenceStencil": "complete",
@@ -3515,6 +3549,11 @@
   },
   {
    "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsAdapter.MonitorHandle",
+   "detail": "A System.IntPtr naming the monitor. CNA refuses the question by design: cna_graphics_adapter_get_native_monitor_handle \"reports the native-monitor-handle mapping as unavailable at the stable C boundary\" and answers CNA_RESULT_NOT_SUPPORTED after validating the adapter index. An IntPtr is not a thing this projection has either."
+  },
+  {
+   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)",
    "detail": "One of the three protected members that are XNA's **device-selection algorithm**, not a setting: FindBestDevice ranks candidates and picks one, and its result is a GraphicsDeviceInformation. CNA selects the device itself when it creates the game, and offers the pieces a caller would rank with -- cna_graphics_adapter_query_backbuffer_format, _query_render_target_format, _is_profile_supported -- but no candidate list and no GraphicsDeviceInformation to be a candidate."
   },
@@ -3607,11 +3646,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Dispose()",
    "detail": "CNA refuses this by design and says why: cna_graphics_device_dispose 'reports that C cannot dispose the graphics device owned by the active game', because 'disposing it through a borrowed handle would leave that game drawing into a destroyed device'. cna_game_destroy performs the canonical disposal. %CHECK-DISPOSABLE refuses it here for the same reason, one step earlier, and the refusal costs the facade nothing."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Adapter",
-   "detail": "Needs GraphicsAdapter, which is not in the selection. The route to reach it exists -- cna_graphics_adapter_get_info and its neighbours, indexed by cna_graphics_device_get_adapter_index -- so this is a type that has not been projected rather than a capability CNA lacks. Note that every adapter route takes a **callback-scoped device handle**, so the projection would inherit a scope rule XNA's static GraphicsAdapter.Adapters has not got; that is the design question to settle before starting, not an obstacle."
   },
   {
    "category": "missing_member",

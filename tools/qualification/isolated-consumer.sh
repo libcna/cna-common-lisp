@@ -80,7 +80,8 @@ LISP
 
 for frames in 60 600; do
     echo "== template canary, $frames frames =="
-    output=$("$sbcl" --script "$work/consumer/run.lisp" -- --frames "$frames" 2>&1) || true
+    output=$("$here/with-virtual-screen.sh" \
+                 "$sbcl" --script "$work/consumer/run.lisp" -- --frames "$frames" 2>&1) || true
     echo "$output" | grep '^CANARY ' || true
     if ! echo "$output" | grep -q '^CANARY result=pass$'; then
         echo "FAIL the $frames-frame canary did not pass" >&2

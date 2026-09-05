@@ -377,6 +377,16 @@
       "by_value": true
     },
     {
+      "name": "CNA_GraphicsAdapterInfo",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GraphicsFormatSelection",
+      "direction": "out",
+      "versioned": true
+    },
+    {
       "name": "CNA_DisplayMode",
       "direction": "out",
       "versioned": true
@@ -1081,6 +1091,78 @@
     },
     {
       "name": "cna_graphics_device_get_is_disposed",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_get_count",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_get_info",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_copy_description",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_copy_device_name",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_get_current_display_mode",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_get_display_mode_count",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_copy_display_modes",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_set_device_preferences",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_is_profile_supported",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_query_render_target_format",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_adapter_query_backbuffer_format",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_get_adapter_index",
       "header": "graphics_device.h",
       "thread": "owner",
       "ownership": "none"

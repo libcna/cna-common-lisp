@@ -434,6 +434,20 @@
    #:all-present-interval
    #:graphics-device-status #:graphics-device-status-value
    #:graphics-device-status-from-value #:all-graphics-device-status
+   ;; --- GraphicsAdapter ----------------------------------------------------
+   #:graphics-adapter #:adapter
+   #:graphics-adapter-adapters #:graphics-adapter-default-adapter
+   #:graphics-adapter-description #:graphics-adapter-device-name
+   #:graphics-adapter-is-default-adapter #:graphics-adapter-is-wide-screen
+   #:graphics-adapter-vendor-id #:graphics-adapter-device-id
+   #:graphics-adapter-revision #:graphics-adapter-sub-system-id
+   #:graphics-adapter-use-null-device #:graphics-adapter-use-reference-device
+   #:graphics-adapter-current-display-mode #:graphics-adapter-supported-display-modes
+   #:graphics-adapter-is-profile-supported
+   #:graphics-adapter-query-back-buffer-format
+   #:graphics-adapter-query-render-target-format
+   #:display-mode-collection #:display-mode-collection-modes-vector
+   #:display-mode-collection-item
    ;; --- DisplayMode and PresentationParameters -----------------------------
    #:display-mode #:display-mode-width #:display-mode-height #:display-mode-format
    #:display-mode-aspect-ratio #:display-mode-title-safe-area

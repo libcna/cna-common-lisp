@@ -41,6 +41,38 @@
 (defconstant +sizeof-cna-color+ 4)
 (defconstant +alignof-cna-color+ 1)
 
+;;; CNA_GraphicsAdapterInfo -- 48 bytes, 8-byte aligned, from display.h.
+(defcstruct (cna-graphics-adapter-info :size 48)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (adapter-index :uint32 :offset 8)
+  (is-default-adapter :uint8 :offset 12)
+  (is-wide-screen :uint8 :offset 13)
+  (use-null-device :uint8 :offset 14)
+  (use-reference-device :uint8 :offset 15)
+  (vendor-id :int32 :offset 16)
+  (device-id :int32 :offset 20)
+  (revision :int32 :offset 24)
+  (subsystem-id :int32 :offset 28)
+  (description-byte-length :uint64 :offset 32)
+  (device-name-byte-length :uint64 :offset 40))
+
+(defconstant +sizeof-cna-graphics-adapter-info+ 48)
+(defconstant +alignof-cna-graphics-adapter-info+ 8)
+
+;;; CNA_GraphicsFormatSelection -- 24 bytes, 4-byte aligned, from display.h.
+(defcstruct (cna-graphics-format-selection :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (exact-match :uint8 :offset 8)
+  (reserved :uint8 :offset 9 :count 3)
+  (format :uint32 :offset 12)
+  (depth-format :uint32 :offset 16)
+  (multi-sample-count :int32 :offset 20))
+
+(defconstant +sizeof-cna-graphics-format-selection+ 24)
+(defconstant +alignof-cna-graphics-format-selection+ 4)
+
 ;;; CNA_DisplayMode -- 24 bytes, 4-byte aligned, from display.h.
 (defcstruct (cna-display-mode :size 24)
   (struct-size :uint32 :offset 0)
@@ -904,6 +936,8 @@
     (cna-error-info 24 8 ((struct-size 0 4) (struct-version 4 4) (result 8 4) (category 12 4) (message-byte-length 16 8)))
     (cna-string-view 16 8 ((data 0 8) (byte-length 8 8)))
     (cna-color 4 1 ((r 0 1) (g 1 1) (b 2 1) (a 3 1)))
+    (cna-graphics-adapter-info 48 8 ((struct-size 0 4) (struct-version 4 4) (adapter-index 8 4) (is-default-adapter 12 1) (is-wide-screen 13 1) (use-null-device 14 1) (use-reference-device 15 1) (vendor-id 16 4) (device-id 20 4) (revision 24 4) (subsystem-id 28 4) (description-byte-length 32 8) (device-name-byte-length 40 8)))
+    (cna-graphics-format-selection 24 4 ((struct-size 0 4) (struct-version 4 4) (exact-match 8 1) (reserved 9 3) (format 12 4) (depth-format 16 4) (multi-sample-count 20 4)))
     (cna-display-mode 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (aspect-ratio 16 4) (format 20 4)))
     (cna-presentation-parameters 44 4 ((struct-size 0 4) (struct-version 4 4) (back-buffer-format 8 4) (back-buffer-width 12 4) (back-buffer-height 16 4) (depth-stencil-format 20 4) (multi-sample-count 24 4) (presentation-interval 28 4) (display-orientation 32 4) (render-target-usage 36 4) (is-full-screen 40 1) (headless-ext 41 1) (reserved 42 2)))
     (cna-rectangle 16 4 ((x 0 4) (y 4 4) (width 8 4) (height 12 4)))

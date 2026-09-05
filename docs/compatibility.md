@@ -107,29 +107,29 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=155 -->
-<!-- generated:selected members=2312 -->
-<!-- generated:complete types=140 -->
-<!-- generated:partial types=15 -->
+<!-- generated:selected types=157 -->
+<!-- generated:selected members=2332 -->
+<!-- generated:complete types=141 -->
+<!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1833 -->
-<!-- generated:partial members=15 -->
+<!-- generated:complete members=1849 -->
+<!-- generated:partial members=19 -->
 <!-- generated:missing members=40 -->
 <!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 155 types, 2312 members.
+Selection **Foundation 1 and the managed closures**: 157 types, 2332 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **140** |
-| Types partial | **15** |
+| Types complete | **141** |
+| Types partial | **16** |
 | Types missing | **0** |
-| Members complete | **1833** |
-| Members partial | **15** |
+| Members complete | **1849** |
+| Members partial | **19** |
 | Members missing | **40** |
 | Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
@@ -161,6 +161,8 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.GraphicsDeviceStatus` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Graphics.DisplayMode` | **complete** | 5 | 0 | 0 | 1 |
 | `M.X.F.Graphics.PresentationParameters` | **partial** | 12 | 0 | 1 | 0 |
+| `M.X.F.Graphics.GraphicsAdapter` | **partial** | 13 | 4 | 1 | 0 |
+| `M.X.F.Graphics.DisplayModeCollection` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 20 | 0 | 9 | 1 |
 | `M.X.F.Content.ContentManager` | **partial** | 3 | 1 | 3 | 3 |
 | `M.X.F.Graphics.RenderTargetCube` | **complete** | 7 | 0 | 0 | 1 |
@@ -190,7 +192,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 44 | 1 | 10 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 45 | 1 | 9 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 11 | 4 | 0 | 1 |
@@ -341,14 +343,15 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 10 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
+| `M.X.F.Graphics.GraphicsDevice` | 9 | 1 |
 | `M.X.F.GameWindow` | 7 | 0 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
+| `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
@@ -382,9 +385,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=440 -->
-<!-- generated:bound native structs=65 -->
-<!-- generated:bound native struct fields=492 -->
+<!-- generated:bound native functions=452 -->
+<!-- generated:bound native structs=67 -->
+<!-- generated:bound native struct fields=512 -->
 <!-- generated:bound native constants=506 -->
 <!-- generated:bound native callbacks=10 -->
 <!-- generated:by-value aggregates=6 -->
@@ -394,9 +397,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 440 |
-| Bound structs | 65 |
-| Bound struct fields | 492 |
+| Bound functions | 452 |
+| Bound structs | 67 |
+| Bound struct fields | 512 |
 | Bound constants | 506 |
 | Bound callback typedefs | 10 |
 | By-value aggregates admitted | 6 |

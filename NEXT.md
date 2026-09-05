@@ -19,8 +19,11 @@ python3 tools/native-abi/generate.py --check --headers "$CNA_HEADERS" --baseline
 # 2. a C compiler agrees with every bound prototype, layout and constant
 tools/native-abi/verify.sh "$CNA_HEADERS"
 
-# 3. the whole test suite
-sbcl --non-interactive --load ~/quicklisp/setup.lisp \
+# 3. the whole test suite. On a machine with a desktop, run it on a virtual
+#    screen: CNA's SDL3 platform initialises the host's windowing stack even
+#    under HEADLESS, and the suite creates and destroys a game hundreds of times.
+tools/qualification/with-virtual-screen.sh \
+  sbcl --non-interactive --load ~/quicklisp/setup.lisp \
      --eval '(push (truename ".") asdf:*central-registry*)' \
      --eval '(asdf:test-system "cna-common-lisp")'
 
@@ -35,6 +38,14 @@ tools/qualification/isolated-consumer.sh ../cna-common-lisp-template
 CNA_NATIVE_LIBRARY=/absolute/path/to/software/libcna_c_api.so \
     tools/qualification/rasterizer.sh
 ```
+
+The two qualification scripts do that for themselves. `with-virtual-screen.sh`
+runs its command on a fresh Xvfb display **only when `DISPLAY` is set** -- so a
+developer's own screen is left alone, and CI, which runs with no display at all,
+is unchanged. That last part is deliberate: the `Native` workflow proves the
+SOFTWARE renderer needs no display, and a lane that quietly grew a dependency on
+one would stop proving it. `CNA_LISP_NO_XVFB=1` opts out, for watching the
+windows.
 
 `git log --oneline` answers what has been published; a count written down here
 would go stale the moment the next commit lands. The same is true of the suite's
@@ -100,29 +111,29 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=155 -->
-<!-- generated:selected members=2312 -->
-<!-- generated:complete types=140 -->
-<!-- generated:partial types=15 -->
+<!-- generated:selected types=157 -->
+<!-- generated:selected members=2332 -->
+<!-- generated:complete types=141 -->
+<!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1833 -->
-<!-- generated:partial members=15 -->
+<!-- generated:complete members=1849 -->
+<!-- generated:partial members=19 -->
 <!-- generated:missing members=40 -->
 <!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 155 types, 2312 members.
+Selection **Foundation 1 and the managed closures**: 157 types, 2332 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **140** |
-| Types partial | **15** |
+| Types complete | **141** |
+| Types partial | **16** |
 | Types missing | **0** |
-| Members complete | **1833** |
-| Members partial | **15** |
+| Members complete | **1849** |
+| Members partial | **19** |
 | Members missing | **40** |
 | Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
@@ -140,20 +151,21 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=15 --> are partial, and this is where the remaining
+<!-- generated:partial types=16 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 10 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
+| `M.X.F.Graphics.GraphicsDevice` | 9 | 1 |
 | `M.X.F.GameWindow` | 7 | 0 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
+| `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
@@ -173,14 +185,15 @@ one.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 10 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
+| `M.X.F.Graphics.GraphicsDevice` | 9 | 1 |
 | `M.X.F.GameWindow` | 7 | 0 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
+| `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
@@ -245,13 +258,19 @@ the graph after each closure instead of following this list once it has moved.
    Read `unimplemented` in `tools/api-compat/mapping-rules.json` before assuming
    anything about what is left.
 
-   Two of the three have since been done -- `GraphicsDevice`'s four payload-free
-   events, and `Game.Window` with the whole `GameWindow` type. One left:
-   **`GraphicsDevice.Adapter`** needs `GraphicsAdapter`,
-   whose thirteen CNA routes all take a *callback-scoped device handle* -- so
-   projecting it inherits a scope rule XNA's static `GraphicsAdapter.Adapters` has
-   not got, which is a design question to settle before starting rather than an
-   obstacle.
+   **All three have since been done**: `GraphicsDevice`'s four payload-free
+   events, `Game.Window` with the whole `GameWindow` type, and
+   `GraphicsDevice.Adapter` with `GraphicsAdapter` and `DisplayModeCollection`.
+   The scope question the audit flagged for the adapter was settled the way it
+   asked to be -- the instance members are complete and the two XNA makes *static*
+   are reported partial, because every CNA adapter route takes a callback-scoped
+   device handle and XNA's answer before a device exists.
+
+   What is left is what the audit found genuinely blocked: protected raisers with
+   no callback to be raised from, types CNA cannot represent (`IServiceProvider`,
+   `IntPtr`, `GraphicsDeviceInformation`, `Texture3D`), the device as an object a
+   program constructs, and `DrawInstancedPrimitives`, for which 0.21.0 has no
+   route at all.
 
 1. **The device-settings closure**: `Adapter`, `DisplayMode`,
    `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
