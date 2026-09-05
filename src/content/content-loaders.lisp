@@ -147,3 +147,37 @@
         ;; the effect's own disposal, which gives back the whole graph.
         (funcall record (lambda () (microsoft.xna.framework:dispose effect)))
         (%commit-loaded-asset manager asset-name record effect)))))
+
+;;; --- SoundEffect --------------------------------------------------------------
+;;;
+;;; **CNA's route deliberately does not cache and XNA's `Load<T>' does, so the
+;;; managed cache is what a program sees.** `cna_content_manager_load_sound_effect'
+;;; says so in its own header -- "the canonical `Load<SoundEffect>' specialization,
+;;; which deliberately does not cache: every successful call returns an
+;;; independently owned sound effect" -- and XNA's `ContentManager.Load<T>' looks
+;;; the cleaned name up in `loadedAssets' before reading anything, whatever T is.
+;;; There is no per-type exception to that in the IL.
+;;;
+;;; So the two sides are reconciled the way every other loader here reconciles
+;;; them: `%COMMIT-LOADED-ASSET' caches, and a second `Load<SoundEffect>' of the
+;;; same name never reaches CNA at all. Two loads answer **one** object, and
+;;; `Unload' disposes it once. Letting CNA's non-caching route through per call
+;;; would answer two objects for one name and hand a program two things to dispose
+;;; where XNA gives it one.
+;;;
+;;; A sound effect is one handle for one name -- unlike a SpriteFont, which is two
+;;; -- so this is the simple shape: receive the handle, record its destruction,
+;;; adopt, commit.
+
+(%define-asset-loader (microsoft.xna.framework.audio:sound-effect manager asset-name)
+  (let* ((operation "load-asset 'sound-effect")
+         (game (%loading-game manager operation))
+         (handle (%load-one-handle
+                  manager asset-name
+                  #'cna-lisp.internal.ffi::%content-manager-load-sound-effect
+                  operation)))
+    (cna-lisp.internal:with-native-rollback (record)
+      (funcall record (lambda () (cna-lisp.internal.ffi::%sound-effect-destroy handle)))
+      (%commit-loaded-asset
+       manager asset-name record
+       (microsoft.xna.framework.audio::%adopt-loaded-sound-effect game handle record)))))

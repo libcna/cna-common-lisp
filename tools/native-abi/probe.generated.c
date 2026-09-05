@@ -1766,6 +1766,7 @@ CNA_Result (*const cna_lisp_probe_cna_content_manager_get_has_service_provider)(
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_texture2d)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_content_manager_load_texture2d;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_texture_cube)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_content_manager_load_texture_cube;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_sprite_font)(CNA_Handle, CNA_StringView, CNA_Handle*, CNA_Handle*) = cna_content_manager_load_sprite_font;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_load_sound_effect)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_content_manager_load_sound_effect;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_effect)(CNA_Handle, CNA_StringView, CNA_EffectHandle*) = cna_content_manager_load_effect;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_unload)(CNA_Handle) = cna_content_manager_unload;
 CNA_Result (*const cna_lisp_probe_cna_render_target_cube_create)(CNA_Handle, const CNA_RenderTargetCubeCreateInfo*, CNA_Handle*) = cna_render_target_cube_create;

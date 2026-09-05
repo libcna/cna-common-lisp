@@ -1818,6 +1818,10 @@
 (defcfun ("cna_content_manager_load_sprite_font" %content-manager-load-sprite-font) :uint32
   (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-sprite-font :pointer) (out-texture :pointer))
 
+;;; CNA_Result cna_content_manager_load_sound_effect(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_sound_effect)
+(defcfun ("cna_content_manager_load_sound_effect" %content-manager-load-sound-effect) :uint32
+  (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-sound-effect :pointer))
+
 ;;; CNA_Result cna_content_manager_load_effect(CNA_Handle content_manager, CNA_StringView asset_name, CNA_EffectHandle* out_effect)
 (defcfun ("cna_content_manager_load_effect" %content-manager-load-effect) :uint32
   (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-effect :pointer))
@@ -2446,6 +2450,7 @@
     ("cna_content_manager_load_texture2d" %content-manager-load-texture-2d :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_load_texture_cube" %content-manager-load-texture-cube :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_load_sprite_font" %content-manager-load-sprite-font :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :game :ownership "creates")
+    ("cna_content_manager_load_sound_effect" %content-manager-load-sound-effect :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_load_effect" %content-manager-load-effect :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_unload" %content-manager-unload :uint32 (:uint64) :thread :game :ownership "none")
     ("cna_render_target_cube_create" %render-target-cube-create :uint32 (:uint64 :pointer :pointer) :thread :game :ownership "creates")

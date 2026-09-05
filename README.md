@@ -135,7 +135,7 @@ stubs:
   XNA's `Load<SpriteFont>`, with the type as an argument because Common Lisp can
   name one where C cannot. The asset types CNA has a route for are
   <!-- generated-block:loadable-asset-type-names -->
-`Texture2D`, `TextureCube`, `SpriteFont` and `Effect`
+`Texture2D`, `TextureCube`, `SpriteFont`, `Effect` and `SoundEffect`
 <!-- /generated-block:loadable-asset-type-names -->,
   which is `LOADABLE-ASSET-TYPES` rendered from the live loader table rather than
   a list kept beside it. The manager
@@ -207,7 +207,7 @@ placeholder methods that answer a default and claim success.
 <!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=429 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=495 -->
+<!-- generated:bound native functions=496 -->
 <!-- generated:bound native structs=72 -->
 
 <!-- generated-block:scoreboard-headline -->
@@ -230,7 +230,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **495 native routes** and **72 native structs**,
+The private foreign layer binds **496 native routes** and **72 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

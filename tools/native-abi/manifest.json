@@ -3516,6 +3516,12 @@
       "ownership": "creates"
     },
     {
+      "name": "cna_content_manager_load_sound_effect",
+      "header": "content.h",
+      "thread": "game",
+      "ownership": "creates"
+    },
+    {
       "name": "cna_content_manager_load_effect",
       "header": "effects.h",
       "thread": "game",

@@ -32292,6 +32292,10 @@
     {
       "lisp_package": "microsoft.xna.framework.graphics",
       "lisp_name": "effect"
+    },
+    {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "sound-effect"
     }
   ],
   "declared_absences": [

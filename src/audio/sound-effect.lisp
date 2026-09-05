@@ -252,7 +252,7 @@ to be able to open. Nothing public overrides it.")
 (defmethod initialize-instance :after
     ((effect sound-effect)
      &key buffer (offset 0) (count nil count-supplied) sample-rate channels
-          (loop-start 0) (loop-length 0) (%handle nil))
+          (loop-start 0) (loop-length 0) &allow-other-keys)
   "SoundEffect(byte[], int, AudioChannels) and its seven-argument sibling.
 
 Both XNA constructors funnel into `FromBuffer', so both funnel into this: the
@@ -263,16 +263,18 @@ reject a null or empty buffer with `ArgumentException' before any other check --
 and %CHECK-BUFFER answers the same exception for the same inputs, so the
 distinction does not survive into the projection.
 
-%HANDLE is the private path `ContentManager.Load<SoundEffect>' and
-`FromStream' arrive by: the handle already exists and only the adoption and the
-duration read remain."
+**An effect that already has a handle is being adopted, not constructed.** That
+is the path `ContentManager.Load<SoundEffect>' and `FromStream' arrive by: the
+caller received the handle from CNA and has already recorded its destruction in
+its own ledger, so nothing here may record it a second time -- see
+%ADOPT-LOADED-SOUND-EFFECT. All that is left is the duration, which is read once
+and kept, because XNA's `Duration' is a field its constructor fills in."
   (let ((operation "make-instance sound-effect"))
-    (if %handle
+    (if (plusp (cna-lisp.internal:handle-of effect))
+        (setf (slot-value effect 'duration)
+              (%read-sound-effect-duration
+               effect (cna-lisp.internal:handle-of effect) operation))
         (let ((game (%active-game operation)))
-          (%adopt-sound-effect effect game %handle)
-          (setf (slot-value effect 'duration)
-                (%read-sound-effect-duration effect %handle operation)))
-        (let* ((game (%active-game operation)))
           (%check-sample-rate sample-rate operation)
           (%check-channels channels operation)
           (let ((block-align (%block-align channels)))
@@ -319,6 +321,33 @@ duration read remain."
             (setf (slot-value effect 'duration)
                   (%read-sound-effect-duration effect handle operation))))))))
 
+(defun %adopt-loaded-sound-effect (game handle record)
+  "Build the CLOS SoundEffect over a handle the caller's transaction already owns.
+
+RECORD is that transaction's recorder, and the division of labour is the rule
+that keeps one asset load to one ledger:
+
+  **whoever receives a handle from CNA records its destruction.**
+
+This function did not receive HANDLE from CNA -- the content loader or
+`FromStream' did -- so it records only the undo for the *Lisp* state it creates:
+the object, and its registration as a child of the game. Recording the handle here
+too is the bug this shape exists to make unsayable, because a handle owned by two
+nested ledgers is destroyed twice when the inner one runs first.
+
+The undo is INVALIDATE rather than UNREGISTER-CHILD, for the reason
+%ADOPT-TEXTURE-2D gives: an abandoned object's handle is about to be destroyed by
+the step recorded before it, so anything still holding a reference must find a
+disposed object rather than a live-looking one over a dead handle."
+  (let ((effect (make-instance 'sound-effect
+                               :handle handle
+                               :ownership :owned
+                               :owner game
+                               :owner-thread (cna-lisp.internal:owner-thread-of game))))
+    (cna-lisp.internal:register-child game effect)
+    (funcall record (lambda () (cna-lisp.internal:invalidate effect)))
+    effect))
+
 ;;; --- FromStream ------------------------------------------------------------
 
 (defun sound-effect-from-stream (stream)
@@ -353,7 +382,13 @@ report carries CNA's own message, which distinguishes them."
          (cna-lisp.internal.ffi::%sound-effect-create-from-encoded-ext
           (cna-lisp.internal:handle-of game) raw (length bytes) out)
          operation :object-type 'sound-effect)
-        (make-instance 'sound-effect :%handle (cffi:mem-ref out :uint64))))))
+        (let ((handle (cffi:mem-ref out :uint64)))
+          ;; This function received the handle, so this ledger records its
+          ;; destruction and the adoption records only the Lisp state.
+          (cna-lisp.internal:with-native-rollback (record)
+            (funcall record
+                     (lambda () (cna-lisp.internal.ffi::%sound-effect-destroy handle)))
+            (%adopt-loaded-sound-effect game handle record)))))))
 
 ;;; --- readers ---------------------------------------------------------------
 

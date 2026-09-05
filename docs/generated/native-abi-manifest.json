@@ -24,7 +24,7 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 495,
+    "functions": 496,
     "structs": 72,
     "struct_fields": 544,
     "constants": 511,
@@ -11439,6 +11439,42 @@
       "ownership": "creates",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_content_manager_load_sprite_font(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_sprite_font, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_content_manager_load_sound_effect",
+      "header": "content.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "asset_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "asset_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_sound_effect",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_load_sound_effect(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_sound_effect)"
     },
     {
       "name": "cna_content_manager_load_effect",
