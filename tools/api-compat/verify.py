@@ -659,6 +659,22 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
             # the projection of `new NoAudioHardwareException(msg)' is the
             # condition class plus its initargs, exactly as MAKE-INSTANCE is the
             # projection of a reference type's constructor.
+            #
+            # **The two are not interchangeable, and this is what says so.** A
+            # constructor declared MAKE-CONDITION whose type is an ordinary class
+            # cannot be signalled with ERROR and cannot be handled with
+            # HANDLER-CASE, so a rule claiming it would be claiming an exception
+            # projection that does not work. The surface dump carries the flag;
+            # this reads it.
+            if expected == "make-condition":
+                entry = symbols.get(type_rule["lisp_name"])
+                if entry is None or not entry.get("condition"):
+                    report.add("wrong_kind", subject,
+                               "%r projects a CLR exception constructor onto "
+                               "MAKE-CONDITION, but %r is not a condition class"
+                               % (contract_type["name"], type_rule["lisp_name"]))
+                    statuses[sig] = "missing"
+                    continue
             statuses[sig] = "complete"
             continue
         # A member may project onto a symbol in another package -- GraphicsResource's

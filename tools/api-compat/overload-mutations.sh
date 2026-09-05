@@ -33,10 +33,15 @@ here=$(cd "$(dirname "$0")" && pwd)
 root=$(cd "$here/../.." && pwd)
 work="$root/build-probe/overload-mutations"
 rules="$here/mapping-rules.json"
+# Mutation 12 breaks the *dumped surface* rather than the rules -- whether a class
+# is a condition is a fact about the image, not about the projection -- so both
+# files are saved and both are restored.
+surface="$root/docs/generated/public-surface.json"
 
 mkdir -p "$work"
 cp "$rules" "$work/rules.orig"
-restore() { cp "$work/rules.orig" "$rules"; }
+cp "$surface" "$work/surface.orig"
+restore() { cp "$work/rules.orig" "$rules"; cp "$work/surface.orig" "$surface"; }
 trap restore EXIT
 
 expect_red() {
@@ -54,6 +59,20 @@ expect_red() {
     restore
 }
 
+expect_red_with() {
+    label=$1; category=$2
+    if python3 "$here/verify.py" --strict > "$work/out.txt" 2>&1; then
+        echo "FAIL $label: the verifier stayed green" >&2
+        exit 1
+    fi
+    if ! grep -q "$category" "$work/out.txt"; then
+        echo "FAIL $label: it went red, but not with $category:" >&2
+        sed -n '1,25p' "$work/out.txt" >&2
+        exit 1
+    fi
+    echo "  ok  $label -> $category"
+    restore
+}
 echo "== 1. an overload family that declares no mechanism at all =="
 python3 - "$rules" <<'PY'
 import json, sys
@@ -199,7 +218,33 @@ if ! grep -q "were measured" "$work/out.txt"; then
 fi
 echo "  ok  a selection count that does not match the measurement -> refused"
 
-echo "== 12. and the unmutated rules are green =="
+# --- the one mechanism the Audio closure added -------------------------------
+#
+# A CLR exception type's constructors project onto MAKE-CONDITION, which is the
+# same statement about a condition class that MAKE-INSTANCE is about an ordinary
+# one. The two are **not** interchangeable: a rule claiming MAKE-CONDITION for a
+# type that is not a condition class is claiming an exception projection that
+# cannot be signalled with ERROR or caught with HANDLER-CASE. Before the check
+# existed such a rule was accepted and the member read complete.
+echo "== 12. MAKE-CONDITION claimed for a type that is not a condition class =="
+python3 - "$surface" <<'MUTPY'
+import json, sys
+path = sys.argv[1]
+d = json.load(open(path))
+for pkg in d["packages"]:
+    if pkg["package"] != "microsoft.xna.framework.audio":
+        continue
+    for sym in pkg["symbols"]:
+        if sym["name"] == "no-audio-hardware-error":
+            # Still a class, still in the right package, still with the right
+            # superclass -- only no longer a *condition*. That is the one fact
+            # this projection rests on, and the only one mutated here.
+            sym["condition"] = False
+json.dump(d, open(path, "w"), indent=2)
+MUTPY
+expect_red_with "MAKE-CONDITION over a non-condition class" "wrong_kind"
+
+echo "== 13. and the unmutated rules are green =="
 # --strict exits non-zero on any disagreement, and `set -e' is what makes that
 # stop the script. Piping it into grep used to hide the exit code, so a mutation
 # left behind by a failing step would have been reported as a pass.
@@ -214,4 +259,5 @@ echo "declared mechanism that does not actually separate two overloads, for a"
 echo "discriminator on an argument that does not exist or on a type its sibling"
 echo "also claims, and for a unified collapse that names nobody, names the wrong"
 echo "sibling or gives no reason -- and refuses to write a report whose member"
-echo "count does not add up."
+echo "count does not add up. It also refuses a CLR exception constructor projected"
+echo "onto MAKE-CONDITION when the type behind it is not a condition class."
