@@ -917,16 +917,16 @@ def verify_frontier_categories(report, rules, statuses):
     """
     kinds = rules.get("frontier_category_kinds", {})
     categories = rules.get("frontier_categories", {})
-    frontier = set()
+    frontier = {}
     for type_name, members in statuses["members"].items():
         for signature, status in members.items():
             if status in ("missing", "partial"):
-                frontier.add("%s.%s" % (type_name, signature))
-    for subject in sorted(frontier - set(categories)):
+                frontier["%s.%s" % (type_name, signature)] = status
+    for subject in sorted(set(frontier) - set(categories)):
         report.add("uncategorised_absence", subject,
                    "is %s and no frontier_categories entry says what kind of "
-                   "limit that is" % ("partial or missing"))
-    for subject in sorted(set(categories) - frontier):
+                   "limit that is" % frontier[subject])
+    for subject in sorted(set(categories) - set(frontier)):
         report.add("uncategorised_absence", subject,
                    "has a frontier_categories entry and is not missing or "
                    "partial; delete the entry")
