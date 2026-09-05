@@ -1230,6 +1230,7 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_presentation_parameter
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_presentation_parameters)(CNA_Handle, const CNA_PresentationParameters*) = cna_graphics_device_set_presentation_parameters;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_display_mode)(CNA_Handle, CNA_DisplayMode*) = cna_graphics_device_get_display_mode;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_status)(CNA_Handle, CNA_GraphicsDeviceStatus*) = cna_graphics_device_get_status;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_is_disposed)(CNA_Handle, CNA_Bool*) = cna_graphics_device_get_is_disposed;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_graphics_profile)(CNA_Handle, CNA_GraphicsProfile*) = cna_graphics_device_get_graphics_profile;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_clear_options)(CNA_Handle, CNA_ClearOptions, CNA_Color, float, int32_t) = cna_graphics_device_clear_options;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_present)(CNA_Handle) = cna_graphics_device_present;

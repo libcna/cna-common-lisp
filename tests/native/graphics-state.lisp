@@ -697,6 +697,7 @@ make this member *differ* from XNA rather than match it."
    (mode :initform nil :accessor observed-mode)
    (status :initform nil :accessor observed-status)
    (parameters :initform nil :accessor observed-parameters)
+   (is-disposed :initform nil :accessor observed-is-disposed)
    (bounds :initform nil :accessor observed-bounds)
    (failure :initform nil :accessor settings-failure))
   (:documentation "Reads everything the device answers about its own settings."))
@@ -711,6 +712,7 @@ make this member *differ* from XNA rather than match it."
       (let ((device (xna:graphics-device game)))
         (setf (observed-mode game) (gfx:display-mode device)
               (observed-status game) (gfx:graphics-device-status device)
+              (observed-is-disposed game) (gfx:is-disposed device)
               (observed-parameters game) (gfx:presentation-parameters device))
         (setf (observed-bounds game)
               (gfx:presentation-parameters-bounds (observed-parameters game))))
@@ -753,6 +755,18 @@ the height is zero, and the value comes back in the struct."
                                       (gfx:display-mode-height mode))))
             "DisplayMode.TitleSafeArea and Viewport.TitleSafeArea are the same ~
              static method in the assembly and must answer the same rectangle")))))
+
+(define-native-test a-live-device-reports-itself-not-disposed
+  "GraphicsDevice.IsDisposed asks CNA about the device *CNA* owns, which is a
+different question from DISPOSED-P asking about the CLOS facade.
+
+A device read from inside a callback is by construction live, so the interesting
+assertion is that the two questions are both answerable and agree here -- and that
+IsDisposed is a real ABI round trip rather than the facade's own slot read twice."
+  (with-settings-game (game)
+    (is-false (observed-is-disposed game)
+              "a live device reported itself disposed")
+    (is-false (xna:disposed-p (xna:graphics-device game)))))
 
 (define-native-test the-device-answers-a-lifecycle-status
   "GraphicsDeviceStatus is :NORMAL, :LOST or :NOT-RESET, and a renderer that

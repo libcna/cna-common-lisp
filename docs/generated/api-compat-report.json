@@ -22,15 +22,15 @@
    "complete": 140
   },
   "members_by_status": {
-   "complete": 1816,
-   "missing": 39,
+   "complete": 1817,
+   "missing": 38,
    "not-applicable": 422,
    "partial": 15
   },
-  "diagnostics": 39,
+  "diagnostics": 38,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 39,
+   "missing_member": 38,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1451,7 +1451,7 @@
     "Dispose(Boolean)": "not-applicable",
     "Dispose()": "missing",
     "Finalize()": "not-applicable",
-    "IsDisposed": "missing",
+    "IsDisposed": "complete",
     "ScissorRectangle": "complete",
     "Indices": "complete",
     "Viewport": "partial",
@@ -3444,7 +3444,7 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Game.Window",
-   "detail": "no exported 'window' in microsoft.xna.framework"
+   "detail": "Needs GameWindow, which is not in the selection. **CNA has a full window surface** -- runtime_window.h carries AllowUserResizing, ClientBounds, CurrentOrientation, the screen device name and more, all keyed by the game handle rather than by a window handle -- so this is a type that has not been projected rather than a capability CNA lacks, and it is a self-contained closure whenever it is wanted."
   },
   {
    "category": "missing_member",
@@ -3459,42 +3459,42 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)",
-   "detail": "no exported 'find-best-device' in microsoft.xna.framework"
+   "detail": "One of the three protected members that are XNA's **device-selection algorithm**, not a setting: FindBestDevice ranks candidates and picks one, and its result is a GraphicsDeviceInformation. CNA selects the device itself when it creates the game, and offers the pieces a caller would rank with -- cna_graphics_adapter_query_backbuffer_format, _query_render_target_format, _is_profile_supported -- but no candidate list and no GraphicsDeviceInformation to be a candidate."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation)",
-   "detail": "no exported 'can-reset-device' in microsoft.xna.framework"
+   "detail": "See FindBestDevice for the missing type, and GraphicsDevice.Reset for the missing operation: asking whether a device *can* be reset presupposes resetting it."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)",
-   "detail": "no exported 'rank-devices' in microsoft.xna.framework"
+   "detail": "See FindBestDevice: it is handed the candidate list that type does not exist to hold."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceCreated(Object,EventArgs)",
-   "detail": "no exported 'on-device-created' in microsoft.xna.framework"
+   "detail": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceCreated *is* what raises DeviceCreated: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceDisposing(Object,EventArgs)",
-   "detail": "no exported 'on-device-disposing' in microsoft.xna.framework"
+   "detail": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceDisposing *is* what raises DeviceDisposing: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceReset(Object,EventArgs)",
-   "detail": "no exported 'on-device-reset' in microsoft.xna.framework"
+   "detail": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceReset *is* what raises DeviceReset: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceResetting(Object,EventArgs)",
-   "detail": "no exported 'on-device-resetting' in microsoft.xna.framework"
+   "detail": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceResetting *is* what raises DeviceResetting: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)",
-   "detail": "no exported 'on-preparing-device-settings' in microsoft.xna.framework"
+   "detail": "The raiser problem above, and a second one on top of it: the argument is a PreparingDeviceSettingsEventArgs carrying a GraphicsDeviceInformation, and neither type is in the selection nor has a CNA representation."
   },
   {
    "category": "missing_member",
@@ -3519,7 +3519,7 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.new(GraphicsAdapter,GraphicsProfile,PresentationParameters)",
-   "detail": "this constructor signature is not projected"
+   "detail": "The device as an object a program constructs. A CNA-Lisp program never constructs one: CNA creates the device with the game and lends it for a callback's duration, and there is no create route to project. Constructing one would also need a GraphicsAdapter, which is not in the selection."
   },
   {
    "category": "missing_member",
@@ -3544,77 +3544,72 @@
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)",
-   "detail": "no exported 'draw-instanced-primitives' in microsoft.xna.framework.graphics"
+   "detail": "Needs an instanced vertex stream, and ABI 0.21.0 has **no instanced draw route at all** -- searched, not assumed. The vertex-buffer binding surface has no instance frequency either, so there is nothing to draw instanced from even if the draw existed."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Dispose()",
-   "detail": "no exported 'dispose' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.IsDisposed",
-   "detail": "no exported 'is-disposed' in microsoft.xna.framework.graphics"
+   "detail": "CNA refuses this by design and says why: cna_graphics_device_dispose 'reports that C cannot dispose the graphics device owned by the active game', because 'disposing it through a borrowed handle would leave that game drawing into a destroyed device'. cna_game_destroy performs the canonical disposal. %CHECK-DISPOSABLE refuses it here for the same reason, one step earlier, and the refusal costs the facade nothing."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Adapter",
-   "detail": "no exported 'adapter' in microsoft.xna.framework.graphics"
+   "detail": "Needs GraphicsAdapter, which is not in the selection. The route to reach it exists -- cna_graphics_adapter_get_info and its neighbours, indexed by cna_graphics_device_get_adapter_index -- so this is a type that has not been projected rather than a capability CNA lacks. Note that every adapter route takes a **callback-scoped device handle**, so the projection would inherit a scope rule XNA's static GraphicsAdapter.Adapters has not got; that is the design question to settle before starting, not an obstacle."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Disposing",
-   "detail": "no event projection is declared"
+   "detail": "CNA has the route -- cna_graphics_device_subscribe_event with CNA_GRAPHICS_DEVICE_EVENT_DISPOSING -- so this is implementable and not yet implemented. What it needs is somewhere to keep the registration: the device is a parent-owned facade with no handle of its own, and CNA requires every registration to be released before cna_game_destroy succeeds, so the game has to release the device's subscriptions as part of its own teardown. Recorded as the next implementable step rather than as a limit."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceDestroyed",
-   "detail": "no event projection is declared"
+   "detail": "cna_graphics_device_subscribe_resource_destroyed exists. Same payload question as ResourceCreated, from the other end of the resource's life."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceCreated",
-   "detail": "no event projection is declared"
+   "detail": "cna_graphics_device_subscribe_resource_created exists, and carries a payload the other four device events do not. CNA's own header is the reason to be careful with it: 'the canonical event is raised from the graphics-resource base constructor, so the reported object is still under construction: its concrete type does not exist yet and no member of it can' be used. Projecting that needs a decision about what object a handler is handed, and inventing a half-built resource is not it."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceLost",
-   "detail": "no event projection is declared"
+   "detail": "See Disposing: CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST, same mechanism, same registration-lifetime question."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceReset",
-   "detail": "no event projection is declared"
+   "detail": "See Disposing: CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET. **This is GraphicsDevice's own event, not IGraphicsDeviceService's same-named one** -- those five are already complete on GraphicsDeviceManager, and confusing the two is the mistake docs/limitations.md records under Game.Services."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DeviceResetting",
-   "detail": "no event projection is declared"
+   "detail": "See DeviceReset, and the same warning about the name collision."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.Effect.OnApply()",
-   "detail": "no exported 'on-apply' in microsoft.xna.framework.graphics"
+   "detail": "A protected virtual hook XNA calls from inside EffectPass.Apply, so that a subclass can adjust parameters immediately before the pass is applied -- and returning true from it cancels the pass. CNA applies a pass in one route with no callback into managed code in the middle, so an override here would never be called and could never cancel anything. The same shape as ContentManager.ReadAsset: a hook needs somewhere to be called from."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.EffectParameter.GetValueTextureCube()",
-   "detail": "no exported 'get-value-texture-cube' in microsoft.xna.framework.graphics"
+   "detail": "The CNA route exists -- cna_effect_parameter_get_value_texture takes a texture-type identity and TextureCube is one of the three -- so this is not blocked by the ABI. What it is blocked by is the same handle-to-object gap GetValueTexture2D solves by *remembering* what was set: the ABI has no route from a handle back to the object that names it, and inventing one would hand back a TextureCube with no owner and no disposal story. Whether the remembering can be extended to cubes has not been audited -- SetValue(Texture) routes a non-Texture2D to CNA's base texture slot -- and a reason stated without that audit would be a guess."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.EffectParameter.GetValueTexture3D()",
-   "detail": "no exported 'get-value-texture-3d' in microsoft.xna.framework.graphics"
+   "detail": "Needs Texture3D, which is neither projected nor in the selection. The CNA route would take it as its third texture-type identity, so the gap is the type."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.DirectionalLight.new(EffectParameter,EffectParameter,EffectParameter,DirectionalLight)",
-   "detail": "this constructor signature is not projected"
+   "detail": "XNA's constructor takes three EffectParameters and a DirectionalLight to copy from, which is how the stock effects wire their own lights up at construction. A program does not build one: it reaches DirectionalLight through BasicEffect.DirectionalLight0 and its two siblings, which are complete. Projecting the constructor would let a caller assemble a light over parameters belonging to any effect, or none, and CNA has no route that would make that mean anything."
   },
   {
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.BasicEffect.OnApply()",
-   "detail": "no exported 'on-apply' in microsoft.xna.framework.graphics"
+   "detail": "A protected virtual hook XNA calls from inside EffectPass.Apply, so that a subclass can adjust parameters immediately before the pass is applied -- and returning true from it cancels the pass. CNA applies a pass in one route with no callback into managed code in the middle, so an override here would never be called and could never cancel anything. The same shape as ContentManager.ReadAsset: a hook needs somewhere to be called from."
   }
  ]
 }

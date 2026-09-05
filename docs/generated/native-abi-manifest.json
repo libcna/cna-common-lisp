@@ -24,7 +24,7 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 426,
+    "functions": 427,
     "structs": 65,
     "struct_fields": 492,
     "constants": 499,
@@ -1031,6 +1031,28 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_get_status(CNA_Handle graphics_device, CNA_GraphicsDeviceStatus* out_status)"
+    },
+    {
+      "name": "cna_graphics_device_get_is_disposed",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_is_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_is_disposed(CNA_Handle graphics_device, CNA_Bool* out_is_disposed)"
     },
     {
       "name": "cna_graphics_device_get_graphics_profile",

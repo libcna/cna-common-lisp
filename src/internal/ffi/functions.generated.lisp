@@ -174,6 +174,10 @@
 (defcfun ("cna_graphics_device_get_status" %graphics-device-get-status) :uint32
   (graphics-device :uint64) (out-status :pointer))
 
+;;; CNA_Result cna_graphics_device_get_is_disposed(CNA_Handle graphics_device, CNA_Bool* out_is_disposed)
+(defcfun ("cna_graphics_device_get_is_disposed" %graphics-device-get-is-disposed) :uint32
+  (graphics-device :uint64) (out-is-disposed :pointer))
+
 ;;; CNA_Result cna_graphics_device_get_graphics_profile(CNA_Handle graphics_device, CNA_GraphicsProfile* out_profile)
 (defcfun ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile) :uint32
   (graphics-device :uint64) (out-profile :pointer))
@@ -1759,6 +1763,7 @@
     ("cna_graphics_device_set_presentation_parameters" %graphics-device-set-presentation-parameters :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_display_mode" %graphics-device-get-display-mode :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_status" %graphics-device-get-status :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_is_disposed" %graphics-device-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_clear_options" %graphics-device-clear-options :uint32 (:uint64 :uint32 :uint32 :float :int32) :thread :owner :ownership "none")
     ("cna_graphics_device_present" %graphics-device-present :uint32 (:uint64) :thread :owner :ownership "none")

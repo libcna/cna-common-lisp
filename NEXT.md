@@ -105,9 +105,9 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 <!-- generated:complete types=140 -->
 <!-- generated:partial types=14 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1816 -->
+<!-- generated:complete members=1817 -->
 <!-- generated:partial members=15 -->
-<!-- generated:missing members=39 -->
+<!-- generated:missing members=38 -->
 <!-- generated:not-applicable members=422 -->
 <!-- generated:disagreement total=0 -->
 
@@ -121,9 +121,9 @@ Selection **Foundation 1 and the managed closures**: 154 types, 2292 members.
 | Types complete | **140** |
 | Types partial | **14** |
 | Types missing | **0** |
-| Members complete | **1816** |
+| Members complete | **1817** |
 | Members partial | **15** |
-| Members missing | **39** |
+| Members missing | **38** |
 | Members not applicable | **422** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -146,7 +146,7 @@ members actually are:
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 15 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 14 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
@@ -172,7 +172,7 @@ one.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 15 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 14 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
@@ -233,6 +233,26 @@ is a packaging limit, not a blocker.
 The order follows the public-signature dependency graph: each step is a closure
 that can be finished, tested and measured before the next one starts. Regenerate
 the graph after each closure instead of following this list once it has moved.
+
+0. **Every remaining absence now carries a stated reason**, and the mapping rules
+   are where they live rather than this file. Twenty-six of the thirty-nine
+   missing members had none until they were audited route by route against
+   0.21.0's headers, and the audit changed what several of them *are*: three
+   turned out to be implementable and are recorded as next steps rather than as
+   limits, and one -- `GraphicsDevice.IsDisposed` -- was implemented on the spot.
+   Read `unimplemented` in `tools/api-compat/mapping-rules.json` before assuming
+   anything about what is left.
+
+   The three worth knowing: **`GraphicsDevice`'s four payload-free events** have
+   routes (`cna_graphics_device_subscribe_event`) and need only somewhere to keep
+   the registration, since the device is a facade with no handle and CNA requires
+   every registration released before `cna_game_destroy`; **`Game.Window`** needs
+   only the `GameWindow` type, because `runtime_window.h` is a full window surface
+   keyed by the game handle; and **`GraphicsDevice.Adapter`** needs `GraphicsAdapter`,
+   whose thirteen CNA routes all take a *callback-scoped device handle* -- so
+   projecting it inherits a scope rule XNA's static `GraphicsAdapter.Adapters` has
+   not got, which is a design question to settle before starting rather than an
+   obstacle.
 
 1. **The device-settings closure**: `Adapter`, `DisplayMode`,
    `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three

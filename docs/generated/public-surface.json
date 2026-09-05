@@ -18106,6 +18106,27 @@
           "documentation": "DynamicVertexBuffer.IsContentLost and DynamicIndexBuffer.IsContentLost.\n\nReads the buffer's own state from CNA. CNA's header documents the field as\ncurrently always false, so this answers NIL today for every buffer; it is a read\nof the runtime rather than a literal, so a CNA that starts reporting loss is\nreported here without a change here."
         },
         {
+          "name": "is-disposed",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.IsDisposed: whether the *native* device has been disposed.\n\nDistinct from MICROSOFT.XNA.FRAMEWORK:DISPOSED-P, and the difference is the point.\nDISPOSED-P is this binding's question about the CLOS object; this one asks CNA\nabout the device CNA owns, which is destroyed with the game rather than by\nanything a program does. So a program that has not disposed its game and gets a\ntrue here has learned something DISPOSED-P could not tell it.\n\nCallback-scoped like every other device reader, because that is when CNA lends\nthe handle -- XNA's property has no such rule, and `docs/limitations.md` records\nthe scope difference once for the whole type rather than on each member."
+        },
+        {
           "name": "is-full-screen",
           "fbound": true,
           "macro": false,

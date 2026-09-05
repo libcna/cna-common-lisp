@@ -189,6 +189,28 @@ is settable and is the other side of the same subject."))
        "graphics-profile" :object-type 'graphics-device)
       (graphics-profile-from-value (cffi:mem-ref out :uint32)))))
 
+(defgeneric is-disposed (graphics-device)
+  (:documentation
+   "GraphicsDevice.IsDisposed: whether the *native* device has been disposed.
+
+Distinct from MICROSOFT.XNA.FRAMEWORK:DISPOSED-P, and the difference is the point.
+DISPOSED-P is this binding's question about the CLOS object; this one asks CNA
+about the device CNA owns, which is destroyed with the game rather than by
+anything a program does. So a program that has not disposed its game and gets a
+true here has learned something DISPOSED-P could not tell it.
+
+Callback-scoped like every other device reader, because that is when CNA lends
+the handle -- XNA's property has no such rule, and `docs/limitations.md` records
+the scope difference once for the whole type rather than on each member."))
+
+(defmethod is-disposed ((device graphics-device))
+  (let ((handle (%resolve-device-handle device "is-disposed")))
+    (cffi:with-foreign-object (out :uint8)
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%graphics-device-get-is-disposed handle out)
+       "is-disposed" :object-type 'graphics-device)
+      (cna-lisp.internal.ffi:cna-true-p (cffi:mem-ref out :uint8)))))
+
 (defgeneric viewport (graphics-device)
   (:documentation
    "GraphicsDevice.Viewport.

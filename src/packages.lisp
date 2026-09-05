@@ -420,6 +420,7 @@
    #:all-graphics-profile
    #:clear-options #:clear-options-value #:clear-options-from-value
    #:all-clear-options
+   #:is-disposed
    #:present-interval #:present-interval-value #:present-interval-from-value
    #:all-present-interval
    #:graphics-device-status #:graphics-device-status-value
