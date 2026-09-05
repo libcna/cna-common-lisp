@@ -134,7 +134,7 @@ The eight conditions, and what each rests on:
 | Zero structural disagreements | `verify.py --strict`, over <!-- generated:diagnostic categories=18 --> diagnostic categories |
 | No stale live-state documentation | two audits; the second is recorded below, and found what the first left behind |
 | Admitted ABI set truthful | 0.21.0 only. 0.22.0 is audited, shape-identical, and **correctly not admitted** -- the blocker is reproducibility, re-measured a fourth time and unchanged |
-| CI green | both workflows, `success` and not `cancelled`, on the commits this section lands with |
+| CI green | both workflows `success`, and named by run id below rather than by "the latest run" |
 | Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must also be *described* |
 | Every non-complete member has a concrete reason | 54 of 54, each naming a route or an IL fact, each in one of seven categories, with **zero** in either implementable category |
 
@@ -144,6 +144,20 @@ That last row is the one to re-read before believing this.
 `docs/compatibility.md` renders the count and `verify.py` refuses a frontier
 member that has no category. Nothing in the selected profile is both unblocked and
 worth doing. That is what makes this a milestone rather than a pause.
+
+**The release evidence, named exactly.** Foundation 1's release decision rests on
+these runs, at the commit where the documentation-truth condition first became
+true:
+
+| Workflow | Run | Commit | Conclusion |
+| --- | --- | --- | --- |
+| `Lisp` | [33968261788](https://github.com/openeggbert/cna-common-lisp/actions/runs/33968261788) | `5a7f7c1` | **success** |
+| `Native` | [33968261886](https://github.com/openeggbert/cna-common-lisp/actions/runs/33968261886) | `5a7f7c1` | **success** |
+
+A run at an earlier commit is not release evidence for this one, and a `cancelled`
+run is not evidence at all -- run `33966149186`, the `Native` run for `efae9c9`,
+was cancelled by the push that followed it seconds later and must not be cited as
+green.
 
 **Foundation 1 is frozen.** The 35 missing members are not work in progress. The
 owned `GraphicsDevice`, `GameServiceContainer`, an `IntPtr` projection and the
@@ -349,7 +363,7 @@ Inventoried whole rather than by guessing names, they fall into five families:
 
 | Family | Routes | Enough for the XNA type? |
 | --- | ---: | --- |
-| `cna_sound_effect_*` | 24 | yes -- both `create_pcm16` forms, `from_encoded_ext`, `from_asset_ext`, `create_instance`, the four statics, duration, name, disposal |
+| `cna_sound_effect_*` | 25 | yes -- both `create_pcm16` forms, `from_encoded_ext`, `from_asset_ext`, `create_instance`, the four statics as get/set pairs, duration, the two sample-maths statics, name, type name, disposal |
 | `cna_sound_effect_instance_*` | 15 | yes -- play/pause/resume/stop, volume/pitch/pan/looping, `get_info`, `apply_3d` and `apply_3d_multi_ext` |
 | `cna_dynamic_sound_effect_instance_*` | 12 | a later closure; depends on this one |
 | `cna_microphone_*` | 18 | a later closure, and needs hardware |
@@ -373,10 +387,15 @@ dependencies are already selected or already solved: `Vector3` and `TimeSpan`, a
 a `Stream` for `SoundEffect.FromStream`, which is an ordinary Common Lisp binary
 stream here.
 
-The member counts that used to stand here were an estimate from a planning pass
-and are deliberately not repeated: extract the exact signatures from the pinned
-contract when the implementation starts, and let the generated report carry the
-numbers from then on.
+**All eight verified against the pinned 257-type contract**, which carries 19
+Audio types: 57 members exactly -- `SoundEffect` 17, `SoundEffectInstance` 16,
+`AudioListener` 5, `AudioEmitter` 6, `SoundState` 4, `AudioChannels` 3, and 3 each
+for the two exceptions, which are sealed and extend
+`System.Runtime.InteropServices.ExternalException`. `SoundEffectInstance` is
+**not** sealed -- `DynamicSoundEffectInstance` derives from it -- so its
+projection must leave room for that subclass without projecting it. Once the
+implementation starts, the generated report carries these numbers and this
+paragraph is not the place to read them.
 
 The other eleven Audio types stay out, and for reasons rather than by omission:
 `AudioEngine`, `SoundBank`, `WaveBank`, `Cue`, `AudioCategory` and
