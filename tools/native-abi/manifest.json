@@ -1090,6 +1090,12 @@
       "ownership": "destroys:graphics-device-event-registration"
     },
     {
+      "name": "cna_graphics_device_draw_instanced_primitives",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
       "name": "cna_graphics_device_reset",
       "header": "graphics_device.h",
       "thread": "owner",

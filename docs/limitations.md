@@ -1168,6 +1168,21 @@ pins it as one.
 
   It is left recorded rather than quietly deleted, because it is the same mistake
   `Game.Services` made: a confident reason written without reading the routes.
+* Nothing about `DrawInstancedPrimitives` either — **it is complete**, and the
+  reason that used to stand for it was the third instance of that same mistake,
+  and the most explicit one. It read: "ABI 0.21.0 has **no instanced draw route
+  at all** — searched, not assumed". The search it claimed had happened had not.
+  `cna_graphics_device_draw_instanced_primitives` is in the header with XNA's
+  parameter list exactly, and it is the one draw that is *legal* while a vertex
+  stream is bound with a non-zero instance frequency — the state every other draw
+  in this binding refuses. So the member the instancing guard exists for was the
+  member reported absent.
+
+  Three wrong reasons, all the same shape: written from what seemed likely about
+  CNA rather than from its headers. A declared reason is a claim about the ABI
+  and has to be measured like one; "searched, not assumed" is worth less than
+  nothing when the search did not happen, because it tells the next reader not to
+  look again.
 * **Two of the six device events**, and only the two that carry a payload.
   `ResourceCreated` and `ResourceDestroyed` have routes, and CNA's own header is
   the reason to be careful: "the canonical event is raised from the

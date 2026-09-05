@@ -1226,6 +1226,11 @@
             "adapter"
           ],
           "reason": "The same route with the adapter's index. An :ADAPTER without :PRESENTATION-PARAMETERS is refused, because XNA has no such overload."
+        },
+        "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": {
+          "lisp": "draw-instanced-primitives",
+          "generic": true,
+          "reason": "Over cna_graphics_device_draw_instanced_primitives, whose parameter list is XNA's exactly. The **only** draw legal while a vertex stream is bound with a non-zero instance frequency -- every other one refuses in that state -- so this is the one that deliberately does not call %CHECK-NO-INSTANCING. A backend without instancing answers CNA_RESULT_NOT_SUPPORTED, which reaches the caller as a condition rather than as a draw that quietly did nothing."
         }
       },
       "not_applicable": {
@@ -1235,7 +1240,6 @@
         "Present(Nullable`1,Nullable`1,IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected.",
         "new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "The device as an object a program constructs, which a CNA-Lisp program never does: CNA creates the device with the game and lends it for a callback's duration. **cna_graphics_device_create does exist**, so this is a design decision rather than a missing capability -- supporting it means a second kind of GraphicsDevice, an owned one with a handle of its own alongside the parent-owned facade, and every device operation learning which it has. That is a closure of its own, not a member to add.",
         "Dispose()": "CNA refuses this for a game's device by design and says why: cna_graphics_device_dispose 'reports that C cannot dispose the graphics device owned by the active game', because 'disposing it through a borrowed handle would leave that game drawing into a destroyed device'. cna_game_destroy performs the canonical disposal. %CHECK-DISPOSABLE refuses it here for the same reason, one step earlier, and the refusal costs the facade nothing. cna_graphics_device_destroy accepts only a *caller-created* device, so this member arrives with the constructor above or not at all.",
-        "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": "Needs an instanced vertex stream, and ABI 0.21.0 has **no instanced draw route at all** -- searched, not assumed. The vertex-buffer binding surface has no instance frequency either, so there is nothing to draw instanced from even if the draw existed.",
         "ResourceCreated": "cna_graphics_device_subscribe_resource_created exists, and carries a payload the other four device events do not. CNA's own header is the reason to be careful with it: 'the canonical event is raised from the graphics-resource base constructor, so the reported object is still under construction: its concrete type does not exist yet and no member of it can' be used. Projecting that needs a decision about what object a handler is handed, and inventing a half-built resource is not it.",
         "ResourceDestroyed": "cna_graphics_device_subscribe_resource_destroyed exists. Same payload question as ResourceCreated, from the other end of the resource's life."
       },

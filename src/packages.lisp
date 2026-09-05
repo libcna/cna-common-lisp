@@ -372,7 +372,7 @@
    #:copy-vertex-buffer-binding #:vertex-buffer-binding-vertex-buffer
    #:vertex-buffer-binding-vertex-offset #:vertex-buffer-binding-instance-frequency
    #:set-vertex-buffer #:set-vertex-buffers #:get-vertex-buffers #:indices
-   #:draw-primitives #:draw-indexed-primitives
+   #:draw-primitives #:draw-indexed-primitives #:draw-instanced-primitives
    #:draw-user-primitives #:draw-user-indexed-primitives
    ;; --- Effect and its object graph ----------------------------------------
    #:effect #:basic-effect #:effect-techniques #:effect-parameters
@@ -427,6 +427,7 @@
    #:all-graphics-profile
    #:clear-options #:clear-options-value #:clear-options-from-value
    #:all-clear-options
+   #:draw-instanced-primitives
    #:is-disposed #:add-device-lost-handler #:remove-device-lost-handler
    #:add-device-reset-handler #:remove-device-reset-handler
    #:add-device-resetting-handler #:remove-device-resetting-handler

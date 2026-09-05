@@ -387,3 +387,64 @@
                         :num-vertices 3 :primitive-count 1))
                      "draw-user-indexed-primitives")))
       (gfx:set-vertex-buffer device nil))))
+
+;;; --- the one draw that instancing is for --------------------------------------
+
+(define-native-test the-instanced-draw-is-the-one-legal-under-an-instanced-stream
+  "DrawInstancedPrimitives, over cna_graphics_device_draw_instanced_primitives.
+
+Its parameter list is XNA's exactly. The claim that is renderer-independent, and
+therefore the one asserted, is about **state**: every other draw refuses while a
+vertex stream is bound with a non-zero instance frequency, and this one does not.
+So the non-instanced draw must fail with the guard's own condition, and the
+instanced one must get past the guard and reach CNA -- whatever CNA then says
+about a backend that has no instancing, which under HEADLESS is an internal
+failure rather than a refusal.
+
+The argument checks are asserted exactly, because they never reach CNA at all.
+
+This member was reported missing with the reason \"ABI 0.21.0 has **no instanced
+draw route at all** -- searched, not assumed\". The route was there the whole
+time. The claim was the mistake, not the search that should have preceded it."
+  (let ((guarded nil) (instanced nil) (zero-vertices nil))
+    (with-buffer-game (game)
+      ;; Observations only: this body runs inside a native callback, so the
+      ;; assertions are below, after control is back in Lisp.
+      (let* ((device (xna:graphics-device game))
+             (declaration (gfx:vertex-position-color-vertex-declaration))
+             (vertices (keep game (make-instance 'gfx:vertex-buffer
+                                                 :graphics-device device
+                                                 :vertex-declaration declaration
+                                                 :vertex-count 3)))
+             (indices (keep game (make-instance 'gfx:index-buffer
+                                                :graphics-device device
+                                                :index-element-size :sixteen-bits
+                                                :index-count 3))))
+        (setf (gfx:indices device) indices)
+        (gfx:set-vertex-buffers device
+                                (list (gfx:make-vertex-buffer-binding vertices 0 1)))
+        (flet ((outcome (thunk)
+                 (handler-case (progn (funcall thunk) :accepted)
+                   (error (condition) (cons (type-of condition)
+                                            (princ-to-string condition))))))
+          (setf guarded (outcome (lambda () (gfx:draw-indexed-primitives
+                                             device :triangle-list 0 0 3 0 1)))
+                instanced (outcome (lambda () (gfx:draw-instanced-primitives
+                                               device :triangle-list 0 0 3 0 1 2)))
+                zero-vertices (outcome (lambda () (gfx:draw-instanced-primitives
+                                                   device :triangle-list 0 0 0 0 1 2)))))
+        (gfx:set-vertex-buffers device '())))
+    ;; The guard refuses the ordinary indexed draw, by name.
+    (is (eq 'xna:cna-invalid-state-error (car guarded))
+        "the non-instanced draw gave ~a under an instanced stream" (car guarded))
+    (is (search "instance frequency" (cdr guarded))
+        "the refusal did not name the instancing state: ~a" (cdr guarded))
+    ;; ...and does not refuse this one. Whatever CNA answers, it is not the
+    ;; guard, and that is the whole distinction between the two members.
+    (unless (eq :accepted instanced)
+      (is (not (search "instance frequency" (cdr instanced)))
+          "the instanced draw was refused by the instancing guard: ~a"
+          (cdr instanced)))
+    ;; The argument check never reaches CNA, so it is exact on every renderer.
+    (is (eq 'xna:cna-argument-out-of-range-error (car zero-vertices))
+        "zero vertices gave ~a" (car zero-vertices))))

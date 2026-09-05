@@ -236,6 +236,47 @@ substantiate."))
             draw is not the instanced one. XNA throws InvalidOperationException ~
             here.")))
 
+(defgeneric draw-instanced-primitives (graphics-device primitive-type base-vertex
+                                       min-vertex-index num-vertices start-index
+                                       primitive-count instance-count)
+  (:documentation
+   "GraphicsDevice.DrawInstancedPrimitives: several instances of one index range.
+
+The indexed draw with an instance count, and the **only** draw that is legal
+while a vertex stream is bound with a non-zero instance frequency -- every other
+one refuses in that state, and this one does not, which is the whole distinction
+XNA draws between them.
+
+A backend without instancing answers `CNA_RESULT_NOT_SUPPORTED', which reaches
+the caller as a condition rather than as a draw that quietly did nothing."))
+
+(defmethod draw-instanced-primitives ((device graphics-device) primitive-type base-vertex
+                                      min-vertex-index num-vertices start-index
+                                      primitive-count instance-count)
+  (check-type primitive-type primitive-type)
+  (dolist (value (list base-vertex min-vertex-index num-vertices start-index
+                       primitive-count instance-count))
+    (check-type value (signed-byte 32)))
+  ;; The same order the indexed draw checks in, which is XNA's.
+  (unless (plusp num-vertices)
+    (error 'microsoft.xna.framework:cna-argument-out-of-range-error
+           :operation "draw-instanced-primitives" :parameter-name "num-vertices"
+           :format-control
+           "an indexed draw must span at least one vertex: XNA refuses ~d with ~
+            ArgumentOutOfRangeException."
+           :format-arguments (list num-vertices)))
+  (%check-primitive-count "draw-instanced-primitives" primitive-count)
+  ;; ...and no %CHECK-NO-INSTANCING, deliberately: this is the draw that state is
+  ;; for.
+  (let ((handle (%resolve-device-handle device "draw-instanced-primitives")))
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%graphics-device-draw-instanced-primitives
+      handle (%native-of %primitive-type-to-native primitive-type "primitive-type")
+      base-vertex min-vertex-index num-vertices start-index primitive-count
+      instance-count)
+     "draw-instanced-primitives" :object-type 'graphics-device))
+  (values))
+
 (defgeneric draw-primitives (graphics-device primitive-type vertex-start primitive-count)
   (:documentation
    "GraphicsDevice.DrawPrimitives(PrimitiveType, Int32, Int32)."))

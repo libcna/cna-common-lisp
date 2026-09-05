@@ -1289,6 +1289,7 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_display_mode)(CNA_Hand
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_status)(CNA_Handle, CNA_GraphicsDeviceStatus*) = cna_graphics_device_get_status;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_subscribe_event)(CNA_Handle, CNA_GraphicsDeviceEvent, CNA_GraphicsDeviceEventCallback, void*, CNA_GraphicsDeviceEventRegistrationHandle*) = cna_graphics_device_subscribe_event;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_unsubscribe)(CNA_GraphicsDeviceEventRegistrationHandle) = cna_graphics_device_unsubscribe;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_draw_instanced_primitives)(CNA_Handle, CNA_PrimitiveType, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t) = cna_graphics_device_draw_instanced_primitives;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_reset)(CNA_Handle) = cna_graphics_device_reset;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_reset_with_parameters)(CNA_Handle, const CNA_PresentationParameters*, const uint32_t*) = cna_graphics_device_reset_with_parameters;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_is_disposed)(CNA_Handle, CNA_Bool*) = cna_graphics_device_get_is_disposed;

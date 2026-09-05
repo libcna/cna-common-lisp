@@ -24,7 +24,7 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 454,
+    "functions": 455,
     "structs": 67,
     "struct_fields": 512,
     "constants": 506,
@@ -1381,6 +1381,58 @@
       "ownership": "destroys:graphics-device-event-registration",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_unsubscribe(CNA_GraphicsDeviceEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_graphics_device_draw_instanced_primitives",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "primitive_type",
+          "c_type": "CNA_PrimitiveType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "base_vertex",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "min_vertex_index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "num_vertices",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "start_index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "primitive_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "instance_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_draw_instanced_primitives(CNA_Handle graphics_device, CNA_PrimitiveType primitive_type, int32_t base_vertex, int32_t min_vertex_index, int32_t num_vertices, int32_t start_index, int32_t primitive_count, int32_t instance_count)"
     },
     {
       "name": "cna_graphics_device_reset",

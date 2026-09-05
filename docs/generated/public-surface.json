@@ -15823,6 +15823,34 @@
           "documentation": "GraphicsDevice.DrawIndexedPrimitives(PrimitiveType, Int32, Int32, Int32, Int32, Int32)."
         },
         {
+          "name": "draw-instanced-primitives",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device",
+            "primitive-type",
+            "base-vertex",
+            "min-vertex-index",
+            "num-vertices",
+            "start-index",
+            "primitive-count",
+            "instance-count"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DrawInstancedPrimitives: several instances of one index range.\n\nThe indexed draw with an instance count, and the **only** draw that is legal\nwhile a vertex stream is bound with a non-zero instance frequency -- every other\none refuses in that state, and this one does not, which is the whole distinction\nXNA draws between them.\n\nA backend without instancing answers `CNA_RESULT_NOT_SUPPORTED', which reaches\nthe caller as a condition rather than as a draw that quietly did nothing."
+        },
+        {
           "name": "draw-primitives",
           "fbound": true,
           "macro": false,

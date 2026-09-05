@@ -112,9 +112,9 @@ genuine absence.
 <!-- generated:complete types=141 -->
 <!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1852 -->
+<!-- generated:complete members=1853 -->
 <!-- generated:partial members=19 -->
-<!-- generated:missing members=37 -->
+<!-- generated:missing members=36 -->
 <!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
 
@@ -128,9 +128,9 @@ Selection **Foundation 1 and the managed closures**: 157 types, 2332 members.
 | Types complete | **141** |
 | Types partial | **16** |
 | Types missing | **0** |
-| Members complete | **1852** |
+| Members complete | **1853** |
 | Members partial | **19** |
-| Members missing | **37** |
+| Members missing | **36** |
 | Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -192,7 +192,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 48 | 1 | 6 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 49 | 1 | 5 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 11 | 4 | 0 | 1 |
@@ -345,7 +345,7 @@ back-reference.
 | --- | ---: | ---: |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.GameWindow` | 7 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | 6 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
@@ -385,7 +385,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=454 -->
+<!-- generated:bound native functions=455 -->
 <!-- generated:bound native structs=67 -->
 <!-- generated:bound native struct fields=512 -->
 <!-- generated:bound native constants=506 -->
@@ -397,7 +397,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 454 |
+| Bound functions | 455 |
 | Bound structs | 67 |
 | Bound struct fields | 512 |
 | Bound constants | 506 |

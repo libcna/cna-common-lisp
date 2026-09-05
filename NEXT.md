@@ -116,9 +116,9 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 <!-- generated:complete types=141 -->
 <!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1852 -->
+<!-- generated:complete members=1853 -->
 <!-- generated:partial members=19 -->
-<!-- generated:missing members=37 -->
+<!-- generated:missing members=36 -->
 <!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
 
@@ -132,9 +132,9 @@ Selection **Foundation 1 and the managed closures**: 157 types, 2332 members.
 | Types complete | **141** |
 | Types partial | **16** |
 | Types missing | **0** |
-| Members complete | **1852** |
+| Members complete | **1853** |
 | Members partial | **19** |
-| Members missing | **37** |
+| Members missing | **36** |
 | Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -159,7 +159,7 @@ members actually are:
 | --- | ---: | ---: |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.GameWindow` | 7 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | 6 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
@@ -187,7 +187,7 @@ one.
 | --- | ---: | ---: |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.GameWindow` | 7 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | 6 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
@@ -203,23 +203,23 @@ one.
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 <!-- /generated-block:partial-frontier -->
 
-`GraphicsDevice` is still most of it, but the drawing family is no longer any of
-it. What is left there is four different things, and they belong to four
-different closures rather than one:
+`GraphicsDevice` is still the largest single entry, but almost nothing of what
+used to be listed here is left. The drawing family is complete, render targets
+are complete, the whole device-settings surface is complete -- `Adapter`,
+`DisplayMode`, `PresentationParameters`, `GraphicsProfile`,
+`GraphicsDeviceStatus`, the three `Reset` overloads, `Present` and the device's
+four events -- and so are `Clear`'s three overloads and
+`DrawInstancedPrimitives`. What remains is two things, not four:
 
-* **render targets** -- `SetRenderTarget` (two), `SetRenderTargets`,
-  `GetRenderTargets`, and `RenderTarget2D`, `RenderTargetUsage` and `DepthFormat`
-  with them;
-* **the device-settings surface** -- `Adapter`, `DisplayMode`,
-  `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
-  `Reset` overloads, `Present` and the five device-lifetime events. That is one
-  closure with `GraphicsDeviceManager`'s sixteen, which are the same subject seen
-  from the other side;
-* **two `Clear` overloads and `DrawInstancedPrimitives`**, which need a
-  `ClearOptions` and an instanced vertex stream respectively;
-* **`new(...)` and `Dispose`/`IsDisposed`/`Disposing`**, which are the device as
-  an object a program constructs -- something a CNA-Lisp program never does,
-  since CNA lends the device.
+* **`new(...)` and `Dispose()`**, which are the device as an object a program
+  constructs -- something a CNA-Lisp program never does, since CNA lends the
+  device. Both CNA routes exist; what they need is a second kind of
+  `GraphicsDevice` beside the parent-owned facade, which is a closure of its own.
+  `Present(Nullable, Nullable, IntPtr)` sits with them, needing `IntPtr`.
+* **`ResourceCreated` and `ResourceDestroyed`**, the only two device events that
+  carry a payload, and the payload is the problem: CNA raises the first from the
+  graphics-resource base constructor, so the object it reports does not have its
+  concrete type yet.
 
 `Texture2D`'s twelve are `SetData`/`GetData` (three each), two constructors, and
 the four members that need `System.IO.Stream`: `FromStream` twice, `SaveAsPng`
@@ -268,9 +268,13 @@ the graph after each closure instead of following this list once it has moved.
 
    What is left is what the audit found genuinely blocked: protected raisers with
    no callback to be raised from, types CNA cannot represent (`IServiceProvider`,
-   `IntPtr`, `GraphicsDeviceInformation`, `Texture3D`), the device as an object a
-   program constructs, and `DrawInstancedPrimitives`, for which 0.21.0 has no
-   route at all.
+   `IntPtr`, `GraphicsDeviceInformation`, `Texture3D`), and the device as an
+   object a program constructs.
+
+   `DrawInstancedPrimitives` was on that list and should not have been: its
+   declared reason claimed 0.21.0 had no instanced draw route, and 0.21.0 has
+   one. It is complete now, and `docs/limitations.md` records the mistake with
+   the two others of its kind rather than deleting it.
 
 1. **The device-settings closure**: `Adapter`, `DisplayMode`,
    `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three

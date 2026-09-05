@@ -22,15 +22,15 @@
    "complete": 141
   },
   "members_by_status": {
-   "complete": 1852,
-   "missing": 37,
+   "complete": 1853,
+   "missing": 36,
    "not-applicable": 424,
    "partial": 19
   },
-  "diagnostics": 37,
+  "diagnostics": 36,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 37,
+   "missing_member": 36,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1488,7 +1488,7 @@
     "Reset(PresentationParameters,GraphicsAdapter)": "complete",
     "DrawPrimitives(PrimitiveType,Int32,Int32)": "complete",
     "DrawIndexedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32)": "complete",
-    "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": "missing",
+    "DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)": "complete",
     "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32)": "complete",
     "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int16[],Int32,Int32)": "complete",
     "DrawUserIndexedPrimitives(PrimitiveType,!!0[],Int32,Int32,Int32[],Int32,Int32,VertexDeclaration)": "complete",
@@ -3621,11 +3621,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Present(Nullable`1,Nullable`1,IntPtr)",
    "detail": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DrawInstancedPrimitives(PrimitiveType,Int32,Int32,Int32,Int32,Int32,Int32)",
-   "detail": "Needs an instanced vertex stream, and ABI 0.21.0 has **no instanced draw route at all** -- searched, not assumed. The vertex-buffer binding surface has no instance frequency either, so there is nothing to draw instanced from even if the draw existed."
   },
   {
    "category": "missing_member",
