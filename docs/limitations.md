@@ -1183,6 +1183,35 @@ pins it as one.
   and has to be measured like one; "searched, not assumed" is worth less than
   nothing when the search did not happen, because it tells the next reader not to
   look again.
+
+  So every remaining declared reason was then re-read against the 0.21.0 headers
+  and the pinned IL, one at a time. **Six more were wrong**, and none of the six
+  in a way that changed whether the member is reachable — which is the point:
+  they were wrong about *why*, and a reason nobody can check is not a reason.
+
+  | Member | What the reason claimed | What is true |
+  | --- | --- | --- |
+  | `Game.ShowMissingRequirementMessage` | needs "a platform message box" | CNA has one: `cna_message_box_show_ext`. The member is `.method family` — protected — and called from inside `Run`'s catch handlers, which are CNA's. That is the blocker, and it went unmentioned. |
+  | `Effect.OnApply`, `BasicEffect.OnApply` | "returning true from it cancels the pass" | `OnApply()` returns **`void`** in the pinned assembly, and `Effect`'s body is a single `ret`. It cancels nothing. That was a claim about XNA taken from somewhere that is not XNA. |
+  | `GraphicsDevice.ResourceCreated` | needs "a decision about what object a handler is handed" | There is nothing to hand: `CNA_ResourceCreatedEventInfo` carries one boolean, and "no native object pointer crosses the ABI". `ResourceCreatedEventArgs` is not in the selection either. |
+  | `GraphicsDevice.ResourceDestroyed` | the same payload question | Its payload is a name and a `has_tag` boolean, and `ResourceDestroyedEventArgs` is not in the selection. |
+  | `PresentationParameters.DeviceWindowHandle` | `cna_graphics_device_get_device_window_handle` refuses | No route has that name. `cna_graphics_device_get_native_window_handle` does, and does refuse, for a reason the header states. |
+  | `DirectionalLight.new(…)` | "CNA has no route that would make that mean anything" | `cna_directional_light_create` exists. It takes no arguments and makes an unattached default light, so it is not this constructor — but "no route" was the wrong thing to say, and is the wording that hid three earlier mistakes. |
+
+  `GraphicsDevice.Present(Nullable, Nullable, IntPtr)` was understated rather than
+  wrong: the missing types are real, and `cna_graphics_device_present` also takes
+  no arguments beyond the device.
+
+  The reasons that survived the re-read unchanged are worth naming too, because
+  they are now checked rather than merely written: `Game.Services` and
+  `ContentManager`'s three (no CNA route registers a service or hands one back —
+  "a service provider is a Sharp Runtime object and never crosses the C
+  boundary"), `GameComponentCollection.new` (every `cna_game_components_*` route
+  takes the game), `FindBestDevice`/`RankDevices`/`CanResetDevice` and
+  `PreparingDeviceSettings` (`GraphicsDeviceInformation` is not in the selection),
+  `GraphicsAdapter.MonitorHandle`, `GameWindow.Handle`,
+  `EffectParameter.GetValueTexture3D` (`Texture3D` is not in the selection),
+  `GraphicsDevice.new`/`Dispose`, and the eleven protected raisers.
 * **Two of the six device events**, and only the two that carry a payload.
   `ResourceCreated` and `ResourceDestroyed` have routes, and CNA's own header is
   the reason to be careful: "the canonical event is raised from the
