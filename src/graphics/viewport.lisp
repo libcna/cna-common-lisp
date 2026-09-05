@@ -39,20 +39,28 @@ rather than a division by zero."
         (viewport-height viewport) (microsoft.xna.framework:rectangle-height rectangle))
   rectangle)
 
+(defun %title-safe-area (x y width height)
+  "Viewport.GetTitleSafeArea, which DisplayMode.TitleSafeArea also calls.
+
+XNA insets by one twentieth on each axis only once the area is at least 640x480;
+below that the whole area is title safe. The arithmetic is the original's integer
+arithmetic. Shared by VIEWPORT-TITLE-SAFE-AREA and DISPLAY-MODE-TITLE-SAFE-AREA
+because in the assembly they are literally the same static method."
+  (if (and (>= width 640) (>= height 480))
+      (let ((dx (+ (truncate (* width 5) 100) x))
+            (dy (+ (truncate (* height 5) 100) y)))
+        (microsoft.xna.framework:make-rectangle
+         dx dy (- width (* 2 (- dx x))) (- height (* 2 (- dy y)))))
+      (microsoft.xna.framework:make-rectangle x y width height)))
+
 (defun viewport-title-safe-area (viewport)
   "Viewport.TitleSafeArea.
 
-XNA insets by one twentieth on each axis only once the viewport is at least
-640x480; below that the whole viewport is title safe. The arithmetic is the
-original's integer arithmetic."
-  (let ((x (viewport-x viewport)) (y (viewport-y viewport))
-        (w (viewport-width viewport)) (h (viewport-height viewport)))
-    (if (and (>= w 640) (>= h 480))
-        (let ((dx (+ (truncate (* w 5) 100) x))
-              (dy (+ (truncate (* h 5) 100) y)))
-          (microsoft.xna.framework:make-rectangle
-           dx dy (- w (* 2 (- dx x))) (- h (* 2 (- dy y)))))
-        (microsoft.xna.framework:make-rectangle x y w h))))
+The arithmetic is `Viewport.GetTitleSafeArea', a static method
+`DisplayMode.TitleSafeArea' calls too -- so it lives in one place here as well.
+See %TITLE-SAFE-AREA in src/graphics/display.lisp."
+  (%title-safe-area (viewport-x viewport) (viewport-y viewport)
+                    (viewport-width viewport) (viewport-height viewport)))
 
 (defun viewport-equal (left right)
   (and (= (viewport-x left) (viewport-x right))

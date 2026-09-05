@@ -322,6 +322,13 @@
       "CNA_CLEAR_OPTION_STENCIL",
       "CNA_GRAPHICS_PROFILE_REACH",
       "CNA_GRAPHICS_PROFILE_HI_DEF",
+      "CNA_PRESENT_INTERVAL_DEFAULT",
+      "CNA_PRESENT_INTERVAL_ONE",
+      "CNA_PRESENT_INTERVAL_TWO",
+      "CNA_PRESENT_INTERVAL_IMMEDIATE",
+      "CNA_GRAPHICS_DEVICE_STATUS_NORMAL",
+      "CNA_GRAPHICS_DEVICE_STATUS_LOST",
+      "CNA_GRAPHICS_DEVICE_STATUS_NOT_RESET",
       "CNA_CUBE_MAP_FACE_POSITIVE_X",
       "CNA_CUBE_MAP_FACE_NEGATIVE_X",
       "CNA_CUBE_MAP_FACE_POSITIVE_Y",
@@ -361,6 +368,16 @@
       "direction": "inout",
       "versioned": false,
       "by_value": true
+    },
+    {
+      "name": "CNA_DisplayMode",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_PresentationParameters",
+      "direction": "in-out",
+      "versioned": true
     },
     {
       "name": "CNA_Rectangle",
@@ -928,6 +945,48 @@
     },
     {
       "name": "cna_graphics_device_clear_rgba",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_presentation_parameters_init",
+      "header": "display.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_presentation_parameters_clone",
+      "header": "display.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_presentation_parameters_get_bounds",
+      "header": "display.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_get_presentation_parameters",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_set_presentation_parameters",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_get_display_mode",
+      "header": "display.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_get_status",
       "header": "graphics_device.h",
       "thread": "owner",
       "ownership": "none"

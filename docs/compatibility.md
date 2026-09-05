@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=150 -->
-<!-- generated:selected members=2264 -->
-<!-- generated:complete types=137 -->
-<!-- generated:partial types=13 -->
+<!-- generated:selected types=154 -->
+<!-- generated:selected members=2292 -->
+<!-- generated:complete types=140 -->
+<!-- generated:partial types=14 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1789 -->
+<!-- generated:complete members=1816 -->
 <!-- generated:partial members=15 -->
-<!-- generated:missing members=41 -->
-<!-- generated:not-applicable members=419 -->
+<!-- generated:missing members=39 -->
+<!-- generated:not-applicable members=422 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 150 types, 2264 members.
+Selection **Foundation 1 and the managed closures**: 154 types, 2292 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **137** |
-| Types partial | **13** |
+| Types complete | **140** |
+| Types partial | **14** |
 | Types missing | **0** |
-| Members complete | **1789** |
+| Members complete | **1816** |
 | Members partial | **15** |
-| Members missing | **41** |
-| Members not applicable | **419** |
+| Members missing | **39** |
+| Members not applicable | **422** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -156,6 +156,10 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.TitleContainer` | **partial** | 0 | 1 | 0 | 0 |
 | `M.X.F.Graphics.GraphicsProfile` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Graphics.ClearOptions` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Graphics.PresentInterval` | **complete** | 4 | 0 | 0 | 1 |
+| `M.X.F.Graphics.GraphicsDeviceStatus` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Graphics.DisplayMode` | **complete** | 5 | 0 | 0 | 1 |
+| `M.X.F.Graphics.PresentationParameters` | **partial** | 12 | 0 | 1 | 0 |
 | `M.X.F.GraphicsDeviceManager` | **partial** | 20 | 0 | 9 | 1 |
 | `M.X.F.Content.ContentManager` | **partial** | 3 | 1 | 3 | 3 |
 | `M.X.F.Graphics.RenderTargetCube` | **complete** | 7 | 0 | 0 | 1 |
@@ -185,7 +189,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 36 | 1 | 18 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 39 | 1 | 15 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 11 | 4 | 0 | 1 |
@@ -336,12 +340,13 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 18 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 15 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
+| `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
@@ -375,10 +380,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=419 -->
-<!-- generated:bound native structs=63 -->
-<!-- generated:bound native struct fields=473 -->
-<!-- generated:bound native constants=492 -->
+<!-- generated:bound native functions=426 -->
+<!-- generated:bound native structs=65 -->
+<!-- generated:bound native struct fields=492 -->
+<!-- generated:bound native constants=499 -->
 <!-- generated:bound native callbacks=9 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -387,10 +392,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 419 |
-| Bound structs | 63 |
-| Bound struct fields | 473 |
-| Bound constants | 492 |
+| Bound functions | 426 |
+| Bound structs | 65 |
+| Bound struct fields | 492 |
+| Bound constants | 499 |
 | Bound callback typedefs | 9 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |

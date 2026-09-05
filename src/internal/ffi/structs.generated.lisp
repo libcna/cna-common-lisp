@@ -41,6 +41,37 @@
 (defconstant +sizeof-cna-color+ 4)
 (defconstant +alignof-cna-color+ 1)
 
+;;; CNA_DisplayMode -- 24 bytes, 4-byte aligned, from display.h.
+(defcstruct (cna-display-mode :size 24)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (width :int32 :offset 8)
+  (height :int32 :offset 12)
+  (aspect-ratio :float :offset 16)
+  (format :uint32 :offset 20))
+
+(defconstant +sizeof-cna-display-mode+ 24)
+(defconstant +alignof-cna-display-mode+ 4)
+
+;;; CNA_PresentationParameters -- 44 bytes, 4-byte aligned, from display.h.
+(defcstruct (cna-presentation-parameters :size 44)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (back-buffer-format :uint32 :offset 8)
+  (back-buffer-width :int32 :offset 12)
+  (back-buffer-height :int32 :offset 16)
+  (depth-stencil-format :uint32 :offset 20)
+  (multi-sample-count :int32 :offset 24)
+  (presentation-interval :uint32 :offset 28)
+  (display-orientation :uint32 :offset 32)
+  (render-target-usage :uint32 :offset 36)
+  (is-full-screen :uint8 :offset 40)
+  (headless-ext :uint8 :offset 41)
+  (reserved :uint8 :offset 42 :count 2))
+
+(defconstant +sizeof-cna-presentation-parameters+ 44)
+(defconstant +alignof-cna-presentation-parameters+ 4)
+
 ;;; CNA_Rectangle -- 16 bytes, 4-byte aligned, from core.h.
 ;;; Passed by value as :uint64 :uint64 (System V AMD64 eightbyte classes: INTEGER INTEGER).
 (defcstruct (cna-rectangle :size 16)
@@ -873,6 +904,8 @@
     (cna-error-info 24 8 ((struct-size 0 4) (struct-version 4 4) (result 8 4) (category 12 4) (message-byte-length 16 8)))
     (cna-string-view 16 8 ((data 0 8) (byte-length 8 8)))
     (cna-color 4 1 ((r 0 1) (g 1 1) (b 2 1) (a 3 1)))
+    (cna-display-mode 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (aspect-ratio 16 4) (format 20 4)))
+    (cna-presentation-parameters 44 4 ((struct-size 0 4) (struct-version 4 4) (back-buffer-format 8 4) (back-buffer-width 12 4) (back-buffer-height 16 4) (depth-stencil-format 20 4) (multi-sample-count 24 4) (presentation-interval 28 4) (display-orientation 32 4) (render-target-usage 36 4) (is-full-screen 40 1) (headless-ext 41 1) (reserved 42 2)))
     (cna-rectangle 16 4 ((x 0 4) (y 4 4) (width 8 4) (height 12 4)))
     (cna-point 8 4 ((x 0 4) (y 4 4)))
     (cna-vector-2 8 4 ((x 0 4) (y 4 4)))

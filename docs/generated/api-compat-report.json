@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 150,
-  "member_count": 2264
+  "type_count": 154,
+  "member_count": 2292
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 150,
-  "members": 2264,
+  "types": 154,
+  "members": 2292,
   "types_by_status": {
-   "partial": 13,
-   "complete": 137
+   "partial": 14,
+   "complete": 140
   },
   "members_by_status": {
-   "complete": 1789,
-   "missing": 41,
-   "not-applicable": 419,
+   "complete": 1816,
+   "missing": 39,
+   "not-applicable": 422,
    "partial": 15
   },
-  "diagnostics": 41,
+  "diagnostics": 39,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 41,
+   "missing_member": 39,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -239,6 +239,62 @@
     "Stencil": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:clear-options"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PresentInterval",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Default": "complete",
+    "One": "complete",
+    "Two": "complete",
+    "Immediate": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:present-interval"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Normal": "complete",
+    "Lost": "complete",
+    "NotReset": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:graphics-device-status"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.DisplayMode",
+   "status": "complete",
+   "members": {
+    "ToString()": "not-applicable",
+    "Format": "complete",
+    "Height": "complete",
+    "Width": "complete",
+    "AspectRatio": "complete",
+    "TitleSafeArea": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:display-mode"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+   "status": "partial",
+   "members": {
+    "new()": "complete",
+    "Clone()": "complete",
+    "BackBufferWidth": "complete",
+    "BackBufferHeight": "complete",
+    "BackBufferFormat": "complete",
+    "DepthStencilFormat": "complete",
+    "MultiSampleCount": "complete",
+    "DisplayOrientation": "complete",
+    "PresentationInterval": "complete",
+    "RenderTargetUsage": "complete",
+    "DeviceWindowHandle": "missing",
+    "IsFullScreen": "complete",
+    "Bounds": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:presentation-parameters"
   },
   {
    "name": "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -1399,11 +1455,11 @@
     "ScissorRectangle": "complete",
     "Indices": "complete",
     "Viewport": "partial",
-    "DisplayMode": "missing",
-    "GraphicsDeviceStatus": "missing",
+    "DisplayMode": "complete",
+    "GraphicsDeviceStatus": "complete",
     "GraphicsProfile": "complete",
     "Adapter": "missing",
-    "PresentationParameters": "missing",
+    "PresentationParameters": "complete",
     "RasterizerState": "complete",
     "ReferenceStencil": "complete",
     "DepthStencilState": "complete",
@@ -3397,6 +3453,11 @@
   },
   {
    "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Graphics.PresentationParameters.DeviceWindowHandle",
+   "detail": "A System.IntPtr naming the native window. CNA refuses the question by design -- cna_graphics_device_get_device_window_handle answers CNA_RESULT_NOT_SUPPORTED after validating the device, because a native window handle is not something the stable C boundary hands out -- and an IntPtr is not a thing this projection has to hand one back in."
+  },
+  {
+   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)",
    "detail": "no exported 'find-best-device' in microsoft.xna.framework"
   },
@@ -3497,23 +3558,8 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.DisplayMode",
-   "detail": "no exported 'display-mode' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.GraphicsDeviceStatus",
-   "detail": "no exported 'graphics-device-status' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Adapter",
    "detail": "no exported 'adapter' in microsoft.xna.framework.graphics"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.PresentationParameters",
-   "detail": "no exported 'presentation-parameters' in microsoft.xna.framework.graphics"
   },
   {
    "category": "missing_member",

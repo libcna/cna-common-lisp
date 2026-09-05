@@ -1162,6 +1162,21 @@
           "lisp": "graphics-profile",
           "generic": true,
           "reason": "GraphicsDevice.GraphicsProfile over cna_graphics_device_get_graphics_profile. Get-only, as XNA's is: a device's profile is decided when the device is made. The settable side of the same subject is GraphicsDeviceManager.GraphicsProfile, which is a different member on a different type and is separately complete."
+        },
+        "DisplayMode": {
+          "lisp": "display-mode",
+          "generic": true,
+          "reason": "GraphicsDevice.DisplayMode over cna_graphics_device_get_display_mode, answering a fresh DISPLAY-MODE snapshot per call as every device reader here does."
+        },
+        "GraphicsDeviceStatus": {
+          "lisp": "graphics-device-status",
+          "generic": true,
+          "reason": "GraphicsDevice.GraphicsDeviceStatus over cna_graphics_device_get_status: :NORMAL, :LOST or :NOT-RESET, the three lifecycle states XNA names."
+        },
+        "PresentationParameters": {
+          "lisp": "presentation-parameters",
+          "generic": true,
+          "reason": "GraphicsDevice.PresentationParameters over cna_graphics_device_get_presentation_parameters. A snapshot rather than a live view; XNA's property answers the device's own object and mutating that changes nothing until a Reset, which is not projected, so nothing here could act on the difference either."
         }
       },
       "not_applicable": {
@@ -6903,6 +6918,107 @@
       "lisp_package": "microsoft.xna.framework.graphics",
       "lisp_name": "clear-options",
       "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.Graphics.PresentInterval": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "present-interval",
+      "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "graphics-device-status",
+      "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.Graphics.DisplayMode": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "display-mode",
+      "lisp_kind": "class",
+      "member_overrides": {
+        "Width": {
+          "lisp": "display-mode-width"
+        },
+        "Height": {
+          "lisp": "display-mode-height"
+        },
+        "Format": {
+          "lisp": "display-mode-format"
+        },
+        "AspectRatio": {
+          "lisp": "display-mode-aspect-ratio"
+        },
+        "TitleSafeArea": {
+          "lisp": "display-mode-title-safe-area",
+          "reason": "Viewport.GetTitleSafeArea(0, 0, Width, Height) in the assembly -- the same static method Viewport.TitleSafeArea calls, so the arithmetic lives in one place here too."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.PresentationParameters": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "presentation-parameters",
+      "lisp_kind": "class",
+      "constructors": {
+        "new()": "make-instance"
+      },
+      "member_overrides": {
+        "Clone()": {
+          "lisp": "clone-presentation-parameters",
+          "generic": true,
+          "reason": "Named for its type, as CLONE-EFFECT is, rather than putting a bare CLONE into a package consumers use unqualified. The copy goes through cna_presentation_parameters_clone rather than through SLOT-VALUE, so a field a later struct version adds is copied by the routine that knows about it."
+        },
+        "Bounds": {
+          "lisp": "presentation-parameters-bounds",
+          "generic": true,
+          "reason": "Through cna_presentation_parameters_get_bounds rather than composed here from the width and the height."
+        },
+        "BackBufferWidth": {
+          "lisp": "back-buffer-width",
+          "generic": true,
+          "setf": true
+        },
+        "BackBufferHeight": {
+          "lisp": "back-buffer-height",
+          "generic": true,
+          "setf": true
+        },
+        "BackBufferFormat": {
+          "lisp": "back-buffer-format",
+          "generic": true,
+          "setf": true
+        },
+        "DepthStencilFormat": {
+          "lisp": "depth-stencil-format",
+          "generic": true,
+          "setf": true
+        },
+        "MultiSampleCount": {
+          "lisp": "multi-sample-count",
+          "generic": true,
+          "setf": true
+        },
+        "DisplayOrientation": {
+          "lisp": "display-orientation",
+          "generic": true,
+          "setf": true
+        },
+        "PresentationInterval": {
+          "lisp": "presentation-interval",
+          "generic": true,
+          "setf": true
+        },
+        "RenderTargetUsage": {
+          "lisp": "render-target-usage",
+          "generic": true,
+          "setf": true
+        },
+        "IsFullScreen": {
+          "lisp": "is-full-screen",
+          "generic": true,
+          "setf": true
+        }
+      },
+      "unimplemented": {
+        "DeviceWindowHandle": "A System.IntPtr naming the native window. CNA refuses the question by design -- cna_graphics_device_get_device_window_handle answers CNA_RESULT_NOT_SUPPORTED after validating the device, because a native window handle is not something the stable C boundary hands out -- and an IntPtr is not a thing this projection has to hand one back in."
+      }
     }
   }
 }

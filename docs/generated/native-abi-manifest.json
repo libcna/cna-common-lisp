@@ -24,10 +24,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 419,
-    "structs": 63,
-    "struct_fields": 473,
-    "constants": 492,
+    "functions": 426,
+    "structs": 65,
+    "struct_fields": 492,
+    "constants": 499,
     "callbacks": 9,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -882,6 +882,155 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_clear_rgba(CNA_Handle graphics_device, float r, float g, float b, float a)"
+    },
+    {
+      "name": "cna_presentation_parameters_init",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_parameters",
+          "c_type": "CNA_PresentationParameters*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_presentation_parameters_init(CNA_PresentationParameters* out_parameters)"
+    },
+    {
+      "name": "cna_presentation_parameters_clone",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "source",
+          "c_type": "const CNA_PresentationParameters*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_parameters",
+          "c_type": "CNA_PresentationParameters*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_presentation_parameters_clone(const CNA_PresentationParameters* source, CNA_PresentationParameters* out_parameters)"
+    },
+    {
+      "name": "cna_presentation_parameters_get_bounds",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parameters",
+          "c_type": "const CNA_PresentationParameters*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_bounds",
+          "c_type": "CNA_Rectangle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_presentation_parameters_get_bounds(const CNA_PresentationParameters* parameters, CNA_Rectangle* out_bounds)"
+    },
+    {
+      "name": "cna_graphics_device_get_presentation_parameters",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_parameters",
+          "c_type": "CNA_PresentationParameters*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_presentation_parameters(CNA_Handle graphics_device, CNA_PresentationParameters* out_parameters)"
+    },
+    {
+      "name": "cna_graphics_device_set_presentation_parameters",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "parameters",
+          "c_type": "const CNA_PresentationParameters*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_set_presentation_parameters(CNA_Handle graphics_device, const CNA_PresentationParameters* parameters)"
+    },
+    {
+      "name": "cna_graphics_device_get_display_mode",
+      "header": "display.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_mode",
+          "c_type": "CNA_DisplayMode*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_display_mode(CNA_Handle graphics_device, CNA_DisplayMode* out_mode)"
+    },
+    {
+      "name": "cna_graphics_device_get_status",
+      "header": "graphics_device.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_status",
+          "c_type": "CNA_GraphicsDeviceStatus*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_get_status(CNA_Handle graphics_device, CNA_GraphicsDeviceStatus* out_status)"
     },
     {
       "name": "cna_graphics_device_get_graphics_profile",
@@ -10653,6 +10802,197 @@
       ]
     },
     {
+      "name": "CNA_DisplayMode",
+      "size": 24,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "aspect_ratio",
+          "c_type": "float",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "display.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_PresentationParameters",
+      "size": 44,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "back_buffer_format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "back_buffer_width",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "back_buffer_height",
+          "c_type": "int32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth_stencil_format",
+          "c_type": "CNA_DepthFormat",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "multi_sample_count",
+          "c_type": "int32_t",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "presentation_interval",
+          "c_type": "CNA_PresentInterval",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "display_orientation",
+          "c_type": "CNA_DisplayOrientation",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "render_target_usage",
+          "c_type": "CNA_RenderTargetUsage",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "is_full_screen",
+          "c_type": "CNA_Bool",
+          "offset": 40,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "headless_ext",
+          "c_type": "CNA_Bool",
+          "offset": 41,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint8_t",
+          "offset": 42,
+          "size": 2,
+          "count": 2,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        }
+      ],
+      "header": "display.h",
+      "direction": "in-out",
+      "versioned": true
+    },
+    {
       "name": "CNA_Rectangle",
       "size": 16,
       "align": 4,
@@ -15820,6 +16160,9 @@
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET": 3,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING": 4,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DISPOSED": 0,
+    "CNA_GRAPHICS_DEVICE_STATUS_LOST": 1,
+    "CNA_GRAPHICS_DEVICE_STATUS_NORMAL": 0,
+    "CNA_GRAPHICS_DEVICE_STATUS_NOT_RESET": 2,
     "CNA_GRAPHICS_PROFILE_HI_DEF": 1,
     "CNA_GRAPHICS_PROFILE_REACH": 0,
     "CNA_INDEX_ELEMENT_SIZE_SIXTEEN_BITS": 0,
@@ -15998,6 +16341,10 @@
     "CNA_PLAYER_INDEX_ONE": 0,
     "CNA_PLAYER_INDEX_THREE": 2,
     "CNA_PLAYER_INDEX_TWO": 1,
+    "CNA_PRESENT_INTERVAL_DEFAULT": 0,
+    "CNA_PRESENT_INTERVAL_IMMEDIATE": 3,
+    "CNA_PRESENT_INTERVAL_ONE": 1,
+    "CNA_PRESENT_INTERVAL_TWO": 2,
     "CNA_PRIMITIVE_LINE_LIST": 2,
     "CNA_PRIMITIVE_LINE_STRIP": 3,
     "CNA_PRIMITIVE_TRIANGLE_LIST": 0,

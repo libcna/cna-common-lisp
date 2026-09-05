@@ -203,6 +203,9 @@ that a keyword-taking projection accepts no keywords at all."
    "surface-format" (alist-object microsoft.xna.framework.graphics::*surface-format-table*)
    "graphics-profile" (alist-object microsoft.xna.framework.graphics::*graphics-profile-table*)
    "clear-options" (alist-object microsoft.xna.framework.graphics::*clear-options-table*)
+   "present-interval" (alist-object microsoft.xna.framework.graphics::*present-interval-table*)
+   "graphics-device-status"
+   (alist-object microsoft.xna.framework.graphics::*graphics-device-status-table*)
    "containment-type" (alist-object microsoft.xna.framework::*containment-type-table*)
    "plane-intersection-type"
    (alist-object microsoft.xna.framework::*plane-intersection-type-table*)

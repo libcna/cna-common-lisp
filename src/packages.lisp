@@ -420,6 +420,17 @@
    #:all-graphics-profile
    #:clear-options #:clear-options-value #:clear-options-from-value
    #:all-clear-options
+   #:present-interval #:present-interval-value #:present-interval-from-value
+   #:all-present-interval
+   #:graphics-device-status #:graphics-device-status-value
+   #:graphics-device-status-from-value #:all-graphics-device-status
+   ;; --- DisplayMode and PresentationParameters -----------------------------
+   #:display-mode #:display-mode-width #:display-mode-height #:display-mode-format
+   #:display-mode-aspect-ratio #:display-mode-title-safe-area
+   #:presentation-parameters #:back-buffer-width #:back-buffer-height
+   #:back-buffer-format #:depth-stencil-format #:multi-sample-count
+   #:display-orientation #:presentation-interval #:render-target-usage
+   #:is-full-screen #:clone-presentation-parameters #:presentation-parameters-bounds
    #:width #:height #:level-count #:format-of #:bounds
    ;; --- SpriteBatch -------------------------------------------------------
    ;; --- RenderTarget2D ----------------------------------------------------

@@ -100,31 +100,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=150 -->
-<!-- generated:selected members=2264 -->
-<!-- generated:complete types=137 -->
-<!-- generated:partial types=13 -->
+<!-- generated:selected types=154 -->
+<!-- generated:selected members=2292 -->
+<!-- generated:complete types=140 -->
+<!-- generated:partial types=14 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1789 -->
+<!-- generated:complete members=1816 -->
 <!-- generated:partial members=15 -->
-<!-- generated:missing members=41 -->
-<!-- generated:not-applicable members=419 -->
+<!-- generated:missing members=39 -->
+<!-- generated:not-applicable members=422 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 150 types, 2264 members.
+Selection **Foundation 1 and the managed closures**: 154 types, 2292 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **137** |
-| Types partial | **13** |
+| Types complete | **140** |
+| Types partial | **14** |
 | Types missing | **0** |
-| Members complete | **1789** |
+| Members complete | **1816** |
 | Members partial | **15** |
-| Members missing | **41** |
-| Members not applicable | **419** |
+| Members missing | **39** |
+| Members not applicable | **422** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -140,18 +140,19 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=13 --> are partial, and this is where the remaining
+<!-- generated:partial types=14 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 18 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 15 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
+| `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
@@ -171,12 +172,13 @@ one.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.Graphics.GraphicsDevice` | 18 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 15 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.Game` | 5 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
+| `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |

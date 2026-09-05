@@ -689,3 +689,130 @@ make this member *differ* from XNA rather than match it."
       (progn
         (when (clearing-manager game) (ignore-errors (xna:dispose (clearing-manager game))))
         (xna:dispose game)))))
+
+;;; --- the device-settings snapshot: DisplayMode and PresentationParameters ----
+
+(defclass settings-game (counting-game)
+  ((manager :initform nil :accessor settings-manager)
+   (mode :initform nil :accessor observed-mode)
+   (status :initform nil :accessor observed-status)
+   (parameters :initform nil :accessor observed-parameters)
+   (bounds :initform nil :accessor observed-bounds)
+   (failure :initform nil :accessor settings-failure))
+  (:documentation "Reads everything the device answers about its own settings."))
+
+(defmethod initialize-instance :after ((game settings-game) &key)
+  (setf (settings-manager game)
+        (make-instance 'xna:graphics-device-manager :game game)))
+
+(defmethod xna:load-content ((game settings-game))
+  (call-next-method)
+  (handler-case
+      (let ((device (xna:graphics-device game)))
+        (setf (observed-mode game) (gfx:display-mode device)
+              (observed-status game) (gfx:graphics-device-status device)
+              (observed-parameters game) (gfx:presentation-parameters device))
+        (setf (observed-bounds game)
+              (gfx:presentation-parameters-bounds (observed-parameters game))))
+    (error (condition) (setf (settings-failure game) condition))))
+
+(defmacro with-settings-game ((game) &body body)
+  `(let ((,game (make-instance 'settings-game :exit-after 2)))
+     (unwind-protect
+          (progn (xna:run ,game)
+                 (is (null (settings-failure ,game))
+                     "the fixture failed: ~a" (settings-failure ,game))
+                 ,@body)
+       (progn
+         (when (settings-manager ,game)
+           (ignore-errors (xna:dispose (settings-manager ,game))))
+         (xna:dispose ,game)))))
+
+(define-native-test the-device-answers-its-own-display-mode
+  "GraphicsDevice.DisplayMode, and the aspect ratio CNA derives rather than this
+binding: `cna_display_mode_init' documents it as width over height, or zero when
+the height is zero, and the value comes back in the struct."
+  (with-settings-game (game)
+    (let ((mode (observed-mode game)))
+      (is (typep mode 'gfx:display-mode))
+      (is (plusp (gfx:display-mode-width mode)))
+      (is (plusp (gfx:display-mode-height mode)))
+      (is (typep (gfx:display-mode-format mode) 'gfx:surface-format))
+      (is (< (abs (- (gfx:display-mode-aspect-ratio mode)
+                     (/ (coerce (gfx:display-mode-width mode) 'single-float)
+                        (coerce (gfx:display-mode-height mode) 'single-float))))
+             1.0e-5)
+          "the aspect ratio ~a is not the width over the height"
+          (gfx:display-mode-aspect-ratio mode))
+      ;; TitleSafeArea is Viewport.GetTitleSafeArea(0, 0, Width, Height), and the
+      ;; inset only applies from 640x480 up.
+      (let ((safe (gfx:display-mode-title-safe-area mode)))
+        (is (xna:rectangle-equal
+             safe (gfx:viewport-title-safe-area
+                   (gfx:make-viewport 0 0 (gfx:display-mode-width mode)
+                                      (gfx:display-mode-height mode))))
+            "DisplayMode.TitleSafeArea and Viewport.TitleSafeArea are the same ~
+             static method in the assembly and must answer the same rectangle")))))
+
+(define-native-test the-device-answers-a-lifecycle-status
+  "GraphicsDeviceStatus is :NORMAL, :LOST or :NOT-RESET, and a renderer that
+never loses its device answering :NORMAL forever is an answer, not an absence."
+  (with-settings-game (game)
+    (is (member (observed-status game) (gfx:all-graphics-device-status))
+        "the device reported ~a" (observed-status game))))
+
+(define-native-test the-device-answers-its-presentation-parameters
+  "Every field of the settings record, and the bounds CNA composes from two of
+them rather than this binding composing them here."
+  (with-settings-game (game)
+    (let ((parameters (observed-parameters game)))
+      (is (typep parameters 'gfx:presentation-parameters))
+      (is (plusp (gfx:back-buffer-width parameters)))
+      (is (plusp (gfx:back-buffer-height parameters)))
+      (is (typep (gfx:back-buffer-format parameters) 'gfx:surface-format))
+      (is (typep (gfx:depth-stencil-format parameters) 'gfx:depth-format))
+      (is (integerp (gfx:multi-sample-count parameters)))
+      (is (typep (gfx:presentation-interval parameters) 'gfx:present-interval))
+      (is (typep (gfx:render-target-usage parameters) 'gfx:render-target-usage))
+      (is (listp (gfx:display-orientation parameters))
+          "DisplayOrientation is a flags enum, so a list")
+      (is (member (gfx:is-full-screen parameters) '(t nil)))
+      (let ((bounds (observed-bounds game)))
+        (is (= 0 (xna:rectangle-x bounds)))
+        (is (= 0 (xna:rectangle-y bounds)))
+        (is (= (gfx:back-buffer-width parameters) (xna:rectangle-width bounds)))
+        (is (= (gfx:back-buffer-height parameters) (xna:rectangle-height bounds)))))))
+
+(define-native-test presentation-parameters-are-a-snapshot-and-clone-independently
+  "The record the device answers is a value, and Clone answers another one.
+
+Mutating what the device handed back changes nothing about the device -- which is
+worth pinning, because a projection that answered a live view would make the
+setters look like they did something."
+  (with-settings-game (game)
+    (let* ((first (observed-parameters game))
+           (copy (gfx:clone-presentation-parameters first)))
+      (is (not (eq first copy)) "Clone answered the same object")
+      (is (= (gfx:back-buffer-width first) (gfx:back-buffer-width copy)))
+      (is (eq (gfx:back-buffer-format first) (gfx:back-buffer-format copy)))
+      (setf (gfx:back-buffer-width copy) 12345)
+      (is (/= 12345 (gfx:back-buffer-width first))
+          "mutating the clone changed the original"))))
+
+(test presentation-parameters-are-constructible-with-xnas-defaults
+  "XNA's parameterless constructor. The defaults are CNA's
+`cna_presentation_parameters_init' rather than a second copy of a list of numbers
+here, which is the point: a list restated in Lisp is a list that can drift."
+  (if (native-library-requested-p)
+      (let ((parameters (make-instance 'gfx:presentation-parameters)))
+        (is (typep (gfx:back-buffer-format parameters) 'gfx:surface-format))
+        (is (typep (gfx:depth-stencil-format parameters) 'gfx:depth-format))
+        (is (typep (gfx:presentation-interval parameters) 'gfx:present-interval))
+        (is (typep (gfx:render-target-usage parameters) 'gfx:render-target-usage))
+        (is (member (gfx:is-full-screen parameters) '(t nil)))
+        ;; and it is settable, as XNA's properties are
+        (setf (gfx:back-buffer-width parameters) 640
+              (gfx:is-full-screen parameters) t)
+        (is (= 640 (gfx:back-buffer-width parameters)))
+        (is-true (gfx:is-full-screen parameters)))
+      (skip "CNA_NATIVE_LIBRARY is not set; the defaults come from CNA")))

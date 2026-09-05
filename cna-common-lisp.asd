@@ -81,6 +81,11 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; The cube target derives from TextureCube and RenderTargetBinding names
    ;; both kinds, so this loads after both target families exist.
    (:file "graphics/render-target-cube")
+   ;; DisplayMode and PresentationParameters are value snapshots the device
+   ;; answers; they load after the enumerations they carry -- DepthFormat and
+   ;; RenderTargetUsage are declared with the render targets -- and they carry
+   ;; the three GraphicsDevice readers with them for the same reason.
+   (:file "graphics/display")
    (:file "graphics/drawing")
    ;; Effect is a GraphicsResource, and the four view kinds hanging off it are
    ;; not; both halves are here, and BasicEffect after them.

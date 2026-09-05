@@ -146,6 +146,34 @@
 (defcfun ("cna_graphics_device_clear_rgba" %graphics-device-clear-rgba) :uint32
   (graphics-device :uint64) (r :float) (g :float) (b :float) (a :float))
 
+;;; CNA_Result cna_presentation_parameters_init(CNA_PresentationParameters* out_parameters)
+(defcfun ("cna_presentation_parameters_init" %presentation-parameters-init) :uint32
+  (out-parameters :pointer))
+
+;;; CNA_Result cna_presentation_parameters_clone(const CNA_PresentationParameters* source, CNA_PresentationParameters* out_parameters)
+(defcfun ("cna_presentation_parameters_clone" %presentation-parameters-clone) :uint32
+  (source :pointer) (out-parameters :pointer))
+
+;;; CNA_Result cna_presentation_parameters_get_bounds(const CNA_PresentationParameters* parameters, CNA_Rectangle* out_bounds)
+(defcfun ("cna_presentation_parameters_get_bounds" %presentation-parameters-get-bounds) :uint32
+  (parameters :pointer) (out-bounds :pointer))
+
+;;; CNA_Result cna_graphics_device_get_presentation_parameters(CNA_Handle graphics_device, CNA_PresentationParameters* out_parameters)
+(defcfun ("cna_graphics_device_get_presentation_parameters" %graphics-device-get-presentation-parameters) :uint32
+  (graphics-device :uint64) (out-parameters :pointer))
+
+;;; CNA_Result cna_graphics_device_set_presentation_parameters(CNA_Handle graphics_device, const CNA_PresentationParameters* parameters)
+(defcfun ("cna_graphics_device_set_presentation_parameters" %graphics-device-set-presentation-parameters) :uint32
+  (graphics-device :uint64) (parameters :pointer))
+
+;;; CNA_Result cna_graphics_device_get_display_mode(CNA_Handle graphics_device, CNA_DisplayMode* out_mode)
+(defcfun ("cna_graphics_device_get_display_mode" %graphics-device-get-display-mode) :uint32
+  (graphics-device :uint64) (out-mode :pointer))
+
+;;; CNA_Result cna_graphics_device_get_status(CNA_Handle graphics_device, CNA_GraphicsDeviceStatus* out_status)
+(defcfun ("cna_graphics_device_get_status" %graphics-device-get-status) :uint32
+  (graphics-device :uint64) (out-status :pointer))
+
 ;;; CNA_Result cna_graphics_device_get_graphics_profile(CNA_Handle graphics_device, CNA_GraphicsProfile* out_profile)
 (defcfun ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile) :uint32
   (graphics-device :uint64) (out-profile :pointer))
@@ -1724,6 +1752,13 @@
     ("cna_title_location_copy_path" %title-location-copy-path :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_viewport" %graphics-device-get-viewport :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_clear_rgba" %graphics-device-clear-rgba :uint32 (:uint64 :float :float :float :float) :thread :owner :ownership "none")
+    ("cna_presentation_parameters_init" %presentation-parameters-init :uint32 (:pointer) :thread :any :ownership "none")
+    ("cna_presentation_parameters_clone" %presentation-parameters-clone :uint32 (:pointer :pointer) :thread :any :ownership "none")
+    ("cna_presentation_parameters_get_bounds" %presentation-parameters-get-bounds :uint32 (:pointer :pointer) :thread :any :ownership "none")
+    ("cna_graphics_device_get_presentation_parameters" %graphics-device-get-presentation-parameters :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_set_presentation_parameters" %graphics-device-set-presentation-parameters :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_display_mode" %graphics-device-get-display-mode :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_get_status" %graphics-device-get-status :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_graphics_profile" %graphics-device-get-graphics-profile :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_clear_options" %graphics-device-clear-options :uint32 (:uint64 :uint32 :uint32 :float :int32) :thread :owner :ownership "none")
     ("cna_graphics_device_present" %graphics-device-present :uint32 (:uint64) :thread :owner :ownership "none")

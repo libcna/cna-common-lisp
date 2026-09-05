@@ -12885,6 +12885,25 @@
           "documentation": "Every member of FILL-MODE, as keywords, in value order."
         },
         {
+          "name": "all-graphics-device-status",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of GRAPHICS-DEVICE-STATUS, as keywords, in value order."
+        },
+        {
           "name": "all-graphics-profile",
           "fbound": true,
           "macro": false,
@@ -12921,6 +12940,25 @@
           "constant": false,
           "value": null,
           "documentation": "Every member of INDEX-ELEMENT-SIZE, as keywords, in value order."
+        },
+        {
+          "name": "all-present-interval",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of PRESENT-INTERVAL, as keywords, in value order."
         },
         {
           "name": "all-primitive-type",
@@ -13251,6 +13289,78 @@
           "constant": false,
           "value": null,
           "documentation": "EffectPass.Apply(): make this pass's state current on the graphics device.\n\nNamed APPLY-EFFECT-PASS rather than APPLY, because APPLY is a standard Common\nLisp function and shadowing it in a package a consumer uses unqualified would be\nhostile. See docs/naming.md."
+        },
+        {
+          "name": "back-buffer-format",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "back-buffer-height",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "back-buffer-width",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "basic-effect",
@@ -13788,6 +13898,27 @@
           "constant": false,
           "value": null,
           "documentation": "Effect.Clone(): an independent copy, of the same concrete type.\n\nNamed CLONE-EFFECT rather than CLONE for the reason APPLY-EFFECT-PASS is not\nAPPLY: the projection does not put a bare, very general verb into a package\nconsumers use unqualified."
+        },
+        {
+          "name": "clone-presentation-parameters",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameters"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "PresentationParameters.Clone(): an independent copy.\n\nNamed for its type, as CLONE-EFFECT is, rather than putting a bare CLONE into a\npackage consumers use unqualified. The copy goes through\n`cna_presentation_parameters_clone' rather than through SLOT-VALUE, so a field\nCNA adds in a later struct version is copied by the routine that knows about\nit."
         },
         {
           "name": "collection-count",
@@ -14727,8 +14858,11 @@
             "object"
           ],
           "keywords": [],
-          "setf_fbound": false,
-          "setf_lambda_list": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
           "class": false,
           "structure": false,
           "condition": false,
@@ -15012,6 +15146,161 @@
           "constant": false,
           "value": null,
           "documentation": "DirectionalLight.SpecularColor"
+        },
+        {
+          "name": "display-mode",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:display-mode",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.DisplayMode: the display configuration the device is running.\n\nA fresh snapshot per call, as every device reader here is: CNA lends the device\nfor a callback's duration and this reads through it at the moment it is asked."
+        },
+        {
+          "name": "display-mode-aspect-ratio",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "display-mode-format",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "display-mode-height",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "display-mode-title-safe-area",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "display-mode"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DisplayMode.TitleSafeArea.\n\n`Viewport.GetTitleSafeArea(0, 0, Width, Height)' in the assembly -- the same\nstatic method `Viewport.TitleSafeArea' calls, with the origin at zero because a\ndisplay mode has no offset."
+        },
+        {
+          "name": "display-mode-width",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "display-orientation",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "draw-indexed-primitives",
@@ -17423,6 +17712,69 @@
           "documentation": "The game's graphics device. Instances are produced by the runtime and reached\nthrough MICROSOFT.XNA.FRAMEWORK:GRAPHICS-DEVICE; a consumer does not create one.\n\nEvery operation on a graphics device is legal only inside a game lifecycle\nmethod -- LOAD-CONTENT, UPDATE, DRAW and their neighbours -- because that is the\nonly time CNA lends the device out."
         },
         {
+          "name": "graphics-device-status",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.GraphicsDeviceStatus: :NORMAL, :LOST or :NOT-RESET.\n\nThe three lifecycle states XNA names. A renderer that never loses its device\nanswers :NORMAL forever, which is an answer and not an absence."
+        },
+        {
+          "name": "graphics-device-status-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The GRAPHICS-DEVICE-STATUS member a value names."
+        },
+        {
+          "name": "graphics-device-status-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a GRAPHICS-DEVICE-STATUS member."
+        },
+        {
           "name": "graphics-profile",
           "fbound": true,
           "macro": false,
@@ -17752,6 +18104,30 @@
           "constant": false,
           "value": null,
           "documentation": "DynamicVertexBuffer.IsContentLost and DynamicIndexBuffer.IsContentLost.\n\nReads the buffer's own state from CNA. CNA's header documents the field as\ncurrently always false, so this answers NIL today for every buffer; it is a read\nof the runtime rather than a literal, so a CNA that starts reporting loss is\nreported here without a change here."
+        },
+        {
+          "name": "is-full-screen",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "item",
@@ -18161,8 +18537,11 @@
             "object"
           ],
           "keywords": [],
-          "setf_fbound": false,
-          "setf_lambda_list": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
           "class": false,
           "structure": false,
           "condition": false,
@@ -18217,6 +18596,138 @@
           "constant": false,
           "value": null,
           "documentation": "GraphicsDevice.Present()."
+        },
+        {
+          "name": "present-interval",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.PresentInterval."
+        },
+        {
+          "name": "present-interval-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The PRESENT-INTERVAL member a value names."
+        },
+        {
+          "name": "present-interval-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a PRESENT-INTERVAL member."
+        },
+        {
+          "name": "presentation-interval",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "presentation-parameters",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "graphics-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:presentation-parameters",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDevice.PresentationParameters: the settings the device is running.\n\nA snapshot, and **not** a live view: mutating what this answers changes nothing.\nXNA's property answers the device's own object and mutating that changes nothing\neither until a `Reset', so the difference is one a program cannot act on -- but it\nis a difference, and `Reset' is not projected yet, so there is nothing here that\ncould act on it either."
+        },
+        {
+          "name": "presentation-parameters-bounds",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameters"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "PresentationParameters.Bounds: the back buffer's rectangle.\n\nThrough `cna_presentation_parameters_get_bounds' rather than composed here from\nthe width and the height, because the composition is the sort of thing that is\nobviously right and occasionally is not."
         },
         {
           "name": "primitive-type",
@@ -18612,8 +19123,11 @@
             "object"
           ],
           "keywords": [],
-          "setf_fbound": false,
-          "setf_lambda_list": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
           "class": false,
           "structure": false,
           "condition": false,
@@ -21544,7 +22058,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Viewport.TitleSafeArea.\n\nXNA insets by one twentieth on each axis only once the viewport is at least\n640x480; below that the whole viewport is title safe. The arithmetic is the\noriginal's integer arithmetic."
+          "documentation": "Viewport.TitleSafeArea.\n\nThe arithmetic is `Viewport.GetTitleSafeArea', a static method\n`DisplayMode.TitleSafeArea' calls too -- so it lives in one place here as well.\nSee %TITLE-SAFE-AREA in src/graphics/display.lisp."
         },
         {
           "name": "viewport-unproject",
@@ -29213,6 +29727,17 @@
       "target": 1,
       "depth-buffer": 2,
       "stencil": 4
+    },
+    "present-interval": {
+      "default": 0,
+      "one": 1,
+      "two": 2,
+      "immediate": 3
+    },
+    "graphics-device-status": {
+      "normal": 0,
+      "lost": 1,
+      "not-reset": 2
     },
     "containment-type": {
       "disjoint": 0,

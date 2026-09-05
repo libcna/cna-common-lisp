@@ -977,18 +977,68 @@ format is `Depth24Stencil8`. That state is `PresentationParameters`, which is
 missing. CNA implements the canonical member, so `cna_graphics_device_clear_rgba`
 carries it and the derivation stays CNA's rather than being guessed here.
 
+### The device-settings snapshot: `DisplayMode` and `PresentationParameters`
+
+Both are **classes in XNA and classes here, holding no native resource**: CNA
+carries them as versioned value structs rather than as handles, so neither is a
+native object, neither owns anything, and neither is disposed. Each reader copies
+out of CNA at the moment it is asked, exactly as the graphics device resolves its
+handle per call.
+
+`PresentationParameters` is a **snapshot and not a live view**, and the difference
+is one a program cannot currently act on: XNA's property answers the device's own
+object, and mutating that changes nothing there either until a `Reset` — which is
+not projected, so nothing here could act on it. `MAKE-INSTANCE` with no arguments
+is XNA's parameterless constructor and its defaults come from
+`cna_presentation_parameters_init` rather than being restated in Lisp, because a
+list of numbers restated is a list of numbers that can drift. `Clone` goes through
+`cna_presentation_parameters_clone` for the same reason: a field a later struct
+version adds is copied by the routine that knows about it.
+
+**`DeviceWindowHandle` is missing, and CNA refuses it by design.**
+`cna_graphics_device_get_device_window_handle` answers `CNA_RESULT_NOT_SUPPORTED`
+after validating the device — a native window handle is not something the stable C
+boundary hands out — and an `IntPtr` is not a thing this projection has to hand
+one back in.
+
+**There is no `DISPLAY-MODE-EQUAL`, and CNA having a route for one is not a
+reason.** `cna_display_mode_equals` compares two modes by width, height and
+format. XNA's `DisplayMode` has **no equality members at all** — not
+`Equals(Object)`, not `op_Equality` — so it is compared by reference there.
+Projecting the CNA route would invent a member XNA has not got, which is the same
+reason `cna_sprite_font_create` is not a public constructor. The route is not
+bound.
+
+`DisplayMode.TitleSafeArea` is `Viewport.GetTitleSafeArea(0, 0, Width, Height)` in
+the assembly — the same static method `Viewport.TitleSafeArea` calls — so the
+arithmetic lives in one place here too, and a test asserts the two answer the same
+rectangle.
+
 ### What is still missing from the device, and why
 
-`GraphicsDevice.GraphicsProfile` is complete — `cna_graphics_device_get_graphics_profile`
-answers it, get-only as XNA's is. The rest of the device-settings surface is not,
-and each has its own reason rather than one shared one: `Adapter`, `DisplayMode`,
-`PresentationParameters` and `GraphicsDeviceStatus` each need a **type** that is
-not in the selection yet, the three `Reset` overloads and `Present` need
-`PresentationParameters` with them, and the six device events need CNA
-subscription routes this binding has not audited. `GraphicsDeviceManager`'s
-remaining ten are the five protected `On*` raisers, `PreparingDeviceSettings` and
-its event args, and `FindBestDevice`/`RankDevices`/`CanResetDevice`, which are the
-device-selection algorithm rather than a setting.
+`GraphicsProfile`, `DisplayMode`, `GraphicsDeviceStatus` and
+`PresentationParameters` are complete. What is left is four different things:
+
+* **`Adapter`** needs `GraphicsAdapter`, which is not in the selection.
+  `cna_graphics_device_get_adapter_index` answers an index into CNA's own adapter
+  queries, so the route is there and the type is not.
+* **The three `Reset` overloads and `Present`** are device-lifetime operations
+  rather than settings. `cna_graphics_device_present` exists; the `Reset` family
+  needs a decision about what resetting means for a device CNA lends rather than
+  lets a program construct.
+* **The six device events** — `Disposing`, `ResourceCreated`, `ResourceDestroyed`,
+  `DeviceLost`, `DeviceReset`, `DeviceResetting` — need CNA subscription routes
+  this binding has not audited. Note that `DeviceReset` and `DeviceResetting` here
+  are `GraphicsDevice`'s *own*, not `IGraphicsDeviceService`'s same-named pair,
+  which are already complete on `GraphicsDeviceManager`; confusing the two is the
+  mistake `Game.Services` records above.
+* **`new(...)`, `Dispose`, `IsDisposed` and `Disposing`** are the device as an
+  object a program constructs, which a CNA-Lisp program never does.
+
+`GraphicsDeviceManager`'s remaining ten are the five protected `On*` raisers,
+`PreparingDeviceSettings` and its event args, and
+`FindBestDevice`/`RankDevices`/`CanResetDevice`, which are the device-selection
+algorithm rather than a setting.
 
 ## Texture extent comes from the image, not from CNA
 
