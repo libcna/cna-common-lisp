@@ -15,6 +15,15 @@
      "Deterministic disposal. XNA spells disposal differently on each type that
       has it, and CNA-Lisp needs one question and one operation that can be
       applied to anything holding a native resource.")
+    (microsoft.xna.framework cna-error-cause
+     "Where `System.Exception''s innerException constructor argument goes. Two
+      selected XNA types are exception classes and each declares the CLR's
+      three-constructor set; `new(String, Exception)' needs somewhere to put its
+      second argument, and without this reader it had nowhere -- which would make
+      that constructor one this projection cannot express rather than one it
+      collapses. `System.Exception' is the base-class library's and is not
+      projected as a type: a Common Lisp condition is what it projects onto, the
+      same rule `System.IO.Stream' is read by.")
     (microsoft.xna.framework clr-type-name
      "The .NET type name CNA reports for a projected object, so a structural
       claim can be checked against the runtime instead of asserted.")

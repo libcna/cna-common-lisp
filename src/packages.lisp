@@ -256,6 +256,7 @@
    #:cna-disposed-error #:cna-ownership-error #:cna-scope-error
    #:cna-native-library-error #:cna-abi-rejected-error #:cna-invalid-cast-error
    #:cna-error-operation #:cna-error-native-message #:cna-error-object-type
+   #:cna-error-cause
    #:cna-abi-found-version #:cna-abi-admitted-versions #:cna-native-library-path
    #:cna-callback-underlying-condition))
 

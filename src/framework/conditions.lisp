@@ -19,6 +19,8 @@
                    :documentation "CNA's own diagnostic text, or NIL when CNA had none.")
    (object-type :initarg :object-type :initform nil :reader cna-error-object-type
                 :documentation "The class name of the object involved, when there was one.")
+   (cause :initarg :cause :initform nil :reader cna-error-cause
+          :documentation "The condition this one was raised because of, or NIL.")
    (%result :initarg :%result :initform nil :reader %cna-error-result)
    (%category :initarg :%category :initform nil :reader %cna-error-category)
    (format-control :initarg :format-control :initform nil :reader %cna-error-format-control)
@@ -27,7 +29,18 @@
   (:documentation
    "Superclass of every condition CNA-Lisp signals. Its readers describe the
 failure in Lisp terms; the CNA result code behind it is not part of the public
-API.")
+API.
+
+`CAUSE' is where `System.Exception''s `innerException' constructor argument goes.
+Two of the selected XNA types are exception classes, and each of them declares
+the CLR's three-constructor set -- `new()', `new(String)' and
+`new(String, Exception)'. The first two are `MAKE-CONDITION' with and without
+`:FORMAT-CONTROL'; the third needs somewhere to put a second argument, and
+without this slot it had nowhere, which would make `new(String, Exception)' a
+constructor this projection cannot express rather than one it collapses.
+`System.Exception' itself is not projected as a type -- it is the base-class
+library's, and a Common Lisp condition is what it projects onto, the same rule
+`System.IO.Stream' is read by -- so the slot holds a condition.")
   (:report
    (lambda (condition stream)
      (let ((control (%cna-error-format-control condition)))
