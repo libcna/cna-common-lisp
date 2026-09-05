@@ -355,6 +355,43 @@ this needs a CNA route, not a cleverer caller.
 * **`ReadAsset` and `OpenStream`** are protected hooks. CNA's loaders read and
   construct in one route with no callback in between, and no stream object
   crosses its C boundary.
+
+**`Load<T>` reaches four types, not three.** The entry that used to stand here
+named `cna_content_manager_load_texture2d`, `_load_texture_cube` and
+`_load_sprite_font` and called them "the ones CNA has a route for". There is a
+fourth, and it is in `effects.h` rather than `content.h`, which is how the search
+missed it: `cna_content_manager_load_effect`, which CNA's own header calls "the
+canonical `Load<Effect>` specialization, which is the route an XNA game's
+`ContentManager.Load<Effect>` takes".
+
+It is projected now. It reads three shapes — a compiled `.xnb` Effect asset, a
+`.cnj` descriptor naming a stock effect, and a `.cnj` descriptor carrying shader
+source — and **only the compiled shape needs
+`CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`**, which neither qualification renderer
+has. So the descriptor shapes load on `HEADLESS` and `SOFTWARE` and are tested
+there, which is the first content route in this binding that reaches `Effect` at
+all.
+
+A loaded effect is **not** flattened to the base class. `cna_effect_copy_type_name`
+answers the handle's runtime type name in full, so a descriptor naming
+`BasicEffect` comes back as a `BASIC-EFFECT` — which is what XNA's content reader
+produces, and what `Load<Effect>`'s caller expects to be able to downcast to. Five
+names map: `BasicEffect`, `AlphaTestEffect`, `SkinnedEffect`,
+`EnvironmentMapEffect` and `DualTextureEffect`. Measured against 0.21.0,
+`SpriteEffect` is refused by the loader and is not in the selection either. A name
+outside that table answers an `EFFECT`, which is always correct if less specific.
+
+The handle's destruction is recorded by the **constructor**, not by the loader,
+which is the single-ledger rule applied to a constructor that takes an existing
+handle: a construction that fails has already run its own ledger by the time the
+loader's rollback runs, so recording it in both would destroy it twice. A
+construction that succeeds drops its ledger, and from there the loader's undo is
+the effect's own disposal. `Effect.Clone` takes the same path for the same reason.
+
+`Load<T>` stays **partial** because it is generic over any type with a content
+reader and this is four. CNA's `_load_sound_effect` and `_load_model` are for
+types not in the selection; `_load_foreign_ext` and `_load_object_dictionary_ext`
+are extensions rather than `Load<T>`.
 * **`Game.Content`'s setter** is not projected, which is why that member is
   partial. XNA's `Game.Content = m` assigns a reference; CNA's
   `cna_game_set_content_manager_ext` **copies** — its header says "the canonical

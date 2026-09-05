@@ -776,6 +776,50 @@ consumers use unqualified."))
       (setf (%resource-device clone) (%resource-device effect))
       clone)))
 
+(defparameter %loaded-effect-classes
+  '(("Microsoft.Xna.Framework.Graphics.BasicEffect" . basic-effect)
+    ("Microsoft.Xna.Framework.Graphics.AlphaTestEffect" . alpha-test-effect)
+    ("Microsoft.Xna.Framework.Graphics.SkinnedEffect" . skinned-effect)
+    ("Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect" . environment-map-effect)
+    ("Microsoft.Xna.Framework.Graphics.DualTextureEffect" . dual-texture-effect))
+  "What `cna_effect_copy_type_name' answers, and the class that name means here.
+
+`Load<Effect>' in XNA answers whatever the content reader built, and the static
+type is only `Effect'. CNA answers an opaque effect handle -- but it also answers
+the handle's **runtime type name**, in full, so this projection does not have to
+choose between guessing and flattening every loaded effect to the base class.
+
+The five here are the five a `.cnj' descriptor can name and that this binding
+projects; measured against 0.21.0, `SpriteEffect' is refused by the loader and is
+not in the selection either. A name not in this table answers an EFFECT, which is
+`Load<Effect>''s static type and always correct if less specific.")
+
+(defun %effect-type-name (handle operation)
+  "The runtime type name CNA reports for an effect handle."
+  (cna-lisp.internal:count-then-copy-string
+   (lambda (out)
+     (cna-lisp.internal.ffi::%effect-get-type-name-byte-count handle out))
+   (lambda (buffer capacity out)
+     (cna-lisp.internal.ffi::%effect-copy-type-name handle buffer capacity out))
+   operation))
+
+(defun %adopt-loaded-effect (game handle operation)
+  "Wrap an effect a ContentManager created, as the class its type name names.
+
+**The handle's destruction is recorded by MAKE-INSTANCE and not by the caller.**
+That is the single-ledger rule applied to a constructor that takes an existing
+handle: a construction that fails has already run its own ledger by the time the
+loader's runs, so a loader that recorded the destruction too would destroy it
+twice. A construction that succeeds drops its ledger, and from that point the
+undo the loader needs is the effect's own disposal. CLONE-EFFECT takes the same
+path for the same reason."
+  (let* ((name (%effect-type-name handle operation))
+         (class (or (cdr (assoc name %loaded-effect-classes :test #'string=))
+                    'effect))
+         (effect (make-instance class :%adopted-handle handle :%adopted-game game)))
+    (setf (%resource-device effect) (microsoft.xna.framework:graphics-device game))
+    effect))
+
 ;;; --- destruction -----------------------------------------------------------
 
 (defmethod cna-lisp.internal:destroy-native ((effect effect))

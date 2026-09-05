@@ -558,3 +558,120 @@ condition has to name it."
         (when (texture game) (ignore-errors (xna:dispose (texture game))))
         (when (manager game) (ignore-errors (xna:dispose (manager game))))
         (ignore-errors (xna:dispose game))))))
+
+;;; --- Load<Effect> ------------------------------------------------------------
+;;;
+;;; The fourth asset type, and the one whose absence was a wrong reason: the
+;;; declared reason for `ContentManager.Load' named three loader routes and said
+;;; those were "the ones CNA has a route for". `cna_content_manager_load_effect'
+;;; is a fourth, for a type that is in the selection, and CNA's own header calls
+;;; it "the canonical `Load<Effect>' specialization".
+;;;
+;;; It reads three shapes and only the compiled `.xnb' one needs
+;;; CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS, which neither qualification renderer
+;;; has. A `.cnj' descriptor naming a stock effect needs nothing, which is why
+;;; these run on HEADLESS.
+
+(defclass effect-content-game (graphics-game)
+  ((results :initform '() :accessor effect-results)
+   (loaded :initform '() :accessor loaded-effects)
+   (types :initform nil :accessor loadable-types)
+   (failure :initform nil :accessor effect-load-failure))
+  (:documentation "Loads Effects through the game's own ContentManager."))
+
+(defmethod xna:load-content ((game effect-content-game))
+  (call-next-method)
+  (handler-case
+      (let ((content (xna:content game)))
+        (setf (xna.content:root-directory content) (%content-root)
+              (loadable-types game) (xna.content:loadable-asset-types))
+        (flet ((attempt (label name)
+                 (push (cons label
+                             (handler-case
+                                 (let ((effect (xna.content:load-asset
+                                                content 'gfx:effect name)))
+                                   (push effect (loaded-effects game))
+                                   (list :class (type-of effect)
+                                         :techniques (gfx:collection-count
+                                                      (gfx:effect-techniques effect))
+                                         ;; The same name twice is one asset: the
+                                         ;; cache is keyed by the cleaned name.
+                                         :cached (eq effect
+                                                     (xna.content:load-asset
+                                                      content 'gfx:effect name))))
+                               (error (condition) (type-of condition))))
+                       (effect-results game))))
+          (attempt :basic "stock-basic-effect")
+          (attempt :dual "stock-dual-texture-effect")
+          (attempt :missing "no-such-effect-asset")
+          ;; A descriptor that is a SpriteFont, asked for as an Effect: the cache
+          ;; is keyed by name and not by type, so this must be the loader
+          ;; refusing rather than a font coming back.
+          (attempt :wrong-type *font-asset*)))
+    (error (condition) (setf (effect-load-failure game) condition))))
+
+(defmacro with-effect-content-game ((game) &body body)
+  `(let ((,game (make-instance 'effect-content-game :exit-after 2)))
+     (unwind-protect
+          (progn (xna:run ,game)
+                 (is (null (effect-load-failure ,game))
+                     "the fixture failed: ~a" (effect-load-failure ,game))
+                 ,@body)
+       (progn
+         (dolist (effect (loaded-effects ,game)) (ignore-errors (xna:dispose effect)))
+         (when (batch ,game) (ignore-errors (xna:dispose (batch ,game))))
+         (when (texture ,game) (ignore-errors (xna:dispose (texture ,game))))
+         (when (manager ,game) (ignore-errors (xna:dispose (manager ,game))))
+         (xna:dispose ,game)))))
+
+(defun %effect-result (game label)
+  (cdr (assoc label (effect-results game))))
+
+(define-native-test an-effect-is-a-loadable-asset-type
+  "LOADABLE-ASSET-TYPES answers what LOAD-ASSET has a route for, so EFFECT being
+in it is the claim that the route exists and is wired up."
+  (with-effect-content-game (game)
+    (is (member 'gfx:effect (loadable-types game))
+        "EFFECT is not among ~a" (loadable-types game))))
+
+(define-native-test a-loaded-effect-is-the-class-its-type-name-names
+  "**Not flattened to EFFECT.** CNA answers an opaque effect handle, but it also
+answers that handle's runtime type name in full -- `cna_effect_copy_type_name'
+gives \"Microsoft.Xna.Framework.Graphics.BasicEffect\" -- so a descriptor naming a
+stock effect comes back as that stock effect's own class, which is what XNA's
+content reader produces.
+
+The technique count is asserted because it is the evidence that the object graph
+was built from the loaded handle rather than left empty: an effect with no
+technique could not apply a pass."
+  (with-effect-content-game (game)
+    (let ((basic (%effect-result game :basic))
+          (dual (%effect-result game :dual)))
+      (is (eq 'gfx:basic-effect (getf basic :class))
+          "a BasicEffect descriptor loaded as ~a" (getf basic :class))
+      (is (plusp (or (getf basic :techniques) 0))
+          "the loaded BasicEffect had ~a technique(s)" (getf basic :techniques))
+      (is (eq 'gfx:dual-texture-effect (getf dual :class))
+          "a DualTextureEffect descriptor loaded as ~a" (getf dual :class))
+      (is (plusp (or (getf dual :techniques) 0))))))
+
+(define-native-test loading-one-effect-twice-answers-one-effect
+  "The cache is ContentManager's, and it holds an Effect exactly as it holds a
+texture or a font: the second Load answers the first object."
+  (with-effect-content-game (game)
+    (is-true (getf (%effect-result game :basic) :cached)
+             "the second Load<Effect> answered a different object")
+    (is-true (getf (%effect-result game :dual) :cached))))
+
+(define-native-test loading-an-effect-refuses-what-is-not-one
+  "A name that names nothing is an IO failure, which is what CNA documents for
+\"a missing, malformed or wrongly-typed asset\". A descriptor that *is* an asset
+but is a SpriteFont is the same failure and not a font: the cache is keyed by the
+cleaned name and not by the type, so a wrongly-typed load has to be refused at
+the loader rather than answered from somewhere else."
+  (with-effect-content-game (game)
+    (is (eq 'xna:cna-io-error (%effect-result game :missing))
+        "a missing effect asset gave ~a" (%effect-result game :missing))
+    (is (eq 'xna:cna-io-error (%effect-result game :wrong-type))
+        "a SpriteFont descriptor loaded as an Effect gave ~a"
+        (%effect-result game :wrong-type))))

@@ -385,7 +385,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=455 -->
+<!-- generated:bound native functions=458 -->
 <!-- generated:bound native structs=67 -->
 <!-- generated:bound native struct fields=512 -->
 <!-- generated:bound native constants=506 -->
@@ -397,7 +397,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 455 |
+| Bound functions | 458 |
 | Bound structs | 67 |
 | Bound struct fields | 512 |
 | Bound constants | 506 |

@@ -1451,6 +1451,8 @@ CNA_Result (*const cna_lisp_probe_cna_effect_create_compiled)(CNA_Handle, const 
 CNA_Result (*const cna_lisp_probe_cna_effect_destroy)(CNA_EffectHandle) = cna_effect_destroy;
 CNA_Result (*const cna_lisp_probe_cna_effect_dispose)(CNA_EffectHandle) = cna_effect_dispose;
 CNA_Result (*const cna_lisp_probe_cna_effect_clone)(CNA_EffectHandle, CNA_EffectHandle*) = cna_effect_clone;
+CNA_Result (*const cna_lisp_probe_cna_effect_get_type_name_byte_count)(CNA_EffectHandle, uint64_t*) = cna_effect_get_type_name_byte_count;
+CNA_Result (*const cna_lisp_probe_cna_effect_copy_type_name)(CNA_EffectHandle, char*, uint64_t, uint64_t*) = cna_effect_copy_type_name;
 CNA_Result (*const cna_lisp_probe_cna_effect_get_parameters)(CNA_EffectHandle, CNA_EffectParameterCollectionHandle*) = cna_effect_get_parameters;
 CNA_Result (*const cna_lisp_probe_cna_effect_get_techniques)(CNA_EffectHandle, CNA_EffectTechniqueCollectionHandle*) = cna_effect_get_techniques;
 CNA_Result (*const cna_lisp_probe_cna_effect_get_current_technique)(CNA_EffectHandle, CNA_EffectTechniqueHandle*) = cna_effect_get_current_technique;
@@ -1685,6 +1687,7 @@ CNA_Result (*const cna_lisp_probe_cna_content_manager_get_has_service_provider)(
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_texture2d)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_content_manager_load_texture2d;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_texture_cube)(CNA_Handle, CNA_StringView, CNA_Handle*) = cna_content_manager_load_texture_cube;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_load_sprite_font)(CNA_Handle, CNA_StringView, CNA_Handle*, CNA_Handle*) = cna_content_manager_load_sprite_font;
+CNA_Result (*const cna_lisp_probe_cna_content_manager_load_effect)(CNA_Handle, CNA_StringView, CNA_EffectHandle*) = cna_content_manager_load_effect;
 CNA_Result (*const cna_lisp_probe_cna_content_manager_unload)(CNA_Handle) = cna_content_manager_unload;
 CNA_Result (*const cna_lisp_probe_cna_render_target_cube_create)(CNA_Handle, const CNA_RenderTargetCubeCreateInfo*, CNA_Handle*) = cna_render_target_cube_create;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_set_render_target_cube)(CNA_Handle, CNA_Handle, CNA_CubeMapFace) = cna_graphics_device_set_render_target_cube;

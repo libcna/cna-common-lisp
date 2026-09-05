@@ -24,7 +24,7 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 455,
+    "functions": 458,
     "structs": 67,
     "struct_fields": 512,
     "constants": 506,
@@ -5656,6 +5656,60 @@
       "ownership": "owns",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_effect_clone(CNA_EffectHandle effect, CNA_EffectHandle* out_clone)"
+    },
+    {
+      "name": "cna_effect_get_type_name_byte_count",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_get_type_name_byte_count(CNA_EffectHandle effect, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_effect_copy_type_name",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_effect_copy_type_name(CNA_EffectHandle effect, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
     },
     {
       "name": "cna_effect_get_parameters",
@@ -11385,6 +11439,42 @@
       "ownership": "creates",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_content_manager_load_sprite_font(CNA_Handle content_manager, CNA_StringView asset_name, CNA_Handle* out_sprite_font, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_content_manager_load_effect",
+      "header": "effects.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "asset_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "asset_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_load_effect(CNA_Handle content_manager, CNA_StringView asset_name, CNA_EffectHandle* out_effect)"
     },
     {
       "name": "cna_content_manager_unload",

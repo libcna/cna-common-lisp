@@ -117,3 +117,33 @@
             manager asset-name record
             (microsoft.xna.framework.graphics::%adopt-loaded-sprite-font
              game font-handle atlas-handle record)))))))
+
+;;; --- Effect -----------------------------------------------------------------
+;;;
+;;; `cna_content_manager_load_effect' "maps the canonical `Load<Effect>'
+;;; specialization, which is the route an XNA game's `ContentManager.Load<Effect>'
+;;; takes", and reads three shapes: a compiled `.xnb' Effect asset, a `.cnj'
+;;; descriptor naming one of the stock effects, and a `.cnj' descriptor carrying
+;;; custom shader source. **Only the compiled shape needs
+;;; CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS**, which neither qualification
+;;; renderer has -- so the descriptor shapes load here, and are tested.
+
+(%define-asset-loader (microsoft.xna.framework.graphics:effect manager asset-name)
+  (let* ((operation "load-asset 'effect")
+         (game (%loading-game manager operation)))
+    (cna-lisp.internal:with-native-rollback (record)
+      ;; The handle goes straight into the constructor, which is what receives it
+      ;; and therefore what records its destruction. Recording it here as well
+      ;; would destroy it twice: a construction that fails has already run its own
+      ;; ledger by the time this one runs. See %ADOPT-LOADED-EFFECT.
+      (let ((effect (microsoft.xna.framework.graphics::%adopt-loaded-effect
+                     game
+                     (%load-one-handle
+                      manager asset-name
+                      #'cna-lisp.internal.ffi::%content-manager-load-effect
+                      operation)
+                     operation)))
+        ;; Construction committed and dropped its ledger, so from here the undo is
+        ;; the effect's own disposal, which gives back the whole graph.
+        (funcall record (lambda () (microsoft.xna.framework:dispose effect)))
+        (%commit-loaded-asset manager asset-name record effect)))))

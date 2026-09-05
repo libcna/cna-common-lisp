@@ -2067,6 +2067,18 @@
       "ownership": "owns"
     },
     {
+      "name": "cna_effect_get_type_name_byte_count",
+      "header": "effects.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_effect_copy_type_name",
+      "header": "effects.h",
+      "thread": "game",
+      "ownership": "none"
+    },
+    {
       "name": "cna_effect_get_parameters",
       "header": "effects.h",
       "thread": "game",
@@ -3470,6 +3482,12 @@
     {
       "name": "cna_content_manager_load_sprite_font",
       "header": "content.h",
+      "thread": "game",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_content_manager_load_effect",
+      "header": "effects.h",
       "thread": "game",
       "ownership": "creates"
     },

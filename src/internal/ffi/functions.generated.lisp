@@ -874,6 +874,14 @@
 (defcfun ("cna_effect_clone" %effect-clone) :uint32
   (effect :uint64) (out-clone :pointer))
 
+;;; CNA_Result cna_effect_get_type_name_byte_count(CNA_EffectHandle effect, uint64_t* out_byte_count)
+(defcfun ("cna_effect_get_type_name_byte_count" %effect-get-type-name-byte-count) :uint32
+  (effect :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_effect_copy_type_name(CNA_EffectHandle effect, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_effect_copy_type_name" %effect-copy-type-name) :uint32
+  (effect :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
 ;;; CNA_Result cna_effect_get_parameters(CNA_EffectHandle effect, CNA_EffectParameterCollectionHandle* out_collection)
 (defcfun ("cna_effect_get_parameters" %effect-get-parameters) :uint32
   (effect :uint64) (out-collection :pointer))
@@ -1810,6 +1818,10 @@
 (defcfun ("cna_content_manager_load_sprite_font" %content-manager-load-sprite-font) :uint32
   (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-sprite-font :pointer) (out-texture :pointer))
 
+;;; CNA_Result cna_content_manager_load_effect(CNA_Handle content_manager, CNA_StringView asset_name, CNA_EffectHandle* out_effect)
+(defcfun ("cna_content_manager_load_effect" %content-manager-load-effect) :uint32
+  (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-effect :pointer))
+
 ;;; CNA_Result cna_content_manager_unload(CNA_Handle content_manager)
 (defcfun ("cna_content_manager_unload" %content-manager-unload) :uint32
   (content-manager :uint64))
@@ -2050,6 +2062,8 @@
     ("cna_effect_destroy" %effect-destroy :uint32 (:uint64) :thread :game :ownership "releases")
     ("cna_effect_dispose" %effect-dispose :uint32 (:uint64) :thread :game :ownership "none")
     ("cna_effect_clone" %effect-clone :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
+    ("cna_effect_get_type_name_byte_count" %effect-get-type-name-byte-count :uint32 (:uint64 :pointer) :thread :game :ownership "none")
+    ("cna_effect_copy_type_name" %effect-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "none")
     ("cna_effect_get_parameters" %effect-get-parameters :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
     ("cna_effect_get_techniques" %effect-get-techniques :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
     ("cna_effect_get_current_technique" %effect-get-current-technique :uint32 (:uint64 :pointer) :thread :game :ownership "owns")
@@ -2284,6 +2298,7 @@
     ("cna_content_manager_load_texture2d" %content-manager-load-texture-2d :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_load_texture_cube" %content-manager-load-texture-cube :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_load_sprite_font" %content-manager-load-sprite-font :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :game :ownership "creates")
+    ("cna_content_manager_load_effect" %content-manager-load-effect :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates")
     ("cna_content_manager_unload" %content-manager-unload :uint32 (:uint64) :thread :game :ownership "none")
     ("cna_render_target_cube_create" %render-target-cube-create :uint32 (:uint64 :pointer :pointer) :thread :game :ownership "creates")
     ("cna_graphics_device_set_render_target_cube" %graphics-device-set-render-target-cube :uint32 (:uint64 :uint64 :uint32) :thread :game :ownership "none")

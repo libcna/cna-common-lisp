@@ -194,7 +194,7 @@ placeholder methods that answer a default and claim success.
 <!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=455 -->
+<!-- generated:bound native functions=458 -->
 <!-- generated:bound native structs=67 -->
 
 <!-- generated-block:scoreboard-headline -->
@@ -217,7 +217,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **455 native routes** and **67 native structs**,
+The private foreign layer binds **458 native routes** and **67 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 
