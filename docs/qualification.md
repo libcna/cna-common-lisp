@@ -43,91 +43,88 @@ is where the CNA C ABI lives, and pinning by preference would mean the binding
 stops noticing the day CNA's ABI moves — which is the one thing this
 qualification exists to notice.
 
-**It has since moved.** CNA bumped the ABI to **0.22.0** on 2026-09-04. This
-binding still admits **0.21.0 only**. That is now a *measured* decision rather
-than an untouched one: 0.22.0 has been audited, and the audit is below.
+**It has since moved twice.** CNA bumped the ABI to **0.22.0** on 2026-09-04 and
+to **0.23.0** later the same day. This binding admits **{0.21.0, 0.22.0}**, and
+both halves of that set are qualified.
 
-### The ABI 0.22.0 audit, and why it is still not admitted
+### ABI 0.22.0 is admitted, and this is the evidence
 
-Audited on 2026-09-04 against `openeggbert/cnanext` at `c4561fd2b`, whose headers
-declare `0.22.0` (encoded **5632**) and whose `tools/c-api/abi_baseline.json`
-agrees.
+Qualified on 2026-09-05 against an exact, published source pair:
 
-What was measured, and what it says:
-
-| Step | Result |
+| | |
 | --- | --- |
-| Every bound route still exported | **all 328**, none absent from the 0.22.0 baseline |
-| The generated foreign layer, regenerated against 0.22.0's headers | **identical** except the two version constants — every prototype, every struct size, alignment, field offset and field size, every other constant and all seven callback typedefs are byte-for-byte the same |
-| Compiler-backed probe against 0.22.0's headers | **passes**, at `-Wall -Wextra -Werror -Wpedantic`, with every static assertion on layout and prototype holding |
-| A 0.22.0 library refused by the gate | yes — `cna-abi-rejected-error`, which is the gate doing its job |
+| CNA | `fb62662c9536f30a6a8bd080597002b8443b28d4` — on `origin/next`, the newest commit there whose headers declare 0.22.0 (the parent of `e18854238`, which raises the ABI to 0.23.0) |
+| sharp-runtime | `bfc826e1fa7eef1adb36df1c64782e9939a0af37` — `origin/next`, which declares and defines `StoragePaths::SetIsolatedStorageRootOverride` |
 
-So the *shape* of 0.22.0 is the shape this binding already binds, and a C
-compiler says so. That is the whole of steps one to seven of an admission.
+Neither is a local commit and neither tree was patched: both are detached
+worktrees of the published branches, and `git status` is clean in each.
 
-**It is still not admitted, and as of 2026-09-05 the reason has changed.** It was
-reproducibility: no 0.22.0 library could be built from published sources, so
-qualifying against one would have produced evidence CI could not check. **That
-blocker is gone.** Re-measured 2026-09-05, and the measurement that had been the
-same four times running is now different:
+What was run against a real 0.22.0 library built from that pair:
 
-* `openeggbert/cna:next` (`1704c3273`) still calls
-  `SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride`, twice,
-  in `modules/storage/src/StorageDevice.cpp` — unchanged;
-* but `c419f477` is **now on `origin/next`**: `git branch -r --contains c419f477`
-  prints it, where four earlier measurements printed nothing;
-* and `openeggbert/sharp-runtime:next` has moved to `bfc826e1`, which **declares
-  and defines** the member — `StoragePaths.hpp:41` and `StoragePaths.cpp:63`.
+| Gate | Result |
+| --- | --- |
+| Headers declare 0.22.0 | encoded **5632**, and `tools/c-api/abi_baseline.json` agrees |
+| Every bound route exported | **496 of 496**, none absent from the built library's 4055 exported symbols |
+| Generated foreign layer regenerated against 0.22.0's headers | **identical** but for the four version constants — every prototype, struct size, alignment, field offset and field size, every other constant and all ten callback typedefs byte for byte the same |
+| Compiler-backed probe, 0.22.0 headers | **passes** at `-Wall -Wextra -Werror -Wpedantic` |
+| The gate accepts it | `ENSURE-ABI-ADMITTED` answers 0.22.0 |
+| Whole suite, HEADLESS, native + shim | **0 failures, nothing not run** |
+| Whole suite, HEADLESS, no shim | **0 failures, nothing not run** |
+| Audio lanes, in separate processes | unavailable branch and dummy-driver state machine, both as on 0.21.0 |
+| Isolated consumer, 60 and 600 frames | passes |
+| Whole suite, SOFTWARE, with the rasterizer proof registry | see the SOFTWARE row below |
 
-So `cna:next` builds from published sources again, and a 0.22.0 library is
-something anybody can produce.
+**And 0.21.0 was re-run after the set grew**, because admitting a second version
+is a change to the first one's gate as well: the same suite, the same audio lanes
+and the same consumer against the 0.21.0 library, all green, with
+`ENSURE-ABI-ADMITTED` answering 0.21.0. The admitted set is a set, and both
+members are evidenced.
 
-**The admitted set stays `{0.21.0}` anyway, and the reason is now the honest
-one: the gates have not been run against 0.22.0.** Admission requires the whole
-suite, both qualification renderers, the isolated consumer and — since the Audio
-closure landed — the audio lanes, all against a real 0.22.0 library built from
-published sources. None of that has happened. A shape-identical foreign layer and
-a green compiler probe are steps one to seven of an admission, not the admission.
+**Making the set a set needed three fixes**, each of which had silently assumed
+one version. `generate.py --check` compared the generated layer byte for byte, so
+it could only ever pass against the version the checked-in files were generated
+from; `probe.generated.c` asserted `CNA_ABI_VERSION == 5376` in C; and
+`the-admitted-set-is-explicit-and-small` asserted a set of exactly one. The four
+ABI-version constants are now compared and asserted as *an admitted version*
+rather than one particular one — and nothing else is relaxed, so a version that
+changed a route, a layout or any other constant still fails. Verified by breaking
+it.
 
-What admission now needs, in order: build a HEADLESS and a SOFTWARE 0.22.0 from
-`cna:next` against `sharp-runtime:next`; run the complete gate set against both;
-and only then move `src/internal/abi-gate.lisp` and the manifest's
-`admitted_abi_versions` **together**, since the first gates the runtime and the
-second gates the generator.
+### Why the `Native` workflow is still pinned, and to what
 
-**As of 2026-09-04 that branch does not build from published sources, so
-`CNA_REF` is pinned to `056e57d478f8e6accfa9124337803e735b39f1e4`.** The reason
-is measured, not suspected:
+`CNA_REF` defaults to `fb62662c9536f30a6a8bd080597002b8443b28d4` — the 0.22.0
+commit above.
 
-* `openeggbert/cna:next` commit `822d3b960` ("scope isolated storage with game
-  identity", 2026-09-03) made `modules/storage/src/StorageDevice.cpp` call
-  `SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride`;
-* that member did not exist in `openeggbert/sharp-runtime:next` as published
-  (`bd282d101640005454639b372f67e119ffa5642b`) — the sharp-runtime commit that
-  adds it, `c419f477`, had not been pushed, and was re-measured on no remote
-  branch at all four times between 2026-09-04 and 2026-09-05;
-* so the build fails eleven minutes in, in CNA's storage module, with
-  `'SetIsolatedStorageRootOverride' is not a member of
-  'SharpRuntime::Storage::StoragePaths'`. Workflow run 33841079977 is the
-  evidence.
+**The old reason for a pin is gone.** Between 2026-09-04 and 2026-09-05 the pin
+existed because `cna:next` did not build from published sources at all:
+commit `822d3b960` made `modules/storage/src/StorageDevice.cpp` call
+`SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride`, the
+sharp-runtime commit adding it had not been pushed, and the build failed eleven
+minutes in with `'SetIsolatedStorageRootOverride' is not a member of
+'SharpRuntime::Storage::StoragePaths'` — workflow run 33841079977 is that
+evidence. `sharp-runtime:next` caught up on 2026-09-05 (`bfc826e1`), and that
+blocker is closed.
 
-This is not a CNA code defect. It is the consequence CNA's own `CHANGELOG.md`
-predicts: "`sharp-runtime` is the exception and is not pinned by the build …
-Recording the revision here is a stopgap." Two repositories moved out of step and
-nothing enforces the pairing.
+**The reason now is the ABI gate working.** `cna:next` is ABI 0.23.0, which this
+binding does not admit, so an unpinned job would fail the gate on its first run —
+correctly, and with nothing to fix but a decision. Pinning to the newest *admitted*
+commit on the branch is what following `next` means while the gate is the thing
+that decides.
 
-`056e57d47` is `822d3b960`'s parent. It is on `origin/next`, it is ABI 0.21.0, it
-carries every route `docs/generated/native-abi-manifest.json` binds, and it does
-not make that call.
+This is still not a preference for reproducibility. When 0.23.0 is audited and
+qualified the pin moves again, and `workflow_dispatch` with `cna_ref: next` is how
+to measure the tip without making it the default.
 
-**`sharp-runtime:next` has now caught up** (2026-09-05, `bfc826e1`), so the
-condition this pin was waiting on is met and the pin is a candidate for removal.
-It is deliberately **not** removed in the same change that measured the fact:
-dropping it means an unpinned `Native` job builds whatever `cna:next` is that
-day, and that is a change to what CI qualifies against, which deserves its own
-run rather than riding along with a documentation correction.
-`workflow_dispatch` with `cna_ref: next` is how to try it before making it the
-default, and it is the next thing to try rather than a thing still blocked.
+**Reproducing either half of the admitted set:**
+
+* **0.22.0** — the default. Nothing to pass.
+* **0.21.0** — `workflow_dispatch` on `Native` with
+  `cna_ref: 056e57d478f8e6accfa9124337803e735b39f1e4`. That commit is on
+  `origin/next`, is ABI 0.21.0, carries every route the manifest binds, and is
+  what this workflow qualified against until 2026-09-05.
+
+Locally, either is `CNA_NATIVE_LIBRARY`, `CNA_HEADERS` and `CNA_ABI_BASELINE`
+pointed at the matching build; the generator refuses a mismatch by name.
 
 Following a branch, or a pin, is only honest if every run records where it
 actually landed. So the `Native` workflow:

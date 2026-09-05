@@ -41,8 +41,10 @@ on:
       cna_ref:
         description: >
           CNA branch, tag or commit to build the C ABI from. Defaults to the
-          pinned commit below; pass 'next' to qualify the branch tip once
-          openeggbert/sharp-runtime:next has caught up with it.
+          pinned commit below -- the newest origin/next commit whose ABI this
+          binding admits. Pass 'next' to measure the branch tip's newer ABI, or
+          056e57d478f8e6accfa9124337803e735b39f1e4 to reproduce the 0.21.0 half
+          of the admitted set.
         required: false
         default: ''
       sharp_runtime_ref:
@@ -57,23 +59,30 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # A pinned commit on openeggbert/cna's `next` branch, not the branch tip, and
-  # the reason is not a preference for reproducibility -- it is that the tip does
-  # not build from published sources.
+  # A pinned commit on openeggbert/cna's `next` branch, not the branch tip.
   #
-  # CNA consumes sharp-runtime as a sibling checkout and pins no revision. Since
-  # cna:next commit 822d3b960 ("scope isolated storage with game identity",
-  # 2026-09-03) its storage module calls
-  # SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride, and that
-  # member does not exist on openeggbert/sharp-runtime:next as published. The
-  # build fails eleven minutes in with "is not a member of StoragePaths".
+  # **The old reason is gone and this is not it.** Between 2026-09-04 and
+  # 2026-09-05 this pin existed because cna:next called
+  # SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride and
+  # openeggbert/sharp-runtime:next did not publish that member, so the tip did not
+  # build from published sources at all. sharp-runtime:next has since caught up
+  # (bfc826e1 declares and defines it), and a cna:next build is reproducible again.
   #
-  # 056e57d47 is 822d3b960's parent: on origin/next, ABI 0.21.0, carrying every
-  # route docs/generated/native-abi-manifest.json binds, and free of that call.
-  # It is what this workflow qualifies against until the two repositories agree
-  # again, at which point the pin can be dropped for 'next'. docs/qualification.md
-  # has the policy and the evidence.
-  CNA_REF: ${{ github.event.inputs.cna_ref || '056e57d478f8e6accfa9124337803e735b39f1e4' }}
+  # The reason now is the ABI gate doing its job. cna:next has moved on to ABI
+  # **0.23.0** (e18854238, 2026-09-04), and this binding admits {0.21.0, 0.22.0} --
+  # see src/internal/abi-gate.lisp. Defaulting to the tip would fail the gate on
+  # the first run, which is the gate working rather than a build to fix.
+  #
+  # fb62662c9 is the newest commit on origin/next that this binding admits: ABI
+  # 0.22.0, the parent of the 0.23.0 bump, carrying every route
+  # docs/generated/native-abi-manifest.json binds. Moving the pin here from the
+  # 0.21.0 commit is what qualifies the newly admitted version continuously.
+  #
+  # To measure the next bump: workflow_dispatch with cna_ref: next. To reproduce
+  # the 0.21.0 half of the admitted set: workflow_dispatch with
+  # cna_ref: 056e57d478f8e6accfa9124337803e735b39f1e4. docs/qualification.md has
+  # the policy and the evidence for both.
+  CNA_REF: ${{ github.event.inputs.cna_ref || 'fb62662c9536f30a6a8bd080597002b8443b28d4' }}
   # CNA consumes sharp-runtime as a sibling checkout with add_subdirectory and
   # pins no revision -- "sharp-runtime is the exception and is not pinned by the
   # build", in CNA's own CHANGELOG, which calls recording the revision a stopgap.
