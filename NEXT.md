@@ -39,6 +39,10 @@ tools/qualification/isolated-consumer.sh ../cna-common-lisp-template
 #    -DCNA_GRAPHICS_RENDERER=SOFTWARE is a CPU rasteriser and needs no display.
 CNA_NATIVE_LIBRARY=/absolute/path/to/software/libcna_c_api.so \
     tools/qualification/rasterizer.sh
+
+# 7. the audio lanes, in separate processes because SDL's driver selection is
+#    process-global and latches at initialisation. Needs no sound card.
+tools/qualification/audio.sh
 ```
 
 The two qualification scripts do that for themselves. `with-virtual-screen.sh`
@@ -72,6 +76,8 @@ Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 | Prose consistency | every generated fact and block matches the reports |
 | Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: every kind its registry requires (<!-- generated:rasterizer proof count=8 -->) |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
+| Audio, unavailable branch | a driver that does not exist: no device, and every route needing one refused with `NO-AUDIO-HARDWARE-ERROR` |
+| Audio, state machine | `SDL_AUDIODRIVER=dummy`: a device opened with no speaker behind it, and play/pause/resume/stop transitioned |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
 | Construction atomicity | an exploding subclass of twelve resource families, plus `Game` and `GraphicsDeviceManager`, leaves no live child and lets the game shut down |
@@ -119,17 +125,33 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## Foundation 1 is release-ready, and frozen
 
-**`FOUNDATION_1_RELEASE_READY = yes`.** The decision is about the *foundation as a
-coherent milestone*, not about the scoreboard reaching zero. It never will: of the
-54 non-complete members, 39 are held up by CNA 0.21.0, 6 by types the profile has
-not selected, 5 by the Common Lisp projection, 3 by an object-model closure and 1
-by a missing proof. The category table below is the whole of that, generated.
+**`FOUNDATION_1_RELEASE_READY = yes`**, decided at `5a7f7c1` and unchanged since.
+
+**Read this section's numbers as Foundation 1's, and the generated scoreboard
+below as the whole binding's.** They were the same figure when this was written
+and they are not any more: Audio landed after the freeze and added eight complete
+types and 57 members to the selection. Foundation 1 at its release commit was
+
+    157 selected types, 2332 selected members
+    141 complete types, 16 partial, 0 missing
+    1854 complete members, 19 partial, 35 missing, 424 not applicable
+    0 disagreement diagnostics
+
+and the generated blocks further down are that plus Audio. Every non-complete
+member is still Foundation 1's -- Audio contributed none -- so the category table
+below describes the same 54 members it always did.
+
+The decision was about the *foundation as a coherent milestone*, not about the
+scoreboard reaching zero. It never will: of those 54, 39 are held up by CNA
+0.21.0, 6 by types the profile has not selected, 5 by the Common Lisp projection,
+3 by an object-model closure and 1 by a missing proof.
 
 The eight conditions, and what each rests on:
 
 | Condition | Evidence |
 | --- | --- |
 | All gates green | the gates in "Reproduce the state" and the table above, re-run at each audit; the suite reports no failure and nothing not run in all three native configurations, and in the fourth it reports the native layer as not run rather than as passed |
+| The freeze holds | Audio landed after it and changed no Foundation 1 member: still 35 missing and 19 partial, still 0 missing types, still 0 disagreements |
 | No known ownership or lifetime defect | ownership stress, construction atomicity over twelve resource families, content transaction rollback at four injection points, callback registry empty after each cycle |
 | Zero structural disagreements | `verify.py --strict`, over <!-- generated:diagnostic categories=18 --> diagnostic categories |
 | No stale live-state documentation | two audits; the second is recorded below, and found what the first left behind |
@@ -332,106 +354,92 @@ The shim stays optional -- a release must load with no C toolchain -- so without
 `CNA_LISP_SHIM` the setter refuses with a condition naming the variable, the
 command that builds one, and the reason. That is a packaging limit, not a blocker.
 
-## What to do next: Audio
+## Audio has landed, and what it is
 
-**One closure, and this file carries one.** When Audio lands, this section is
-replaced by the next closure rather than added to.
+The `SoundEffect` closure is **selected and complete**: eight types, 57 members,
+all eight complete, in the scoreboard above. This section is what a future reader
+needs to know about it that the scoreboard does not say. `docs/limitations.md` has
+the four CNA/XNA divergences and the projection limit; this is the shape.
 
-Audio is next because it was measured to be, at the Foundation 1 release audit,
-and the measurement said three things: both authorities are already pinned, CNA's
-ABI is complete for it, and all of its qualification levels are reachable in CI
-with no audio hardware.
-
-**Nothing here is implemented and the selection has not grown.** Do not add these
-types to `SELECTED` until the implementation lands with them: a selected type with
-nothing behind it is a missing type, and "no selected type is missing" is a
-property the release statement uses. This closure goes in whole, as every closure
-here does.
-
-### Both authorities are already pinned
-
-`Microsoft.Xna.Framework.Audio.SoundEffect` and `SoundEffectInstance` are in
-**`Microsoft.Xna.Framework.dll`** -- the assembly this project already pins by
-SHA-256 and already reads behaviour from. No new assembly has to be found or
-hashed. The 257-type contract snapshot carries **19 Audio types**, so the
-structural authority is in place too.
-
-### What CNA 0.21.0 actually has
-
-`modules/c-api/include/CNA/C/audio.h` is 1241 lines and exports **74 routes**.
-Inventoried whole rather than by guessing names, they fall into five families:
-
-| Family | Routes | Enough for the XNA type? |
+| Type | Members | Notes |
 | --- | ---: | --- |
-| `cna_sound_effect_*` | 25 | yes -- both `create_pcm16` forms, `from_encoded_ext`, `from_asset_ext`, `create_instance`, the four statics as get/set pairs, duration, the two sample-maths statics, name, type name, disposal |
-| `cna_sound_effect_instance_*` | 15 | yes -- play/pause/resume/stop, volume/pitch/pan/looping, `get_info`, `apply_3d` and `apply_3d_multi_ext` |
-| `cna_dynamic_sound_effect_instance_*` | 12 | a later closure; depends on this one |
-| `cna_microphone_*` | 18 | a later closure, and needs hardware |
-| `cna_audio_listener_init`, `cna_audio_emitter_init`, `cna_audio_get_capabilities`, `cna_audio_unsubscribe_ext` | 4 | yes |
+| `SoundEffect` | 17 | two constructors, `FromStream`, `CreateInstance`, two `Play` overloads, four process-wide statics, two static sample computations |
+| `SoundEffectInstance` | 16 | the transport, four bounded properties, both `Apply3D` overloads. **Not sealed in XNA** -- `DynamicSoundEffectInstance` derives from it -- and not sealed here |
+| `AudioListener` | 5 | a plain managed object; no handle |
+| `AudioEmitter` | 6 | the same, plus `DopplerScale` |
+| `SoundState` | 4 | `Playing` 0, `Paused` 1, `Stopped` 2 |
+| `AudioChannels` | 3 | `Mono` 1, `Stereo` 2 -- the member *is* the channel count, which is what makes the sample arithmetic arithmetic |
+| `NoAudioHardwareException` | 3 | a condition subclassing `CNA-NOT-SUPPORTED-ERROR` |
+| `InstancePlayLimitException` | 3 | a condition subclassing `CNA-INVALID-STATE-ERROR` |
 
-`cna_content_manager_load_sound_effect` exists as well, so
-`ContentManager.Load<SoundEffect>` is the canonical fifth loader route rather
-than something to invent -- and `LOADABLE-ASSET-TYPES` and the README's rendered
-block will pick it up on their own.
+**The two exceptions are conditions, not invented objects**, and each subclasses
+the exact CNA result-code condition that produces it. So a program can handle the
+XNA-specific class or the CNA one and both work, and a generic native failure is
+still neither -- which is the distinction the qualification has to prove and does.
 
-**Do not conclude a route is absent from one guessed name.** That mistake was made
-three times in the graphics closure, each time about a route that was in the
-header. Inventory the family.
+**`AudioListener` and `AudioEmitter` hold no handle.** CNA's own header calls them
+"a fixed value here rather than a handle", so the C struct is built at the
+`Apply3D` boundary and thrown away. XNA's private handedness flip -- it negates Z
+on the way in and again on the way out -- is deliberately **not** reproduced: it
+is its own inverse and no program can observe it. Reproducing it would match XNA's
+storage and break XNA's public behaviour.
 
-### The dependency-complete selection this suggests
+**The ownership graph is `Game -> SoundEffect -> SoundEffectInstance`**, which is
+what CNA documents, enforced before the ABI sees a wrong order. Four failure
+states are pinned by `tests/native/audio.lisp` -- a subclass initializer signalling
+after each of the two handles exists, a load whose cache insertion fails, and a
+load whose duration read fails -- and each must give every handle back exactly
+once, restore the child count and the cache, and leave the game able to shut down.
 
-Eight types: **`SoundEffect`**, **`SoundEffectInstance`**, **`AudioListener`**,
-**`AudioEmitter`**, **`SoundState`**, **`AudioChannels`**, and the two exceptions
-**`NoAudioHardwareException`** and **`InstancePlayLimitException`**. Their
-dependencies are already selected or already solved: `Vector3` and `TimeSpan`, and
-a `Stream` for `SoundEffect.FromStream`, which is an ordinary Common Lisp binary
-stream here.
+**`ContentManager.Load<SoundEffect>` uses the managed cache**, because CNA's route
+"deliberately does not cache" and XNA's `Load<T>` does. Two loads of one name
+answer one object. The fixture is a generated WAV; no recording is stored here.
 
-**All eight verified against the pinned 257-type contract**, which carries 19
-Audio types: 57 members exactly -- `SoundEffect` 17, `SoundEffectInstance` 16,
-`AudioListener` 5, `AudioEmitter` 6, `SoundState` 4, `AudioChannels` 3, and 3 each
-for the two exceptions, which are sealed and extend
-`System.Runtime.InteropServices.ExternalException`. `SoundEffectInstance` is
-**not** sealed -- `DynamicSoundEffectInstance` derives from it -- so its
-projection must leave room for that subclass without projecting it. Once the
-implementation starts, the generated report carries these numbers and this
-paragraph is not the place to read them.
+**Audio is not in the template, and that is deliberate.** The template is a
+deterministic graphics and content canary whose value is that it produces the same
+60/60 and 600/600 counts and the same pixels every run. Making its ordinary
+execution depend on an audio backend would make it fail on a machine with no sound
+card, which is most CI. A public-only audio consumer script is the right shape for
+that if it is ever wanted; a "hello game" beep to show Audio exists is not.
 
-The other eleven Audio types stay out, and for reasons rather than by omission:
-`AudioEngine`, `SoundBank`, `WaveBank`, `Cue`, `AudioCategory` and
-`RendererDetail` are XACT, and **CNA has no route for any of them**;
-`DynamicSoundEffectInstance` and the three `Microphone` types have full CNA route
-families but are each a closure of their own, and the microphone one needs
-hardware.
+### What Audio does not claim
 
-### The qualification levels are reachable, and this was measured
+No test here says a sound was heard. `tools/qualification/audio.sh` produces the
+unavailable branch from a driver that does not exist and the state machine from
+SDL's `dummy` driver, in separate processes because SDL's driver selection is
+process-global and latches at initialisation. **A dummy audio device is not
+audible hardware.** A state transition, a duration and a native acceptance are
+what this proves.
 
-The task a sound test usually fails is being green because nothing happened.
-CNA's design makes that avoidable: `cna_audio_get_capabilities` reports
-`is_playback_available` as **data**, returning `CNA_RESULT_SUCCESS` either way,
-and its header says so. Probed against the qualified HEADLESS library:
+## What to do next
 
-| Environment | Result | `is_playback_available` |
-| --- | --- | --- |
-| as the suite runs it | `SUCCESS` | **TRUE** -- a real device opens, even under HEADLESS |
-| `SDL_AUDIODRIVER=dummy` | `SUCCESS` | **TRUE** -- SDL's dummy driver still opens a device, so this is *not* how to reach the unavailable branch |
-| `SDL_AUDIODRIVER=nonexistent-driver` | `SUCCESS` | **FALSE** |
+**One closure, and this file carries one.** When the next one lands, this section
+is replaced rather than added to.
 
-So every level is reachable and none has to be a skip. **SDL's audio driver
-selection is process-global and latches at initialisation**, so the available and
-unavailable branches cannot be qualified in one image: the unavailable lane has to
-be its own process, with its own environment.
+The honest answer is that the next thing is **not** a namespace. Two jobs are in
+front of it, and both are now unblocked:
 
-**Nothing above is a claim that a sound was heard, and no test may make one.** A
-state transition, a duration and a native acceptance are what this can prove. A
-dummy audio device is not audible hardware.
+1. **Admit ABI 0.22.0, or record why not.** The reproducibility blocker that stood
+   through four measurements is gone as of 2026-09-05: `c419f477` is on
+   `origin/next` and `sharp-runtime:next` publishes the member `cna:next` needs.
+   0.22.0 is already audited and shape-identical; what is missing is that the
+   gates have not been run against it. Build a HEADLESS and a SOFTWARE 0.22.0 from
+   published sources, run the complete gate set against both -- audio lanes
+   included -- and move `src/internal/abi-gate.lisp` and the manifest's
+   `admitted_abi_versions` together, or write down what stopped it.
 
-### After Audio
+2. **Drop the `Native` workflow's CNA pin, or find out why it cannot go.** The pin
+   exists for the blocker above and its condition is now met. `workflow_dispatch`
+   with `cna_ref: next` is how to try it without making it the default.
 
-Models, media, storage, gamer services and networking are the remaining
-namespaces. **Measure the next one rather than starting it**: Audio is a large
-enough milestone to audit before expanding again, and the measurement is what
-decides which comes next.
+**Then measure the next namespace rather than starting one.** The candidates are
+`DynamicSoundEffectInstance` and the three `Microphone` types -- both with full
+CNA route families, both closures of their own, the microphone one needing
+hardware -- and `Model`, media, storage, gamer services and networking. Audio was
+chosen last time because it was *measured* to be reachable: both authorities
+pinned, CNA's ABI complete for it, and every qualification level reachable in CI
+without hardware. Do that measurement again before choosing, rather than taking
+the next name off a list.
 
 ## Architectural facts a future agent must not undo
 
@@ -441,18 +449,29 @@ decision and the reason it is not an oversight.
 
 **About the ABI**
 
-* **ABI 0.22.0 is audited, shape-identical, and correctly not admitted.** All 328
-  bound routes are still exported, the foreign layer regenerated against 0.22.0's
-  headers is identical but for two version constants, and the compiler probe
-  passes at `-Werror`. What is missing is a library anybody can build: `cna:next`
-  calls `StoragePaths::SetIsolatedStorageRootOverride` and the sharp-runtime
-  commit adding it, `c419f477`, is on **no remote branch**. Re-measured a fourth
-  time at this audit and unchanged -- `cna:next` has moved on to `cb2c90208` and
-  still makes that call, `sharp-runtime:next` is still `bd282d101`, and
-  `git branch -r --contains c419f477` is still empty. That last command is the
-  whole cheap re-check. **Do not admit 0.22.0 on local evidence.** The admitted
-  set lives in `src/internal/abi-gate.lisp` for the runtime and in the manifest's
-  `admitted_abi_versions` for the generator, and both move together.
+* **ABI 0.22.0 is audited, shape-identical, and still not admitted -- but the
+  reason changed on 2026-09-05.** All 328 bound routes are still exported, the
+  foreign layer regenerated against 0.22.0's headers is identical but for two
+  version constants, and the compiler probe passes at `-Werror`.
+
+  What was missing was a library anybody can build. `cna:next` calls
+  `StoragePaths::SetIsolatedStorageRootOverride`, and the sharp-runtime commit
+  adding it, `c419f477`, was on no remote branch -- measured four times, unchanged
+  every time. **It is on `origin/next` now**: `git branch -r --contains c419f477`
+  prints it, and `sharp-runtime:next` (`bfc826e1`) declares and defines the member
+  at `StoragePaths.hpp:41` and `StoragePaths.cpp:63`. So `cna:next` builds from
+  published sources again and the reproducibility blocker is gone.
+
+  **The admitted set stays `{0.21.0}` anyway, because the gates have not been run
+  against 0.22.0.** A shape-identical foreign layer and a green compiler probe are
+  steps one to seven of an admission, not the admission. What it needs now: build
+  a HEADLESS and a SOFTWARE 0.22.0 from published sources, run the complete gate
+  set against both -- the audio lanes included -- and only then move
+  `src/internal/abi-gate.lisp` and the manifest's `admitted_abi_versions`
+  **together**, since the first gates the runtime and the second gates the
+  generator. That is the next infrastructure job and it is no longer blocked on
+  anybody else. Until it is done, **do not admit 0.22.0**: nothing has run
+  against it.
 * To reproduce the 0.21.0 gates, point `CNA_ABI_BASELINE` at a 0.21.0 baseline --
   `cnanext 2b0c374a1` is the last commit carrying one -- rather than at whatever
   the checkout is on today, or the generator refuses with "supplied headers

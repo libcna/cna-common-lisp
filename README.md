@@ -142,6 +142,20 @@ stubs:
   keeps XNA's two collections, so a name loaded twice answers the same object and
   `Unload` disposes what it loaded -- in the order they have to go, a `SpriteFont`
   before the atlas it draws from;
+* the **`Microsoft.Xna.Framework.Audio` `SoundEffect` closure**: `SoundEffect`,
+  `SoundEffectInstance`, `AudioListener`, `AudioEmitter`, `SoundState`,
+  `AudioChannels` and the two exceptions XNA's audio surface raises, which are
+  projected as Common Lisp conditions subclassing the CNA result-code condition
+  each one comes from. **No public member takes a game**, as XNA's take none: CNA
+  permits one active game per process and the binding resolves it, the way
+  `Keyboard.GetState` already did. The constructors' validation is XNA's, in
+  XNA's order, and where CNA disagrees -- an unclamped `Volume`, a clamped
+  `Pitch`, a truncating `GetSampleDuration` -- XNA wins publicly and
+  `docs/limitations.md` records the difference. Qualified in two lanes, both
+  without a sound card: a driver that does not exist proves the
+  no-audio-hardware path, and SDL's `dummy` driver opens a device with no speaker
+  behind it so the play/pause/resume/stop state machine can be observed. **No
+  test claims a sound was heard**;
 * **`System.IO.Stream` as an ordinary Common Lisp binary stream**, which is what
   a language with its own equivalent abstraction should do with a BCL type that is
   not even in the profile's contract. `Texture2D.FromStream`, `SaveAsPng` and

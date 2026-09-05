@@ -65,24 +65,35 @@ What was measured, and what it says:
 So the *shape* of 0.22.0 is the shape this binding already binds, and a C
 compiler says so. That is the whole of steps one to seven of an admission.
 
-**It is still not admitted, and the reason is reproducibility.** Admission
-requires the whole suite, both qualification renderers and the isolated consumer
-to run against a real 0.22.0 library, and that library must be one anybody —
-including this repository's own CI — can build. As of this audit it is not:
+**It is still not admitted, and as of 2026-09-05 the reason has changed.** It was
+reproducibility: no 0.22.0 library could be built from published sources, so
+qualifying against one would have produced evidence CI could not check. **That
+blocker is gone.** Re-measured 2026-09-05, and the measurement that had been the
+same four times running is now different:
 
-* `openeggbert/cna`'s current `next` still calls
+* `openeggbert/cna:next` (`1704c3273`) still calls
   `SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride`, twice,
-  in `modules/storage/src/StorageDevice.cpp`;
-* the sharp-runtime commit that adds it, `c419f477`, is **on no remote branch**
-  — `git branch -r --contains c419f477` is empty;
-* `openeggbert/sharp-runtime:next` is still `bd282d101`, unmoved since the
-  previous measurement, and the member is absent from it.
+  in `modules/storage/src/StorageDevice.cpp` — unchanged;
+* but `c419f477` is **now on `origin/next`**: `git branch -r --contains c419f477`
+  prints it, where four earlier measurements printed nothing;
+* and `openeggbert/sharp-runtime:next` has moved to `bfc826e1`, which **declares
+  and defines** the member — `StoragePaths.hpp:41` and `StoragePaths.cpp:63`.
 
-A 0.22.0 library *can* be built on a machine that happens to hold the unpublished
-sharp-runtime commit, and one exists here. Qualifying against it would produce
-evidence nobody else could reproduce and CI could not check, which is not what
-the admitted set means. **The admitted set stays `{0.21.0}`**, and the thing that
-would change it is `sharp-runtime:next` catching up — not more effort here.
+So `cna:next` builds from published sources again, and a 0.22.0 library is
+something anybody can produce.
+
+**The admitted set stays `{0.21.0}` anyway, and the reason is now the honest
+one: the gates have not been run against 0.22.0.** Admission requires the whole
+suite, both qualification renderers, the isolated consumer and — since the Audio
+closure landed — the audio lanes, all against a real 0.22.0 library built from
+published sources. None of that has happened. A shape-identical foreign layer and
+a green compiler probe are steps one to seven of an admission, not the admission.
+
+What admission now needs, in order: build a HEADLESS and a SOFTWARE 0.22.0 from
+`cna:next` against `sharp-runtime:next`; run the complete gate set against both;
+and only then move `src/internal/abi-gate.lisp` and the manifest's
+`admitted_abi_versions` **together**, since the first gates the runtime and the
+second gates the generator.
 
 **As of 2026-09-04 that branch does not build from published sources, so
 `CNA_REF` is pinned to `056e57d478f8e6accfa9124337803e735b39f1e4`.** The reason
@@ -91,10 +102,10 @@ is measured, not suspected:
 * `openeggbert/cna:next` commit `822d3b960` ("scope isolated storage with game
   identity", 2026-09-03) made `modules/storage/src/StorageDevice.cpp` call
   `SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride`;
-* that member does not exist in `openeggbert/sharp-runtime:next` as published
+* that member did not exist in `openeggbert/sharp-runtime:next` as published
   (`bd282d101640005454639b372f67e119ffa5642b`) — the sharp-runtime commit that
-  adds it, `c419f477`, has not been pushed, and re-measured on 2026-09-04 is
-  still on no remote branch at all;
+  adds it, `c419f477`, had not been pushed, and was re-measured on no remote
+  branch at all four times between 2026-09-04 and 2026-09-05;
 * so the build fails eleven minutes in, in CNA's storage module, with
   `'SetIsolatedStorageRootOverride' is not a member of
   'SharpRuntime::Storage::StoragePaths'`. Workflow run 33841079977 is the
@@ -107,9 +118,16 @@ nothing enforces the pairing.
 
 `056e57d47` is `822d3b960`'s parent. It is on `origin/next`, it is ABI 0.21.0, it
 carries every route `docs/generated/native-abi-manifest.json` binds, and it does
-not make that call. **The pin should be dropped the moment `sharp-runtime:next`
-catches up**; until then `workflow_dispatch` with `cna_ref: next` is how to check
-whether it has.
+not make that call.
+
+**`sharp-runtime:next` has now caught up** (2026-09-05, `bfc826e1`), so the
+condition this pin was waiting on is met and the pin is a candidate for removal.
+It is deliberately **not** removed in the same change that measured the fact:
+dropping it means an unpinned `Native` job builds whatever `cna:next` is that
+day, and that is a change to what CI qualifies against, which deserves its own
+run rather than riding along with a documentation correction.
+`workflow_dispatch` with `cna_ref: next` is how to try it before making it the
+default, and it is the next thing to try rather than a thing still blocked.
 
 Following a branch, or a pin, is only honest if every run records where it
 actually landed. So the `Native` workflow:

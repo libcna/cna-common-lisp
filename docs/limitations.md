@@ -1356,13 +1356,157 @@ of cascading. Cascading would mean the binding deciding when a program's
 resources die, which is not the binding's decision, and there is no evidence that
 a particular cascade order is the right one.
 
+## Audio: four places CNA and XNA disagree, and XNA wins in each
+
+The `SoundEffect` closure is complete, and every divergence below is a place the
+projection had to choose. It chose XNA, because that is what a consumer's program
+was written against; each is pinned by a test that asserts **both** sides, so a
+CNA that changed would fail a test rather than silently changing this binding's
+public behaviour.
+
+### `Play` on a disposed effect throws; CNA answers false
+
+`cna_sound_effect_play`'s header says "a disposed effect answers `CNA_FALSE`
+rather than failing, which is the canonical behavior". It is not the canonical
+behaviour: `SoundEffect.Play` in the pinned assembly opens with an `IsDisposed`
+test and throws `ObjectDisposedException` before it reaches anything else. This
+binding's disposal check runs first, so a disposed effect signals
+`CNA-DISPOSED-ERROR` and CNA's `CNA_FALSE` branch is never reached from here.
+
+**`Duration` is the exception, and also XNA's.** Its getter is a bare `ldfld` over
+a field the constructor filled in — no disposal test, no native call — so a
+disposed `SoundEffect` still answers its duration there, and does here. Adding a
+guard would refuse a program XNA runs.
+
+### `Volume` is unclamped in CNA, `Pitch` is clamped, and XNA refuses both
+
+| Member | CNA | XNA, and so here |
+| --- | --- | --- |
+| `SoundEffectInstance.Volume` | any finite value, passed through | refuses outside [0, 1] |
+| `SoundEffectInstance.Pitch` | **clamps** to [-1, 1] | refuses outside [-1, 1] |
+| `SoundEffectInstance.Pan` | refuses outside [-1, 1] | the same |
+
+Two of the three would silently accept a value XNA throws on — a pitch of 2.0 is
+a silent 1.0 through CNA — so all three are checked here, before the route.
+
+### NaN is refused by three static properties and stored by one
+
+XNA's guards branch on *unordered* comparisons, and which branch a NaN takes is
+therefore a per-property fact rather than a consequence. Read from the IL:
+
+| Property | Range | NaN |
+| --- | --- | --- |
+| `SoundEffect.MasterVolume` | [0, 1] | **throws** (`blt.un`/`bgt.un`) |
+| `SoundEffect.DopplerScale` | [0, ∞) | **throws** (`blt.un`) |
+| `SoundEffect.SpeedOfSound` | (0, ∞) | **throws** (`ble.un`) |
+| `SoundEffect.DistanceScale` | [0, ∞) | **stored** (`bge.un`, and the clamp after it is ordered) |
+| `AudioEmitter.DopplerScale` | [0, ∞) | **stored** (`bge.un`) |
+
+The last two rows are the ones worth re-reading: `DistanceScale` alone among the
+four statics keeps a NaN, and `AudioEmitter.DopplerScale` — the per-emitter
+property of the same name as the static one above it — has the opposite answer to
+its namesake. `DistanceScale` also raises a value in [0, `float.Epsilon`] to
+`float.Epsilon`, because a zero distance scale would divide by zero.
+
+**A NaN reaching CNA is masked at the boundary, and has to be.** CNA does binary32
+arithmetic with the value and raises the IEEE invalid operation in hardware; SBCL
+leaves floating-point traps enabled, so that surfaces as
+`FLOATING-POINT-INVALID-OPERATION` out of a foreign call — a condition this API may
+not signal. The four static setters, `Play`'s settings triple and `Apply3D` run
+their native calls under `WITH-BINARY32-SEMANTICS` for that reason, which is what
+the CLR does and what XNA's storing a NaN presumes.
+
+### `GetSampleDuration` truncates in CNA and rounds in XNA
+
+`cna_sound_effect_get_sample_duration_ticks` answers **120000** ticks for 200
+bytes of mono PCM16 at 8000 Hz. XNA answers **125000**, which is the exact 12.5 ms
+those 100 frames hold: `AudioFormat.DurationFromSize` divides by the block align,
+computes the milliseconds in binary32 and hands the result to
+`TimeSpan.FromMilliseconds`, which rounds rather than truncating.
+
+So the two static sample computations are done here rather than through CNA — the
+same decision the math types make, for the same reason: "CNA has routes for all of
+it, and using them would make the binding's arithmetic CNA's rather than XNA's."
+The routes stay bound and `tests/native/audio.lisp` asserts both answers.
+
+**The effect's own duration route is not affected.**
+`cna_sound_effect_get_duration_ticks` agrees with XNA to the tick, which is why
+this is described as one computation's divergence and not as CNA's audio
+generally.
+
+## Audio has no game argument, and that is a projection limit
+
+XNA's audio API takes no `Game`: its constructors take none and its four static
+properties take none. CNA's routes need one — for lifetime on the creation routes,
+and "for thread affinity only" on the statics, which its own header says. The gap
+is closed the way `Keyboard.GetState` closes it: **CNA permits one active game per
+process**, so there is exactly one game a static audio operation could mean, and
+CNA-Lisp resolves it rather than making a consumer pass it. No public audio member
+takes a `:game`, because adding one would change XNA's API to accommodate CNA.
+
+**With no live game the operation signals `CNA-INVALID-STATE-ERROR`** naming what
+is missing. That is the whole cost, and it is a runtime limit rather than a
+structural one: the surface is complete, and a program that has created a game
+never meets it. The two pure static computations need no game at all and answer
+before one exists.
+
+### Three of the four static properties work with no audio device
+
+Measured, and not what a reader would guess: `DistanceScale`, `DopplerScale` and
+`SpeedOfSound` are 3D parameters CNA keeps in process state and answers without
+opening anything, so they read and write on a machine with no sound card.
+`MasterVolume` reaches the mixer and answers `CNA_RESULT_NOT_SUPPORTED`, which
+this binding raises as `NO-AUDIO-HARDWARE-ERROR` — the same mapping XNA's own
+`Helpers.ThrowExceptionFromErrorCode` applies to that code.
+
+### A missing sound asset is reported as NOT_SUPPORTED, not IO
+
+`cna_content_manager_load_sound_effect`'s header documents `CNA_RESULT_IO` for "a
+missing or undecodable asset", and a missing *font* really does answer IO. A
+missing sound answers `CNA_RESULT_NOT_SUPPORTED`, with a message naming the file
+it could not open.
+
+The consequence is that **this route's NOT_SUPPORTED cannot be mapped to
+`NO-AUDIO-HARDWARE-ERROR`**: the same code means either "no audio device" or "no
+such file", and the result code alone does not distinguish them. It stays the
+generic native condition, and a test asserts that a missing file is *not* reported
+as missing hardware.
+
+## What the audio tests prove, and what they do not
+
+**No test in this repository claims a sound was heard, and none may.** The
+evidence levels are kept apart the way the rasterization kinds are:
+
+| Level | What it means |
+| --- | --- |
+| `structural` | the enumerations, the sample arithmetic, the condition hierarchy and the listener and emitter defaults, checked with no device and no game |
+| `unavailable` | no playback device opened, and every route needing one refused with `NO-AUDIO-HARDWARE-ERROR` |
+| `state-machine` | a device opened, and play/pause/resume/stop transitioned as CNA's header says |
+
+`tools/qualification/audio.sh` produces the second and third **in separate
+processes**, because SDL's audio driver selection is process-global and latches at
+initialisation: one image cannot answer for two drivers. A driver that does not
+exist reaches the unavailable branch deterministically and with no hardware; SDL's
+`dummy` driver still opens a device, so the state machine is qualified with no
+speaker attached.
+
+**A dummy audio device is not audible hardware.** A state transition, a duration
+and a native acceptance are what these prove. Where a human would perceive a sound
+is not established here, and a future hardware qualification would be a different
+claim with different evidence.
+
 ## Not implemented in this milestone
 
 These are absent, and measured as absent, not faked:
 
 * `GameServiceContainer` and `Game.Services` — see below;
-* whole XNA namespaces outside the selected profile: **audio, media, storage,
-  gamer services and networking**;
+* whole XNA namespaces outside the selected profile: **media, storage, gamer
+  services and networking**. Audio was on this list and is not any more: the
+  eight-type `SoundEffect` closure is selected and complete. What is still absent
+  *within* audio is XACT — `AudioEngine`, `SoundBank`, `WaveBank`, `Cue`,
+  `AudioCategory`, `RendererDetail` — for which CNA has no route at all, and
+  `DynamicSoundEffectInstance` and the three `Microphone` types, which have full
+  CNA route families and are each a closure of their own;
 * the rest of the 3D resource surface — `Model`, `Texture3D`, and the
   `EffectParameter` member that needs one.
 
