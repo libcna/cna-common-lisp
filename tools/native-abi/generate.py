@@ -660,7 +660,7 @@ C_HEAD = """/* {name} --- GENERATED FILE, DO NOT EDIT.
 """
 
 
-def emit_probe(resolved):
+def emit_probe(resolved, manifest):
     out = [C_HEAD.format(name="probe.generated.c")]
     out.append("/* --- struct layout: every size, alignment, field offset and field size --- */")
     for s in resolved["structs"]:
@@ -687,9 +687,30 @@ def emit_probe(resolved):
                    % (c["name"], c["name"]))
     out.append("")
     out.append("/* --- constants --- */")
+    out.append("/* The four ABI-version constants are asserted to be *an admitted*")
+    out.append(" * version rather than one particular one, because the admitted set has")
+    out.append(" * more than one member and this file is generated once. Everything else")
+    out.append(" * below is an equality: the bound surface is identical across the set,")
+    out.append(" * and a version that changed a route, a layout or any other constant")
+    out.append(" * would fail here rather than being admitted by this exemption. */")
+    admitted_values = sorted(v["encoded"] for v in manifest["admitted_abi_versions"])
     for name, value in sorted(resolved["constants"].items()):
-        out.append('_Static_assert((int64_t)(%s) == INT64_C(%d), "%s value");'
-                   % (name, value, name))
+        if name == "CNA_ABI_VERSION":
+            out.append("_Static_assert(%s, \"CNA_ABI_VERSION is an admitted version\");"
+                       % " || ".join("(int64_t)(CNA_ABI_VERSION) == INT64_C(%d)" % v
+                                     for v in admitted_values))
+        elif name in ("CNA_ABI_VERSION_MAJOR", "CNA_ABI_VERSION_MINOR",
+                      "CNA_ABI_VERSION_PATCH"):
+            component = {"CNA_ABI_VERSION_MAJOR": lambda v: v >> 16,
+                         "CNA_ABI_VERSION_MINOR": lambda v: (v >> 8) & 0xFF,
+                         "CNA_ABI_VERSION_PATCH": lambda v: v & 0xFF}[name]
+            allowed = sorted({component(v) for v in admitted_values})
+            out.append("_Static_assert(%s, \"%s is an admitted version's\");"
+                       % (" || ".join("(int64_t)(%s) == INT64_C(%d)" % (name, v)
+                                      for v in allowed), name))
+        else:
+            out.append('_Static_assert((int64_t)(%s) == INT64_C(%d), "%s value");'
+                       % (name, value, name))
     out.append("")
     out.append("int cna_lisp_probe_ok(void) { return 1; }")
     return "\n".join(out) + "\n"
@@ -787,6 +808,60 @@ def sha256_of(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+VERSION_VARYING = ("+abi-version+", "+abi-version-major+", "+abi-version-minor+",
+                   "+abi-version-patch+", "CNA_ABI_VERSION", "CNA_ABI_VERSION_MAJOR",
+                   "CNA_ABI_VERSION_MINOR", "CNA_ABI_VERSION_PATCH")
+
+
+def _version_neutral(text):
+    """TEXT with the four ABI-version constants' *values* blanked out.
+
+    **Why `--check' compares this rather than the text.** The admitted set has more
+    than one version in it, and the generated foreign layer is byte-identical
+    across it except for these four numbers: regenerating against 0.22.0's headers
+    changes `+abi-version+' from 5376 to 5632, `+abi-version-minor+' from 21 to 22,
+    and nothing else in 496 functions, 72 structs, 511 constants and 10 callbacks.
+
+    Pinning one version's numbers into the checked-in files would make `--check'
+    pass against exactly one admitted version and fail against every other, so the
+    0.21.0 gate and the 0.22.0 gate could not both be green -- which would make the
+    admitted set a list of one, spelled as a list of several.
+
+    Blanking them is safe because **nothing reads them**: they are a transcription
+    of the header's own constants, and the version that actually gates anything is
+    the one the *loaded library* reports, which `ENSURE-ABI-ADMITTED' checks against
+    `*ADMITTED-ABI-VERSIONS*' at run time. The supplied headers' version is checked
+    against the admitted set separately, in `main', before any of this runs -- so a
+    version outside the set is still refused, and this only stops the check from
+    insisting on one particular admitted version.
+    """
+    stripped = text.lstrip()
+    if stripped.startswith("{"):
+        # The two generated reports. `abi_version' is the version they were
+        # rendered for, by design; the four constants travel with it.
+        try:
+            document = json.loads(text)
+        except ValueError:
+            document = None
+        if document is not None:
+            def scrub(node):
+                if isinstance(node, dict):
+                    return {k: ("<version>" if k == "abi_version" or k in VERSION_VARYING
+                                else scrub(v))
+                            for k, v in node.items()}
+                if isinstance(node, list):
+                    return [scrub(v) for v in node]
+                return node
+            return json.dumps(scrub(document), indent=2, sort_keys=True)
+    out = []
+    for line in text.split("\n"):
+        if any(name in line for name in VERSION_VARYING):
+            out.append(re.sub(r"\d+", "<version>", line))
+        else:
+            out.append(line)
+    return "\n".join(out)
+
+
 def write(path, text, check, changed):
     full = os.path.join(ROOT, path)
     old = None
@@ -794,6 +869,11 @@ def write(path, text, check, changed):
         with open(full, encoding="utf-8") as fh:
             old = fh.read()
     if old == text:
+        return
+    # A file that differs only in the ABI-version constants is current for every
+    # admitted version; see _VERSION_NEUTRAL. On a write it is still rewritten, so
+    # the checked-in files record the version they were last generated against.
+    if check and old is not None and _version_neutral(old) == _version_neutral(text):
         return
     changed.append(path)
     if check:
@@ -832,7 +912,8 @@ def main(argv):
           emit_functions(resolved), args.check, changed)
     write("src/framework/predefined-colors.generated.lisp",
           emit_colors(baseline), args.check, changed)
-    write("tools/native-abi/probe.generated.c", emit_probe(resolved), args.check, changed)
+    write("tools/native-abi/probe.generated.c", emit_probe(resolved, manifest),
+          args.check, changed)
     write("tools/native-abi/valueprobe.generated.c",
           emit_valueprobe(resolved), args.check, changed)
     write("tools/native-abi/shim.generated.c", emit_shim(resolved), args.check, changed)

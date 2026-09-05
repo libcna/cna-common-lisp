@@ -1825,10 +1825,16 @@ _Static_assert(sizeof(CNA_GameComponentEventCallback) == sizeof(void (*)(void)),
 _Static_assert(sizeof(CNA_GameComponentCollectionCallback) == sizeof(void (*)(void)), "CNA_GameComponentCollectionCallback size");
 
 /* --- constants --- */
-_Static_assert((int64_t)(CNA_ABI_VERSION) == INT64_C(5376), "CNA_ABI_VERSION value");
-_Static_assert((int64_t)(CNA_ABI_VERSION_MAJOR) == INT64_C(0), "CNA_ABI_VERSION_MAJOR value");
-_Static_assert((int64_t)(CNA_ABI_VERSION_MINOR) == INT64_C(21), "CNA_ABI_VERSION_MINOR value");
-_Static_assert((int64_t)(CNA_ABI_VERSION_PATCH) == INT64_C(0), "CNA_ABI_VERSION_PATCH value");
+/* The four ABI-version constants are asserted to be *an admitted*
+ * version rather than one particular one, because the admitted set has
+ * more than one member and this file is generated once. Everything else
+ * below is an equality: the bound surface is identical across the set,
+ * and a version that changed a route, a layout or any other constant
+ * would fail here rather than being admitted by this exemption. */
+_Static_assert((int64_t)(CNA_ABI_VERSION) == INT64_C(5376) || (int64_t)(CNA_ABI_VERSION) == INT64_C(5632), "CNA_ABI_VERSION is an admitted version");
+_Static_assert((int64_t)(CNA_ABI_VERSION_MAJOR) == INT64_C(0), "CNA_ABI_VERSION_MAJOR is an admitted version's");
+_Static_assert((int64_t)(CNA_ABI_VERSION_MINOR) == INT64_C(21) || (int64_t)(CNA_ABI_VERSION_MINOR) == INT64_C(22), "CNA_ABI_VERSION_MINOR is an admitted version's");
+_Static_assert((int64_t)(CNA_ABI_VERSION_PATCH) == INT64_C(0), "CNA_ABI_VERSION_PATCH is an admitted version's");
 _Static_assert((int64_t)(CNA_AUDIO_CHANNELS_MONO) == INT64_C(1), "CNA_AUDIO_CHANNELS_MONO value");
 _Static_assert((int64_t)(CNA_AUDIO_CHANNELS_STEREO) == INT64_C(2), "CNA_AUDIO_CHANNELS_STEREO value");
 _Static_assert((int64_t)(CNA_BLEND_DESTINATION_ALPHA) == INT64_C(8), "CNA_BLEND_DESTINATION_ALPHA value");

@@ -20,28 +20,44 @@
 
 (define-native-test the-admitted-set-is-explicit-and-small
   ;; Not a range and not "any 0.x": each entry is a version whose whole bound
-  ;; surface a compiler has checked.
+  ;; surface a compiler has checked, and the set is written out so that adding one
+  ;; is a decision rather than a consequence.
   (int:ensure-abi-admitted)
-  (is (= 1 (length (int:admitted-abi-versions))))
-  (is (equal '(5376) (int:admitted-abi-versions))))
+  (is (= 2 (length (int:admitted-abi-versions))))
+  (is (equal '(5376 5632) (int:admitted-abi-versions))
+      "0.21.0 and 0.22.0, in that order"))
+
+(define-native-test the-loaded-library-is-one-of-the-two-admitted-versions
+  ;; Which one depends on which library CNA_NATIVE_LIBRARY names, and both are
+  ;; qualified: docs/qualification.md records a run against each. This asserts the
+  ;; set has not quietly become a range -- a third version would be admitted by
+  ;; neither branch.
+  (let ((found (int:ensure-abi-admitted)))
+    (is (member found '(5376 5632))
+        "the loaded library reports ~a, which is neither admitted version"
+        (int:format-abi-version found))))
 
 (define-native-test a-version-outside-the-set-is-refused
   ;; The rejection path is exercised for real by narrowing the admitted set, not
   ;; by trusting that it would work.
-  (int:ensure-abi-admitted)
-  (let ((int::*admitted-abi-versions* '((1 . "0.0.1"))))
-    (handler-case (progn (int:ensure-abi-admitted) (fail "an unadmitted ABI was accepted"))
-      (xna:cna-abi-rejected-error (condition)
-        (is (= 5376 (xna:cna-abi-found-version condition)))
-        (is (equal '(1) (xna:cna-abi-admitted-versions condition)))
-        (is (string= (int:native-library-path) (xna:cna-native-library-path condition)))
-        (let ((text (princ-to-string condition)))
-          (is (search (int:native-library-path) text)
-              "the rejection does not name the library")
-          (is (search "0.21.0" text) "the rejection does not name the version found")
-          (is (search "0.0.1" text) "the rejection does not name the admitted set")
-          (is (search "CNA_NATIVE_LIBRARY" text)
-              "the rejection does not say how to supply a qualified library"))))))
+  ;; The expected version is read from the library rather than written down: this
+  ;; test runs against each admitted ABI in turn, and a literal here would make it
+  ;; a test of which library the runner happened to build.
+  (let ((loaded (int:ensure-abi-admitted)))
+    (let ((int::*admitted-abi-versions* '((1 . "0.0.1"))))
+      (handler-case (progn (int:ensure-abi-admitted) (fail "an unadmitted ABI was accepted"))
+        (xna:cna-abi-rejected-error (condition)
+          (is (= loaded (xna:cna-abi-found-version condition)))
+          (is (equal '(1) (xna:cna-abi-admitted-versions condition)))
+          (is (string= (int:native-library-path) (xna:cna-native-library-path condition)))
+          (let ((text (princ-to-string condition)))
+            (is (search (int:native-library-path) text)
+                "the rejection does not name the library")
+            (is (search (int:format-abi-version loaded) text)
+                "the rejection does not name the version found")
+            (is (search "0.0.1" text) "the rejection does not name the admitted set")
+            (is (search "CNA_NATIVE_LIBRARY" text)
+                "the rejection does not say how to supply a qualified library")))))))
 
 (define-native-test cffi-agrees-with-the-recorded-struct-layouts
   ;; Independent of the C probe: that one proves the recorded layout matches the
