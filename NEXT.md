@@ -450,30 +450,85 @@ what this proves.
 **One closure, and this file carries one.** When the next one lands, this section
 is replaced rather than added to.
 
-The honest answer is that the next thing is **not** a namespace. Two jobs are in
-front of it, and both are now unblocked:
+### The five candidates, measured
 
-1. **Admit ABI 0.22.0, or record why not.** The reproducibility blocker that stood
-   through four measurements is gone as of 2026-09-05: `c419f477` is on
-   `origin/next` and `sharp-runtime:next` publishes the member `cna:next` needs.
-   0.22.0 is already audited and shape-identical; what is missing is that the
-   gates have not been run against it. Build a HEADLESS and a SOFTWARE 0.22.0 from
-   published sources, run the complete gate set against both -- audio lanes
-   included -- and move `src/internal/abi-gate.lisp` and the manifest's
-   `admitted_abi_versions` together, or write down what stopped it.
+Audio was chosen last time because it was *measured* to be reachable rather than
+taken off a list, and this is that measurement repeated for the five closures in
+front of it. Type and member counts are the pinned 257-type contract's; route
+counts are `grep` over CNA 0.22.0's own headers; every determinism claim names the
+header sentence it rests on.
 
-2. **Drop the `Native` workflow's CNA pin, or find out why it cannot go.** The pin
-   exists for the blocker above and its condition is now met. `workflow_dispatch`
-   with `cna_ref: next` is how to try it without making it the default.
+| | Types | Members | CNA 0.22 routes | Selected deps missing | Hardware | Deterministic in CI |
+| --- | ---: | ---: | ---: | --- | --- | --- |
+| `DynamicSoundEffectInstance` | 1 | 10 | 12 | none | a playback device | **yes** — the SDL `dummy` driver already qualifies the audio lanes |
+| `Microphone` family | 3 | 21 | 18 | none | a **capture** device | **half** — see below |
+| `Model` family | 12 | 48 | 133 | none | none | **yes** — HEADLESS for lifecycle, SOFTWARE for pixels |
+| `Media` | 24 | 223 | 270 | none | a playback device; `MediaLibrary` scans the machine | **half** — an empty library is "an ordinary result" |
+| `Storage` | 3 | 35 | 49 | `IAsyncResult` | none — the filesystem | **yes** |
 
-**Then measure the next namespace rather than starting one.** The candidates are
-`DynamicSoundEffectInstance` and the three `Microphone` types -- both with full
-CNA route families, both closures of their own, the microphone one needing
-hardware -- and `Model`, media, storage, gamer services and networking. Audio was
-chosen last time because it was *measured* to be reachable: both authorities
-pinned, CNA's ABI complete for it, and every qualification level reachable in CI
-without hardware. Do that measurement again before choosing, rather than taking
-the next name off a list.
+**Every one of the five has complete CNA route coverage**, so route count is not
+the discriminator it was when Audio was chosen. Three things are.
+
+**Qualification determinism.** `cna_microphone_get_count`'s header says "a machine
+with no capture device answers zero, which is an ordinary answer and the one every
+verification tree gives" -- so the *absent* branch is deterministic and the
+*present* branch needs hardware CI does not have. There is no capture equivalent
+of `SDL_AUDIODRIVER=dummy` in this ABI. `Media` is the same shape one level up:
+`cna_media_library_create` "scans the device's music and picture locations" and an
+empty library is ordinary, so the empty branch qualifies and nothing else does.
+A closure whose interesting half cannot be qualified is worth less than its route
+count suggests, whatever Section 29's route inventory says.
+
+**Projection novelty.** `Storage`'s members are `BeginShowSelector` /
+`EndShowSelector` / `BeginOpenContainer` / `EndOpenContainer` -- the .NET
+asynchronous pair, returning `IAsyncResult`. CNA has already collapsed them:
+`cna_storage_device_show_selector` and its three siblings are synchronous. So the
+projection is possible and it needs a *decision* about how an async pair becomes
+one Common Lisp call, which is the first member in this binding to raise that
+question. `Model` raises a different one: XNA's `Model` has **no public
+constructor**, so `ContentManager.Load<Model>` is the only way in, and a
+qualification needs a `.cnb` model fixture -- generatable, because the CNB writer
+routes are there and `tools/qualification/` already generates a font and a wave
+byte for byte, but it is the largest fixture this repository would own.
+`DynamicSoundEffectInstance` raises none: it derives from `SoundEffectInstance`,
+which is already projected, and its one novelty is the `BufferNeeded` event, for
+which the event machinery already exists.
+
+**Size.** 10 members against 223. `Media` is larger than the whole Audio closure
+by a factor of four and would be the biggest single expansion this binding has
+attempted; `Model`'s 48 members include four collection-and-enumerator pairs whose
+projection is settled work rather than new work.
+
+### The recommendation: `DynamicSoundEffectInstance`
+
+It wins on the same grounds Audio won on, and the reasoning is the same shape.
+
+* **Every qualification level is reachable with no hardware.** Its buffers are
+  PCM the test generates, its state machine is `SoundEffectInstance`'s -- already
+  qualified against the `dummy` driver in a separate process -- and
+  `cna_dynamic_sound_effect_instance_get_pending_buffer_count` makes buffer
+  consumption *observable*, so "the runtime took the buffer" is an assertion and
+  not an assumption. Nothing else on the list can say that of its whole surface.
+* **It needs nothing this binding does not already have.** One type, ten members,
+  a base class that is projected, and an event.
+* **It is the only candidate that adds a capability rather than a surface.**
+  Procedurally generated and streamed audio is not reachable through any member
+  the binding has; `Storage` and `Media` largely re-express things a Lisp program
+  can already do with `OPEN`.
+
+**Not `Microphone`, and deliberately not "Audio phase 2".** It shares a namespace
+with `DynamicSoundEffectInstance` and nothing else: its route family is the same
+size, and half of it cannot be qualified without a capture device. Bundling the
+two would attach an unqualifiable half to a fully qualifiable closure and let the
+first hide behind the second's evidence.
+
+**`Model` is the runner-up and is the bigger prize** -- it is the largest missing
+*capability*, 133 routes are waiting, and the SOFTWARE lane can prove a drawn mesh
+reached pixels the same way it proves a drawn triangle does. What it needs first
+is the `.cnb` model fixture, and deciding to build one is a bigger decision than
+this measurement should make on its own.
+
+**Do not implement it yet.** This is a measurement, and the next task chooses.
 
 ## Architectural facts a future agent must not undo
 
