@@ -24,10 +24,13 @@ of anything holding a native resource.")
   (:documentation
    "Release OBJECT's native resource, deterministically and now.
 
-Refuses when OBJECT still owns live children -- CNA requires children to be
-destroyed before their parent, and a diagnosable refusal is better than the
-native failure that would follow. Calling DISPOSE on an already-disposed object
-does nothing, exactly as IDisposable.Dispose does."))
+Live children are handed to DISPOSE-OWNED-CHILDREN, whose default refuses: CNA
+requires children destroyed before their parent, and a diagnosable refusal is
+better than the native failure that would follow. One selected type overrides
+that because its pinned XNA behaviour cascades; see DISPOSE-OWNED-CHILDREN.
+
+Calling DISPOSE on an already-disposed object does nothing, exactly as
+IDisposable.Dispose does."))
 
 (defgeneric %check-disposable (object)
   (:documentation
@@ -68,6 +71,41 @@ be claiming to have released something it does not own.")
               so there is nothing here to dispose. Dispose the parent instead."
              :format-arguments (list (string-downcase (type-of object)))))))
 
+(defgeneric dispose-owned-children (object children)
+  (:documentation
+   "What disposing OBJECT does about the live native CHILDREN it still owns.
+
+**The default refuses, and that is the rule for every type but one.** CNA destroys
+children before their parent and refuses the other order, and deciding *when* a
+program's resources die is the program's decision rather than the binding's: a
+cascade invoked on its own initiative would dispose objects the caller still holds
+references to.
+
+The rule is a default and not an invariant, because one selected type's pinned
+behaviour is the other thing. `SoundEffect.Dispose' in the pinned assembly walks
+its `children' list and calls `Dispose()' on every live `SoundEffectInstance'
+before releasing its own handle, so a binding that refused there would be refusing
+a call XNA accepts. It overrides this, and `docs/limitations.md' records why.
+
+Specialise this **only** where pinned XNA semantics require it. A type that
+cascades because cascading was convenient would be inventing the one behaviour
+this default exists to prevent, and it would do so silently: a cascade cannot be
+distinguished from a correct teardown by looking at the result."))
+
+(defmethod dispose-owned-children ((object cna-lisp.internal:native-object) children)
+  (error 'cna-ownership-error
+         :operation "dispose"
+         :object-type (type-of object)
+         :format-control
+         "~a still owns ~d live native ~:[child~;children~] (~{~a~^, ~}). CNA destroys ~
+          children before their parent and refuses the other order; dispose them ~
+          first. Ownership does not cascade by default here, because deciding when a ~
+          resource dies is the program's decision, not the binding's -- a public type ~
+          cascades only where pinned XNA semantics require it, and this one does not."
+         :format-arguments (list (type-of object) (length children) (rest children)
+                                 (mapcar (lambda (c) (string-downcase (type-of c)))
+                                         children))))
+
 (defun %live-owned-children (object)
   (remove-if (lambda (child)
                (or (eq (cna-lisp.internal:ownership-of child) :parent-owned)
@@ -84,17 +122,7 @@ be claiming to have released something it does not own.")
     (%check-disposable object)
     (let ((children (%live-owned-children object)))
       (when children
-        (error 'cna-ownership-error
-               :operation "dispose"
-               :object-type (type-of object)
-               :format-control
-               "~a still owns ~d live native ~:[child~;children~] (~{~a~^, ~}). CNA destroys ~
-                children before their parent and refuses the other order; dispose them ~
-                first. CNA-Lisp does not cascade on your behalf, because deciding when a ~
-                resource dies is the program's decision, not the binding's."
-               :format-arguments (list (type-of object) (length children) (rest children)
-                                       (mapcar (lambda (c) (string-downcase (type-of c)))
-                                               children)))))
+        (dispose-owned-children object children)))
     (unwind-protect
          (cna-lisp.internal:destroy-native object)
       ;; The handle is invalid once CNA has released it, including when a shutdown
