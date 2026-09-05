@@ -98,9 +98,11 @@
       settable PackedValue property on a default-constructed Color; a constructor
       is the direct way to say it in Lisp.")
     (microsoft.xna.framework window-title
-     "The game window's title, reached through the game. GameWindow is not
-      projected as a type in this milestone, and the title is the one part of it
-      CNA's C ABI exposes without one.")
+     "The game window's title, reached through the game in one call instead of
+      two. GameWindow *is* projected now, so this is a convenience rather than the
+      only route: (window-title game) and (title (window game)) read the same CNA
+      title, and both read it rather than remembering it. XNA has no Game.Title,
+      which is why this is declared here.")
     (microsoft.xna.framework.graphics render-target-binding-equal
      "Structural equality for RenderTargetBinding, for the reason VIEWPORT-EQUAL
       records: the XNA struct has no Equals of its own, and a projected value type

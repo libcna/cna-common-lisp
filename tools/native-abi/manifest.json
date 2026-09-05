@@ -333,6 +333,9 @@
       "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST",
       "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET",
       "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING",
+      "CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED",
+      "CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED",
+      "CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED",
       "CNA_CUBE_MAP_FACE_POSITIVE_X",
       "CNA_CUBE_MAP_FACE_NEGATIVE_X",
       "CNA_CUBE_MAP_FACE_POSITIVE_Y",
@@ -931,6 +934,72 @@
       "header": "runtime.h",
       "thread": "owner",
       "ownership": "destroys"
+    },
+    {
+      "name": "cna_game_window_get_title_size",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_copy_title",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_get_allow_user_resizing",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_set_allow_user_resizing",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_get_client_bounds",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_get_current_orientation",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_get_screen_device_name_size",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_copy_screen_device_name",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_begin_screen_device_change",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_end_screen_device_change",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_window_subscribe",
+      "header": "runtime_window.h",
+      "thread": "owner",
+      "ownership": "creates-owned:game-event-registration:child-of-game"
     },
     {
       "name": "cna_title_location_get_path_size",

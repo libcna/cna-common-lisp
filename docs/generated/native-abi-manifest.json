@@ -24,10 +24,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 429,
+    "functions": 440,
     "structs": 65,
     "struct_fields": 492,
-    "constants": 503,
+    "constants": 506,
     "callbacks": 10,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -769,6 +769,302 @@
       "ownership": "destroys",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_game_unsubscribe(CNA_GameEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_game_window_get_title_size",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_get_title_size(CNA_Handle game, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_game_window_copy_title",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_copy_title(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_game_window_get_allow_user_resizing",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_allowed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_get_allow_user_resizing(CNA_Handle game, CNA_Bool* out_allowed)"
+    },
+    {
+      "name": "cna_game_window_set_allow_user_resizing",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "allowed",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_set_allow_user_resizing(CNA_Handle game, CNA_Bool allowed)"
+    },
+    {
+      "name": "cna_game_window_get_client_bounds",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bounds",
+          "c_type": "CNA_Rectangle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_get_client_bounds(CNA_Handle game, CNA_Rectangle* out_bounds)"
+    },
+    {
+      "name": "cna_game_window_get_current_orientation",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_orientation",
+          "c_type": "CNA_DisplayOrientation*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_get_current_orientation(CNA_Handle game, CNA_DisplayOrientation* out_orientation)"
+    },
+    {
+      "name": "cna_game_window_get_screen_device_name_size",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_get_screen_device_name_size(CNA_Handle game, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_game_window_copy_screen_device_name",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_copy_screen_device_name(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_game_window_begin_screen_device_change",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "will_be_full_screen",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_begin_screen_device_change(CNA_Handle game, CNA_Bool will_be_full_screen)"
+    },
+    {
+      "name": "cna_game_window_end_screen_device_change",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "screen_device_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "screen_device_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "client_width",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "client_height",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_end_screen_device_change(CNA_Handle game, CNA_StringView screen_device_name, int32_t client_width, int32_t client_height)"
+    },
+    {
+      "name": "cna_game_window_subscribe",
+      "header": "runtime_window.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "event",
+          "c_type": "CNA_GameWindowEvent",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_GameEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GameEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:game-event-registration:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_window_subscribe(CNA_Handle game, CNA_GameWindowEvent event, CNA_GameEventCallback callback, void* context, CNA_GameEventRegistrationHandle* out_registration)"
     },
     {
       "name": "cna_title_location_get_path_size",
@@ -16237,6 +16533,9 @@
     "CNA_GAME_EVENT_DEACTIVATED": 1,
     "CNA_GAME_EVENT_DISPOSED": 2,
     "CNA_GAME_EVENT_EXITING": 3,
+    "CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED": 0,
+    "CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED": 1,
+    "CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED": 2,
     "CNA_GESTURE_TYPE_DOUBLE_TAP": 2,
     "CNA_GESTURE_TYPE_DRAG_COMPLETE": 256,
     "CNA_GESTURE_TYPE_FLICK": 128,

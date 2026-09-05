@@ -130,6 +130,50 @@
 (defcfun ("cna_game_unsubscribe" %game-unsubscribe) :uint32
   (registration :uint64))
 
+;;; CNA_Result cna_game_window_get_title_size(CNA_Handle game, uint64_t* out_bytes)
+(defcfun ("cna_game_window_get_title_size" %game-window-get-title-size) :uint32
+  (game :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_game_window_copy_title(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_game_window_copy_title" %game-window-copy-title) :uint32
+  (game :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_game_window_get_allow_user_resizing(CNA_Handle game, CNA_Bool* out_allowed)
+(defcfun ("cna_game_window_get_allow_user_resizing" %game-window-get-allow-user-resizing) :uint32
+  (game :uint64) (out-allowed :pointer))
+
+;;; CNA_Result cna_game_window_set_allow_user_resizing(CNA_Handle game, CNA_Bool allowed)
+(defcfun ("cna_game_window_set_allow_user_resizing" %game-window-set-allow-user-resizing) :uint32
+  (game :uint64) (allowed :uint8))
+
+;;; CNA_Result cna_game_window_get_client_bounds(CNA_Handle game, CNA_Rectangle* out_bounds)
+(defcfun ("cna_game_window_get_client_bounds" %game-window-get-client-bounds) :uint32
+  (game :uint64) (out-bounds :pointer))
+
+;;; CNA_Result cna_game_window_get_current_orientation(CNA_Handle game, CNA_DisplayOrientation* out_orientation)
+(defcfun ("cna_game_window_get_current_orientation" %game-window-get-current-orientation) :uint32
+  (game :uint64) (out-orientation :pointer))
+
+;;; CNA_Result cna_game_window_get_screen_device_name_size(CNA_Handle game, uint64_t* out_bytes)
+(defcfun ("cna_game_window_get_screen_device_name_size" %game-window-get-screen-device-name-size) :uint32
+  (game :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_game_window_copy_screen_device_name(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_game_window_copy_screen_device_name" %game-window-copy-screen-device-name) :uint32
+  (game :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_game_window_begin_screen_device_change(CNA_Handle game, CNA_Bool will_be_full_screen)
+(defcfun ("cna_game_window_begin_screen_device_change" %game-window-begin-screen-device-change) :uint32
+  (game :uint64) (will-be-full-screen :uint8))
+
+;;; CNA_Result cna_game_window_end_screen_device_change(CNA_Handle game, CNA_StringView screen_device_name, int32_t client_width, int32_t client_height)
+(defcfun ("cna_game_window_end_screen_device_change" %game-window-end-screen-device-change) :uint32
+  (game :uint64) (screen-device-name-0 :pointer) (screen-device-name-1 :uint64) (client-width :int32) (client-height :int32))
+
+;;; CNA_Result cna_game_window_subscribe(CNA_Handle game, CNA_GameWindowEvent event, CNA_GameEventCallback callback, void* context, CNA_GameEventRegistrationHandle* out_registration)
+(defcfun ("cna_game_window_subscribe" %game-window-subscribe) :uint32
+  (game :uint64) (event :uint32) (callback :pointer) (context :pointer) (out-registration :pointer))
+
 ;;; CNA_Result cna_title_location_get_path_size(CNA_Handle game, uint64_t* out_bytes)
 (defcfun ("cna_title_location_get_path_size" %title-location-get-path-size) :uint32
   (game :uint64) (out-bytes :pointer))
@@ -1760,6 +1804,17 @@
     ("cna_game_get_graphics_device" %game-get-graphics-device :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows-callback-scoped:graphics-device")
     ("cna_game_subscribe" %game-subscribe :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates")
     ("cna_game_unsubscribe" %game-unsubscribe :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_game_window_get_title_size" %game-window-get-title-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_window_copy_title" %game-window-copy-title :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_window_get_allow_user_resizing" %game-window-get-allow-user-resizing :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_window_set_allow_user_resizing" %game-window-set-allow-user-resizing :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_game_window_get_client_bounds" %game-window-get-client-bounds :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_window_get_current_orientation" %game-window-get-current-orientation :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_window_get_screen_device_name_size" %game-window-get-screen-device-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_window_copy_screen_device_name" %game-window-copy-screen-device-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_game_window_begin_screen_device_change" %game-window-begin-screen-device-change :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_game_window_end_screen_device_change" %game-window-end-screen-device-change :uint32 (:uint64 :pointer :uint64 :int32 :int32) :thread :owner :ownership "none")
+    ("cna_game_window_subscribe" %game-window-subscribe :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates-owned:game-event-registration:child-of-game")
     ("cna_title_location_get_path_size" %title-location-get-path-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_title_location_copy_path" %title-location-copy-path :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_viewport" %graphics-device-get-viewport :uint32 (:uint64 :pointer) :thread :owner :ownership "none")

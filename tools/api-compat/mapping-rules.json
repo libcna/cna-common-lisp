@@ -75,6 +75,11 @@
           "setf": false,
           "reason": "The game's own content manager, answered by identity because XNA's is a field. Read-only, and the missing setter is deliberate: XNA's Game.Content = m assigns a reference, and CNA's cna_game_set_content_manager_ext *copies* -- its own header says \"the canonical setter takes a reference and copies, so this does too: the caller keeps its own manager\". Reading the property back would therefore answer a different object than the one assigned, so the member is reported partial rather than projected as something that silently means something else. docs/limitations.md.",
           "status": "partial"
+        },
+        "Window": {
+          "lisp": "window",
+          "generic": true,
+          "reason": "Game.Window over the GameWindow facade, answering the same object every time as XNA's property does. Get-only, as XNA's is."
         }
       },
       "not_applicable": {
@@ -84,8 +89,7 @@
         "OnActivated(Object,EventArgs)": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not.",
         "OnDeactivated(Object,EventArgs)": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not.",
         "ShowMissingRequirementMessage(Exception)": "Needs the CLR exception projection and a platform message box.",
-        "Services": "GameServiceContainer, which CNA does not have a container for. It has cna_game_services_contains_ext and remove_ext over a closed CNA_GAME_SERVICE_TYPE_* enum and no route that registers a service or hands one back, so GetService -- the member the type exists for -- cannot be answered for the two services the runtime registers. Not, as an earlier note claimed, because IGraphicsDeviceService is unprojectable: its five members are already complete on GraphicsDeviceManager, the type that implements it. docs/limitations.md carries the audit.",
-        "Window": "Needs GameWindow, which is not in the selection. **CNA has a full window surface** -- runtime_window.h carries AllowUserResizing, ClientBounds, CurrentOrientation, the screen device name and more, all keyed by the game handle rather than by a window handle -- so this is a type that has not been projected rather than a capability CNA lacks, and it is a self-contained closure whenever it is wanted."
+        "Services": "GameServiceContainer, which CNA does not have a container for. It has cna_game_services_contains_ext and remove_ext over a closed CNA_GAME_SERVICE_TYPE_* enum and no route that registers a service or hands one back, so GetService -- the member the type exists for -- cannot be answered for the two services the runtime registers. Not, as an earlier note claimed, because IGraphicsDeviceService is unprojectable: its five members are already complete on GraphicsDeviceManager, the type that implements it. docs/limitations.md carries the audit."
       },
       "events": {
         "Activated": {
@@ -7073,6 +7077,92 @@
       },
       "unimplemented": {
         "DeviceWindowHandle": "A System.IntPtr naming the native window. CNA refuses the question by design -- cna_graphics_device_get_device_window_handle answers CNA_RESULT_NOT_SUPPORTED after validating the device, because a native window handle is not something the stable C boundary hands out -- and an IntPtr is not a thing this projection has to hand one back in."
+      }
+    },
+    "Microsoft.Xna.Framework.GameWindow": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "game-window",
+      "lisp_kind": "class",
+      "member_overrides": {
+        "Title": {
+          "lisp": "title",
+          "generic": true,
+          "setf": true,
+          "reason": "GameWindow.Title. The getter is cna_game_window_get_title_size and ..._copy_title; the setter is cna_game_set_window_title, which is where XNA's protected SetTitle ends up too. MICROSOFT.XNA.FRAMEWORK:WINDOW-TITLE on the game is a declared extension reaching the same place in one call."
+        },
+        "AllowUserResizing": {
+          "lisp": "allow-user-resizing",
+          "generic": true,
+          "setf": true
+        },
+        "ClientBounds": {
+          "lisp": "client-bounds",
+          "generic": true
+        },
+        "ScreenDeviceName": {
+          "lisp": "screen-device-name",
+          "generic": true
+        },
+        "CurrentOrientation": {
+          "lisp": "current-orientation",
+          "generic": true,
+          "reason": "A DisplayOrientation *list*, because that enum carries the FlagsAttribute; the empty mask reads back as (:DEFAULT), its named zero."
+        },
+        "BeginScreenDeviceChange(Boolean)": {
+          "lisp": "begin-screen-device-change",
+          "generic": true
+        },
+        "EndScreenDeviceChange(String)": {
+          "lisp": "end-screen-device-change",
+          "generic": true,
+          "distinguished_by": "no-keywords",
+          "positional": 2,
+          "reason": "The one-argument overload, and CNA's route is what gives it its meaning: a width or height \"less than one\" keeps the current one, so this is the same route with both extents left out rather than a second route or a remembered size."
+        },
+        "EndScreenDeviceChange(String,Int32,Int32)": {
+          "lisp": "end-screen-device-change",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "client-width",
+            "client-height"
+          ],
+          "reason": "The three-argument overload. Either both extents or neither, because XNA has no overload with one."
+        }
+      },
+      "overload_families": {
+        "EndScreenDeviceChange": {
+          "lisp": "end-screen-device-change",
+          "reason": "Two overloads, one generic function, the supplied keywords selecting between them: none of :CLIENT-WIDTH and :CLIENT-HEIGHT is EndScreenDeviceChange(String), both is the three-argument one, and one of the two is refused."
+        }
+      },
+      "events": {
+        "ClientSizeChanged": {
+          "add": "add-client-size-changed-handler",
+          "remove": "remove-client-size-changed-handler",
+          "reason": "Over cna_game_window_subscribe. CNA gives a window registration the same handle type and the same release route as a game's -- its header says \"a window registration and a game registration are the same kind of thing and one route releases both\" -- so one mechanism serves both."
+        },
+        "OrientationChanged": {
+          "add": "add-orientation-changed-handler",
+          "remove": "remove-orientation-changed-handler"
+        },
+        "ScreenDeviceNameChanged": {
+          "add": "add-screen-device-name-changed-handler",
+          "remove": "remove-screen-device-name-changed-handler"
+        }
+      },
+      "not_applicable": {
+        "SetTitle(String)": "The protected implementation of the Title setter, which a platform window overrides. Common Lisp has no protected methods, the setter itself is projected, and there is nothing for an override to sit between.",
+        "SetSupportedOrientations(DisplayOrientation)": "Protected-internal: not part of the public surface a consumer can reach, and the public way to say the same thing is GraphicsDeviceManager.SupportedOrientations, which is complete."
+      },
+      "unimplemented": {
+        "Handle": "A System.IntPtr naming the native window. cna_game_window_get_native_handle_ext answers a uint64 rather than refusing, so unlike PresentationParameters.DeviceWindowHandle the number is available -- what is missing is a type to put it in. This projection has no IntPtr, and handing back a bare integer that a consumer can do nothing safe with is not one.",
+        "OnActivated()": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnActivated *is* what raises Activated, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window.",
+        "OnDeactivated()": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnDeactivated *is* what raises Deactivated, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window.",
+        "OnPaint()": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnPaint *is* what raises Paint, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window.",
+        "OnScreenDeviceNameChanged()": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnScreenDeviceNameChanged *is* what raises ScreenDeviceNameChanged, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window.",
+        "OnClientSizeChanged()": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnClientSizeChanged *is* what raises ClientSizeChanged, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window.",
+        "OnOrientationChanged()": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnOrientationChanged *is* what raises OrientationChanged, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window."
       }
     }
   }

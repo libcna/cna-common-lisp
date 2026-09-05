@@ -190,6 +190,13 @@
    #:game-time #:total-game-time #:elapsed-game-time #:is-running-slowly
    #:total-game-time-seconds #:elapsed-game-time-seconds
    #:+ticks-per-second+
+   ;; --- GameWindow ---------------------------------------------------------
+   #:game-window #:window #:title #:allow-user-resizing #:client-bounds
+   #:current-orientation #:screen-device-name
+   #:begin-screen-device-change #:end-screen-device-change
+   #:add-client-size-changed-handler #:remove-client-size-changed-handler
+   #:add-orientation-changed-handler #:remove-orientation-changed-handler
+   #:add-screen-device-name-changed-handler #:remove-screen-device-name-changed-handler
    ;; --- TitleContainer ----------------------------------------------------
    #:title-container-open-stream
    ;; --- GraphicsDeviceManager's preference surface -------------------------

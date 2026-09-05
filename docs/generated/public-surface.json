@@ -276,6 +276,28 @@
           "documentation": "Game.Activated: the game gained focus.\n\nHANDLER is called with the game and nothing else, on the thread CNA raises the\nevent on."
         },
         {
+          "name": "add-client-size-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.ClientSizeChanged: the client area changed size.\n\nHANDLER is called with the window. The new size is read from CLIENT-BOUNDS: the\nevent carries nothing, on both sides."
+        },
+        {
           "name": "add-component",
           "fbound": true,
           "macro": false,
@@ -540,6 +562,50 @@
           "documentation": "Game.Exiting: the game is exiting.\n\nThis only observes. ON-EXITING is the overridable step that runs as part of the\nshutdown; a handler here cannot stop it."
         },
         {
+          "name": "add-orientation-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.OrientationChanged: the display orientation changed."
+        },
+        {
+          "name": "add-screen-device-name-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.ScreenDeviceNameChanged: the window moved to another display."
+        },
+        {
           "name": "add-update-order-changed-handler",
           "fbound": true,
           "macro": false,
@@ -698,6 +764,30 @@
           "documentation": "Every member of PLANE-INTERSECTION-TYPE, as keywords, in value order."
         },
         {
+          "name": "allow-user-resizing",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game-window"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "game-window"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.AllowUserResizing."
+        },
+        {
           "name": "apply-changes",
           "fbound": true,
           "macro": false,
@@ -759,6 +849,28 @@
           "constant": false,
           "value": null,
           "documentation": "Game.BeginRun(). Runs once, before the first frame of a run."
+        },
+        {
+          "name": "begin-screen-device-change",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game-window",
+            "will-be-full-screen"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.BeginScreenDeviceChange(Boolean): start moving or resizing.\n\nPaired with END-SCREEN-DEVICE-CHANGE, as XNA pairs them."
         },
         {
           "name": "black",
@@ -1593,6 +1705,27 @@
           "constant": false,
           "value": null,
           "documentation": "GameComponentCollection.Clear."
+        },
+        {
+          "name": "client-bounds",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game-window"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.ClientBounds: the window's client rectangle."
         },
         {
           "name": "clr-type-name",
@@ -3365,6 +3498,27 @@
           "documentation": "Color.Cornflower Blue: a fresh Color each call."
         },
         {
+          "name": "current-orientation",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game-window"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.CurrentOrientation: the orientation the window is displayed at.\n\nA *list* of keywords, because DisplayOrientation carries the FlagsAttribute, and\nthe empty mask reads back as (:DEFAULT), which is that enum's named zero."
+        },
+        {
           "name": "curve",
           "fbound": false,
           "macro": false,
@@ -4526,6 +4680,34 @@
           "documentation": "Game.EndRun(). Runs once, after the last frame of a run."
         },
         {
+          "name": "end-screen-device-change",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game-window",
+            "screen-device-name",
+            "&key",
+            "client-width",
+            "client-height"
+          ],
+          "keywords": [
+            "client-height",
+            "client-width"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.EndScreenDeviceChange: both overloads, the keywords selecting one.\n\n    (end-screen-device-change window name)\n    (end-screen-device-change window name :client-width 800 :client-height 480)\n\nXNA has `EndScreenDeviceChange(String)' and\n`EndScreenDeviceChange(String, Int32, Int32)', and CNA has one route whose\ndocumentation gives the first its meaning: a width or height \"less than one\"\nkeeps the current one. So the one-argument overload is this route with both left\nout, rather than a second route or a remembered size. Either both extents or\nneither, because XNA has no overload with one."
+        },
+        {
           "name": "event-args-game-component",
           "fbound": true,
           "macro": false,
@@ -4690,6 +4872,31 @@
           "constant": false,
           "value": null,
           "documentation": "A snapshot of the game loop's timing. Instances are produced by the runtime\nand handed to UPDATE and DRAW; a consumer does not create them."
+        },
+        {
+          "name": "game-window",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:game-window",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.GameWindow: the window a game runs in.\n\nReached through MICROSOFT.XNA.FRAMEWORK:WINDOW, which answers the same object\nevery time as XNA's property does. A facade over the game, holding no native\nhandle: every CNA window route takes the game's.\n\nAbstract in XNA, and this is not a projection of a concrete platform window --\nit is the members a program can reach, over the routes CNA has."
         },
         {
           "name": "graphics-device",
@@ -9271,6 +9478,28 @@
           "documentation": "The `-=' of add-activated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
+          "name": "remove-client-size-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-client-size-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
           "name": "remove-component",
           "fbound": true,
           "macro": false,
@@ -9557,6 +9786,50 @@
           "documentation": "The `-=' of add-exiting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
+          "name": "remove-orientation-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-orientation-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
+          "name": "remove-screen-device-name-changed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-screen-device-name-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+        },
+        {
           "name": "remove-update-order-changed-handler",
           "fbound": true,
           "macro": false,
@@ -9662,6 +9935,27 @@
           "constant": false,
           "value": null,
           "documentation": "Game.RunOneFrame(): process host events and run exactly one frame."
+        },
+        {
+          "name": "screen-device-name",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game-window"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.ScreenDeviceName: the display the window is on."
         },
         {
           "name": "supported-orientations",
@@ -9776,6 +10070,30 @@
           "constant": false,
           "value": null,
           "documentation": "Game.Tick(): one update and, unless drawing was suppressed, one draw. Unlike\nRUN-ONE-FRAME it does not process host events."
+        },
+        {
+          "name": "title",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game-window"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "game-window"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameWindow.Title: the window's caption."
         },
         {
           "name": "title-container-open-stream",
@@ -12455,12 +12773,33 @@
           "documentation": "Color.White: a fresh Color each call."
         },
         {
+          "name": "window",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.Window: the window this game runs in.\n\nThe same object every time, as XNA's property is. A facade over the game, so it\nis not disposed and disposing it is refused with a diagnosable condition.\n\nGet-only, as XNA's is."
+        },
+        {
           "name": "window-title",
           "fbound": true,
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "object"
+            "game"
           ],
           "keywords": [],
           "setf_fbound": true,
@@ -12476,7 +12815,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": null
+          "documentation": "GameWindow.Title, reached through the game. A declared extension.\n\n**Read from CNA, not remembered.** It used to answer the slot the game was\ncreated with, which is the same string only until something sets the title -- and\nonce `MICROSOFT.XNA.FRAMEWORK:WINDOW' existed, `(setf (title (window game)) ...)'\nwas exactly that something, and the two readers disagreed. A test caught it. The\ncreation title is still kept, because the constructor needs it before there is a\ngame to ask, but nothing reads it afterwards."
         },
         {
           "name": "with-disposal",
@@ -30398,7 +30737,7 @@
       "symbols": [
         "window-title"
       ],
-      "reason": "The game window's title, reached through the game. GameWindow is not\n      projected as a type in this milestone, and the title is the one part of it\n      CNA's C ABI exposes without one."
+      "reason": "The game window's title, reached through the game in one call instead of\n      two. GameWindow *is* projected now, so this is a convenience rather than the\n      only route: (window-title game) and (title (window game)) read the same CNA\n      title, and both read it rather than remembering it. XNA has no Game.Title,\n      which is why this is declared here."
     },
     {
       "package": "microsoft.xna.framework.graphics",

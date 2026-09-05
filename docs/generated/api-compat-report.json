@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 154,
-  "member_count": 2292
+  "type_count": 155,
+  "member_count": 2312
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 154,
-  "members": 2292,
+  "types": 155,
+  "members": 2312,
   "types_by_status": {
-   "partial": 14,
+   "partial": 15,
    "complete": 140
   },
   "members_by_status": {
-   "complete": 1821,
-   "missing": 34,
-   "not-applicable": 422,
+   "complete": 1833,
+   "missing": 40,
+   "not-applicable": 424,
    "partial": 15
   },
-  "diagnostics": 34,
+  "diagnostics": 40,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 34,
+   "missing_member": 40,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -83,7 +83,7 @@
     "IsMouseVisible": "complete",
     "TargetElapsedTime": "complete",
     "IsFixedTimeStep": "complete",
-    "Window": "missing",
+    "Window": "complete",
     "IsActive": "complete",
     "GraphicsDevice": "complete",
     "Content": "partial",
@@ -210,6 +210,33 @@
     "new()": "complete"
    },
    "lisp": "microsoft.xna.framework:launch-parameters"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameWindow",
+   "status": "partial",
+   "members": {
+    "BeginScreenDeviceChange(Boolean)": "complete",
+    "EndScreenDeviceChange(String,Int32,Int32)": "complete",
+    "EndScreenDeviceChange(String)": "complete",
+    "SetTitle(String)": "not-applicable",
+    "SetSupportedOrientations(DisplayOrientation)": "not-applicable",
+    "OnActivated()": "missing",
+    "OnDeactivated()": "missing",
+    "OnPaint()": "missing",
+    "OnScreenDeviceNameChanged()": "missing",
+    "OnClientSizeChanged()": "missing",
+    "OnOrientationChanged()": "missing",
+    "Title": "complete",
+    "Handle": "missing",
+    "AllowUserResizing": "complete",
+    "ClientBounds": "complete",
+    "ScreenDeviceName": "complete",
+    "CurrentOrientation": "complete",
+    "ScreenDeviceNameChanged": "complete",
+    "ClientSizeChanged": "complete",
+    "OrientationChanged": "complete"
+   },
+   "lisp": "microsoft.xna.framework:game-window"
   },
   {
    "name": "Microsoft.Xna.Framework.TitleContainer",
@@ -3443,13 +3470,43 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.Window",
-   "detail": "Needs GameWindow, which is not in the selection. **CNA has a full window surface** -- runtime_window.h carries AllowUserResizing, ClientBounds, CurrentOrientation, the screen device name and more, all keyed by the game handle rather than by a window handle -- so this is a type that has not been projected rather than a capability CNA lacks, and it is a self-contained closure whenever it is wanted."
+   "subject": "Microsoft.Xna.Framework.GameComponentCollection.new()",
+   "detail": "XNA's constructor is public and a standalone collection is legal there, if useless -- a Game makes its own and drives that one. CNA has no route for a collection apart from a game's: `a game owns exactly one component collection, so the collection needs no handle of its own and every route addresses the game's`. So a standalone one is not projected rather than faked."
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GameComponentCollection.new()",
-   "detail": "XNA's constructor is public and a standalone collection is legal there, if useless -- a Game makes its own and drives that one. CNA has no route for a collection apart from a game's: `a game owns exactly one component collection, so the collection needs no handle of its own and every route addresses the game's`. So a standalone one is not projected rather than faked."
+   "subject": "Microsoft.Xna.Framework.GameWindow.OnActivated()",
+   "detail": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnActivated *is* what raises Activated, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GameWindow.OnDeactivated()",
+   "detail": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnDeactivated *is* what raises Deactivated, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GameWindow.OnPaint()",
+   "detail": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnPaint *is* what raises Paint, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GameWindow.OnScreenDeviceNameChanged()",
+   "detail": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnScreenDeviceNameChanged *is* what raises ScreenDeviceNameChanged, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GameWindow.OnClientSizeChanged()",
+   "detail": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnClientSizeChanged *is* what raises ClientSizeChanged, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GameWindow.OnOrientationChanged()",
+   "detail": "A protected raiser, and the half that cannot be projected is the half the member exists for: in XNA OnOrientationChanged *is* what raises OrientationChanged, and a platform window is what calls it. CNA raises, and reaches Lisp only through one callback per subscribed handler, so an override could notify but never suppress. GameWindow is abstract in XNA and these six are its extension point for a platform; this projection is not a platform window."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.GameWindow.Handle",
+   "detail": "A System.IntPtr naming the native window. cna_game_window_get_native_handle_ext answers a uint64 rather than refusing, so unlike PresentationParameters.DeviceWindowHandle the number is available -- what is missing is a type to put it in. This projection has no IntPtr, and handing back a bare integer that a consumer can do nothing safe with is not one."
   },
   {
    "category": "missing_member",

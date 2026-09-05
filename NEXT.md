@@ -100,31 +100,31 @@ the run's artifact, and `workflow_dispatch` takes `cna_ref` and
 
 ## The measured frontier
 
-<!-- generated:selected types=154 -->
-<!-- generated:selected members=2292 -->
+<!-- generated:selected types=155 -->
+<!-- generated:selected members=2312 -->
 <!-- generated:complete types=140 -->
-<!-- generated:partial types=14 -->
+<!-- generated:partial types=15 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1821 -->
+<!-- generated:complete members=1833 -->
 <!-- generated:partial members=15 -->
-<!-- generated:missing members=34 -->
-<!-- generated:not-applicable members=422 -->
+<!-- generated:missing members=40 -->
+<!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 154 types, 2292 members.
+Selection **Foundation 1 and the managed closures**: 155 types, 2312 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **140** |
-| Types partial | **14** |
+| Types partial | **15** |
 | Types missing | **0** |
-| Members complete | **1821** |
+| Members complete | **1833** |
 | Members partial | **15** |
-| Members missing | **34** |
-| Members not applicable | **422** |
+| Members missing | **40** |
+| Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -140,7 +140,7 @@ the whole of `Microsoft.Xna.Framework.Input`** -- the keyboard, the mouse, the
 and the nine enumerations they are built from.
 
 **No selected type is missing.**
-<!-- generated:partial types=14 --> are partial, and this is where the remaining
+<!-- generated:partial types=15 --> are partial, and this is where the remaining
 members actually are:
 
 <!-- generated-block:partial-frontier -->
@@ -148,7 +148,8 @@ members actually are:
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 10 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
-| `M.X.F.Game` | 5 | 1 |
+| `M.X.F.GameWindow` | 7 | 0 |
+| `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
@@ -174,7 +175,8 @@ one.
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 10 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
-| `M.X.F.Game` | 5 | 1 |
+| `M.X.F.GameWindow` | 7 | 0 |
+| `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
@@ -243,10 +245,9 @@ the graph after each closure instead of following this list once it has moved.
    Read `unimplemented` in `tools/api-compat/mapping-rules.json` before assuming
    anything about what is left.
 
-   The first of the three has since been done -- `GraphicsDevice`'s four
-   payload-free events are complete. Two left: **`Game.Window`** needs
-   only the `GameWindow` type, because `runtime_window.h` is a full window surface
-   keyed by the game handle; and **`GraphicsDevice.Adapter`** needs `GraphicsAdapter`,
+   Two of the three have since been done -- `GraphicsDevice`'s four payload-free
+   events, and `Game.Window` with the whole `GameWindow` type. One left:
+   **`GraphicsDevice.Adapter`** needs `GraphicsAdapter`,
    whose thirteen CNA routes all take a *callback-scoped device handle* -- so
    projecting it inherits a scope rule XNA's static `GraphicsAdapter.Adapters` has
    not got, which is a design question to settle before starting rather than an

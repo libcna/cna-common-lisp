@@ -109,6 +109,9 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "runtime/game")
    (:file "runtime/game-events")
    (:file "runtime/graphics-device-manager")
+   ;; GameWindow is a facade over the game and uses the event machinery, so it
+   ;; loads after GAME and before anything that reaches a window.
+   (:file "runtime/game-window")
    (:file "runtime/manager-events")
    ;; The graphics device's own four events. After manager-events, because three
    ;; of the four pairs are shared with types declared there and in
@@ -180,6 +183,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/render-target")
    (:file "native/render-target-cube")
    (:file "native/game-components")
+   (:file "native/game-window")
    ;; The text pixel proofs build on the SpriteFont fixture game.
    (:file "native/sprite-font")
    (:file "native/content")

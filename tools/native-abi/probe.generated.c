@@ -1219,6 +1219,17 @@ CNA_Result (*const cna_lisp_probe_cna_game_copy_type_name)(CNA_Handle, char*, ui
 CNA_Result (*const cna_lisp_probe_cna_game_get_graphics_device)(CNA_Handle, CNA_Handle*) = cna_game_get_graphics_device;
 CNA_Result (*const cna_lisp_probe_cna_game_subscribe)(CNA_Handle, CNA_GameEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*) = cna_game_subscribe;
 CNA_Result (*const cna_lisp_probe_cna_game_unsubscribe)(CNA_GameEventRegistrationHandle) = cna_game_unsubscribe;
+CNA_Result (*const cna_lisp_probe_cna_game_window_get_title_size)(CNA_Handle, uint64_t*) = cna_game_window_get_title_size;
+CNA_Result (*const cna_lisp_probe_cna_game_window_copy_title)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_game_window_copy_title;
+CNA_Result (*const cna_lisp_probe_cna_game_window_get_allow_user_resizing)(CNA_Handle, CNA_Bool*) = cna_game_window_get_allow_user_resizing;
+CNA_Result (*const cna_lisp_probe_cna_game_window_set_allow_user_resizing)(CNA_Handle, CNA_Bool) = cna_game_window_set_allow_user_resizing;
+CNA_Result (*const cna_lisp_probe_cna_game_window_get_client_bounds)(CNA_Handle, CNA_Rectangle*) = cna_game_window_get_client_bounds;
+CNA_Result (*const cna_lisp_probe_cna_game_window_get_current_orientation)(CNA_Handle, CNA_DisplayOrientation*) = cna_game_window_get_current_orientation;
+CNA_Result (*const cna_lisp_probe_cna_game_window_get_screen_device_name_size)(CNA_Handle, uint64_t*) = cna_game_window_get_screen_device_name_size;
+CNA_Result (*const cna_lisp_probe_cna_game_window_copy_screen_device_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_game_window_copy_screen_device_name;
+CNA_Result (*const cna_lisp_probe_cna_game_window_begin_screen_device_change)(CNA_Handle, CNA_Bool) = cna_game_window_begin_screen_device_change;
+CNA_Result (*const cna_lisp_probe_cna_game_window_end_screen_device_change)(CNA_Handle, CNA_StringView, int32_t, int32_t) = cna_game_window_end_screen_device_change;
+CNA_Result (*const cna_lisp_probe_cna_game_window_subscribe)(CNA_Handle, CNA_GameWindowEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*) = cna_game_window_subscribe;
 CNA_Result (*const cna_lisp_probe_cna_title_location_get_path_size)(CNA_Handle, uint64_t*) = cna_title_location_get_path_size;
 CNA_Result (*const cna_lisp_probe_cna_title_location_copy_path)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_title_location_copy_path;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_viewport)(CNA_Handle, CNA_Viewport*) = cna_graphics_device_get_viewport;
@@ -1792,6 +1803,9 @@ _Static_assert((int64_t)(CNA_GAME_EVENT_ACTIVATED) == INT64_C(0), "CNA_GAME_EVEN
 _Static_assert((int64_t)(CNA_GAME_EVENT_DEACTIVATED) == INT64_C(1), "CNA_GAME_EVENT_DEACTIVATED value");
 _Static_assert((int64_t)(CNA_GAME_EVENT_DISPOSED) == INT64_C(2), "CNA_GAME_EVENT_DISPOSED value");
 _Static_assert((int64_t)(CNA_GAME_EVENT_EXITING) == INT64_C(3), "CNA_GAME_EVENT_EXITING value");
+_Static_assert((int64_t)(CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED) == INT64_C(0), "CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED value");
+_Static_assert((int64_t)(CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED) == INT64_C(1), "CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED value");
+_Static_assert((int64_t)(CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED) == INT64_C(2), "CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_DOUBLE_TAP) == INT64_C(2), "CNA_GESTURE_TYPE_DOUBLE_TAP value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_DRAG_COMPLETE) == INT64_C(256), "CNA_GESTURE_TYPE_DRAG_COMPLETE value");
 _Static_assert((int64_t)(CNA_GESTURE_TYPE_FLICK) == INT64_C(128), "CNA_GESTURE_TYPE_FLICK value");

@@ -729,7 +729,7 @@ docs/limitations.md."))
 ;;; its own handlers, because CNA's registrations for both come from the same
 ;;; game handle.
 (defmethod cna-lisp.internal:destroy-native :before ((game game))
-  "Release the subscriptions held by the game's two facades, before CNA destroys it.
+  "Release the subscriptions held by the game's facades, before CNA destroys it.
 
 Both are facades with no handle of their own, so neither has a DESTROY-NATIVE to
 release its own registrations from -- and for the graphics device this is not
@@ -741,4 +741,7 @@ scope, because `cna_graphics_device_unsubscribe' takes only the registration."
       (ignore-errors (%release-event-handlers collection))))
   (let ((device (slot-value game 'graphics-device)))
     (when device
-      (ignore-errors (%release-event-handlers device)))))
+      (ignore-errors (%release-event-handlers device))))
+  (let ((window (%game-window game)))
+    (when window
+      (ignore-errors (%release-event-handlers window)))))

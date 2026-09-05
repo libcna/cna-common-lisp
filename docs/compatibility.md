@@ -107,31 +107,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=154 -->
-<!-- generated:selected members=2292 -->
+<!-- generated:selected types=155 -->
+<!-- generated:selected members=2312 -->
 <!-- generated:complete types=140 -->
-<!-- generated:partial types=14 -->
+<!-- generated:partial types=15 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1821 -->
+<!-- generated:complete members=1833 -->
 <!-- generated:partial members=15 -->
-<!-- generated:missing members=34 -->
-<!-- generated:not-applicable members=422 -->
+<!-- generated:missing members=40 -->
+<!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 154 types, 2292 members.
+Selection **Foundation 1 and the managed closures**: 155 types, 2312 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **140** |
-| Types partial | **14** |
+| Types partial | **15** |
 | Types missing | **0** |
-| Members complete | **1821** |
+| Members complete | **1833** |
 | Members partial | **15** |
-| Members missing | **34** |
-| Members not applicable | **422** |
+| Members missing | **40** |
+| Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -143,7 +143,7 @@ collapsed overload family says how each of its overloads is expressed.
 <!-- generated-block:per-type-table -->
 | Type | Status | complete | partial | missing | n/a |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `M.X.F.Game` | **partial** | 30 | 1 | 5 | 2 |
+| `M.X.F.Game` | **partial** | 31 | 1 | 4 | 2 |
 | `M.X.F.GameTime` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.IGameComponent` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.IUpdateable` | **complete** | 5 | 0 | 0 | 0 |
@@ -153,6 +153,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.GameComponentCollection` | **partial** | 2 | 0 | 1 | 4 |
 | `M.X.F.GameComponentCollectionEventArgs` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.LaunchParameters` | **complete** | 1 | 0 | 0 | 0 |
+| `M.X.F.GameWindow` | **partial** | 11 | 0 | 7 | 2 |
 | `M.X.F.TitleContainer` | **partial** | 0 | 1 | 0 | 0 |
 | `M.X.F.Graphics.GraphicsProfile` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Graphics.ClearOptions` | **complete** | 3 | 0 | 0 | 1 |
@@ -342,7 +343,8 @@ back-reference.
 | --- | ---: | ---: |
 | `M.X.F.Graphics.GraphicsDevice` | 10 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 9 | 0 |
-| `M.X.F.Game` | 5 | 1 |
+| `M.X.F.GameWindow` | 7 | 0 |
+| `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
 | `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
@@ -380,10 +382,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=429 -->
+<!-- generated:bound native functions=440 -->
 <!-- generated:bound native structs=65 -->
 <!-- generated:bound native struct fields=492 -->
-<!-- generated:bound native constants=503 -->
+<!-- generated:bound native constants=506 -->
 <!-- generated:bound native callbacks=10 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -392,10 +394,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 429 |
+| Bound functions | 440 |
 | Bound structs | 65 |
 | Bound struct fields | 492 |
-| Bound constants | 503 |
+| Bound constants | 506 |
 | Bound callback typedefs | 10 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |

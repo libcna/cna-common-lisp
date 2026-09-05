@@ -29,7 +29,11 @@ Both answer the same object, because in CNA they are the same device."))
   ((graphics-device :initform nil
                     :documentation "The game's GRAPHICS-DEVICE facade.")
    (callback-token :initform nil :reader %callback-token)
-   (window-title :initarg :window-title :initform "CNA-Lisp Game" :reader window-title)
+   ;; The title the game was *created* with. WINDOW-TITLE the reader answers the
+   ;; window's live title instead, because the two can differ the moment anything
+   ;; sets it -- see below.
+   (window-title :initarg :window-title :initform "CNA-Lisp Game"
+                 :reader %creation-window-title)
    (running :initform nil :accessor %running-p)
    (content-loaded :initform nil :accessor %content-loaded-p)
    (event-handlers :initform '() :accessor %event-handlers
@@ -42,7 +46,11 @@ itself, so the binding has to be able to find the registration from it.")
    ;; src/content/game-content.lisp, both of which load after this.
    (components :initform nil :accessor %game-components)
    (launch-parameters :initform nil :accessor %game-launch-parameters)
-   (content :initform nil :accessor %game-content))
+   (content :initform nil :accessor %game-content)
+   ;; Game.Window, cached like Game.Content: XNA's is a property answering the
+   ;; same object every time, and a facade built twice would be two objects
+   ;; holding two sets of event subscriptions over one window.
+   (window :initform nil :accessor %game-window))
   (:documentation
    "Microsoft.Xna.Framework.Game.
 
@@ -250,7 +258,8 @@ answers true, exactly as the original's does.")
          (setf (cna-lisp.internal:active-game) nil))))
     (cffi:with-foreign-object (callbacks '(:struct cna-lisp.internal.ffi::cna-game-callbacks))
       (%fill-game-callbacks callbacks token)
-      (cna-lisp.internal:with-utf8-view (title-data title-length (window-title game))
+      (cna-lisp.internal:with-utf8-view (title-data title-length
+                                                          (%creation-window-title game))
         (cffi:with-foreign-object (info '(:struct cna-lisp.internal.ffi::cna-game-create-info))
           (cffi:foreign-funcall "memset" :pointer info :int 0
                                 :size cna-lisp.internal.ffi::+sizeof-cna-game-create-info+
@@ -437,8 +446,30 @@ RUN-ONE-FRAME it does not process host events."))
       cna-lisp.internal.ffi::%game-set-inactive-sleep-time-ticks
     "Game.InactiveSleepTime, in 100-nanosecond ticks."))
 
+(defgeneric window-title (game)
+  (:documentation
+   "GameWindow.Title, reached through the game. A declared extension.
+
+**Read from CNA, not remembered.** It used to answer the slot the game was
+created with, which is the same string only until something sets the title -- and
+once `MICROSOFT.XNA.FRAMEWORK:WINDOW' existed, `(setf (title (window game)) ...)'
+was exactly that something, and the two readers disagreed. A test caught it. The
+creation title is still kept, because the constructor needs it before there is a
+game to ask, but nothing reads it afterwards."))
+
 (defgeneric (setf window-title) (title game)
-  (:documentation "GameWindow.Title, reached through the game."))
+  (:documentation "GameWindow.Title's setter, reached through the game."))
+
+(defmethod window-title ((game game))
+  (cna-lisp.internal:check-usable game "window-title")
+  (cna-lisp.internal:count-then-copy-string
+   (lambda (out)
+     (cna-lisp.internal.ffi::%game-window-get-title-size
+      (cna-lisp.internal:handle-of game) out))
+   (lambda (buffer capacity out)
+     (cna-lisp.internal.ffi::%game-window-copy-title
+      (cna-lisp.internal:handle-of game) buffer capacity out))
+   "window-title"))
 
 (defmethod (setf window-title) (title (game game))
   (check-type title string)
@@ -448,7 +479,7 @@ RUN-ONE-FRAME it does not process host events."))
      (cna-lisp.internal.ffi::%game-set-window-title
       (cna-lisp.internal:handle-of game) data length)
      "(setf window-title)" :object-type (type-of game)))
-  (setf (slot-value game 'window-title) title))
+  title)
 
 (defgeneric clr-type-name (object)
   (:documentation

@@ -935,6 +935,44 @@ nothing is an **IO** failure. That is XNA's distinction between `ArgumentExcepti
 and `FileNotFoundException`, and collapsing the two would make a traversal attempt
 look like a typo.
 
+## `Game.Window` is a facade too, and needs no callback scope
+
+`GameWindow` is projected, and like `Game.Content` and the graphics device it is a
+**facade over the game**: every CNA window route takes the *game* handle, because
+CNA models the window as something the game has rather than as an object with a
+handle. So it holds no handle, is not disposed, and disposing it is refused with a
+condition that says why.
+
+Unlike the graphics device it needs **no callback scope**. CNA takes an "active
+owned or callback-borrowed game handle" for every window route, so a program can
+read the client bounds or set the title before the loop starts — which is where a
+program most wants to. That is XNA's shape too.
+
+**Under a headless renderer the client bounds are legitimately `0x0`.** There is
+no window; CNA answers what is true rather than refusing, and the test asserts a
+non-negative extent rather than a positive one, because asserting positive would
+be asserting that a headless run has a window.
+
+**`GameWindow` is abstract in XNA**, and its six protected `On*` methods are how a
+platform's concrete window raises the three events. They are not projected, for
+the reason no protected raiser here is: the half that cannot be projected is the
+half the member exists for. `Handle` is not projected either, and for a different
+reason from `PresentationParameters.DeviceWindowHandle` — CNA *answers* it,
+`cna_game_window_get_native_handle_ext` gives back a `uint64`, so the number is
+available and what is missing is a type to put it in. Handing back a bare integer
+a consumer can do nothing safe with is not that type.
+
+### `WINDOW-TITLE` on the game used to go stale, and a test caught it
+
+`MICROSOFT.XNA.FRAMEWORK:WINDOW-TITLE` is a declared extension — XNA has no
+`Game.Title` — and it used to answer the slot the game was **created** with. That
+is the same string only until something sets the title, and once `Game.Window`
+existed, `(setf (title (window game)) ...)` was exactly that something: the two
+readers disagreed, and the new test said so on its first run.
+
+It reads from CNA now. The creation title is still kept, because the constructor
+needs it before there is a game to ask, but nothing reads it afterwards.
+
 ## The device-settings surface, and how much of it CNA has
 
 `GraphicsDeviceManager`'s **preference surface is complete**: `GraphicsProfile`,
