@@ -669,3 +669,55 @@ one CNA is still owed when the game shuts down."
     (is (= 0 children-after)
         "the game was left owning ~d live effect(s) it never handed out"
         children-after)))
+
+;;; --- the texture identities, which are separate storage --------------------------
+
+(define-native-test the-texture-and-cube-identities-round-trip-independently
+  "SetValue(Texture) and the two GetValueTexture* getters, over CNA's identities.
+
+**The two facts asserted here were measured, not assumed, and the shape of the
+setter depends on both.** CNA's texture identities are independent storage: a
+parameter holds a Texture2D and a TextureCube at once and each getter answers its
+own. And CNA's *base* identity -- the one that looks like the natural home for
+XNA's single `SetValue(Texture)' -- is write-only: the header says no native
+getter corresponds to it, and a texture put there is readable through neither
+typed getter.
+
+That is why the setter routes by the argument's runtime type. XNA does no such
+thing: its one `SetValue' calls one D3D `SetTexture' and the kind-specific getters
+QueryInterface the result. Routing everything to CNA's base identity would be the
+closer transcription of XNA and would silently lose every texture.
+
+`GetValueTextureCube' was reported missing on the grounds that TextureCube is not
+a projected type. It is."
+  (with-effect-game (game effect)
+    (let* ((device (xna:graphics-device game))
+           (flat (keep game (gfx:texture-2d-from-png-file
+                             device (fixture-path "solid-magenta-8.png"))))
+           (cube (keep game (make-instance 'gfx:texture-cube
+                                           :graphics-device device :size 4))))
+      (with-standalone-parameters (parameters effect
+                                   ("surface" "" ffi::+effect-parameter-class-object+
+                                    ffi::+effect-parameter-type-texture+))
+        (let ((p (gfx:collection-item parameters 0)))
+          ;; Nothing set is NIL from both, and not a refusal.
+          (is (null (gfx:effect-parameter-value-texture p)))
+          (is (null (gfx:effect-parameter-value-texture-cube p)))
+          ;; Each identity answers the object it was given.
+          (setf (gfx:effect-parameter-value-texture p) flat)
+          (is (eq flat (gfx:effect-parameter-value-texture p))
+              "the Texture2D identity did not answer the object it was given")
+          (setf (gfx:effect-parameter-value-texture p) cube)
+          (is (eq cube (gfx:effect-parameter-value-texture-cube p))
+              "the TextureCube identity did not answer the object it was given")
+          ;; ...and setting the cube did not disturb the Texture2D. This is the
+          ;; independence, and it is why there are two remembered slots.
+          (is (eq flat (gfx:effect-parameter-value-texture p))
+              "setting the cube identity disturbed the Texture2D identity")
+          ;; A null clears, and clears both, because XNA has one value to clear.
+          (setf (gfx:effect-parameter-value-texture p) nil)
+          (is (null (gfx:effect-parameter-value-texture-cube p)))
+          ;; A Texture that is neither goes to the base identity, which no getter
+          ;; reads -- so it is set, and it is gone. Recorded because it is a real
+          ;; edge of this projection and not an accident.
+          (is (null (gfx:effect-parameter-value-texture p))))))))

@@ -1509,10 +1509,53 @@ more**: the layout each value is written and read with is exact, because CNA
 stored it and gave it back. It says nothing about how a real shader's parameter
 behaves, which nothing available here could say.
 
-Two of `EffectParameter`'s getters are missing on purpose:
-`GetValueTexture3D` and `GetValueTextureCube` return `Texture3D` and
-`TextureCube`, which this binding does not project. CNA has the routes; the
-public types do not exist, and inventing them would be worse than the absence.
+One of `EffectParameter`'s getters is missing: `GetValueTexture3D` returns a
+`Texture3D`, which this binding does not project. CNA has the route; the public
+type does not exist, and inventing one would be worse than the absence.
+
+**`GetValueTextureCube` used to be listed beside it, with the same reason, and
+the reason was false: `TextureCube` *is* projected here.** The rest of that
+reason was more honest — it said the remembering `GetValueTexture2D` depends on
+had not been audited for cubes, and that a claim without the audit would be a
+guess. The audit was done, against the header and against the running library,
+and it found two things neither API documents:
+
+* **CNA's texture identities are independent storage.** Setting the `TextureCube`
+  identity leaves the `Texture2D` identity reading zero, and the reverse. So each
+  getter reads its own and there is no ambiguity about which texture it means.
+* **CNA's base identity is write-only.** The header says "no corresponding native
+  getter exists", and a probe confirms both typed getters still read zero after a
+  texture is written there.
+
+The second fact decides the shape of the setter, and decided it before this was
+measured — wrongly. XNA's single `SetValue(Texture)` makes **no distinction by
+runtime type**: it calls one D3D `SetTexture` and the kind-specific getters
+`QueryInterface` the result. The docstring here claimed the routing *was* that
+distinction. It is not; it is a compensation for CNA modelling the same members
+differently, and routing everything to the base identity — the closer
+transcription of XNA — would silently lose every texture. A `TextureCube` was
+being routed there, and was.
+
+The audit found two more things worth having:
+
+* **XNA's guards were missing entirely.** `SetValue(Texture)` and all three
+  `GetValueTexture*` members guard on the parameter's *declared type* and throw
+  `InvalidCastException` before touching anything — `Texture`/`Texture2D` for the
+  2D getter, `Texture`/`TextureCube` for the cube one, the five texture types for
+  the setter. CNA enforces none of them: a probe set a cube on a `:SCALAR`
+  parameter and read it straight back. `CNA-INVALID-CAST-ERROR` is those guards,
+  and it is a new condition because this is the first place the selected surface
+  throws that exception.
+* **Clearing has to clear every identity.** XNA has one texture value, so a null
+  clears it. Writing the null to one CNA identity leaves the others holding stale
+  handles, and the getter then finds a handle this binding no longer remembers
+  and refuses. The test caught exactly that.
+
+No stock effect CNA 0.21.0 builds exposes a texture-typed parameter — measured,
+across all four — so the round trip is asserted over a parameter built through
+CNA's own construction routes, like the rest of the value surface above. The
+guards are asserted against a real stock-effect parameter, since any non-texture
+one will do.
 
 ## An effect's techniques, passes and parameters are not disposable
 

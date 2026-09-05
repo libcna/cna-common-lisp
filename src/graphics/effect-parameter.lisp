@@ -167,7 +167,13 @@
    (%texture :initform nil :accessor %parameter-texture
              :documentation
              "The TEXTURE-2D last set here, so the getter can answer the object
-rather than a handle. See EFFECT-PARAMETER-VALUE-TEXTURE."))
+rather than a handle. See EFFECT-PARAMETER-VALUE-TEXTURE.")
+   (%texture-cube :initform nil :accessor %parameter-texture-cube
+                  :documentation
+                  "The TEXTURE-CUBE last set here. A second slot rather than one
+shared with %TEXTURE, because CNA's texture identities are independent storage:
+a parameter can hold a Texture2D and a TextureCube at once, and each getter reads
+its own. See %EFFECT-TEXTURE-SLOTS."))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.EffectParameter: one named shader input.
 
@@ -417,14 +423,61 @@ cannot disagree about a layout."))
 
 (defparameter %effect-texture-slots
   `((:texture . ,cna-lisp.internal.ffi::+effect-texture-base+)
-    (:texture-2d . ,cna-lisp.internal.ffi::+effect-texture-2d+))
-  "The texture overloads this binding can express.
+    (:texture-2d . ,cna-lisp.internal.ffi::+effect-texture-2d+)
+    (:texture-cube . ,cna-lisp.internal.ffi::+effect-texture-cube+))
+  "CNA's texture-overload identities, and what each one is good for.
 
-CNA also has CNA_EFFECT_TEXTURE_3D and CNA_EFFECT_TEXTURE_CUBE. XNA's
-GetValueTexture3D and GetValueTextureCube return Texture3D and TextureCube, which
-are not projected types here, so those two members are recorded missing rather
-than answered with something invented. The base :TEXTURE slot is a setter only,
-which is also what CNA says of it and what XNA's SetValue(Texture) is.")
+Measured against 0.21.0 rather than assumed, because the two facts that decide
+the shape of the setter are not in either API's documentation:
+
+* **the slots are independent storage.** Setting the cube identity leaves the
+  Texture2D identity reading zero, and the other way round. So each getter reads
+  its own slot and there is no ambiguity about which texture it means.
+* **the base identity is write-only and feeds nothing.** A texture set through
+  CNA_EFFECT_TEXTURE_BASE is readable through no getter at all -- the header says
+  \"no corresponding native getter exists\", and a probe confirms both typed
+  getters still answer zero afterwards.
+
+That second fact is why SETF EFFECT-PARAMETER-VALUE-TEXTURE routes by the
+texture's runtime type instead of always using the base slot: a TextureCube put
+in the base slot would be *lost*, and it was, until this was measured.
+
+CNA_EFFECT_TEXTURE_3D is here in CNA and absent here, because Texture3D is not a
+projected type. That one really is blocked by the type, which is what was
+wrongly claimed of TextureCube.")
+
+;;; XNA's own guards, read from the pinned Graphics assembly. Every one of these
+;;; is on the parameter's **declared type**, and not on what was last set:
+;;;
+;;;   SetValue(Texture)     Texture, Texture1D, Texture2D, Texture3D, TextureCube
+;;;   GetValueTexture2D     Texture, Texture2D
+;;;   GetValueTextureCube   Texture, TextureCube
+;;;   GetValueTexture3D     Texture, Texture3D
+;;;
+;;; and anything else throws InvalidCastException before the parameter is
+;;; touched. CNA enforces none of them -- a probe set a cube on a :SCALAR
+;;; parameter and read it straight back -- so they live here or nowhere.
+
+(defparameter %texture-setter-parameter-types
+  '(:texture :texture-1d :texture-2d :texture-3d :texture-cube)
+  "The declared parameter types XNA's SetValue(Texture) accepts.")
+
+(defun %check-texture-parameter-type (parameter allowed operation)
+  "Refuse unless PARAMETER's declared type is one of ALLOWED, as XNA does.
+
+XNA throws InvalidCastException here, which this binding reports as an invalid
+cast, and it does so *before* touching the parameter -- so a refusal leaves the
+value exactly as it was."
+  (let ((type (effect-parameter-parameter-type parameter)))
+    (unless (member type allowed)
+      (error 'microsoft.xna.framework:cna-invalid-cast-error
+             :operation operation :object-type 'effect-parameter
+             :format-control
+             "this parameter is declared ~a, and ~a is defined only for ~
+              ~{~a~^, ~}. XNA throws InvalidCastException here, and the parameter ~
+              is left untouched."
+             :format-arguments (list type operation allowed)))
+    type))
 
 (defgeneric effect-parameter-value-texture (parameter)
   (:documentation
@@ -437,25 +490,47 @@ back to the object that names it, so a binding can either remember what it bound
 or invent an object -- and inventing one would hand back a Texture2D with no
 owner, no dimensions and no disposal story.
 
+Refuses with CNA-INVALID-CAST-ERROR unless the parameter is declared :TEXTURE or
+:TEXTURE-2D, which is the guard XNA's own IL applies before doing anything else.
+
 There is no getter for the base Texture overload: XNA has none, and neither does
 CNA."))
+
+(defgeneric effect-parameter-value-texture-cube (parameter)
+  (:documentation
+   "EffectParameter.GetValueTextureCube().
+
+The same shape as EFFECT-PARAMETER-VALUE-TEXTURE, over CNA's cube identity, and
+guarded on :TEXTURE or :TEXTURE-CUBE as XNA guards it.
+
+This member was reported missing, and the reason given was that TextureCube is
+not a projected type. It is -- and CNA has a full cube getter/setter pair. What
+the reason had right was that the remembering had to be audited before the claim
+could be made either way; the audit is in %EFFECT-TEXTURE-SLOTS."))
 
 (defgeneric (setf effect-parameter-value-texture) (texture parameter)
   (:documentation
    "EffectParameter.SetValue(Texture).
 
-The overload is chosen by what is passed: a TEXTURE-2D goes to CNA's Texture2D
-slot, and any other TEXTURE to the base one, which is the distinction XNA's
-single SetValue(Texture) makes internally."))
+XNA has exactly one texture setter and it makes **no distinction by runtime
+type**: it calls one D3D SetTexture and remembers the object. This binding has to
+distinguish, because CNA does not model it that way -- its base identity is
+write-only and feeds no getter, so a texture put there could never be read back.
+So a TEXTURE-2D goes to CNA's Texture2D identity, a TEXTURE-CUBE to its
+TextureCube identity, and any other TEXTURE to the base one, which is the only
+place left for it.
 
-(defmethod effect-parameter-value-texture ((parameter effect-parameter))
-  (let ((handle (%view-handle parameter "effect-parameter-value-texture"))
-        (remembered (%parameter-texture parameter)))
+Refuses with CNA-INVALID-CAST-ERROR unless the parameter is declared one of the
+five texture types, as XNA's IL does before touching anything."))
+
+(defun %parameter-texture-of-slot (parameter slot remembered operation)
+  "Read SLOT and answer REMEMBERED when the handle CNA reports is its handle."
+  (let ((handle (%view-handle parameter operation)))
     (cffi:with-foreign-object (out :uint64)
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%effect-parameter-get-value-texture
-        handle (cdr (assoc :texture-2d %effect-texture-slots)) out)
-       "effect-parameter-value-texture" :object-type 'effect-parameter)
+        handle (cdr (assoc slot %effect-texture-slots)) out)
+       operation :object-type 'effect-parameter)
       (let ((native (cffi:mem-ref out :uint64)))
         (cond ((zerop native) nil)
               ((and remembered
@@ -464,26 +539,55 @@ single SetValue(Texture) makes internally."))
                remembered)
               (t
                (error 'microsoft.xna.framework:cna-invalid-state-error
-                      :operation "effect-parameter-value-texture"
+                      :operation operation
                       :object-type 'effect-parameter
                       :format-control
                       "CNA reports a texture on this parameter that this binding did ~
                        not set. There is no way back from a native texture handle to ~
                        the object that names it, so this refuses rather than ~
-                       answering a Texture2D it would have to invent.")))))))
+                       answering a texture it would have to invent.")))))))
+
+(defmethod effect-parameter-value-texture ((parameter effect-parameter))
+  (%check-texture-parameter-type parameter '(:texture :texture-2d)
+                                 "effect-parameter-value-texture")
+  (%parameter-texture-of-slot parameter :texture-2d (%parameter-texture parameter)
+                              "effect-parameter-value-texture"))
+
+(defmethod effect-parameter-value-texture-cube ((parameter effect-parameter))
+  (%check-texture-parameter-type parameter '(:texture :texture-cube)
+                                 "effect-parameter-value-texture-cube")
+  (%parameter-texture-of-slot parameter :texture-cube
+                              (%parameter-texture-cube parameter)
+                              "effect-parameter-value-texture-cube"))
 
 (defmethod (setf effect-parameter-value-texture) (texture (parameter effect-parameter))
-  (let ((handle (%view-handle parameter "(setf effect-parameter-value-texture)")))
-    (when texture (check-type texture texture))
-    (let ((slot (cdr (assoc (if (typep texture 'texture-2d) :texture-2d :texture)
-                            %effect-texture-slots))))
-      (cna-lisp.internal:check-result
-       (cna-lisp.internal.ffi::%effect-parameter-set-value-texture
-        handle slot
-        (if texture
-            (progn (cna-lisp.internal:check-usable texture "effect parameter texture")
-                   (cna-lisp.internal:handle-of texture))
-            0))
-       "(setf effect-parameter-value-texture)" :object-type 'effect-parameter)
-      (setf (%parameter-texture parameter) (and (typep texture 'texture-2d) texture))))
+  (when texture (check-type texture texture))
+  (%check-texture-parameter-type parameter %texture-setter-parameter-types
+                                 "(setf effect-parameter-value-texture)")
+  (let ((handle (%view-handle parameter "(setf effect-parameter-value-texture)"))
+        (slot (cond ((typep texture 'texture-2d) :texture-2d)
+                    ((typep texture 'texture-cube) :texture-cube)
+                    (t :texture))))
+    (flet ((write-slot (slot value)
+             (cna-lisp.internal:check-result
+              (cna-lisp.internal.ffi::%effect-parameter-set-value-texture
+               handle (cdr (assoc slot %effect-texture-slots)) value)
+              "(setf effect-parameter-value-texture)" :object-type 'effect-parameter)))
+      (cond
+        ;; XNA has one texture value, so clearing it clears the whole thing.
+        ;; CNA's identities are independent storage, which means a null written
+        ;; to one of them leaves the others holding what they held -- and a
+        ;; getter would then find a handle this binding no longer remembers and
+        ;; refuse. So a null is written to every identity.
+        ((null texture)
+         (dolist (each '(:texture :texture-2d :texture-cube))
+           (write-slot each 0))
+         (setf (%parameter-texture parameter) nil
+               (%parameter-texture-cube parameter) nil))
+        (t
+         (cna-lisp.internal:check-usable texture "effect parameter texture")
+         (write-slot slot (cna-lisp.internal:handle-of texture))
+         (case slot
+           (:texture-2d (setf (%parameter-texture parameter) texture))
+           (:texture-cube (setf (%parameter-texture-cube parameter) texture)))))))
   texture)

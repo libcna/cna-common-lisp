@@ -254,7 +254,7 @@
    #:launch-parameters #:launch-parameter #:launch-parameter-names
    #:cna-argument-error #:cna-argument-out-of-range-error #:cna-error-parameter-name
    #:cna-disposed-error #:cna-ownership-error #:cna-scope-error
-   #:cna-native-library-error #:cna-abi-rejected-error
+   #:cna-native-library-error #:cna-abi-rejected-error #:cna-invalid-cast-error
    #:cna-error-operation #:cna-error-native-message #:cna-error-object-type
    #:cna-abi-found-version #:cna-abi-admitted-versions #:cna-native-library-path
    #:cna-callback-underlying-condition))
@@ -398,6 +398,7 @@
    #:effect-parameter-annotations
    #:effect-parameter-value #:effect-parameter-values
    #:effect-parameter-value-string #:effect-parameter-value-texture
+   #:effect-parameter-value-texture-cube
    #:effect-parameter-class #:effect-parameter-class-value
    #:effect-parameter-class-from-value #:all-effect-parameter-class
    #:effect-parameter-type #:effect-parameter-type-value

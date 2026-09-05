@@ -5920,7 +5920,7 @@
           "setf": true,
           "distinguished_by": "tagged-argument",
           "tag": ":texture",
-          "reason": "A texture is a handle rather than a value, so it is its own function. Which of CNA's texture slots it goes to is decided by what is passed -- a TEXTURE-2D to the Texture2D slot, any other TEXTURE to the base one -- which is the distinction XNA's single SetValue(Texture) makes internally."
+          "reason": "A texture is a handle rather than a value, so it is its own function. **XNA makes no distinction by runtime type here** -- its single SetValue(Texture) calls one D3D SetTexture and remembers the object -- and the reason that used to stand here claimed it did. This binding has to distinguish because CNA does not model it XNA's way: CNA's base texture identity is write-only and feeds no getter, so a texture routed there could never be read back. A TEXTURE-2D therefore goes to CNA's Texture2D identity, a TEXTURE-CUBE to its TextureCube identity, and any other TEXTURE to the base one, which is the only place left for it. Guarded on the parameter's declared type -- one of the five texture types -- as XNA's IL guards it."
         },
         "GetValueBoolean()": {
           "lisp": "effect-parameter-value",
@@ -6080,7 +6080,7 @@
           "setf": false,
           "distinguished_by": "tagged-argument",
           "tag": ":texture",
-          "reason": "Answers the TEXTURE-2D this parameter was last set to, cross-checked against the handle CNA reports, because CNA's ABI has no route from a native handle back to the object that names it -- the same reason GET-VERTEX-BUFFERS remembers what it bound. A handle it did not set is refused rather than wrapped in an invented Texture2D."
+          "reason": "Answers the TEXTURE-2D this parameter was last set to, cross-checked against the handle CNA reports, because CNA's ABI has no route from a native handle back to the object that names it -- the same reason GET-VERTEX-BUFFERS remembers what it bound. A handle it did not set is refused rather than wrapped in an invented Texture2D. Guarded on the parameter's declared type -- :TEXTURE or :TEXTURE-2D -- as XNA's IL guards it; that guard was absent until the TextureCube audit found it."
         },
         "ParameterType": {
           "lisp": "effect-parameter-parameter-type",
@@ -6135,6 +6135,12 @@
           "generic": true,
           "setf": false,
           "reason": "Read-only, as XNA's is: a parameter's shape comes from the effect."
+        },
+        "GetValueTextureCube()": {
+          "lisp": "effect-parameter-value-texture-cube",
+          "generic": true,
+          "setf": false,
+          "reason": "Over CNA's TextureCube identity, guarded on the parameter's declared type as XNA's IL guards it: :TEXTURE or :TEXTURE-CUBE, else an invalid cast before the parameter is touched. It answers the TEXTURE-CUBE last set here, cross-checked against the handle CNA reports, for the reason GetValueTexture2D does. It was reported missing with a reason that said TextureCube was not a projected type -- it is -- and that the remembering had not been audited, which was the honest half. The audit found CNA's texture identities are independent storage and its base identity feeds no getter, so the remembering extends unchanged."
         }
       },
       "overload_families": {
@@ -6148,7 +6154,6 @@
         }
       },
       "unimplemented": {
-        "GetValueTextureCube()": "The CNA route exists -- cna_effect_parameter_get_value_texture takes a texture-type identity and TextureCube is one of the three -- so this is not blocked by the ABI. What it is blocked by is the same handle-to-object gap GetValueTexture2D solves by *remembering* what was set: the ABI has no route from a handle back to the object that names it, and inventing one would hand back a TextureCube with no owner and no disposal story. Whether the remembering can be extended to cubes has not been audited -- SetValue(Texture) routes a non-Texture2D to CNA's base texture slot -- and a reason stated without that audit would be a guess.",
         "GetValueTexture3D()": "Needs Texture3D, which is neither projected nor in the selection. The CNA route would take it as its third texture-type identity, so the gap is the type."
       }
     },

@@ -22,15 +22,15 @@
    "complete": 141
   },
   "members_by_status": {
-   "complete": 1853,
-   "missing": 36,
+   "complete": 1854,
+   "missing": 35,
    "not-applicable": 424,
    "partial": 19
   },
-  "diagnostics": 36,
+  "diagnostics": 35,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 36,
+   "missing_member": 35,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -2329,7 +2329,7 @@
     "GetValueMatrixTransposeArray(Int32)": "complete",
     "GetValueString()": "complete",
     "GetValueTexture2D()": "complete",
-    "GetValueTextureCube()": "missing",
+    "GetValueTextureCube()": "complete",
     "GetValueTexture3D()": "missing",
     "ParameterType": "complete",
     "ParameterClass": "complete",
@@ -3641,11 +3641,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.Effect.OnApply()",
    "detail": "A protected virtual hook XNA calls from inside EffectPass.Apply, so that a subclass can adjust parameters immediately before the pass is applied -- and returning true from it cancels the pass. CNA applies a pass in one route with no callback into managed code in the middle, so an override here would never be called and could never cancel anything. The same shape as ContentManager.ReadAsset: a hook needs somewhere to be called from."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.EffectParameter.GetValueTextureCube()",
-   "detail": "The CNA route exists -- cna_effect_parameter_get_value_texture takes a texture-type identity and TextureCube is one of the three -- so this is not blocked by the ABI. What it is blocked by is the same handle-to-object gap GetValueTexture2D solves by *remembering* what was set: the ABI has no route from a handle back to the object that names it, and inventing one would hand back a TextureCube with no owner and no disposal story. Whether the remembering can be extended to cubes has not been audited -- SetValue(Texture) routes a non-Texture2D to CNA's base texture slot -- and a reason stated without that audit would be a guess."
   },
   {
    "category": "missing_member",

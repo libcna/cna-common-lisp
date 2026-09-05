@@ -132,6 +132,20 @@ rather than letting the check disappear -- is what keeps
 `(matrix-create-perspective-field-of-view 0 ...)' refusing here as it refuses
 there."))
 
+(define-condition cna-invalid-cast-error (cna-usage-error) ()
+  (:documentation
+   "A member was asked of an object whose declared type does not define it.
+
+CNA-Lisp's projection of System.InvalidCastException, for the places the
+selected surface actually throws one. `EffectParameter' is that place: XNA guards
+`SetValue(Texture)' and each of the three `GetValueTexture*' members on the
+parameter's **declared type**, and throws this before touching the parameter --
+so a refusal leaves the value exactly as it was.
+
+It is a usage error rather than a native one: CNA enforces none of these guards,
+and a probe against 0.21.0 set a TextureCube on a `:SCALAR' parameter and read it
+straight back. The guard lives here or nowhere."))
+
 (define-condition cna-disposed-error (cna-usage-error) ()
   (:documentation "The object was already disposed."))
 

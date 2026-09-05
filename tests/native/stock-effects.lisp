@@ -452,3 +452,65 @@ explicitly on it -- nor the specular material surface, which it has not got."
       (signals error (gfx:effect-specular-color effect))
       (signals error (gfx:effect-specular-power effect))
       (signals error (gfx:effect-prefer-per-pixel-lighting effect)))))
+
+;;; --- EffectParameter's texture members, and XNA's guards on them ----------------
+;;;
+;;; The two getters are guarded on the parameter's **declared type** and not on
+;;; what was last set. That is read from the pinned Graphics assembly, where
+;;; `GetValueTexture2D' accepts Texture and Texture2D, `GetValueTextureCube'
+;;; accepts Texture and TextureCube, and each throws InvalidCastException for
+;;; anything else *before* touching the parameter. `SetValue(Texture)' accepts all
+;;; five texture types and throws the same for anything else.
+;;;
+;;; CNA enforces none of them: a probe against 0.21.0 set a TextureCube on a
+;;; scalar parameter and read it straight back. So the guard is this binding's,
+;;; and asserting it is asserting the only part of these members that XNA's own
+;;; implementation contributes. The round trip is asserted too, in
+;;; `tests/native/effects.lisp', over a parameter built through CNA's own
+;;; construction routes -- no stock effect exposes a texture-typed parameter.
+
+(define-native-test the-texture-members-refuse-a-parameter-that-is-not-a-texture
+  "XNA's InvalidCastException, on all three members, against a real parameter.
+
+Which parameters a stock effect exposes is a property of the CNA build -- the
+collection test says so and reports rather than requires -- so this finds a
+non-texture parameter rather than naming one, and says so if the build has
+none."
+  (let ((name nil) (declared nil) (outcomes '()) (before :unset) (after :unset))
+    (with-cube-game (game)
+      (let* ((effect (cube-effect game))
+             (cube (cube-of game))
+             (parameters (gfx:effect-parameters effect))
+             (scalar (find-if (lambda (p)
+                                (eq :scalar (gfx:effect-parameter-parameter-class p)))
+                              (gfx:collection-elements parameters))))
+        (when scalar
+          (setf name (gfx:effect-parameter-name scalar)
+                declared (gfx:effect-parameter-parameter-type scalar)
+                before (gfx:effect-parameter-value scalar :single))
+          (flet ((outcome (label thunk)
+                   (push (cons label
+                               (handler-case (progn (funcall thunk) :accepted)
+                                 (error (condition) (type-of condition))))
+                         outcomes)))
+            (outcome :get-2d (lambda () (gfx:effect-parameter-value-texture scalar)))
+            (outcome :get-cube (lambda () (gfx:effect-parameter-value-texture-cube scalar)))
+            (outcome :set (lambda ()
+                            (setf (gfx:effect-parameter-value-texture scalar) cube))))
+          ;; The refusal must be before anything is touched, so the parameter's
+          ;; own value is still what it was.
+          (setf after (gfx:effect-parameter-value scalar :single)))))
+    (cond
+      ((null name)
+       (format t "~&no scalar parameter on this CNA build; the guard was not exercised~%"))
+      (t
+       (is (not (member declared '(:texture :texture-1d :texture-2d :texture-3d
+                                   :texture-cube)))
+           "~a is declared ~a, which is a texture type; this test needs one that is not"
+           name declared)
+       (dolist (label '(:get-2d :get-cube :set))
+         (is (eq 'xna:cna-invalid-cast-error (cdr (assoc label outcomes)))
+             "~a on a ~a parameter gave ~a" label declared (cdr (assoc label outcomes))))
+       (is (equalp before after)
+           "the refused setter changed the parameter's value from ~a to ~a"
+           before after)))))

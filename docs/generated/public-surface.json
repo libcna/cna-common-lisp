@@ -2175,6 +2175,34 @@
           "documentation": "An argument violated the CNA native contract."
         },
         {
+          "name": "cna-invalid-cast-error",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": true,
+          "metaclass": "condition-class",
+          "precedence": [
+            "microsoft.xna.framework:cna-invalid-cast-error",
+            "microsoft.xna.framework:cna-usage-error",
+            "microsoft.xna.framework:cna-error",
+            "common-lisp:error",
+            "common-lisp:serious-condition",
+            "common-lisp:condition",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "A member was asked of an object whose declared type does not define it.\n\nCNA-Lisp's projection of System.InvalidCastException, for the places the\nselected surface actually throws one. `EffectParameter' is that place: XNA guards\n`SetValue(Texture)' and each of the three `GetValueTexture*' members on the\nparameter's **declared type**, and throws this before touching the parameter --\nso a refusal leaves the value exactly as it was.\n\nIt is a usage error rather than a native one: CNA enforces none of these guards,\nand a probe against 0.21.0 set a TextureCube on a `:SCALAR' parameter and read it\nstraight back. The guard lives here or nowhere."
+        },
+        {
           "name": "cna-invalid-object-error",
           "fbound": false,
           "macro": false,
@@ -17274,7 +17302,28 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "EffectParameter.GetValueTexture2D().\n\nAnswers the TEXTURE-2D this parameter was last set to, cross-checked against the\nhandle CNA reports, and NIL when nothing has been set. It has to work that way\nfor the reason GetVertexBuffers does: CNA's ABI has no route from a native handle\nback to the object that names it, so a binding can either remember what it bound\nor invent an object -- and inventing one would hand back a Texture2D with no\nowner, no dimensions and no disposal story.\n\nThere is no getter for the base Texture overload: XNA has none, and neither does\nCNA."
+          "documentation": "EffectParameter.GetValueTexture2D().\n\nAnswers the TEXTURE-2D this parameter was last set to, cross-checked against the\nhandle CNA reports, and NIL when nothing has been set. It has to work that way\nfor the reason GetVertexBuffers does: CNA's ABI has no route from a native handle\nback to the object that names it, so a binding can either remember what it bound\nor invent an object -- and inventing one would hand back a Texture2D with no\nowner, no dimensions and no disposal story.\n\nRefuses with CNA-INVALID-CAST-ERROR unless the parameter is declared :TEXTURE or\n:TEXTURE-2D, which is the guard XNA's own IL applies before doing anything else.\n\nThere is no getter for the base Texture overload: XNA has none, and neither does\nCNA."
+        },
+        {
+          "name": "effect-parameter-value-texture-cube",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameter"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EffectParameter.GetValueTextureCube().\n\nThe same shape as EFFECT-PARAMETER-VALUE-TEXTURE, over CNA's cube identity, and\nguarded on :TEXTURE or :TEXTURE-CUBE as XNA guards it.\n\nThis member was reported missing, and the reason given was that TextureCube is\nnot a projected type. It is -- and CNA has a full cube getter/setter pair. What\nthe reason had right was that the remembering had to be audited before the claim\ncould be made either way; the audit is in %EFFECT-TEXTURE-SLOTS."
         },
         {
           "name": "effect-parameter-values",
@@ -31232,6 +31281,7 @@
         "cna-scope-error",
         "cna-native-library-error",
         "cna-abi-rejected-error",
+        "cna-invalid-cast-error",
         "cna-error-operation",
         "cna-error-native-message",
         "cna-error-object-type",

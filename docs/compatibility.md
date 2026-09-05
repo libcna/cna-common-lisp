@@ -112,9 +112,9 @@ genuine absence.
 <!-- generated:complete types=141 -->
 <!-- generated:partial types=16 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1853 -->
+<!-- generated:complete members=1854 -->
 <!-- generated:partial members=19 -->
-<!-- generated:missing members=36 -->
+<!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=424 -->
 <!-- generated:disagreement total=0 -->
 
@@ -128,9 +128,9 @@ Selection **Foundation 1 and the managed closures**: 157 types, 2332 members.
 | Types complete | **141** |
 | Types partial | **16** |
 | Types missing | **0** |
-| Members complete | **1853** |
+| Members complete | **1854** |
 | Members partial | **19** |
-| Members missing | **36** |
+| Members missing | **35** |
 | Members not applicable | **424** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -242,7 +242,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.EffectTechniqueCollection` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectPass` | **complete** | 3 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectPassCollection` | **complete** | 4 | 0 | 0 | 0 |
-| `M.X.F.Graphics.EffectParameter` | **partial** | 49 | 0 | 2 | 0 |
+| `M.X.F.Graphics.EffectParameter` | **partial** | 50 | 0 | 1 | 0 |
 | `M.X.F.Graphics.EffectParameterCollection` | **complete** | 5 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectAnnotation` | **complete** | 14 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectAnnotationCollection` | **complete** | 4 | 0 | 0 | 0 |
@@ -348,11 +348,11 @@ back-reference.
 | `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
-| `M.X.F.Graphics.EffectParameter` | 2 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
+| `M.X.F.Graphics.EffectParameter` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 | `M.X.F.TitleContainer` | 0 | 1 |
