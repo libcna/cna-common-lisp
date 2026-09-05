@@ -95,9 +95,37 @@ def rasterizer_proofs():
     return load("tools/qualification/rasterizer-proofs.json")["proofs"]
 
 
+def loadable_asset_types():
+    """The asset types `ContentManager.Load<T>` has a route for.
+
+    Read from the dumped **live loader table**, not from a list kept beside it:
+    `dump-surface.lisp` calls `LOADABLE-ASSET-TYPES`, which reads the same
+    `*ASSET-LOADERS*` alist `Load<T>` dispatches on, so a loader that lands
+    without a documentation change leaves the rendered block stale and this
+    tool red. The README had said "Texture2D, TextureCube and SpriteFont"
+    for a while after `Load<Effect>` landed, which is exactly the drift a
+    generated block removes.
+
+    The XNA name comes from the mapping rules, which is where the
+    Lisp-name-to-XNA-name correspondence already lives; the dump carries only
+    the Lisp symbol, because that is all the loader table knows.
+    """
+    surface = load("docs/generated/public-surface.json")
+    rules = load("tools/api-compat/mapping-rules.json")
+    xna_name = {}
+    for name, spec in rules["types"].items():
+        xna_name[(spec.get("lisp_package"), spec.get("lisp_name"))] = name
+    types = []
+    for entry in surface.get("loadable_asset_types", []):
+        key = (entry["lisp_package"], entry["lisp_name"])
+        types.append((xna_name.get(key, entry["lisp_name"]), entry["lisp_name"]))
+    return types
+
+
 def facts_of(abi, compat):
     return {
         "rasterizer proof count": len(rasterizer_proofs()),
+        "loadable asset types": len(loadable_asset_types()),
         "bound native functions": abi["counts"]["functions"],
         "bound native structs": abi["counts"]["structs"],
         "bound native struct fields": abi["counts"]["struct_fields"],
@@ -279,10 +307,27 @@ def block_rasterizer_proof_kinds(abi, compat):
     return "%d kinds -- %s and %s." % (len(kinds), ", ".join(kinds[:-1]), kinds[-1])
 
 
+def block_loadable_asset_types(abi, compat):
+    lines = ["| Asset type | `load-asset` argument |", "| --- | --- |"]
+    for xna, lisp in loadable_asset_types():
+        lines.append("| `%s` | `'%s` |" % (short(xna), lisp))
+    return "\n".join(lines)
+
+
+def block_loadable_asset_type_names(abi, compat):
+    # The leaf name, not the qualified one: this block goes in a sentence.
+    names = ["`%s`" % xna.rsplit(".", 1)[-1] for xna, _ in loadable_asset_types()]
+    if len(names) == 1:
+        return names[0]
+    return "%s and %s" % (", ".join(names[:-1]), names[-1])
+
+
 BLOCKS = {
     "selection": block_selection,
     "rasterizer-proofs": block_rasterizer_proofs,
     "rasterizer-proof-kinds": block_rasterizer_proof_kinds,
+    "loadable-asset-types": block_loadable_asset_types,
+    "loadable-asset-type-names": block_loadable_asset_type_names,
     "native-abi-headline": block_native_abi_headline,
     "scoreboard-headline": block_scoreboard_headline,
     "scoreboard": block_scoreboard,
@@ -365,6 +410,26 @@ def main():
             for match in re.finditer(pattern, stripped, re.I):
                 problems.append("%s: %r must not appear in prose -- %s"
                                 % (document, match.group(0).strip(), reason))
+
+    # Every proof the registry requires must also be *described* somewhere, and
+    # the count alone does not say that: `loaded-text` was added to the registry
+    # and to the suite, the count marker moved from 7 to 8, and the table in
+    # docs/qualification.md that says what each proof actually does never grew
+    # the row. A generated block cannot carry that table -- what a proof does is
+    # prose, and prose is the thing worth writing by hand -- so what is checked
+    # is that each kind is named by a row of it.
+    # Searched with the generated blocks removed. That document also renders
+    # `rasterizer-proofs`, whose rows begin with the same `| `kind` |`, so a
+    # check over the whole file is satisfied by the generated table and can
+    # never see the hand-written one go missing -- which is how this check
+    # passed the first time it was tried against a deliberately deleted row.
+    described = BLOCK_RE.sub("", text("docs/qualification.md") or "")
+    for proof in rasterizer_proofs():
+        if ("| `%s` |" % proof["kind"]) not in described:
+            problems.append(
+                "docs/qualification.md: the rasterizer proof %r is required by "
+                "tools/qualification/rasterizer-proofs.json and no row of the proof "
+                "table describes it" % proof["kind"])
 
     if compat["totals"]["disagreement_total"]:
         problems.append("the compatibility report has %d disagreement diagnostics"

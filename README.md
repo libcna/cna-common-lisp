@@ -38,18 +38,27 @@ and another host ABI would be a different calling convention, not an untested
 one. Everything that touches no native route runs anywhere.
 
 HEADLESS qualifies command submission and the lifecycle. The SOFTWARE lane
-qualifies the four pixel paths it actually tests: a `Clear` reaches the back
-buffer and reads back; a `SpriteBatch` draw puts a generated opaque texture's own
-texels on exactly the pixels its destination rectangle names — checked at the
-rectangle's corners and at the pixels immediately outside it, with a second,
-four-colour texture proving orientation as well as placement; a
-`DrawUserPrimitives` triangle drawn through a `BasicEffect` pass covers exactly
-the pixels its geometry covers and none outside them; and `DrawString` lays a
-string out glyph by glyph over a two-colour atlas, so the colour of a pixel says
-*which* glyph reached it — the second glyph of `"AB"` reads green eight pixels
-right of the first, and the second line of `"A\nA"` reads red twelve rows down,
-which is `LineSpacing` and not the glyph height. It needs no display to do any of
-that. `docs/qualification.md` defines the claims and `docs/limitations.md` bounds
+qualifies the pixel paths it actually tests, and it needs no display to do it.
+The proofs it requires are one registry —
+`tools/qualification/rasterizer-proofs.json` — which the lane enforces in both
+directions: a required proof the run did not produce fails it, and a proof the
+run produced that the registry does not name fails it too. That registry is what
+the following is rendered from, so this list cannot drift from the gate:
+
+<!-- generated-block:rasterizer-proofs -->
+| Proof | What it claims |
+| --- | --- |
+| `clear` | GraphicsDevice.Clear reached the back buffer and read back |
+| `sprite` | a SpriteBatch draw put a known texture's own texels on exactly the pixels its destination rectangle names, and on none outside it |
+| `primitive` | a DrawUserPrimitives triangle, through a BasicEffect pass, covered exactly the pixels its geometry covers and none outside them |
+| `text` | SpriteFont's metrics and SpriteBatch.DrawString's layout put each glyph of a string at its own advanced position, from its own atlas cell -- proved with a two-colour atlas, so a pixel says which glyph reached it, and across a line break, so the line advance is LineSpacing and not the glyph height |
+| `loaded-text` | a SpriteFont obtained through ContentManager.Load, from a .cnj descriptor on disk with no test-only producer in the path, drew the same string at the same coordinates as the hand-built font -- so a descriptor that drifted from the suite's glyph rows would put a glyph somewhere else and fail |
+| `stock-effect` | a pass applied through an AlphaTestEffect and through a SkinnedEffect made a primitive draw legal and covered the right pixels -- that they are usable draw effects, and nothing about the alpha test or about skinning, neither of which this renderer applies to the geometry these tests can give it |
+| `render-target` | a clear into a bound RenderTarget2D left the back buffer untouched, and the target's own contents then reached the back buffer through the texture path -- the first evidence here that does not depend on the back-buffer readback being the only way to see a pixel |
+| `render-target-data` | every texel of a bound-and-cleared RenderTarget2D read back through Texture2D.GetData -- which reads a texture and not a back buffer, so it is the one pixel claim here that does not depend on GetBackBufferData at all |
+<!-- /generated-block:rasterizer-proofs -->
+
+`docs/qualification.md` defines the claims and `docs/limitations.md` bounds
 them.
 
 ## What is implemented
@@ -124,8 +133,12 @@ stubs:
 * **content**: `ContentManager` and `Game.Content`, which is what makes a
   `SpriteFont` obtainable -- `(load-asset content 'gfx:sprite-font "font")` is
   XNA's `Load<SpriteFont>`, with the type as an argument because Common Lisp can
-  name one where C cannot. Texture2D, TextureCube and SpriteFont are the asset
-  types CNA has a route for, and `LOADABLE-ASSET-TYPES` says so. The manager
+  name one where C cannot. The asset types CNA has a route for are
+  <!-- generated-block:loadable-asset-type-names -->
+`Texture2D`, `TextureCube`, `SpriteFont` and `Effect`
+<!-- /generated-block:loadable-asset-type-names -->,
+  which is `LOADABLE-ASSET-TYPES` rendered from the live loader table rather than
+  a list kept beside it. The manager
   keeps XNA's two collections, so a name loaded twice answers the same object and
   `Unload` disposes what it loaded -- in the order they have to go, a `SpriteFont`
   before the atlas it draws from;

@@ -31353,6 +31353,24 @@
       "reason": "Keyboard.GetState. Static classes project as <class>-<member> so that\n      Mouse and GamePad can join the namespace without colliding."
     }
   ],
+  "loadable_asset_types": [
+    {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "texture-2d"
+    },
+    {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "texture-cube"
+    },
+    {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "sprite-font"
+    },
+    {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "effect"
+    }
+  ],
   "declared_absences": [
     {
       "subject": "Microsoft.Xna.Framework.GameComponent",

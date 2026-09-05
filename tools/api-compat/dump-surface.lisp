@@ -254,6 +254,21 @@ that a keyword-taking projection accepts no keywords at all."
                     "reason" (car (last entry))))
           cna-lisp.internal::*binding-extensions*))
 
+(defun loadable-asset-types ()
+  "The asset types LOAD-ASSET has a route for, from the live loader table.
+
+Not a list written down twice. `LOADABLE-ASSET-TYPES' reads `*ASSET-LOADERS*',
+which `%DEFINE-ASSET-LOADER' fills in as the content layer loads, so this is the
+same table `Load<T>' dispatches on. A loader added without a documentation
+change makes the README's rendered block stale, and
+`tools/qualification/verify-numbers.py' fails until it is regenerated -- which is
+the whole point of dumping it rather than describing it."
+  (mapcar (lambda (type)
+            (object "lisp_package" (string-downcase
+                                    (package-name (symbol-package type)))
+                    "lisp_name" (string-downcase (symbol-name type))))
+          (microsoft.xna.framework.content:loadable-asset-types)))
+
 (defun absences ()
   (mapcar (lambda (entry)
             (object "subject" (or (getf entry :type) (getf entry :member))
@@ -287,6 +302,7 @@ that a keyword-taking projection accepts no keywords at all."
         "predefined_colors" (mapcar (lambda (k) (string-downcase (symbol-name k)))
                                     (microsoft.xna.framework:predefined-color-names))
         "declared_extensions" (extensions)
+        "loadable_asset_types" (loadable-asset-types)
         "declared_absences" (absences))
        stream)
       (terpri stream))
