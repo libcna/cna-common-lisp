@@ -57,7 +57,11 @@ Qualified on 2026-09-05 against an exact, published source pair:
 | sharp-runtime | `bfc826e1fa7eef1adb36df1c64782e9939a0af37` — `origin/next`, which declares and defines `StoragePaths::SetIsolatedStorageRootOverride` |
 
 Neither is a local commit and neither tree was patched: both are detached
-worktrees of the published branches, and `git status` is clean in each.
+worktrees of the published branches, and `git status` is clean in each. The
+HEADLESS and SOFTWARE libraries were built from that one tree with
+`-DCNA_BUILD_C_API=ON -DCNA_PLATFORM=SDL3 -DCNA_AUDIO_PLATFORM=SDL3` and the two
+renderer settings, against `-DCNA_SHARP_RUNTIME_ROOT` pointing at the
+sharp-runtime worktree above.
 
 What was run against a real 0.22.0 library built from that pair:
 
@@ -72,7 +76,7 @@ What was run against a real 0.22.0 library built from that pair:
 | Whole suite, HEADLESS, no shim | **0 failures, nothing not run** |
 | Audio lanes, in separate processes | unavailable branch and dummy-driver state machine, both as on 0.21.0 |
 | Isolated consumer, 60 and 600 frames | passes |
-| Whole suite, SOFTWARE, with the rasterizer proof registry | see the SOFTWARE row below |
+| Whole suite, SOFTWARE, with the rasterizer proof registry | **0 failures, nothing not run**, and every proof kind the registry requires |
 
 **And 0.21.0 was re-run after the set grew**, because admitting a second version
 is a change to the first one's gate as well: the same suite, the same audio lanes

@@ -61,8 +61,9 @@ check count, which is why this file no longer carries one and
 ## What is green, exactly
 
 Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
-**0.21.0** (encoded 5376) built with the `SDL3` platform, `SDL3` audio and the
-**HEADLESS** renderer:
+**0.21.0** (encoded 5376) and **0.22.0** (encoded 5632), each built with the
+`SDL3` platform, `SDL3` audio and the **HEADLESS** renderer. Both are in the
+admitted set and the table below was produced against each:
 
 | Gate | Result |
 | --- | --- |
@@ -114,13 +115,16 @@ they have never executed is stale.
 killed proves nothing in either direction. Cite a run by id and conclusion, never
 by "the last run"; `gh run list` prints all three fields.
 
-The `Native` job is **pinned to CNA commit `056e57d47`**, and not by preference:
-`openeggbert/cna:next` does not currently build from published sources, because
-its storage module calls a `sharp-runtime` member that has not been pushed. The
-pin is that call's parent commit. Every run records the CNA and sharp-runtime
-commits it landed on, in the step summary and in `qualification-run.json` inside
-the run's artifact, and `workflow_dispatch` takes `cna_ref` and
-`sharp_runtime_ref` for checking whether the two repositories have caught up.
+The `Native` job is **pinned to CNA commit `fb62662c9`** -- ABI 0.22.0, the newest
+commit on `origin/next` whose ABI this binding admits, and the parent of the
+0.23.0 bump. The pin is no longer the sharp-runtime one: that blocker closed on
+2026-09-05 and the pin's old comment said otherwise until this task. It is the ABI
+gate now. `cna:next` is 0.23.0, which is not admitted, so an unpinned job would
+fail the gate on its first run -- correctly. Every run records the CNA and
+sharp-runtime commits it landed on, in the step summary and in
+`qualification-run.json` inside the run's artifact, and `workflow_dispatch` takes
+`cna_ref` and `sharp_runtime_ref` -- `cna_ref: next` measures the tip, and
+`cna_ref: 056e57d47...` reproduces the 0.21.0 half of the admitted set.
 `docs/qualification.md` has the policy and the evidence.
 
 ## Foundation 1 is release-ready, and frozen
@@ -155,7 +159,7 @@ The eight conditions, and what each rests on:
 | No known ownership or lifetime defect | ownership stress, construction atomicity over twelve resource families, content transaction rollback at four injection points, callback registry empty after each cycle |
 | Zero structural disagreements | `verify.py --strict`, over <!-- generated:diagnostic categories=18 --> diagnostic categories |
 | No stale live-state documentation | two audits; the second is recorded below, and found what the first left behind |
-| Admitted ABI set truthful | 0.21.0 only. 0.22.0 is audited, shape-identical, and **correctly not admitted** -- the blocker is reproducibility, re-measured a fourth time and unchanged |
+| Admitted ABI set truthful | `{0.21.0, 0.22.0}`, and both are evidenced: the whole gate set ran against a real 0.22.0 library built from an exact published source pair, and 0.21.0 was re-run afterwards. `cna:next` is 0.23.0 and is **correctly not admitted** -- nothing has run against it |
 | CI green | both workflows `success`, and named by run id below rather than by "the latest run" |
 | Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must also be *described* |
 | Every non-complete member has a concrete reason | 54 of 54, each naming a route or an IL fact, each in one of seven categories, with **zero** in either implementable category |
@@ -538,33 +542,38 @@ decision and the reason it is not an oversight.
 
 **About the ABI**
 
-* **ABI 0.22.0 is audited, shape-identical, and still not admitted -- but the
-  reason changed on 2026-09-05.** All 328 bound routes are still exported, the
-  foreign layer regenerated against 0.22.0's headers is identical but for two
-  version constants, and the compiler probe passes at `-Werror`.
+* **The admitted set is `{0.21.0, 0.22.0}`, and it is a *set*.** 0.22.0 was
+  qualified on 2026-09-05 against an exact published pair -- CNA `fb62662c9` and
+  sharp-runtime `bfc826e1`, both detached worktrees of `origin/next`, neither
+  patched -- and the whole gate set was run against a real library built from it.
+  0.21.0 was re-run afterwards, because admitting a second version changes the
+  first one's gate too. `docs/qualification.md` names every gate and its result.
 
-  What was missing was a library anybody can build. `cna:next` calls
-  `StoragePaths::SetIsolatedStorageRootOverride`, and the sharp-runtime commit
-  adding it, `c419f477`, was on no remote branch -- measured four times, unchanged
-  every time. **It is on `origin/next` now**: `git branch -r --contains c419f477`
-  prints it, and `sharp-runtime:next` (`bfc826e1`) declares and defines the member
-  at `StoragePaths.hpp:41` and `StoragePaths.cpp:63`. So `cna:next` builds from
-  published sources again and the reproducibility blocker is gone.
+  **Making it a set needed three fixes, and each had silently assumed one
+  version.** `generate.py --check` compared the generated layer byte for byte, so
+  it could only pass against whichever version the checked-in files came from;
+  `probe.generated.c` asserted `CNA_ABI_VERSION == 5376` in C; and the
+  admitted-set test asserted a set of exactly one. The four ABI-version constants
+  are now compared and asserted as *an admitted version* and nothing else is
+  relaxed -- a version that changed a route, a layout or any other constant still
+  fails, which was verified by breaking it. That is the shape of the mistake to
+  expect when a third version arrives: not the layer, but the machinery that
+  checks it.
 
-  **The admitted set stays `{0.21.0}` anyway, because the gates have not been run
-  against 0.22.0.** A shape-identical foreign layer and a green compiler probe are
-  steps one to seven of an admission, not the admission. What it needs now: build
-  a HEADLESS and a SOFTWARE 0.22.0 from published sources, run the complete gate
-  set against both -- the audio lanes included -- and only then move
-  `src/internal/abi-gate.lisp` and the manifest's `admitted_abi_versions`
-  **together**, since the first gates the runtime and the second gates the
-  generator. That is the next infrastructure job and it is no longer blocked on
-  anybody else. Until it is done, **do not admit 0.22.0**: nothing has run
-  against it.
+  **The layer really is identical across the set.** 496 functions, 72 structs,
+  511 constants and 10 callbacks, byte for byte, differing only in
+  `+abi-version+` and `+abi-version-minor+`. All 496 bound routes are exported by
+  the 0.22.0 library.
+* **`cna:next` is ABI 0.23.0 and is not admitted.** Auditing and qualifying it is
+  the same job this task did for 0.22.0, and the machinery is now in place for it.
+  Do not widen the gate to a range to avoid doing it: the explicit set is what
+  makes "qualified" mean something.
 * To reproduce the 0.21.0 gates, point `CNA_ABI_BASELINE` at a 0.21.0 baseline --
   `cnanext 2b0c374a1` is the last commit carrying one -- rather than at whatever
   the checkout is on today, or the generator refuses with "supplied headers
   declare ABI ... which the manifest does not admit", which is the gate working.
+  `~/deps/cna-c-abi-0.21.0/` and `~/deps/cna-c-abi-0.22.0/` hold a built library
+  and its baseline for each.
 * **A private shim is the permitted remedy for a proved ABI impedance mismatch**,
   and it stays optional: a release must load with no C toolchain.
 

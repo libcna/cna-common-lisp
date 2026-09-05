@@ -26,7 +26,7 @@ This is what has actually been run, not what might work.
 | Implementation | SBCL 2.5.2 (Linux x86-64) |
 | Foreign layer | CFFI, Babel, bordeaux-threads — no `cffi-libffi` |
 | Build system | ASDF |
-| CNA C ABI | **0.21.0** only (encoded 5376) |
+| CNA C ABI | **0.21.0** (encoded 5376) and **0.22.0** (encoded 5632) — an explicit set, both qualified |
 | CNA build | `SDL3` platform, `SDL3` audio, **HEADLESS** renderer |
 | Second lane | the same suite against a **SOFTWARE** renderer, which reads real pixels back out of the back buffer |
 
