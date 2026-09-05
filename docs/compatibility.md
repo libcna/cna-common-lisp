@@ -48,9 +48,9 @@ python3 tools/api-compat/verify.py --strict
 
 ## Diagnostic categories
 
-<!-- generated:diagnostic categories=17 --> categories are measured.
+<!-- generated:diagnostic categories=18 --> categories are measured.
 <!-- generated:absence categories=2 --> of them mean *absence*; the other
-<!-- generated:disagreement categories=15 --> mean **disagreement** -- the
+<!-- generated:disagreement categories=16 --> mean **disagreement** -- the
 binding claiming something that is not so, or hiding something.
 
 <!-- generated-block:diagnostic-categories -->
@@ -70,6 +70,7 @@ binding claiming something that is not so, or hiding something.
 |  | `unmeasured_category` |
 |  | `stale_mapping_rule` |
 |  | `stale_declared_absence` |
+|  | `uncategorised_absence` |
 |  | `wrong_overload_shape` |
 <!-- /generated-block:diagnostic-categories -->
 
@@ -376,6 +377,59 @@ The counts in that table are the real remaining surface. The largest by far is
 `System.IO.Stream` and the `Texture2D` members that need it, and the parts of
 `Game` and `GraphicsDeviceManager` that need a component engine, a content
 manager or a device-settings type.
+
+## Why each non-complete member is non-complete
+
+Every missing and every partial member carries a prose reason, one per member,
+in `tools/api-compat/mapping-rules.json` -- `unimplemented` for the missing and
+`member_overrides` for the partial. Each names the CNA route it was read from or
+the IL fact it rests on, and they are measurements rather than claims: a
+route-by-route re-audit rewrote ten of them, three of which had said "CNA has no
+route" about a route that existed, and found two members that were not blocked at
+all.
+
+Reasons alone do not add up, though. The question a release has to answer is not
+how many members are missing but whether any of them is missing for no better
+reason than that nobody has done it. So each also carries a **category**, the set
+is closed, and `verify.py` requires the mapping to cover the frontier exactly --
+an uncategorised non-complete member is an `uncategorised_absence` diagnostic,
+and so is a category left behind by a member that has since been completed.
+
+<!-- generated-block:frontier-categories -->
+| Category | Members | What it means |
+| --- | ---: | --- |
+| `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
+| `CNA_0_21_ABI_LIMIT` | **39** | CNA 0.21.0 has no route for the member, or its route cannot express what the member means. |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against 0.21.0, but only as a new closure in this binding's object model rather than as a member. |
+| `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
+| `QUALIFICATION_LIMIT` | **1** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
+| `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
+| `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
+<!-- /generated-block:frontier-categories -->
+
+<!-- generated:high-value frontier members=0 --> members are in
+`IMPLEMENTABLE_AND_HIGH_VALUE`, and that is the row the release statement rests
+on: nothing in the selected profile is both unblocked and worth doing. The two
+empty rows are rendered rather than dropped, because their being empty is the
+claim.
+
+The categories are not excuses of equal weight. `CNA_0_21_ABI_LIMIT` holds the
+large majority, and most of that is one shape repeated: XNA's protected
+`On<Event>` raisers, thirteen of them across `Game`, `GameWindow` and
+`GraphicsDeviceManager`. In XNA the raiser *is* what raises the event, and a
+subclass overrides it to stand between the framework and the handlers. CNA raises
+the events itself and reaches Lisp through one callback per subscribed handler,
+so an override here could notify but never suppress -- there is no moment at
+which this binding decides whether to raise. Projecting them would give a
+consumer a method that looks like an interception point and is not.
+
+`PUBLIC_OBJECT_MODEL_CLOSURE` is the one category that is this binding's own work
+rather than a limit imposed on it. It holds three members -- `GraphicsDevice`'s
+constructor and `Dispose`, and `Game.Services` -- and each is a closure rather
+than a member: the first two need a second kind of `GraphicsDevice`, an owned one
+with a handle of its own beside the parent-owned facade, and the third needs
+`GameServiceContainer` in the selection and a managed container that stays in
+step with CNA's two canonical services. `docs/limitations.md` has both audits.
 
 ## Behaviour, as distinct from structure
 

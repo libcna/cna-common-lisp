@@ -41,6 +41,7 @@ CATEGORIES = [
     "unmeasured_category",
     "stale_mapping_rule",
     "stale_declared_absence",
+    "uncategorised_absence",
     "wrong_overload_shape",
 ]
 
@@ -895,6 +896,47 @@ def verify_declared_absences(report, surface, statuses):
             mismatch(subject, declared, "complete")
 
 
+def verify_frontier_categories(report, rules, statuses):
+    """Every non-complete member says what *kind* of thing is stopping it.
+
+    Each already carries a prose reason naming the route or the IL fact it was
+    read from, and those reasons are good -- a route-by-route audit rewrote ten
+    of them after three turned out to name a route that existed. What they could
+    not do is add up. "Every remaining absence has a reason" is only worth
+    saying if the reasons sort into kinds, because the interesting question at a
+    release is not how many members are missing but whether any of them is
+    missing for no better reason than that nobody did it.
+
+    So each is categorised, the set is closed, and the mapping must cover the
+    frontier exactly: an uncategorised non-complete member is a diagnostic, and
+    so is a category for a member that has since been completed -- the same
+    stale-entry failure `stale_declared_absence` exists for, one level up.
+
+    IMPLEMENTABLE_AND_HIGH_VALUE being empty is the property worth having. An
+    entry there is work the scoreboard would otherwise hide behind a number.
+    """
+    kinds = rules.get("frontier_category_kinds", {})
+    categories = rules.get("frontier_categories", {})
+    frontier = set()
+    for type_name, members in statuses["members"].items():
+        for signature, status in members.items():
+            if status in ("missing", "partial"):
+                frontier.add("%s.%s" % (type_name, signature))
+    for subject in sorted(frontier - set(categories)):
+        report.add("uncategorised_absence", subject,
+                   "is %s and no frontier_categories entry says what kind of "
+                   "limit that is" % ("partial or missing"))
+    for subject in sorted(set(categories) - frontier):
+        report.add("uncategorised_absence", subject,
+                   "has a frontier_categories entry and is not missing or "
+                   "partial; delete the entry")
+    for subject, category in sorted(categories.items()):
+        if category not in kinds:
+            report.add("uncategorised_absence", subject,
+                       "names the category %r, which frontier_category_kinds "
+                       "does not define" % category)
+
+
 def verify_leaks(report, packages):
     """No exported name may mention an ABI concept.
 
@@ -949,10 +991,10 @@ def main(argv):
             verify_type(report, rules, contract_type, surface, packages, claimed))
     verify_unexpected(report, rules, surface, packages, claimed)
     verify_leaks(report, packages)
-    verify_declared_absences(
-        report, surface,
-        {"types": {entry["name"]: entry["status"] for entry in report.types},
-         "members": {entry["name"]: entry["members"] for entry in report.types}})
+    statuses = {"types": {entry["name"]: entry["status"] for entry in report.types},
+                "members": {entry["name"]: entry["members"] for entry in report.types}}
+    verify_declared_absences(report, surface, statuses)
+    verify_frontier_categories(report, rules, statuses)
 
     by_status = {}
     member_status = {}

@@ -126,6 +126,10 @@ def facts_of(abi, compat):
     return {
         "rasterizer proof count": len(rasterizer_proofs()),
         "loadable asset types": len(loadable_asset_types()),
+        "high-value frontier members": sum(
+            1 for category in load(
+                "tools/api-compat/mapping-rules.json")["frontier_categories"].values()
+            if category == "IMPLEMENTABLE_AND_HIGH_VALUE"),
         "bound native functions": abi["counts"]["functions"],
         "bound native structs": abi["counts"]["structs"],
         "bound native struct fields": abi["counts"]["struct_fields"],
@@ -342,6 +346,26 @@ def block_diagnostic_categories(abi, compat):
     return "\n".join(lines)
 
 
+def block_frontier_categories(abi, compat):
+    """How many non-complete members are held up by each kind of limit.
+
+    Rendered so that the two empty rows stay visible. A release statement rests
+    on IMPLEMENTABLE_AND_HIGH_VALUE being zero, and a table that dropped its
+    empty rows would show that by showing nothing.
+    """
+    rules = load("tools/api-compat/mapping-rules.json")
+    kinds = rules["frontier_category_kinds"]
+    counts = {name: 0 for name in kinds}
+    for category in rules["frontier_categories"].values():
+        counts[category] = counts.get(category, 0) + 1
+    lines = ["| Category | Members | What it means |", "| --- | ---: | --- |"]
+    for name in kinds:
+        # One sentence of the definition; the rules file carries the whole one.
+        summary = kinds[name].split(". ")[0].rstrip(".") + "."
+        lines.append("| `%s` | **%d** | %s |" % (name, counts[name], summary))
+    return "\n".join(lines)
+
+
 BLOCKS = {
     "selection": block_selection,
     "rasterizer-proofs": block_rasterizer_proofs,
@@ -355,6 +379,7 @@ BLOCKS = {
     "partial-frontier": block_partial_frontier,
     "native-abi-summary": block_native_abi_summary,
     "diagnostic-categories": block_diagnostic_categories,
+    "frontier-categories": block_frontier_categories,
 }
 
 BLOCK_RE = re.compile(
