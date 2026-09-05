@@ -160,6 +160,16 @@ done
 echo "== the template stays on the public API =="
 "$work/consumer/tools/audit-public-only.sh"
 
+# The canary's CANARY lines are its interface, and its README documents them.
+# That list had fallen four fields behind the program, so it is checked -- but
+# only when the template carries the audit, since this script also has to work
+# against an older checkout of it.
+if [ -x "$work/consumer/tools/audit-canary-fields.sh" ]; then
+    echo
+    echo "== every CANARY field the template emits is documented =="
+    "$work/consumer/tools/audit-canary-fields.sh"
+fi
+
 echo
 echo "isolated consumer qualification passed"
 echo "  artifact  $work/artifact"
