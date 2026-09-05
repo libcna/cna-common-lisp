@@ -388,6 +388,19 @@ loader's rollback runs, so recording it in both would destroy it twice. A
 construction that succeeds drops its ledger, and from there the loader's undo is
 the effect's own disposal. `Effect.Clone` takes the same path for the same reason.
 
+**One of the route's three shapes is covered, and which one is worth stating.**
+The stock-effect descriptor is tested on both qualification renderers. The
+compiled `.xnb` shape needs `CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`, which
+neither renderer has, so it is refused here exactly as `Effect(GraphicsDevice,
+byte[])` is. The shader-source descriptor needs
+`CNA_GRAPHICS_CAPABILITY_CUSTOM_EFFECTS` — a *different* capability, and CNA's
+header says the software renderer has it — so that shape should load under
+`SOFTWARE`; what is missing is its schema. The `.cnj` shape for a source-carrying
+effect is not documented in 0.21.0's headers, and five plausible spellings were
+tried against the software renderer and all refused with `CNA_RESULT_IO`. Rather
+than keep guessing, it is written down: **the shader-source shape is unexercised,
+for want of its descriptor schema and not for want of a capability.**
+
 `Load<T>` stays **partial** because it is generic over any type with a content
 reader and this is four. CNA's `_load_sound_effect` and `_load_model` are for
 types not in the selection; `_load_foreign_ext` and `_load_object_dictionary_ext`

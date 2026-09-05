@@ -276,6 +276,21 @@ the graph after each closure instead of following this list once it has moved.
    one. It is complete now, and `docs/limitations.md` records the mistake with
    the two others of its kind rather than deleting it.
 
+   **Every declared reason has since been re-read, one at a time, against
+   0.21.0's headers and the pinned IL — the missing and the partial both.** That
+   sweep was started because three reasons turned out false in quick succession,
+   and it found seven more wrong and two members that were not blocked at all:
+   `EffectParameter.GetValueTextureCube` and `ContentManager.Load<Effect>`, both
+   now complete. `docs/limitations.md` carries the whole audit, including the
+   reasons that survived it unchanged — those are named too, so that a reader can
+   tell a checked reason from an unchecked one.
+
+   **So the reasons in `mapping-rules.json` are now measurements rather than
+   claims.** If one of them turns out wrong again, the thing to fix is not only
+   the member: it is that a route was named without being read. Three of the ten
+   said "CNA has no route" about a route that existed, which is the wording to
+   distrust first.
+
 1. **The device-settings closure**: `Adapter`, `DisplayMode`,
    `PresentationParameters`, `GraphicsProfile`, `GraphicsDeviceStatus`, the three
    `Reset` overloads, `Present`, `GraphicsDevice`'s six events, and
