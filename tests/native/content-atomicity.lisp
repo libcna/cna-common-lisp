@@ -46,7 +46,8 @@
   "The load step that must signal, or NIL. Bound around one LOAD-ASSET call.")
 
 (defparameter *destroy-routes*
-  '(ffi::%texture-2d-destroy ffi::%sprite-font-destroy ffi::%texturecube-destroy)
+  '(ffi::%texture-2d-destroy ffi::%sprite-font-destroy ffi::%texturecube-destroy
+    ffi::%sound-effect-destroy ffi::%sound-effect-instance-destroy)
   "The destroy routes a content rollback can call.")
 
 (defun call-with-destroy-log (function)
@@ -166,6 +167,18 @@ that state."
   (declare (ignore asset-name record values))
   (if (eq *exploding-step* :cache-insertion)
       (error 'content-step-blew-up :step :cache-insertion)
+      (call-next-method)))
+
+(defmethod audio::%read-sound-effect-duration :around (effect handle operation)
+  "The step a loaded SoundEffect takes *after* its handle exists, and so the one
+window a failure-injection test has to be able to open on this closure.
+
+A sound effect is one handle for one name, so a failure here is the simplest
+shape the rollback has to handle: CNA has handed the handle over, the loader's
+ledger owns it, and no object is built yet. Everything must go back exactly once."
+  (declare (ignore effect handle operation))
+  (if (eq *exploding-step* :sound-effect-duration)
+      (error 'content-step-blew-up :step :sound-effect-duration)
       (call-next-method)))
 
 (defmethod gfx::%read-font-glyph-table :around (handle count operation)

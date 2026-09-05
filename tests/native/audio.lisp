@@ -1107,3 +1107,163 @@ tell them apart. Guessing would name the wrong cause half the time."
     (is (= (children-before game) (children-after game))
         "a failed load changed the game's children from ~d to ~d"
         (children-before game) (children-after game))))
+
+;;; --- construction and content atomicity --------------------------------------
+;;;
+;;; **The machinery is the existing generic one**, not an audio-specific copy:
+;;; `tests/native/content-atomicity.lisp' owns the destroy log, the
+;;; `*EXPLODING-STEP*' seam and the `ATOMIC-LOAD-GAME' fixture, and this file adds
+;;; the audio cases to them. `%SOUND-EFFECT-DESTROY' joined the logged routes and
+;;; `%READ-SOUND-EFFECT-DURATION' grew the `:around' that fails it -- which is why
+;;; that function is a generic function at all.
+;;;
+;;; Four states a failure can happen in, and all four have to give everything
+;;; back exactly once:
+;;;
+;;;   1. the effect's native handle exists, and a subclass initializer signals
+;;;   2. the instance's native handle exists, and a subclass initializer signals
+;;;   3. a load has the handle and the duration, and the cache insertion fails
+;;;   4. a load has the handle, and reading the duration fails
+
+(define-condition audio-subclass-blew-up (error) ()
+  (:report (lambda (c stream) (declare (ignore c))
+             (format stream "boom, from an audio subclass initializer"))))
+
+(defclass exploding-sound-effect (audio:sound-effect) ())
+(defmethod initialize-instance :after ((object exploding-sound-effect) &key)
+  (declare (ignore object))
+  (error 'audio-subclass-blew-up))
+
+(defclass exploding-sound-effect-instance (audio:sound-effect-instance) ())
+(defmethod initialize-instance :after ((object exploding-sound-effect-instance) &key)
+  (declare (ignore object))
+  (error 'audio-subclass-blew-up))
+
+(define-audio-device-test a-failed-sound-effect-subclass-gives-the-handle-back
+  "Case 1: `SoundEffect''s own initializer has finished, so CNA is holding a
+handle, and then the consumer's subclass signals.
+
+CLOS runs `:after' methods least-specific-first, so a subclass's own runs *last*
+-- after the handle exists and after the effect is registered as a child of the
+game. Without the construction ledger the game would be left owning a sound
+effect the caller never received, and the symptom would appear at shutdown rather
+than here."
+  (let ((before (length (int:children-of game)))
+        (registry-before (int:callback-registry-count)))
+    (call-with-destroy-log
+     (lambda (log)
+       (signals audio-subclass-blew-up
+         (make-instance 'exploding-sound-effect
+                        :buffer (pcm16-silence 800)
+                        :sample-rate +fixture-sample-rate+ :channels :mono))
+       (let ((entries (destroys-of (funcall log) 'ffi::%sound-effect-destroy)))
+         (is (= 1 (length entries))
+             "the effect handle was destroyed ~d time(s), not once" (length entries))
+         (is (plusp (cdr (first entries))) "a zero handle was handed back"))))
+    (is (= before (length (int:children-of game)))
+        "the game was left owning ~d child/children it never handed out"
+        (- (length (int:children-of game)) before))
+    (is (= registry-before (int:callback-registry-count)))))
+
+(define-audio-device-test a-failed-instance-subclass-leaves-the-effect-disposable
+  "Case 2: the instance's handle exists and its subclass signals.
+
+The consequence a leak has here is specific and worse than a stranded object: CNA
+refuses to destroy a sound effect that still has live instances, so an instance
+left behind makes its *parent* undisposable, and the game after it. That the
+effect still disposes is the assertion."
+  (with-sound-effect (effect :buffer (pcm16-silence 800)
+                             :sample-rate +fixture-sample-rate+ :channels :mono)
+    (let ((before (length (int:children-of effect))))
+      (call-with-destroy-log
+       (lambda (log)
+         (signals audio-subclass-blew-up
+           (make-instance 'exploding-sound-effect-instance :sound-effect effect))
+         (let ((entries (destroys-of (funcall log)
+                                     'ffi::%sound-effect-instance-destroy)))
+           (is (= 1 (length entries))
+               "the instance handle was destroyed ~d time(s), not once"
+               (length entries)))))
+      (is (= before (length (int:children-of effect)))
+          "the effect was left owning ~d instance(s) it never handed out"
+          (- (length (int:children-of effect)) before))
+      ;; The proof that nothing is stranded: the effect goes back, which CNA
+      ;; would refuse if an instance were still alive.
+      (xna:dispose effect)
+      (is (audio:is-disposed effect)))))
+
+(define-native-test a-sound-load-whose-caching-fails-keeps-none-of-it
+  "Case 3: everything worked and the commit failed.
+
+By the time the effect reaches the cache CNA has handed the handle over, the
+duration is read, the object is built and the game owns it. All of it has to come
+apart, and the manager has to keep neither a cache entry nor a disposal-list
+entry -- an entry left on the second would make `Unload' dispose a handle that
+had already gone back."
+  (when (with-audio-game (probe) (audio-playback-available-p))
+    (with-atomic-load-game (game :asset-type 'audio:sound-effect
+                                 :asset-name "test-tone"
+                                 :step-to-blow :cache-insertion)
+      (let ((log (destroy-log game))
+            (content (xna:content game)))
+        (is (typep (condition-seen game) 'content-step-blew-up)
+            "the caller saw ~a" (type-of (condition-seen game)))
+        (is (eq :cache-insertion (blown-step (condition-seen game))))
+        (is (destroyed-exactly-once-p log 'ffi::%sound-effect-destroy)
+            "the effect handle was destroyed ~d time(s), not once"
+            (length (destroys-of log 'ffi::%sound-effect-destroy)))
+        (is (= (children-before game) (children-after game))
+            "the adopted effect was left registered as a live child of the game")
+        (is (= (registry-before game) (registry-after game)))
+        (is (zerop (hash-table-count (xna.content::%content-loaded-assets content)))
+            "a failed load left ~d cache entry/entries behind"
+            (hash-table-count (xna.content::%content-loaded-assets content)))
+        (is (null (xna.content::%content-disposable-assets content))
+            "a failed load left ~d asset(s) on the manager's disposal list"
+            (length (xna.content::%content-disposable-assets content)))))))
+
+(define-native-test a-sound-load-that-fails-after-its-handle-strands-nothing
+  "Case 4: CNA handed the handle over and the very next step failed.
+
+This is the narrowest window in the load -- the loader's ledger owns a handle and
+no object exists yet -- and it is the one the single-ledger rule exists for. A
+second ledger recording the same handle would destroy it twice here."
+  (when (with-audio-game (probe) (audio-playback-available-p))
+    (with-atomic-load-game (game :asset-type 'audio:sound-effect
+                                 :asset-name "test-tone"
+                                 :step-to-blow :sound-effect-duration)
+      (let ((log (destroy-log game))
+            (content (xna:content game)))
+        (is (typep (condition-seen game) 'content-step-blew-up)
+            "the caller saw ~a" (type-of (condition-seen game)))
+        (is (eq :sound-effect-duration (blown-step (condition-seen game))))
+        (is (destroyed-exactly-once-p log 'ffi::%sound-effect-destroy)
+            "the effect handle was destroyed ~d time(s), not once"
+            (length (destroys-of log 'ffi::%sound-effect-destroy)))
+        (is (= (children-before game) (children-after game)))
+        (is (zerop (hash-table-count (xna.content::%content-loaded-assets content))))
+        (is (null (xna.content::%content-disposable-assets content)))))))
+
+(define-native-test a-successful-sound-load-destroys-nothing
+  "The control. Without it every assertion above would still pass if
+`Load<SoundEffect>' had simply stopped working."
+  (when (with-audio-game (probe) (audio-playback-available-p))
+    (with-atomic-load-game (game :asset-type 'audio:sound-effect
+                                 :asset-name "test-tone"
+                                 :step-to-blow nil)
+      (is (null (condition-seen game)) "the control load failed: ~a" (condition-seen game))
+      (is (null (destroys-of (destroy-log game) 'ffi::%sound-effect-destroy))
+          "a successful load destroyed ~d handle(s)"
+          (length (destroys-of (destroy-log game) 'ffi::%sound-effect-destroy)))
+      (is (= 1 (- (children-after game) (children-before game)))
+          "a successful load added ~d child/children, not one"
+          (- (children-after game) (children-before game)))
+      (is (= 1 (hash-table-count
+                (xna.content::%content-loaded-assets (xna:content game))))
+          "a successful load left ~d cache entry/entries"
+          (hash-table-count (xna.content::%content-loaded-assets (xna:content game))))
+      ;; and the loaded effect is disposed here rather than in the teardown: it
+      ;; is a live child of the game, and CNA refuses to destroy a parent that
+      ;; still has one. The control is the only case with anything left to give
+      ;; back -- every failing case above already gave it back.
+      (xna:dispose (first (load-result game))))))
