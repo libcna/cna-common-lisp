@@ -63,7 +63,9 @@ check count, which is why this file no longer carries one and
 Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
 **0.21.0** (encoded 5376) and **0.22.0** (encoded 5632), each built with the
 `SDL3` platform, `SDL3` audio and the **HEADLESS** renderer. Both are in the
-admitted set and the table below was produced against each:
+admitted set, and every row below that involves a library was produced against
+each of them -- the fourth row is the lane with no library at all, so it has no
+ABI to be produced against:
 
 | Gate | Result |
 | --- | --- |
