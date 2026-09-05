@@ -2032,7 +2032,28 @@
           "type": true,
           "constant": false,
           "value": null,
-          "documentation": "Superclass of every condition CNA-Lisp signals. Its readers describe the\nfailure in Lisp terms; the CNA result code behind it is not part of the public\nAPI."
+          "documentation": "Superclass of every condition CNA-Lisp signals. Its readers describe the\nfailure in Lisp terms; the CNA result code behind it is not part of the public\nAPI.\n\n`CAUSE' is where `System.Exception''s `innerException' constructor argument goes.\nTwo of the selected XNA types are exception classes, and each of them declares\nthe CLR's three-constructor set -- `new()', `new(String)' and\n`new(String, Exception)'. The first two are `MAKE-CONDITION' with and without\n`:FORMAT-CONTROL'; the third needs somewhere to put a second argument, and\nwithout this slot it had nowhere, which would make `new(String, Exception)' a\nconstructor this projection cannot express rather than one it collapses.\n`System.Exception' itself is not projected as a type -- it is the base-class\nlibrary's, and a Common Lisp condition is what it projects onto, the same rule\n`System.IO.Stream' is read by -- so the slot holds a condition."
+        },
+        {
+          "name": "cna-error-cause",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "condition"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
         },
         {
           "name": "cna-error-native-message",
@@ -4528,7 +4549,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Release OBJECT's native resource, deterministically and now.\n\nRefuses when OBJECT still owns live children -- CNA requires children to be\ndestroyed before their parent, and a diagnosable refusal is better than the\nnative failure that would follow. Calling DISPOSE on an already-disposed object\ndoes nothing, exactly as IDisposable.Dispose does."
+          "documentation": "Release OBJECT's native resource, deterministically and now.\n\nLive children are handed to DISPOSE-OWNED-CHILDREN, whose default refuses: CNA\nrequires children destroyed before their parent, and a diagnosable refusal is\nbetter than the native failure that would follow. One selected type overrides\nthat because its pinned XNA behaviour cascades; see DISPOSE-OWNED-CHILDREN.\n\nCalling DISPOSE on an already-disposed object does nothing, exactly as\nIDisposable.Dispose does."
         },
         {
           "name": "disposed-p",
@@ -31127,7 +31148,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "SoundEffect.FromStream(Stream).\n\nSTREAM is an ordinary Common Lisp binary stream, which is what `System.IO.Stream'\nprojects onto here -- see `docs/limitations.md'. XNA reads it to the end and\ndecodes whatever it holds; `cna_sound_effect_create_from_encoded_ext' takes the\nbytes CNA would have read, because \"the canonical operation takes a C++ stream\nand reads it to the end, so C takes the bytes it would have read\".\n\nWhatever the audio backend can decode is accepted, which is more than the raw\nPCM the constructors take. A payload it cannot decode answers\n`CNA_RESULT_NOT_SUPPORTED', which is the same code a machine with no audio device\nanswers -- so this signals NO-AUDIO-HARDWARE-ERROR for both, and the condition's\nreport carries CNA's own message, which distinguishes them."
+          "documentation": "SoundEffect.FromStream(Stream).\n\nSTREAM is an ordinary Common Lisp binary stream, which is what `System.IO.Stream'\nprojects onto here -- see `docs/limitations.md'. XNA reads it to the end;\n`cna_sound_effect_create_from_encoded_ext' takes the bytes CNA would have read,\nbecause \"the canonical operation takes a C++ stream and reads it to the end, so C\ntakes the bytes it would have read\".\n\n**The bytes are checked against XNA's wave contract before CNA sees them, and\nthat is the whole point of `audio/wave.lisp'.** CNA's route accepts \"whatever the\naudio backend can decode ... which is more than the raw PCM the other creation\nroutes take\" -- its own header says so -- and XNA accepts one shape: a RIFF/WAVE\nfile whose `fmt ' chunk declares uncompressed PCM, one or two channels, 8 or 16\nbits and a rate in [8000, 48000], followed by a `data' chunk. Handing an Ogg\nstraight to CNA and answering with a SoundEffect because SDL could decode it\nwould be adding a capability to `FromStream' that XNA has not got, which is the\none thing this projection does not do.\n\n**Three different failures, three different conditions.** They used to be one:\n\n  not RIFF/WAVE, or a declared size that disagrees with the stream\n      CNA-USAGE-ERROR, XNA's InvalidOperationException from ParseWavHeader\n\n  a wave file XNA will not read -- non-PCM, wrong channel count, wrong rate,\n  wrong sample width, no fmt chunk, no data chunk, data before fmt\n      CNA-ARGUMENT-ERROR, XNA's ArgumentException(InvalidWaveStream)\n\n  a wave file XNA accepts, on a machine with no playback device\n      NO-AUDIO-HARDWARE-ERROR, XNA's NoAudioHardwareException\n\nThe third used to swallow the other two, because `CNA_RESULT_NOT_SUPPORTED' is\nthe code for \"no audio hardware\" *and* for \"cannot decode these bytes\", and\nmapping both onto NO-AUDIO-HARDWARE-ERROR told a program with a malformed asset\nthat its machine had no sound card. Validating first removes the ambiguity, and\nwhat remains of it is settled by asking CNA whether a playback device exists."
         },
         {
           "name": "sound-effect-get-sample-duration",
@@ -31150,7 +31171,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "SoundEffect.GetSampleDuration(int, int, AudioChannels), in 100-nanosecond ticks.\n\nTimeSpan is projected as an exact tick count throughout this binding rather than\nas a type, so this answers an integer. A size of zero answers zero, which is\n`TimeSpan.Zero' and XNA's own early return."
+          "documentation": "SoundEffect.GetSampleDuration(int, int, AudioChannels), in 100-nanosecond ticks.\n\nTimeSpan is projected as an exact tick count throughout this binding rather than\nas a type, so this answers an integer. A size of zero answers zero, which is\n`TimeSpan.Zero' and XNA's own early return.\n\nThree guards in the pinned IL's order -- a negative size is\n`ArgumentException(\"sizeInBytes\")', then the sample rate, then the channels --\nand, unlike `GetSampleSizeInBytes', **no overflow path**: the IL has no `checked'\nregion and no `catch', because `sizeInBytes' is an `Int32' and the largest one\ndivides down to about 1.3e8 milliseconds, far inside a TimeSpan. That bound is\npart of the contract rather than an accident of C#, so a size outside Int32 is\nrefused here: Common Lisp would otherwise accept an integer XNA cannot be\nhanded and answer a duration no XNA program can obtain."
         },
         {
           "name": "sound-effect-get-sample-size-in-bytes",
@@ -31173,7 +31194,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "SoundEffect.GetSampleSizeInBytes(TimeSpan, int, AudioChannels).\n\nDURATION is a tick count, for the reason GetSampleDuration answers one. XNA\nrefuses a negative duration and one longer than its own maximum with\n`ArgumentOutOfRangeException'; a zero duration answers zero bytes."
+          "documentation": "SoundEffect.GetSampleSizeInBytes(TimeSpan, int, AudioChannels).\n\nDURATION is a tick count, for the reason GetSampleDuration answers one.\n\n**Four guards, in the pinned IL's order**, because which parameter a call wrong\nin two of them is told about is decided by that order:\n\n    TotalMilliseconds < 0                  -> ArgumentOutOfRangeException(\"duration\")\n    TotalMilliseconds > 2147483647         -> ArgumentOutOfRangeException(\"duration\")\n    sampleRate outside [8000, 48000]       -> ArgumentOutOfRangeException(\"sampleRate\")\n    channels outside [1, 2]                -> ArgumentOutOfRangeException(\"channels\")\n\nthen `duration == TimeSpan.Zero' answers 0, and only then is the size computed --\ninside a `checked' region whose overflow becomes the *duration* exception again.\nThe upper bound and the overflow were both documented here and neither was\nimplemented; a duration of a thousand years answered a bignum.\n\nNaN does not arise: a TimeSpan is an Int64 tick count, so there is no float to be\none, and inventing a NaN branch would be inventing a rule."
         },
         {
           "name": "sound-effect-instance",
@@ -32078,6 +32099,13 @@
         "with-disposal"
       ],
       "reason": "Deterministic disposal. XNA spells disposal differently on each type that\n      has it, and CNA-Lisp needs one question and one operation that can be\n      applied to anything holding a native resource."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "cna-error-cause"
+      ],
+      "reason": "Where `System.Exception''s innerException constructor argument goes. Two\n      selected XNA types are exception classes and each declares the CLR's\n      three-constructor set; `new(String, Exception)' needs somewhere to put its\n      second argument, and without this reader it had nowhere -- which would make\n      that constructor one this projection cannot express rather than one it\n      collapses. `System.Exception' is the base-class library's and is not\n      projected as a type: a Common Lisp condition is what it projects onto, the\n      same rule `System.IO.Stream' is read by."
     },
     {
       "package": "microsoft.xna.framework",

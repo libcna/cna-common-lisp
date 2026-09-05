@@ -281,6 +281,19 @@ def discriminating_key(member, rule):
 def verify_group_separation(report, subject, group, overrides, entry):
     """Every overload in a group must be told from every other one in it.
 
+    **What this proves, and the boundary.** It proves that the *declarations*
+    separate the overloads: that no two of them collapse onto one symbol with
+    nothing left to tell them apart. It does **not** prove that the running
+    function accepts only the declared keyword sets, and it must not be described
+    as if it did. The distinction cost a real defect: `SoundEffect.Play''s two
+    declarations were correct and different while the method accepted six shapes
+    neither of them describes, because a `&key' lambda list makes every keyword
+    optional and fills the rest in with defaults.
+
+    Enforcing that is the runtime's job and `%CHECK-OVERLOAD-KEYWORDS' in
+    `src/framework/overloads.lisp' is where it happens. Reproducing it here would
+    mean interpreting Lisp inside this script, which is the wrong place for it.
+
     Three ways, and each is a declaration rather than a silence:
 
     * the declared mechanism separates them -- distinct keys;

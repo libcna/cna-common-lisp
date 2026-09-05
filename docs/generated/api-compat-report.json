@@ -18,14 +18,14 @@
   "types": 165,
   "members": 2389,
   "types_by_status": {
-   "partial": 16,
-   "complete": 149
+   "partial": 18,
+   "complete": 147
   },
   "members_by_status": {
-   "complete": 1906,
+   "complete": 1904,
    "missing": 35,
    "not-applicable": 429,
-   "partial": 19
+   "partial": 21
   },
   "diagnostics": 35,
   "diagnostics_by_category": {
@@ -3484,7 +3484,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Audio.SoundEffect",
-   "status": "complete",
+   "status": "partial",
    "members": {
     "new(Byte[],Int32,AudioChannels)": "complete",
     "new(Byte[],Int32,Int32,Int32,AudioChannels,Int32,Int32)": "complete",
@@ -3498,7 +3498,7 @@
     "GetSampleDuration(Int32,Int32,AudioChannels)": "complete",
     "IsDisposed": "complete",
     "Name": "complete",
-    "Duration": "complete",
+    "Duration": "partial",
     "MasterVolume": "complete",
     "SpeedOfSound": "complete",
     "DopplerScale": "complete",
@@ -3508,7 +3508,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
-   "status": "complete",
+   "status": "partial",
    "members": {
     "Finalize()": "not-applicable",
     "Dispose()": "complete",
@@ -3519,7 +3519,7 @@
     "Pause()": "complete",
     "Resume()": "complete",
     "Apply3D(AudioListener,AudioEmitter)": "complete",
-    "Apply3D(AudioListener[],AudioEmitter)": "complete",
+    "Apply3D(AudioListener[],AudioEmitter)": "partial",
     "IsDisposed": "complete",
     "Volume": "complete",
     "Pitch": "complete",

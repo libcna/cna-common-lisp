@@ -213,11 +213,11 @@ placeholder methods that answer a default and claim success.
 
 <!-- generated:selected types=165 -->
 <!-- generated:selected members=2389 -->
-<!-- generated:complete types=149 -->
-<!-- generated:partial types=16 -->
+<!-- generated:complete types=147 -->
+<!-- generated:partial types=18 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1906 -->
-<!-- generated:partial members=19 -->
+<!-- generated:complete members=1904 -->
+<!-- generated:partial members=21 -->
 <!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=429 -->
 <!-- generated:disagreement total=0 -->
@@ -229,8 +229,8 @@ The generated scoreboard, over a selection of **165 XNA types and 2389 members**
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **149 / 16 / 0** |
-| Members complete / missing | **1906 / 35** |
+| Types complete / partial / missing | **147 / 18 / 0** |
+| Members complete / missing | **1904 / 35** |
 | Members not applicable | **429** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->

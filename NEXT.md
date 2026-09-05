@@ -246,11 +246,11 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 <!-- generated:selected types=165 -->
 <!-- generated:selected members=2389 -->
-<!-- generated:complete types=149 -->
-<!-- generated:partial types=16 -->
+<!-- generated:complete types=147 -->
+<!-- generated:partial types=18 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1906 -->
-<!-- generated:partial members=19 -->
+<!-- generated:complete members=1904 -->
+<!-- generated:partial members=21 -->
 <!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=429 -->
 <!-- generated:disagreement total=0 -->
@@ -262,11 +262,11 @@ Selection **Foundation 1 and the managed closures**: 165 types, 2389 members.
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **149** |
-| Types partial | **16** |
+| Types complete | **147** |
+| Types partial | **18** |
 | Types missing | **0** |
-| Members complete | **1906** |
-| Members partial | **19** |
+| Members complete | **1904** |
+| Members partial | **21** |
 | Members missing | **35** |
 | Members not applicable | **429** |
 | **Disagreement diagnostics** | **0** |
@@ -306,6 +306,8 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
+| `M.X.F.Audio.SoundEffect` | 0 | 1 |
+| `M.X.F.Audio.SoundEffectInstance` | 0 | 1 |
 <!-- /generated-block:partial-frontier -->
 
 That table is the authority on where the frontier is. **Do not restate it in
@@ -320,7 +322,7 @@ had moved. Regenerate the table after every closure and read it there.
 | Category | Members | What it means |
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_0_21_ABI_LIMIT` | **39** | CNA 0.21.0 has no route for the member, or its route cannot express what the member means. |
+| `CNA_0_21_ABI_LIMIT` | **41** | CNA 0.21.0 has no route for the member, or its route cannot express what the member means. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against 0.21.0, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **1** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
