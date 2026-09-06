@@ -188,9 +188,7 @@ SELECTED = [
     # arguments are an Int32 and the AudioChannels already here, and its one
     # event is EventHandler<EventArgs> like every other event in this selection.
     # XACT (AudioEngine, SoundBank, WaveBank, Cue, AudioCategory, RendererDetail)
-    # stays out because CNA has no route for any of it; the three Microphone
-    # types have a full CNA route family and are a closure of their own, whose
-    # interesting half needs a capture device no verification tree has.
+    # stays out because CNA has no route for any of it.
     "Microsoft.Xna.Framework.Audio.SoundEffect",
     "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
     "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance",
@@ -200,6 +198,33 @@ SELECTED = [
     "Microsoft.Xna.Framework.Audio.AudioChannels",
     "Microsoft.Xna.Framework.Audio.NoAudioHardwareException",
     "Microsoft.Xna.Framework.Audio.InstancePlayLimitException",
+    # --- the Microphone family -------------------------------------------
+    # Dependency-complete and measured, not listed: the closure of these three
+    # over the snapshot's own `baseType', `interfaces', member return types and
+    # parameter types adds **nothing**. Everything they reach is either already
+    # selected or the base-class library's -- `System.Byte[]', `System.TimeSpan',
+    # `System.Int32', `System.String', `System.Boolean', `System.Exception', and
+    # the `ReadOnlyCollection<Microphone>' that `All' answers, which is the same
+    # BCL collection wrapper `GraphicsAdapter.Adapters' already projects onto a
+    # Common Lisp list.
+    #
+    # **The reason this family was held back is gone, and it was measured
+    # rather than assumed.** It used to read "whose interesting half needs a
+    # capture device no verification tree has". SDL's `dummy' audio driver
+    # enumerates capture devices that start, stop, and advance a PCM16 stream at
+    # their reported sample rate, so both halves qualify deterministically and
+    # with no hardware -- the same way `SDL_AUDIODRIVER=dummy' already qualifies
+    # the playback half.
+    #
+    # `MicrophoneCollection' is **not** here and is not a member of this closure:
+    # it is `private' in the pinned assembly, so it is not in the 257-type public
+    # snapshot at all, and `Microphone.All' answers the BCL wrapper rather than
+    # it. The two CNA type-name routes are likewise not members; they answer the
+    # microphone type's .NET name, which is machinery, exactly as
+    # `cna_game_copy_type_name' is.
+    "Microsoft.Xna.Framework.Audio.Microphone",
+    "Microsoft.Xna.Framework.Audio.MicrophoneState",
+    "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException",
     # --- the Model family ------------------------------------------------
     # Dependency-complete and measured rather than listed: the closure of these
     # twelve over the pinned snapshot's own `baseType`, `interfaces`, member

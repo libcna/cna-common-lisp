@@ -242,27 +242,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=178 -->
-<!-- generated:selected members=2447 -->
-<!-- generated:complete types=156 -->
+<!-- generated:selected types=181 -->
+<!-- generated:selected members=2468 -->
+<!-- generated:complete types=159 -->
 <!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1957 -->
+<!-- generated:complete members=1976 -->
 <!-- generated:partial members=25 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=430 -->
+<!-- generated:not-applicable members=432 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=572 -->
+<!-- generated:bound native functions=590 -->
 <!-- generated:bound native structs=73 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **178 XNA types and 2447 members**:
+The generated scoreboard, over a selection of **181 XNA types and 2468 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **156 / 22 / 0** |
-| Members complete / missing | **1957 / 35** |
-| Members not applicable | **430** |
+| Types complete / partial / missing | **159 / 22 / 0** |
+| Members complete / missing | **1976 / 35** |
+| Members not applicable | **432** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -275,7 +275,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **572 native routes** and **73 native structs**,
+The private foreign layer binds **590 native routes** and **73 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

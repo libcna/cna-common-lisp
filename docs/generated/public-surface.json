@@ -31479,6 +31479,28 @@
           "documentation": "DynamicSoundEffectInstance.BufferNeeded's `+=': call HANDLER when the queue runs low.\n\n    (add-buffer-needed-handler instance\n                               (lambda (instance)\n                                 (submit-buffer instance (next-block))))\n\nHANDLER takes the sender and nothing else, because XNA passes `EventArgs.Empty'\nand a second always-empty argument would be one every handler had to write and\nignore.\n\nIt is called on the thread that advances the buffer queue, which is the game\nthread while the loop runs. A condition it signals cannot be reported to CNA --\nthe callback answers `void' -- so it is contained there and re-signalled by the\nfirst native call that returns to your program afterwards, which for a handler\nreached during the loop is the RUN, RUN-ONE-FRAME or TICK that was running. The\ncondition object itself arrives, not a description of it; if a native call fails\nin the same breath, that failure is what is signalled and the handler's condition\nis its CNA-ERROR-CAUSE.\n\nLegal on a disposed instance, and purely managed there: XNA's `+=' is\n`Delegate.Combine' against a field its disposal never clears, so the handler list\noutlives the instance even though nothing can raise the event any more."
         },
         {
+          "name": "add-buffer-ready-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Microphone.BufferReady's `+=': call HANDLER when captured data is ready to read.\n\n    (add-buffer-ready-handler microphone\n                              (lambda (microphone)\n                                (let ((n (get-data microphone buffer)))\n                                  (consume buffer n))))\n\nHANDLER takes the sender and nothing else, because XNA passes `EventArgs.Empty'\nand a second always-empty argument would be one every handler had to write and\nignore.\n\n**The sender is the same object `MICROPHONE-ALL' and `MICROPHONE-DEFAULT' answer**,\nnever a fresh facade built from the device index -- `EQ' holds, and the\nqualification asserts it. XNA raises the event on the element of its own device\nlist, and so does this.\n\nIt is called on the thread that advances the frame. A condition it signals cannot\nbe reported to CNA -- the callback answers `void' -- so it is contained there and\nre-signalled by the first native call that returns to your program afterwards,\nunder the rule `src/internal/callback-conditions.lisp' owns for every callback in\nthis binding.\n\nRemoving the last handler releases the native registration; removing a handler\nthat was never added answers NIL and does nothing, which is what\n`Delegate.Remove' does silently."
+        },
+        {
           "name": "all-audio-channels",
           "fbound": true,
           "macro": false,
@@ -31496,6 +31518,25 @@
           "constant": false,
           "value": null,
           "documentation": "Every member of AUDIO-CHANNELS, as keywords, in value order."
+        },
+        {
+          "name": "all-microphone-state",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of MICROPHONE-STATE, as keywords, in value order."
         },
         {
           "name": "all-sound-state",
@@ -31649,6 +31690,30 @@
           "documentation": "Microsoft.Xna.Framework.Audio.AudioListener: where the ears are, and how they move.\n\n`(make-instance ='audio-listener)' is XNA's parameterless constructor, and its\nfour properties are the ordinary readers and `SETF' writers XNA's are. None of\nthem validates: XNA's four setters are bare `stfld' after the handedness flip, so\nany Vector3 is stored, NaN and infinity included, and this stores them too.\n\nThe type is not sealed in XNA and is not sealed here; it holds no native handle,\nso nothing needs disposing."
         },
         {
+          "name": "buffer-duration",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "microphone"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "ticks",
+            "microphone"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Microphone.BufferDuration: how much audio the capture buffer holds, in ticks.\n\nTimeSpan is projected as an exact count of 100-nanosecond ticks throughout this\nbinding, so this answers an integer.\n\n**It answers the stored value, not the device.** XNA's getter reads the\n`captureBufferDuration' field under the microphone's lock and never goes back to\nthe native layer; the field is filled in the constructor from the device and\nupdated by the setter. So this is a mirror of what the device was last told, and\nthat is what the original exposes."
+        },
+        {
           "name": "create-instance",
           "fbound": true,
           "macro": false,
@@ -31765,6 +31830,35 @@
           "documentation": null
         },
         {
+          "name": "get-data",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "microphone",
+            "buffer",
+            "&key",
+            "offset",
+            "count",
+            "&allow-other-keys"
+          ],
+          "keywords": [
+            "count",
+            "offset"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Microphone.GetData: read captured PCM16 into BUFFER, and answer the byte count.\n\nTwo overloads, selected by the complete keyword set:\n\n    (get-data microphone buffer)                       GetData(Byte[])\n    (get-data microphone buffer :offset o :count n)    GetData(Byte[], Int32, Int32)\n\n`:OFFSET' alone and `:COUNT' alone are shapes XNA has not got, and\n%CHECK-OVERLOAD-KEYWORDS refuses them rather than defaulting the difference.\n\n**A short read is success, including a read of zero bytes.** Capture is a stream:\n`audio.h' says so in as many words -- \"a short read is **not** a failure here:\nthe canonical operation fills what it can and reports how much\" -- and XNA\nreturns the count the native layer wrote. So the answer is the number of bytes\nactually written, `[offset, offset + answer)' of BUFFER holds them, and **every\nother byte of BUFFER is left exactly as it was**. Nothing is filled in and a\nshort read is never turned into a buffer-too-small condition.\n\n**A microphone that is not started answers 0 and reads nothing.** XNA's last act\nbefore the native call is `if (State != Started) return 0', so this is a normal\nanswer rather than a refusal, and no condition is signalled.\n\nThe validation order is the pinned IL's, and which condition a call wrong in two\nways gets is decided by it:\n\n    buffer null, empty, or length not a whole sample frame\n        -> ArgumentException(InvalidAudioBuffer)\n    offset < 0, offset >= length, or offset not a whole sample frame\n        -> ArgumentException(InvalidAudioBufferOffset)\n    count <= 0, offset + count > length, count not a whole sample frame,\n    or count's duration rounding to zero\n        -> ArgumentException(InvalidOffsetCountLength)\n\nNeeds an active game."
+        },
+        {
           "name": "get-sample-duration",
           "fbound": true,
           "macro": false,
@@ -31859,6 +31953,27 @@
           "documentation": null
         },
         {
+          "name": "is-headset",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "microphone"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "is-looped",
           "fbound": true,
           "macro": false,
@@ -31881,6 +31996,129 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "microphone",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:microphone",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.Microphone: one capture device the runtime owns.\n\n**You do not make one.** XNA's constructor is assembly-private and only its\ndevice enumeration calls it, so there is no `MAKE-INSTANCE' here either: ask\n`MICROPHONE-ALL' for every device or `MICROPHONE-DEFAULT' for the preferred one,\nand the objects they answer are the ones that exist.\n\n**They are the *same* objects every time**, which is a property programs rely on\nand a test asserts with `EQ': `(nth 0 (microphone-all))' twice is one object, and\n`MICROPHONE-DEFAULT' is `EQ' to its entry in `MICROPHONE-ALL' rather than a\nsecond object with equal slots. XNA's enumeration is append-only over a list its\nstatic constructor makes once, so an index names one `Microphone' object for the\nlife of the process; this reproduces that.\n\n**There is no disposal.** The runtime owns the device and outlives the game, let\nalone this object, so there is nothing to give back -- and XNA offers no\n`Dispose' either. `START' and `STOP' change what the device is doing; neither\nends the object.\n\nFour of its members answer from slots filled when the facade was built --\n`NAME', `SAMPLE-RATE', `IS-HEADSET' and `BUFFER-DURATION' -- because in XNA all\nfour are fields their getters read rather than native queries. `STATE',\n`GET-DATA', `START' and `STOP' are the members that actually reach the device,\nand each needs an active game for the reason this file's header gives."
+        },
+        {
+          "name": "microphone-all",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Microphone.All: every capture device the runtime reports, as a list.\n\n    (dolist (microphone (microphone-all))\n      (format t \"~a at ~d Hz~%\" (name microphone) (sample-rate microphone)))\n\n**A fresh list of cached objects.** The list is new on every call, so nothing a\ncaller does to it can reach the identity cache -- which is the property XNA gets\nfrom `ReadOnlyCollection<Microphone>' and Common Lisp has no read-only sequence\nto express. The *elements* are the cached facades, so `EQ' holds across calls:\n\n    (eq (first (microphone-all)) (first (microphone-all)))  =>  T\n\nA `ReadOnlyCollection<T>' projects onto a list here for the reason\n`GraphicsAdapter.Adapters' does: a list is what Common Lisp reads a sequence you\nmust not mutate as. Ordering and count are CNA's, which are the runtime's.\n\nAnswers `NIL' on a machine with no capture device, which `audio.h' calls \"an\nordinary answer\" and is not a failure. It re-enumerates on every call, as XNA's\n`get_All' does, so a device that has appeared since the last call is picked up.\n\nNeeds an active game, for the reason this file's header gives."
+        },
+        {
+          "name": "microphone-default",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Microphone.Default: the capture device CNA reports as the default one, or NIL.\n\n**It is `EQ' to one of `MICROPHONE-ALL''s objects**, never a second object with\nequal slots. XNA's `SelectDefaultMicrophone' picks an element of the very list\n`All' answers, and this does the same: it enumerates, resolves CNA's default\nindex, and returns the cached facade at that index.\n\n**NIL when there is no capture device**, which is XNA's answer too -- its\nselection leaves `defaultMic' null when the collection is empty, and null is what\nthe property then answers. It is not an exception there and it is not a condition\nhere.\n\n**Cached once, exactly as XNA caches it.** `get_Default' returns its stored\n`defaultMic' without enumerating whenever it is already set, and only re-selects\nwhile it is null. So the first call needs an active game and later calls do not,\nwhich is the IL's asymmetry with `MICROPHONE-ALL' -- that one enumerates every\ntime -- and is reproduced rather than tidied away.\n\nIf CNA reports a default index that its own count does not cover, that is a\nnative inconsistency and is signalled as one. No facade is manufactured outside\n`MICROPHONE-ALL' to satisfy it."
+        },
+        {
+          "name": "microphone-state",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.MicrophoneState: whether a microphone is capturing.\n\n**Started is 0 and Stopped is 1**, which is the opposite of the order a reader\nexpects and is what the pinned contract says. `SoundState' next door numbers\nPlaying 0, Paused 1, Stopped 2, so the two enumerations of this namespace do not\nshare a \"stopped\" value and nothing may be read across from one to the other.\n\nThe pinned IL makes the numbering observable rather than cosmetic:\n`Microphone.GetData' branches on `get_State()' with a `brfalse', which takes the\nzero branch -- so \"is it started\" is spelled \"is it zero\" in the original, and a\nprojection that renumbered the pair would invert that test.\n\nXNA's *private* `MicrophoneCaptureState' is a third numbering again -- MicStarted\n1, MicStopped 2 -- and `get_State' translates it: `captureState == MicStarted'\nanswers `Started', everything else answers `Stopped'. That private enumeration is\nnot in the public contract and is not projected; it is recorded here because it\nis why the public pair is not simply the native pair renamed."
+        },
+        {
+          "name": "microphone-state-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The MICROPHONE-STATE member a value names."
+        },
+        {
+          "name": "microphone-state-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a MICROPHONE-STATE member."
         },
         {
           "name": "name",
@@ -31934,6 +32172,35 @@
           "constant": false,
           "value": null,
           "documentation": "No audio playback device could be opened.\n\nCNA-Lisp's projection of Microsoft.Xna.Framework.Audio.NoAudioHardwareException.\n\nThis is a statement about the *machine and its audio backend*, not about the\nprogram: `cna_audio_get_capabilities' reports `is_playback_available' as data and\nsucceeds either way, and the creation routes answer `CNA_RESULT_NOT_SUPPORTED'\nwhen there is no device to put a sound on. A run under\n`SDL_AUDIODRIVER=nonexistent-driver' reaches this deterministically and with no\nhardware, which is how the unavailable branch is qualified rather than skipped.\n\nIt is a subtype of `CNA-NOT-SUPPORTED-ERROR', so a handler for that catches it."
+        },
+        {
+          "name": "no-microphone-connected-error",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": true,
+          "metaclass": "condition-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:no-microphone-connected-error",
+            "microsoft.xna.framework:cna-not-supported-error",
+            "microsoft.xna.framework:cna-native-error",
+            "microsoft.xna.framework:cna-error",
+            "common-lisp:error",
+            "common-lisp:serious-condition",
+            "common-lisp:condition",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "No capture device was connected when one was needed.\n\nCNA-Lisp's projection of Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException.\n\n**It is raised from `START' and from nowhere else**, because that is the one\nmicrophone route CNA documents `CNA_RESULT_NOT_SUPPORTED' for: \"`CNA_RESULT_SUCCESS`,\n`CNA_RESULT_INVALID_ARGUMENT` for an index at or past the count,\n`CNA_RESULT_NOT_SUPPORTED` when no microphone is connected\". Every other\nmicrophone route documents no such code, so translating the code everywhere would\nbe inventing a failure the ABI does not describe.\n\n**Enumerating no microphone is not this condition.** A machine with no capture\ndevice answers a count of zero, which `audio.h' calls \"an ordinary answer\", and\n`MICROPHONE-ALL' answers the empty list and `MICROPHONE-DEFAULT' answers NIL.\nThere is no facade to call `START' on, so the deterministic no-device lane never\nreaches this condition -- it proves the empty enumeration instead, which is a\ndifferent and stronger fact than an exception.\n\nIt is a subtype of `CNA-NOT-SUPPORTED-ERROR', so a handler for that catches it,\nand so does one for the sibling `NO-AUDIO-HARDWARE-ERROR''s supertype -- the two\nshare a result code and are distinguished by the route that answered it."
         },
         {
           "name": "pan",
@@ -32102,12 +32369,55 @@
           "documentation": "The `-=' of add-buffer-needed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
+          "name": "remove-buffer-ready-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-buffer-ready-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
+        },
+        {
           "name": "resume",
           "fbound": true,
           "macro": false,
           "generic": true,
           "lambda_list": [
             "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "sample-rate",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "microphone"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -32383,6 +32693,27 @@
           "constant": false,
           "value": null,
           "documentation": "The exact value of a SOUND-STATE member."
+        },
+        {
+          "name": "start",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "microphone"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Microphone.Start: begin capturing.\n\nXNA's body is the native `Start' under the microphone's lock, with the result\ncode turned into an exception -- there is no state test before it and no\nbookkeeping after it, so what a repeated `START' does is whatever the capture\nengine does. Measured against all three admitted ABIs, CNA accepts it and the\nstate stays `:STARTED'; that is recorded as CNA's answer through XNA's shape\nrather than claimed as an XNA rule the IL does not contain.\n\n`NO-MICROPHONE-CONNECTED-ERROR' is the failure this route documents, and it is\nthe only microphone route that documents it.\n\nNeeds an active game."
         },
         {
           "name": "state",
@@ -33034,6 +33365,10 @@
     "audio-channels": {
       "mono": 1,
       "stereo": 2
+    },
+    "microphone-state": {
+      "started": 0,
+      "stopped": 1
     }
   },
   "predefined_colors": [

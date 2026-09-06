@@ -301,31 +301,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=178 -->
-<!-- generated:selected members=2447 -->
-<!-- generated:complete types=156 -->
+<!-- generated:selected types=181 -->
+<!-- generated:selected members=2468 -->
+<!-- generated:complete types=159 -->
 <!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1957 -->
+<!-- generated:complete members=1976 -->
 <!-- generated:partial members=25 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=430 -->
+<!-- generated:not-applicable members=432 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 178 types, 2447 members.
+Selection **Foundation 1 and the managed closures**: 181 types, 2468 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **156** |
+| Types complete | **159** |
 | Types partial | **22** |
 | Types missing | **0** |
-| Members complete | **1957** |
+| Members complete | **1976** |
 | Members partial | **25** |
 | Members missing | **35** |
-| Members not applicable | **430** |
+| Members not applicable | **432** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

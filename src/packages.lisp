@@ -751,4 +751,17 @@ naming what is missing, which is a projection limit and is written down in
    #:dynamic-sound-effect-instance
    #:submit-buffer #:pending-buffer-count
    #:get-sample-duration #:get-sample-size-in-bytes
-   #:add-buffer-needed-handler #:remove-buffer-needed-handler))
+   #:add-buffer-needed-handler #:remove-buffer-needed-handler
+   ;; --- Microphone -----------------------------------------------------------
+   ;; `MICROPHONE-ALL' and `MICROPHONE-DEFAULT' carry the class prefix because
+   ;; they project *static* members, which is the naming rule for those; the
+   ;; instance members are bare readers because that is the rule for a reference
+   ;; type's. `NAME', `STATE', `STOP', `GET-SAMPLE-DURATION' and
+   ;; `GET-SAMPLE-SIZE-IN-BYTES' are already exported above and gain a microphone
+   ;; method rather than a second symbol.
+   #:microphone #:microphone-all #:microphone-default
+   #:microphone-state #:microphone-state-value #:microphone-state-from-value
+   #:all-microphone-state
+   #:no-microphone-connected-error
+   #:sample-rate #:is-headset #:buffer-duration #:start #:get-data
+   #:add-buffer-ready-handler #:remove-buffer-ready-handler))

@@ -247,7 +247,9 @@ that a keyword-taking projection accepts no keywords at all."
    "effect-parameter-type"
    (alist-object microsoft.xna.framework.graphics::*effect-parameter-type-table*)
    "sound-state" (alist-object microsoft.xna.framework.audio::*sound-state-table*)
-   "audio-channels" (alist-object microsoft.xna.framework.audio::*audio-channels-table*)))
+   "audio-channels" (alist-object microsoft.xna.framework.audio::*audio-channels-table*)
+   "microphone-state"
+   (alist-object microsoft.xna.framework.audio::*microphone-state-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

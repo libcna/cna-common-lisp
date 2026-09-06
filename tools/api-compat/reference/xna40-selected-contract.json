@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 178,
-  "member_count": 2447
+  "type_count": 181,
+  "member_count": 2468
  },
  "types": [
   {
@@ -43571,6 +43571,326 @@
    "sealed": true,
    "underlyingType": null,
    "baseType": "System.Runtime.InteropServices.ExternalException",
+   "interfaces": [
+    "System.Runtime.InteropServices._Exception",
+    "System.Runtime.Serialization.ISerializable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "message",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "message",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "inner",
+       "type": "System.Exception",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.Microphone",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "Finalize",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "GetSampleSizeInBytes",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "duration",
+       "type": "System.TimeSpan",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetSampleDuration",
+     "static": false,
+     "access": "public",
+     "returnType": "System.TimeSpan",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sizeInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Start",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Stop",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "buffer",
+       "type": "System.Byte[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetData",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "buffer",
+       "type": "System.Byte[]",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "offset",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "count",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "All",
+     "type": "System.Collections.ObjectModel.ReadOnlyCollection`1[Microsoft.Xna.Framework.Audio.Microphone]",
+     "static": true,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Default",
+     "type": "Microsoft.Xna.Framework.Audio.Microphone",
+     "static": true,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "State",
+     "type": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "BufferDuration",
+     "type": "System.TimeSpan",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "SampleRate",
+     "type": "System.Int32",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "IsHeadset",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "BufferReady",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "field",
+     "name": "Name",
+     "type": "System.String",
+     "static": false,
+     "constant": false,
+     "value": null
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+   "kind": "enum",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": "System.Int32",
+   "baseType": "System.Enum",
+   "interfaces": [
+    "System.IComparable",
+    "System.IConvertible",
+    "System.IFormattable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "field",
+     "name": "value__",
+     "type": "System.Int32",
+     "static": false,
+     "constant": false,
+     "value": null
+    },
+    {
+     "kind": "field",
+     "name": "Started",
+     "type": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+     "static": true,
+     "constant": true,
+     "value": "0"
+    },
+    {
+     "kind": "field",
+     "name": "Stopped",
+     "type": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+     "static": true,
+     "constant": true,
+     "value": "1"
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Exception",
    "interfaces": [
     "System.Runtime.InteropServices._Exception",
     "System.Runtime.Serialization.ISerializable"

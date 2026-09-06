@@ -153,6 +153,11 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; validators and sample arithmetic. It names no SOUND-EFFECT: a
    ;; DynamicSoundEffectInstance has none, and is a child of the game directly.
    (:file "audio/dynamic-sound-effect-instance")
+   ;; The capture half, last of the namespace. It is not a NATIVE-OBJECT and owns
+   ;; no handle -- the runtime owns the devices -- but it reuses SoundEffect's
+   ;; active-game resolution, its buffer/offset/count validators and its TimeSpan
+   ;; arithmetic, so it loads after the three that define them.
+   (:file "audio/microphone")
    ;; --- Microsoft.Xna.Framework.Content ------------------------------------
    ;; The manager first, then the loaders that produce graphics objects, then
    ;; Game.Content, which needs both GAME and CONTENT-MANAGER to exist.

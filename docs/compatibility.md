@@ -118,31 +118,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=178 -->
-<!-- generated:selected members=2447 -->
-<!-- generated:complete types=156 -->
+<!-- generated:selected types=181 -->
+<!-- generated:selected members=2468 -->
+<!-- generated:complete types=159 -->
 <!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1957 -->
+<!-- generated:complete members=1976 -->
 <!-- generated:partial members=25 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=430 -->
+<!-- generated:not-applicable members=432 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 178 types, 2447 members.
+Selection **Foundation 1 and the managed closures**: 181 types, 2468 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **156** |
+| Types complete | **159** |
 | Types partial | **22** |
 | Types missing | **0** |
-| Members complete | **1957** |
+| Members complete | **1976** |
 | Members partial | **25** |
 | Members missing | **35** |
-| Members not applicable | **430** |
+| Members not applicable | **432** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -320,6 +320,9 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Audio.AudioChannels` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Audio.NoAudioHardwareException` | **complete** | 3 | 0 | 0 | 0 |
 | `M.X.F.Audio.InstancePlayLimitException` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Audio.Microphone` | **complete** | 14 | 0 | 0 | 1 |
+| `M.X.F.Audio.MicrophoneState` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Audio.NoMicrophoneConnectedException` | **complete** | 3 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Model` | **partial** | 7 | 1 | 0 | 0 |
 | `M.X.F.Graphics.ModelBone` | **complete** | 5 | 0 | 0 | 0 |
 | `M.X.F.Graphics.ModelBoneCollection` | **complete** | 3 | 0 | 0 | 0 |
@@ -492,10 +495,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=572 -->
+<!-- generated:bound native functions=590 -->
 <!-- generated:bound native structs=73 -->
 <!-- generated:bound native struct fields=546 -->
-<!-- generated:bound native constants=511 -->
+<!-- generated:bound native constants=513 -->
 <!-- generated:bound native callbacks=11 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
@@ -504,10 +507,10 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 572 |
+| Bound functions | 590 |
 | Bound structs | 73 |
 | Bound struct fields | 546 |
-| Bound constants | 511 |
+| Bound constants | 513 |
 | Bound callback typedefs | 11 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
