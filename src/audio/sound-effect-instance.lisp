@@ -35,10 +35,19 @@
 (in-package #:microsoft.xna.framework.audio)
 
 (defclass sound-effect-instance (cna-lisp.internal:native-object)
-  ((%effect :initarg :sound-effect :reader %instance-sound-effect
-            :documentation "The parent SOUND-EFFECT. Not public: XNA's SoundEffect
-property on this type is `assembly'-visible, not public, and is not in the
-selected contract.")
+  ((%effect :initarg :sound-effect :initform nil :reader %instance-sound-effect
+            :documentation "The parent SOUND-EFFECT, or NIL for a kind that has none.
+
+Not public: XNA's SoundEffect property on this type is `assembly'-visible, not
+public, and is not in the selected contract.
+
+**NIL is a real value here and not an omission.** XNA's field is a plain
+`SoundEffect effect' that its parameterless constructor never assigns, so it is
+null for every `DynamicSoundEffectInstance'; its `Dispose(bool)' reads the field
+and skips `ChildDestroyed' when it is null. The initform is what makes the same
+thing true here, so that generic disposal code reads NIL rather than hitting an
+unbound slot -- and so that no fake SoundEffect has to be built to satisfy a base
+class.")
    (%positioned :initform nil :accessor %instance-positioned-p
                 :documentation "True once APPLY-3D has succeeded on this instance.
 XNA calls this `is3d' and uses it for exactly one thing: refusing the Pan setter.")
@@ -78,15 +87,77 @@ the same refusal, so the projected condition is `CNA-INVALID-STATE-ERROR'."))
 
 ;;; --- construction ----------------------------------------------------------
 
-(defmethod initialize-instance :after ((instance sound-effect-instance)
-                                       &key sound-effect &allow-other-keys)
-  "Create the native instance as a child of SOUND-EFFECT.
+(defgeneric %initialize-native-sound-instance (instance &key &allow-other-keys)
+  (:documentation
+   "Acquire INSTANCE's native handle and enter it into its owner's ledger.
 
-The whole construction is one ledger, as every native construction here is: the
-handle is recorded before anything that can still fail, so a failing subclass
+**The seam this type is polymorphic at, and it is polymorphic in XNA first.**
+`SoundEffectInstance' has two constructors in the pinned assembly: the
+assembly-visible `(SoundEffect, bool)' that stores the parent effect and calls
+`AllocateVoice()', and a **parameterless** `.ctor()' that stores nothing, calls
+nothing and exists for the subclass. `DynamicSoundEffectInstance' calls the
+second, validates its own arguments and then calls the same virtual
+`AllocateVoice()' -- which it overrides. So the base class's construction already
+varies by class in the original, and a base `INITIALIZE-INSTANCE :AFTER' that
+always required a `SoundEffect' and always called
+`cna_sound_effect_create_instance' would run the wrong constructor for a subclass
+that CLOS is perfectly willing to define.
+
+A specialization is responsible for four things and nothing else: validating the
+arguments its own XNA constructor takes, calling its own creation route,
+choosing its owner, and calling %ADOPT-SOUND-EFFECT-INSTANCE with what it got.
+Everything after that -- the handle, the thread affinity, the child registration
+and the two undo steps -- is the same for every kind and is not repeated.
+
+Dispatching here rather than testing the class inside one method is the point: a
+`TYPEP' ladder in the ordinary constructor would make the ordinary type's
+constructor responsible for every future one."))
+
+(defun %adopt-sound-effect-instance (instance owner handle)
+  "Take ownership of HANDLE on behalf of OWNER, recording both halves in the ledger.
+
+Shared by every kind of sound-effect instance, because the *handle* is one kind
+for all of them. `cna_dynamic_sound_effect_instance_create' says so about the one
+this file did not create: \"The handle is a **sound-effect instance**: every
+`cna_sound_effect_instance_*' route accepts it, including the transport, the
+mixing setters and `cna_sound_effect_instance_destroy'.\" That sentence is
+identical in both admitted ABIs -- `audio.h' is byte for byte the same in 0.21.0
+and 0.22.0 -- so what varies between the kinds is the creation route and the
+owner, not the handle's type and not the way it is given back.
+
+The handle is recorded before anything that can still fail, so a failing subclass
 initializer gives it back rather than leaving CNA holding an instance the caller
-never received -- and leaving the *effect* undisposable, since CNA refuses to
-destroy a sound effect that still has live instances."
+never received -- and, for the ordinary kind, leaving the *effect* undisposable,
+since CNA refuses to destroy a sound effect that still has live instances."
+  (cna-lisp.internal:record-construction-undo
+   instance
+   (lambda () (cna-lisp.internal.ffi::%sound-effect-instance-destroy handle)))
+  (setf (cna-lisp.internal:handle-of instance) handle
+        (slot-value instance 'cna-lisp.internal::owner) owner
+        (slot-value instance 'cna-lisp.internal::owner-thread)
+        (cna-lisp.internal:owner-thread-of owner))
+  (cna-lisp.internal:register-child owner instance)
+  (cna-lisp.internal:record-construction-undo
+   instance
+   (lambda () (cna-lisp.internal:invalidate instance)))
+  instance)
+
+(defmethod initialize-instance :after ((instance sound-effect-instance)
+                                       &rest initargs &key &allow-other-keys)
+  "Hand the whole construction to the method for INSTANCE's actual class.
+
+The initargs are passed on untouched, so each specialization declares the
+keywords its own XNA constructor takes and sees a caller's mistake as an
+unrecognised one rather than as a silently ignored one."
+  (apply #'%initialize-native-sound-instance instance initargs))
+
+(defmethod %initialize-native-sound-instance ((instance sound-effect-instance)
+                                              &key sound-effect &allow-other-keys)
+  "SoundEffect.CreateInstance(): an instance over an existing effect.
+
+There is no public constructor for this in XNA and none here -- CREATE-INSTANCE
+is the way in -- so the refusal for a missing `:SOUND-EFFECT' is about a private
+initarg being used wrongly rather than about a member's argument."
   (let ((operation "create-instance"))
     (unless (typep sound-effect 'sound-effect)
       (error 'xna:cna-usage-error
@@ -100,32 +171,71 @@ destroy a sound effect that still has live instances."
        (cna-lisp.internal.ffi::%sound-effect-create-instance
         (cna-lisp.internal:handle-of sound-effect) out)
        operation :object-type 'sound-effect-instance)
-      (let ((handle (cffi:mem-ref out :uint64)))
-        (cna-lisp.internal:record-construction-undo
-         instance
-         (lambda () (cna-lisp.internal.ffi::%sound-effect-instance-destroy handle)))
-        (setf (cna-lisp.internal:handle-of instance) handle
-              (slot-value instance 'cna-lisp.internal::owner) sound-effect
-              (slot-value instance 'cna-lisp.internal::owner-thread)
-              (cna-lisp.internal:owner-thread-of sound-effect))
-        (cna-lisp.internal:register-child sound-effect instance)
-        (push instance (%sound-effect-instances sound-effect))
-        (cna-lisp.internal:record-construction-undo
-         instance
-         (lambda ()
-           (setf (%sound-effect-instances sound-effect)
-                 (remove instance (%sound-effect-instances sound-effect) :test #'eq))
-           (cna-lisp.internal:invalidate instance)))))))
+      (%adopt-sound-effect-instance instance sound-effect (cffi:mem-ref out :uint64))
+      ;; The effect's own list of its instances, which is its bookkeeping rather
+      ;; than the ownership graph's, so it is undone here rather than in the
+      ;; shared adoption. Undos run newest-first, so this one runs before the
+      ;; invalidation the adoption recorded, which runs before the handle goes.
+      (push instance (%sound-effect-instances sound-effect))
+      (cna-lisp.internal:record-construction-undo
+       instance
+       (lambda ()
+         (setf (%sound-effect-instances sound-effect)
+               (remove instance (%sound-effect-instances sound-effect) :test #'eq)))))))
 
-(defmethod cna-lisp.internal:destroy-native ((instance sound-effect-instance))
-  (let ((effect (%instance-sound-effect instance)))
+(defgeneric %release-sound-instance-registrations (instance)
+  (:documentation
+   "Give back whatever CNA registrations INSTANCE holds, before its handle goes.
+
+An ordinary instance holds none. `DynamicSoundEffectInstance' holds its
+`BufferNeeded' subscriptions, and XNA releases the equivalent in the same place
+and the same order: its `Dispose(bool)' removes the instance from the static
+`allInstances' table -- the table its native buffer-needed callback looks it up
+in -- **before** calling the base `Dispose(bool)' that deallocates the voice.")
+  (:method ((instance sound-effect-instance)) nil))
+
+(defgeneric %destroy-native-sound-instance (instance)
+  (:documentation
+   "Release INSTANCE's native handle.
+
+A hook rather than a straight call because destruction is the other half of the
+construction seam, and it is a hook whose **base method every kind uses**: the
+destroy route is shared on evidence rather than by assumption.
+`cna_dynamic_sound_effect_instance_create' says its handle is one
+`cna_sound_effect_instance_destroy' accepts, and there is no dynamic destroy
+route in either admitted ABI to accept instead -- `grep' over both `audio.h'
+files answers the same twelve dynamic routes and none of them destroys.")
+  (:method ((instance sound-effect-instance))
     (cna-lisp.internal:check-result
      (cna-lisp.internal.ffi::%sound-effect-instance-destroy
       (cna-lisp.internal:handle-of instance))
-     "dispose" :object-type 'sound-effect-instance)
-    (when effect
-      (setf (%sound-effect-instances effect)
-            (remove instance (%sound-effect-instances effect) :test #'eq)))))
+     "dispose" :object-type (type-of instance))))
+
+(defgeneric %forget-sound-instance-owner (instance)
+  (:documentation
+   "Drop INSTANCE from the private list its owner keeps of it, if its owner keeps one.
+
+A `SoundEffect' does. A `Game' does not: the ownership graph's own child list is
+all there is for an instance the game owns directly, and INVALIDATE maintains
+that.")
+  (:method ((instance sound-effect-instance))
+    ;; NIL for a kind with no parent effect, which is why %EFFECT has an
+    ;; initform: no method here may assume the slot is bound, and XNA's own
+    ;; Dispose(bool) reads `effect' and skips its ChildDestroyed call when the
+    ;; field is null.
+    (let ((effect (%instance-sound-effect instance)))
+      (when effect
+        (setf (%sound-effect-instances effect)
+              (remove instance (%sound-effect-instances effect) :test #'eq))))))
+
+(defmethod cna-lisp.internal:destroy-native ((instance sound-effect-instance))
+  "Registrations, then the handle, then the owner's bookkeeping -- in that order.
+
+The order is XNA's: nothing that could reach this object may still be registered
+when its voice goes."
+  (%release-sound-instance-registrations instance)
+  (%destroy-native-sound-instance instance)
+  (%forget-sound-instance-owner instance))
 
 ;;; --- the info snapshot -------------------------------------------------------
 
