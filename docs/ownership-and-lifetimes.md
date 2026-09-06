@@ -96,9 +96,26 @@ this binding where a disposal exists that XNA has no member for. XNA's
 `SpriteFont` extends `System.Object`, is sealed, and is **not** `IDisposable`.
 `dispose` on one is the binding's own deterministic disposal — the declared
 extension every native object carries — and is not counted as an XNA member of
-that type. `ContentManager.Unload` does **not** call it: CNA's unload does not
-destroy what it handed out, which is why that member and `Dispose()` are reported
-partial. `docs/limitations.md` has the audit.
+that type.
+
+**`ContentManager.Unload` does call it**, and this paragraph said the opposite
+until the content closure landed. The current model is:
+
+* the manager owns the assets it loaded, at the managed projection level;
+* its cache preserves XNA's reference identity, so two loads of one cleaned name
+  answer one object;
+* `Unload` disposes those assets in the safe order — a font before the atlas it
+  keeps alive, a later asset before an earlier one — and then calls
+  `cna_content_manager_unload` as well, so neither side keeps what the other has
+  let go;
+* `Game.Content`'s `Dispose` is XNA's managed unload-and-drop, which is why
+  `%CHECK-DISPOSABLE` accepts it where it refuses every other parent-owned facade.
+
+`Unload` and `Dispose()` are **complete**, not partial; the two members that are
+not are `Load(String)`, which is partial, and the two `IServiceProvider`
+constructors and `ServiceProvider`, which are missing.
+`docs/compatibility.md` has the per-member table and `docs/limitations.md` the
+audit.
 
 ## Construction is all-or-nothing, and a subclass's share of it too
 

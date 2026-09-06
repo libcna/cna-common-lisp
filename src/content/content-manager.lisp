@@ -305,11 +305,16 @@ single member instead of becoming one function per asset type.
 The asset name is logical, resolved against ROOT-DIRECTORY, and its extension is
 optional. LOADABLE-ASSET-TYPES answers which types are loadable.
 
-The loaded object is owned by the game and disposed with
-MICROSOFT.XNA.FRAMEWORK:DISPOSE, before it. Loading the same name twice answers
-two distinct objects here, because CNA's per-asset routes each create one; XNA's
-manager caches and answers the same instance. That difference is recorded in
-docs/limitations.md."))
+**Loading the same name twice answers the same object**, which is XNA's cache and
+is what the implementation below does: the cleaned name is looked up first, a hit
+of the right type is answered as it stands, and only a miss reads anything. A hit
+of the *wrong* type is a failure rather than a second load, because XNA's cache is
+keyed by the cleaned name alone. CNA's own per-asset routes do not cache -- their
+headers say so -- so the cache is this binding's, over them.
+
+The loaded object is owned by the manager, and UNLOAD disposes it. A program may
+still dispose one itself; DISPOSE is idempotent, so the manager's later pass over
+it costs nothing."))
 
 (defmethod load-asset ((manager content-manager) type (asset-name string))
   ;; XNA's Load<T>, step for step, read from the assembly:
@@ -388,13 +393,24 @@ to make fail, the same reason %READ-TEXTURE-STORAGE is one.")
 
 (defgeneric unload (manager)
   (:documentation
-   "ContentManager.Unload(): drop what the manager has cached.
+   "ContentManager.Unload(): dispose what the manager loaded, and empty its cache.
 
-This does **not** destroy objects already handed out. Every object LOAD-ASSET
-answered is an owned CNA resource with its own lifetime, and CNA's own note says
-so: \"independently owned resource handles returned by the manager are not
-destroyed by this call\". Dispose them yourself, as you would any other
-resource."))
+**It does destroy the objects it handed out**, because the manager owns them at
+the managed projection level and XNA's `Unload()' disposes every
+`IDisposable' it loaded. The assets go front-to-back in the order they were
+recorded -- a `SpriteFont' before the atlas texture it keeps alive, and a later
+asset before an earlier one -- and DISPOSE is idempotent, so one the caller
+already disposed costs nothing.
+
+CNA's own note, that \"independently owned resource handles returned by the
+manager are not destroyed by this call\", is about `cna_content_manager_unload'
+and remains true of it: that route is called as well, so neither side is left
+holding an asset the other has let go.
+
+The cache and the disposal list are cleared however this ends. If an asset's
+disposal signals, every later asset is still attempted and the **first**
+condition is re-signalled once the manager is empty -- a manager that failed to
+release something must not go on claiming it has it."))
 
 (defmethod unload ((manager content-manager))
   (cna-lisp.internal:check-live manager "unload")
