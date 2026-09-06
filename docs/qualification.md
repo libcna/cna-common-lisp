@@ -458,12 +458,15 @@ drivers.
 | --- | --- | --- |
 | `tools/qualification/audio.sh` | `AUDIO_UNAVAILABLE`, `AUDIO_DYNAMIC_UNAVAILABLE`, `AUDIO_AVAILABLE_STATE_MACHINE`, `AUDIO_DYNAMIC_STREAMING` | no sound card |
 | `tools/qualification/microphone.sh` | `MICROPHONE_UNAVAILABLE`, `MICROPHONE_ENUMERATION`, `MICROPHONE_CAPTURE_STATE_MACHINE`, `MICROPHONE_CAPTURE_DATA`, `MICROPHONE_BUFFER_READY`, plus a public-API-only consumer | no microphone |
+| `tools/qualification/media.sh` | `MEDIA_UNAVAILABLE`, `MEDIA_PLAYBACK`, `MEDIA_PLAY_CLOCK`, `MEDIA_QUEUE`, `MEDIA_EVENTS`, plus a public-API-only consumer | no sound card |
 | `tools/qualification/rasterizer.sh` | the pixel proofs above | a rasterising renderer, no display |
 
-**Playback and capture are two scripts and not one**, because they are different
-devices behind different CNA routes: a machine may have a speaker and no
-microphone or the reverse, and a lane that read one out of the other would let
-either be reported as the other. The GitHub runner has neither, and both scripts
+**Playback, capture and song playback are three scripts and not one.** Playback
+and capture are different devices behind different CNA routes -- a machine may
+have a speaker and no microphone or the reverse -- and a song is neither: it goes
+through `media_player.h` routes of its own, so a run that qualified the
+sound-effect transport says nothing about whether the media player's did. A lane
+that read any of the three out of another would let one be reported as another. The GitHub runner has neither, and both scripts
 produce both of their branches there anyway — a driver name SDL cannot load gives
 the unavailable branch deterministically, and SDL's `dummy` driver opens a
 playback device with no speaker and enumerates capture devices that advance a

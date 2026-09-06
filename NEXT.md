@@ -49,9 +49,14 @@ tools/qualification/audio.sh
 #    above because playback and capture are different devices behind different
 #    CNA routes, and a machine may have either without the other.
 tools/qualification/microphone.sh
+
+# 9. the song-playback lanes, plus their own public-only consumer. Needs no
+#    sound card. A third script because a song is neither a sound effect nor a
+#    capture device: it goes through media_player.h routes of its own.
+tools/qualification/media.sh
 ```
 
-The three qualification scripts do that for themselves. `with-virtual-screen.sh`
+The four qualification scripts do that for themselves. `with-virtual-screen.sh`
 runs its command on a fresh Xvfb display **only when `DISPLAY` is set** -- so a
 developer's own screen is left alone, and CI, which runs with no display at all,
 is unchanged. That last part is deliberate: the `Native` workflow proves the
@@ -107,6 +112,12 @@ library at all, so it has no ABI to be produced against:
 | Microphone, BufferReady | the same devices: the event arrived, its sender was `EQ` to the object `All` and `Default` hand out, removing the handler released the native registration and stopped delivery, and the callback registry returned to its baseline |
 | Microphone, public-only consumer | a complete capture session through the two exported packages alone, under a mechanical audit for the internal package, CFFI, handles, result codes and private `%`-symbols |
 | Microphone, XNA over CNA | five measured disagreements between CNA and the pinned XNA behaviour, each asserted in **both** directions so a CNA that changed would fail a test rather than silently changing this binding |
+| Media, unavailable | a driver that does not exist: a `Song` is created **anyway** -- CNA's constructor only checks that the file exists -- and the refusal arrives at `Play`, wrapped as XNA wraps a failed `Play(Song)` with the native failure as its inner exception. The same asymmetry `DynamicSoundEffectInstance` has with `SoundEffect` |
+| Media, playback | `SDL_AUDIODRIVER=dummy`: the transport moved through `:PLAYING`, `:PAUSED` and `:STOPPED`, and each of XNA's **three guards** -- `Pause` only when playing, `Resume` only when not, `Stop` only when not stopped -- was asserted as a no-op in the state it guards against |
+| Media, play clock | the same device: the play position advanced inside a justified window around the wall clock and **stood still while paused**, which is the half that makes it a clock rather than a counter |
+| Media, queue | the same device: `Play` enqueued, `ActiveSong` answered a **fresh** object `SONG-EQUAL` to its entry and not `EQ` to it, `MoveNext` and `MovePrevious` wrapped at both ends in the managed layer, and the active-index setter clamped where the indexer refuses |
+| Media, static events | both events reached handlers that take **no arguments** -- XNA raises them with a null sender because they are static -- subscribing needed no game because CNA's two routes take none, and removing released the registration and stopped delivery |
+| Media, public-only consumer | a complete playback session through the two exported packages alone, under the same mechanical audit the capture consumer passes |
 | Microphone, the one ABI limit | `BufferDuration` is **partial**: XNA accepts [100, 1000] ms in steps of ten inclusive, CNA 0.21.0 accepts [100, **990**] and refuses exactly 1000, and 0.22.0 and 0.23.0 take the whole range. Nothing is rounded down to hide it; the refusal names the ABI rather than the argument, and both branches assert |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
@@ -137,6 +148,25 @@ and `tools/qualification/microphone.sh` requires each kind by name. It is a
 devices behind different CNA routes -- the GitHub runner has neither, a
 developer's laptop may have one and not the other -- and a lane that read one out
 of the other would let either be reported as the other.
+
+**The six media rows are six claims and not one**, and the discipline applies a
+third time. A transport that transitions says nothing about whether the play
+clock advances; a clock that advances says nothing about the queue or the events.
+`tools/qualification/media.sh` requires each kind by name, and it is a **third
+script** beside the other two because a song is neither a sound effect nor a
+capture device -- it goes through `media_player.h` routes of its own, and a run
+that qualified the sound-effect transport says nothing about the media player's.
+
+The strongest sentence the media rows support is:
+
+> the media player CNA drives over an SDL device with no speaker behind it moves
+> through XNA's transport states, advances its play position at something like
+> the wall clock, keeps its queue in XNA's order with XNA's object identity, and
+> raises both of its static events -- and CNA-Lisp reproduces the XNA semantics
+> over that.
+
+It is **not** a claim that music was audible, that the file was decoded, or that a
+physical output device works.
 
 **`dummy capture device != microphone`**, and this is the strongest sentence the
 capture rows support, written out in full because a shorter one would overstate
@@ -786,106 +816,73 @@ is replaced rather than added to.
 
 ### The candidates, re-measured against all three admitted ABIs
 
-Type and member counts are the pinned 257-type contract's, and they are the
-**dependency closure** of each candidate rather than the seed types: the walk
-follows `baseType`, `interfaces`, member return types and parameter types, and
-expands only through types the selection does not already have. Route counts are
+Counts are the pinned 257-type contract's, and they are each candidate's
+**dependency closure over the selection as it now stands** -- so `MediaLibrary`
+and `Video` are smaller than they were, because `Song`, `SongCollection` and
+`MediaState` are selected now and no longer count against them. Route counts are
 `grep -c '^CNA_C_API'` over each family's own headers in all three admitted ABIs,
-and every one of those headers is **byte for byte identical** in 0.21.0, 0.22.0
-and 0.23.0 — checked, not assumed. So the admitted set unlocks and blocks nothing;
-it is not a variable in this table.
+and every one of those headers is byte for byte identical in 0.21.0, 0.22.0 and
+0.23.0.
 
-| Candidate | Types | Members | Routes (identical in all three ABIs) | Deps outside the selection | Hardware | New language design | Deterministic CI | User value | Complexity |
-| --- | ---: | ---: | ---: | --- | --- | --- | --- | --- | --- |
-| `Media` / `MediaPlayer` | 10 | 104 | 39 `media.h` + 41 `media_player.h` | `Uri`, `Stream`, `TimeSpan`, `ReadOnlyCollection<T>` — all already projected or already collapsed | a playback device | **none** | **yes, both branches** | high | medium |
-| `Storage` | 3 | 35 | 49, `storage.h` | `IAsyncResult`, `AsyncCallback`, `Stream`, `FileMode`/`FileAccess`/`FileShare` | none — the filesystem | **two open questions** | yes | high | medium |
-| `Media` / `Video` | 4 | 28 | 42, `video.h` | `TimeSpan` | an optional FFmpeg decoder | none | build-dependent | low | medium |
-| XACT | 7 | 72 | 62, `xact.h` | `TimeSpan`, `Int16` | a playback device | none | **no fixture exists** | low | high |
-| `Media` / `MediaLibrary` | 17 | 168 | 148, `media_library.h` | `DateTime`, `Uri`, `Stream` | scans the machine | collection protocol | **empty only** | low | high |
+| Candidate | Types | Members | Routes (identical in all three ABIs) | New language design | Deterministic CI | User value | Complexity |
+| --- | ---: | ---: | ---: | --- | --- | --- | --- |
+| `Storage` | 3 | 35 | 49, `storage.h` | **two open questions** | yes | high | medium |
+| `Media` / `Video` | 3 | 24 | 42, `video.h` | none | **build-dependent** | low | medium |
+| XACT | 7 | 72 | 62, `xact.h` | none | **no fixture can exist** | low | high |
+| `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | collection protocol | **empty only** | low | high |
 
-**Three numbers in the previous table were wrong and are corrected here.**
-`MediaPlayer` was measured at 7 types and 61 members; its real closure is **10 and
-104**, because `Song` drags in `Album`, `Artist`, `Genre`, `AlbumCollection` and
-`VisualizationData` and `MediaQueue` drags in `SongCollection`. `MediaLibrary` was
-15 and 142 and is **17 and 168**. `Video` was 2 and 20 and is **4 and 28**. The old
-numbers counted seed types rather than closures, which is the same mistake that
-made `Microphone` look like a smaller closure than it was.
+**Seventy of the snapshot's 257 types are still unselected**, and those four
+groups are all of them that CNA has any route for.
 
-**And one standing claim is false.** Both `tools/api-compat/import-contract.py`
-and `docs/limitations.md` say XACT stays out "because CNA has no route for any of
-it". `xact.h` has **62 routes** and covers all five reachable types —
-`cna_audio_engine_*` 30, `cna_cue_*` 16, `cna_sound_bank_*` 12,
-`cna_audio_category_*` 10, `cna_wave_bank_*` 10. That claim is corrected in this
-commit. XACT is *still* not the recommendation, but for a different and honest
-reason: `cna_audio_engine_create` takes a path to an `.xgs` settings file,
-`cna_wave_bank_create` an `.xwb` and `cna_sound_bank_create` an `.xsb`, and those
-are binaries built by Microsoft's XACT authoring tool. **No fixture for them can
-be generated in this repository**, which is the same standard that keeps every
-other fixture here generated in source rather than stored — so XACT could be
-implemented and could not be qualified beyond its refusals.
+**The recommendation is `Storage`, and the two open questions are now the whole
+of the argument** rather than a reason to defer.
 
-**The recommendation is `MediaPlayer`, and the reason is that it is the only
-candidate that is both large in user value and free of an unanswered design
-question.**
+Everything else on the list is blocked on something no amount of care in this
+repository can fix:
 
-It needs no new language design. Every type it reaches is already projected or
-already collapsed by an established rule: `TimeSpan` is a tick count throughout
-this binding, `ReadOnlyCollection<T>` is a Common Lisp list — the rule
-`GraphicsAdapter.Adapters` and now `Microphone.All` both declare — `Stream` is an
-ordinary Common Lisp binary stream where bytes cross, and `Uri` is a string.
-`MediaState` is a three-member enum beside the three this binding already has in
-`Audio`.
+* **`Video`** needs CNA's optional FFmpeg decoder and answers
+  `CNA_RESULT_NOT_SUPPORTED` without it. The pinned build does not have it, so
+  the positive branch would be build-dependent -- a worse deal than a dummy
+  driver, which is what every other device closure here qualifies against.
+* **XACT** cannot be qualified at all. `cna_audio_engine_create` takes an `.xgs`
+  settings file, `cna_wave_bank_create` an `.xwb` and `cna_sound_bank_create` an
+  `.xsb`, and those are binaries built by Microsoft's XACT authoring tool. **No
+  fixture for them can be generated here**, which is the standard every other
+  fixture in this repository meets. It could be implemented and could only be
+  proved to refuse.
+* **`MediaLibrary`** scans the machine's music and picture locations.
+  `media_library.h` says an empty library is an ordinary result, so CI can
+  qualify *empty* and nothing else, and fifteen types that are only ever empty
+  are not a closure worth having. The three `Song` members this milestone left
+  missing -- `Artist`, `Album` and `Genre` -- would land with it, which is the
+  one thing in its favour and is not enough.
 
-**Both branches qualify deterministically and with no hardware**, which is the
-property that made `Microphone` the right choice last time and is worth the same
-weight now. `cna_song_create` takes a **local file path**, and this repository
-already generates PCM16 WAV fixtures in Lisp for the SoundEffect closure — so a
-`Song` comes from a fixture with no stored sample audio, and playback goes through
-the same `SDL_AUDIODRIVER=dummy` device the existing audio and capture lanes use.
-A driver that does not exist gives the unavailable branch. `MediaPlayer` is static
-and process-global, so it needs the same one-active-game resolution three closures
-already use and no new one.
-
-It is also the largest remaining piece of **user-facing** surface: playing music is
-something a game does, and a queue with volume, repeat and shuffle is a complete
-feature rather than a fragment.
-
-**Not `Storage`, and still for the two open design questions rather than size.**
-Nothing about them has changed and neither should be answered in passing:
+`Storage` is blocked on nothing external. It touches only the filesystem, both of
+its branches are producible in CI, and it is the last piece of high user value
+left. What it needs first is a decision, and the two questions are unchanged:
 
 1. **How does `BeginShowSelector`/`EndShowSelector` become Common Lisp?** Four
    `Begin` overloads and two `End` methods, plus `IAsyncResult` and
    `AsyncCallback`, neither in the selection. `storage.h` says in as many words
    that "the canonical API uses XNA's fake-async `BeginXxx`/`EndXxx` pair, which
-   CNA completes synchronously", so the C side is easy and the *projection* is
-   the question. Candidate designs: a literal `IAsyncResult` object; one
-   idiomatic synchronous call with the pair measured separately; a promise or
-   future extension; a partial projection that implements `Begin` and refuses
-   `End`. **Do not choose one in the task that implements it** — it is a public
-   API decision and deserves its own argument.
+   CNA completes synchronously", and the C route is one synchronous call whose
+   optional completion callback fires *before it returns*. So the C side is easy
+   and the **projection** is the question. Candidate designs: a literal
+   `IAsyncResult` object; one idiomatic synchronous call with the pair measured
+   separately; a promise or future extension; a partial projection that
+   implements `Begin` and refuses `End`.
 2. **What does `OpenFile` return?** `StorageContainer.CreateFile` and its three
    `OpenFile` overloads answer `System.IO.Stream`, and CNA backs that with eleven
    `cna_storage_stream_*` routes. The `SaveAsPng`/`FromStream` precedent moves
    *byte arrays* across the boundary; a CNA-owned seekable read-write stream is a
    different object, and making it an ordinary CL stream means Gray streams.
-   `ContentManager.OpenStream` is unimplemented precisely because no stream object
-   crosses CNA's C boundary; Storage is where one would have to.
+   `ContentManager.OpenStream` is unimplemented precisely because no stream
+   object crosses CNA's C boundary; Storage is where one would have to.
 
-**Not `Video`**: it needs CNA's optional FFmpeg decoder and answers
-`CNA_RESULT_NOT_SUPPORTED` without it, so what CI could qualify depends on how the
-library was built — and the pinned build is not built with it. A closure whose
-positive branch is build-dependent is a worse deal than one whose positive branch
-is a dummy driver.
-
-**Not `MediaLibrary`**: 17 types and 168 members that scan the machine's music and
-picture locations. `media_library.h` says an empty library is an ordinary result,
-so CI can qualify *empty* and nothing else, and seventeen collection types that are
-only ever empty are not a closure worth having yet.
-
-**If Media is done, `MediaPlayer` first and alone.** The three sub-closures'
-dependencies do not cross: `MediaPlayer` needs `Song`, `SongCollection`,
-`MediaQueue`, `MediaState` and the three metadata types `Song` exposes;
-`MediaLibrary` needs those plus fourteen more; `Video` needs neither.
+**Both deserve their own argument, and neither should be answered in passing.**
+That is a reason to start `Storage` with a design decision rather than a reason
+to pick something else: the three alternatives are blocked on FFmpeg, on a
+Microsoft authoring tool, and on there being nothing to enumerate.
 
 **Do not implement the recommendation yet.** This is a measurement, and the next
 task chooses.

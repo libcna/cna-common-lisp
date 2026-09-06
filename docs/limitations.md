@@ -2262,13 +2262,224 @@ It is **not** a claim that microphone audio is correct, that speech was captured
 or that a physical microphone works. A hardware qualification would be a different
 claim with different evidence.
 
+## Media: the playback closure, and the four types it deliberately leaves out
+
+`MediaPlayer`, the one `MediaQueue` it owns, `Song`, `SongCollection`,
+`MediaState` and `VisualizationData` are projected: six types and fifty-seven
+members over sixty-four routes from `media.h` and `media_player.h`, both of which
+are byte for byte identical in all three admitted ABIs.
+
+### The closure is *playback*, and the strict one would have been twice the size
+
+The strict dependency closure of `MediaPlayer` is **ten types and 104 members**,
+because `Song.Artist`, `Song.Album` and `Song.Genre` answer `Artist`, `Album` and
+`Genre`, and those pull in `AlbumCollection` behind them.
+
+Those four are **media-library entities**. Their CNA routes are in
+`media_library.h` rather than `media.h`, and `cna_song_get_album` and its two
+siblings say in as many words that only a song obtained from a media library has
+one — a song a caller created from a file path has no library context, so the
+route reports `CNA_FALSE`. Measured true on all three admitted ABIs, for the only
+kind of song this closure can make.
+
+So selecting them to satisfy three members would have added **53 members that
+nothing in this repository could exercise**, which is precisely the reason
+`MediaLibrary` was not the closure chosen. The three are declared missing under
+`DEPENDENCY_NOT_SELECTED` instead — the same category
+`EffectParameter.GetValueTexture3D` carries for `Texture3D`, which is the
+standing precedent for a member whose type is not in the selection.
+
+`Song` is therefore the one partial type in this closure, and those three members
+are the whole of why.
+
+### `MediaPlayer` is a static class, and its events are static too
+
+`abstract sealed` in the pinned IL — C#'s `static class` — so it has no instances
+and all twenty members are static. They project as `MEDIA-PLAYER-<member>`, the
+rule `Keyboard`, `Mouse` and `GamePad` already follow.
+
+**The two events are the first static ones in this binding, and their sender is
+null.** `OnActiveSongChanged` and `OnMediaStateChanged` invoke
+`handler(null, args)`: the event is static, so there is no instance to be the
+sender. Every other event here passes its sender and nothing else; these pass
+**nothing at all**, because a handler that had to accept and ignore one
+always-null argument would be worse than one that accepts none — the same
+reasoning that dropped the always-empty `EventArgs` everywhere else, applied to
+the other argument.
+
+CNA agrees the player is process-global in the strongest way available to it:
+`cna_media_player_subscribe_active_song_changed_ext` and its media-state sibling
+take a callback, a context and an out-registration and **no game handle**. They
+are the only subscribe routes in this ABI that do, so a subscription is legal
+before any game exists — which the qualification asserts.
+
+The handler lists live on a private singleton the shared event machinery
+specialises on, so the rooted-token discipline and the failed-unsubscribe rule
+are the same ones every other event uses rather than a second registry.
+`verify.py` gained a static-event case: there is no object to specialise on, so
+these project onto plain functions, and the flag that permits it is read from the
+**contract** rather than from the rule, so a rule cannot claim it.
+
+### Five places the IL decides something CNA would not
+
+| Member | XNA | CNA |
+| --- | --- | --- |
+| `Pause` | runs only when the state is `Playing` | accepts it unconditionally |
+| `Resume` | runs only when the state is **not** `Playing` | accepts it unconditionally |
+| `Stop` | runs only when the state is **not** `Stopped` | accepts it unconditionally |
+| `Volume`'s setter | clamps to [0, 1] with two *ordered* comparisons, so NaN passes through | clamps to the same bounds |
+| `MediaQueue.ActiveSongIndex`'s setter | clamps to [0, Count-1] and never refuses | — |
+
+So pausing a stopped player is a **no-op** in the original rather than an error
+or a transition, and each guard is reproduced here rather than left to CNA. The
+volume clamp is reproduced even though CNA agrees, because a CNA that stopped
+clamping would otherwise change this member's public behaviour silently.
+
+`MoveNext` and `MovePrevious` **wrap** — to the first and last entry
+respectively — and the wrap is the *managed* layer's: the native routes are only
+the middle branch of
+
+```
+if (Count <= 0)                     do nothing
+else if (ActiveSongIndex < Count-1) native MoveNext
+else                                ActiveSongIndex = 0
+```
+
+so both the wrap and the empty-queue no-op are reproduced rather than delegated.
+
+**`ActiveSongIndex` clamps where `Item` refuses**, and that asymmetry is the
+original's: the setter takes any integer and moves to the nearest valid one, while
+the indexer raises `ArgumentOutOfRangeException`.
+
+### Only `Play(Song)` wraps its failures
+
+`MediaQueue.Play(Song)` catches whatever the native call answered, maps it through
+`GetExceptionFromResult` and throws
+`InvalidOperationException(SongPlaybackFailed, inner)`. Its two `SongCollection`
+siblings call `ThrowExceptionFromErrorCode` and let the mapped exception out
+unwrapped. That is reproduced: the single-song overload raises
+`CNA-INVALID-STATE-ERROR` with the underlying condition as its `CNA-ERROR-CAUSE`,
+and the collection overloads do not.
+
+**That is also this closure's whole failure story on a machine with no audio
+device.** Measured on all three admitted ABIs with a driver SDL cannot load,
+`cna_song_create` **succeeds** — the canonical constructor "checks only that the
+file exists; it does not open or decode it" — and `cna_media_player_play_song`
+answers `CNA_RESULT_INTERNAL`. So the refusal arrives at `Play` rather than at
+construction, which is exactly the asymmetry `DynamicSoundEffectInstance` already
+has with `SoundEffect`, and it is asserted rather than hidden.
+
+### Object identity: one queue forever, and a fresh song every time
+
+**`MediaPlayer.Queue` answers the same object every time**, which is XNA's own
+guarantee: its static constructor makes one `MediaQueue` and the property answers
+that static field. A test asserts it with `EQ`.
+
+The queue facade holds **nothing**, because XNA's `MediaQueue` declares no fields
+at all — its constructor is `ldarg.0; call object..ctor; ret` — and every member
+goes to the native layer. CNA's queue handle is a *borrowed view* of a
+process-global object, so the facade resolves it per operation and releases it
+rather than caching a handle across game lifetimes.
+
+**`Item` and `ActiveSong` answer a fresh `Song` each time**, and that is XNA's
+too: its indexer ends with `newobj Song::.ctor(uint32)`, and CNA's `get_at` routes
+answer a new owned handle. So two reads of one index are `SONG-EQUAL` and are
+**not** `EQ` — the exact opposite of `Microphone`, whose identity is permanent,
+and the difference is the original's in both cases.
+
+### `Song`'s disposal is two native calls
+
+CNA splits what XNA joins. `cna_song_dispose` "only marks the song disposed;
+every other member keeps answering afterwards", and `cna_song_destroy` releases
+the handle. XNA has one `Dispose()` and **every getter begins with
+`ThrowIfDisposed()`** — so after disposal the original refuses where CNA answers.
+
+XNA wins at no cost: `NATIVE-OBJECT` already tracks a disposed state and refuses
+on it, which is the same refusal `ObjectDisposedException` is. Both native calls
+happen, in that order, because this binding has no finalizer to release the
+handle later and the canonical disposal is what marks the song the player copied
+into its queue. `IS-DISPOSED` is the one member that still answers afterwards,
+because saying so is what it is for.
+
+**A `SongCollection` keeps its songs alive**, which CNA states: it stores
+non-owning pointers and C retains the songs, so a caller may dispose its own song
+objects immediately after building one. Asserted rather than taken on trust.
+
+### Neither `Song` nor `SongCollection` has a public XNA constructor
+
+A `Song` comes from `Song.FromUri` or a `MediaLibrary`; a `SongCollection` only
+from a `MediaLibrary`, an `Album`, an `Artist` or a `Genre`. None of those is in
+this closure. CNA does offer creation routes taking a local path and an array of
+songs, so `MAKE-INSTANCE` over them is a **declared binding extension** — without
+it a program could not reach this closure at all.
+
+`Song.Duration` is **zero** for a song made that way, which is CNA's documented
+behaviour rather than a defect: the constructor does not decode the file. The
+duration-supplying shape is what provides one.
+
+### `CNA_Bool` is one byte, and reading four was a real defect
+
+`CNA_Bool` is `uint8_t`. Five reads in this closure and **one already shipped in
+the Microphone closure** read it as four bytes, taking three the route never
+wrote. It happened to work while those bytes were zero; all four media player
+flags answered whatever the stack held, which is what the flags round-trip test
+caught. Every `CNA_Bool` now goes through `CNA-TRUE-P` over a `:uint8`, which is
+the shape `GraphicsAdapter` already used.
+
+**One flag genuinely cannot be set without a device**:
+`IsVisualizationEnabled`'s setter succeeds and its getter still answers false
+when no playback device opened. That is not a refusal and not a defect —
+visualization is computed from the mixer, and there is no mixer — and it has its
+own two-branch test.
+
+## What the media tests prove, and what they do not
+
+**No test in this repository claims music was heard, and none may.**
+
+| Level | What it means |
+| --- | --- |
+| `unavailable` | no playback device opened; a `Song` was created anyway and the refusal arrived at `Play`, wrapped as XNA wraps it |
+| `playback` | a device opened and the transport moved through `Playing`, `Paused` and `Stopped`, with each of XNA's three guards asserted as a no-op |
+| `play-clock` | the play position advanced inside a justified window around the wall clock, and stood still while paused |
+| `queue` | `Play` enqueued, `ActiveSong` answered a fresh object equal to its entry, both moves wrapped, and the setter clamped where the indexer refuses |
+| `events` | both static events reached handlers taking no arguments, needed no game to subscribe, and stopped when removed |
+
+`tools/qualification/media.sh` produces them **in separate processes**, for the
+reason `audio.sh` does. It is a **third script** rather than more lanes in
+`audio.sh` or `microphone.sh` because a song is not a sound effect and not a
+capture device: playback of a song goes through `media_player.h` routes of its
+own, and a run that qualified the sound-effect transport says nothing about
+whether the media player's did.
+
+It also runs `examples/media-consumer.lisp`, a complete playback session through
+the two exported packages alone under a mechanical audit. That consumer plays for
+**24 frames on purpose** — shorter than the one-second fixture — because a run
+that reaches the song's end observes a position of zero and a stopped player,
+which is correct behaviour, useless evidence and timing-dependent.
+
+**A dummy audio device is not a speaker.** The strongest claim this evidence
+supports is:
+
+> the media player CNA drives over an SDL device with no speaker behind it moves
+> through XNA's transport states, advances its play position at something like
+> the wall clock, keeps its queue in XNA's order with XNA's object identity, and
+> raises both of its static events — and CNA-Lisp reproduces the XNA semantics
+> over that.
+
+It is **not** a claim that music was audible, that the file was decoded, or that
+a physical output device works.
+
 ## Not implemented in this milestone
 
 These are absent, and measured as absent, not faked:
 
 * `GameServiceContainer` and `Game.Services` — see below;
-* whole XNA namespaces outside the selected profile: **media, storage, gamer
-  services and networking**. Audio was on this list and is not any more: the
+* whole XNA namespaces outside the selected profile: **storage, gamer services
+  and networking**. Media was on this list and is not any more: the six-type
+  *playback* closure is selected, and what is still absent within it is the
+  media **library** -- `MediaLibrary`, `Album`, `Artist`, `Genre`, `Picture`,
+  `Playlist`, `MediaSource` and the six collection types -- plus `Video` and
+  `VideoPlayer`, which need CNA's optional FFmpeg decoder. Audio was on this list and is not any more: the
   eight-type `SoundEffect` closure is selected and complete. What is still absent
   *within* audio is XACT — `AudioEngine`, `SoundBank`, `WaveBank`, `Cue`,
   `AudioCategory`, `RendererDetail` — and the reason given here used to be "CNA
