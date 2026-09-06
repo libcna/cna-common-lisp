@@ -29,7 +29,8 @@
     "MICROSOFT.XNA.FRAMEWORK.INPUT"
     "MICROSOFT.XNA.FRAMEWORK.INPUT.TOUCH"
     "MICROSOFT.XNA.FRAMEWORK.AUDIO"
-    "MICROSOFT.XNA.FRAMEWORK.MEDIA"))
+    "MICROSOFT.XNA.FRAMEWORK.MEDIA"
+    "MICROSOFT.XNA.FRAMEWORK.STORAGE"))
 
 ;;; --- a very small JSON writer -------------------------------------------
 ;;; CNA-Lisp has no JSON dependency and does not need one for this.
@@ -252,7 +253,10 @@ that a keyword-taking projection accepts no keywords at all."
    "microphone-state"
    (alist-object microsoft.xna.framework.audio::*microphone-state-table*)
    "media-state"
-   (alist-object microsoft.xna.framework.media::*media-state-table*)))
+   (alist-object microsoft.xna.framework.media::*media-state-table*)
+   "file-mode" (alist-object microsoft.xna.framework.storage::*file-mode-table*)
+   "file-access" (alist-object microsoft.xna.framework.storage::*file-access-table*)
+   "file-share" (alist-object microsoft.xna.framework.storage::*file-share-table*)))
 
 (defun extensions ()
   (mapcar (lambda (entry)

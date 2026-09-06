@@ -15,7 +15,8 @@
     "Microsoft.Xna.Framework.Input": "microsoft.xna.framework.input",
     "Microsoft.Xna.Framework.Graphics.PackedVector": "microsoft.xna.framework.graphics.packed-vector",
     "Microsoft.Xna.Framework.Input.Touch": "microsoft.xna.framework.input.touch",
-    "Microsoft.Xna.Framework.Media": "microsoft.xna.framework.media"
+    "Microsoft.Xna.Framework.Media": "microsoft.xna.framework.media",
+    "Microsoft.Xna.Framework.Storage": "microsoft.xna.framework.storage"
   },
   "universal_not_applicable": [
     {
@@ -8515,6 +8516,300 @@
           "generic": true,
           "setf": false,
           "reason": "The second buffer; see Frequencies."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Storage.StorageDevice": {
+      "lisp_package": "microsoft.xna.framework.storage",
+      "lisp_name": "storage-device",
+      "lisp_kind": "class",
+      "constructors": {},
+      "events": {
+        "DeviceChanged": {
+          "add": "storage-device-add-device-changed-handler",
+          "remove": "storage-device-remove-device-changed-handler",
+          "reason": "**A static event**, the second family of them in this binding after MediaPlayer's two, and handled the same way: XNA keeps the delegate in a static field and raises it with a null sender, so the projected handler takes **no arguments at all**, and the two functions are plain rather than generic because there is no object to specialise on -- which verify.py permits only for an event the *contract* marks static. Over cna_storage_device_subscribe_device_changed, whose CNA_StorageCompletionCallback has CNA_GameEventCallback's exact shape; the registration is released by cna_storage_device_unsubscribe_device_changed. **The subscribe route takes no handle of any kind** -- not a game and not a device -- so a subscription is legal before anything else exists. The handler list lives on a private singleton the shared machinery specialises on, so the rooted-token discipline is the same one every other event uses. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        }
+      },
+      "member_overrides": {
+        "BeginShowSelector(AsyncCallback,Object)": {
+          "lisp": "storage-device-begin-show-selector",
+          "distinguished_by": "no-keywords",
+          "unified_with": [
+            "BeginShowSelector(PlayerIndex,AsyncCallback,Object)",
+            "BeginShowSelector(Int32,Int32,AsyncCallback,Object)",
+            "BeginShowSelector(PlayerIndex,Int32,Int32,AsyncCallback,Object)"
+          ],
+          "reason": "The no-player, no-size overload, which supplies no keyword at all. **The Begin/End pair is kept rather than collapsed, and the pinned IL is why.** StorageDeviceAsyncResult implements IAsyncResult with every member a constant: its ManualResetEvent is constructed already-signalled, CompletedSynchronously is a literal `ldc.i4.1; ret', and IsCompleted is a zero-millisecond wait on that signalled event and is therefore always true. Begin validates, makes the result and **invokes the caller's callback before it returns**; End does the work and refuses a second call. So Begin-then-End is a synchronous call with two names, and CNA says the same -- its routes \"collapse the canonical BeginShowSelector/EndShowSelector pair, which CNA completes synchronously; no operation handle is invented for work that never pends\". Both members are therefore projected and **no promise, future or thread is invented**: inventing concurrency would give the type a capability XNA has not got, for an operation already finished before the caller can look at it. `System.IAsyncResult' is the base-class library's and is not a projected type -- the same statement `System.IO.Stream' gets -- so it becomes an opaque object whose one public reader, ASYNC-STATE, answers the state the caller passed in. **Begin makes no native call**: the device is created by End, which is where XNA creates it, so a program that begins and never ends creates no handle. docs/limitations.md. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "BeginShowSelector(PlayerIndex,AsyncCallback,Object)": {
+          "lisp": "storage-device-begin-show-selector",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "player"
+          ],
+          "unified_with": [
+            "BeginShowSelector(AsyncCallback,Object)",
+            "BeginShowSelector(Int32,Int32,AsyncCallback,Object)",
+            "BeginShowSelector(PlayerIndex,Int32,Int32,AsyncCallback,Object)"
+          ],
+          "reason": "See the no-keyword overload. The player is validated against [0, 3] unless it is XNA's 0xff all-players sentinel, which is what the two no-player overloads pass. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "BeginShowSelector(Int32,Int32,AsyncCallback,Object)": {
+          "lisp": "storage-device-begin-show-selector",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "size-in-bytes",
+            "directory-count"
+          ],
+          "unified_with": [
+            "BeginShowSelector(AsyncCallback,Object)",
+            "BeginShowSelector(PlayerIndex,AsyncCallback,Object)",
+            "BeginShowSelector(PlayerIndex,Int32,Int32,AsyncCallback,Object)"
+          ],
+          "reason": "See the no-keyword overload. sizeInBytes < 0 is ArgumentOutOfRangeException; **directoryCount is never validated and never read** in the IL, so it is accepted and has no effect, and it stays in the signature because removing it would remove two of the four overloads. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "BeginShowSelector(PlayerIndex,Int32,Int32,AsyncCallback,Object)": {
+          "lisp": "storage-device-begin-show-selector",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "player",
+            "size-in-bytes",
+            "directory-count"
+          ],
+          "unified_with": [
+            "BeginShowSelector(AsyncCallback,Object)",
+            "BeginShowSelector(PlayerIndex,AsyncCallback,Object)",
+            "BeginShowSelector(Int32,Int32,AsyncCallback,Object)"
+          ],
+          "reason": "The full overload the other three delegate to in the IL, with sizeInBytes 0 and directoryCount 1 supplied for the two that have neither. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "EndShowSelector(IAsyncResult)": {
+          "lisp": "storage-device-end-show-selector",
+          "reason": "**The half that does the work**, which is XNA's arrangement. Two guards in the IL's order: a result that is not the matching Begin's is ArgumentNullException(\"result\") -- XNA's `isinst' answers null for a wrong type as well as for a missing one, so both are one refusal -- and a second End on one result is InvalidOperationException(CannotEndTwice). **The Begin/End pair is kept rather than collapsed, and the pinned IL is why.** StorageDeviceAsyncResult implements IAsyncResult with every member a constant: its ManualResetEvent is constructed already-signalled, CompletedSynchronously is a literal `ldc.i4.1; ret', and IsCompleted is a zero-millisecond wait on that signalled event and is therefore always true. Begin validates, makes the result and **invokes the caller's callback before it returns**; End does the work and refuses a second call. So Begin-then-End is a synchronous call with two names, and CNA says the same -- its routes \"collapse the canonical BeginShowSelector/EndShowSelector pair, which CNA completes synchronously; no operation handle is invented for work that never pends\". Both members are therefore projected and **no promise, future or thread is invented**: inventing concurrency would give the type a capability XNA has not got, for an operation already finished before the caller can look at it. `System.IAsyncResult' is the base-class library's and is not a projected type -- the same statement `System.IO.Stream' gets -- so it becomes an opaque object whose one public reader, ASYNC-STATE, answers the state the caller passed in. **Begin makes no native call**: the device is created by End, which is where XNA creates it, so a program that begins and never ends creates no handle. docs/limitations.md. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "BeginOpenContainer(String,AsyncCallback,Object)": {
+          "lisp": "begin-open-container",
+          "generic": true,
+          "reason": "The instance counterpart of BeginShowSelector, with the same shape and the same reasons: the callback fires before it returns and no native call happens here. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "EndOpenContainer(IAsyncResult)": {
+          "lisp": "end-open-container",
+          "generic": true,
+          "reason": "**Three guards, and the third is one EndShowSelector has not got**: after the shared wrong-result and CannotEndTwice checks, the IL compares `ReferenceEquals(this, result.storageDevice)' and the player indices and raises ArgumentException(IAsyncNotFromBegin) when they differ -- so ending one device's operation on another device is refused rather than quietly answering a container on the wrong one. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "DeleteContainer(String)": {
+          "lisp": "delete-container",
+          "generic": true,
+          "reason": "Over cna_storage_device_delete_container. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "FreeSpace": {
+          "lisp": "free-space",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, over cna_storage_device_get_free_space. XNA computes it from the device folder's drive; CNA answers for the same location. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "TotalSpace": {
+          "lisp": "total-space",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only; see FreeSpace. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsConnected": {
+          "lisp": "is-connected",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, and the one member of this type whose answer can change under a running program -- which is what StorageDeviceNotConnectedException exists for. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Storage.StorageContainer": {
+      "lisp_package": "microsoft.xna.framework.storage",
+      "lisp_name": "storage-container",
+      "lisp_kind": "class",
+      "constructors": {},
+      "events": {
+        "Disposing": {
+          "add": "add-disposing-handler",
+          "remove": "remove-disposing-handler",
+          "reason": "An ordinary *instance* event -- unlike StorageDevice.DeviceChanged next door, which is static -- so its handler takes the sender and nothing else, which is what every instance event in this binding does. Over cna_storage_container_subscribe_disposing, released by the matching unsubscribe route. It is raised by cna_storage_container_dispose, which is the first half of this type's two-call disposal, so a handler runs while the handle is still live -- XNA's order too. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        }
+      },
+      "member_overrides": {
+        "DirectoryExists(String)": {
+          "lisp": "directory-exists",
+          "generic": true,
+          "reason": "Over the matching route. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "FileExists(String)": {
+          "lisp": "file-exists",
+          "generic": true,
+          "reason": "Over the matching route. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "CreateDirectory(String)": {
+          "lisp": "create-directory",
+          "generic": true,
+          "reason": "Over the matching route. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "DeleteDirectory(String)": {
+          "lisp": "delete-directory",
+          "generic": true,
+          "reason": "Over the matching route. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "DeleteFile(String)": {
+          "lisp": "delete-file",
+          "generic": true,
+          "reason": "Over the matching route. **The package shadows CL:DELETE-FILE** so that the projected name stays the naming rule's name; a program that wants the standard function has it by its own package qualifier. The same answer microsoft.xna.framework.audio gives for POSITION. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "CreateFile(String)": {
+          "lisp": "create-file",
+          "generic": true,
+          "reason": "`System.IO.Stream' becomes a **real Common Lisp stream**, which is what this binding has always declared it becomes -- Texture2D.FromStream and SaveAsPng say so -- and Storage is the first place a CNA-owned one has to cross the boundary. Answering a second, parallel stream-like API would have made that statement false. So the result is a Gray stream on which READ-SEQUENCE, WRITE-SEQUENCE, READ-BYTE, WRITE-BYTE, FILE-POSITION, FORCE-OUTPUT, CLOSE and WITH-OPEN-STREAM all work. FILE-LENGTH does not, because CL:FILE-LENGTH takes a *file stream* and the Gray protocol has no generic behind it; `(file-position s :end)' is the length. The stream is an owned child of its container, which CNA requires -- it \"must be closed before the container is destroyed\" -- and CL:CLOSE is what releases it. docs/limitations.md. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "OpenFile(String,FileMode)": {
+          "lisp": "open-file",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "mode"
+          ],
+          "unified_with": [
+            "OpenFile(String,FileMode,FileAccess)",
+            "OpenFile(String,FileMode,FileAccess,FileShare)"
+          ],
+          "reason": "The shortest of the three overloads. :MODE is in every one of them because every XNA overload takes a FileMode; :ACCESS without :MODE and :SHARE without :ACCESS name no overload and are refused rather than defaulted. `System.IO.Stream' becomes a **real Common Lisp stream**, which is what this binding has always declared it becomes -- Texture2D.FromStream and SaveAsPng say so -- and Storage is the first place a CNA-owned one has to cross the boundary. Answering a second, parallel stream-like API would have made that statement false. So the result is a Gray stream on which READ-SEQUENCE, WRITE-SEQUENCE, READ-BYTE, WRITE-BYTE, FILE-POSITION, FORCE-OUTPUT, CLOSE and WITH-OPEN-STREAM all work. FILE-LENGTH does not, because CL:FILE-LENGTH takes a *file stream* and the Gray protocol has no generic behind it; `(file-position s :end)' is the length. The stream is an owned child of its container, which CNA requires -- it \"must be closed before the container is destroyed\" -- and CL:CLOSE is what releases it. docs/limitations.md. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "OpenFile(String,FileMode,FileAccess)": {
+          "lisp": "open-file",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "mode",
+            "access"
+          ],
+          "unified_with": [
+            "OpenFile(String,FileMode)",
+            "OpenFile(String,FileMode,FileAccess,FileShare)"
+          ],
+          "reason": "See OpenFile(String, FileMode). `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "OpenFile(String,FileMode,FileAccess,FileShare)": {
+          "lisp": "open-file",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "mode",
+            "access",
+            "share"
+          ],
+          "unified_with": [
+            "OpenFile(String,FileMode)",
+            "OpenFile(String,FileMode,FileAccess)"
+          ],
+          "reason": "See OpenFile(String, FileMode). `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "GetDirectoryNames()": {
+          "lisp": "get-directory-names",
+          "generic": true,
+          "distinguished_by": "arity",
+          "unified_with": [
+            "GetDirectoryNames(String)"
+          ],
+          "reason": "The no-pattern overload, which XNA's own body implements by passing \"*\" -- so one function with an optional pattern loses neither. `System.String[]' projects onto a **vector** rather than a list, because that is what a CLR array is: indexable and of known length. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "GetDirectoryNames(String)": {
+          "lisp": "get-directory-names",
+          "generic": true,
+          "distinguished_by": "arity",
+          "unified_with": [
+            "GetDirectoryNames()"
+          ],
+          "reason": "See GetDirectoryNames(). `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "GetFileNames()": {
+          "lisp": "get-file-names",
+          "generic": true,
+          "distinguished_by": "arity",
+          "unified_with": [
+            "GetFileNames(String)"
+          ],
+          "reason": "See GetDirectoryNames(). `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "GetFileNames(String)": {
+          "lisp": "get-file-names",
+          "generic": true,
+          "distinguished_by": "arity",
+          "unified_with": [
+            "GetFileNames()"
+          ],
+          "reason": "See GetDirectoryNames(). `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**Two native calls, in that order**: cna_storage_container_dispose is the canonical disposal and is what raises Disposing, and cna_storage_container_destroy releases the handle. The same split Song has. Disposing a container closes every stream it opened first, which CNA requires and the ordinary ownership graph provides. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "DisplayName": {
+          "lisp": "display-name",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, through the ABI's count-then-copy string idiom. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "StorageDevice": {
+          "lisp": "storage-device",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only: the device this container was opened on. **The same symbol names the class and this reader**, which Common Lisp allows and which the naming rule produces -- a reference type's member is the bare member name. It answers the ownership layer's own parent rather than asking CNA, because that is the same fact: the container is a child of the device in this binding's graph and in CNA's, whose route says containers \"must be destroyed first\". `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsDisposed": {
+          "lisp": "is-disposed",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, answering this binding's own disposed state rather than cna_storage_container_get_is_disposed, for the reason Song.IsDisposed gives: the managed state is the one every other member's refusal is decided by. `storage.h' is byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException": {
+      "lisp_package": "microsoft.xna.framework.storage",
+      "lisp_name": "storage-device-not-connected-error",
+      "lisp_kind": "class",
+      "expected_superclass": "microsoft.xna.framework:cna-not-supported-error",
+      "constructors": {
+        "new()": "make-condition",
+        "new(String)": "make-condition",
+        "new(String,Exception)": "make-condition"
+      },
+      "not_applicable": {
+        "new(SerializationInfo,StreamingContext)": "The CLR's protected deserialization constructor, which every [Serializable] exception carries. Serialization is not projected and has no counterpart here, so this is not a way to construct the exception -- it is the runtime's way to rebuild one from a stream this binding has no notion of. It is declared not applicable rather than collapsed onto MAKE-CONDITION with the other three, because a collapse claims the call is expressible and this one is not."
+      },
+      "member_overrides": {
+        "new()": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new(String)",
+            "new(String,Exception)"
+          ],
+          "reason": "A Common Lisp condition is made by MAKE-CONDITION or signalled by ERROR, and one call expresses all three public CLR constructors: the message is the :FORMAT-CONTROL initarg and the inner exception is the :CAUSE initarg, read back by CNA-ERROR-CAUSE. XNA's own exception type, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base, which is what CNA-NATIVE-ERROR already is here -- and **not sealed**, unlike every other exception in this selection, so the condition class is left open too. It subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class. It shares CNA_RESULT_NOT_SUPPORTED with NO-AUDIO-HARDWARE-ERROR and NO-MICROPHONE-CONNECTED-ERROR and is still a separate class, because the family of routes that answered decides which is meant."
+        },
+        "new(String)": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new()",
+            "new(String,Exception)"
+          ],
+          "reason": "See new(). A Common Lisp condition is made by MAKE-CONDITION or signalled by ERROR, and one call expresses all three public CLR constructors: the message is the :FORMAT-CONTROL initarg and the inner exception is the :CAUSE initarg, read back by CNA-ERROR-CAUSE. XNA's own exception type, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base, which is what CNA-NATIVE-ERROR already is here -- and **not sealed**, unlike every other exception in this selection, so the condition class is left open too. It subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class. It shares CNA_RESULT_NOT_SUPPORTED with NO-AUDIO-HARDWARE-ERROR and NO-MICROPHONE-CONNECTED-ERROR and is still a separate class, because the family of routes that answered decides which is meant."
+        },
+        "new(String,Exception)": {
+          "lisp": "make-condition",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "new()",
+            "new(String)"
+          ],
+          "reason": "See new(). A Common Lisp condition is made by MAKE-CONDITION or signalled by ERROR, and one call expresses all three public CLR constructors: the message is the :FORMAT-CONTROL initarg and the inner exception is the :CAUSE initarg, read back by CNA-ERROR-CAUSE. XNA's own exception type, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base, which is what CNA-NATIVE-ERROR already is here -- and **not sealed**, unlike every other exception in this selection, so the condition class is left open too. It subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class. It shares CNA_RESULT_NOT_SUPPORTED with NO-AUDIO-HARDWARE-ERROR and NO-MICROPHONE-CONNECTED-ERROR and is still a separate class, because the family of routes that answered decides which is meant."
         }
       }
     }

@@ -9,7 +9,12 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
   :author "Robert Vokac <robertvokac@robertvokac.com>"
   :license "MS-PL"
   :version "0.1.0"
-  :depends-on ("cffi" "babel" "bordeaux-threads" "uiop")
+  ;; `trivial-gray-streams' is what `System.IO.Stream' needs to stay an ordinary
+  ;; Common Lisp stream once a CNA-owned one has to cross the boundary -- see
+  ;; src/storage/storage-stream.lisp. It is a few hundred lines of portable
+  ;; Common Lisp with no foreign code and no build step, so it costs a released
+  ;; binding nothing that the `cffi-libffi' refusal is protecting.
+  :depends-on ("cffi" "babel" "bordeaux-threads" "trivial-gray-streams" "uiop")
   :serial t
   :pathname "src"
   :components
@@ -175,6 +180,20 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "content/content-manager")
    (:file "content/content-loaders")
    (:file "content/game-content")
+   ;; --- Microsoft.Xna.Framework.Storage -------------------------------------
+   ;; The one namespace that needs no game at all: no storage route takes one.
+   ;; The enumerations and the condition first, then the stream -- which the
+   ;; container's four file members answer -- then the container, then the device
+   ;; that owns it. The ownership graph here is three deep, which is new:
+   ;; StorageDevice -> StorageContainer -> StorageStream.
+   (:file "storage/enums")
+   (:file "storage/conditions")
+   ;; Where the saves go: two CNA extensions with no XNA member behind them,
+   ;; because off the Xbox nothing derives a title's directory for it.
+   (:file "storage/storage-root")
+   (:file "storage/storage-stream")
+   (:file "storage/storage-container")
+   (:file "storage/storage-device")
    ;; --- declared capabilities and deliberate absences ----------------------
    (:file "capabilities"))
   :in-order-to ((test-op (test-op "cna-common-lisp/tests"))))

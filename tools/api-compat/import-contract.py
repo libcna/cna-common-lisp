@@ -300,6 +300,23 @@ SELECTED = [
     "Microsoft.Xna.Framework.Media.Song",
     "Microsoft.Xna.Framework.Media.SongCollection",
     "Microsoft.Xna.Framework.Media.VisualizationData",
+    # --- Microsoft.Xna.Framework.Storage -----------------------------------
+    # All three types of the namespace, and the closure is complete: everything
+    # they reach beyond each other is the base-class library's -- `System.String',
+    # `System.Int64', `System.Boolean', `System.String[]', `System.Exception', and
+    # the four types the two design questions are about: `System.IAsyncResult',
+    # `System.AsyncCallback', `System.IO.Stream' and the three `System.IO' file
+    # enumerations. `Microsoft.Xna.Framework.PlayerIndex' is the one XNA type they
+    # reach and it has been selected since Foundation 1.
+    #
+    # The two questions are answered in `docs/limitations.md' and the answers are
+    # both "project it the way the pinned IL says, and invent nothing":
+    # `IAsyncResult' becomes an opaque already-complete object because XNA's own
+    # is already complete, and `System.IO.Stream' becomes a real Common Lisp
+    # stream because that is what this binding has always said it becomes.
+    "Microsoft.Xna.Framework.Storage.StorageDevice",
+    "Microsoft.Xna.Framework.Storage.StorageContainer",
+    "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
 ]
 
 

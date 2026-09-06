@@ -827,3 +827,81 @@ is written down in `docs/limitations.md' as one.")
    #:media-player-remove-active-song-changed-handler
    #:media-player-add-media-state-changed-handler
    #:media-player-remove-media-state-changed-handler))
+
+(defpackage #:microsoft.xna.framework.storage
+  (:documentation
+   "Common Lisp projection of the Microsoft.Xna.Framework.Storage namespace.
+
+All three of its types: `StorageDevice', `StorageContainer' and
+`StorageDeviceNotConnectedException'.
+
+**Two design questions had to be answered before any of this could be written**,
+and both are answered from the pinned IL rather than from taste.
+`docs/limitations.md' carries the full argument; the decisions are:
+
+**XNA's async is a fiction, so the projection keeps the pair and invents no
+concurrency.** `StorageDeviceAsyncResult.CompletedSynchronously' is a literal
+`true', its wait handle is constructed already-signalled so `IsCompleted' is
+always true, `Begin' invokes the caller's callback **before it returns**, and
+`End' is what does the work -- with a call-once guard. CNA collapses the pair for
+exactly that reason. So both members are projected, the callback still fires
+inside `Begin', `End' still does the work and still refuses a second call, and
+**no promise, future or thread is invented for work that never pends**. The
+`IAsyncResult' becomes an opaque object carrying the caller's state; it is not a
+projected type, the way `System.IO.Stream' is not.
+
+**`OpenFile' answers a real Common Lisp stream.** `System.IO.Stream' already
+projects onto an ordinary CL stream everywhere else in this binding --
+`Texture2D.FromStream' and `SaveAsPng' say so -- and Storage is the first place a
+*CNA-owned* one has to cross the boundary. Answering a second, parallel
+stream-like API would have made that existing statement false, so the streams
+here are Gray streams and `READ-SEQUENCE', `WRITE-SEQUENCE', `FILE-POSITION',
+`FILE-LENGTH', `READ-BYTE', `WRITE-BYTE', `FORCE-OUTPUT' and `CLOSE' all work on
+them.
+
+**`FileMode', `FileAccess' and `FileShare' are base-class-library enumerations**,
+not XNA types, so they are not in the selection and are not projected as types.
+Their values are keywords, in tables of the usual shape, and the keywords are
+declared binding extensions.
+
+**No public member of this package takes a game**, and unlike the audio and media
+surfaces most of them need none: `storage.h`'s routes take a device, a container
+or a stream and never a game handle. The selector routes are the exception and
+they take none either. So a storage program needs no game at all.")
+  (:use #:cl)
+  (:local-nicknames (#:xna #:microsoft.xna.framework))
+  ;; `StorageContainer.DeleteFile' is a reference-type member, so the naming rule
+  ;; makes it the bare `DELETE-FILE' -- and `CL:DELETE-FILE' is a standard
+  ;; function. Shadowing is the honest answer, the same one
+  ;; `microsoft.xna.framework.audio' gives for `POSITION': it keeps the projected
+  ;; name the rule's name, and a program that wants the standard function still
+  ;; has `CL:DELETE-FILE' by its own package qualifier. Renaming the member to
+  ;; `STORAGE-CONTAINER-DELETE-FILE' would apply the *static class* rule to an
+  ;; instance member, and this binding has one naming rule per kind on purpose.
+  (:shadow #:delete-file)
+  (:export
+   ;; --- the base-class-library enumerations, as keywords -------------------
+   #:file-mode #:file-mode-value #:file-mode-from-value #:all-file-mode
+   #:file-access #:file-access-value #:file-access-from-value #:all-file-access
+   #:file-share #:file-share-value #:file-share-from-value #:all-file-share
+   ;; --- the exception -------------------------------------------------------
+   #:storage-device-not-connected-error
+   ;; --- StorageDevice -------------------------------------------------------
+   #:storage-device
+   #:storage-device-begin-show-selector #:storage-device-end-show-selector
+   #:begin-open-container #:end-open-container #:delete-container
+   #:free-space #:total-space #:is-connected
+   #:storage-device-add-device-changed-handler
+   #:storage-device-remove-device-changed-handler
+   #:async-state
+   ;; --- StorageContainer ----------------------------------------------------
+   #:storage-container
+   #:display-name #:is-disposed
+   #:directory-exists #:file-exists #:create-directory #:delete-directory
+   #:create-file #:open-file #:delete-file
+   #:get-directory-names #:get-file-names
+   #:add-disposing-handler #:remove-disposing-handler
+   ;; --- the stream ----------------------------------------------------------
+   #:storage-stream
+   ;; --- where the saves go, which XNA never had to say -----------------------
+   #:set-storage-application-name #:storage-root))

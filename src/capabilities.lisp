@@ -153,6 +153,46 @@
       because CL:COUNT is a standard sequence function and this package shadows
       nothing; XNA spells both Count, so the rename is this projection's and is
       declared here.")
+    (microsoft.xna.framework.storage
+     file-mode file-mode-value file-mode-from-value all-file-mode
+     file-access file-access-value file-access-from-value all-file-access
+     file-share file-share-value file-share-from-value all-file-share
+     "The three `System.IO' enumerations `OpenFile' takes. **None is an XNA
+      type**, so none is in the selection and none is projected as a type -- the
+      same statement `System.IO.Stream' gets. What a projection still owes is a
+      name for each value, because three overloads take them, and the name is a
+      keyword in a table of the usual shape whose values are asserted against
+      CNA's own constants. `FileShare' carries [Flags] in the BCL and is
+      **combinable here**, because CNA's route documents its parameter as zero or
+      more bits: `(:read :delete)' and `:read-write' are both accepted, as
+      `FileShare.Read | FileShare.Delete' and `FileShare.ReadWrite' both are in
+      XNA. What the sharing states has no effect on any admitted ABI, which is
+      CNA's own documented limitation rather than this projection's; see
+      `docs/limitations.md'.")
+    (microsoft.xna.framework.storage storage-stream
+     "The class of the Common Lisp stream `CreateFile' and `OpenFile' answer.
+      `System.IO.Stream' is not a projected type -- it becomes an ordinary CL
+      stream -- but the *class* has to be nameable so that a program can declare
+      a type or specialise a method on it, which is what an ordinary CL stream
+      class always is.")
+    (microsoft.xna.framework.storage async-state
+     "`IAsyncResult.AsyncState': the object a caller passed to a `Begin' half,
+      read back from what it answered. `System.IAsyncResult' is the base-class
+      library's and is not a projected type, so its interface is not projected
+      either -- but the state is the one thing a caller put in and would
+      otherwise have no way back to. Its three other members are constants in
+      XNA (true, true, and an already-signalled wait handle) and a reader that
+      answered a constant would be offering a question with one answer.")
+    (microsoft.xna.framework.storage set-storage-application-name storage-root
+     "Naming the directory a program's saves go in, and reading back where that
+      is. **XNA has no such members and needed none**: on Windows and the Xbox
+      the CLR knows the entry assembly and the framework builds a per-title root
+      from it, so `StorageDevice' never had to expose the question. A Common Lisp
+      image is not a title -- no entry assembly, no title id, no product name --
+      so nothing derives it here, and CNA answers with two `_ext' routes. Hiding
+      them would leave every program's saves in CNA's default directory with no
+      way to choose another and no way to learn which one it was; the name says
+      plainly that these are not XNA members.")
     (microsoft.xna.framework.media song song-collection
      "Making a Song or a SongCollection at all. **XNA has no public constructor
       for either** -- a Song comes from Song.FromUri or a MediaLibrary, and a

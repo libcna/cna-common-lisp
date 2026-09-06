@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 187,
-  "member_count": 2525
+  "type_count": 190,
+  "member_count": 2560
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,16 +15,16 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 187,
-  "members": 2525,
+  "types": 190,
+  "members": 2560,
   "types_by_status": {
    "partial": 24,
-   "complete": 163
+   "complete": 166
   },
   "members_by_status": {
-   "complete": 2021,
+   "complete": 2054,
    "missing": 38,
-   "not-applicable": 440,
+   "not-applicable": 442,
    "partial": 26
   },
   "diagnostics": 38,
@@ -3884,6 +3884,62 @@
     "Samples": "complete"
    },
    "lisp": "microsoft.xna.framework.media:visualization-data"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Storage.StorageDevice",
+   "status": "complete",
+   "members": {
+    "BeginShowSelector(PlayerIndex,AsyncCallback,Object)": "complete",
+    "BeginShowSelector(PlayerIndex,Int32,Int32,AsyncCallback,Object)": "complete",
+    "EndShowSelector(IAsyncResult)": "complete",
+    "BeginOpenContainer(String,AsyncCallback,Object)": "complete",
+    "EndOpenContainer(IAsyncResult)": "complete",
+    "DeleteContainer(String)": "complete",
+    "BeginShowSelector(AsyncCallback,Object)": "complete",
+    "BeginShowSelector(Int32,Int32,AsyncCallback,Object)": "complete",
+    "FreeSpace": "complete",
+    "IsConnected": "complete",
+    "TotalSpace": "complete",
+    "DeviceChanged": "complete"
+   },
+   "lisp": "microsoft.xna.framework.storage:storage-device"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Storage.StorageContainer",
+   "status": "complete",
+   "members": {
+    "DirectoryExists(String)": "complete",
+    "FileExists(String)": "complete",
+    "CreateDirectory(String)": "complete",
+    "CreateFile(String)": "complete",
+    "DeleteDirectory(String)": "complete",
+    "OpenFile(String,FileMode)": "complete",
+    "OpenFile(String,FileMode,FileAccess)": "complete",
+    "OpenFile(String,FileMode,FileAccess,FileShare)": "complete",
+    "DeleteFile(String)": "complete",
+    "GetDirectoryNames()": "complete",
+    "GetDirectoryNames(String)": "complete",
+    "GetFileNames()": "complete",
+    "GetFileNames(String)": "complete",
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "DisplayName": "complete",
+    "StorageDevice": "complete",
+    "IsDisposed": "complete",
+    "Disposing": "complete"
+   },
+   "lisp": "microsoft.xna.framework.storage:storage-container"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "new(String)": "complete",
+    "new(String,Exception)": "complete",
+    "new(SerializationInfo,StreamingContext)": "not-applicable"
+   },
+   "lisp": "microsoft.xna.framework.storage:storage-device-not-connected-error"
   }
  ],
  "diagnostics": [

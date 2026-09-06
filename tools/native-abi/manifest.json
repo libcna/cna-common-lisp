@@ -376,7 +376,11 @@
       "CNA_FILE_SHARE_READ",
       "CNA_FILE_SHARE_WRITE",
       "CNA_FILE_SHARE_READ_WRITE",
-      "CNA_FILE_SHARE_DELETE"
+      "CNA_FILE_SHARE_DELETE",
+      "CNA_FILE_SHARE_INHERITABLE",
+      "CNA_SEEK_ORIGIN_BEGIN",
+      "CNA_SEEK_ORIGIN_CURRENT",
+      "CNA_SEEK_ORIGIN_END"
     ],
     "prefix_families": [
       {

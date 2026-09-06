@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 187,
-  "member_count": 2525
+  "type_count": 190,
+  "member_count": 2560
  },
  "types": [
   {
@@ -45551,6 +45551,735 @@
      "getAccess": "public",
      "setAccess": null,
      "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Storage.StorageDevice",
+   "kind": "class",
+   "flags": false,
+   "sealed": true,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "BeginShowSelector",
+     "static": true,
+     "access": "public",
+     "returnType": "System.IAsyncResult",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "player",
+       "type": "Microsoft.Xna.Framework.PlayerIndex",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "callback",
+       "type": "System.AsyncCallback",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "state",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "BeginShowSelector",
+     "static": true,
+     "access": "public",
+     "returnType": "System.IAsyncResult",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "player",
+       "type": "Microsoft.Xna.Framework.PlayerIndex",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "sizeInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "directoryCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "callback",
+       "type": "System.AsyncCallback",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "state",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "EndShowSelector",
+     "static": true,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Storage.StorageDevice",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "result",
+       "type": "System.IAsyncResult",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "BeginOpenContainer",
+     "static": false,
+     "access": "public",
+     "returnType": "System.IAsyncResult",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "displayName",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "callback",
+       "type": "System.AsyncCallback",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "state",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "EndOpenContainer",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.Storage.StorageContainer",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "result",
+       "type": "System.IAsyncResult",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "DeleteContainer",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "titleName",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "BeginShowSelector",
+     "static": true,
+     "access": "public",
+     "returnType": "System.IAsyncResult",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "callback",
+       "type": "System.AsyncCallback",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "state",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "BeginShowSelector",
+     "static": true,
+     "access": "public",
+     "returnType": "System.IAsyncResult",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "sizeInBytes",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "directoryCount",
+       "type": "System.Int32",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "callback",
+       "type": "System.AsyncCallback",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "state",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "FreeSpace",
+     "type": "System.Int64",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "IsConnected",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "TotalSpace",
+     "type": "System.Int64",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "DeviceChanged",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": true,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Storage.StorageContainer",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [
+    "System.IDisposable"
+   ],
+   "directInterfaces": [
+    "System.IDisposable"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "DirectoryExists",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "directory",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "FileExists",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "file",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateDirectory",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "directory",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "CreateFile",
+     "static": false,
+     "access": "public",
+     "returnType": "System.IO.Stream",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "file",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "DeleteDirectory",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "directory",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "OpenFile",
+     "static": false,
+     "access": "public",
+     "returnType": "System.IO.Stream",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "file",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "fileMode",
+       "type": "System.IO.FileMode",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "OpenFile",
+     "static": false,
+     "access": "public",
+     "returnType": "System.IO.Stream",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "file",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "fileMode",
+       "type": "System.IO.FileMode",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "fileAccess",
+       "type": "System.IO.FileAccess",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "OpenFile",
+     "static": false,
+     "access": "public",
+     "returnType": "System.IO.Stream",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "file",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "fileMode",
+       "type": "System.IO.FileMode",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "fileAccess",
+       "type": "System.IO.FileAccess",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "fileShare",
+       "type": "System.IO.FileShare",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "DeleteFile",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "file",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetDirectoryNames",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String[]",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "GetDirectoryNames",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String[]",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "searchPattern",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetFileNames",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String[]",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "GetFileNames",
+     "static": false,
+     "access": "public",
+     "returnType": "System.String[]",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "searchPattern",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "Finalize",
+     "static": false,
+     "access": "protected",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Dispose",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "DisplayName",
+     "type": "System.String",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "StorageDevice",
+     "type": "Microsoft.Xna.Framework.Storage.StorageDevice",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "IsDisposed",
+     "type": "System.Boolean",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "Disposing",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.Runtime.InteropServices.ExternalException",
+   "interfaces": [
+    "System.Runtime.InteropServices._Exception",
+    "System.Runtime.Serialization.ISerializable"
+   ],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "message",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "message",
+       "type": "System.String",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "innerException",
+       "type": "System.Exception",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "protected",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "info",
+       "type": "System.Runtime.Serialization.SerializationInfo",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "context",
+       "type": "System.Runtime.Serialization.StreamingContext",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
     }
    ]
   }
