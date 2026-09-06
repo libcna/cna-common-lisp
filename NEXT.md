@@ -161,6 +161,14 @@ from 0.22.0 to 0.23.0 in a day and moved fifteen more commits while 0.23.0 was
 being qualified, so a job following the tip qualifies whatever the tip was that
 hour.
 
+**Both halves of the pair are pinned, and the second half was caught the hard
+way.** `SHARP_RUNTIME_REF` followed the `next` branch until the first run after
+0.23.0 was admitted -- run `34041187578`, which resolved it to `30ccdef3`, one
+commit past the `bfc826e1` every document names, pushed while the qualification
+was running. It passed, so nothing broke but the claim. CNA pins no sharp-runtime
+revision, so that half is the one most likely to move with nobody deciding to;
+it is an exact commit now.
+
 **One admitted ABI per push, the others on dispatch**, and that was measured
 rather than assumed: a `Native` run is three to five minutes with a warm ccache
 and its cache key is the resolved CNA commit, so a second ABI on every push is a

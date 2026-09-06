@@ -263,10 +263,23 @@ branch fails in `modules/storage/src/StorageDevice.cpp` with
 `SetIsolatedStorageRootOverride is not a member of StoragePaths`, eleven minutes
 into the build. `libcna/cna:next` needs `libcna/sharp-runtime:next`.
 
-So the workflow checks out `sharp-runtime` at `SHARP_RUNTIME_REF`, defaulting to
-`next` alongside CNA's `next`, records the commit it resolved to next to the CNA
-one, and takes a `sharp_runtime_ref` dispatch input for qualifying a different
-pairing. This is not a CNA defect; it is a documented property of how CNA is
+So the workflow checks out `sharp-runtime` at `SHARP_RUNTIME_REF`, records the
+commit it resolved to next to the CNA one, and takes a `sharp_runtime_ref`
+dispatch input for qualifying a different pairing.
+
+**And `SHARP_RUNTIME_REF` is now an exact commit too, because following the
+branch was caught qualifying an undocumented pair.** It defaulted to `next` until
+2026-09-06. In run **34041187578** — the first run after 0.23.0 was admitted —
+`CNA_REF` was the exact qualified 0.23.0 commit and `next` resolved to
+sharp-runtime **`30ccdef3`**, one commit past the `bfc826e1` every document here
+names, pushed while the 0.23.0 qualification was running. The run passed, so
+nothing was broken except the claim: CI had qualified a pair no document
+describes, and the only reason anyone noticed is that the run records the commits
+it resolved.
+
+A pair is two commits, and pinning one of them is half a pin. The half CNA leaves
+unpinned is exactly the half most likely to move without anyone deciding to move
+it, so it is pinned here now. This is not a CNA defect; it is a documented property of how CNA is
 built, and the remedy belongs here.
 
 **An ABI artifact whose CNA commit was not recorded is not qualification
