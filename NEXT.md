@@ -328,8 +328,8 @@ had moved. Regenerate the table after every closure and read it there.
 | Category | Members | What it means |
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_0_21_ABI_LIMIT` | **41** | CNA 0.21.0 has no route for the member, or its route cannot express what the member means. |
-| `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against 0.21.0, but only as a new closure in this binding's object model rather than as a member. |
+| `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **1** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
@@ -349,7 +349,8 @@ two facts are:
 
 What the retired boolean actually claimed -- **"there is nothing externally
 blocked at all"** -- was false when it was written. Thirty-nine selected members
-are classified `CNA_0_21_ABI_LIMIT`: they need a CNA release, not a commit here.
+are classified `CNA_ADMITTED_ABI_LIMIT`: they need a CNA release, not a commit
+here.
 Six more need a type the profile has not selected, which is a profile decision
 rather than an implementation. Say which category, not which boolean.
 

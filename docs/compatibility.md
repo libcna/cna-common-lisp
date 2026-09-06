@@ -409,8 +409,8 @@ and so is a category left behind by a member that has since been completed.
 | Category | Members | What it means |
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_0_21_ABI_LIMIT` | **41** | CNA 0.21.0 has no route for the member, or its route cannot express what the member means. |
-| `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against 0.21.0, but only as a new closure in this binding's object model rather than as a member. |
+| `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **1** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
@@ -423,7 +423,23 @@ on: nothing in the selected profile is both unblocked and worth doing. The two
 empty rows are rendered rather than dropped, because their being empty is the
 claim.
 
-The categories are not excuses of equal weight. `CNA_0_21_ABI_LIMIT` holds the
+**Two of these categories were named after CNA 0.21.0 and are not any more.**
+`CNA_ADMITTED_ABI_LIMIT` was `CNA_0_21_ABI_LIMIT` and `PUBLIC_OBJECT_MODEL_CLOSURE`
+said "implementable against 0.21.0". Both were exactly right while the binding
+admitted one version, and both became the wrong abstraction the moment the
+admitted set became `{0.21.0, 0.22.0}`: a category describes the compatibility
+policy, and the policy is about the set rather than about its oldest member. A
+member that only one admitted version could express is as unrepresentable as one
+no version can express, because the binding promises the same public surface
+against every version it admits.
+
+**A member's own reason may still name a version, and several do.** "0.21.0 lacks
+route X" is a fact about a version that is still admitted, and that fact alone is
+enough to stop a uniform implementation, so it belongs in the entry where it can
+be checked against a header. What it may not do is name the category. No member's
+status changed with the rename; only the name did.
+
+The categories are not excuses of equal weight. `CNA_ADMITTED_ABI_LIMIT` holds the
 large majority, and most of that is one shape repeated: XNA's protected
 `On<Event>` raisers, thirteen of them across `Game`, `GameWindow` and
 `GraphicsDeviceManager`. In XNA the raiser *is* what raises the event, and a

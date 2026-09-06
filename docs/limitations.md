@@ -1609,7 +1609,10 @@ emitter loudest — decides the applied attenuation, pan and Doppler."
 
 That is a different function of the listener array from XNA's, not an
 approximation of it within a tolerance, and no argument this binding can pass
-makes the two agree. The member is `CNA_0_21_ABI_LIMIT`.
+makes the two agree. The member is `CNA_ADMITTED_ABI_LIMIT`, and the concrete
+evidence is the same in both admitted versions: `audio.h` is byte for byte
+identical in 0.21.0 and 0.22.0, so the multi-listener route approximates the
+same way in each.
 
 **The single-listener overload is unaffected**, and the IL is why:
 `Apply3D(AudioListener, AudioEmitter)` is `Apply3D(new[] { listener }, emitter)` —
