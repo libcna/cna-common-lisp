@@ -228,6 +228,10 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/content-atomicity")
    ;; The SoundEffect closure: fixtures generated here, no sample audio stored.
    (:file "native/audio")
+   ;; The Microphone closure. After native/audio because it reuses that file's
+   ;; game fixture and its teardown; its own lanes need a capture device, and
+   ;; both branches -- one enumerated and none enumerated -- assert.
+   (:file "native/microphone")
    ;; Texture2D's four Stream members, over ordinary Common Lisp streams.
    (:file "native/texture-streams")
    ;; TitleContainer resolves its base path through a live game.

@@ -88,6 +88,49 @@
         (format t "No audio claim above is about audible output: a dummy or real~%")
         (format t "device accepting a state transition is not a sound being heard,~%")
         (format t "and a buffer the mixer consumed is not a buffer anyone heard.~%")))
+    ;; The capture surface, reported **separately from playback**, because they
+    ;; are different devices behind different CNA routes: a run with a playback
+    ;; device may enumerate no microphone and a run with a microphone may have no
+    ;; speaker, and one line covering both would let either be read as the other.
+    ;; Its five levels are five claims for the reason the audio ones are four.
+    (when (native-library-requested-p)
+      (if *microphone-evidence*
+          (dolist (entry (reverse *microphone-evidence*))
+            (format t "~&microphone    : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&microphone    : NOT RUN -- no microphone test recorded evidence~%"))
+      (when (and (microphone-proved-p :unavailable)
+                 (not (microphone-proved-p :enumeration)))
+        (format t "No capture device was enumerated, so only the unavailable branch~%")
+        (format t "is qualified. SDL_AUDIODRIVER=dummy enumerates capture devices~%")
+        (format t "that advance a stream of silence, which is what the other lanes~%")
+        (format t "need.~%"))
+      (when (and (microphone-proved-p :enumeration)
+                 (not (microphone-proved-p :capture-data)))
+        (format t "Capture devices enumerated and no PCM was read from one: those~%")
+        (format t "are two claims and this run supports only the first.~%"))
+      (when (and (microphone-proved-p :capture-data)
+                 (not (microphone-proved-p :buffer-ready)))
+        (format t "PCM arrived and the BufferReady event was not observed: a stream~%")
+        (format t "that advances says nothing about the event that announces it.~%"))
+      ;; Where CNA and the pinned XNA behaviour were measured to disagree. Each
+      ;; line is a decision as well as a measurement: the public answer is XNA's,
+      ;; and printing CNA's beside it is what keeps the divergence a fact rather
+      ;; than a comment nobody re-checks.
+      (when *microphone-divergences*
+        (format t "~&microphone    : xna-over-cna -- ~d measured disagreement~:p, ~
+                   and the public answer is XNA's in each~%"
+                (length *microphone-divergences*))
+        (dolist (line (reverse *microphone-divergences*))
+          (format t "                  * ~a~%" line)))
+      (when (microphone-proved-p :capture-data)
+        (format t "No microphone claim above is about acoustics. No captured byte~%")
+        (format t "was inspected: what was proved is that the capture device this~%")
+        (format t "run's SDL driver enumerated advances its PCM16 stream at the~%")
+        (format t "sample rate it reports, and that CNA-Lisp reproduces XNA's~%")
+        (format t "state, buffer and event semantics over that stream. Nothing~%")
+        (format t "here says a sound was captured or that a physical microphone~%")
+        (format t "works. tools/qualification/microphone.sh runs this under SDL's~%")
+        (format t "dummy driver, whose capture devices produce silence.~%")))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))

@@ -369,6 +369,27 @@ jobs:
           CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
         run: tools/qualification/audio.sh
 
+      # The capture surface, and it is a **separate step from the one above**
+      # rather than two more lanes inside it: playback and capture are different
+      # devices behind different CNA routes, and a runner may have neither, so a
+      # script that read one out of the other would let either be reported as the
+      # other. Same process-per-driver constraint, same two deterministic
+      # branches -- a driver that does not exist enumerates no capture device, and
+      # SDL's dummy driver enumerates devices that advance a PCM16 stream of
+      # silence at the rate they report.
+      #
+      # It also runs the public-only consumer, which is the independent evidence
+      # that a complete capture session needs nothing but the two exported
+      # packages: the suite's own tests reach two private symbols, legitimately,
+      # and this proves neither is required.
+      #
+      # Nothing here is a claim that a sound was captured, and the script says so.
+      - name: Microphone qualification, unavailable and dummy-capture lanes
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: tools/qualification/microphone.sh
+
       - name: Isolated consumer qualification, 60 and 600 frames
         working-directory: cna-common-lisp
         run: |
