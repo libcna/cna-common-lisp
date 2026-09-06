@@ -343,6 +343,13 @@ generic functions those interfaces became answer for it.
                 (defmethod ,name ((effect %effect-with-lights))
                   (cna-lisp.internal:check-live
                    effect ,(string-downcase (symbol-name name)))
+                  ;; The three light views are taken by %BUILD-EFFECT-EXTRAS,
+                  ;; which a content-published effect never runs -- so this slot
+                  ;; is the empty vector there and an AREF would signal an
+                  ;; index error about an implementation detail. Refuse by name
+                  ;; instead, with the same explanation the graph members give.
+                  (%refuse-content-published-graph
+                   effect ,(string-downcase (symbol-name name)))
                   (aref (%effect-lights effect) ,index)))))
   (define-light-reader directional-light-0 0)
   (define-light-reader directional-light-1 1)
@@ -432,6 +439,7 @@ all of them: CNA answers a handle, its ABI has no route from a handle back to th
 object that names it, so this compares the handle against the object the setter
 remembered and refuses rather than inventing a Texture2D."
   (cna-lisp.internal:check-usable effect operation)
+  (%refuse-content-published-graph effect operation)
   (cffi:with-foreign-objects ((out :uint64) (has :uint8))
     (cna-lisp.internal:check-result
      (funcall route (cna-lisp.internal:handle-of effect) has out)
@@ -456,6 +464,7 @@ remembered and refuses rather than inventing a Texture2D."
 (defun %set-effect-texture (effect route texture operation)
   "Assign or clear a stock effect's texture. NIL is CNA_INVALID_HANDLE."
   (cna-lisp.internal:check-usable effect operation)
+  (%refuse-content-published-graph effect operation)
   (when texture (check-type texture texture-2d))
   (cna-lisp.internal:check-result
    (funcall route

@@ -504,29 +504,56 @@ mesh still lists exactly one."
 `cna_content_manager_load_model' publishes a loaded model's effect handle with no
 `adapterState'; `GetEffectState' casts that null pointer, so
 `cna_effect_get_techniques' on such a handle is a memory fault at offset 0x20
-rather than a result code -- on 0.21.0 and 0.22.0 alike. A binding cannot contain
-a segfault, so it refuses before reaching the route.
+rather than a result code -- on 0.21.0, 0.22.0 and 0.23.0 alike. A binding cannot
+contain a segfault, so it refuses before reaching the route.
 
-What this asserts is both halves: the four members that would read the missing
-state refuse, and the ones that do not read it answer normally. If CNA is fixed,
-the refusals become wrong and this test is where that is noticed."
+**The refusal used to cover four members and the unsafe set is seventeen.**
+`tools/qualification/model-defect-matrix.sh' enumerates the routes that read
+`adapterState' straight out of CNA's own source -- 22 of the 322 in
+`CnaCApiEffects.cpp' -- and 17 of them are bound here. Four were guarded. The
+other thirteen are the stock effects' `Texture' pairs, `DualTextureEffect''s two
+layers, `EnvironmentMapEffect.EnvironmentMap' and
+`cna_effect_lights_get_directional_light', and the first two of those were
+measured killing a subprocess at address 0x0 on 0.22.0 and 0.23.0 through
+`BasicEffect.Texture' -- an ordinary XNA member, on the class a `.cnj' model
+actually publishes. This test is now the whole audited set.
+
+What it asserts is both halves: every member that would read the missing state
+refuses, by name, and the ones that do not read it answer normally. If CNA is
+fixed, the refusals become wrong and this test is where that is noticed."
   (with-model-game (game)
     (let* ((mesh (gfx:collection-item (gfx:model-meshes (loaded-model game)) 0))
            (part (gfx:collection-item (gfx:model-mesh-parts mesh) 0))
            (effect (gfx:model-mesh-part-effect part)))
+      ;; The four graph entry points.
       (signals xna:cna-not-supported-error (gfx:effect-techniques effect))
       (signals xna:cna-not-supported-error (gfx:effect-current-technique effect))
       (signals xna:cna-not-supported-error (gfx:effect-parameters effect))
       (signals xna:cna-not-supported-error (gfx:clone-effect effect))
-      (handler-case (gfx:effect-techniques effect)
-        (xna:cna-not-supported-error (condition)
-          (is (search "ContentManager.Load<Model>" (princ-to-string condition))
-              "the refusal must name where the handle came from")
-          (is (search "model-mesh-part-effect" (princ-to-string condition))
-              "and the remedy")))
+      ;; The texture pair, which is what a program actually reaches for. The
+      ;; fixture publishes a BasicEffect, so these are the routes measured
+      ;; faulting at 0x0 in a subprocess.
+      (signals xna:cna-not-supported-error (gfx:effect-texture effect))
+      (signals xna:cna-not-supported-error (setf (gfx:effect-texture effect) nil))
+      ;; And the three light views, whose graph build a content-published effect
+      ;; never runs -- so without this they answered an AREF index error about a
+      ;; private slot rather than saying what was wrong.
+      (signals xna:cna-not-supported-error (gfx:directional-light-0 effect))
+      (signals xna:cna-not-supported-error (gfx:directional-light-1 effect))
+      (signals xna:cna-not-supported-error (gfx:directional-light-2 effect))
+      (dolist (probe (list (lambda () (gfx:effect-techniques effect))
+                           (lambda () (gfx:effect-texture effect))
+                           (lambda () (gfx:directional-light-0 effect))))
+        (handler-case (funcall probe)
+          (xna:cna-not-supported-error (condition)
+            (is (search "ContentManager.Load<Model>" (princ-to-string condition))
+                "the refusal must name where the handle came from")
+            (is (search "model-mesh-part-effect" (princ-to-string condition))
+                "and the remedy"))))
       ;; And the 300 routes that do not read adapter state answer normally.
       (finishes (gfx:effect-world effect))
-      (finishes (gfx:effect-view effect)))))
+      (finishes (gfx:effect-view effect))
+      (finishes (gfx:effect-vertex-color-enabled effect)))))
 
 (define-native-test assigning-your-own-effect-repairs-the-part-and-the-collection
   "The remedy the refusal names, measured end to end.

@@ -190,6 +190,7 @@ surface has no index and inventing one would be inventing a member."))
 
 (defun %dual-texture-layer (effect layer operation)
   (cna-lisp.internal:check-usable effect operation)
+  (%refuse-content-published-graph effect operation)
   (cffi:with-foreign-objects ((out :uint64) (has :uint8))
     (cna-lisp.internal:check-result
      (cna-lisp.internal.ffi::%dual-texture-effect-get-texture
@@ -216,6 +217,7 @@ surface has no index and inventing one would be inventing a member."))
 
 (defun %set-dual-texture-layer (effect layer texture operation)
   (cna-lisp.internal:check-usable effect operation)
+  (%refuse-content-published-graph effect operation)
   (when texture (check-type texture texture-2d))
   (cna-lisp.internal:check-result
    (cna-lisp.internal.ffi::%dual-texture-effect-set-texture
@@ -500,6 +502,7 @@ no route from a handle back to the object that names it."))
 
 (defmethod effect-environment-map ((effect environment-map-effect))
   (cna-lisp.internal:check-usable effect "effect-environment-map")
+  (%refuse-content-published-graph effect "effect-environment-map")
   (cffi:with-foreign-objects ((out :uint64) (has :uint8))
     (cna-lisp.internal:check-result
      (cna-lisp.internal.ffi::%environment-map-effect-get-environment-map
@@ -526,6 +529,7 @@ no route from a handle back to the object that names it."))
 
 (defmethod (setf effect-environment-map) (texture (effect environment-map-effect))
   (cna-lisp.internal:check-usable effect "(setf effect-environment-map)")
+  (%refuse-content-published-graph effect "(setf effect-environment-map)")
   (when texture (check-type texture texture-cube))
   (cna-lisp.internal:check-result
    (cna-lisp.internal.ffi::%environment-map-effect-set-environment-map

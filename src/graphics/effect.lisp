@@ -542,7 +542,19 @@ docs/limitations.md has the consequences, the largest of which is that no
 `Parameters'."))
 
 (defun %refuse-content-published-graph (effect operation)
-  "Refuse a member that would read a model-published handle's adapter state."
+  "Refuse a member that would read a model-published handle's adapter state.
+
+**Every member that reaches one of the unsafe routes calls this**, and which
+routes those are was measured rather than guessed: 22 of the 322 routes defined
+in CNA's `CnaCApiEffects.cpp' read the effect's `adapterState', and
+`PublishModelResource<EffectResource>' never fills it in. 17 of the 22 are bound
+here; the other five belong to families this binding does not project, so no
+public member can reach them at all. The 17 are covered by this function --
+through the four graph members, the shared stock-effect texture accessors, the
+dual-texture layer accessors, `EnvironmentMap' and the three directional-light
+readers, whose views are taken by a graph build a content-published effect never
+runs. Measured on 0.21.0, 0.22.0 and 0.23.0 alike: the defect is not one any
+admitted ABI has fixed."
   (when (%effect-content-published-p effect)
     (error 'microsoft.xna.framework:cna-not-supported-error
            :operation operation
@@ -551,9 +563,11 @@ docs/limitations.md has the consequences, the largest of which is that no
            "~a came from ContentManager.Load<Model>, and CNA publishes a loaded ~
             model's effect handle without the adapter state this member reads: ~
             cna_effect_get_techniques, cna_effect_get_parameters, ~
-            cna_effect_get_current_technique, cna_effect_clone and the texture ~
-            setters all dereference a null shared_ptr on such a handle rather than ~
-            refusing, on both admitted ABIs. Refusing here is what keeps that a ~
+            cna_effect_get_current_technique, cna_effect_clone, the stock ~
+            effects' Texture and EnvironmentMap routes and ~
+            cna_effect_lights_get_directional_light all dereference a null ~
+            shared_ptr on such a handle rather than refusing -- on every ABI this ~
+            build admits, 0.23.0 included. Refusing here is what keeps that a ~
             condition instead of a memory fault. Assign your own effect to the ~
             mesh part -- (setf (model-mesh-part-effect part) my-basic-effect) -- ~
             and every member works, which is what this binding's own ~
