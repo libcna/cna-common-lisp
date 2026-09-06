@@ -781,93 +781,106 @@ is replaced rather than added to.
 
 ### The candidates, re-measured against all three admitted ABIs
 
-Type and member counts are the pinned 257-type contract's, recomputed here from
-`xna40-windows-runtime-contract.json`. Route counts are
-`grep -c '^CNA_C_API'` over each family's own headers, **in all three admitted
-ABIs** -- and every one of them is identical in 0.21.0, 0.22.0 and 0.23.0, which
-is the first thing 0.23.0's arrival changes about this table: it changes nothing.
-0.23.0's one added route is `cna_decal_pass_is_supported`, in the engine layer.
-**It unlocks no candidate.**
+Type and member counts are the pinned 257-type contract's, and they are the
+**dependency closure** of each candidate rather than the seed types: the walk
+follows `baseType`, `interfaces`, member return types and parameter types, and
+expands only through types the selection does not already have. Route counts are
+`grep -c '^CNA_C_API'` over each family's own headers in all three admitted ABIs,
+and every one of those headers is **byte for byte identical** in 0.21.0, 0.22.0
+and 0.23.0 — checked, not assumed. So the admitted set unlocks and blocks nothing;
+it is not a variable in this table.
 
 | Candidate | Types | Members | Routes (identical in all three ABIs) | Deps outside the selection | Hardware | New language design | Deterministic CI | User value | Complexity |
 | --- | ---: | ---: | ---: | --- | --- | --- | --- | --- | --- |
-| `Microphone` | 3 | 21 | 18, in `audio.h` | `Byte[]`, `TimeSpan`, `Int32`, `String`, `Exception` -- all already projected | a capture device | **none** | **yes, both branches** | moderate | **low** |
-| `Storage` | 3 | 35 | 49, `storage.h` | `IAsyncResult`, `AsyncCallback`, `Stream`, `FileMode`/`FileAccess`/`FileShare` | none -- the filesystem | **two open questions** | yes | high | medium |
-| `Media` / `MediaPlayer` | 7 | 61 | ~80 of `media.h` + `media_player.h` | `Uri`, `Stream` | a playback device | none | yes | moderate | medium |
-| `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 8 `IEnumerator<T>` instantiations, `IList<MediaSource>` | scans the machine | collection protocol | **empty only** | low | high |
-| `Media` / `Video` | 2 | 20 | 42, `video.h` | `Stream` | an optional FFmpeg decoder | none | build-dependent | low | medium |
+| `Media` / `MediaPlayer` | 10 | 104 | 39 `media.h` + 41 `media_player.h` | `Uri`, `Stream`, `TimeSpan`, `ReadOnlyCollection<T>` — all already projected or already collapsed | a playback device | **none** | **yes, both branches** | high | medium |
+| `Storage` | 3 | 35 | 49, `storage.h` | `IAsyncResult`, `AsyncCallback`, `Stream`, `FileMode`/`FileAccess`/`FileShare` | none — the filesystem | **two open questions** | yes | high | medium |
+| `Media` / `Video` | 4 | 28 | 42, `video.h` | `TimeSpan` | an optional FFmpeg decoder | none | build-dependent | low | medium |
+| XACT | 7 | 72 | 62, `xact.h` | `TimeSpan`, `Int16` | a playback device | none | **no fixture exists** | low | high |
+| `Media` / `MediaLibrary` | 17 | 168 | 148, `media_library.h` | `DateTime`, `Uri`, `Stream` | scans the machine | collection protocol | **empty only** | low | high |
 
-**The recommendation is `Microphone`, and the reason is new evidence.**
+**Three numbers in the previous table were wrong and are corrected here.**
+`MediaPlayer` was measured at 7 types and 61 members; its real closure is **10 and
+104**, because `Song` drags in `Album`, `Artist`, `Genre`, `AlbumCollection` and
+`VisualizationData` and `MediaQueue` drags in `SongCollection`. `MediaLibrary` was
+15 and 142 and is **17 and 168**. `Video` was 2 and 20 and is **4 and 28**. The old
+numbers counted seed types rather than closures, which is the same mistake that
+made `Microphone` look like a smaller closure than it was.
 
-It was rejected last time because "its present branch has no capture equivalent of
-`SDL_AUDIODRIVER=dummy` in either admitted ABI". **That is false, and it was
-measured this time rather than repeated.** A probe that creates a game and asks
-`cna_microphone_get_count` finds, on 0.23.0:
+**And one standing claim is false.** Both `tools/api-compat/import-contract.py`
+and `docs/limitations.md` say XACT stays out "because CNA has no route for any of
+it". `xact.h` has **62 routes** and covers all five reachable types —
+`cna_audio_engine_*` 30, `cna_cue_*` 16, `cna_sound_bank_*` 12,
+`cna_audio_category_*` 10, `cna_wave_bank_*` 10. That claim is corrected in this
+commit. XACT is *still* not the recommendation, but for a different and honest
+reason: `cna_audio_engine_create` takes a path to an `.xgs` settings file,
+`cna_wave_bank_create` an `.xwb` and `cna_sound_bank_create` an `.xsb`, and those
+are binaries built by Microsoft's XACT authoring tool. **No fixture for them can
+be generated in this repository**, which is the same standard that keeps every
+other fixture here generated in source rather than stored — so XACT could be
+implemented and could not be qualified beyond its refusals.
 
-| `SDL_AUDIODRIVER` | devices | default | what it gives |
-| --- | ---: | --- | --- |
-| unset (this machine) | 3 | index 0, available | a real capture device |
-| `dummy` | **2** | index 0, available | **a deterministic positive branch** |
-| a name SDL cannot load | 0 | not available | the deterministic negative branch |
+**The recommendation is `MediaPlayer`, and the reason is that it is the only
+candidate that is both large in user value and free of an unanswered design
+question.**
 
-And the dummy device does not merely enumerate. Started, it reports
-`sample_rate` 44100 and a one-second buffer, transitions `Stopped -> Started ->
-Stopped` through `Start` and `Stop`, and over 180 frames answered **130
-`GetData` reads totalling 266 240 bytes** -- against 264 600 expected for three
-seconds of 44.1 kHz PCM16, so the *capture clock runs at the sample rate*, which
-is a checkable claim rather than "a call succeeded".
+It needs no new language design. Every type it reaches is already projected or
+already collapsed by an established rule: `TimeSpan` is a tick count throughout
+this binding, `ReadOnlyCollection<T>` is a Common Lisp list — the rule
+`GraphicsAdapter.Adapters` and now `Microphone.All` both declare — `Stream` is an
+ordinary Common Lisp binary stream where bytes cross, and `Uri` is a string.
+`MediaState` is a three-member enum beside the three this binding already has in
+`Audio`.
 
-**The bytes are silence**, every one of them zero. So Microphone would qualify
-exactly the way Audio already does, with the same honesty and the same wording
-discipline: a dummy capture device is not a microphone, and no test would say a
-sound was heard. What it *can* say is that the device enumerated, the state
-machine transitioned, the buffer duration round-tripped, and PCM arrived at the
-rate the sample rate implies. That is a **full two-branch qualification**, not the
-negative-capability-only qualification this family was assumed to be limited to.
+**Both branches qualify deterministically and with no hardware**, which is the
+property that made `Microphone` the right choice last time and is worth the same
+weight now. `cna_song_create` takes a **local file path**, and this repository
+already generates PCM16 WAV fixtures in Lisp for the SoundEffect closure — so a
+`Song` comes from a fixture with no stored sample audio, and playback goes through
+the same `SDL_AUDIODRIVER=dummy` device the existing audio and capture lanes use.
+A driver that does not exist gives the unavailable branch. `MediaPlayer` is static
+and process-global, so it needs the same one-active-game resolution three closures
+already use and no new one.
 
-It is also the smallest candidate by every measure -- 3 types, 21 members, 18
-routes -- it needs no type the binding has not already projected, and it needs no
-public API decision at all.
+It is also the largest remaining piece of **user-facing** surface: playing music is
+something a game does, and a queue with volume, repeat and shuffle is a complete
+feature rather than a fragment.
 
-**Not `Storage`, and the reason is two open design questions rather than size.**
-CNA has already collapsed XNA's fake-async pair: `storage.h` says in as many words
-that "the canonical API uses XNA's fake-async `BeginXxx`/`EndXxx` pair, which CNA
-completes synchronously", and the C route is one synchronous call whose optional
-completion callback fires *before it returns*. So the C side is easy and the
-projection is not:
+**Not `Storage`, and still for the two open design questions rather than size.**
+Nothing about them has changed and neither should be answered in passing:
 
 1. **How does `BeginShowSelector`/`EndShowSelector` become Common Lisp?** Four
    `Begin` overloads and two `End` methods, plus `IAsyncResult` and
-   `AsyncCallback`, neither of which is in the selection. Candidate designs: a
-   literal `IAsyncResult` object projection; one idiomatic synchronous call with
-   the `Begin`/`End` pair measured separately; a promise or future extension; a
-   partial projection that implements `Begin` and refuses `End`. **Do not choose
-   one in the task that implements it** -- the choice is a public API decision and
-   deserves its own argument.
+   `AsyncCallback`, neither in the selection. `storage.h` says in as many words
+   that "the canonical API uses XNA's fake-async `BeginXxx`/`EndXxx` pair, which
+   CNA completes synchronously", so the C side is easy and the *projection* is
+   the question. Candidate designs: a literal `IAsyncResult` object; one
+   idiomatic synchronous call with the pair measured separately; a promise or
+   future extension; a partial projection that implements `Begin` and refuses
+   `End`. **Do not choose one in the task that implements it** — it is a public
+   API decision and deserves its own argument.
 2. **What does `OpenFile` return?** `StorageContainer.CreateFile` and its three
    `OpenFile` overloads answer `System.IO.Stream`, and CNA backs that with eleven
-   real `cna_storage_stream_*` routes. There is a precedent -- `SaveAsPng` and
-   `FromStream` project `Stream` onto an ordinary Common Lisp binary stream -- but
-   that precedent moves *byte arrays* across the boundary. A CNA-owned, seekable,
-   readable-and-writable stream is a different object, and making it an ordinary
-   CL stream means Gray streams. `ContentManager.OpenStream` is currently
-   unimplemented precisely because "no stream object crosses CNA's C boundary";
-   Storage is where one would have to.
+   `cna_storage_stream_*` routes. The `SaveAsPng`/`FromStream` precedent moves
+   *byte arrays* across the boundary; a CNA-owned seekable read-write stream is a
+   different object, and making it an ordinary CL stream means Gray streams.
+   `ContentManager.OpenStream` is unimplemented precisely because no stream object
+   crosses CNA's C boundary; Storage is where one would have to.
 
-Both questions are worth answering. Neither should be answered in passing.
+**Not `Video`**: it needs CNA's optional FFmpeg decoder and answers
+`CNA_RESULT_NOT_SUPPORTED` without it, so what CI could qualify depends on how the
+library was built — and the pinned build is not built with it. A closure whose
+positive branch is build-dependent is a worse deal than one whose positive branch
+is a dummy driver.
 
-**Not `Media` as one closure**, and the measurement says why: at 24 types and 223
-members it is larger than everything added since Foundation 1 put together, and
-it **splits cleanly into three sub-closures** whose XNA dependencies do not cross.
-`MediaPlayer` (7 types, 61 members) is producible in CI -- `cna_song_create` takes
-a file path, so a Song comes from a fixture and playback goes through the same
-dummy audio device the existing lanes use. `MediaLibrary` (15 types, 142 members)
-scans the machine's music and picture locations; `media_library.h` says an empty
-library is an ordinary result, so CI can qualify *empty* and nothing else, and
-fifteen collection types that are only ever empty are not a closure worth having
-yet. `Video` (2 types, 20 members) needs CNA's optional FFmpeg decoder and answers
-`CNA_RESULT_NOT_SUPPORTED` without it. If Media is ever done, `MediaPlayer` first
-and alone.
+**Not `MediaLibrary`**: 17 types and 168 members that scan the machine's music and
+picture locations. `media_library.h` says an empty library is an ordinary result,
+so CI can qualify *empty* and nothing else, and seventeen collection types that are
+only ever empty are not a closure worth having yet.
+
+**If Media is done, `MediaPlayer` first and alone.** The three sub-closures'
+dependencies do not cross: `MediaPlayer` needs `Song`, `SongCollection`,
+`MediaQueue`, `MediaState` and the three metadata types `Song` exposes;
+`MediaLibrary` needs those plus fourteen more; `Video` needs neither.
 
 **Do not implement the recommendation yet.** This is a measurement, and the next
 task chooses.

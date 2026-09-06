@@ -2219,11 +2219,16 @@ These are absent, and measured as absent, not faked:
   services and networking**. Audio was on this list and is not any more: the
   eight-type `SoundEffect` closure is selected and complete. What is still absent
   *within* audio is XACT — `AudioEngine`, `SoundBank`, `WaveBank`, `Cue`,
-  `AudioCategory`, `RendererDetail` — for which CNA has no route at all, and
-  nothing else: `DynamicSoundEffectInstance` and the three `Microphone`
-  types were on this list while each was a closure of its own, and both
-  closures have landed — **which is exactly the staleness the paragraph
-  below warns about, caught twice in one sentence**;
+  `AudioCategory`, `RendererDetail` — and the reason given here used to be "CNA
+  has no route at all", which is **measured false**: `xact.h` has 62 routes
+  covering all five reachable types. The real reason is that it cannot be
+  qualified — its three creation routes take `.xgs`, `.xwb` and `.xsb` files
+  built by Microsoft's XACT authoring tool, so no fixture for them can be
+  generated here, which is the standard every other fixture in this repository
+  meets. Nothing else within audio is absent: `DynamicSoundEffectInstance` and
+  the three `Microphone` types were on this list while each was a closure of its
+  own, and both closures have landed — **which is exactly the staleness the
+  paragraph below warns about, caught twice in one sentence**;
 * the rest of the 3D resource surface — `Texture3D` and the `EffectParameter`
   member that needs one. `Model` was on this list too and its family is
   projected now; the generated per-type table is the authority.

@@ -188,7 +188,14 @@ SELECTED = [
     # arguments are an Int32 and the AudioChannels already here, and its one
     # event is EventHandler<EventArgs> like every other event in this selection.
     # XACT (AudioEngine, SoundBank, WaveBank, Cue, AudioCategory, RendererDetail)
-    # stays out because CNA has no route for any of it.
+    # stays out, and **not** for the reason this comment used to give. It said
+    # "CNA has no route for any of it", and that was measured false: `xact.h' has
+    # 62 routes covering all five reachable types. The real reason is that it
+    # could not be *qualified*. `cna_audio_engine_create' takes a path to an
+    # `.xgs' settings file, `cna_wave_bank_create' an `.xwb' and
+    # `cna_sound_bank_create' an `.xsb', and those are binaries built by
+    # Microsoft's XACT authoring tool -- so no fixture for them can be generated
+    # in this repository, which is the standard every other fixture here meets.
     "Microsoft.Xna.Framework.Audio.SoundEffect",
     "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
     "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance",
