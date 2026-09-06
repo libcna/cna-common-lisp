@@ -368,6 +368,8 @@
 (defconstant +key-z+ 90)
 (defconstant +key-zoom+ 251)
 (defconstant +max-samplers+ 16)
+(defconstant +microphone-state-started+ 0)
+(defconstant +microphone-state-stopped+ 1)
 (defconstant +mouse-button-left+ 1)
 (defconstant +mouse-button-middle+ 2)
 (defconstant +mouse-button-none+ 0)

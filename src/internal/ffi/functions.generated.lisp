@@ -2026,6 +2026,78 @@
 (defcfun ("cna_audio_unsubscribe_ext" %audio-unsubscribe-ext) :uint32
   (registration :uint64))
 
+;;; CNA_Result cna_microphone_get_count(CNA_Handle game, uint64_t* out_count)
+(defcfun ("cna_microphone_get_count" %microphone-get-count) :uint32
+  (game :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_microphone_get_default_index_ext(CNA_Handle game, uint64_t* out_index, CNA_Bool* out_available)
+(defcfun ("cna_microphone_get_default_index_ext" %microphone-get-default-index-ext) :uint32
+  (game :uint64) (out-index :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_microphone_get_name_size_at(CNA_Handle game, uint64_t index, uint64_t* out_bytes)
+(defcfun ("cna_microphone_get_name_size_at" %microphone-get-name-size-at) :uint32
+  (game :uint64) (index :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_microphone_copy_name_at(CNA_Handle game, uint64_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_microphone_copy_name_at" %microphone-copy-name-at) :uint32
+  (game :uint64) (index :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_microphone_get_buffer_duration_ticks_at(CNA_Handle game, uint64_t index, int64_t* out_ticks)
+(defcfun ("cna_microphone_get_buffer_duration_ticks_at" %microphone-get-buffer-duration-ticks-at) :uint32
+  (game :uint64) (index :uint64) (out-ticks :pointer))
+
+;;; CNA_Result cna_microphone_set_buffer_duration_ticks_at(CNA_Handle game, uint64_t index, int64_t ticks)
+(defcfun ("cna_microphone_set_buffer_duration_ticks_at" %microphone-set-buffer-duration-ticks-at) :uint32
+  (game :uint64) (index :uint64) (ticks :int64))
+
+;;; CNA_Result cna_microphone_get_is_headset_at(CNA_Handle game, uint64_t index, CNA_Bool* out_headset)
+(defcfun ("cna_microphone_get_is_headset_at" %microphone-get-is-headset-at) :uint32
+  (game :uint64) (index :uint64) (out-headset :pointer))
+
+;;; CNA_Result cna_microphone_get_sample_rate_at(CNA_Handle game, uint64_t index, int32_t* out_sample_rate)
+(defcfun ("cna_microphone_get_sample_rate_at" %microphone-get-sample-rate-at) :uint32
+  (game :uint64) (index :uint64) (out-sample-rate :pointer))
+
+;;; CNA_Result cna_microphone_get_state_at(CNA_Handle game, uint64_t index, CNA_MicrophoneState* out_state)
+(defcfun ("cna_microphone_get_state_at" %microphone-get-state-at) :uint32
+  (game :uint64) (index :uint64) (out-state :pointer))
+
+;;; CNA_Result cna_microphone_start_at(CNA_Handle game, uint64_t index)
+(defcfun ("cna_microphone_start_at" %microphone-start-at) :uint32
+  (game :uint64) (index :uint64))
+
+;;; CNA_Result cna_microphone_stop_at(CNA_Handle game, uint64_t index)
+(defcfun ("cna_microphone_stop_at" %microphone-stop-at) :uint32
+  (game :uint64) (index :uint64))
+
+;;; CNA_Result cna_microphone_get_data_at(CNA_Handle game, uint64_t index, uint8_t* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_microphone_get_data_at" %microphone-get-data-at) :uint32
+  (game :uint64) (index :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_microphone_get_sample_duration_ticks_at(CNA_Handle game, uint64_t index, int32_t size_in_bytes, int64_t* out_ticks)
+(defcfun ("cna_microphone_get_sample_duration_ticks_at" %microphone-get-sample-duration-ticks-at) :uint32
+  (game :uint64) (index :uint64) (size-in-bytes :int32) (out-ticks :pointer))
+
+;;; CNA_Result cna_microphone_get_sample_size_in_bytes_at(CNA_Handle game, uint64_t index, int64_t duration_ticks, int32_t* out_bytes)
+(defcfun ("cna_microphone_get_sample_size_in_bytes_at" %microphone-get-sample-size-in-bytes-at) :uint32
+  (game :uint64) (index :uint64) (duration-ticks :int64) (out-bytes :pointer))
+
+;;; CNA_Result cna_microphone_subscribe_buffer_ready_at(CNA_Handle game, uint64_t index, CNA_AudioEventCallback callback, void* context, CNA_AudioEventRegistrationHandle* out_registration)
+(defcfun ("cna_microphone_subscribe_buffer_ready_at" %microphone-subscribe-buffer-ready-at) :uint32
+  (game :uint64) (index :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_microphone_check_all_buffers_ext(CNA_Handle game)
+(defcfun ("cna_microphone_check_all_buffers_ext" %microphone-check-all-buffers-ext) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_microphone_get_type_name_size(CNA_Handle game, uint64_t* out_bytes)
+(defcfun ("cna_microphone_get_type_name_size" %microphone-get-type-name-size) :uint32
+  (game :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_microphone_copy_type_name(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_microphone_copy_type_name" %microphone-copy-type-name) :uint32
+  (game :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
 ;;; CNA_Result cna_model_bone_create_default(CNA_ModelBoneHandle* out_bone)
 (defcfun ("cna_model_bone_create_default" %model-bone-create-default) :uint32
   (out-bone :pointer))
@@ -2806,6 +2878,24 @@
     ("cna_dynamic_sound_effect_instance_get_sample_size_in_bytes" %dynamic-sound-effect-instance-get-sample-size-in-bytes :uint32 (:uint64 :int64 :pointer) :thread :owner :ownership "none")
     ("cna_dynamic_sound_effect_instance_subscribe_buffer_needed" %dynamic-sound-effect-instance-subscribe-buffer-needed :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
     ("cna_audio_unsubscribe_ext" %audio-unsubscribe-ext :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_microphone_get_count" %microphone-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_get_default_index_ext" %microphone-get-default-index-ext :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_get_name_size_at" %microphone-get-name-size-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_copy_name_at" %microphone-copy-name-at :uint32 (:uint64 :uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_get_buffer_duration_ticks_at" %microphone-get-buffer-duration-ticks-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_set_buffer_duration_ticks_at" %microphone-set-buffer-duration-ticks-at :uint32 (:uint64 :uint64 :int64) :thread :owner :ownership "none")
+    ("cna_microphone_get_is_headset_at" %microphone-get-is-headset-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_get_sample_rate_at" %microphone-get-sample-rate-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_get_state_at" %microphone-get-state-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_start_at" %microphone-start-at :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_microphone_stop_at" %microphone-stop-at :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_microphone_get_data_at" %microphone-get-data-at :uint32 (:uint64 :uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_get_sample_duration_ticks_at" %microphone-get-sample-duration-ticks-at :uint32 (:uint64 :uint64 :int32 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_get_sample_size_in_bytes_at" %microphone-get-sample-size-in-bytes-at :uint32 (:uint64 :uint64 :int64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_subscribe_buffer_ready_at" %microphone-subscribe-buffer-ready-at :uint32 (:uint64 :uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_microphone_check_all_buffers_ext" %microphone-check-all-buffers-ext :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_microphone_get_type_name_size" %microphone-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_microphone_copy_type_name" %microphone-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_model_bone_create_default" %model-bone-create-default :uint32 (:pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
     ("cna_model_bone_create" %model-bone-create :uint32 (:int32 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
     ("cna_model_bone_destroy" %model-bone-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-bone")

@@ -356,7 +356,9 @@
       "CNA_AUDIO_CHANNELS_STEREO",
       "CNA_SOUND_STATE_PLAYING",
       "CNA_SOUND_STATE_PAUSED",
-      "CNA_SOUND_STATE_STOPPED"
+      "CNA_SOUND_STATE_STOPPED",
+    "CNA_MICROPHONE_STATE_STARTED",
+    "CNA_MICROPHONE_STATE_STOPPED"
     ],
     "prefix_families": [
       {
@@ -3844,6 +3846,114 @@
       "header": "audio.h",
       "thread": "owner",
       "ownership": "destroys"
+    },
+    {
+      "name": "cna_microphone_get_count",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_default_index_ext",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_name_size_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_copy_name_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_buffer_duration_ticks_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_set_buffer_duration_ticks_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_is_headset_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_sample_rate_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_state_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_start_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_stop_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_data_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_sample_duration_ticks_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_sample_size_in_bytes_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_subscribe_buffer_ready_at",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_microphone_check_all_buffers_ext",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_get_type_name_size",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_microphone_copy_type_name",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
     },
     {
       "name": "cna_model_bone_create_default",

@@ -34,10 +34,10 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 572,
+    "functions": 590,
     "structs": 73,
     "struct_fields": 546,
-    "constants": 511,
+    "constants": 513,
     "callbacks": 11,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
@@ -12762,6 +12762,507 @@
       "c_prototype": "CNA_Result cna_audio_unsubscribe_ext(CNA_AudioEventRegistrationHandle registration)"
     },
     {
+      "name": "cna_microphone_get_count",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_count(CNA_Handle game, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_microphone_get_default_index_ext",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_index",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_available",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_default_index_ext(CNA_Handle game, uint64_t* out_index, CNA_Bool* out_available)"
+    },
+    {
+      "name": "cna_microphone_get_name_size_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_name_size_at(CNA_Handle game, uint64_t index, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_microphone_copy_name_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_copy_name_at(CNA_Handle game, uint64_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_microphone_get_buffer_duration_ticks_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_buffer_duration_ticks_at(CNA_Handle game, uint64_t index, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_microphone_set_buffer_duration_ticks_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "ticks",
+          "c_type": "int64_t",
+          "cffi_type": ":int64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_set_buffer_duration_ticks_at(CNA_Handle game, uint64_t index, int64_t ticks)"
+    },
+    {
+      "name": "cna_microphone_get_is_headset_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_headset",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_is_headset_at(CNA_Handle game, uint64_t index, CNA_Bool* out_headset)"
+    },
+    {
+      "name": "cna_microphone_get_sample_rate_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_sample_rate",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_sample_rate_at(CNA_Handle game, uint64_t index, int32_t* out_sample_rate)"
+    },
+    {
+      "name": "cna_microphone_get_state_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_MicrophoneState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_state_at(CNA_Handle game, uint64_t index, CNA_MicrophoneState* out_state)"
+    },
+    {
+      "name": "cna_microphone_start_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_start_at(CNA_Handle game, uint64_t index)"
+    },
+    {
+      "name": "cna_microphone_stop_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_stop_at(CNA_Handle game, uint64_t index)"
+    },
+    {
+      "name": "cna_microphone_get_data_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_data_at(CNA_Handle game, uint64_t index, uint8_t* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_microphone_get_sample_duration_ticks_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "size_in_bytes",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_sample_duration_ticks_at(CNA_Handle game, uint64_t index, int32_t size_in_bytes, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_microphone_get_sample_size_in_bytes_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "duration_ticks",
+          "c_type": "int64_t",
+          "cffi_type": ":int64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_sample_size_in_bytes_at(CNA_Handle game, uint64_t index, int64_t duration_ticks, int32_t* out_bytes)"
+    },
+    {
+      "name": "cna_microphone_subscribe_buffer_ready_at",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_AudioEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_AudioEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_subscribe_buffer_ready_at(CNA_Handle game, uint64_t index, CNA_AudioEventCallback callback, void* context, CNA_AudioEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_microphone_check_all_buffers_ext",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_check_all_buffers_ext(CNA_Handle game)"
+    },
+    {
+      "name": "cna_microphone_get_type_name_size",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_get_type_name_size(CNA_Handle game, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_microphone_copy_type_name",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_microphone_copy_type_name(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
       "name": "cna_model_bone_create_default",
       "header": "models.h",
       "c_returns": "CNA_Result",
@@ -20798,6 +21299,8 @@
     "CNA_KEY_Z": 90,
     "CNA_KEY_ZOOM": 251,
     "CNA_MAX_SAMPLERS": 16,
+    "CNA_MICROPHONE_STATE_STARTED": 0,
+    "CNA_MICROPHONE_STATE_STOPPED": 1,
     "CNA_MOUSE_BUTTON_LEFT": 1,
     "CNA_MOUSE_BUTTON_MIDDLE": 2,
     "CNA_MOUSE_BUTTON_NONE": 0,
