@@ -1395,13 +1395,17 @@ the ownership graph exists to prevent. A failed child is still invalidated on th
 Lisp side, because `DISPOSE` invalidates through an `UNWIND-PROTECT`, so nothing
 is left pointing at a handle that may or may not exist.
 
-## Audio: four places CNA and XNA disagree, and XNA wins in each
+## Audio: five places CNA and XNA disagree, and XNA wins in the four it can
 
-The `SoundEffect` closure is complete, and every divergence below is a place the
-projection had to choose. It chose XNA, because that is what a consumer's program
-was written against; each is pinned by a test that asserts **both** sides, so a
-CNA that changed would fail a test rather than silently changing this binding's
-public behaviour.
+Every divergence below is a place the projection had to choose. It chose XNA in
+each of the first four, because that is what a consumer's program was written
+against; each is pinned by a test that asserts **both** sides, so a CNA that
+changed would fail a test rather than silently changing this binding's public
+behaviour.
+
+The fifth is different in kind and is at the end: it is a place where XNA's answer
+is not establishable from the pinned assembly, so there is nothing to choose XNA
+*for*, and the member is partial rather than complete.
 
 ### `Play` on a disposed effect throws; CNA answers false
 
@@ -1513,11 +1517,47 @@ a corrected CNA fails a test rather than passing silently.
 binding knows the format it computes XNA's answer instead of reading the route --
 both constructors, and `FromStream`, which parses the wave header on the way past
 — and those are exact. A `SoundEffect` obtained through `ContentManager.Load` was
-never handed to this binding as bytes, and ABI 0.21.0 has no route reporting an
-effect's sample rate, channel count or data length, so there is nothing to compute
+never handed to this binding as bytes, and **neither admitted ABI** has a route
+reporting an effect's sample rate, channel count or data length -- `audio.h` is
+byte for byte the same in 0.21.0 and 0.22.0 -- so there is nothing to compute
 from. Its duration is CNA's tick count and can differ from XNA's by up to half a
 millisecond. Answering it is better than refusing a member XNA always answers;
 calling it complete would be claiming an agreement that was measured to be false.
+
+### The streaming constructor needs no audio device in CNA, and XNA's answer is unknown
+
+`SoundEffect`'s constructors refuse on a machine with no playback device:
+`cna_sound_effect_create_pcm16_range_ext` answers `CNA_RESULT_NOT_SUPPORTED`,
+which this binding raises as `NoAudioHardwareException`, and the
+`AUDIO_UNAVAILABLE` lane qualifies exactly that.
+
+`DynamicSoundEffectInstance`'s constructor does not.
+`cna_dynamic_sound_effect_instance_create` answers `CNA_RESULT_SUCCESS` with no
+device — measured against 0.21.0 and 0.22.0, with a driver name SDL cannot
+resolve — and the handle it gives back accepts `SubmitBuffer`. The refusal
+arrives at `Play`.
+
+**XNA's own behaviour there is not establishable.** Its constructor calls
+`AllocateVoice()`, which calls
+`SoundEffectUnsafeNativeMethods.CreateDynamicSoundEffectInstance`, whose body is
+native code inside the mixed-mode assembly rather than IL. What the disassembly
+*does* establish is the shape of the failure if there is one:
+`Helpers.GetExceptionFromResult` maps XACT result `0x8ac70017` to
+`NoAudioHardwareException`, so a failure would surface as that exception and not
+as something else.
+
+So the constructor is **partial**. Adopting CNA's success is a binding-defined
+outcome standing in for an unknown one, which is legitimate for a partial member
+and would not be legitimate while the member was called complete — the same
+standard `Apply3D(AudioListener[], AudioEmitter)` is held to for its empty array.
+Inventing a capability probe and refusing would be worse: it would be reproducing
+a behaviour nothing in the pinned assembly says XNA has.
+
+`tests/native/audio.lisp` asserts the measured behaviour in **both** directions
+in its `AUDIO_DYNAMIC_UNAVAILABLE` lane — the constructor succeeds, a buffer is
+accepted, `Play` refuses with `NoAudioHardwareException`, and the argument checks
+still run first so a machine with no sound card cannot turn a wrong sample rate
+into a hardware report.
 
 ## Audio has no game argument, and that is a projection limit
 

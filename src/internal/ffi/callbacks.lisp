@@ -64,6 +64,23 @@ answer normally. See docs/callbacks-and-threading.md.")
     (when dispatcher
       (ignore-errors (funcall dispatcher (pointer-address context))))))
 
+(defvar *audio-event-dispatcher* nil
+  "Function of one integer token, called when CNA raises a subscribed audio event.
+
+`CNA_AudioEventCallback' has `CNA_GameEventCallback''s exact shape --
+`void (*)(void* context)' -- and answers nothing, so a handler's failure has the
+same nowhere to go and is contained the same way. It is a **separate** callback
+and a separate dispatcher rather than the game one reused, because the routes
+that install it are audio's and the registration it produces is released by
+`cna_audio_unsubscribe_ext' rather than by `cna_game_unsubscribe'.")
+
+(defcallback audio-event-callback :void ((context :pointer))
+  (let ((dispatcher *audio-event-dispatcher*))
+    ;; No dispatcher means the registry was torn down under a live subscription.
+    ;; There is nothing to report it to, so the only thing left is to do nothing.
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context))))))
+
 (defvar *resource-disposing-dispatcher* nil
   "Function of one integer token, called when CNA raises a graphics resource's
 Disposing event. Void-returning, like the game event dispatcher.")
@@ -125,6 +142,10 @@ of doing what the registry does exactly."
 (defun game-event-callback-pointer ()
   "The one top-level callback CNA is given for every game event subscription."
   (callback game-event-callback))
+
+(defun audio-event-callback-pointer ()
+  "The one top-level callback CNA is given for every audio event subscription."
+  (callback audio-event-callback))
 
 (defun lifecycle-callback-pointer (kind)
   "The top-level callback pointer CNA is given for KIND."

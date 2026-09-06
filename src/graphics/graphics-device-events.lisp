@@ -43,7 +43,7 @@
   (cna-lisp.internal.ffi::%graphics-device-unsubscribe registration))
 
 (setf cna-lisp.internal.ffi:*graphics-device-event-dispatcher*
-      #'microsoft.xna.framework::%dispatch-game-event)
+      #'microsoft.xna.framework::%dispatch-payload-free-event)
 
 (microsoft.xna.framework::%define-event-pair
  add-device-lost-handler remove-device-lost-handler

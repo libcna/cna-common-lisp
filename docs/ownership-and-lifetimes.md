@@ -158,6 +158,23 @@ and so does this, so the proof there is that a second manager can still be made.
 Classes with no native resource of their own — `VertexDeclaration` and the four
 state objects — record nothing, because there is nothing to give back.
 
+**A handle is not the only thing a construction can acquire.** An initializer may
+also *subscribe*, and that was a hole in the mechanism above until
+`DynamicSoundEffectInstance`'s own atomicity test opened it: an initializer that
+subscribed and then signalled left CNA holding the event registration and the
+private callback registry holding the token that roots the object. Nothing in the
+ledger gave either back, because only the constructor's own two steps were in it.
+The hole was never about audio — every exported class that raises an event is
+subclassable, and the same subclass could be written for any of them.
+
+`%SUBSCRIBE-EVENT` therefore records a construction undo for the subscription it
+just made, and only while the object is still constructing: `NATIVE-OBJECT`
+carries a `constructing` flag that the `:around` sets and clears. After the
+construction commits the same call records nothing, because a subscription a
+program made is an ordinary thing it did and nothing may undo it on the program's
+behalf. A non-empty ledger is *nearly* the same test and is not the same test,
+which is why the flag is explicit.
+
 ## Double disposal
 
 `dispose` is idempotent, exactly as `IDisposable.Dispose` is. The second call

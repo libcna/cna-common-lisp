@@ -1998,6 +1998,34 @@
 (defcfun ("cna_audio_emitter_init" %audio-emitter-init) :uint32
   (out-emitter :pointer))
 
+;;; CNA_Result cna_dynamic_sound_effect_instance_create(CNA_Handle game, int32_t sample_rate, CNA_AudioChannels channels, CNA_Handle* out_instance)
+(defcfun ("cna_dynamic_sound_effect_instance_create" %dynamic-sound-effect-instance-create) :uint32
+  (game :uint64) (sample-rate :int32) (channels :uint32) (out-instance :pointer))
+
+;;; CNA_Result cna_dynamic_sound_effect_instance_submit_buffer(CNA_Handle instance, const uint8_t* bytes, uint64_t byte_count, int32_t offset, int32_t count)
+(defcfun ("cna_dynamic_sound_effect_instance_submit_buffer" %dynamic-sound-effect-instance-submit-buffer) :uint32
+  (instance :uint64) (bytes :pointer) (byte-count :uint64) (offset :int32) (count :int32))
+
+;;; CNA_Result cna_dynamic_sound_effect_instance_get_pending_buffer_count(CNA_Handle instance, int32_t* out_count)
+(defcfun ("cna_dynamic_sound_effect_instance_get_pending_buffer_count" %dynamic-sound-effect-instance-get-pending-buffer-count) :uint32
+  (instance :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_dynamic_sound_effect_instance_get_sample_duration_ticks(CNA_Handle instance, int32_t size_in_bytes, int64_t* out_ticks)
+(defcfun ("cna_dynamic_sound_effect_instance_get_sample_duration_ticks" %dynamic-sound-effect-instance-get-sample-duration-ticks) :uint32
+  (instance :uint64) (size-in-bytes :int32) (out-ticks :pointer))
+
+;;; CNA_Result cna_dynamic_sound_effect_instance_get_sample_size_in_bytes(CNA_Handle instance, int64_t duration_ticks, int32_t* out_bytes)
+(defcfun ("cna_dynamic_sound_effect_instance_get_sample_size_in_bytes" %dynamic-sound-effect-instance-get-sample-size-in-bytes) :uint32
+  (instance :uint64) (duration-ticks :int64) (out-bytes :pointer))
+
+;;; CNA_Result cna_dynamic_sound_effect_instance_subscribe_buffer_needed(CNA_Handle instance, CNA_AudioEventCallback callback, void* context, CNA_AudioEventRegistrationHandle* out_registration)
+(defcfun ("cna_dynamic_sound_effect_instance_subscribe_buffer_needed" %dynamic-sound-effect-instance-subscribe-buffer-needed) :uint32
+  (instance :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_audio_unsubscribe_ext(CNA_AudioEventRegistrationHandle registration)
+(defcfun ("cna_audio_unsubscribe_ext" %audio-unsubscribe-ext) :uint32
+  (registration :uint64))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -2494,6 +2522,13 @@
     ("cna_sound_effect_instance_apply_3d" %sound-effect-instance-apply-3d :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "none")
     ("cna_sound_effect_instance_apply_3d_multi_ext" %sound-effect-instance-apply-3d-multi-ext :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_audio_listener_init" %audio-listener-init :uint32 (:pointer) :thread :any :ownership "none")
-    ("cna_audio_emitter_init" %audio-emitter-init :uint32 (:pointer) :thread :any :ownership "none"))
+    ("cna_audio_emitter_init" %audio-emitter-init :uint32 (:pointer) :thread :any :ownership "none")
+    ("cna_dynamic_sound_effect_instance_create" %dynamic-sound-effect-instance-create :uint32 (:uint64 :int32 :uint32 :pointer) :thread :owner :ownership "creates-owned:sound-effect-instance:child-of-game")
+    ("cna_dynamic_sound_effect_instance_submit_buffer" %dynamic-sound-effect-instance-submit-buffer :uint32 (:uint64 :pointer :uint64 :int32 :int32) :thread :owner :ownership "none")
+    ("cna_dynamic_sound_effect_instance_get_pending_buffer_count" %dynamic-sound-effect-instance-get-pending-buffer-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_dynamic_sound_effect_instance_get_sample_duration_ticks" %dynamic-sound-effect-instance-get-sample-duration-ticks :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "none")
+    ("cna_dynamic_sound_effect_instance_get_sample_size_in_bytes" %dynamic-sound-effect-instance-get-sample-size-in-bytes :uint32 (:uint64 :int64 :pointer) :thread :owner :ownership "none")
+    ("cna_dynamic_sound_effect_instance_subscribe_buffer_needed" %dynamic-sound-effect-instance-subscribe-buffer-needed :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_audio_unsubscribe_ext" %audio-unsubscribe-ext :uint32 (:uint64) :thread :owner :ownership "destroys"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

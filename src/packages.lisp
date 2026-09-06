@@ -684,8 +684,9 @@ The **selected** part of it: `SoundEffect' and `SoundEffectInstance', the
 and `AudioChannels' enumerations, and the two exceptions XNA's audio surface
 raises on its own behalf. XACT -- `AudioEngine', `SoundBank', `WaveBank', `Cue',
 `AudioCategory' and `RendererDetail' -- is not selected, and CNA has no route for
-any of it. `DynamicSoundEffectInstance' and the microphone family have full CNA
-route families and are each a closure of their own.
+any of it. `DynamicSoundEffectInstance' is selected and is the streaming half of
+this namespace; the microphone family has a full CNA route family and is a
+closure of its own, and half of it cannot be qualified without a capture device.
 
 **No public member of this package takes a game.** XNA's audio API has no game
 argument -- its constructors and its four static properties take none -- and CNA's
@@ -726,4 +727,9 @@ naming what is missing, which is a projection limit and is written down in
    ;; --- SoundEffectInstance -------------------------------------------------
    #:sound-effect-instance
    #:state #:is-looped #:volume #:pitch #:pan
-   #:pause #:resume #:stop #:apply-3d))
+   #:pause #:resume #:stop #:apply-3d
+   ;; --- DynamicSoundEffectInstance ------------------------------------------
+   #:dynamic-sound-effect-instance
+   #:submit-buffer #:pending-buffer-count
+   #:get-sample-duration #:get-sample-size-in-bytes
+   #:add-buffer-needed-handler #:remove-buffer-needed-handler))

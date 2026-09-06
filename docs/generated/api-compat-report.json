@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 165,
-  "member_count": 2389
+  "type_count": 166,
+  "member_count": 2399
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 165,
-  "members": 2389,
+  "types": 166,
+  "members": 2399,
   "types_by_status": {
-   "partial": 18,
+   "partial": 19,
    "complete": 147
   },
   "members_by_status": {
-   "complete": 1904,
+   "complete": 1912,
    "missing": 35,
-   "not-applicable": 429,
-   "partial": 21
+   "not-applicable": 430,
+   "partial": 22
   },
   "diagnostics": 35,
   "diagnostics_by_category": {
@@ -3528,6 +3528,23 @@
     "State": "complete"
    },
    "lisp": "microsoft.xna.framework.audio:sound-effect-instance"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance",
+   "status": "partial",
+   "members": {
+    "new(Int32,AudioChannels)": "partial",
+    "Dispose(Boolean)": "not-applicable",
+    "SubmitBuffer(Byte[])": "complete",
+    "SubmitBuffer(Byte[],Int32,Int32)": "complete",
+    "GetSampleDuration(Int32)": "complete",
+    "GetSampleSizeInBytes(TimeSpan)": "complete",
+    "Play()": "complete",
+    "IsLooped": "complete",
+    "PendingBufferCount": "complete",
+    "BufferNeeded": "complete"
+   },
+   "lisp": "microsoft.xna.framework.audio:dynamic-sound-effect-instance"
   },
   {
    "name": "Microsoft.Xna.Framework.Audio.AudioListener",

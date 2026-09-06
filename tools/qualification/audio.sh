@@ -25,7 +25,24 @@
 #                                runs with no speaker attached. This is the lane
 #                                that qualifies the available branch in CI.
 #
-# **A dummy audio device is not audible hardware, and neither lane is a claim
+#   AUDIO_DYNAMIC_UNAVAILABLE    the unavailable lane again, recording what the
+#                                streaming constructor does there: it **succeeds**,
+#                                because CNA's create route needs no device where
+#                                SoundEffect's does. The refusal arrives at Play.
+#                                Recorded rather than asserted away, because the two
+#                                constructors genuinely differ.
+#
+#   AUDIO_DYNAMIC_STREAMING      the same lane and the same device, and a
+#                                **different claim**. Generated PCM16 is submitted
+#                                to a DynamicSoundEffectInstance, the pending
+#                                buffer count is observed rising, and the native
+#                                streaming state machine is observed consuming it
+#                                while the game loop runs. A transport transition
+#                                says nothing about whether a submitted buffer was
+#                                ever taken, so this is required separately rather
+#                                than read out of the line above.
+#
+# **A dummy audio device is not audible hardware, and no lane here is a claim
 # that a sound was heard.** What is proved is that the values reached CNA, that
 # CNA accepted them, and that the observable state changed where CNA exposes one.
 # No test here or anywhere in this repository claims audible correctness; a
@@ -56,6 +73,21 @@ cd "$root"
 # "none", which SDL might one day accept as a real driver and quietly turn this
 # lane into a second copy of the dummy one.
 missing_driver=definitely-nonexistent-cna-test-driver
+
+# A second kind of evidence out of a lane that has already run. `run_lane' checks
+# the one kind that names the lane; this checks any other kind the lane has to
+# have produced, against the log it left behind.
+require_evidence() {
+    lane=$1; kind=$2
+    log="$root/build-probe/audio-$lane.log"
+    if ! grep -q "^audio         : $kind -- " "$log"; then
+        echo "FAIL lane $lane had to produce '$kind' evidence and did not:" >&2
+        grep -E '^audio +: ' "$log" >&2 || echo "  (no audio line at all)" >&2
+        exit 1
+    fi
+    echo "  also proved: $kind"
+    echo
+}
 
 run_lane() {
     lane=$1; driver=$2; expected=$3
@@ -109,10 +141,21 @@ run_lane() {
 }
 
 # 1. The unavailable branch, produced deterministically and with no hardware.
+#    Two kinds again, and the second is a *different* fact rather than more of the
+#    first: SoundEffect's constructor refuses without a device and
+#    DynamicSoundEffectInstance's does not, so requiring only "unavailable" would
+#    let the asymmetry go unrecorded.
 run_lane unavailable "$missing_driver" unavailable
+require_evidence unavailable dynamic-unavailable
 
-# 2. The available branch, on a device with no speaker behind it.
+# 2. The available branch, on a device with no speaker behind it. Two kinds of
+#    evidence come out of this one lane and both are required: the transport's
+#    state machine, and the streaming buffer queue. They are different claims --
+#    a play/pause/resume/stop transition says nothing about whether a submitted
+#    buffer was ever consumed -- so requiring only the first would let a broken
+#    DynamicSoundEffectInstance pass behind SoundEffectInstance's evidence.
 run_lane dummy dummy state-machine
+require_evidence dummy dynamic-streaming
 
 # 3. The ordinary environment, recorded and not required to be either.
 echo "== lane ordinary: the environment as it is =="
@@ -139,9 +182,19 @@ echo "audio qualification passed"
 echo "  AUDIO_UNAVAILABLE              a nonexistent driver: no device, and every"
 echo "                                 route needing one refused with the"
 echo "                                 XNA-visible NO-AUDIO-HARDWARE-ERROR"
+echo "  AUDIO_DYNAMIC_UNAVAILABLE      the same driver: the streaming constructor"
+echo "                                 succeeded anyway and took a buffer, and the"
+echo "                                 refusal arrived at Play"
 echo "  AUDIO_AVAILABLE_STATE_MACHINE  SDL's dummy driver: a device opened and the"
 echo "                                 play/pause/resume/stop transitions were"
 echo "                                 observed on it"
+echo "  AUDIO_DYNAMIC_STREAMING        the same device: generated PCM16 was submitted"
+echo "                                 to a DynamicSoundEffectInstance, the pending"
+echo "                                 buffer count rose, and the native streaming"
+echo "                                 state machine consumed it while frames ran"
 echo
 echo "  Not proved, and not claimed: that anything was audible. A dummy audio"
-echo "  device is not a speaker, and no lane here listens to anything."
+echo "  device is not a speaker, and no lane here listens to anything. The"
+echo "  strongest claim the streaming lane supports is that generated PCM was"
+echo "  accepted and consumed by the native streaming state machine -- not that"
+echo "  a sound was heard."

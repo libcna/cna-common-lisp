@@ -1811,6 +1811,13 @@ CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_apply_3d)(CNA_Handle
 CNA_Result (*const cna_lisp_probe_cna_sound_effect_instance_apply_3d_multi_ext)(CNA_Handle, const CNA_AudioListener*, uint64_t, const CNA_AudioEmitter*) = cna_sound_effect_instance_apply_3d_multi_ext;
 CNA_Result (*const cna_lisp_probe_cna_audio_listener_init)(CNA_AudioListener*) = cna_audio_listener_init;
 CNA_Result (*const cna_lisp_probe_cna_audio_emitter_init)(CNA_AudioEmitter*) = cna_audio_emitter_init;
+CNA_Result (*const cna_lisp_probe_cna_dynamic_sound_effect_instance_create)(CNA_Handle, int32_t, CNA_AudioChannels, CNA_Handle*) = cna_dynamic_sound_effect_instance_create;
+CNA_Result (*const cna_lisp_probe_cna_dynamic_sound_effect_instance_submit_buffer)(CNA_Handle, const uint8_t*, uint64_t, int32_t, int32_t) = cna_dynamic_sound_effect_instance_submit_buffer;
+CNA_Result (*const cna_lisp_probe_cna_dynamic_sound_effect_instance_get_pending_buffer_count)(CNA_Handle, int32_t*) = cna_dynamic_sound_effect_instance_get_pending_buffer_count;
+CNA_Result (*const cna_lisp_probe_cna_dynamic_sound_effect_instance_get_sample_duration_ticks)(CNA_Handle, int32_t, int64_t*) = cna_dynamic_sound_effect_instance_get_sample_duration_ticks;
+CNA_Result (*const cna_lisp_probe_cna_dynamic_sound_effect_instance_get_sample_size_in_bytes)(CNA_Handle, int64_t, int32_t*) = cna_dynamic_sound_effect_instance_get_sample_size_in_bytes;
+CNA_Result (*const cna_lisp_probe_cna_dynamic_sound_effect_instance_subscribe_buffer_needed)(CNA_Handle, CNA_AudioEventCallback, void*, CNA_AudioEventRegistrationHandle*) = cna_dynamic_sound_effect_instance_subscribe_buffer_needed;
+CNA_Result (*const cna_lisp_probe_cna_audio_unsubscribe_ext)(CNA_AudioEventRegistrationHandle) = cna_audio_unsubscribe_ext;
 
 /* --- callbacks --- */
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
@@ -1823,6 +1830,7 @@ _Static_assert(sizeof(CNA_IndexBufferContentLostCallback) == sizeof(void (*)(voi
 _Static_assert(sizeof(CNA_RenderTargetContentLostCallback) == sizeof(void (*)(void)), "CNA_RenderTargetContentLostCallback size");
 _Static_assert(sizeof(CNA_GameComponentEventCallback) == sizeof(void (*)(void)), "CNA_GameComponentEventCallback size");
 _Static_assert(sizeof(CNA_GameComponentCollectionCallback) == sizeof(void (*)(void)), "CNA_GameComponentCollectionCallback size");
+_Static_assert(sizeof(CNA_AudioEventCallback) == sizeof(void (*)(void)), "CNA_AudioEventCallback size");
 
 /* --- constants --- */
 /* The four ABI-version constants are asserted to be *an admitted*

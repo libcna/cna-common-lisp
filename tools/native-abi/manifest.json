@@ -800,6 +800,9 @@
     },
     {
       "name": "CNA_GameComponentCollectionCallback"
+    },
+    {
+      "name": "CNA_AudioEventCallback"
     }
   ],
   "functions": [
@@ -3789,6 +3792,48 @@
       "header": "audio.h",
       "thread": "any",
       "ownership": "none"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_create",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "creates-owned:sound-effect-instance:child-of-game"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_submit_buffer",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_get_pending_buffer_count",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_get_sample_duration_ticks",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_get_sample_size_in_bytes",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_subscribe_buffer_needed",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_audio_unsubscribe_ext",
+      "header": "audio.h",
+      "thread": "owner",
+      "ownership": "destroys"
     }
   ],
   "shimmed_routes": [

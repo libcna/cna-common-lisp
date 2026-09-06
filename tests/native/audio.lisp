@@ -127,11 +127,21 @@ next test can still start."
                 with exactly NO-AUDIO-HARDWARE-ERROR
   :state-machine a device opened and the play/pause/resume/stop transitions were
                 observed on it
+  :dynamic-unavailable  a device could not be opened and the **streaming**
+                constructor succeeded anyway -- CNA's create route needs no device
+                where SoundEffect's does -- with the refusal arriving at Play
+  :dynamic-streaming  generated PCM16 was submitted to a
+                DynamicSoundEffectInstance and the native streaming state machine
+                consumed it -- the pending-buffer count rose and then fell while
+                the game loop ran
 
 Kept apart for the reason the rasterization kinds are: proving the unavailable
-branch says nothing about the state machine, and a summary that collapsed them
-would let one be read as the other. **None of them is a claim that a sound was
-heard.**")
+branch says nothing about the state machine, proving the state machine says
+nothing about the buffer queue, and a summary that collapsed them would let one
+be read as another. **None of them is a claim that a sound was heard**, and the
+streaming one least of all: `dummy device != speaker', and the strongest thing
+it supports is that generated PCM was accepted and consumed by the native
+streaming state machine.")
 
 (defun note-audio (level description &rest arguments)
   "Record LEVEL once. Sixteen tests take the unavailable branch and they are all
@@ -175,7 +185,47 @@ the two branches are testing the same operation."
                    header documents as the machine having no audio hardware")
       t)
     (error (condition)
-      (fail "expected NO-AUDIO-HARDWARE-ERROR with no device, got ~a" (type-of condition)))))
+      (fail "expected NO-AUDIO-HARDWARE-ERROR with no device, got ~a" (type-of condition))))
+  ;; **The streaming constructor is the asymmetry, and it is measured here rather
+  ;; than assumed.** `cna_sound_effect_create_pcm16_range_ext' needs a device and
+  ;; answers CNA_RESULT_NOT_SUPPORTED without one;
+  ;; `cna_dynamic_sound_effect_instance_create' does **not** -- it answers
+  ;; CNA_RESULT_SUCCESS and a usable handle on a machine with no playback device,
+  ;; and buffers can be submitted to it. The refusal appears at PLAY.
+  ;;
+  ;; XNA's own answer is not establishable: its constructor calls AllocateVoice,
+  ;; which calls CreateDynamicSoundEffectInstance, whose body is native code
+  ;; inside the mixed-mode assembly rather than IL. What the IL does establish is
+  ;; that XACT result 0x8ac70017 becomes NoAudioHardwareException, so the shape of
+  ;; the failure is XNA's even where the trigger is unknown. The member is
+  ;; recorded partial for that reason; docs/limitations.md has it.
+  (let ((instance (make-instance 'audio:dynamic-sound-effect-instance
+                                 :sample-rate +fixture-sample-rate+ :channels :mono)))
+    (unwind-protect
+         (progn
+           (is (not (audio:is-disposed instance))
+               "CNA's streaming constructor needs no playback device")
+           (is (= 0 (audio:pending-buffer-count instance)))
+           (audio:submit-buffer instance (pcm16-silence 400))
+           (is (= 1 (audio:pending-buffer-count instance))
+               "and it takes buffers without one")
+           (signals audio:no-audio-hardware-error (audio:play instance)))
+      (xna:dispose instance)))
+  ;; The argument checks still run *first*, because they are before the route in
+  ;; the IL: a machine with no sound card must not turn a wrong argument into a
+  ;; hardware report.
+  (signals xna:cna-argument-out-of-range-error
+    (make-instance 'audio:dynamic-sound-effect-instance
+                   :sample-rate 10 :channels :mono))
+  ;; A level of its own, because NOTE-AUDIO records each one once and this is a
+  ;; different claim from the SoundEffect one above: the two constructors do not
+  ;; behave the same way without a device, and a summary that folded them together
+  ;; would report the stronger of the two.
+  (note-audio :dynamic-unavailable
+              "DynamicSoundEffectInstance's constructor **succeeded** with no ~
+               playback device and took a buffer, which is CNA's asymmetry rather ~
+               than XNA's; the refusal arrives at PLAY, as NO-AUDIO-HARDWARE-ERROR. ~
+               Its argument checks ran first either way"))
 
 (defmacro define-audio-device-test (name docstring &body body)
   "Define a test that needs a playback device, and say what happened when there is none.
@@ -1259,6 +1309,530 @@ release it")
           (is (audio:is-disposed effect) "the retry released the effect"))))
     ;; Teardown is still recoverable, which is the property the whole policy is
     ;; for: a game that cannot be disposed poisons every later test.
+    (xna:dispose game)
+    (is (xna:disposed-p game)))
+
+;;; --- DynamicSoundEffectInstance ----------------------------------------------
+;;;
+;;; **Streaming, qualified with no speaker and no recording.** Every buffer below
+;;; is PCM16 this file computes, and the only thing any assertion claims is that
+;;; the bytes were accepted, that the queue depth moved the way CNA's header says
+;;; it moves, and that the buffer-needed event reached Lisp. A dummy audio device
+;;; is not audible hardware and nothing here says a sound was heard.
+;;;
+;;; The queue is advanced by the **game loop**: CNA's header says
+;;; `cna_framework_dispatcher_update' drives every live streaming instance, so
+;;; these tests run frames rather than sleeping, and they poll with a bound rather
+;;; than asserting a frame count.
+
+(defun dynamic-pcm (frames &optional (channels :mono))
+  "FRAMES sample frames of a computed PCM16 sawtooth, as bytes.
+
+The same shape PCM16-RAMP produces for SoundEffect, generated here rather than
+reused so the two closures' fixtures cannot drift into each other."
+  (let* ((per-frame (if (eq channels :stereo) 2 1))
+         (bytes (make-array (* 2 per-frame frames) :element-type '(unsigned-byte 8)))
+         (i 0))
+    (dotimes (frame frames bytes)
+      (dotimes (channel per-frame)
+        (let ((sample (- (mod (+ (* frame 137) (* channel 4099)) 65536) 32768)))
+          (setf (aref bytes i) (ldb (byte 8 0) sample)
+                (aref bytes (1+ i)) (ldb (byte 8 8) (ldb (byte 16 0) sample))
+                i (+ i 2)))))))
+
+(defmacro with-dynamic-instance ((variable &rest initargs) &body body)
+  `(let ((,variable (make-instance 'audio:dynamic-sound-effect-instance ,@initargs)))
+     (unwind-protect (progn ,@body)
+       (ignore-errors (xna:dispose ,variable)))))
+
+(defun %run-frames-until (game predicate &key (limit 600))
+  "Run frames until PREDICATE answers true, or LIMIT frames have run.
+
+Bounded polling rather than a frame count, because buffer consumption is
+playback: how many frames half a second of audio takes depends on the frame rate
+and on nothing this test controls. Answers how many frames it took, or NIL."
+  (loop for frame from 0 below limit
+        when (funcall predicate) return frame
+        do (xna:run-one-frame game)
+        finally (return (when (funcall predicate) frame))))
+
+(define-audio-device-test the-dynamic-constructor-validates-exactly-what-xna-validates
+  "DynamicSoundEffectInstance(int sampleRate, AudioChannels channels), from the IL.
+
+    base()                                     -- the parameterless SoundEffectInstance ctor
+    sampleRate < 0x1f40 || > 0xbb80  -> ArgumentOutOfRangeException(\"sampleRate\")
+    channels   < 1      || > 2       -> ArgumentOutOfRangeException(\"channels\")
+    format = AudioFormat.Create(sampleRate, channels, 16)
+    AllocateVoice()                            -- the native handle, last
+
+The order is observable and is asserted: a call wrong in both is told about the
+**sample rate**, because that test comes first. The bounds are 8000 and 48000,
+the same pair the SoundEffect constructors use.
+
+The keyword shape is the other half. XNA has one public constructor and no other,
+so :SAMPLE-RATE alone and :CHANNELS alone name no member and are refused rather
+than defaulted -- the mistake %CHECK-OVERLOAD-KEYWORDS exists for."
+
+    (progn
+      (signals xna:cna-argument-out-of-range-error
+        (make-instance 'audio:dynamic-sound-effect-instance
+                       :sample-rate 7999 :channels :mono))
+      (signals xna:cna-argument-out-of-range-error
+        (make-instance 'audio:dynamic-sound-effect-instance
+                       :sample-rate 48001 :channels :mono))
+      (signals xna:cna-argument-out-of-range-error
+        (make-instance 'audio:dynamic-sound-effect-instance
+                       :sample-rate 8000 :channels :quadraphonic))
+      ;; The order: wrong in both, and the parameter named is the sample rate.
+      (handler-case (progn (make-instance 'audio:dynamic-sound-effect-instance
+                                          :sample-rate 1 :channels :quadraphonic)
+                           (fail "a doubly-wrong constructor was accepted"))
+        (xna:cna-argument-out-of-range-error (condition)
+          (is (string= "sample-rate" (xna:cna-error-parameter-name condition))
+              "sampleRate is checked before channels, so it is the one named")))
+      ;; Both keywords or neither is not a shape: there is no other overload.
+      (signals xna:cna-usage-error
+        (make-instance 'audio:dynamic-sound-effect-instance :sample-rate 8000))
+      (signals xna:cna-usage-error
+        (make-instance 'audio:dynamic-sound-effect-instance :channels :mono))
+      (signals xna:cna-usage-error
+        (make-instance 'audio:dynamic-sound-effect-instance))
+      ;; And both bounds inclusive, which is what `blt'/`bgt' rather than
+      ;; `ble'/`bge' means.
+      (with-dynamic-instance (low :sample-rate 8000 :channels :mono)
+        (is (not (audio:is-disposed low))))
+      (with-dynamic-instance (high :sample-rate 48000 :channels :stereo)
+        (is (not (audio:is-disposed high))))))
+
+(define-audio-device-test a-dynamic-instance-does-not-run-the-ordinary-constructor
+  "The architectural assertion, and the one a `(defclass d (sound-effect-instance))'
+would have failed.
+
+The base class's construction used to be hard-wired to the ordinary kind: require
+`:SOUND-EFFECT', call `cna_sound_effect_create_instance', make the effect the
+owner, push onto its instance list. That method runs for a subclass too, so a
+`DynamicSoundEffectInstance' defined over it would have executed the wrong
+constructor -- and XNA's does not: its `.ctor(int, AudioChannels)' calls the
+**parameterless** `SoundEffectInstance.ctor()', which stores nothing and
+allocates nothing, and then its own overridden `AllocateVoice'.
+
+What is asserted is the observable consequence of the right one having run:
+
+  * the instance has **no** parent SoundEffect, and the private slot is NIL
+    rather than unbound -- XNA's `effect' field is null for this class too, and
+    its `Dispose(bool)' reads it and skips `ChildDestroyed';
+  * the game owns it directly, so the graph is Game -> DynamicSoundEffectInstance
+    with nothing between;
+  * a SoundEffect that exists alongside it is not its parent and does not list it
+    among its instances, so the ordinary path was not taken by another name."
+
+    (with-sound-effect (effect :buffer (pcm16-silence 800)
+                               :sample-rate 8000 :channels :mono)
+      (let ((ordinary (audio:create-instance effect)))
+        (with-dynamic-instance (dynamic :sample-rate 8000 :channels :mono)
+          ;; the ordinary kind: parent effect, and on the effect's own list
+          (is (eq effect (audio::%instance-sound-effect ordinary)))
+          (is (member ordinary (audio::%sound-effect-instances effect)))
+          (is (member ordinary (int:children-of effect)))
+          ;; the dynamic kind: no effect at all, and a child of the game
+          (is (null (audio::%instance-sound-effect dynamic))
+              "a DynamicSoundEffectInstance has no parent SoundEffect")
+          (is (not (member dynamic (audio::%sound-effect-instances effect)))
+              "and is not on any effect's instance list")
+          (is (not (member dynamic (int:children-of effect)))
+              "and is not a child of any effect")
+          (is (eq game (int:owner-of dynamic))
+              "the game owns it directly")
+          (is (member dynamic (int:children-of game)))
+          ;; It is a SOUND-EFFECT-INSTANCE all the same, which is what makes the
+          ;; inherited surface legitimate rather than accidental.
+          (is (typep dynamic 'audio:sound-effect-instance)))
+        (xna:dispose ordinary))))
+
+(define-audio-device-test dynamic-destruction-uses-the-ordinary-instance-route
+  "There is no dynamic destroy route in either admitted ABI, and that is not an
+omission.
+
+`cna_dynamic_sound_effect_instance_create' says what its handle is: \"The handle
+is a **sound-effect instance**: every `cna_sound_effect_instance_*' route accepts
+it, including the transport, the mixing setters and
+`cna_sound_effect_instance_destroy'.\" So the destruction hook's base method is
+the one this class uses, and the evidence is the header rather than the fact that
+CLOS would inherit it.
+
+What is asserted is that disposal works, that it is idempotent, that the handle
+goes back exactly once -- a second native destroy on a released handle is the
+double free the ownership machinery exists to prevent -- and that the game can
+then shut down, which it cannot do while a child handle lives."
+
+    (let ((before (length (int:children-of game))))
+      (let ((dynamic (make-instance 'audio:dynamic-sound-effect-instance
+                                    :sample-rate 8000 :channels :mono)))
+        (is (= (1+ before) (length (int:children-of game))))
+        (xna:dispose dynamic)
+        (is (audio:is-disposed dynamic))
+        (is (= before (length (int:children-of game))))
+        ;; idempotent, and not a second native call
+        (xna:dispose dynamic)
+        (is (audio:is-disposed dynamic))))
+    (xna:dispose game)
+    (is (xna:disposed-p game)))
+
+(define-audio-device-test the-dynamic-state-machine-is-the-inherited-one-where-xna-says-so
+  "**Inheritance is not evidence.** CLOS gives this class every method
+SOUND-EFFECT-INSTANCE has, and the pinned metadata decides which of them XNA
+gives it. Of the inherited surface, XNA overrides exactly two -- `Play' and
+`IsLooped' -- and leaves the transport, the three settings and `Apply3D' alone,
+so those are asserted as inherited and the two overrides are asserted as
+different.
+
+`Play' is inherited here even though XNA overrides it, and the reason is in the
+override: the base `Play()' submits the parent effect's packet when
+`isPacketSubmitted' is false, this one has no packet, and this binding's base
+method never had a packet to submit either -- CNA exposes none and
+`cna_sound_effect_instance_play' accepts a streaming handle. One method is both,
+and this pins the behaviour rather than the inheritance."
+
+    (with-dynamic-instance (d :sample-rate 8000 :channels :mono)
+      ;; The four settings start at XNA's SoundEffectInstance constructor defaults,
+      ;; because that constructor is the one this class's base call runs.
+      (is (= 1.0 (audio:volume d)))
+      (is (= 0.0 (audio:pitch d)))
+      (is (= 0.0 (audio:pan d)))
+      (is (eq :stopped (audio:state d)) "a fresh streaming instance is stopped")
+      ;; IsLooped is overridden: false always, and true is refused.
+      (is (not (audio:is-looped d)))
+      (is (null (setf (audio:is-looped d) nil))
+          "assigning false is XNA's no-op, not a refusal")
+      (is (not (audio:is-looped d)))
+      (signals xna:cna-invalid-state-error (setf (audio:is-looped d) t))
+      (is (not (audio:is-looped d))
+          "the refused assignment stored nothing, which is what `ret' after the throw means")
+      ;; The three settings are inherited, ranges and all.
+      (setf (audio:volume d) 0.5)
+      (is (= 0.5 (audio:volume d)))
+      (signals xna:cna-argument-out-of-range-error (setf (audio:volume d) 1.5))
+      (setf (audio:pitch d) -0.25)
+      (is (= -0.25 (audio:pitch d)))
+      (signals xna:cna-argument-out-of-range-error (setf (audio:pitch d) 2.0))
+      (setf (audio:pan d) 0.75)
+      (is (= 0.75 (audio:pan d)))
+      (signals xna:cna-argument-out-of-range-error (setf (audio:pan d) -1.5))
+      ;; Play refuses every keyword, exactly as the base class's does: congruence
+      ;; forces the lambda list to accept SoundEffect's three, and accepting is
+      ;; not having.
+      (signals xna:cna-usage-error (audio:play d :volume 0.5))
+      ;; The transport, over a submitted buffer so there is something to play.
+      (audio:submit-buffer d (dynamic-pcm 4000))
+      (audio:play d)
+      (is (eq :playing (audio:state d)))
+      (audio:pause d)
+      (is (eq :paused (audio:state d)))
+      (audio:resume d)
+      (is (eq :playing (audio:state d)))
+      (audio:stop d)
+      (is (eq :stopped (audio:state d)))
+      ;; Apply3D is inherited and is legal: XNA does not override it, and CNA's
+      ;; header says every cna_sound_effect_instance_* route accepts this handle.
+      (audio:apply-3d d (make-instance 'audio:audio-listener)
+                      (make-instance 'audio:audio-emitter))
+      ;; and the inherited managed getters keep answering after disposal, because
+      ;; they are the base class's bare field reads.
+      (xna:dispose d)
+      (is (audio:is-disposed d))
+      (is (= 0.5 (audio:volume d)))
+      (is (= -0.25 (audio:pitch d)))
+      (is (= 0.75 (audio:pan d)))
+      ;; IsLooped is the exception, and it is the override that makes it one: this
+      ;; class's getter tests IsDisposed where the base class's does not.
+      (signals xna:cna-disposed-error (audio:is-looped d))
+      (signals xna:cna-disposed-error (audio:state d))
+      (signals xna:cna-disposed-error (audio:pending-buffer-count d))
+      (signals xna:cna-disposed-error (audio:submit-buffer d (dynamic-pcm 100)))
+      (signals xna:cna-disposed-error (audio:get-sample-duration d 400))
+      (signals xna:cna-disposed-error (audio:get-sample-size-in-bytes d 10000))))
+
+(define-audio-device-test buffer-submission-validates-exactly-what-xna-validates
+  "SubmitBuffer's five checks, in the pinned IL's order.
+
+    disposed                                 -> ObjectDisposedException
+    buffer null / empty / length misaligned  -> ArgumentException(InvalidAudioBuffer)
+    offset < 0 || >= length || misaligned    -> ArgumentException(InvalidAudioBufferOffset)
+    checked(offset + count) overflows        -> ArgumentException(InvalidOffsetCountLength)
+    count <= 0 || offset+count > length
+      || count misaligned                    -> ArgumentException(InvalidOffsetCountLength)
+
+`IsAligned(v)' is `v % BlockAlign == 0', and `BlockAlign' for the format this
+class always builds -- `AudioFormat.Create(sampleRate, channels, 16)' -- is
+`2 * channels'. So a mono instance refuses an odd length and a stereo one refuses
+anything not a multiple of four, and that is asserted on both.
+
+The overload shape is the other half: XNA has `SubmitBuffer(byte[])' and
+`SubmitBuffer(byte[], int, int)' and nothing between them, so `:OFFSET' alone and
+`:COUNT' alone name no member."
+
+    (with-dynamic-instance (mono :sample-rate 8000 :channels :mono)
+      (let ((pcm (dynamic-pcm 100)))          ; 200 bytes, block align 2
+        ;; the shapes that exist
+        (audio:submit-buffer mono pcm)
+        (audio:submit-buffer mono pcm :offset 0 :count 200)
+        (audio:submit-buffer mono pcm :offset 100 :count 100)
+        ;; and the four that do not
+        (signals xna:cna-usage-error (audio:submit-buffer mono pcm :offset 0))
+        (signals xna:cna-usage-error (audio:submit-buffer mono pcm :count 100))
+        (signals xna:cna-usage-error
+          (audio:submit-buffer mono pcm :offset 0 :count 100 :loop-start 0))
+        ;; the buffer itself
+        (signals xna:cna-argument-error (audio:submit-buffer mono nil))
+        (signals xna:cna-argument-error
+          (audio:submit-buffer mono (make-array 0 :element-type '(unsigned-byte 8))))
+        (signals xna:cna-argument-error
+          (audio:submit-buffer mono (make-array 3 :element-type '(unsigned-byte 8)
+                                                  :initial-element 0))
+          "an odd length is not a whole number of 2-byte mono frames")
+        ;; the offset
+        (signals xna:cna-argument-error (audio:submit-buffer mono pcm :offset -2 :count 10))
+        (signals xna:cna-argument-error (audio:submit-buffer mono pcm :offset 200 :count 2))
+        (signals xna:cna-argument-error (audio:submit-buffer mono pcm :offset 1 :count 10)
+          "an odd offset is not frame-aligned")
+        ;; the count
+        (signals xna:cna-argument-error (audio:submit-buffer mono pcm :offset 0 :count 0))
+        (signals xna:cna-argument-error (audio:submit-buffer mono pcm :offset 0 :count -2))
+        (signals xna:cna-argument-error (audio:submit-buffer mono pcm :offset 0 :count 3)
+          "an odd count is not frame-aligned")
+        (signals xna:cna-argument-error (audio:submit-buffer mono pcm :offset 100 :count 200)
+          "offset + count must not run past the end")
+        ;; the overflow branch, which is the same exception by another road
+        (signals xna:cna-argument-error
+          (audio:submit-buffer mono pcm :offset 0 :count most-positive-fixnum))))
+    ;; and a stereo instance aligns to four rather than to two
+    (with-dynamic-instance (stereo :sample-rate 8000 :channels :stereo)
+      (audio:submit-buffer stereo (dynamic-pcm 50 :stereo))
+      (signals xna:cna-argument-error
+        (audio:submit-buffer stereo (make-array 6 :element-type '(unsigned-byte 8)
+                                                  :initial-element 0))
+        "6 bytes is not a whole number of 4-byte stereo frames")
+      (signals xna:cna-argument-error
+        (audio:submit-buffer stereo (dynamic-pcm 50 :stereo) :offset 2 :count 4)
+        "an offset of 2 is not frame-aligned for stereo")))
+
+(define-audio-device-test pending-buffers-rise-on-submission-and-fall-on-playback
+  "**AUDIO_DYNAMIC_STREAMING.** The evidence that a buffer was taken *and consumed*.
+
+`cna_dynamic_sound_effect_instance_get_pending_buffer_count' documents what the
+number means, and it is the reason this member is worth a lane of its own: the
+count \"only shrinks once a buffer has actually been **consumed by playback**, not
+merely handed to the mixer, which is the canonical contract\". So the fall is a
+statement about the native streaming state machine rather than about this
+binding.
+
+The assertion is a state transition, not a duration:
+
+    pending = 0
+    submit half a second of generated PCM16   -> pending = 1
+    submit a second block                     -> pending = 2
+    play, and run frames                      -> pending falls to 0
+
+Half a second rather than a few frames' worth, so that the rise cannot be raced
+by the fall -- and the fall is polled with a **bound** rather than asserted at a
+frame count, because how many frames half a second of audio takes depends on the
+frame rate and on nothing this test controls. Nothing here claims a sound was
+heard: the SDL `dummy' driver opens a device with no speaker behind it."
+
+    (with-dynamic-instance (d :sample-rate 8000 :channels :mono)
+      (is (= 0 (audio:pending-buffer-count d)) "nothing submitted, nothing pending")
+      ;; 4000 mono frames at 8000 Hz is half a second.
+      (audio:submit-buffer d (dynamic-pcm 4000))
+      (is (= 1 (audio:pending-buffer-count d)) "a submitted buffer is pending")
+      (audio:submit-buffer d (dynamic-pcm 4000))
+      (is (= 2 (audio:pending-buffer-count d)) "and a second one is pending too")
+      ;; Nothing is consumed before playback starts, which is what makes the two
+      ;; assertions above safe from a race rather than lucky.
+      (is (= 2 (audio:pending-buffer-count d))
+          "a stopped instance consumes nothing")
+      (audio:play d)
+      (let ((frames (%run-frames-until game (lambda () (zerop (audio:pending-buffer-count d))))))
+        (is (not (null frames))
+            "the streaming state machine consumed both buffers within the bound; ~
+             ~d still pending" (audio:pending-buffer-count d))
+        (is (= 0 (audio:pending-buffer-count d))))
+      (note-audio :dynamic-streaming
+                  "generated PCM16 was submitted to a DynamicSoundEffectInstance, the ~
+                   pending-buffer count rose to two, and the native streaming state ~
+                   machine consumed both while the game loop ran. A dummy device is ~
+                   not a speaker and nothing here is a claim that a sound was heard")))
+
+(define-audio-device-test buffer-needed-reaches-lisp-and-stops-at-disposal
+  "The BufferNeeded event: add, remove, containment and lifetime.
+
+**No FiveAM assertion runs inside the callback.** The handler records what it
+saw and the assertions run after control is back in Lisp, which is the rule every
+callback test here follows: a condition signalled inside a C callback would cross
+the containment layer rather than fail the test.
+
+What is asserted:
+
+  * the handler is called, with the **instance** as its sender -- XNA's
+    `OnBufferNeeded' invokes `handler(this, EventArgs.Empty)', and the empty
+    argument is not projected;
+  * removing it stops the calls, and removing it twice answers NIL rather than
+    refusing, which is what `-=' against a delegate that no longer holds it does;
+  * the callback registry returns to the size it was, so no token is left rooted;
+  * **no callback arrives after disposal**, which is XNA's own ordering: its
+    `Dispose(bool)' removes the instance from the table its native callback looks
+    it up in before the base disposal deallocates the voice.
+
+Neither framework publishes a queue-depth threshold, so nothing here asserts one:
+several callbacks may arrive before a submission and that is not a defect."
+
+    (let ((before (int:callback-registry-count))
+          (seen '()))
+      (with-dynamic-instance (d :sample-rate 8000 :channels :mono)
+        (let ((note (lambda (sender) (push sender seen))))
+          (audio:add-buffer-needed-handler d note)
+          (is (= (1+ before) (int:callback-registry-count))
+              "the subscription rooted exactly one token")
+          (audio:submit-buffer d (dynamic-pcm 800))
+          (audio:play d)
+          (%run-frames-until game (lambda () (not (null seen))) :limit 300)
+          (is (not (null seen)) "the buffer-needed event reached Lisp")
+          (is (every (lambda (sender) (eq sender d)) seen)
+              "and its sender is the instance, as OnBufferNeeded's `handler(this, ...)' is")
+          ;; removal
+          (is (audio:remove-buffer-needed-handler d note)
+              "removal reports that it found a handler to remove")
+          (is (= before (int:callback-registry-count))
+              "and the token is no longer rooted")
+          (setf seen '())
+          (dotimes (frame 20) (xna:run-one-frame game))
+          (is (null seen) "a removed handler is not called")
+          (is (null (audio:remove-buffer-needed-handler d note))
+              "removing it again finds nothing, and says so rather than refusing")
+          ;; and a live subscription must not survive the object
+          (audio:add-buffer-needed-handler d note)
+          (is (= (1+ before) (int:callback-registry-count)))
+          (setf seen '())
+          (xna:dispose d)
+          (is (= before (int:callback-registry-count))
+              "disposal released the registration and unrooted its token")
+          (dotimes (frame 20) (xna:run-one-frame game))
+          (is (null seen) "no callback arrives after disposal")))
+      (is (= before (int:callback-registry-count))))
+    (xna:dispose game)
+    (is (xna:disposed-p game)))
+
+(define-audio-device-test the-dynamic-sample-computations-are-xnas-and-cnas-are-pinned
+  "Both sides, exactly as the two static computations on SoundEffect pin both.
+
+XNA's are `AudioFormat.DurationFromSize' and `SizeFromDuration' over the
+instance's own format, so this binding computes them rather than taking CNA's
+route -- `DurationFromSize' ends in `TimeSpan.FromMilliseconds', which rounds to
+a whole millisecond, and CNA's route does not round the same way.
+
+Pinning CNA's answer as well is what makes that a measurement rather than a
+preference: a CNA that changed fails this test rather than silently changing the
+binding's public behaviour. Where the two agree, this asserts that they agree.
+
+The arithmetic a reader can redo: 8000 bytes of mono PCM16 is 4000 frames, and
+4000 frames at 8000 Hz is 500 ms, which is 5,000,000 ticks. One second of stereo
+at 44100 Hz is 44100 frames of 4 bytes, which is 176,400."
+
+    (with-dynamic-instance (mono :sample-rate 8000 :channels :mono)
+      (is (= 5000000 (audio:get-sample-duration mono 8000)))
+      (is (= 0 (audio:get-sample-duration mono 0)) "zero bytes is TimeSpan.Zero")
+      (signals xna:cna-argument-error (audio:get-sample-duration mono -2)
+        "a negative size is ArgumentException(InvalidBufferSize)")
+      (is (= 16000 (audio:get-sample-size-in-bytes mono 10000000)))
+      (is (= 0 (audio:get-sample-size-in-bytes mono 0)) "TimeSpan.Zero is zero bytes")
+      (signals xna:cna-argument-out-of-range-error
+        (audio:get-sample-size-in-bytes mono -1))
+      ;; and CNA's own routes, so a change in them is a failure rather than a drift
+      (cffi:with-foreign-object (ticks :int64)
+        (int:check-result
+         (cna-lisp.internal.ffi::%dynamic-sound-effect-instance-get-sample-duration-ticks
+          (int:handle-of mono) 8000 ticks)
+         "test")
+        (is (= 5000000 (cffi:mem-ref ticks :int64))
+            "CNA agrees with XNA on this size, and the test says so rather than assuming it"))
+      (cffi:with-foreign-object (bytes :int32)
+        (int:check-result
+         (cna-lisp.internal.ffi::%dynamic-sound-effect-instance-get-sample-size-in-bytes
+          (int:handle-of mono) 10000000 bytes)
+         "test")
+        (is (= 16000 (cffi:mem-ref bytes :int32)))))
+    (with-dynamic-instance (stereo :sample-rate 44100 :channels :stereo)
+      (is (= 176400 (audio:get-sample-size-in-bytes stereo 10000000)))
+      (is (= 10000000 (audio:get-sample-duration stereo 176400)))))
+
+(define-condition dynamic-subclass-blew-up (error) ()
+  (:report (lambda (condition stream)
+             (declare (ignore condition))
+             (format stream "boom, from a DynamicSoundEffectInstance subclass"))))
+
+(defclass exploding-dynamic-instance (audio:dynamic-sound-effect-instance) ())
+(defmethod initialize-instance :after ((object exploding-dynamic-instance) &key)
+  (declare (ignore object))
+  (error 'dynamic-subclass-blew-up))
+
+(defclass exploding-subscribed-dynamic-instance (audio:dynamic-sound-effect-instance) ())
+(defmethod initialize-instance :after ((object exploding-subscribed-dynamic-instance) &key)
+  "Subscribe, and *then* fail -- so the rollback has a registration to undo as
+well as a handle."
+  (audio:add-buffer-needed-handler object (lambda (sender) (declare (ignore sender))))
+  (error 'dynamic-subclass-blew-up))
+
+(define-audio-device-test a-failed-dynamic-subclass-gives-back-handle-and-registration
+  "Construction atomicity for the new kind, at both of its injection points.
+
+The generic framework in `tests/native/construction-atomicity.lisp' covers a
+subclass that fails after the handle exists. This class has a second thing a
+construction can acquire -- a BufferNeeded registration and the callback token
+that roots it -- so the second subclass here subscribes before it fails, and the
+assertions are the same four either way:
+
+  * the caller sees the subclass's own condition, not a rollback's;
+  * the game is left owning no live child of that type;
+  * the callback registry is the size it was, so no token stays rooted;
+  * the game shuts down, which it cannot do while a child handle lives."
+
+    (let ((children (length (int:children-of game)))
+          (tokens (int:callback-registry-count)))
+      (signals dynamic-subclass-blew-up
+        (make-instance 'exploding-dynamic-instance :sample-rate 8000 :channels :mono))
+      (is (= children (length (int:children-of game)))
+          "the handle went back, so the game owns no more children than before")
+      (is (= tokens (int:callback-registry-count)))
+      (signals dynamic-subclass-blew-up
+        (make-instance 'exploding-subscribed-dynamic-instance
+                       :sample-rate 8000 :channels :mono))
+      (is (= children (length (int:children-of game)))
+          "and so did the one that had already subscribed")
+      (is (= tokens (int:callback-registry-count))
+          "with its registration released and its token unrooted"))
+    (xna:dispose game)
+    (is (xna:disposed-p game)))
+
+(define-audio-device-test a-live-subscription-does-not-prevent-teardown
+  "Ownership stress with the subscription left live on purpose.
+
+A consumer's program does not unsubscribe before disposing; it disposes. So the
+qualification has to be that disposal releases the registration itself, over
+enough cycles that a leak would show, and that the game still goes at the end.
+Twenty cycles rather than one, for the reason the ownership stress test uses
+twenty: a single cycle cannot distinguish a leak from a coincidence."
+
+    (let ((baseline (int:callback-registry-count)))
+      (dotimes (cycle 20)
+        (let ((d (make-instance 'audio:dynamic-sound-effect-instance
+                                :sample-rate 8000 :channels :mono)))
+          (audio:add-buffer-needed-handler d (lambda (sender) (declare (ignore sender))))
+          (audio:submit-buffer d (dynamic-pcm 400))
+          (audio:play d)
+          (xna:run-one-frame game)
+          ;; no unsubscribe: disposal is what has to release it
+          (xna:dispose d)))
+      (is (= baseline (int:callback-registry-count))
+          "twenty subscribed-and-disposed instances left no token rooted"))
     (xna:dispose game)
     (is (xna:disposed-p game)))
 

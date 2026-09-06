@@ -250,31 +250,31 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 ## The measured frontier
 
-<!-- generated:selected types=165 -->
-<!-- generated:selected members=2389 -->
+<!-- generated:selected types=166 -->
+<!-- generated:selected members=2399 -->
 <!-- generated:complete types=147 -->
-<!-- generated:partial types=18 -->
+<!-- generated:partial types=19 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1904 -->
-<!-- generated:partial members=21 -->
+<!-- generated:complete members=1912 -->
+<!-- generated:partial members=22 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=429 -->
+<!-- generated:not-applicable members=430 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 165 types, 2389 members.
+Selection **Foundation 1 and the managed closures**: 166 types, 2399 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **147** |
-| Types partial | **18** |
+| Types partial | **19** |
 | Types missing | **0** |
-| Members complete | **1904** |
-| Members partial | **21** |
+| Members complete | **1912** |
+| Members partial | **22** |
 | Members missing | **35** |
-| Members not applicable | **429** |
+| Members not applicable | **430** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -314,6 +314,7 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 | `M.X.F.Audio.SoundEffect` | 0 | 1 |
 | `M.X.F.Audio.SoundEffectInstance` | 0 | 1 |
+| `M.X.F.Audio.DynamicSoundEffectInstance` | 0 | 1 |
 <!-- /generated-block:partial-frontier -->
 
 That table is the authority on where the frontier is. **Do not restate it in
@@ -331,7 +332,7 @@ had moved. Regenerate the table after every closure and read it there.
 | `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
-| `QUALIFICATION_LIMIT` | **1** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
+| `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
 <!-- /generated-block:frontier-categories -->
@@ -363,19 +364,34 @@ The shim stays optional -- a release must load with no C toolchain -- so without
 `CNA_LISP_SHIM` the setter refuses with a condition naming the variable, the
 command that builds one, and the reason. That is a packaging limit, not a blocker.
 
-## Audio has landed, and it is not 8/8 complete
+## Audio has landed in two closures, and it is not all complete
 
 **Read this before the table.** The first Audio milestone reported eight types and
 57 members with every one complete. A re-audit against the pinned assembly found
-that several of those claims were the implementation's rather than XNA's, and the
-corrected scoreboard is **six complete types and two partial**: 50 complete
-members, 2 partial, 5 not applicable. Nothing was removed -- the surface is the
-same size -- and two members are now described accurately instead of generously:
+that several of those claims were the implementation's rather than XNA's; the
+streaming closure that followed added a ninth type and ten members and one more
+honest partial. Audio is now **six complete types and three partial**: 58 complete
+members, 3 partial, 6 not applicable, over nine types and 67 members. Nothing was
+ever removed -- each correction described a member accurately instead of
+generously. Those figures are the generated report's; reproduce them from
+`docs/generated/api-compat-report.json` rather than trusting this paragraph:
 
 | Member | Why partial |
 | --- | --- |
-| `SoundEffect.Duration` | CNA's per-effect duration route does not quantise to whole milliseconds and XNA always does. Computed exactly where the format is known -- both constructors and `FromStream` -- and taken from the route for a `ContentManager`-loaded effect, where 0.21.0 reports no format to compute from |
+| `SoundEffect.Duration` | CNA's per-effect duration route does not quantise to whole milliseconds and XNA always does. Computed exactly where the format is known -- both constructors and `FromStream` -- and taken from the route for a `ContentManager`-loaded effect, where neither admitted ABI reports a format to compute from |
 | `SoundEffectInstance.Apply3D(AudioListener[], AudioEmitter)` | CNA's own header: several listeners are combined by taking the **nearest**, where XACT computes a per-listener output matrix. A different function of the array, not an approximation of one. The single-listener overload is complete on its own evidence |
+| `DynamicSoundEffectInstance.new(Int32, AudioChannels)` | CNA's streaming create route succeeds with no playback device where `SoundEffect`'s refuses, and **XNA's answer is not establishable**: the constructor reaches native code the disassembly does not contain. Adopting CNA's success is a binding-defined outcome standing in for an unknown one |
+
+**A third correction landed with the streaming closure and is not in that table,
+because it made two members honest rather than partial.** `SoundEffectInstance`'s
+`Volume`, `Pitch`, `Pan` and `IsLooped` were read through
+`cna_sound_effect_instance_get_info`, so all four refused after disposal where
+XNA's seven-byte `ldfld` getters answer -- and the test that exercised them called
+that a divergence in its own comment while the report went on calling the members
+complete. They are managed slots now, written after the native setter succeeds
+exactly where XNA's `stfld` is, and complete for real. The same change stopped
+`Apply3D` leaking CNA's computed spatial pan through a property XNA defines as the
+caller's last assignment.
 
 Six other corrections landed with them and changed behaviour rather than wording:
 the two constructors and both `Play` overloads now have exactly XNA's shapes,
@@ -402,6 +418,7 @@ does not say.
 | --- | ---: | --- |
 | `SoundEffect` | 17 | two constructors, `FromStream`, `CreateInstance`, two `Play` overloads, four process-wide statics, two static sample computations. **Partial**: `Duration` |
 | `SoundEffectInstance` | 16 | the transport, four bounded properties, both `Apply3D` overloads. **Not sealed in XNA** -- `DynamicSoundEffectInstance` derives from it -- and not sealed here. **Partial**: the array `Apply3D` |
+| `DynamicSoundEffectInstance` | 10 | the streaming subclass: one constructor, two `SubmitBuffer` overloads, two instance sample computations, `PendingBufferCount`, an overridden `IsLooped` and `Play`, and the `BufferNeeded` event. **Partial**: the constructor, which CNA lets succeed with no playback device |
 | `AudioListener` | 5 | a plain managed object; no handle |
 | `AudioEmitter` | 6 | the same, plus `DopplerScale` |
 | `SoundState` | 4 | `Playing` 0, `Paused` 1, `Stopped` 2 |
@@ -422,7 +439,15 @@ is its own inverse and no program can observe it. Reproducing it would match XNA
 storage and break XNA's public behaviour.
 
 **The ownership graph is `Game -> SoundEffect -> SoundEffectInstance`**, which is
-what CNA documents, enforced before the ABI sees a wrong order -- except that
+what CNA documents, enforced before the ABI sees a wrong order -- **and
+`Game -> DynamicSoundEffectInstance` with nothing between**, which is what
+`cna_dynamic_sound_effect_instance_create` documents: it takes a game handle and
+"unlike an instance created from a sound effect, it has no parent effect -- the
+caller is the source". XNA agrees: its `SoundEffectInstance.effect` field is null
+for that subclass and its `Dispose(bool)` reads the field and skips
+`ChildDestroyed`. The two kinds are one CLOS class hierarchy over two ownership
+shapes, which is why construction and destruction are polymorphic hooks on the
+base rather than one method that knows about both -- except that
 `SoundEffect.Dispose` **cascades to its instances**, because the pinned
 `Dispose(bool)` does, and `ContentManager.Unload` inherits that by calling the
 same `DISPOSE`. The game does not cascade, so the two directions of the graph are
@@ -435,6 +460,68 @@ once, restore the child count and the cache, and leave the game able to shut dow
 **`ContentManager.Load<SoundEffect>` uses the managed cache**, because CNA's route
 "deliberately does not cache" and XNA's `Load<T>` does. Two loads of one name
 answer one object. The fixture is a generated WAV; no recording is stored here.
+
+### The streaming half, and what its qualification does and does not say
+
+`DynamicSoundEffectInstance` is the one member of this namespace that adds a
+**capability** rather than a surface: procedurally generated audio is reachable
+through nothing else here.
+
+**It does not construct itself the way its base class does, and that is XNA's
+shape rather than this projection's.** `SoundEffectInstance` has two constructors
+in the pinned assembly -- an assembly-visible `(SoundEffect, bool)` that stores
+the parent and calls `AllocateVoice()`, and a **parameterless** one that stores
+nothing and calls nothing -- and the streaming subclass calls the second, then
+validates its two arguments, then calls the same virtual `AllocateVoice()`, which
+it overrides. So the base class's construction is already polymorphic in the
+original, and it is polymorphic here: `%INITIALIZE-NATIVE-SOUND-INSTANCE` and
+three sibling hooks, dispatched on the actual class, rather than a `TYPEP` ladder
+in the ordinary constructor.
+
+**The transport, the four settings and `Apply3D` are inherited on evidence.**
+`cna_dynamic_sound_effect_instance_create` says its handle "is a **sound-effect
+instance**: every `cna_sound_effect_instance_*` route accepts it, including the
+transport, the mixing setters and `cna_sound_effect_instance_destroy`", and that
+sentence is byte for byte the same in both admitted ABIs -- the whole of
+`audio.h` is. There is no dynamic *destroy* route in either, and that is not an
+omission. What XNA overrides is exactly two members and both are projected as
+overrides: `IsLooped`, whose getter tests `IsDisposed` where the base class's
+bare `ldfld` does not and then answers a constant false, and whose setter refuses
+a true assignment and stores nothing either way; and `Play`, whose override is
+what this binding's base method already did.
+
+**What the streaming lane proves.** Generated PCM16 is submitted, the
+pending-buffer count rises to two, and the native streaming state machine consumes
+both while the game loop runs -- CNA's route documents that the count "only
+shrinks once a buffer has actually been **consumed by playback**, not merely
+handed to the mixer", which is what makes the fall evidence about the runtime
+rather than about this binding. The queue is advanced by
+`cna_framework_dispatcher_update`, so the test runs frames and polls with a bound
+rather than asserting a frame count. **A consumed buffer is not a buffer anyone
+heard**: `dummy device != speaker`, and the strongest claim here is that the bytes
+were accepted and consumed.
+
+**The constructor is partial, and it is the one place XNA cannot be consulted.**
+`cna_dynamic_sound_effect_instance_create` succeeds on a machine with no playback
+device and the handle it answers takes buffers; the refusal arrives at `Play`.
+`SoundEffect`'s constructor refuses in the same situation, so the two constructors
+of this namespace disagree about hardware and the difference is CNA's. XNA's own
+answer is **not establishable**: its constructor reaches
+`CreateDynamicSoundEffectInstance`, whose body is native code in the mixed-mode
+assembly rather than IL. The IL does establish the *shape* -- XACT result
+`0x8ac70017` becomes `NoAudioHardwareException` -- so a failure would surface as
+that and not as something else. Adopting CNA's success is a binding-defined
+outcome standing in for an unknown one, which is what partial means here and what
+the array `Apply3D` already means. Inventing a capability probe would be worse:
+it would reproduce a behaviour nothing in the pinned assembly says XNA has.
+
+**One defect in shared machinery was found by this closure's own atomicity test**
+and is worth recording, because it was never about audio. A construction that
+subscribed to an event and *then* failed left CNA holding the registration and
+the private registry holding the token that roots the object -- for **any**
+event-raising class, since every one of them is subclassable. `%SUBSCRIBE-EVENT`
+now records a construction undo while the object is still constructing, and
+`NATIVE-OBJECT` carries the flag that says whether it is.
 
 **Audio is not in the template, and that is deliberate.** The template is a
 deterministic graphics and content canary whose value is that it produces the same

@@ -30532,6 +30532,28 @@
       "package": "microsoft.xna.framework.audio",
       "symbols": [
         {
+          "name": "add-buffer-needed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DynamicSoundEffectInstance.BufferNeeded's `+=': call HANDLER when the queue runs low.\n\n    (add-buffer-needed-handler instance\n                               (lambda (instance)\n                                 (submit-buffer instance (next-block))))\n\nHANDLER takes the sender and nothing else, because XNA passes `EventArgs.Empty'\nand a second always-empty argument would be one every handler had to write and\nignore.\n\nIt is called on the thread that advances the buffer queue, which is the game\nthread while the loop runs. A condition it signals cannot be reported to CNA --\nthe callback answers `void' -- so it is preserved and re-signalled by the next\nnative call that drains it, exactly as a game event's is."
+        },
+        {
           "name": "all-audio-channels",
           "fbound": true,
           "macro": false,
@@ -30768,6 +30790,32 @@
           "documentation": null
         },
         {
+          "name": "dynamic-sound-effect-instance",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.audio:dynamic-sound-effect-instance",
+            "microsoft.xna.framework.audio:sound-effect-instance",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance: streamed playback.\n\n    (make-instance 'dynamic-sound-effect-instance :sample-rate 44100 :channels :stereo)\n\nXNA's one public constructor, and the only shape this accepts: both keywords or\nneither is not a choice -- there is no other overload, so a partial set names no\nmember and is refused rather than defaulted.\n\nThe buffers are **PCM16, little-endian, interleaved**, which is the one format\nXNA's constructor can build: it calls `AudioFormat.Create(sampleRate, channels, 16)'\nwith the bit depth written into the call site. A whole sample frame is therefore\n`2 * channels' bytes, and every length, offset and count `SUBMIT-BUFFER' takes\nmust be a whole number of them.\n\n`PENDING-BUFFER-COUNT' is what makes streaming observable: CNA's route documents\nthat the count \"only shrinks once a buffer has actually been **consumed by\nplayback**, not merely handed to the mixer\", so a fall in that number is evidence\nabout the runtime rather than about this binding.\n\n`ADD-BUFFER-NEEDED-HANDLER' subscribes to the event CNA raises when the queue runs\nlow. The queue is advanced by the game loop -- CNA's own header says\n`cna_framework_dispatcher_update' drives it for every live instance -- so a\nprogram that never runs a frame never sees the event, exactly as an XNA program\nthat never pumps its dispatcher does not."
+        },
+        {
           "name": "forward",
           "fbound": true,
           "macro": false,
@@ -30790,6 +30838,50 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "get-sample-duration",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance",
+            "size-in-bytes"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DynamicSoundEffectInstance.GetSampleDuration(Int32), in 100-nanosecond ticks.\n\nTimeSpan is projected as an exact tick count throughout this binding rather than\nas a type, so this answers an integer. A size of zero answers zero, which is\n`TimeSpan.Zero' and XNA's own early return."
+        },
+        {
+          "name": "get-sample-size-in-bytes",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance",
+            "duration"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DynamicSoundEffectInstance.GetSampleSizeInBytes(TimeSpan).\n\nDURATION is a tick count, for the reason GET-SAMPLE-DURATION answers one."
         },
         {
           "name": "instance-play-limit-error",
@@ -30964,6 +31056,27 @@
           "documentation": null
         },
         {
+          "name": "pending-buffer-count",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DynamicSoundEffectInstance.PendingBufferCount: submitted buffers not yet played.\n\n**The member that makes streaming observable.** CNA's route documents exactly\nwhat the number means -- it \"only shrinks once a buffer has actually been\nconsumed by playback, not merely handed to the mixer, which is the canonical\ncontract\" -- so a fall in it is evidence about the runtime rather than about this\nbinding.\n\nThe queue is advanced by the game loop: CNA's own header says\n`cna_framework_dispatcher_update' drives every live streaming instance, so a\nprogram that submits a buffer and never runs a frame will watch this number stay\nwhere it is."
+        },
+        {
           "name": "pitch",
           "fbound": true,
           "macro": false,
@@ -31040,6 +31153,28 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "remove-buffer-needed-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-buffer-needed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
         },
         {
           "name": "resume",
@@ -31367,6 +31502,35 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "submit-buffer",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "instance",
+            "buffer",
+            "&key",
+            "offset",
+            "count",
+            "&allow-other-keys"
+          ],
+          "keywords": [
+            "count",
+            "offset"
+          ],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "DynamicSoundEffectInstance.SubmitBuffer(Byte[]) and its ranged overload.\n\n    (submit-buffer instance pcm)\n    (submit-buffer instance pcm :offset 0 :count 800)\n\nBUFFER holds **PCM16LE sample frames**, interleaved when the instance is stereo.\nAnswers no value, as XNA's `void' does.\n\nThe bytes are copied during the call -- CNA's route says so in as many words --\nso the buffer may be reused or freed the moment this returns."
         },
         {
           "name": "up",

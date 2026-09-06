@@ -116,18 +116,18 @@ construction ledger makes a failing subclass initializer give the handle back.")
 
 ;;; --- constructor validation, transcribed ----------------------------------
 
-(defun %check-sample-rate (sample-rate operation)
+(defun %check-sample-rate (sample-rate operation &key (object-type 'sound-effect))
   "`sampleRate < 8000 || sampleRate > 48000' -> ArgumentOutOfRangeException(\"sampleRate\")."
   (unless (and (integerp sample-rate)
                (<= +minimum-sample-rate+ sample-rate +maximum-sample-rate+))
     (error 'xna:cna-argument-out-of-range-error
            :operation operation :parameter-name "sample-rate"
-           :object-type 'sound-effect
+           :object-type object-type
            :format-control
            "sample-rate must be an integer in [~d, ~d]; ~s was given."
            :format-arguments (list +minimum-sample-rate+ +maximum-sample-rate+ sample-rate))))
 
-(defun %check-channels (channels operation)
+(defun %check-channels (channels operation &key (object-type 'sound-effect))
   "`channels < 1 || channels > 2' -> ArgumentOutOfRangeException(\"channels\").
 
 The projection makes this a keyword, so a value outside the enumeration cannot be
@@ -137,7 +137,7 @@ than a type error."
   (unless (typep channels 'audio-channels)
     (error 'xna:cna-argument-out-of-range-error
            :operation operation :parameter-name "channels"
-           :object-type 'sound-effect
+           :object-type object-type
            :format-control "channels must be :MONO or :STEREO; ~s was given."
            :format-arguments (list channels))))
 
@@ -163,7 +163,7 @@ is not redundant, it is the earlier of two different positions in the order."
             ~:[nothing~;~:*~s~] was given."
            :format-arguments (list buffer))))
 
-(defun %check-buffer (buffer block-align operation)
+(defun %check-buffer (buffer block-align operation &key (object-type 'sound-effect))
   "`buffer == null || buffer.Length == 0 || !IsAligned(buffer.Length)'
 -> ArgumentException(InvalidAudioBuffer)."
   (unless (and buffer
@@ -172,14 +172,14 @@ is not redundant, it is the earlier of two different positions in the order."
                (zerop (mod (length buffer) block-align)))
     (error 'xna:cna-argument-error
            :operation operation :parameter-name "buffer"
-           :object-type 'sound-effect
+           :object-type object-type
            :format-control
            "buffer must be a non-empty (VECTOR (UNSIGNED-BYTE 8)) whose length is a ~
             whole number of ~d-byte sample frames; ~@[~d byte(s) were given~]."
            :format-arguments
            (list block-align (when (typep buffer 'vector) (length buffer))))))
 
-(defun %check-offset (offset buffer block-align operation)
+(defun %check-offset (offset buffer block-align operation &key (object-type 'sound-effect))
   "`offset < 0 || offset >= buffer.Length || !IsAligned(offset)'
 -> ArgumentException(InvalidAudioBufferOffset)."
   (unless (and (integerp offset)
@@ -188,12 +188,12 @@ is not redundant, it is the earlier of two different positions in the order."
                (zerop (mod offset block-align)))
     (error 'xna:cna-argument-error
            :operation operation :parameter-name "offset"
-           :object-type 'sound-effect
+           :object-type object-type
            :format-control
            "offset must be a sample-frame-aligned index in [0, ~d); ~s was given."
            :format-arguments (list (length buffer) offset))))
 
-(defun %check-count (offset count buffer block-align operation)
+(defun %check-count (offset count buffer block-align operation &key (object-type 'sound-effect))
   "`offset + count > buffer.Length || count <= 0 || !IsAligned(count)'
 -> ArgumentException(InvalidOffsetCountLength).
 
@@ -207,7 +207,7 @@ the overflow would have."
                (<= (+ offset count) (length buffer)))
     (error 'xna:cna-argument-error
            :operation operation :parameter-name "count"
-           :object-type 'sound-effect
+           :object-type object-type
            :format-control
            "count must be a positive whole number of ~d-byte sample frames with ~
             offset + count <= ~d; offset ~s and count ~s were given."

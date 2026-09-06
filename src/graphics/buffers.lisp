@@ -794,4 +794,4 @@ and released correctly and is never invoked. See docs/limitations.md.")
  dynamic-index-buffer :content-lost add-content-lost-handler remove-content-lost-handler)
 
 (setf cna-lisp.internal.ffi:*buffer-content-lost-dispatcher*
-      #'microsoft.xna.framework::%dispatch-game-event)
+      #'microsoft.xna.framework::%dispatch-payload-free-event)

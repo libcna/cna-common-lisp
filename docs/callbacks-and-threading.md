@@ -133,3 +133,30 @@ all. What happens instead:
 
 This is a real limit of the C ABI's event shape, not of the binding, and a
 handler that needs its failures seen should catch them itself.
+
+`CNA_AudioEventCallback` has exactly the same shape -- `void (*)(void* context)`
+-- and everything above applies to `add-buffer-needed-handler` unchanged. It is a
+**separate** top-level callback and a separate dispatcher rather than the game
+one reused, because the routes that install it are audio's and the registration
+it produces is released by `cna_audio_unsubscribe_ext` rather than by
+`cna_game_unsubscribe`; what the two share is the dispatcher body, since the
+registry entry is the same `(sender . function)` pair in both. The private
+function that resolves it is called `%DISPATCH-PAYLOAD-FREE-EVENT` for that
+reason -- it was `%DISPATCH-GAME-EVENT` while the game's four events were the
+only such family.
+
+A buffer-needed handler is called from whichever thread advances the streaming
+queue, which is the game thread while the loop runs -- CNA's own route says so.
+The rule above about the *owner* thread is therefore satisfied by the ordinary
+game loop and is not a new claim about foreign threads.
+
+**A subscription made during a construction is part of that construction.** An
+initializer that subscribes and then signals used to leave CNA holding the
+registration and the private registry holding the token that roots the object,
+for any event-raising class -- and every exported class here is subclassable.
+`%SUBSCRIBE-EVENT` records a construction undo while the object is still
+constructing, so the rollback releases the registration and drops the token; once
+`MAKE-INSTANCE` has returned it records nothing, because a subscription a program
+made is an ordinary thing it did and nothing may undo it on the program's behalf.
+`NATIVE-OBJECT` carries the flag that tells the two apart, rather than the
+construction ledger's emptiness being read as one.

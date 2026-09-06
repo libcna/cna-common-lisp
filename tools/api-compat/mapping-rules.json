@@ -7611,6 +7611,86 @@
       "not_applicable": {
         "Dispose(Boolean)": "The protected disposing/finalizing overload. CNA-Lisp has no finalizer that touches a native resource by policy, so the boolean it exists to carry -- 'am I being called from Dispose or from the finalizer' -- has only one possible answer here and nothing to express."
       }
+    },
+    "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance": {
+      "lisp_package": "microsoft.xna.framework.audio",
+      "lisp_name": "dynamic-sound-effect-instance",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(Int32,AudioChannels)": "make-instance"
+      },
+      "member_overrides": {
+        "new(Int32,AudioChannels)": {
+          "lisp": "make-instance",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "sample-rate",
+            "channels"
+          ],
+          "reason": "XNA's one public constructor, over cna_dynamic_sound_effect_instance_create. Both keywords or neither: there is no other overload, so a partial set names no member and %CHECK-OVERLOAD-KEYWORDS refuses it rather than defaulting the difference. The validation order is the IL's -- sampleRate against [0x1f40, 0xbb80] first, then channels against [1, 2] -- and it is observable: a call wrong in both is told about the sample rate. Those are the same two bounds SoundEffect's constructors use, one fact in the pinned assembly appearing in five places, so %CHECK-SAMPLE-RATE and %CHECK-CHANNELS are shared rather than restated. The native handle is taken last, after both checks and after the active game is resolved, and is recorded in the construction ledger before anything that can still fail. The owner is the **game**: the creation route takes a game handle and there is no effect to be a child of, so the ownership graph for this kind is Game -> DynamicSoundEffectInstance with nothing between. The route is the same one in both admitted CNA ABIs and behaves the same way, because modules/c-api/include/CNA/C/audio.h is byte for byte identical in 0.21.0 and 0.22.0. **Partial, and a measurement is why.** cna_dynamic_sound_effect_instance_create answers CNA_RESULT_SUCCESS on a machine with no playback device -- measured against 0.21.0 and 0.22.0 with a nonexistent SDL audio driver -- and the handle it answers takes buffers; the refusal arrives at Play, as CNA_RESULT_NOT_SUPPORTED. cna_sound_effect_create_pcm16_range_ext refuses in the same situation, so the two constructors of this namespace do not agree about hardware and the difference is CNA's. What XNA does there is **not establishable from the pinned assembly**: the constructor calls AllocateVoice, which calls SoundEffectUnsafeNativeMethods.CreateDynamicSoundEffectInstance, whose body is native code in the mixed-mode assembly rather than IL, so the result it returns without a device is inside a boundary the disassembly does not contain. What the IL does establish is the shape of the failure if there is one: Helpers.GetExceptionFromResult maps XACT result 0x8ac70017 to NoAudioHardwareException. Adopting CNA's success is therefore a binding-defined outcome standing in for an unknown one, which is legitimate for a partial member and would not be legitimate while the member was called complete -- the same standard Apply3D(AudioListener[], AudioEmitter) is held to for its empty array. tests/native/audio.lisp's AUDIO_DYNAMIC_UNAVAILABLE lane asserts the measured behaviour in both directions rather than hiding it. docs/limitations.md.",
+          "status": "partial"
+        },
+        "SubmitBuffer(Byte[])": {
+          "lisp": "submit-buffer",
+          "generic": true,
+          "distinguished_by": "no-keywords",
+          "unified_with": [
+            "SubmitBuffer(Byte[],Int32,Int32)"
+          ],
+          "reason": "The short overload, which supplies no keyword at all. XNA's body is literally SubmitBuffer(buffer, 0, buffer.Length), so one generic function with an optional range loses neither -- but :OFFSET alone and :COUNT alone are shapes XNA has not got, and the two are enforced as whole sets at run time by %CHECK-OVERLOAD-KEYWORDS. The buffer is positional in both overloads and is therefore in neither keyword set. One difference between the two is XNA's rather than this projection's and cannot be reproduced: the short overload evaluates buffer.Length to build the long call, so SubmitBuffer(null) is a NullReferenceException there before any check runs, where the long overload reaches ArgumentException. Common Lisp has no null array and both spellings answer the long overload's condition."
+        },
+        "SubmitBuffer(Byte[],Int32,Int32)": {
+          "lisp": "submit-buffer",
+          "generic": true,
+          "distinguished_by": "keywords",
+          "keywords": [
+            "offset",
+            "count"
+          ],
+          "unified_with": [
+            "SubmitBuffer(Byte[])"
+          ],
+          "reason": "See SubmitBuffer(Byte[]). The checks are the pinned IL's, in its order: the disposal test, then ArgumentException(InvalidAudioBuffer) for a null, empty or misaligned-length buffer, then ArgumentException(InvalidAudioBufferOffset) for an offset outside [0, length) or misaligned, then ArgumentException(InvalidOffsetCountLength) for the checked overflow and for a count that is not positive, runs past the end or is misaligned. Those are the same three FrameworkResources strings in the same order that SoundEffect's seven-argument constructor uses, so %CHECK-BUFFER, %CHECK-OFFSET and %CHECK-COUNT are the same three functions rather than three more. IsAligned(v) is v % BlockAlign == 0, and BlockAlign for the format this class always builds -- AudioFormat.Create(sampleRate, channels, 16), with the bit depth written into the call site -- is 2 * channels. The overflow branch needs no separate test: its catch raises the same exception the range test does, Common Lisp integers do not overflow, and every value the overflow would have caught already fails offset + count <= buffer.Length. The bytes are copied during the call, which CNA's route states, so the caller's vector may be reused the moment this returns. The route is the same one in both admitted CNA ABIs and behaves the same way, because modules/c-api/include/CNA/C/audio.h is byte for byte identical in 0.21.0 and 0.22.0."
+        },
+        "GetSampleDuration(Int32)": {
+          "lisp": "get-sample-duration",
+          "generic": true,
+          "reason": "An **instance** method, unlike the static of the same name on SoundEffect, and CNA says so too: \"unlike the sound-effect computations, these two are instance methods: they use the sample rate and channel count this instance was created with rather than taking them as arguments\". Answers 100-nanosecond ticks, because System.TimeSpan is projected as an exact tick count throughout this binding. The arithmetic is AudioFormat.DurationFromSize, which is the same arithmetic the static computes, so it is shared rather than transcribed twice; it is computed here rather than taken from cna_dynamic_sound_effect_instance_get_sample_duration_ticks for the reason SoundEffect.Duration is -- DurationFromSize ends in TimeSpan.FromMilliseconds, which rounds to a whole millisecond, and CNA's route does not round the same way. The route stays bound and tests/native/audio.lisp pins both answers. What differs from the static is only the guards: this one has no rate or channel count to refuse, opens with the IsDisposed test, and raises ArgumentException(InvalidBufferSize) -- not ArgumentOutOfRangeException, and with no parameter name -- for a negative size."
+        },
+        "GetSampleSizeInBytes(TimeSpan)": {
+          "lisp": "get-sample-size-in-bytes",
+          "generic": true,
+          "reason": "See GetSampleDuration(Int32); an instance method over the instance's own format, taking ticks. Its guards are AudioFormat.SizeFromDuration's callers': TotalMilliseconds below zero or above Int32.MaxValue is ArgumentOutOfRangeException(\"duration\"), TimeSpan.Zero answers 0, and the three checked operations' OverflowException becomes that same duration exception. Those are exactly the static's, which is why the two share one implementation."
+        },
+        "Play()": {
+          "lisp": "play",
+          "generic": true,
+          "distinguished_by": "no-keywords",
+          "reason": "**Inherited on evidence, not on the accident that CLOS inherits it.** XNA overrides Play() here, and the override differs from the base only in what the base does that this class has no material for: SoundEffectInstance.Play() submits the parent effect's packet with its loop region when isPacketSubmitted is false, and DynamicSoundEffectInstance.Play() has no effect and no packet, so it goes straight to the native Play and sets isPacketSubmitted. This binding's base method already does exactly that -- CNA exposes no packet submission of its own and cna_sound_effect_instance_play accepts a streaming handle -- so one method is both. It takes no argument and refuses every keyword by name, for the reason SoundEffectInstance.Play() does: congruence with SoundEffect's three-keyword Play forces the lambda list to accept :VOLUME, :PITCH and :PAN, and accepting is not having. tests/native/audio.lisp pins the behaviour rather than the inheritance."
+        },
+        "IsLooped": {
+          "lisp": "is-looped",
+          "generic": true,
+          "setf": true,
+          "reason": "**Overridden in XNA, and the override is a different member from the base class's.** The getter tests IsDisposed -- which the base class's seven-byte ldfld getter does not -- and then returns the constant false; it never reads the inherited `looped' field. The setter tests IsDisposed, throws InvalidOperationException(InvalidDynamicIsLoopedCall) for a true value, and for a false value returns having stored nothing. So a streamed instance is the one place in this type family where the subclass is stricter than its base, and it is projected by CLOS dispatch rather than by a shared body. Assigning NIL is legal and does nothing, which is not the same as being ignored: assigning T is refused, and CNA is never asked to loop a stream it cannot loop."
+        },
+        "PendingBufferCount": {
+          "lisp": "pending-buffer-count",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, and guarded: its IL takes voiceHandleLock and throws ObjectDisposedException before reading anything. Over cna_dynamic_sound_effect_instance_get_pending_buffer_count, whose header pins what the number means -- it \"only shrinks once a buffer has actually been consumed by playback, not merely handed to the mixer, which is the canonical contract\" -- which is what makes it the member the streaming qualification rests on: a fall in it is evidence about the runtime rather than about this binding. The queue is advanced by the game loop, because cna_framework_dispatcher_update drives every live streaming instance. The route is the same one in both admitted CNA ABIs and behaves the same way, because modules/c-api/include/CNA/C/audio.h is byte for byte identical in 0.21.0 and 0.22.0."
+        }
+      },
+      "events": {
+        "BufferNeeded": {
+          "add": "add-buffer-needed-handler",
+          "remove": "remove-buffer-needed-handler",
+          "reason": "The CLR event is add_BufferNeeded and remove_BufferNeeded, so it projects to two generic functions on the instance, as every other event in this binding does. The handler takes the sender and nothing else: OnBufferNeeded invokes handler(this, EventArgs.Empty) and an always-empty second argument would be one every handler had to write and ignore. Over cna_dynamic_sound_effect_instance_subscribe_buffer_needed, whose CNA_AudioEventCallback has CNA_GameEventCallback's exact shape -- void (*)(void*) -- so the existing event machinery serves it; what is new is that the registration is released by cna_audio_unsubscribe_ext rather than by cna_game_unsubscribe. The context CNA carries is an integer token this binding resolves back to a rooted Lisp object, never a Lisp pointer. Registrations are released before the instance's handle is destroyed, which is XNA's own order: its Dispose(bool) removes the instance from the static allInstances table that RaiseBufferNeededOnInstance looks it up in, before the base Dispose(bool) deallocates the voice, so no handler is reachable after disposal. Neither framework publishes a queue-depth threshold and this binding claims none; several callbacks may arrive before a submission, and the qualification asserts that the event arrives and that it stops after disposal. The route is the same one in both admitted CNA ABIs and behaves the same way, because modules/c-api/include/CNA/C/audio.h is byte for byte identical in 0.21.0 and 0.22.0."
+        }
+      },
+      "not_applicable": {
+        "Dispose(Boolean)": "The protected disposing/finalizing overload. CNA-Lisp has no finalizer that touches a native resource by policy, so the boolean it exists to carry -- 'am I being called from Dispose or from the finalizer' -- has only one possible answer here and nothing to express. The same statement SoundEffectInstance's makes; this class overrides it in XNA only to unregister itself from the static instance table first, which is bookkeeping for a mechanism this binding does not have."
+      }
     }
   },
   "frontier_category_kinds": {
@@ -7623,6 +7703,9 @@
     "IMPLEMENTABLE_AND_HIGH_VALUE": "Nothing blocks it and it should be done next. **Empty is the point**: an entry here is a to-do the scoreboard is hiding, and three members sat in this state behind wrong reasons until the route-by-route audit found them."
   },
   "frontier_categories": {
+    "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance.new(Int32,AudioChannels)": "QUALIFICATION_LIMIT",
+    "Microsoft.Xna.Framework.Audio.SoundEffect.Duration": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Audio.SoundEffectInstance.Apply3D(AudioListener[],AudioEmitter)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Content.ContentManager.Load(String)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Content.ContentManager.ServiceProvider": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Content.ContentManager.new(IServiceProvider)": "CNA_ADMITTED_ABI_LIMIT",
@@ -7676,9 +7759,7 @@
     "Microsoft.Xna.Framework.GraphicsDeviceManager.OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT",
-    "Microsoft.Xna.Framework.Audio.SoundEffectInstance.Apply3D(AudioListener[],AudioEmitter)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Audio.SoundEffect.Duration": "CNA_ADMITTED_ABI_LIMIT"
+    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT"
   },
   "frontier_categories_description": "One category per non-complete selected member, keyed by '<type>.<signature>' exactly as the generated report names it. Every missing and partial member must appear here and nothing else may: verify.py reports an uncategorised_absence otherwise, so a member cannot go non-complete without saying what kind of thing is stopping it. The prose reason stays where it was -- per member in 'unimplemented' and in 'member_overrides' -- because a reason names a route and a category sorts it. See 'frontier_category_kinds'."
 }

@@ -357,7 +357,7 @@ the game's rather than wrapping the borrowed handle a second time."
 (defmethod %unsubscribe-natively ((object game-component) registration)
   (cna-lisp.internal.ffi::%game-component-unsubscribe registration))
 
-(setf cna-lisp.internal.ffi:*component-event-dispatcher* #'%dispatch-game-event)
+(setf cna-lisp.internal.ffi:*component-event-dispatcher* #'%dispatch-payload-free-event)
 
 (%define-event-pair add-enabled-changed-handler remove-enabled-changed-handler
   "IUpdateable.EnabledChanged. HANDLER is called with the component.")

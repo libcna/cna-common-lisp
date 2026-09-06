@@ -145,6 +145,11 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; specialises on its class.
    (:file "audio/sound-effect")
    (:file "audio/sound-effect-instance")
+   ;; The streaming subclass last of the three, because it specialises the base
+   ;; class's construction and destruction hooks and reuses SoundEffect's own
+   ;; validators and sample arithmetic. It names no SOUND-EFFECT: a
+   ;; DynamicSoundEffectInstance has none, and is a child of the game directly.
+   (:file "audio/dynamic-sound-effect-instance")
    ;; --- Microsoft.Xna.Framework.Content ------------------------------------
    ;; The manager first, then the loaders that produce graphics objects, then
    ;; Game.Content, which needs both GAME and CONTENT-MANAGER to exist.

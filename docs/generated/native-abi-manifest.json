@@ -29,11 +29,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 496,
+    "functions": 503,
     "structs": 72,
     "struct_fields": 544,
     "constants": 511,
-    "callbacks": 10,
+    "callbacks": 11,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
   },
@@ -12561,6 +12561,200 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_audio_emitter_init(CNA_AudioEmitter* out_emitter)"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_create",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "sample_rate",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "channels",
+          "c_type": "CNA_AudioChannels",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_instance",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:sound-effect-instance:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dynamic_sound_effect_instance_create(CNA_Handle game, int32_t sample_rate, CNA_AudioChannels channels, CNA_Handle* out_instance)"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_submit_buffer",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "bytes",
+          "c_type": "const uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "offset",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dynamic_sound_effect_instance_submit_buffer(CNA_Handle instance, const uint8_t* bytes, uint64_t byte_count, int32_t offset, int32_t count)"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_get_pending_buffer_count",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dynamic_sound_effect_instance_get_pending_buffer_count(CNA_Handle instance, int32_t* out_count)"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_get_sample_duration_ticks",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "size_in_bytes",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dynamic_sound_effect_instance_get_sample_duration_ticks(CNA_Handle instance, int32_t size_in_bytes, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_get_sample_size_in_bytes",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "duration_ticks",
+          "c_type": "int64_t",
+          "cffi_type": ":int64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dynamic_sound_effect_instance_get_sample_size_in_bytes(CNA_Handle instance, int64_t duration_ticks, int32_t* out_bytes)"
+    },
+    {
+      "name": "cna_dynamic_sound_effect_instance_subscribe_buffer_needed",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "instance",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_AudioEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_AudioEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_dynamic_sound_effect_instance_subscribe_buffer_needed(CNA_Handle instance, CNA_AudioEventCallback callback, void* context, CNA_AudioEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_audio_unsubscribe_ext",
+      "header": "audio.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_AudioEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_audio_unsubscribe_ext(CNA_AudioEventRegistrationHandle registration)"
     }
   ],
   "structs": [
@@ -18437,6 +18631,18 @@
           "c_type": "CNA_GameComponentHandle",
           "cffi_type": ":uint64"
         },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
+      "name": "CNA_AudioEventCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
         {
           "name": "context",
           "c_type": "void*",

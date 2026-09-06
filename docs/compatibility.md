@@ -118,31 +118,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=165 -->
-<!-- generated:selected members=2389 -->
+<!-- generated:selected types=166 -->
+<!-- generated:selected members=2399 -->
 <!-- generated:complete types=147 -->
-<!-- generated:partial types=18 -->
+<!-- generated:partial types=19 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1904 -->
-<!-- generated:partial members=21 -->
+<!-- generated:complete members=1912 -->
+<!-- generated:partial members=22 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=429 -->
+<!-- generated:not-applicable members=430 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 165 types, 2389 members.
+Selection **Foundation 1 and the managed closures**: 166 types, 2399 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
 | Types complete | **147** |
-| Types partial | **18** |
+| Types partial | **19** |
 | Types missing | **0** |
-| Members complete | **1904** |
-| Members partial | **21** |
+| Members complete | **1912** |
+| Members partial | **22** |
 | Members missing | **35** |
-| Members not applicable | **429** |
+| Members not applicable | **430** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -313,6 +313,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Input.ButtonState` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Audio.SoundEffect` | **partial** | 15 | 1 | 0 | 1 |
 | `M.X.F.Audio.SoundEffectInstance` | **partial** | 13 | 1 | 0 | 2 |
+| `M.X.F.Audio.DynamicSoundEffectInstance` | **partial** | 8 | 1 | 0 | 1 |
 | `M.X.F.Audio.AudioListener` | **complete** | 5 | 0 | 0 | 0 |
 | `M.X.F.Audio.AudioEmitter` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.Audio.SoundState` | **complete** | 3 | 0 | 0 | 1 |
@@ -380,6 +381,7 @@ back-reference.
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 | `M.X.F.Audio.SoundEffect` | 0 | 1 |
 | `M.X.F.Audio.SoundEffectInstance` | 0 | 1 |
+| `M.X.F.Audio.DynamicSoundEffectInstance` | 0 | 1 |
 <!-- /generated-block:partial-frontier -->
 
 The counts in that table are the real remaining surface, and the table is where to
@@ -412,7 +414,7 @@ and so is a category left behind by a member that has since been completed.
 | `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
-| `QUALIFICATION_LIMIT` | **1** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
+| `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
 <!-- /generated-block:frontier-categories -->
@@ -475,11 +477,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=496 -->
+<!-- generated:bound native functions=503 -->
 <!-- generated:bound native structs=72 -->
 <!-- generated:bound native struct fields=544 -->
 <!-- generated:bound native constants=511 -->
-<!-- generated:bound native callbacks=10 -->
+<!-- generated:bound native callbacks=11 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
 <!-- generated:abi version encoded=5376 -->
@@ -487,11 +489,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 496 |
+| Bound functions | 503 |
 | Bound structs | 72 |
 | Bound struct fields | 544 |
 | Bound constants | 511 |
-| Bound callback typedefs | 10 |
+| Bound callback typedefs | 11 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
 | Admitted ABI versions | 0.21.0 only (encoded 5376) |

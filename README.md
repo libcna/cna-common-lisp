@@ -156,6 +156,18 @@ stubs:
   no-audio-hardware path, and SDL's `dummy` driver opens a device with no speaker
   behind it so the play/pause/resume/stop state machine can be observed. **No
   test claims a sound was heard**;
+* **`DynamicSoundEffectInstance`**, which is the streaming half of that namespace
+  and the one member of it that adds a *capability* rather than a surface:
+  procedurally generated audio is not reachable through anything else here. A
+  program builds one from a sample rate and a channel count, hands it PCM16 with
+  `submit-buffer`, watches `pending-buffer-count`, and is told when the queue runs
+  low through `add-buffer-needed-handler`. It derives from `SoundEffectInstance`
+  in XNA and here, and the two members XNA overrides -- `IsLooped`, which is
+  always false and refuses a true assignment, and `Play` -- are projected as
+  overrides rather than inherited by accident. The same `dummy` driver qualifies
+  it: generated PCM is submitted, the pending count rises and the native streaming
+  state machine consumes it while the game loop runs. **A consumed buffer is not
+  a buffer anyone heard**, and no test says otherwise;
 * **`System.IO.Stream` as an ordinary Common Lisp binary stream**, which is what
   a language with its own equivalent abstraction should do with a BCL type that is
   not even in the profile's contract. `Texture2D.FromStream`, `SaveAsPng` and
@@ -211,27 +223,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=165 -->
-<!-- generated:selected members=2389 -->
+<!-- generated:selected types=166 -->
+<!-- generated:selected members=2399 -->
 <!-- generated:complete types=147 -->
-<!-- generated:partial types=18 -->
+<!-- generated:partial types=19 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1904 -->
-<!-- generated:partial members=21 -->
+<!-- generated:complete members=1912 -->
+<!-- generated:partial members=22 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=429 -->
+<!-- generated:not-applicable members=430 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=496 -->
+<!-- generated:bound native functions=503 -->
 <!-- generated:bound native structs=72 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **165 XNA types and 2389 members**:
+The generated scoreboard, over a selection of **166 XNA types and 2399 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **147 / 18 / 0** |
-| Members complete / missing | **1904 / 35** |
-| Members not applicable | **429** |
+| Types complete / partial / missing | **147 / 19 / 0** |
+| Members complete / missing | **1912 / 35** |
+| Members not applicable | **430** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -244,7 +256,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **496 native routes** and **72 native structs**,
+The private foreign layer binds **503 native routes** and **72 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

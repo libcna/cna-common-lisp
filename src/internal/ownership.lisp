@@ -52,6 +52,16 @@ takes none here, because there is only ever one game it could mean.")
     :initform '() :accessor construction-undo-of
     :documentation "Undo thunks for a construction still in progress, newest
 first. Emptied when the construction commits; see INITIALIZE-INSTANCE :around.")
+   (constructing
+    :initform nil :accessor constructing-p
+    :documentation "True while this object's MAKE-INSTANCE has not yet returned.
+
+**A step that is undoable during construction and permanent afterwards needs to
+know which it is.** Subscribing to an event is the case: during a construction it
+belongs in the ledger, so a later initializer's failure gives the registration
+back; after one it is an ordinary thing a program did and must not be undone by
+anybody. A non-empty ledger is *nearly* the same test and is not the same test,
+so the flag is explicit rather than inferred.")
    (disposed :initform nil :accessor disposed-state-of))
   (:documentation
    "Private base of every CNA-Lisp object with a native handle. None of its slots
@@ -97,9 +107,11 @@ here would replace the one that caused it. A committed construction drops its
 ledger rather than keeping it, so nothing recorded can be run twice or reached
 after MAKE-INSTANCE has answered."
   (let ((committed nil))
+    (setf (constructing-p object) t)
     (unwind-protect
          (multiple-value-prog1 (call-next-method)
            (setf committed t))
+      (setf (constructing-p object) nil)
       (if committed
           (setf (construction-undo-of object) '())
           (dolist (thunk (construction-undo-of object))

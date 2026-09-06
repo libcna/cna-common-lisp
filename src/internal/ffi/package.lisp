@@ -24,10 +24,12 @@ by tools/native-abi/generate.py.")
    ;; callbacks
    #:lifecycle-callback-pointer
    #:game-event-callback-pointer
+   #:audio-event-callback-pointer
    #:resource-disposing-callback-pointer
    #:graphics-device-event-callback-pointer
    #:*lifecycle-dispatcher*
    #:*game-event-dispatcher*
+   #:*audio-event-dispatcher*
    #:*resource-disposing-dispatcher*
    #:*graphics-device-event-dispatcher*
    #:content-lost-callback-pointer
@@ -76,7 +78,7 @@ registry. Private; not part of the published API.")
    #:owner-thread-of #:ownership-of #:disposed-state-of
    #:register-child #:unregister-child #:children-of
    #:check-live #:check-usable #:destroy-native #:invalidate
-   #:record-construction-undo #:construction-undo-of
+   #:record-construction-undo #:construction-undo-of #:constructing-p
    #:call-with-native-rollback #:with-native-rollback
    #:call-with-transient-native #:with-transient-native
    #:next-generation #:active-game #:stale-p #:generation-of

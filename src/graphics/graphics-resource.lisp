@@ -260,7 +260,7 @@ resource is still addressable but must not be used for new work.")
  graphics-resource :disposing add-disposing-handler remove-disposing-handler)
 
 (setf cna-lisp.internal.ffi:*resource-disposing-dispatcher*
-      #'microsoft.xna.framework::%dispatch-game-event)
+      #'microsoft.xna.framework::%dispatch-payload-free-event)
 
 (defmethod cna-lisp.internal:destroy-native :around ((resource %native-graphics-resource))
   "Release the resource's event subscriptions after its native destruction.

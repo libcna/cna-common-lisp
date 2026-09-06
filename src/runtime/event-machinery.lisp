@@ -72,8 +72,13 @@ mechanism serving two types rather than two mechanisms.")
         (cons :exiting cna-lisp.internal.ffi::+game-event-exiting+))
   "The CNA identity of each projected game event.")
 
-(defun %dispatch-game-event (token)
-  "Invoke the handler TOKEN names. Called from the one top-level event callback."
+(defun %dispatch-payload-free-event (token)
+  "Invoke the handler TOKEN names. Called from a top-level event callback.
+
+One function for every CNA event that carries nothing but its sender, whatever
+family it belongs to: the registry entry is `(SENDER . FUNCTION)' in each case,
+and the callback shapes are the same `void (*)(void*)'. It was called
+%DISPATCH-GAME-EVENT while the game's four events were the only such family."
   (let ((entry (cna-lisp.internal:callback-target token)))
     (when entry
       (destructuring-bind (sender . function) entry
@@ -82,7 +87,11 @@ mechanism serving two types rather than two mechanisms.")
             ;; Nowhere to report it: see the file header.
             (setf cna-lisp.internal:*pending-callback-condition* condition)))))))
 
-(setf cna-lisp.internal.ffi:*game-event-dispatcher* #'%dispatch-game-event)
+(setf cna-lisp.internal.ffi:*game-event-dispatcher* #'%dispatch-payload-free-event
+      ;; CNA_AudioEventCallback is the same shape and its registry entry is the
+      ;; same pair, so it is the same dispatcher. What differs is the subscribe
+      ;; and unsubscribe routes, and those are the two generic functions below.
+      cna-lisp.internal.ffi:*audio-event-dispatcher* #'%dispatch-payload-free-event)
 
 (defgeneric %event-handlers (object)
   (:documentation
@@ -152,6 +161,20 @@ all three are generic functions on the object."
                "add-event-handler")
               (push (list* event function token (cffi:mem-ref registration :uint64))
                     (%event-handlers object))
+              ;; **A subscription made *during* a construction belongs in that
+              ;; construction's ledger.** Otherwise an initializer that subscribes
+              ;; and then fails leaves CNA holding a registration and the private
+              ;; registry holding the token that roots the object -- which is the
+              ;; leak `DynamicSoundEffectInstance''s atomicity test found, and
+              ;; which any subclass of any event-raising class could have caused.
+              ;; After the construction commits this records nothing: a
+              ;; subscription a program made is an ordinary thing it did, and
+              ;; nothing may undo it on its behalf.
+              (when (and (typep object 'cna-lisp.internal:native-object)
+                         (cna-lisp.internal:constructing-p object))
+                (cna-lisp.internal:record-construction-undo
+                 object
+                 (lambda () (%unsubscribe-event object event function))))
               function)
           (serious-condition (condition)
             (cna-lisp.internal:unregister-callback-target token)

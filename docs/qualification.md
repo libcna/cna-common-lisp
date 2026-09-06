@@ -78,6 +78,15 @@ What was run against a real 0.22.0 library built from that pair:
 | Isolated consumer, 60 and 600 frames | passes |
 | Whole suite, SOFTWARE, with the rasterizer proof registry | **0 failures, nothing not run**, and every proof kind the registry requires |
 
+**That table is the record of one dated run and its numbers are that run's**, not
+live ones: the bound-route count in particular has grown since, because
+`DynamicSoundEffectInstance` landed afterwards and brought seven more routes and
+one more callback with it. The gate set is re-run against **both** admitted
+versions at every closure -- the streaming closure's own run added a fourth audio
+lane, `AUDIO_DYNAMIC_UNAVAILABLE`, and a fifth kind of evidence,
+`AUDIO_DYNAMIC_STREAMING` -- and `README.md`'s generated block carries the current
+route count. Reproduce, do not read off.
+
 **And 0.21.0 was re-run after the set grew**, because admitting a second version
 is a change to the first one's gate as well: the same suite, the same audio lanes
 and the same consumer against the 0.21.0 library, all green, with
