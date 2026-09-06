@@ -457,7 +457,7 @@ drivers.
 | Script | Lanes | Needs |
 | --- | --- | --- |
 | `tools/qualification/audio.sh` | `AUDIO_UNAVAILABLE`, `AUDIO_DYNAMIC_UNAVAILABLE`, `AUDIO_AVAILABLE_STATE_MACHINE`, `AUDIO_DYNAMIC_STREAMING` | no sound card |
-| `tools/qualification/microphone.sh` | `MICROPHONE_UNAVAILABLE`, `MICROPHONE_ENUMERATION`, `MICROPHONE_CAPTURE_STATE_MACHINE`, `MICROPHONE_CAPTURE_DATA`, `MICROPHONE_BUFFER_READY` | no microphone |
+| `tools/qualification/microphone.sh` | `MICROPHONE_UNAVAILABLE`, `MICROPHONE_ENUMERATION`, `MICROPHONE_CAPTURE_STATE_MACHINE`, `MICROPHONE_CAPTURE_DATA`, `MICROPHONE_BUFFER_READY`, plus a public-API-only consumer | no microphone |
 | `tools/qualification/rasterizer.sh` | the pixel proofs above | a rasterising renderer, no display |
 
 **Playback and capture are two scripts and not one**, because they are different
@@ -474,6 +474,14 @@ another.** A transport that transitioned says nothing about whether a submitted
 buffer was consumed; devices that enumerated say nothing about whether capture
 advances; a stream that advances says nothing about the event that announces it.
 Each script requires each kind of evidence *by name*.
+
+**A capture device that enumerates is not one that delivers.** The runner's
+default audio driver enumerates two capture devices and delivers no PCM from
+either, which is a third environment and not a variation of the other two. The
+suite therefore branches on a bounded probe and asserts in both directions —
+`MICROPHONE_CAPTURE_IDLE` proves `GetData` answers zero rather than refusing and
+writes no byte — while `microphone.sh`, which chooses the driver, requires the
+positive lanes that `SDL_AUDIODRIVER=dummy` does produce.
 
 **Neither is a claim about sound.** A dummy playback device is not a speaker and a
 dummy capture device is not a microphone. No test in this repository says a sound

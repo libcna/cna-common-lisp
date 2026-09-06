@@ -2218,7 +2218,22 @@ evidence levels are kept apart the way the audio and rasterization kinds are:
 | `enumeration` | devices were enumerated, `All[i]` was the same object on every query, `Default` was `EQ` to one of them, and the stored properties answered |
 | `capture-state-machine` | `Start`, `Stop` and `State` transitioned, and a repeated call of either was accepted without moving the state |
 | `capture-data` | `GetData` wrote into exactly the range it reported, left every byte outside it unchanged, and advanced at the rate the device's own `SampleRate` implies |
+| `capture-idle` | devices enumerated and the state machine transitioned, and this environment's driver delivered **no PCM at all**; `GetData` answered zero rather than refusing and wrote no byte |
 | `buffer-ready` | the event arrived with the right sender, removing the handler released the registration and stopped delivery, and the callback registry came back |
+
+**A capture device that enumerates is not a capture device that delivers**, and
+that is a third environment rather than a variation of the other two. The GitHub
+runner enumerates **two** capture devices, transitions their state machine, and
+delivers nothing from either — its SDL driver has device nodes and no daemon
+behind them. That is ordinary, not broken, so every test that needs bytes
+branches on a bounded probe and **both branches assert**: the negative one proves
+that `GetData` answers zero rather than refusing, which `audio.h` calls an
+ordinary short read, and that it writes no byte of the caller's buffer.
+
+The suite runs under whatever driver it is given and may not assume one;
+`tools/qualification/microphone.sh` chooses `SDL_AUDIODRIVER=dummy` and therefore
+**requires** the positive lanes. That is the same relationship `audio.sh` has with
+the suite's playback tests, and it is why both exist.
 
 `tools/qualification/microphone.sh` produces them **in separate processes**, for
 the reason `audio.sh` does: SDL's audio driver selection is process-global and
