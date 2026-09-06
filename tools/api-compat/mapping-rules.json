@@ -14,7 +14,8 @@
     "Microsoft.Xna.Framework.Graphics": "microsoft.xna.framework.graphics",
     "Microsoft.Xna.Framework.Input": "microsoft.xna.framework.input",
     "Microsoft.Xna.Framework.Graphics.PackedVector": "microsoft.xna.framework.graphics.packed-vector",
-    "Microsoft.Xna.Framework.Input.Touch": "microsoft.xna.framework.input.touch"
+    "Microsoft.Xna.Framework.Input.Touch": "microsoft.xna.framework.input.touch",
+    "Microsoft.Xna.Framework.Media": "microsoft.xna.framework.media"
   },
   "universal_not_applicable": [
     {
@@ -8199,6 +8200,323 @@
           "reason": "A Common Lisp condition is made by MAKE-CONDITION or signalled by ERROR, and one call expresses all three CLR constructors: the message is the :FORMAT-CONTROL initarg and the inner exception is the :CAUSE initarg, read back by CNA-ERROR-CAUSE. Three constructors that differ only in which optional argument they carry are one call here, and each names the others so none can go missing behind the collapse. XNA's own exception type, sealed, extending System.Exception directly rather than the ExternalException its two siblings in this namespace extend. It subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class and both work. **It shares CNA_RESULT_NOT_SUPPORTED with NO-AUDIO-HARDWARE-ERROR and is still a separate class**, because the route decides which is meant: audio.h documents that code from the sound-effect creation routes as no audio hardware and from cna_microphone_start_at as no microphone connected, so the translation is per family rather than per code and %CHECK-MICROPHONE-RESULT is a second function beside %CHECK-AUDIO-RESULT. **Enumerating no microphone is not this condition**: a machine with no capture device answers a count of zero, which audio.h calls an ordinary answer, so MICROPHONE-ALL answers the empty list and MICROPHONE-DEFAULT answers NIL and the no-device lane proves the empty enumeration rather than an exception."
         }
       }
+    },
+    "Microsoft.Xna.Framework.Media.MediaPlayer": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "media-player",
+      "lisp_kind": "static",
+      "constructors": {},
+      "events": {
+        "ActiveSongChanged": {
+          "add": "media-player-add-active-song-changed-handler",
+          "remove": "media-player-remove-active-song-changed-handler",
+          "reason": "**A static event, and the first in this binding.** XNA keeps the delegate in a static field and `OnActiveSongChanged` invokes `handler(null, args)` -- there is no instance to be the sender. So the projected handler takes **no arguments at all**: every other event here passes its sender and nothing else, and a handler that had to accept and ignore one always-null argument would be worse than one that accepts none, which is the same reasoning that dropped the always-empty EventArgs everywhere else. The two functions are plain functions rather than generic ones because there is no object to specialise on; verify.py permits that only for an event the *contract* marks static, so a rule cannot claim it. Over cna_media_player_subscribe_active_song_changed_ext, whose CNA_MediaPlayerEventCallback has CNA_GameEventCallback's exact shape -- void (*)(void*) -- so the existing event machinery serves it; the registration is released by cna_media_player_unsubscribe_ext, which is a third unsubscribe route beside the game's and audio's. **That subscribe route takes no game handle**, the only one in this ABI that does not, which is CNA agreeing that the player is process-global. The handler lists therefore live on a private singleton the shared machinery specialises on, so the rooted-token discipline and the failed-unsubscribe rule are the same ones every other event here uses. Neither framework publishes when the event becomes due and this binding claims none. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "MediaStateChanged": {
+          "add": "media-player-add-media-state-changed-handler",
+          "remove": "media-player-remove-media-state-changed-handler",
+          "reason": "See ActiveSongChanged: the same static shape, the same null sender, the same machinery, over cna_media_player_subscribe_media_state_changed_ext. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        }
+      },
+      "member_overrides": {
+        "Play(Song)": {
+          "lisp": "media-player-play",
+          "distinguished_by": "dispatch-and-arity",
+          "unified_with": [
+            "Play(SongCollection)",
+            "Play(SongCollection,Int32)"
+          ],
+          "reason": "One function for the three overloads, distinguished by the **type of the first argument** and by whether an index was supplied -- not by keywords, because two of the three differ in a positional parameter's type rather than in an optional. `(media-player-play song 2)` names no overload and is refused: XNA has no Play(Song, Int32), and a projection that accepted it would gain a member. The null check is ArgumentNullException(\"song\") in the IL; here a disposed song is refused by the ordinary disposal check first, which is the same refusal one step earlier. Every overload clears the queue before enqueuing, which CNA's route states and XNA's queue does. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0.",
+          "generic": true
+        },
+        "Play(SongCollection)": {
+          "lisp": "media-player-play",
+          "distinguished_by": "dispatch-and-arity",
+          "unified_with": [
+            "Play(Song)",
+            "Play(SongCollection,Int32)"
+          ],
+          "reason": "See Play(Song). Two guards in the IL's order: null -> ArgumentNullException(\"songCollection\"), then Count == 0 -> ArgumentException(EmptySongCollectionsCannotBePlayed). The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0.",
+          "generic": true
+        },
+        "Play(SongCollection,Int32)": {
+          "lisp": "media-player-play",
+          "distinguished_by": "dispatch-and-arity",
+          "unified_with": [
+            "Play(Song)",
+            "Play(SongCollection)"
+          ],
+          "reason": "See Play(Song). The same two guards and then index outside [0, Count) -> ArgumentOutOfRangeException(\"index\", MustBeValidIndex), all in the IL's order. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0.",
+          "generic": true
+        },
+        "Pause()": {
+          "lisp": "media-player-pause",
+          "reason": "**Guarded in XNA and unguarded in CNA**, and the guard is observable: the pinned IL is `if (State == Playing) { native Pause(); }`, so pausing a player that is stopped or already paused does nothing at all -- it is not an error and it does not change the state. CNA accepts the call unconditionally, so the guard is reproduced here. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Resume()": {
+          "lisp": "media-player-resume",
+          "reason": "`if (State != Playing)` in the IL; resuming a player that is already playing does nothing. The mirror of Pause. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Stop()": {
+          "lisp": "media-player-stop",
+          "reason": "`if (State != Stopped)` in the IL -- spelled `brfalse`, which takes the zero branch, and Stopped is this enumeration's zero. Stopping an already-stopped player does nothing. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "MoveNext()": {
+          "lisp": "media-player-move-next",
+          "reason": "Over MediaQueue.MoveNext, whose IL is `if (Count <= 0) nothing; else if (ActiveSongIndex < Count-1) native MoveNext; else ActiveSongIndex = 0`. **The wrap is the managed layer's, not the runtime's**, and an empty queue is a no-op rather than a failure; both are reproduced here rather than delegated to cna_media_player_move_next, which is only the middle branch. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "MovePrevious()": {
+          "lisp": "media-player-move-previous",
+          "reason": "The mirror of MoveNext: `else ActiveSongIndex = Count - 1`, so it wraps to the end. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "GetVisualizationData(VisualizationData)": {
+          "lisp": "media-player-get-visualization-data",
+          "reason": "Fills the caller's object **in place**, which is what XNA does -- it hands the two float32[] fields to native code -- and is why VisualizationData's buffers are the live vectors rather than copies. Two things in the IL's order: null -> ArgumentNullException(\"visualizationData\"), then **`if (!IsVisualizationEnabled) return`** -- so while visualization is off this does nothing at all and the caller's buffers keep whatever they held, which is an answer rather than a refusal. Over cna_media_player_get_visualization_data, whose CNA_VisualizationData is a by-value struct of two 256-element float arrays rather than a handle. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsShuffled": {
+          "lisp": "media-player-is-shuffled",
+          "generic": false,
+          "setf": true,
+          "reason": "XNA's getter reads a **static field** its class constructor seeds from the runtime, and its setter writes that field after the native call succeeds. This asks the runtime on every read instead: the difference is observable only if something outside the program changes the flag, which nothing in this binding can do, and asking is the answer that cannot go stale. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsRepeating": {
+          "lisp": "media-player-is-repeating",
+          "generic": false,
+          "setf": true,
+          "reason": "The mirror of IsShuffled, with the same managed-field note. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Queue": {
+          "lisp": "media-player-queue",
+          "generic": false,
+          "setf": false,
+          "reason": "**The same object every time**, which is XNA's own guarantee rather than this binding's convenience: MediaPlayer's static constructor makes one MediaQueue and get_Queue answers that static field. Reproduced with one process-global facade and asserted with EQ. It is the one member here that needs no active game, because the object it answers holds nothing -- the game is needed when a member *of* the queue is called. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "State": {
+          "lisp": "media-player-state",
+          "generic": false,
+          "setf": false,
+          "reason": "Read-only, and it asks the runtime on every read as the IL does. Translated by name through the enumeration table rather than passed through as a number, for the reason SoundEffectInstance.State gives. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "PlayPosition": {
+          "lisp": "media-player-play-position",
+          "generic": false,
+          "setf": false,
+          "reason": "Read-only, a tick count. **Zero when nothing is active without asking the runtime**: MediaQueue.get_PlayPosition starts with `new TimeSpan(0)` and only calls native when ActiveSongIndex != -1. XNA builds its TimeSpan from a *millisecond* count -- `new TimeSpan(0,0,0,0,ms)` -- so its answer is always a whole millisecond; CNA answers ticks at finer resolution and the value is passed through rather than quantised, because quantising would discard precision the caller asked for and XNA's coarseness is an artefact of its native layer's units rather than a rule its contract states. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Volume": {
+          "lisp": "media-player-volume",
+          "generic": false,
+          "setf": true,
+          "reason": "The getter asks the runtime. **The setter clamps rather than refusing**, which is the IL and not a convenience: `if (value < 0) value = 0; if (value > 1) value = 1;` then the native call, with no exception anywhere -- so 2.0 sets 1.0 and -1.0 sets 0.0. Measured, CNA clamps to the same bounds on all three admitted ABIs; the clamp is still reproduced here, because a CNA that stopped clamping would otherwise change this member's public behaviour silently. **NaN passes through unclamped**: `blt` and `bgt` are ordered comparisons, so a NaN fails both tests and reaches the native call, which is reproduced rather than tidied for the reason MathHelper.Clamp's own NaN behaviour is. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsMuted": {
+          "lisp": "media-player-is-muted",
+          "generic": false,
+          "setf": true,
+          "reason": "Both halves ask the runtime, which is the IL's shape -- unlike IsShuffled and IsRepeating, whose getters read a managed field. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsVisualizationEnabled": {
+          "lisp": "media-player-is-visualization-enabled",
+          "generic": false,
+          "setf": true,
+          "reason": "Both halves ask the runtime. **It gates GetVisualizationData**, which returns without touching the caller's buffers while this is false. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "GameHasControl": {
+          "lisp": "media-player-game-has-control",
+          "generic": false,
+          "setf": false,
+          "reason": "**It always answers true, and that is the pinned assembly's answer rather than this binding's.** get_GameHasControl is two instructions -- `ldc.i4.1; ret` -- a literal with no field behind it and no native call. CNA has a real route, cna_media_player_get_game_has_control, and measured it answers true as well, so the two agree here; the literal is still what is projected, because agreement is not a reason to start asking -- the same standard the enumeration tables are held to -- and a CNA that began answering false would otherwise change a member XNA cannot change. It needs no active game, because nothing is asked of one. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        }
+      },
+      "not_applicable": {}
+    },
+    "Microsoft.Xna.Framework.Media.MediaState": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "media-state",
+      "lisp_kind": "enum"
+    },
+    "Microsoft.Xna.Framework.Media.MediaQueue": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "media-queue",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "Count": {
+          "lisp": "count-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, asking the runtime on every read. Named COUNT-OF rather than COUNT because CL:COUNT is a standard sequence function and this package shadows nothing; it is a generic function because SongCollection.Count projects onto it too. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "ActiveSongIndex": {
+          "lisp": "active-song-index",
+          "generic": true,
+          "setf": true,
+          "reason": "**The getter answers -1 for an empty queue without asking the runtime**: the IL seeds its answer with `ldc.i4.m1` and calls native GetActiveSongIndex only when Count is nonzero. **The setter clamps and does not refuse** -- `value < 0` becomes 0, `value > Count-1` becomes Count-1, then native MoveTo -- so an index outside the queue is silently the nearest one inside it. That asymmetry with Item, which does refuse an out-of-range index, is the original's and is reproduced rather than smoothed over. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "ActiveSong": {
+          "lisp": "active-song",
+          "generic": true,
+          "setf": false,
+          "reason": "`ActiveSongIndex == -1` answers null in XNA and NIL here; otherwise it is `this[ActiveSongIndex]` and therefore a **fresh** object each time -- see Item. CNA's route reports availability separately from the handle and leaves the handle untouched when there is none, which is preserved: the flag is read first. The song it answers is an owned copy the caller releases, which CNA states in as many words -- the queue destroys its entries whenever it is cleared, so a borrowed handle would dangle. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Item(Int32)": {
+          "lisp": "item",
+          "generic": true,
+          "setf": false,
+          "reason": "`index < 0 || index >= Count` -> ArgumentOutOfRangeException(\"index\", MustBeValidIndex), then native GetSongAtIndex. **A fresh object each time**: XNA's own indexer ends with `newobj Song::.ctor(uint32)`, so two reads of one index are Equals and are not reference-identical, and CNA's get_at answers a new owned handle for the same reason. SONG-EQUAL is the comparison; EQ is not. A generic function because SongCollection.Item projects onto it too. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.Song": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "song",
+      "lisp_kind": "class",
+      "constructors": {},
+      "unimplemented": {
+        "Artist": "Needs Artist, which is neither projected nor in the selection: it is a media-library entity whose CNA routes are in media_library.h, and cna_song_get_artist reports it unavailable for a song created from a file path -- the only kind this closure can make, measured on all three admitted ABIs. Selecting the four library types to satisfy this member and its two siblings would add 53 members nothing here could exercise, which is the reason MediaLibrary was not the closure chosen.",
+        "Album": "Needs Album; see Artist.",
+        "Genre": "Needs Genre; see Artist."
+      },
+      "not_applicable": {
+        "Equals(Song)": "The IEquatable<T> half of the pair. Common Lisp has one equality predicate per type rather than one per static type of the argument, and SONG-EQUAL is it: Equals(Object) and Equals(Song) differ in the original only in which of them does the type test, and a Lisp predicate that takes two songs has already done it. Declared here rather than collapsed onto Equals(Object), because a collapse claims two members are one call and these two are one call and one type test."
+      },
+      "member_overrides": {
+        "FromUri(String,Uri)": {
+          "lisp": "song-from-uri",
+          "reason": "XNA's one static factory, over cna_song_create_from_uri. `System.Uri` is not in the selection and has no counterpart to project, so it is an ordinary Lisp string holding a `file:` URI or a plain path -- which is exactly what CNA's route takes, and the same projection TitleContainer already makes for a path. No public member takes a game, though nearly every CNA route needs one: CNA permits one active game per process, so there is exactly one game a media operation could mean and %MEDIA-GAME resolves it, the same projection Keyboard.GetState and the whole Audio and Microphone surfaces already use. With no live game the operation signals CNA-INVALID-STATE-ERROR naming what is missing. docs/limitations.md. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**Two native calls, because CNA splits what XNA joins.** cna_song_dispose \"only marks the song disposed; every other member keeps answering afterwards\", and cna_song_destroy releases the handle. XNA has one Dispose() and every getter begins with ThrowIfDisposed(), so after disposal the original refuses where CNA answers. XNA wins and it costs nothing: NATIVE-OBJECT already tracks a disposed state and refuses on it, which is the same refusal ObjectDisposedException is. Both native calls happen, in that order, because this binding has no finalizer to release the handle later and the canonical disposal is what marks the song the player copied into its queue disposed. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Name": {
+          "lisp": "name",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only and a **stored** value: XNA's constructor fills the `name` field and the getter answers it after ThrowIfDisposed(). CNA stores the given name verbatim -- its header notes that the canonical constructor's own documentation claims a default of the file name and the behaviour does not -- and this binding follows the behaviour, as CNA does. Refuses after disposal. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Duration": {
+          "lisp": "duration",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only and stored. **Zero for a song made from a file**, which is CNA's documented behaviour rather than a defect: its constructor \"checks only that the file exists; it does not open or decode it\", so there is nothing to measure. The duration-supplying creation shape is what provides one. Refuses after disposal. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsRated": {
+          "lisp": "is-rated",
+          "generic": true,
+          "setf": false,
+          "reason": "`Rating > 0` -- computed, not stored and not asked of the native layer. The IL is `get_Rating(); ldc.i4.0; cgt`, so a rating of zero is not rated. Refuses after disposal. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Rating": {
+          "lisp": "rating",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only and stored, filled at construction. Refuses after disposal. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "PlayCount": {
+          "lisp": "play-count",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, and one of the two members that really asks the native layer on every read rather than answering a field. Refuses after disposal. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "TrackNumber": {
+          "lisp": "track-number",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only and stored; only a song from a media library has a meaningful one. Refuses after disposal. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsProtected": {
+          "lisp": "is-protected",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, and the other read-through member, over cna_song_get_is_protected. XNA answers false without asking when the song has no valid handle; here a song without a handle has been disposed and the disposal check refuses first. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsDisposed": {
+          "lisp": "is-disposed",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only. Answers this binding's own disposed state rather than cna_song_get_is_disposed, and the two can disagree by design: the Lisp object is disposed the moment DISPOSE runs, and CNA's flag is set by the cna_song_dispose half of it. Reading the managed state is what XNA does -- its IsDisposed is a field read -- and it is the state every other member's refusal is decided by, so a getter that asked CNA could disagree with the refusal beside it. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "op_Equality(Song,Song)": {
+          "lisp": "song-equal",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "Equals(Object)"
+          ],
+          "reason": "One predicate for the operator and the object-taking Equals, over cna_song_equals. Common Lisp has no operator overloading, so `==` projects onto the predicate the type defines; NIL stands for the null both accept, `(song-equal nil nil)` is true and a song is never equal to NIL, which is op_Equality's own null handling. **EQ is not this comparison**: the queue and a collection each hand out a fresh object for the same underlying song, so two of them are SONG-EQUAL and are not EQ. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Equals(Object)": {
+          "lisp": "song-equal",
+          "distinguished_by": "unified",
+          "unified_with": [
+            "op_Equality(Song,Song)"
+          ],
+          "reason": "See op_Equality. A Lisp predicate of two songs has already made the type test that is the only difference between Equals(Object) and Equals(Song) in the original."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.SongCollection": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "song-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "GetEnumerator()": "IEnumerable<Song>'s enumerator. Common Lisp has no IEnumerator<T> to project and the type is not in the selection; SONGS-VECTOR is the declared extension a program walks the collection with, and it answers a fresh vector so that the count is O(1) and the elements are indexable -- which is what the original's enumerator plus Count gives. The same statement DisplayModeCollection's List<T>.Enumerator gets."
+      },
+      "member_overrides": {
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "The same two native calls Song.Dispose makes, for the same reason -- cna_song_collection_dispose marks it and cna_song_collection_destroy releases the handle. **The collection keeps its songs alive**, which CNA states: it stores non-owning pointers and C retains the songs, so a caller may dispose its own song objects immediately after building one. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Count": {
+          "lisp": "count-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, over cna_song_collection_get_count. Shares the generic function with MediaQueue.Count. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "Item(Int32)": {
+          "lisp": "item",
+          "generic": true,
+          "setf": false,
+          "reason": "`index` outside [0, Count) is refused. **A fresh object each time**, over cna_song_collection_get_at, which answers a new owned handle -- so two reads of one index are SONG-EQUAL and not EQ, exactly as the queue's indexer is. Shares the generic function with MediaQueue.Item. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        },
+        "IsDisposed": {
+          "lisp": "is-disposed",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, answering this binding's own disposed state. See Song.IsDisposed. The route family is the same in all three admitted CNA ABIs and behaves the same way: modules/c-api/include/CNA/C/media.h and media_player.h are byte for byte identical in 0.21.0, 0.22.0 and 0.23.0."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.VisualizationData": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "visualization-data",
+      "lisp_kind": "class",
+      "constructors": {
+        "new()": "make-visualization-data"
+      },
+      "member_overrides": {
+        "new()": {
+          "lisp": "make-visualization-data",
+          "reason": "XNA's one public parameterless constructor, which allocates both float32[] buffers. **Not `make-instance`**, and that is the value-like exception this binding already makes for a type that owns nothing native: a constructor function can allocate the two buffers at the size CNA's own CNA_VISUALIZATION_DATA_SIZE names, which is what the object is for. The class is deliberately **not sealed** in XNA -- unusual for this namespace -- so it is left open here and GetVisualizationData takes whatever it is given. The buffers are zeroed, which is cna_visualization_data_init's documented initial value and a thing this binding can state exactly without a foreign call."
+        },
+        "Frequencies": {
+          "lisp": "frequencies",
+          "generic": true,
+          "setf": false,
+          "reason": "ReadOnlyCollection<float> over the object's own float32[] field, projected as **the buffer itself** rather than a copy. Common Lisp has no read-only vector -- the same language projection SpriteFont.Characters declares -- and a fresh copy per call would break the one thing the type is for: GetVisualizationData fills the object's buffers in place and a caller reads them afterwards. The vector is live; writing it corrupts nothing, because there is nothing native behind it."
+        },
+        "Samples": {
+          "lisp": "samples",
+          "generic": true,
+          "setf": false,
+          "reason": "The second buffer; see Frequencies."
+        }
+      }
     }
   },
   "frontier_category_kinds": {
@@ -8247,6 +8565,9 @@
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceDestroyed": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport": "LANGUAGE_PROJECTION_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "PUBLIC_OBJECT_MODEL_CLOSURE",
+    "Microsoft.Xna.Framework.Graphics.Model.Draw(Matrix,Matrix,Matrix)": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.ModelMesh.Draw()": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPart.Effect": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.PresentationParameters.DeviceWindowHandle": "LANGUAGE_PROJECTION_LIMIT",
     "Microsoft.Xna.Framework.Graphics.RenderTargetBinding.CubeMapFace": "LANGUAGE_PROJECTION_LIMIT",
     "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream)": "CNA_ADMITTED_ABI_LIMIT",
@@ -8268,10 +8589,10 @@
     "Microsoft.Xna.Framework.GraphicsDeviceManager.OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.Model.Draw(Matrix,Matrix,Matrix)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.ModelMesh.Draw()": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.ModelMeshPart.Effect": "CNA_ADMITTED_ABI_LIMIT"
+    "Microsoft.Xna.Framework.Media.Song.Album": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.Media.Song.Artist": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.Media.Song.Genre": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT"
   },
   "frontier_categories_description": "One category per non-complete selected member, keyed by '<type>.<signature>' exactly as the generated report names it. Every missing and partial member must appear here and nothing else may: verify.py reports an uncategorised_absence otherwise, so a member cannot go non-complete without saying what kind of thing is stopping it. The prose reason stays where it was -- per member in 'unimplemented' and in 'member_overrides' -- because a reason names a route and a category sorts it. See 'frontier_category_kinds'."
 }

@@ -242,27 +242,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=181 -->
-<!-- generated:selected members=2468 -->
-<!-- generated:complete types=158 -->
-<!-- generated:partial types=23 -->
+<!-- generated:selected types=187 -->
+<!-- generated:selected members=2525 -->
+<!-- generated:complete types=163 -->
+<!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1975 -->
+<!-- generated:complete members=2021 -->
 <!-- generated:partial members=26 -->
-<!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=432 -->
+<!-- generated:missing members=38 -->
+<!-- generated:not-applicable members=440 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=590 -->
-<!-- generated:bound native structs=73 -->
+<!-- generated:bound native functions=654 -->
+<!-- generated:bound native structs=74 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **181 XNA types and 2468 members**:
+The generated scoreboard, over a selection of **187 XNA types and 2525 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **158 / 23 / 0** |
-| Members complete / missing | **1975 / 35** |
-| Members not applicable | **432** |
+| Types complete / partial / missing | **163 / 24 / 0** |
+| Members complete / missing | **2021 / 38** |
+| Members not applicable | **440** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -275,7 +275,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **590 native routes** and **73 native structs**,
+The private foreign layer binds **654 native routes** and **74 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

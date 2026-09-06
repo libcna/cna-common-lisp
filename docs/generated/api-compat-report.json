@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 181,
-  "member_count": 2468
+  "type_count": 187,
+  "member_count": 2525
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 181,
-  "members": 2468,
+  "types": 187,
+  "members": 2525,
   "types_by_status": {
-   "partial": 23,
-   "complete": 158
+   "partial": 24,
+   "complete": 163
   },
   "members_by_status": {
-   "complete": 1975,
-   "missing": 35,
-   "not-applicable": 432,
+   "complete": 2021,
+   "missing": 38,
+   "not-applicable": 440,
    "partial": 26
   },
-  "diagnostics": 35,
+  "diagnostics": 38,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 35,
+   "missing_member": 38,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -3785,6 +3785,105 @@
     "Current": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:model-effect-collection-enumerator"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.MediaPlayer",
+   "status": "complete",
+   "members": {
+    "Play(Song)": "complete",
+    "Play(SongCollection)": "complete",
+    "Play(SongCollection,Int32)": "complete",
+    "Pause()": "complete",
+    "Resume()": "complete",
+    "Stop()": "complete",
+    "MoveNext()": "complete",
+    "MovePrevious()": "complete",
+    "GetVisualizationData(VisualizationData)": "complete",
+    "IsShuffled": "complete",
+    "IsRepeating": "complete",
+    "Queue": "complete",
+    "State": "complete",
+    "PlayPosition": "complete",
+    "Volume": "complete",
+    "IsMuted": "complete",
+    "IsVisualizationEnabled": "complete",
+    "GameHasControl": "complete",
+    "ActiveSongChanged": "complete",
+    "MediaStateChanged": "complete"
+   },
+   "projection": "static class: microsoft.xna.framework.media:media-player-<member>"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.MediaState",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "Paused": "complete",
+    "Playing": "complete",
+    "Stopped": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:media-state"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.MediaQueue",
+   "status": "complete",
+   "members": {
+    "Count": "complete",
+    "ActiveSongIndex": "complete",
+    "ActiveSong": "complete",
+    "Item(Int32)": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:media-queue"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.Song",
+   "status": "partial",
+   "members": {
+    "FromUri(String,Uri)": "complete",
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "op_Equality(Song,Song)": "complete",
+    "op_Inequality(Song,Song)": "not-applicable",
+    "Equals(Object)": "complete",
+    "Equals(Song)": "not-applicable",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "IsDisposed": "complete",
+    "Name": "complete",
+    "Artist": "missing",
+    "Album": "missing",
+    "Genre": "missing",
+    "Duration": "complete",
+    "IsRated": "complete",
+    "Rating": "complete",
+    "PlayCount": "complete",
+    "TrackNumber": "complete",
+    "IsProtected": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:song"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.SongCollection",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetEnumerator()": "not-applicable",
+    "IsDisposed": "complete",
+    "Count": "complete",
+    "Item(Int32)": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:song-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.VisualizationData",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Frequencies": "complete",
+    "Samples": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:visualization-data"
   }
  ],
  "diagnostics": [
@@ -3962,6 +4061,21 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.BasicEffect.OnApply()",
    "detail": "A protected-internal virtual (`.method famorassem`) that XNA calls from inside EffectPass.Apply, so a subclass can adjust parameters immediately before the pass is applied. CNA applies a pass in one route -- cna_effect_pass_apply(pass) takes the pass and nothing else -- with no callback into managed code in the middle, so an override here would never be called. The same shape as ContentManager.ReadAsset: a hook needs somewhere to be called from. The reason that used to stand added \"and returning true from it cancels the pass\". **In the pinned assembly OnApply returns `void`** and cancels nothing; Effect's own body is a single `ret`. That was a claim about XNA taken from somewhere other than XNA."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Media.Song.Artist",
+   "detail": "Needs Artist, which is neither projected nor in the selection: it is a media-library entity whose CNA routes are in media_library.h, and cna_song_get_artist reports it unavailable for a song created from a file path -- the only kind this closure can make, measured on all three admitted ABIs. Selecting the four library types to satisfy this member and its two siblings would add 53 members nothing here could exercise, which is the reason MediaLibrary was not the closure chosen."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Media.Song.Album",
+   "detail": "Needs Album; see Artist."
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Media.Song.Genre",
+   "detail": "Needs Genre; see Artist."
   }
  ]
 }

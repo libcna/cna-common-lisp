@@ -426,31 +426,31 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 ## The measured frontier
 
-<!-- generated:selected types=181 -->
-<!-- generated:selected members=2468 -->
-<!-- generated:complete types=158 -->
-<!-- generated:partial types=23 -->
+<!-- generated:selected types=187 -->
+<!-- generated:selected members=2525 -->
+<!-- generated:complete types=163 -->
+<!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1975 -->
+<!-- generated:complete members=2021 -->
 <!-- generated:partial members=26 -->
-<!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=432 -->
+<!-- generated:missing members=38 -->
+<!-- generated:not-applicable members=440 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 181 types, 2468 members.
+Selection **Foundation 1 and the managed closures**: 187 types, 2525 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **158** |
-| Types partial | **23** |
+| Types complete | **163** |
+| Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **1975** |
+| Members complete | **2021** |
 | Members partial | **26** |
-| Members missing | **35** |
-| Members not applicable | **432** |
+| Members missing | **38** |
+| Members not applicable | **440** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -477,6 +477,7 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
 | `M.X.F.Game` | 4 | 1 |
 | `M.X.F.Content.ContentManager` | 3 | 1 |
+| `M.X.F.Media.Song` | 3 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
@@ -511,7 +512,7 @@ had moved. Regenerate the table after every closure and read it there.
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
 | `CNA_ADMITTED_ABI_LIMIT` | **45** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
-| `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
+| `DEPENDENCY_NOT_SELECTED` | **9** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |

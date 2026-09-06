@@ -126,7 +126,42 @@
       it from somewhere other than a literal.")
     (microsoft.xna.framework.input keyboard-get-state
      "Keyboard.GetState. Static classes project as <class>-<member> so that
-      Mouse and GamePad can join the namespace without colliding."))
+      Mouse and GamePad can join the namespace without colliding.")
+    (microsoft.xna.framework.media songs-vector
+     "Every song in a SongCollection, as a fresh vector. XNA's collection is
+      IEnumerable<Song> and a program walks it with foreach; Common Lisp has no
+      IEnumerator<T> to project and the type is not in the selection, so
+      GetEnumerator is declared not applicable and this is what a program uses
+      instead. A vector rather than a list so that the count is O(1) and the
+      elements are indexable, which is what the original's enumerator plus Count
+      gives together.")
+    (microsoft.xna.framework.media song-equal
+     "Whether two songs are the same song, over cna_song_equals. Song is
+      IEquatable<Song> and declares op_Equality, Equals(Object) and Equals(Song);
+      Common Lisp has no operator overloading and one equality predicate per type
+      is what those project onto, so the predicate itself is the extension and
+      the three members map to it. **It is not EQ**: XNA's queue and collection
+      indexers both answer `new Song(handle)', so two objects for one underlying
+      song are equal and are not identical, and a program needs a way to say so.")
+    (microsoft.xna.framework.media make-visualization-data
+     "VisualizationData's parameterless constructor. A constructor function
+      rather than MAKE-INSTANCE because the type owns nothing native and its
+      whole job is to arrive with two buffers already allocated at the size CNA's
+      own CNA_VISUALIZATION_DATA_SIZE names.")
+    (microsoft.xna.framework.media count-of
+     "The element count of a SongCollection or a MediaQueue. Named COUNT-OF
+      because CL:COUNT is a standard sequence function and this package shadows
+      nothing; XNA spells both Count, so the rename is this projection's and is
+      declared here.")
+    (microsoft.xna.framework.media song song-collection
+     "Making a Song or a SongCollection at all. **XNA has no public constructor
+      for either** -- a Song comes from Song.FromUri or a MediaLibrary, and a
+      SongCollection only from a MediaLibrary, an Album, an Artist or a Genre,
+      and MediaLibrary is not in this closure. CNA does offer creation routes
+      that take a local file path and an array of songs, so MAKE-INSTANCE over
+      them is declared here: without it a program could not reach this closure at
+      all, since Song.FromUri is projected but a collection would be
+      unobtainable."))
   "Public symbols CNA-Lisp adds that are not XNA members, with why each exists.
 The structural verifier requires every extension to appear here; an exported
 symbol that is neither a mapped XNA member nor a declared extension is a

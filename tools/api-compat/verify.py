@@ -581,6 +581,17 @@ def verify_event(report, type_rule, member, subject, symbols, package, claimed):
     is not a generic function is an `event_mapping_mismatch` -- because a plain
     function could not be specialised on a second type that raises the same
     event, and `Disposed` is raised by two of them.
+
+    **A *static* event is the exception, and the contract says which ones those
+    are.** `MediaPlayer.ActiveSongChanged` and `MediaPlayer.MediaStateChanged`
+    are static: XNA keeps their delegates in static fields and raises them with
+    `handler(null, args)`, because there is no instance to be the sender. So
+    there is no object to specialise on, and requiring a generic function would
+    be requiring a generic function with nothing to dispatch on -- which is
+    weaker than a plain function, not stronger, because it would accept a method
+    on `T` that any object could reach. Static events therefore project onto
+    plain functions of one argument, and the `static` flag that permits it is
+    read from the **contract**, never from the rule, so a rule cannot claim it.
     """
     rule = type_rule.get("events", {}).get(member["name"])
     if rule is None:
@@ -598,10 +609,16 @@ def verify_event(report, type_rule, member, subject, symbols, package, claimed):
                        "no exported %r in %s" % (name, package))
             return "missing"
         claimed.setdefault(package, set()).add(name)
-        if not entry["generic"]:
+        if not entry["generic"] and not member.get("static"):
             report.add("event_mapping_mismatch", subject,
                        "%r is not a generic function, so it cannot be specialised "
                        "on a second type that raises the same event" % name)
+            return "missing"
+        if entry["generic"] and member.get("static"):
+            report.add("event_mapping_mismatch", subject,
+                       "%r is a generic function, but the event is static and has "
+                       "no object to specialise on: a generic function here would "
+                       "dispatch on the handler" % name)
             return "missing"
     return "complete"
 

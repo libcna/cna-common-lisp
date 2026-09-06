@@ -268,6 +268,38 @@ SELECTED = [
     "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
     "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
     "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
+    # --- Microsoft.Xna.Framework.Media: the playback closure ---------------
+    # `MediaPlayer' and everything it needs to play a song: the one `MediaQueue'
+    # it owns, `Song' and `SongCollection', the `MediaState' enumeration and the
+    # `VisualizationData' buffer pair.
+    #
+    # **Three members of `Song' are declared missing so that this is a closure
+    # rather than a namespace.** `Song.Artist', `Song.Album' and `Song.Genre'
+    # answer `Artist', `Album' and `Genre', which are *media-library* entities:
+    # their CNA routes are in `media_library.h' rather than `media.h', and
+    # `cna_song_get_album' and its two siblings document that only a song
+    # obtained from a media library has one -- a song a caller created from a
+    # file path has no library context, so the route reports CNA_FALSE. Measured
+    # true on all three admitted ABIs, for the only kind of song this closure can
+    # make.
+    #
+    # Selecting `Album', `AlbumCollection', `Artist' and `Genre' to satisfy those
+    # three would add **53 members that nothing in this repository could
+    # exercise**, which is the reason `MediaLibrary' was not the closure chosen.
+    # They are declared missing under DEPENDENCY_NOT_SELECTED instead -- exactly
+    # what `EffectParameter.GetValueTexture3D' is declared under for `Texture3D',
+    # which is the standing precedent for a member whose type is not selected.
+    #
+    # `MediaLibrary', `Picture', `Playlist', `MediaSource' and the six collection
+    # types are not here for the same reason they were not chosen:
+    # `media_library.h' says an empty library is an ordinary result, so CI could
+    # qualify *empty* and nothing else.
+    "Microsoft.Xna.Framework.Media.MediaPlayer",
+    "Microsoft.Xna.Framework.Media.MediaState",
+    "Microsoft.Xna.Framework.Media.MediaQueue",
+    "Microsoft.Xna.Framework.Media.Song",
+    "Microsoft.Xna.Framework.Media.SongCollection",
+    "Microsoft.Xna.Framework.Media.VisualizationData",
 ]
 
 

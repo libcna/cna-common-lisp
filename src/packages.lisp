@@ -765,3 +765,65 @@ naming what is missing, which is a projection limit and is written down in
    #:no-microphone-connected-error
    #:sample-rate #:is-headset #:buffer-duration #:start #:get-data
    #:add-buffer-ready-handler #:remove-buffer-ready-handler))
+
+(defpackage #:microsoft.xna.framework.media
+  (:documentation
+   "Common Lisp projection of the Microsoft.Xna.Framework.Media namespace.
+
+The **playback** part of it: `MediaPlayer', the one `MediaQueue' it owns, `Song'
+and `SongCollection', the `MediaState' enumeration and the `VisualizationData'
+buffer pair. That is the closure a game reaches to play background music, and it
+is dependency-complete once three members of `Song' are set aside -- see below.
+
+**`MediaLibrary` is not selected, and neither are the four types it owns.**
+`Album', `Artist', `Genre' and `AlbumCollection' are *media-library* entities:
+their CNA routes live in `media_library.h' rather than in `media.h', and
+`cna_song_get_album' and its two siblings say in as many words that only a song
+obtained from a media library has one -- a song a caller created from a file path
+has no library context. So `Song.Artist', `Song.Album' and `Song.Genre' are
+declared missing under DEPENDENCY_NOT_SELECTED, exactly as
+`EffectParameter.GetValueTexture3D' is for `Texture3D'. Selecting the four types
+to satisfy three members would add fifty-three members that nothing in this
+repository could exercise, which is the reason the library closure was not chosen.
+
+**`MediaPlayer' is a static class and its two events are static.** Its members are
+therefore named `MEDIA-PLAYER-<member>', the static-class naming rule, and its
+event handlers take **no sender**: XNA raises both with `handler(null, args)',
+because there is no instance to be one. CNA agrees -- its two subscribe routes
+take a callback and a context and **no game handle at all**, the only
+subscription in this binding that does.
+
+**No public member of this package takes a game.** XNA's media API has no game
+argument, and CNA's routes need one for lifetime and thread affinity. The gap is
+closed the way `Keyboard.GetState' and the whole Audio surface close it: CNA
+permits one active game per process, so there is exactly one game a media
+operation could mean. With no live game the operation signals
+`CNA-INVALID-STATE-ERROR' naming what is missing, which is a projection limit and
+is written down in `docs/limitations.md' as one.")
+  (:use #:cl)
+  (:local-nicknames (#:xna #:microsoft.xna.framework))
+  (:export
+   ;; --- MediaState ---------------------------------------------------------
+   #:media-state #:media-state-value #:media-state-from-value #:all-media-state
+   ;; --- VisualizationData ---------------------------------------------------
+   #:visualization-data #:make-visualization-data #:frequencies #:samples
+   ;; --- Song ----------------------------------------------------------------
+   #:song #:song-from-uri
+   #:name #:duration #:is-rated #:rating #:play-count #:track-number
+   #:is-protected #:is-disposed #:song-equal
+   ;; --- SongCollection ------------------------------------------------------
+   #:song-collection #:count-of #:item #:songs-vector
+   ;; --- MediaQueue ----------------------------------------------------------
+   #:media-queue #:active-song-index #:active-song
+   ;; --- MediaPlayer ---------------------------------------------------------
+   #:media-player-play #:media-player-pause #:media-player-resume
+   #:media-player-stop #:media-player-move-next #:media-player-move-previous
+   #:media-player-get-visualization-data
+   #:media-player-is-shuffled #:media-player-is-repeating
+   #:media-player-queue #:media-player-state #:media-player-play-position
+   #:media-player-volume #:media-player-is-muted
+   #:media-player-is-visualization-enabled #:media-player-game-has-control
+   #:media-player-add-active-song-changed-handler
+   #:media-player-remove-active-song-changed-handler
+   #:media-player-add-media-state-changed-handler
+   #:media-player-remove-media-state-changed-handler))

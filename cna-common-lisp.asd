@@ -158,6 +158,17 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; active-game resolution, its buffer/offset/count validators and its TimeSpan
    ;; arithmetic, so it loads after the three that define them.
    (:file "audio/microphone")
+   ;; --- Microsoft.Xna.Framework.Media --------------------------------------
+   ;; The playback closure. After Audio because it resolves the active game the
+   ;; same way and because nothing here is a SoundEffect; before Content, which
+   ;; names neither. The enumeration and the buffer pair first -- both are pure
+   ;; values -- then Song and SongCollection, which are native objects, then the
+   ;; queue facade over them, then the static player that drives all three.
+   (:file "media/enums")
+   (:file "media/visualization-data")
+   (:file "media/song")
+   (:file "media/media-queue")
+   (:file "media/media-player")
    ;; --- Microsoft.Xna.Framework.Content ------------------------------------
    ;; The manager first, then the loaders that produce graphics objects, then
    ;; Game.Content, which needs both GAME and CONTENT-MANAGER to exist.
