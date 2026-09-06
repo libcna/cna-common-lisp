@@ -85,15 +85,34 @@ the streams, then the container, then the device.
 Whether it can be read, written or sought is **CNA's answer**, read when the
 stream opened, rather than a guess from the `FileAccess' that was asked for."))
 
-(defun %adopt-storage-stream (container handle operation)
-  "Build the stream over a handle CNA has already given us, as a child of CONTAINER."
-  (let ((stream (make-instance 'storage-stream
-                               :handle handle
-                               :ownership :owned
-                               :owner container
-                               :owner-thread
-                               (cna-lisp.internal:owner-thread-of container))))
+(defmethod initialize-instance :after ((stream storage-stream)
+                                      &key operation &allow-other-keys)
+  "Register with the container and read CNA's three capability flags.
+
+**Both steps go in the construction ledger**, which is the reason they are here
+rather than after `MAKE-INSTANCE' in `%ADOPT-STORAGE-STREAM'. Three native reads
+happen after the handle is taken, and a construction that failed at the second of
+them would otherwise leave a live stream registered on a container the caller
+never received one from -- and a container that then refuses disposal forever,
+because it owns a child nobody can reach. The ledger runs newest-first, so the
+registration is withdrawn and then the handle is closed.
+
+**The undo path is not reachable through the public API**, and that is stated
+rather than implied by an untested branch sitting here quietly. A stream is only
+ever built by `CREATE-FILE' and `OPEN-FILE', which name the class themselves, so
+the exploding-subclass case `tests/native/construction-atomicity.lisp' covers for
+every publicly constructible type cannot arise; and the three flag routes answer
+`CNA_RESULT_INVALID_ARGUMENT' only for a null output or an invalid handle, on a
+handle CNA has just returned. It is here because it is what every other adoption
+in this binding does -- `%ADOPT-SONG', `%ADOPT-SOUND-EFFECT', `%ADOPT-BUFFER' --
+and a reader should not have to work out why storage is the exception."
+  (let ((container (cna-lisp.internal:owner-of stream))
+        (handle (cna-lisp.internal:handle-of stream)))
+    (cna-lisp.internal:record-construction-undo
+     stream (lambda () (cna-lisp.internal.ffi::%storage-stream-close handle)))
     (cna-lisp.internal:register-child container stream)
+    (cna-lisp.internal:record-construction-undo
+     stream (lambda () (cna-lisp.internal:invalidate stream)))
     (flet ((flag (route)
              (cffi:with-foreign-object (out :uint8)
                (cna-lisp.internal:check-result (funcall route handle out)
@@ -104,8 +123,19 @@ stream opened, rather than a guess from the `FileAccess' that was asked for."))
             (slot-value stream 'can-write)
             (flag #'cna-lisp.internal.ffi::%storage-stream-get-can-write)
             (slot-value stream 'can-seek)
-            (flag #'cna-lisp.internal.ffi::%storage-stream-get-can-seek)))
-    stream))
+            (flag #'cna-lisp.internal.ffi::%storage-stream-get-can-seek)))))
+
+(defun %adopt-storage-stream (container handle operation)
+  "Build the stream over a handle CNA has already given us, as a child of CONTAINER.
+
+OPERATION is passed through so that a failure names the member the caller
+called -- `create-file' or `open-file' -- rather than this function."
+  (make-instance 'storage-stream
+                 :handle handle
+                 :ownership :owned
+                 :owner container
+                 :owner-thread (cna-lisp.internal:owner-thread-of container)
+                 :operation operation))
 
 (defmethod cna-lisp.internal:destroy-native ((stream storage-stream))
   "`cna_storage_stream_close' is the release, so closing *is* destroying.
