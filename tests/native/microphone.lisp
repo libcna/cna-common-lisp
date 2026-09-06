@@ -1026,3 +1026,99 @@ re-targeting index 0 at a different device."
                                                    :headset t
                                                    :buffer-duration 10000000)))))
             (signals xna:cna-invalid-state-error (audio:microphone-all)))))))
+
+;;; --- enumeration and subscription atomicity ---------------------------------
+
+(define-native-test a-failed-enumeration-publishes-no-half-built-snapshot
+  "Enumeration is several native queries per device, and any of them can fail.
+
+A microphone has no owned handle, so there is nothing to give back -- but the
+**cache** can still be corrupted, and in a worse way than a leaked handle: it is
+process-global and append-only, so a snapshot published with three of five
+devices in it would be a snapshot the *next* successful enumeration never fills
+in, because it starts from the cached count. The device at index three would
+become unreachable for the life of the process.
+
+So %ENUMERATE-MICROPHONES builds every new facade into a fresh list and appends it
+in one assignment. This asserts that: a failure part way through leaves the cache
+exactly as it was, the original condition reaches the caller, and the next
+enumeration -- with the fault removed -- produces the full set.
+
+**The fault is injected by redefining a private reader**, which is invasive and
+is the only way to reach this: the failure is a native query failing, and the
+qualification's devices do not fail. The original definition is restored however
+the test ends."
+  (with-microphone-game (game)
+    (let ((all (audio:microphone-all)))
+      (cond
+        ((null all) (%note-unavailable))
+        ((< (length all) 2)
+         (is (>= (length all) 1)
+             "this environment enumerates one device, so a failure part way ~
+              through a multi-device enumeration cannot be staged here"))
+        (t
+         (audio::%reset-microphone-cache)
+         (let ((original #'audio::%microphone-name-at)
+               (marker (make-condition 'xna:cna-io-error
+                                       :operation "enumeration fault probe")))
+           (unwind-protect
+                (progn
+                  ;; Fail on the *second* device, so the first has been built and
+                  ;; would be published by a projection that appended as it went.
+                  (setf (fdefinition 'audio::%microphone-name-at)
+                        (lambda (handle index operation)
+                          (if (plusp index)
+                              (error marker)
+                              (funcall original handle index operation))))
+                  (let ((signalled
+                          (handler-case (progn (audio:microphone-all) nil)
+                            (xna:cna-error (condition) condition))))
+                    (is (eq marker signalled)
+                        "the original condition must reach the caller unchanged; ~
+                         got ~s" signalled)))
+             (setf (fdefinition 'audio::%microphone-name-at) original))
+           ;; The cache is coherent: nothing was published, so it is still empty.
+           (is (null audio::*microphones*)
+               "a failure part way through must publish no facade at all; ~d ~
+                were left behind" (length audio::*microphones*))
+           (is (null audio::*default-microphone*)
+               "and no half-selected Default may survive it")
+           ;; And with the fault gone the full set appears, which is what a
+           ;; half-published snapshot would have made impossible.
+           (let ((again (audio:microphone-all)))
+             (is (= (length all) (length again))
+                 "the next enumeration must produce the whole set: ~d devices ~
+                  before the fault and ~d after" (length all) (length again)))))))))
+
+(define-native-test a-failed-subscribe-roots-no-callback-token
+  "The first of the four subscription split-brain states: the token is registered
+in Lisp and the native subscribe then fails.
+
+`%SUBSCRIBE-EVENT' registers a callback target *before* it calls CNA, because CNA
+needs the token as its context. If the route then fails, that token roots a Lisp
+object nothing can ever reach -- which the ownership tests would report as a
+registry that did not come back to zero. The machinery unregisters it in a
+`handler-case' and re-signals; this is the microphone family's proof that it does.
+
+The failure is provoked with a facade whose index is past CNA's count, which
+`cna_microphone_subscribe_buffer_ready_at` documents as
+`CNA_RESULT_INVALID_ARGUMENT`. Such a facade cannot arise from the public API --
+it is built directly here -- which is exactly why it is a usable fault injector."
+  (with-microphone-game (game)
+    (let ((all (audio:microphone-all)))
+      (if (null all)
+          (%note-unavailable)
+          (let ((before (int:callback-registry-count))
+                (past-the-end (make-instance 'audio:microphone
+                                             :index (length all)
+                                             :name "not a device CNA enumerates"
+                                             :sample-rate 44100
+                                             :headset t
+                                             :buffer-duration 10000000)))
+            (signals xna:cna-error
+              (audio:add-buffer-ready-handler
+               past-the-end (lambda (sender) (declare (ignore sender)))))
+            (is (= before (int:callback-registry-count))
+                "a failed subscribe must leave no rooted callback token behind")
+            (is (null (microsoft.xna.framework::%event-handlers past-the-end))
+                "and no local row claiming a registration it never got"))))))
