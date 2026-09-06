@@ -10,8 +10,9 @@
 #
 # **The proofs it requires are not written here.** They are in
 # `tools/qualification/rasterizer-proofs.json`, which is the one place they are
-# written at all: this script requires exactly the kinds that file lists, refuses
-# a run that produces a kind the file does not list, and
+# written at all: this script requires the kinds that file lists -- every one
+# whose "needs" capability this run actually has -- refuses a run that produces a
+# kind the file does not list, prints every kind it stood down and why, and
 # `tools/qualification/verify-numbers.py` renders the same list and its count into
 # the prose. That is deliberate. The list here used to be a comment, the loop
 # below used to be a second copy of it, and the documents used to be a third --
@@ -67,7 +68,47 @@ if ! grep -q '^rasterization : ' "$log"; then
     exit 1
 fi
 registry="$here/rasterizer-proofs.json"
-required=$(python3 -c "import json,sys; print(' '.join(p['kind'] for p in json.load(open(sys.argv[1]))['proofs']))" "$registry")
+
+# Which capabilities this run had. A proof may name one in the registry's
+# "needs" field, and a capability the run did not have is a proof no library
+# could have produced -- not a proof that went missing. `model' is the case that
+# forced this: `Load<Model>' refuses on CNA 0.21.0, because `cna_model_destroy'
+# on a content-loaded model is a null dereference there, so the model pixel proof
+# cannot exist on that ABI however well the rasteriser works. Requiring it
+# unconditionally made this whole lane unpassable against an admitted ABI.
+#
+# The capability comes from the runner, which prints one line saying whether the
+# loaded ABI can load a model at all; the suite asserts the refusal itself, so
+# standing the proof down here loses no evidence.
+capabilities=""
+if grep -q '^model loading : available' "$log"; then
+    capabilities="$capabilities model-loading"
+fi
+
+required=$(python3 -c "
+import json, sys
+have = set(sys.argv[2].split())
+for proof in json.load(open(sys.argv[1]))['proofs']:
+    needs = proof.get('needs')
+    if needs is None or needs in have:
+        print(proof['kind'])
+" "$registry" "$capabilities" | tr '\n' ' ')
+
+# Everything the registry names, satisfiable here or not: the second loop below
+# must still accept a stood-down kind if some other run produces it.
+registered=$(python3 -c "import json,sys; print(' '.join(p['kind'] for p in json.load(open(sys.argv[1]))['proofs']))" "$registry")
+
+# Say out loud which proofs were stood down and why, so a lane that requires less
+# than the registry names can never do it silently.
+for kind in $registered; do
+    case " $required " in
+        *" $kind "*) ;;
+        *)
+            echo "NOTE the '$kind' proof is not required by this run:" >&2
+            grep '^model loading : ' "$log" | sed 's/^/     /' >&2 || true
+            ;;
+    esac
+done
 
 for kind in $required; do
     if ! grep -q "^rasterization : $kind -- " "$log"; then
@@ -88,7 +129,7 @@ done
 produced=$(grep '^rasterization : ' "$log" | sed 's/^rasterization : //; s/ --.*//' \
                | grep -v '^none$' | sort -u)
 for kind in $produced; do
-    case " $required " in
+    case " $registered " in
         *" $kind "*) ;;
         *)
             echo "FAIL the run produced a '$kind' proof that $registry does not name." >&2
@@ -107,9 +148,12 @@ echo
 echo "  Proved, one claim per required kind, from $registry:"
 python3 -c "
 import json, sys, textwrap
+required = set(sys.argv[2].split())
 for proof in json.load(open(sys.argv[1]))['proofs']:
+    if proof['kind'] not in required:
+        continue
     print(textwrap.fill(proof['kind'] + ': ' + proof['claim'],
                         width=76, initial_indent='    ', subsequent_indent='      '))
-" "$registry"
+" "$registry" "$required"
 echo "  Not proved, and not claimed: anything about a physical monitor, and"
 echo "  anything about a GPU renderer -- SOFTWARE rasterises on the CPU."

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "The pixel proofs the rasterizer lane requires, and what each one claims. This file is the single source of truth for both the gate and the prose: tools/qualification/rasterizer.sh requires exactly these kinds and refuses a run that produces a kind not listed here, and tools/qualification/verify-numbers.py renders the count and the list into the documents. A proof added to the suite and not to this file is not required by the lane and does not appear in the prose; one added here and not to the suite fails the lane. Neither can drift quietly, which is what the hand-written 'seven kinds' had already done.",
+  "description": "The pixel proofs the rasterizer lane requires, and what each one claims. This file is the single source of truth for both the gate and the prose: tools/qualification/rasterizer.sh requires exactly these kinds and refuses a run that produces a kind not listed here, and tools/qualification/verify-numbers.py renders the count and the list into the documents. A proof added to the suite and not to this file is not required by the lane and does not appear in the prose; one added here and not to the suite fails the lane. Neither can drift quietly, which is what the hand-written 'seven kinds' had already done. A proof may carry a \"needs\" capability: it is required only on a run where the capability holds, and tools/qualification/rasterizer.sh prints the ones it stood down and why rather than quietly requiring less. That exists because \"model\" is not obtainable on every admitted ABI -- Load<Model> refuses on CNA 0.21.0 -- and a lane that requires it unconditionally cannot pass there at all.",
   "proofs": [
     {
       "kind": "clear",
@@ -36,7 +36,8 @@
     },
     {
       "kind": "model",
-      "claim": "a Model loaded through ContentManager.Load<Model>, whose mesh geometry lives in a VertexBuffer and an IndexBuffer the model owns, reached the back buffer through ModelMesh.Draw -- each of its two meshes painting its own colour on the pixels its own triangle covers, and neither on the other's"
+      "claim": "a Model loaded through ContentManager.Load<Model>, whose mesh geometry lives in a VertexBuffer and an IndexBuffer the model owns, reached the back buffer through ModelMesh.Draw -- each of its two meshes painting its own colour on the pixels its own triangle covers, and neither on the other's",
+      "needs": "model-loading"
     }
   ]
 }

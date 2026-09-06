@@ -35,6 +35,22 @@
     ;; The kinds are kept apart because they are different claims: Clear reaching
     ;; the back buffer says nothing about whether SpriteBatch rasterises, and
     ;; neither says anything about the primitive pipeline.
+    ;; Which pixel proofs are *obtainable* here is not the same question as
+    ;; which ones this run produced, and one of them depends on the loaded ABI
+    ;; rather than on the renderer: `Load<Model>' refuses on CNA 0.21.0, so the
+    ;; `model' proof cannot exist there however well the rasteriser works. The
+    ;; lane needs to be told, or it demands a proof no library can produce and
+    ;; the whole lane fails on an admitted ABI -- which is what it did.
+    (when (native-library-requested-p)
+      (if (model-loading-available-p)
+          (format t "~&model loading : available -- the `model' pixel proof is ~
+                     obtainable on this ABI and this lane requires it~%")
+          (format t "~&model loading : refused by this ABI (~a) -- ~
+                     cna_model_destroy on a content-loaded model is a null ~
+                     dereference there, so Load<Model> refuses and the `model' ~
+                     pixel proof cannot be produced. The refusal itself is ~
+                     asserted by the suite, which is a result and not a skip~%"
+                  (int:format-abi-version (int:loaded-abi-version)))))
     (when (native-library-requested-p)
       (if *rasterization-evidence*
           (dolist (entry (reverse *rasterization-evidence*))

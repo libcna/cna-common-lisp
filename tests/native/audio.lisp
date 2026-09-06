@@ -1738,7 +1738,7 @@ completes, and the **frame call itself re-signals it** once control is back in
 Lisp -- the original condition object, not a description of it.
 
 **This test used to assert the opposite**, that the condition was contained and
-then lost, and called the loss "the documented limit", while the public
+then lost, and called the loss \"the documented limit\", while the public
 docstring on ADD-BUFFER-NEEDED-HANDLER promised a re-signal. Both could not be
 true: CALL-NATIVE-FRAME cleared the pending condition unread on every successful
 call. src/internal/callback-conditions.lisp is the mechanism that makes the
