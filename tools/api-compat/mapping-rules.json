@@ -7496,7 +7496,7 @@
           "unified_with": [
             "Play(Single,Single,Single)"
           ],
-          "reason": "The overload that supplies no keyword at all, told from its sibling by the absence of :VOLUME. XNA gives the two overloads one name and its no-argument body is literally Play(1.0f, 0.0f, 0.0f), so one generic function with an optional settings triple loses neither. The two shapes are enforced at run time by %CHECK-OVERLOAD-KEYWORDS: the three settings are one indivisible overload, so :VOLUME alone -- and the five other partial combinations -- name no member and are refused rather than completed with defaults. **Play validates nothing itself**: its body assigns the three to a pooled SoundEffectInstance through set_Volume, set_Pitch and set_Pan and then calls Play(), so those setters' ranges and their order are this member's."
+          "reason": "The overload that supplies no keyword at all, told from its sibling by supplying the empty set rather than by any one keyword's absence: :PITCH alone also lacks :VOLUME and names no member either. XNA gives the two overloads one name and its no-argument body is literally Play(1.0f, 0.0f, 0.0f), so one generic function with an optional settings triple loses neither. The two shapes are enforced at run time by %CHECK-OVERLOAD-KEYWORDS: the three settings are one indivisible overload, so :VOLUME alone -- and the five other partial combinations -- name no member and are refused rather than completed with defaults. **Play validates nothing itself**: its body assigns the three to a pooled SoundEffectInstance through set_Volume, set_Pitch and set_Pan and then calls Play(), so those setters' ranges and their order are this member's."
         },
         "Play(Single,Single,Single)": {
           "lisp": "play",
@@ -7510,7 +7510,7 @@
           "unified_with": [
             "Play()"
           ],
-          "reason": "See Play(). The asymmetry is XNA's and CNA's alike: pan is range-checked and pitch is not. The two shapes are enforced at run time by %CHECK-OVERLOAD-KEYWORDS: the three settings are one indivisible overload, so :VOLUME alone -- and the five other partial combinations -- name no member and are refused rather than completed with defaults. **Play validates nothing itself**: its body assigns the three to a pooled SoundEffectInstance through set_Volume, set_Pitch and set_Pan and then calls Play(), so those setters' ranges and their order are this member's."
+          "reason": "See Play(). The long overload, spelled with all three of :VOLUME, :PITCH and :PAN. This rule used to add \"the asymmetry is XNA's and CNA's alike: pan is range-checked and pitch is not\", which was the pre-audit assumption read off CNA -- CNA clamps pitch -- and which contradicted the sentence beside it in this same reason. All three ranges apply, in set_Volume, set_Pitch, set_Pan order. The two shapes are enforced at run time by %CHECK-OVERLOAD-KEYWORDS: the three settings are one indivisible overload, so :VOLUME alone -- and the five other partial combinations -- name no member and are refused rather than completed with defaults. **Play validates nothing itself**: its body assigns the three to a pooled SoundEffectInstance through set_Volume, set_Pitch and set_Pan and then calls Play(), so those setters' ranges and their order are this member's."
         },
         "Dispose()": {
           "lisp": "dispose",
@@ -7523,7 +7523,7 @@
           "generic": true,
           "setf": false,
           "status": "partial",
-          "reason": "**Partial, and the arithmetic is why.** XNA's Duration is a field its constructor fills in from AudioFormat.DurationFromSize, which ends in TimeSpan.FromMilliseconds -- `(long)(v + 0.5) * 10000' in the pinned mscorlib, so every duration XNA reports is a whole number of milliseconds. cna_sound_effect_get_duration_ticks does not quantise: measured against 0.21.0, 100 mono frames at 8000 Hz answer 125000 ticks through the route and 130000 through XNA's arithmetic, and 1000 stereo frames at 22050 Hz answer 453514 against 450000. Wherever this binding knows the format it computes XNA's answer instead -- both constructors, and FromStream, which parses the wave header -- and those are exact. A SoundEffect obtained through ContentManager.Load was never handed to this binding as bytes and ABI 0.21.0 has no route reporting an effect's sample rate, channel count or data length, so there is nothing to compute from and the route's tick count is all there is. It can differ from XNA's by up to half a millisecond. Answering it is better than refusing a member XNA always answers; calling it complete would be claiming an agreement that was measured to be false. docs/limitations.md."
+          "reason": "**Partial, and the arithmetic is why.** XNA's Duration is a field its constructor fills in from AudioFormat.DurationFromSize, which ends in TimeSpan.FromMilliseconds -- `(long)(v + 0.5) * 10000' in the pinned mscorlib, so every duration XNA reports is a whole number of milliseconds. cna_sound_effect_get_duration_ticks does not quantise: measured against 0.21.0, 100 mono frames at 8000 Hz answer 125000 ticks through the route and 130000 through XNA's arithmetic, and 1000 stereo frames at 22050 Hz answer 453514 against 450000. Wherever this binding knows the format it computes XNA's answer instead -- both constructors, and FromStream, which parses the wave header -- and those are exact. A SoundEffect obtained through ContentManager.Load was never handed to this binding as bytes and neither admitted ABI has a route reporting an effect's sample rate, channel count or data length -- audio.h is byte for byte the same in 0.21.0 and 0.22.0 -- so there is nothing to compute from and the route's tick count is all there is. It can differ from XNA's by up to half a millisecond. Answering it is better than refusing a member XNA always answers; calling it complete would be claiming an agreement that was measured to be false. docs/limitations.md."
         }
       },
       "not_applicable": {}
@@ -7534,6 +7534,36 @@
       "lisp_kind": "class",
       "constructors": {},
       "member_overrides": {
+        "State": {
+          "lisp": "state",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, and the one setting-shaped getter that really does read the voice: 104 bytes of IL that take voiceHandleLock, throw ObjectDisposedException when disposed and then call the native GetState. It goes through cna_sound_effect_instance_get_info and refuses a disposed instance, which is what XNA does. Translated by name through the enumeration table rather than passed through as a number."
+        },
+        "Volume": {
+          "lisp": "volume",
+          "generic": true,
+          "setf": true,
+          "reason": "XNA's currentVolume field. The projection keeps this in a managed slot rather than reading cna_sound_effect_instance_get_info, because the pinned getter is a seven-byte `ldfld' with no IsDisposed test: it answers after the instance is disposed, and reading it through a route that needs the handle made it refuse there instead. The slot is written after the native setter succeeds, which is exactly where XNA's `stfld' is -- after the call and after ThrowExceptionFromErrorCode -- so a refused set leaves the old value readable. State is the only one of this type's six public getters whose IL reads the voice, and it is the only one that is guarded. tests/native/audio.lisp cross-checks the slot against get_info on a live instance. The setter's own range, [0, 1] with a NaN refused, is enforced before the route because CNA passes any finite value through unclamped."
+        },
+        "Pitch": {
+          "lisp": "pitch",
+          "generic": true,
+          "setf": true,
+          "reason": "XNA's currentPitch field. The projection keeps this in a managed slot rather than reading cna_sound_effect_instance_get_info, because the pinned getter is a seven-byte `ldfld' with no IsDisposed test: it answers after the instance is disposed, and reading it through a route that needs the handle made it refuse there instead. The slot is written after the native setter succeeds, which is exactly where XNA's `stfld' is -- after the call and after ThrowExceptionFromErrorCode -- so a refused set leaves the old value readable. State is the only one of this type's six public getters whose IL reads the voice, and it is the only one that is guarded. tests/native/audio.lisp cross-checks the slot against get_info on a live instance. The setter's own range, [-1, 1] with a NaN refused, is enforced before the route because CNA clamps where XNA throws."
+        },
+        "Pan": {
+          "lisp": "pan",
+          "generic": true,
+          "setf": true,
+          "reason": "XNA's currentPan field. The projection keeps this in a managed slot rather than reading cna_sound_effect_instance_get_info, because the pinned getter is a seven-byte `ldfld' with no IsDisposed test: it answers after the instance is disposed, and reading it through a route that needs the handle made it refuse there instead. The slot is written after the native setter succeeds, which is exactly where XNA's `stfld' is -- after the call and after ThrowExceptionFromErrorCode -- so a refused set leaves the old value readable. State is the only one of this type's six public getters whose IL reads the voice, and it is the only one that is guarded. tests/native/audio.lisp cross-checks the slot against get_info on a live instance. This is also the member where the managed slot and CNA's mixer are allowed to disagree while the instance is alive: UnsafeApply3D stores is3d and listenerData and no other field, so XNA's Pan keeps answering the caller's assignment after a positioning, while CNA recomputes a spatial pan and reports it through get_info. The public property is the assignment."
+        },
+        "IsLooped": {
+          "lisp": "is-looped",
+          "generic": true,
+          "setf": true,
+          "reason": "XNA's looped field. The projection keeps this in a managed slot rather than reading cna_sound_effect_instance_get_info, because the pinned getter is a seven-byte `ldfld' with no IsDisposed test: it answers after the instance is disposed, and reading it through a route that needs the handle made it refuse there instead. The slot is written after the native setter succeeds, which is exactly where XNA's `stfld' is -- after the call and after ThrowExceptionFromErrorCode -- so a refused set leaves the old value readable. State is the only one of this type's six public getters whose IL reads the voice, and it is the only one that is guarded. tests/native/audio.lisp cross-checks the slot against get_info on a live instance. One extra difference from the three settings: XNA's set_IsLooped stores the field and makes no native call at all -- the flag is read later, in Play, to choose the loop count of the packet it submits -- while CNA has to be told, so the setter here does call cna_sound_effect_instance_set_is_looped. Both refuse once playback has begun, XNA with InvalidOperationException(InvalidIsLoopedCall) and CNA with CNA_RESULT_INVALID_STATE."
+        },
         "Stop()": {
           "lisp": "stop",
           "generic": true,
