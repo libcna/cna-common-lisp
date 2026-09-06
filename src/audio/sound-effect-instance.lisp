@@ -42,6 +42,14 @@ selected contract.")
    (%positioned :initform nil :accessor %instance-positioned-p
                 :documentation "True once APPLY-3D has succeeded on this instance.
 XNA calls this `is3d' and uses it for exactly one thing: refusing the Pan setter.")
+   (%volume :initform 1.0f0 :accessor %instance-volume
+            :documentation "XNA's `currentVolume' field, and the value Volume answers.")
+   (%pitch :initform 0.0f0 :accessor %instance-pitch
+           :documentation "XNA's `currentPitch' field, and the value Pitch answers.")
+   (%pan :initform 0.0f0 :accessor %instance-pan
+         :documentation "XNA's `currentPan' field, and the value Pan answers.")
+   (%looped :initform nil :accessor %instance-looped
+            :documentation "XNA's `looped' field, and the value IsLooped answers.")
    (%played :initform nil :accessor %instance-played-p
             :documentation "True once PLAY has been called on this instance, ever.
 
@@ -119,13 +127,20 @@ destroy a sound effect that still has live instances."
       (setf (%sound-effect-instances effect)
             (remove instance (%sound-effect-instances effect) :test #'eq)))))
 
-;;; --- the info snapshot the readers come from -------------------------------
+;;; --- the info snapshot -------------------------------------------------------
 
 (defmacro %with-instance-info ((var instance operation) &body body)
   "Read `cna_sound_effect_instance_get_info' and bind VAR to a reader macro.
 
-CNA answers state, looping, volume, pitch and pan in one versioned struct, so
-five readers are one call rather than five. `(VAR slot)' reads a field."
+CNA answers state, looping, volume, pitch and pan in one versioned struct.
+`(VAR slot)' reads a field.
+
+**`STATE' is the only public reader that comes from here**, because it is the only
+one of the six whose pinned IL reads the voice; the other four are managed fields
+and %INSTANCE-MANAGED-SETTINGS says why. The remaining four fields are not dead:
+they are what `tests/native/audio.lisp' cross-checks the managed slots against, so
+a disagreement between what this binding reports and what CNA's mixer holds is a
+test failure rather than an invisible drift."
   (let ((raw (gensym "INFO")) (i (gensym "INSTANCE")) (op (gensym "OP")))
     `(let ((,i ,instance) (,op ,operation))
        (cna-lisp.internal:check-usable ,i ,op)
@@ -153,6 +168,60 @@ five readers are one call rather than five. `(VAR slot)' reads a field."
                         ',(intern (symbol-name slot) '#:cna-lisp.internal.ffi))))
            ,@body)))))
 
+;;; --- the four settings XNA keeps in managed fields --------------------------
+
+(defun %instance-managed-settings (instance)
+  "Volume, pitch, pan and looping as INSTANCE's managed slots hold them.
+
+**Why these four are slots here and not reads of `cna_sound_effect_instance_get_info'.**
+The pinned IL settles it, member by member, and it does not answer the same way
+for all six of this type's public getters:
+
+    get_State     104 bytes: takes voiceHandleLock, throws ObjectDisposedException
+                  when disposed, then calls the native GetState. **Guarded.**
+    get_IsDisposed  7 bytes: ldfld disposed.
+    get_Volume      7 bytes: ldfld currentVolume.
+    get_Pitch       7 bytes: ldfld currentPitch.
+    get_Pan         7 bytes: ldfld currentPan.
+    get_IsLooped    7 bytes: ldfld looped.
+
+So `State' is the only one of the six that reads the voice, and the four settings
+are bare field reads with no disposal test at all. They keep answering after the
+instance is disposed -- including after a `SoundEffect' cascade disposed it -- and
+that is observable behaviour rather than an accident: a program may read the
+volume of an instance it has finished with.
+
+Reading them through CNA made all four refuse with `CNA-DISPOSED-ERROR` where XNA
+answers, because the route needs a handle that is gone. Keeping them here fixes
+that and three more things at once:
+
+* **`APPLY-3D` does not write them.** `UnsafeApply3D' stores exactly two fields,
+  `is3d' and `listenerData'; it never touches `currentVolume', `currentPitch' or
+  `currentPan'. CNA's mixer, on the other hand, computes a spatial pan and a
+  Doppler pitch and `get_info' reports those. Answering CNA's numbers would be
+  reporting the mixer's state through a property XNA defines as the value the
+  caller last assigned.
+* **The write happens after the route succeeds, exactly where XNA's does.** Each
+  of `set_Volume', `set_Pitch' and `set_Pan' validates, calls its native setter,
+  lets `ThrowExceptionFromErrorCode' rethrow, and only then `stfld's the field. A
+  refused or failed set therefore leaves the old value readable, and so it does
+  here.
+* **The defaults are XNA's.** Its constructor sets `currentVolume' to 1 and then
+  calls `set_Volume(1)', `set_Pitch(0)', `set_Pan(0)' and stores `looped' false.
+  The slots start at those four values, and `tests/native/audio.lisp' pins that a
+  freshly created CNA instance reports the same four through `get_info', so the
+  managed defaults and the native state agree rather than merely coexisting.
+
+`IS-LOOPED' is here for the same reason and one more: XNA's `set_IsLooped' stores
+the field and makes **no** native call -- the flag is read later, in `Play', to
+choose the loop count of the packet it submits. CNA needs to be told, so the
+setter here does call the route; the value the getter answers is still the
+managed one."
+  (values (%instance-volume instance)
+          (%instance-pitch instance)
+          (%instance-pan instance)
+          (%instance-looped instance)))
+
 ;;; --- readers ---------------------------------------------------------------
 
 (defmethod state ((instance sound-effect-instance))
@@ -165,21 +234,38 @@ is why agreement is not a reason to skip the table."
     (sound-state-from-value (info state))))
 
 (defmethod is-looped ((instance sound-effect-instance))
-  "SoundEffectInstance.IsLooped's getter."
-  (%with-instance-info (info instance "is-looped")
-    (not (zerop (info is-looped)))))
+  "SoundEffectInstance.IsLooped's getter: the managed field, answered after disposal.
+
+    IL_0000: ldarg.0
+    IL_0001: ldfld bool ...SoundEffectInstance::looped
+    IL_0006: ret
+
+Seven bytes and no `IsDisposed' test. See %INSTANCE-MANAGED-SETTINGS for why that
+is reproduced with a slot rather than with a route."
+  (%instance-looped instance))
 
 (defmethod volume ((instance sound-effect-instance))
-  "SoundEffectInstance.Volume's getter."
-  (%with-instance-info (info instance "volume") (info volume)))
+  "SoundEffectInstance.Volume's getter: the managed field, answered after disposal.
+
+`get_Volume' is `ldfld currentVolume' and nothing else. See
+%INSTANCE-MANAGED-SETTINGS."
+  (%instance-volume instance))
 
 (defmethod pitch ((instance sound-effect-instance))
-  "SoundEffectInstance.Pitch's getter."
-  (%with-instance-info (info instance "pitch") (info pitch)))
+  "SoundEffectInstance.Pitch's getter: the managed field, answered after disposal.
+
+`get_Pitch' is `ldfld currentPitch' and nothing else. See
+%INSTANCE-MANAGED-SETTINGS."
+  (%instance-pitch instance))
 
 (defmethod pan ((instance sound-effect-instance))
-  "SoundEffectInstance.Pan's getter."
-  (%with-instance-info (info instance "pan") (info pan)))
+  "SoundEffectInstance.Pan's getter: the managed field, answered after disposal.
+
+`get_Pan' is `ldfld currentPan' and nothing else -- in particular APPLY-3D does
+not write it, so a positioned instance still answers the value the caller last
+assigned rather than the spatial pan CNA computed. See
+%INSTANCE-MANAGED-SETTINGS."
+  (%instance-pan instance))
 
 (defmethod is-disposed ((instance sound-effect-instance))
   "SoundEffectInstance.IsDisposed, from this binding's own disposal state."
@@ -219,7 +305,9 @@ nowhere."
      (cna-lisp.internal.ffi::%sound-effect-instance-set-volume
       (cna-lisp.internal:handle-of instance) v)
      operation :object-type 'sound-effect-instance)
-    v))
+    ;; `stfld currentVolume' is the last instruction of XNA's setter, after the
+    ;; native call and after the rethrow. See %INSTANCE-MANAGED-SETTINGS.
+    (setf (%instance-volume instance) v)))
 
 (defmethod (setf pitch) (value (instance sound-effect-instance))
   "SoundEffectInstance.Pitch's setter: [-1, 1], NaN refused.
@@ -234,7 +322,7 @@ in XNA; the public behaviour here is XNA's."
      (cna-lisp.internal.ffi::%sound-effect-instance-set-pitch
       (cna-lisp.internal:handle-of instance) v)
      operation :object-type 'sound-effect-instance)
-    v))
+    (setf (%instance-pitch instance) v)))
 
 (defmethod (setf pan) (value (instance sound-effect-instance))
   "SoundEffectInstance.Pan's setter: [-1, 1], NaN refused, and refused outright
@@ -272,7 +360,7 @@ refuses, so this refuses."
        (cna-lisp.internal.ffi::%sound-effect-instance-set-pan
         (cna-lisp.internal:handle-of instance) v)
        operation :object-type 'sound-effect-instance)
-      v)))
+      (setf (%instance-pan instance) v))))
 
 (defmethod (setf is-looped) (value (instance sound-effect-instance))
   "SoundEffectInstance.IsLooped's setter, which is legal **only before playback**.
@@ -290,7 +378,7 @@ having to detect the state itself."
       (cna-lisp.internal:handle-of instance)
       (cna-lisp.internal.ffi:cna-bool-of value))
      operation :object-type 'sound-effect-instance)
-    (and value t)))
+    (setf (%instance-looped instance) (and value t))))
 
 ;;; --- the transport ---------------------------------------------------------
 

@@ -1036,14 +1036,12 @@ instance is disposed in exactly the sense a directly disposed one is, and every
 member that opens with an `IsDisposed' test throws `ObjectDisposedException' --
 `State', the transport, `Apply3D' and the three settings' setters.
 
-**The three getters are the exception, and the IL is why**: `get_Volume',
-`get_Pitch' and `get_Pan' are each a bare `ldfld' with no disposal test, so they
-answer the last value stored. This binding reads them through
-`cna_sound_effect_instance_get_info', which needs the handle -- so they refuse
-here where XNA answers, and that is a divergence rather than a match. It is
-recorded in docs/limitations.md rather than papered over with a cached value,
-because caching three floats to imitate a field read would make the object model
-lie about where its state lives.
+**The four settings are the exception, and the IL is why**: `get_Volume',
+`get_Pitch', `get_Pan' and `get_IsLooped' are each a seven-byte `ldfld' with no
+disposal test, so they answer the last value stored. They are managed slots here
+for that reason and this test is where the difference is visible -- it used to
+assert the opposite, that all four refused, and called that a divergence in its
+own comment while the compatibility report went on calling the members complete.
 
 Disposing the instance again afterwards is legal and does nothing, because
 `Dispose(bool)' returns early when `IsDisposed' is already true."
@@ -1051,8 +1049,17 @@ Disposing the instance again afterwards is legal and does nothing, because
     (with-sound-effect (effect :buffer (pcm16-silence 800)
                                :sample-rate 8000 :channels :mono)
       (let ((instance (audio:create-instance effect)))
+        (setf (audio:volume instance) 0.25
+              (audio:pitch instance) -0.5
+              (audio:pan instance) 0.75
+              (audio:is-looped instance) t)
         (xna:dispose effect)
         (is (audio:is-disposed instance))
+        ;; the four bare field reads keep answering, exactly as XNA's do
+        (is (= 0.25 (audio:volume instance)))
+        (is (= -0.5 (audio:pitch instance)))
+        (is (= 0.75 (audio:pan instance)))
+        (is (audio:is-looped instance))
         ;; every member that XNA guards with IsDisposed
         (signals xna:cna-disposed-error (audio:state instance))
         (signals xna:cna-disposed-error (audio:play instance))
@@ -1066,6 +1073,73 @@ Disposing the instance again afterwards is legal and does nothing, because
         ;; and disposing it again is a no-op rather than a second native destroy
         (xna:dispose instance)
         (is (audio:is-disposed instance)))))
+
+(define-audio-device-test the-four-settings-are-managed-fields-that-cna-agrees-with
+
+  "The other half of the managed-slot decision, and the half that could go wrong
+quietly.
+
+Answering a disposed instance is only correct if the answer was correct while it
+was alive, so this reads both sides: the public getter, and
+`cna_sound_effect_instance_get_info' through the private macro. They must agree
+on a fresh instance -- at XNA's constructor defaults, 1, 0, 0 and false -- and
+after each setter.
+
+**APPLY-3D is where they are allowed to part, and only there.** XNA's
+`UnsafeApply3D' stores `is3d' and `listenerData' and nothing else; CNA's mixer
+recomputes pan and pitch from the emitter's position and reports those through
+`get_info'. So after a positioning the public `PAN' must still be the value the
+caller assigned. This asserts that it is, and does not assert what CNA's number
+became -- that is the mixer's business and pinning it would be pinning CNA's
+spatial arithmetic to this test."
+
+    (with-sound-effect (effect :buffer (pcm16-silence 8000)
+                               :sample-rate 8000 :channels :mono)
+      (let ((instance (audio:create-instance effect)))
+        (unwind-protect
+             (flet ((native ()
+                      (audio::%with-instance-info (info instance "test")
+                        (list (info cna-lisp.internal.ffi::volume)
+                              (info cna-lisp.internal.ffi::pitch)
+                              (info cna-lisp.internal.ffi::pan)
+                              (not (zerop (info cna-lisp.internal.ffi::is-looped)))))))
+               ;; XNA's constructor sets currentVolume to 1 and then calls
+               ;; set_Volume(1), set_Pitch(0), set_Pan(0) and stores looped false.
+               ;; The slots start there; CNA's fresh instance has to agree, or the
+               ;; defaults would be this binding's invention rather than XNA's.
+               (is (equal (list 1.0 0.0 0.0 nil)
+                          (multiple-value-list
+                           (audio::%instance-managed-settings instance)))
+                   "a fresh instance is at XNA's four constructor defaults")
+               (is (equal (list 1.0 0.0 0.0 nil) (native))
+                   "and CNA's own info agrees with them")
+               (setf (audio:volume instance) 0.5)
+               (setf (audio:pitch instance) 0.25)
+               (setf (audio:pan instance) -0.75)
+               (setf (audio:is-looped instance) t)
+               (is (equal (list 0.5 0.25 -0.75 t)
+                          (multiple-value-list
+                           (audio::%instance-managed-settings instance))))
+               (is (equal (list 0.5 0.25 -0.75 t) (native))
+                   "every setter reached CNA as well as the slot")
+               ;; A refused set leaves the old value readable, because XNA's
+               ;; `stfld' is after its native call and after the rethrow.
+               (signals xna:cna-argument-out-of-range-error
+                 (setf (audio:volume instance) 2.0))
+               (is (= 0.5 (audio:volume instance))
+                   "a refused setter does not disturb the value")
+               ;; And the one place the two are allowed to disagree.
+               (audio:apply-3d instance
+                               (make-instance 'audio:audio-listener)
+                               (let ((emitter (make-instance 'audio:audio-emitter)))
+                                 (setf (audio:position emitter)
+                                       (xna:make-vector3 10.0 0.0 0.0))
+                                 emitter))
+               (is (= -0.75 (audio:pan instance))
+                   "Apply3D does not write currentPan, so PAN is still the assignment")
+               (is (= 0.5 (audio:volume instance)))
+               (is (= 0.25 (audio:pitch instance))))
+          (ignore-errors (xna:dispose instance))))))
 
 (define-audio-device-test disposing-an-instance-twice-destroys-its-handle-once
   "Disposal is idempotent at the Lisp level and must not reach CNA twice: a second

@@ -1396,6 +1396,23 @@ a field the constructor filled in — no disposal test, no native call — so a
 disposed `SoundEffect` still answers its duration there, and does here. Adding a
 guard would refuse a program XNA runs.
 
+**Four members of `SoundEffectInstance` are the same exception, and used to be
+handled the other way.** `Volume`, `Pitch`, `Pan` and `IsLooped` are each a
+seven-byte `ldfld` of a managed field, with no `IsDisposed` test; `State` is the
+only one of that type's six public getters that reads the voice, and it is
+guarded. Reading all five through `cna_sound_effect_instance_get_info` made the
+four refuse with `CNA-DISPOSED-ERROR` where XNA answers — including after a
+`SoundEffect` cascade, which is the common way to reach the state. They are
+managed slots now, written after the native setter succeeds exactly where XNA's
+`stfld` is, and the divergence is gone rather than documented.
+
+The same change fixes a second disagreement that had nothing to do with disposal.
+`Apply3D` writes `is3d` and `listenerData` and no other field, so XNA's `Pan`
+keeps answering the value the caller assigned; CNA's mixer recomputes a spatial
+pan and reported *that* through `get_info`. The public property is XNA's
+assignment again. `tests/native/audio.lisp` cross-checks the slots against
+`get_info` on a live instance, so the two may only part where the IL says they do.
+
 ### `Volume` is unclamped in CNA, `Pitch` is clamped, and XNA refuses both
 
 | Member | CNA | XNA, and so here |
