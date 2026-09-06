@@ -140,6 +140,28 @@
         (format t "here says a sound was captured or that a physical microphone~%")
         (format t "works. tools/qualification/microphone.sh runs this under SDL's~%")
         (format t "dummy driver, whose capture devices produce silence.~%")))
+    ;; The media surface, reported separately again, and for the third time for
+    ;; the same reason: playback of a *song* goes through routes of its own, and a
+    ;; run that qualified the sound-effect transport says nothing about whether
+    ;; the media player's did. Its five levels are five claims.
+    (when (native-library-requested-p)
+      (if *media-evidence*
+          (dolist (entry (reverse *media-evidence*))
+            (format t "~&media         : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&media         : NOT RUN -- no media test recorded evidence~%"))
+      (when (and (media-proved-p :unavailable) (not (media-proved-p :playback)))
+        (format t "No playback device opened, so the media transport was not~%")
+        (format t "exercised. The unavailable branch is qualified -- a song was~%")
+        (format t "created anyway and the refusal arrived at Play -- and the~%")
+        (format t "available one is not. SDL_AUDIODRIVER=dummy opens a device~%")
+        (format t "without a speaker.~%"))
+      (when (and (media-proved-p :playback) (not (media-proved-p :play-clock)))
+        (format t "The media transport transitioned and the play clock was not~%")
+        (format t "observed: those are two claims and this run supports one.~%"))
+      (when (media-proved-p :playback)
+        (format t "No media claim above is about audible output. A dummy device~%")
+        (format t "accepting a transport transition is not music being heard, and~%")
+        (format t "a play position that advances is a clock rather than a sound.~%")))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))

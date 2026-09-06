@@ -328,12 +328,14 @@ refuses first."))
 (defmethod is-protected ((song song))
   (let ((operation "is-protected"))
     (cna-lisp.internal:check-usable song operation)
-    (cffi:with-foreign-object (value :int32)
+    ;; `CNA_Bool' is one byte; reading it as four reads three the route never
+    ;; wrote. CNA-TRUE-P over a `:uint8' is the established shape.
+    (cffi:with-foreign-object (value :uint8)
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%song-get-is-protected
         (cna-lisp.internal:handle-of song) value)
        operation :object-type 'song)
-      (/= (cffi:mem-ref value :int32) cna-lisp.internal.ffi::+false+))))
+      (cna-lisp.internal.ffi:cna-true-p (cffi:mem-ref value :uint8)))))
 
 ;;; --- disposal ---------------------------------------------------------------
 
@@ -391,14 +393,13 @@ song is never equal to `NIL', which is `op_Equality''s own null handling."
         (t (let ((operation "song-equal"))
              (cna-lisp.internal:check-usable first operation)
              (cna-lisp.internal:check-usable second operation)
-             (cffi:with-foreign-object (out :int32)
+             (cffi:with-foreign-object (out :uint8)
                (cna-lisp.internal:check-result
                 (cna-lisp.internal.ffi::%song-equals
                  (cna-lisp.internal:handle-of first)
                  (cna-lisp.internal:handle-of second) out)
                 operation :object-type 'song)
-               (/= (cffi:mem-ref out :int32)
-                   cna-lisp.internal.ffi::+false+))))))
+               (cna-lisp.internal.ffi:cna-true-p (cffi:mem-ref out :uint8)))))))
 
 (defmethod xna:clr-type-name ((song song))
   "The .NET type name CNA reports for the song type."

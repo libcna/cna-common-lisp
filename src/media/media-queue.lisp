@@ -156,14 +156,15 @@ original's and is reproduced rather than smoothed over."))
     (if (= -1 (active-song-index queue))
         nil
         (%with-queue (handle operation)
-          (cffi:with-foreign-objects ((out :uint64) (available :int32))
+          (cffi:with-foreign-objects ((out :uint64) (available :uint8))
             (cna-lisp.internal:check-result
              (cna-lisp.internal.ffi::%media-queue-get-active-song handle out available)
              operation :object-type 'media-queue)
             ;; CNA reports availability separately and leaves the handle
             ;; untouched when there is none, so the flag is read first.
-            (when (/= (cffi:mem-ref available :int32)
-                      cna-lisp.internal.ffi::+false+)
+            ;; `CNA_Bool' is one byte, so it is read as one.
+            (when (cna-lisp.internal.ffi:cna-true-p
+                   (cffi:mem-ref available :uint8))
               (%adopt-song-handle (%media-game operation)
                                   (cffi:mem-ref out :uint64) operation)))))))
 

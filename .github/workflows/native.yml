@@ -390,6 +390,26 @@ jobs:
           CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
         run: tools/qualification/microphone.sh
 
+      # The song-playback surface, and a **third** step rather than more lanes in
+      # either of the two above: a song is not a sound effect and not a capture
+      # device, it goes through media_player.h routes of its own, and a run that
+      # qualified the sound-effect transport says nothing about the media
+      # player's. Same process-per-driver constraint, same two deterministic
+      # branches -- with no device a Song is created anyway and the refusal
+      # arrives at Play, and SDL's dummy driver opens one with no speaker so the
+      # transport, the play clock, the queue and both static events all run.
+      #
+      # It also runs the public-only consumer, which is the independent evidence
+      # that a complete playback session needs nothing but the two exported
+      # packages.
+      #
+      # Nothing here is a claim that music was heard, and the script says so.
+      - name: Media qualification, unavailable and dummy-device lanes
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: tools/qualification/media.sh
+
       - name: Isolated consumer qualification, 60 and 600 frames
         working-directory: cna-common-lisp
         run: |

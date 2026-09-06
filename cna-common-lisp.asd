@@ -243,6 +243,10 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; game fixture and its teardown; its own lanes need a capture device, and
    ;; both branches -- one enumerated and none enumerated -- assert.
    (:file "native/microphone")
+   ;; The MediaPlayer playback closure, which reuses the same game fixture and
+   ;; the same PCM16 file the SoundEffect tests generate. Both branches assert:
+   ;; a song is created with no playback device and the refusal arrives at Play.
+   (:file "native/media")
    ;; Texture2D's four Stream members, over ordinary Common Lisp streams.
    (:file "native/texture-streams")
    ;; TitleContainer resolves its base path through a live game.

@@ -92,11 +92,54 @@ Needs an active game."))
               Int32). ~s was given with the index ~s."
              :format-arguments (list source index)))
     (cna-lisp.internal:check-usable source operation)
-    (cna-lisp.internal:check-result
-     (cna-lisp.internal.ffi::%media-player-play-song
-      (%media-game-handle operation) (cna-lisp.internal:handle-of source))
-     operation :object-type 'song)
+    ;; **Only this overload wraps, and the IL is why.** `MediaQueue.Play(Song)'
+    ;; catches whatever the native call answered, maps it through
+    ;; `GetExceptionFromResult', and throws
+    ;; `InvalidOperationException(SongPlaybackFailed, inner)'. Its two
+    ;; SongCollection siblings call `ThrowExceptionFromErrorCode' and let the
+    ;; mapped exception out unwrapped. That asymmetry is the original's.
+    (%play-song-wrapping-failures
+     (lambda ()
+       (cna-lisp.internal:check-result
+        (cna-lisp.internal.ffi::%media-player-play-song
+         (%media-game-handle operation) (cna-lisp.internal:handle-of source))
+        operation :object-type 'song))
+     operation)
     (values)))
+
+(defun %play-song-wrapping-failures (thunk operation)
+  "Run THUNK, wrapping any CNA failure the way `MediaQueue.Play(Song)' does.
+
+The pinned IL, after the native call:
+
+    if (Failed(result)) {
+        Exception inner = Helpers.GetExceptionFromResult(result);
+        throw new InvalidOperationException(FrameworkResources.SongPlaybackFailed, inner);
+    }
+
+so the mapped exception becomes the **inner** one and what a caller sees is an
+`InvalidOperationException'. `CNA-INVALID-STATE-ERROR' is this binding's
+projection of that type, and `CNA-ERROR-CAUSE' is where the inner one goes --
+the same slot `new(String, Exception)' uses for the two audio exceptions.
+
+**This is the member's whole failure story on a machine with no audio device.**
+Measured on all three admitted ABIs with a driver SDL cannot load:
+`cna_song_create' **succeeds** -- the canonical constructor only checks that the
+file exists -- and `cna_media_player_play_song` answers `CNA_RESULT_INTERNAL`.
+So the refusal arrives at `Play' rather than at construction, which is exactly
+the asymmetry `DynamicSoundEffectInstance' already has with `SoundEffect' and is
+recorded here for the same reason: it is CNA's shape, and a projection that hid
+it would be claiming a constructor that fails."
+  (handler-case (funcall thunk)
+    (xna:cna-error (condition)
+      (error 'xna:cna-invalid-state-error
+             :operation operation :object-type 'song
+             :cause condition
+             :format-control
+             "the song could not be played. XNA wraps every native failure of ~
+              this overload in InvalidOperationException(SongPlaybackFailed) ~
+              with the mapped exception as its inner one, which is what the ~
+              CNA-ERROR-CAUSE of this condition is."))))
 
 (defmethod media-player-play ((source song-collection)
                               &optional (index nil index-supplied))
@@ -298,17 +341,20 @@ Needs an active game."
      (defun ,name ()
        ,documentation
        (let ((operation ,(string-downcase (symbol-name name))))
-         (cffi:with-foreign-object (out :int32)
+         ;; `CNA_Bool' is one byte -- the generated layer types the *argument*
+         ;; `:uint8' -- so the out-parameter is read as one. Reading four here
+         ;; read three bytes the route never wrote, which made every one of
+         ;; these four flags answer whatever the stack held.
+         (cffi:with-foreign-object (out :uint8)
            (cna-lisp.internal:check-result
             (,getter (%media-game-handle operation) out) operation)
-           (/= (cffi:mem-ref out :int32) cna-lisp.internal.ffi::+false+))))
+           (cna-lisp.internal.ffi:cna-true-p (cffi:mem-ref out :uint8)))))
      (defun (setf ,name) (value)
        ,documentation
        (let ((operation ,(string-downcase (symbol-name name))))
          (cna-lisp.internal:check-result
           (,setter (%media-game-handle operation)
-                   (if value cna-lisp.internal.ffi::+true+
-                       cna-lisp.internal.ffi::+false+))
+                   (cna-lisp.internal.ffi:cna-bool-of value))
           operation)
          value))))
 

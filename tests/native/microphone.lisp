@@ -139,10 +139,12 @@ failure of that requirement."
 (defun %probe-microphone-is-headset (game index)
   "Answer (values RESULT HEADSET-P) from cna_microphone_get_is_headset_at."
   (declare (ignore game))
-  (cffi:with-foreign-object (out :int32)
+  ;; `CNA_Bool' is one byte, so it is read as one -- reading four would read
+  ;; three the route never wrote.
+  (cffi:with-foreign-object (out :uint8)
     (let ((result (ffi::%microphone-get-is-headset-at
                    (int:handle-of (int:active-game)) index out)))
-      (values result (not (zerop (cffi:mem-ref out :int32)))))))
+      (values result (ffi:cna-true-p (cffi:mem-ref out :uint8))))))
 
 (defun %probe-microphone-sample-duration (game index size-in-bytes)
   "Answer (values RESULT TICKS) from cna_microphone_get_sample_duration_ticks_at."

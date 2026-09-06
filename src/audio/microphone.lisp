@@ -388,7 +388,7 @@ native inconsistency and is signalled as one. No facade is manufactured outside
              (microphones (%enumerate-microphones operation)))
         (when microphones
           (let ((handle (%microphone-game-handle operation)))
-            (cffi:with-foreign-objects ((index :uint64) (available :int32))
+            (cffi:with-foreign-objects ((index :uint64) (available :uint8))
               (%check-microphone-result
                (cna-lisp.internal.ffi::%microphone-get-default-index-ext
                 handle index available)
@@ -396,8 +396,13 @@ native inconsistency and is signalled as one. No facade is manufactured outside
               ;; CNA reports availability separately from the index and leaves
               ;; the index untouched when there is none, so the flag is read
               ;; first and the index is only meaningful behind it.
-              (when (/= (cffi:mem-ref available :int32)
-                        cna-lisp.internal.ffi::+false+)
+              ;;
+              ;; **`CNA_Bool' is one byte.** Reading it as four reads three bytes
+              ;; the route never wrote, which is undefined behaviour that happens
+              ;; to work while they are zero. CNA-TRUE-P over a `:uint8' is the
+              ;; established shape and is what every other Bool here uses.
+              (when (cna-lisp.internal.ffi:cna-true-p
+                     (cffi:mem-ref available :uint8))
                 (let ((chosen (cffi:mem-ref index :uint64)))
                   (unless (< chosen (length microphones))
                     (error 'xna:cna-invalid-state-error
