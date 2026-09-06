@@ -53,6 +53,9 @@
   :capture-state-machine  `START', `STOP' and repeated calls moved `STATE'
   :capture-data           `GET-DATA' wrote captured PCM16 into exactly the range
                           it reported and advanced at the reported sample rate
+  :capture-idle           devices enumerated and the state machine transitioned,
+                          but this environment's driver delivered no PCM at all --
+                          an ordinary environment, and a result rather than a skip
   :buffer-ready           the BufferReady event reached the right object and
                           stopped when its handler was removed
 
@@ -170,6 +173,62 @@ failure of that requirement."
     (ffi::%microphone-get-buffer-duration-ticks-at
      (int:handle-of (int:active-game)) index out)
     (cffi:mem-ref out :int64)))
+
+(defconstant +capture-probe-frames+ 90
+  "Frames to run before deciding a capture device does not deliver.
+
+At the default sixty a second that is one and a half seconds, which is more than
+a 100 ms buffer needs many times over. Bounded so that a device that never
+delivers cannot hang the suite.")
+
+(defun %capture-delivers-p (game microphone)
+  "Whether MICROPHONE's device actually advances a capture stream here.
+
+**This is a measurement of the environment, not of the binding**, and it is
+needed for the same reason `AUDIO-PLAYBACK-AVAILABLE-P' is: a device that
+enumerates is not a device that delivers. SDL's `dummy' driver enumerates capture
+devices *and* advances a stream of silence through them; the GitHub runner's
+default driver enumerates two capture devices and delivers nothing at all from
+either. Both are ordinary environments and neither is a failure.
+
+So every test below that needs bytes branches on this, and **both branches
+assert** -- the rule the rasterizer and audio lanes already follow. The positive
+branch proves the capture semantics; the negative branch proves what still has to
+be true when nothing arrives: `GET-DATA' answers zero rather than refusing, and
+it writes nothing at all.
+
+`tools/qualification/microphone.sh' is where the positive branch is *required*,
+because that script chooses the driver and this file does not."
+  (audio:stop microphone)
+  (audio:start microphone)
+  (unwind-protect
+       (let ((buffer (make-array 4096 :element-type '(unsigned-byte 8)
+                                      :initial-element 0)))
+         (loop repeat +capture-probe-frames+
+               do (xna:run-one-frame game)
+                  (when (plusp (audio:get-data microphone buffer))
+                    (return t))))
+    (ignore-errors (audio:stop microphone))))
+
+(defun %note-idle-capture (microphone)
+  "The negative capture branch, which is a result about the environment.
+
+Asserts what must still be true when a device delivers nothing: `GET-DATA'
+answers zero rather than refusing -- it is a short read of length zero, which
+`audio.h' calls ordinary success -- and it writes no byte of the caller's buffer."
+  (let ((buffer (make-array 4096 :element-type '(unsigned-byte 8)
+                                 :initial-element #xAB)))
+    (is (zerop (audio:get-data microphone buffer))
+        "a device that delivers nothing answers zero rather than refusing")
+    (is (every (lambda (byte) (= byte #xAB)) buffer)
+        "and writes no byte of the caller's buffer"))
+  (note-microphone
+   :capture-idle
+   "capture devices enumerated and the state machine transitioned, but this ~
+    environment's driver delivered no PCM at all in ~d frames. GET-DATA answered ~
+    zero and wrote nothing, which is an ordinary short read; the capture-data and ~
+    buffer-ready claims are **not** supported by this run"
+   +capture-probe-frames+))
 
 (defun %note-unavailable ()
   "The MICROPHONE_UNAVAILABLE assertion, which is a result and not a skip."
@@ -738,9 +797,11 @@ the content: a test that asserted the payload was zero would be asserting a
 property of the dummy driver, not of the binding."
   (with-microphone-game (game)
     (let ((microphone (microphone-or-nil game)))
-      (if (null microphone)
-          (%note-unavailable)
-          (unwind-protect
+      (cond
+        ((null microphone) (%note-unavailable))
+        ((not (%capture-delivers-p game microphone)) (%note-idle-capture microphone))
+        (t
+         (unwind-protect
                (let* ((sentinel #xAB)
                       (size 8192)
                       (offset 1024)
@@ -760,8 +821,9 @@ property of the dummy driver, not of the binding."
                                                      :offset offset :count count))
                           (when (plusp last) (incf reads) (incf total last)))
                  (is (plusp last)
-                     "the capture device produced no bytes in 240 frames, so the ~
-                      destination-range proof has nothing to prove")
+                     "this environment's device delivered during the probe and ~
+                      not during the proof, which is a device that cannot be ~
+                      measured rather than one that does not deliver")
                  (when (plusp last)
                    (is (<= last count)
                        "a read must never report more than the count it was given")
@@ -784,7 +846,7 @@ property of the dummy driver, not of the binding."
                      produced the bytes is the driver's business and this suite ~
                      does not choose one"
                     offset (+ offset last) total)))
-            (ignore-errors (audio:stop microphone)))))))
+           (ignore-errors (audio:stop microphone))))))))
 
 (define-native-test microphone-capture-advances-at-the-reported-sample-rate
   "The capture-clock proof, with an explicit and justified tolerance.
@@ -800,9 +862,11 @@ not keep, or a projection that counted the same bytes twice.
 dummy backend produces is zero."
   (with-microphone-game (game)
     (let ((microphone (microphone-or-nil game)))
-      (if (null microphone)
-          (%note-unavailable)
-          (unwind-protect
+      (cond
+        ((null microphone) (%note-unavailable))
+        ((not (%capture-delivers-p game microphone)) (%note-idle-capture microphone))
+        (t
+         (unwind-protect
                (let* ((rate (audio:sample-rate microphone))
                       (buffer (make-array 65536 :element-type '(unsigned-byte 8)
                                                 :initial-element 0))
@@ -818,8 +882,10 @@ dummy backend produces is zero."
                         ;; mono PCM16: two bytes a frame, `rate' frames a second.
                         (expected (* 2 rate elapsed)))
                    (is (plusp total)
-                       "no bytes arrived in ~d frames, so no capture clock was ~
-                        observed" frames)
+                       "this environment's device delivered during the probe and ~
+                        not during the ~d-frame measurement, which is a device ~
+                        that cannot be measured rather than one that does not ~
+                        deliver" frames)
                    (when (plusp total)
                      (is (< (* 0.25d0 expected) total (* 2.0d0 expected))
                          "~d bytes arrived over ~,3fs at ~d Hz, where the sample ~
@@ -827,7 +893,7 @@ dummy backend produces is zero."
                           window the capture clock is not running at the rate the ~
                           device reports."
                          total elapsed rate expected))))
-            (ignore-errors (audio:stop microphone)))))))
+           (ignore-errors (audio:stop microphone))))))))
 
 ;;; --- BufferReady ------------------------------------------------------------
 
@@ -846,11 +912,26 @@ frames. **No event count is asserted** -- neither framework publishes a rate, an
 CNA raises it on every buffer check until `GET-DATA' drains the backlog."
   (with-microphone-game (game)
     (let ((microphone (microphone-or-nil game)))
-      (if (null microphone)
-          (%note-unavailable)
-          (let ((before (int:callback-registry-count))
-                (senders '())
-                (calls 0))
+      (cond
+        ((null microphone) (%note-unavailable))
+        ;; A device that delivers no PCM can raise no buffer-ready event, and
+        ;; that is the environment rather than the binding. The subscription
+        ;; mechanics are still asserted below, because those do not need a byte.
+        ((not (%capture-delivers-p game microphone))
+         (%note-idle-capture microphone)
+         (let ((before (int:callback-registry-count))
+               (handler (lambda (sender) (declare (ignore sender)))))
+           (audio:add-buffer-ready-handler microphone handler)
+           (is (= (1+ before) (int:callback-registry-count))
+               "the subscription rooted exactly one callback target even where ~
+                no event can become due")
+           (is (eq t (audio:remove-buffer-ready-handler microphone handler)))
+           (is (= before (int:callback-registry-count))
+               "and removing it released the native registration")))
+        (t
+         (let ((before (int:callback-registry-count))
+               (senders '())
+               (calls 0))
             (unwind-protect
                  (let ((handler (lambda (sender) (incf calls) (push sender senders))))
                    (setf (audio:buffer-duration microphone) 1000000) ; 100 ms
@@ -892,7 +973,7 @@ CNA raises it on every buffer check until `GET-DATA' drains the backlog."
                      returned to its baseline"
                     calls))
               (ignore-errors (audio:stop microphone))
-              (ignore-errors (setf (audio:buffer-duration microphone) 9900000))))))))
+              (ignore-errors (setf (audio:buffer-duration microphone) 9900000)))))))))
 
 (define-native-test a-condition-from-a-buffer-ready-handler-uses-the-shared-rule
   "The BufferReady family uses the common callback-condition rule and does not
@@ -905,10 +986,23 @@ One focused test, because the rule itself is owned and exhaustively tested by
 asserted here is that this event family is wired to it."
   (with-microphone-game (game)
     (let ((microphone (microphone-or-nil game)))
-      (if (null microphone)
-          (%note-unavailable)
-          (let ((marker (make-condition 'xna:cna-io-error :operation "handler probe"))
-                (handler nil))
+      (cond
+        ((null microphone) (%note-unavailable))
+        ;; No event can become due where no PCM arrives, so the delivery rule
+        ;; cannot be exercised here. What is still asserted is that a handler can
+        ;; be added and removed and leaves nothing behind -- the claim about the
+        ;; *condition* belongs to the environment that can raise the event, and
+        ;; tools/qualification/microphone.sh is where that is required.
+        ((not (%capture-delivers-p game microphone))
+         (%note-idle-capture microphone)
+         (let ((before (int:callback-registry-count))
+               (handler (lambda (sender) (declare (ignore sender)) (error "unreached"))))
+           (audio:add-buffer-ready-handler microphone handler)
+           (is (eq t (audio:remove-buffer-ready-handler microphone handler)))
+           (is (= before (int:callback-registry-count)))))
+        (t
+         (let ((marker (make-condition 'xna:cna-io-error :operation "handler probe"))
+               (handler nil))
             (unwind-protect
                  (progn
                    (setf handler (lambda (sender) (declare (ignore sender)) (error marker)))
@@ -931,7 +1025,7 @@ asserted here is that this event family is wired to it."
               (ignore-errors (audio:stop microphone))
               (when handler
                 (ignore-errors (audio:remove-buffer-ready-handler microphone handler)))
-              (ignore-errors (setf (audio:buffer-duration microphone) 9900000))))))))
+              (ignore-errors (setf (audio:buffer-duration microphone) 9900000)))))))))
 
 (define-native-test a-refused-microphone-unsubscribe-keeps-its-registration
   "The rule the Dynamic closure fixed, asserted for this event family too.
