@@ -1179,6 +1179,89 @@ this catches."
     (xna:dispose game)
     (is (xna:disposed-p game)))
 
+(define-condition sound-instance-destroy-refused (error)
+  ((label :initarg :label :reader sound-instance-destroy-refused-label))
+  (:report (lambda (condition stream)
+             (format stream "the ~a instance reported a failed destroy"
+                     (sound-instance-destroy-refused-label condition))))
+  (:documentation "The injected failure the cascade test needs.
+
+A *deterministic* one, which a real backend cannot be made to produce on demand:
+`cna_sound_effect_instance_destroy' documents only `CNA_RESULT_SUCCESS' and
+handle, thread and native failures, and none of those can be arranged from a
+test without corrupting something the rest of the suite shares."))
+
+(defclass refusing-sound-effect-instance (audio:sound-effect-instance)
+  ((label :initarg :label :reader refusing-instance-label))
+  (:documentation "A SOUND-EFFECT-INSTANCE whose native destruction reports a failure.
+
+**It releases the handle first and then signals**, which is what makes this an
+injection of a *reported* failure rather than a leak: CNA is left holding
+nothing, so the rest of the suite is unaffected, while the binding sees exactly
+what it would see if the route had answered a failure code."))
+
+(defmethod int:destroy-native ((instance refusing-sound-effect-instance))
+  (call-next-method)
+  (error 'sound-instance-destroy-refused :label (refusing-instance-label instance)))
+
+(define-audio-device-test a-cascade-attempts-every-child-after-one-refuses
+  "One instance failing to release must not leave every later instance alive.
+
+That property was this cascade's own documented claim and its `DOLIST' was
+refuting it: the first signalled condition left the loop, and every instance
+after the failing one stayed live. The policy is now stated where the code is,
+and it is this:
+
+  * every live instance is attempted, in the recorded child-before-parent order;
+  * the **first** condition is kept and no later one replaces it;
+  * a failure re-signals from DISPOSE-OWNED-CHILDREN, which runs *before*
+    DISPOSE's own UNWIND-PROTECT, so the effect is left undisposed;
+  * a retry then releases it, because the children are gone.
+
+Children are recorded newest-first, so an effect given A, B, C cascades over
+C, B, A -- and two of the three refuse, which is what proves the *first* one is
+the one the caller is told about."
+
+    (with-sound-effect (effect :buffer (pcm16-silence 800)
+                               :sample-rate 8000 :channels :mono)
+      (let* ((first-made (make-instance 'refusing-sound-effect-instance
+                                        :sound-effect effect :label :first-made))
+             (middle (audio:create-instance effect))
+             (last-made (make-instance 'refusing-sound-effect-instance
+                                       :sound-effect effect :label :last-made)))
+        (is (= 3 (length (xna::%live-owned-children effect))))
+        (let ((condition (handler-case (progn (xna:dispose effect) nil)
+                           (sound-instance-destroy-refused (c) c))))
+          (is (typep condition 'sound-instance-destroy-refused)
+              "the caller is told that a child refused")
+          ;; LAST-MADE is disposed first, so its failure is the first failure and
+          ;; FIRST-MADE's -- which happens later -- must not replace it.
+          (is (eq :last-made (sound-instance-destroy-refused-label condition))
+              "the first failure reaches the caller, not the last")
+          ;; All three were attempted: the one before the first failure, the one
+          ;; between the two failures, and the one after both.
+          (is (audio:is-disposed last-made) "the failing child was attempted")
+          (is (audio:is-disposed middle)
+              "a child after the first failure was still attempted")
+          (is (audio:is-disposed first-made)
+              "and so was the child after the second failure")
+          ;; The Lisp registry is coherent: a child whose destroy reported a
+          ;; failure is still invalidated, because DISPOSE invalidates through an
+          ;; UNWIND-PROTECT, so nothing is left pointing at a released handle.
+          (is (null (xna::%live-owned-children effect)))
+          (is (null (audio::%sound-effect-instances effect)))
+          ;; The conservative half of the policy: the parent is *not* disposed.
+          (is (not (audio:is-disposed effect))
+              "a reported child failure leaves the effect undisposed, so a retry can \
+release it")
+          ;; And the retry does, because the children are gone.
+          (xna:dispose effect)
+          (is (audio:is-disposed effect) "the retry released the effect"))))
+    ;; Teardown is still recoverable, which is the property the whole policy is
+    ;; for: a game that cannot be disposed poisons every later test.
+    (xna:dispose game)
+    (is (xna:disposed-p game)))
+
 ;;; --- ContentManager.Load<SoundEffect> ----------------------------------------
 ;;;
 ;;; The fixture is `tests/fixtures/test-tone.wav', generated byte for byte by

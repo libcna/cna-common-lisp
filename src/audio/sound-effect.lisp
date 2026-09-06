@@ -722,21 +722,54 @@ CNA documents -- so reproducing XNA here does not fight the ABI, it satisfies it
 
 DISPOSE is used rather than a private teardown so that one instance failing to
 release cannot leave the rest alive: each child goes through the same idempotent,
-ledger-aware path a program's own `(dispose instance)' would."
-  (dolist (child children)
-    (xna:dispose child))
-  ;; The children unregistered themselves through INVALIDATE, so nothing is left
-  ;; for DISPOSE's own check to find. Asserting it rather than assuming it: a
-  ;; child that survived would be destroyed by CNA in the wrong order.
-  (let ((left (xna::%live-owned-children effect)))
-    (when left
-      (error 'xna:cna-ownership-error
-             :operation "dispose" :object-type 'sound-effect
-             :format-control
-             "~d SoundEffectInstance(s) were still live after the cascade that ~
-              should have disposed them. CNA destroys an instance before its ~
-              effect and refuses the other order, so the effect is not destroyed."
-             :format-arguments (list (length left)))))
+ledger-aware path a program's own `(dispose instance)' would.
+
+**The failure policy, stated rather than inherited.** A `SoundEffect''s children
+are dependent native children, not the independent assets `ContentManager.Unload'
+walks, so the policy is decided here on this type's own evidence:
+
+1. every live instance is attempted, in the recorded child-before-parent order;
+2. the **first** condition is kept and no later one replaces it;
+3. a child that signalled does not stop the ones after it -- which is the property
+   this docstring claimed while a bare `DOLIST' was refuting it, since the first
+   signal left the loop and every later instance stayed alive;
+4. if any child signalled, the condition is re-signalled from here, which is
+   **before** `DISPOSE''s own `UNWIND-PROTECT'. The effect is therefore left
+   undisposed and a retry can release it once the children are gone.
+
+Step 4 is the conservative half and it is conservative on purpose.
+`cna_sound_effect_instance_destroy' documents its return as `CNA_RESULT_SUCCESS'
+or a documented handle, thread or native failure, and says the
+handle is invalid when the function returns; it does **not** say that a failing
+call has nevertheless released the native instance, and a handle failure plainly
+has not. Destroying the effect over a child CNA may still be holding is the one
+outcome the ownership graph exists to prevent, so a reported child failure stops
+the parent rather than being logged past.
+
+What a failed child does *not* leave behind is a Lisp-side inconsistency: DISPOSE
+invalidates through an `UNWIND-PROTECT', so a child whose native destroy failed is
+still marked disposed, still unregistered from this effect and still off the
+instance list. The leftover check below therefore stays exact."
+  (let ((failure nil))
+    (dolist (child children)
+      (handler-case (xna:dispose child)
+        (error (condition) (unless failure (setf failure condition)))))
+    ;; The children unregistered themselves through INVALIDATE, so nothing is left
+    ;; for DISPOSE's own check to find. Asserting it rather than assuming it: a
+    ;; child that survived would be destroyed by CNA in the wrong order.
+    (let ((left (xna::%live-owned-children effect)))
+      (when left
+        (error 'xna:cna-ownership-error
+               :operation "dispose" :object-type 'sound-effect
+               :format-control
+               "~d SoundEffectInstance(s) were still live after the cascade that ~
+                should have disposed them. CNA destroys an instance before its ~
+                effect and refuses the other order, so the effect is not destroyed."
+               :format-arguments (list (length left)))))
+    ;; Last, so that the leftover check above is not skipped by an earlier child's
+    ;; failure, and first-wins, so the condition a caller sees is the one that
+    ;; started the trouble rather than whichever instance happened to be last.
+    (when failure (error failure)))
   (values))
 
 (defmethod cna-lisp.internal:destroy-native ((effect sound-effect))

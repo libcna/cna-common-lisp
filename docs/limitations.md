@@ -1374,6 +1374,27 @@ documents.
 `DISPOSE`. That is deliberate: the two paths to releasing a loaded effect must not
 grow two ownership semantics, and there is one implementation between them.
 
+**What happens when a child refuses is this binding's decision, and it is stated
+rather than inherited.** XNA's `Dispose(bool)` walks its snapshot and lets the
+first exception out; a `DOLIST` here did the same and left every instance after
+the failing one alive, while the code's own documentation claimed the opposite.
+`SoundEffect`'s children are dependent native children rather than the
+independent assets `ContentManager.Unload` walks, so the policy is:
+
+1. every live instance is attempted, in the recorded child-before-parent order;
+2. the **first** condition is kept and no later one replaces it;
+3. the condition is re-signalled from `DISPOSE-OWNED-CHILDREN`, which runs before
+   `DISPOSE`'s own `UNWIND-PROTECT`, so the effect is left **undisposed** and a
+   retry releases it once the children are gone.
+
+Step 3 is conservative on purpose. `cna_sound_effect_instance_destroy` documents
+its return as success "or a documented handle/thread/native failure" and does not
+say that a failed call released the instance anyway — a handle failure plainly did
+not — so destroying the effect over a child CNA may still hold is the one outcome
+the ownership graph exists to prevent. A failed child is still invalidated on the
+Lisp side, because `DISPOSE` invalidates through an `UNWIND-PROTECT`, so nothing
+is left pointing at a handle that may or may not exist.
+
 ## Audio: four places CNA and XNA disagree, and XNA wins in each
 
 The `SoundEffect` closure is complete, and every divergence below is a place the
