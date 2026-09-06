@@ -109,6 +109,27 @@ strongest thing the streaming row supports is that generated PCM was accepted an
 consumed by the native streaming state machine, and no test in this repository
 says a sound was heard.
 
+## The canonical repositories are `libcna`, not `openeggbert`
+
+Both repositories moved: `libcna/cna-common-lisp` and
+`libcna/cna-common-lisp-template`, and so did the two they build against --
+`libcna/cna` and `libcna/sharp-runtime`. GitHub redirects the old names, and a
+redirect is not project configuration: every operational reference is the
+canonical one now, and both `origin` remotes push straight to `libcna` rather
+than through a redirect. That covers the README's clone command, the template's
+link back, `plan.md`'s statement of what the repository *is*, `docs/qualification.md`,
+and the six `actions/checkout` repository values in the `Native` workflow.
+
+The pinned commits are unaffected and were re-checked against the new names:
+`libcna/cna` has both `fb62662c9` (ABI 0.22.0) and `056e57d47` (0.21.0), and
+`libcna/sharp-runtime` has `bfc826e1`. `openeggbert/cnanext`, which older notes
+call the current CNA source, **no longer resolves at all**; `libcna/cna` is the
+repository the pins live in.
+
+Historical prose that names a run under the old URL is rewritten only where the
+link is meant to be followed -- the run ids are unchanged and the runs are the
+same runs.
+
 ## Continuous integration
 
 Both workflows **have run on GitHub and are the live gate**; any statement that
@@ -200,8 +221,8 @@ true:
 
 | Workflow | Run | Commit | Conclusion |
 | --- | --- | --- | --- |
-| `Lisp` | [33968261788](https://github.com/openeggbert/cna-common-lisp/actions/runs/33968261788) | `5a7f7c1` | **success** |
-| `Native` | [33968261886](https://github.com/openeggbert/cna-common-lisp/actions/runs/33968261886) | `5a7f7c1` | **success** |
+| `Lisp` | [33968261788](https://github.com/libcna/cna-common-lisp/actions/runs/33968261788) | `5a7f7c1` | **success** |
+| `Native` | [33968261886](https://github.com/libcna/cna-common-lisp/actions/runs/33968261886) | `5a7f7c1` | **success** |
 
 A run at an earlier commit is not release evidence for this one, and a `cancelled`
 run is not evidence at all -- run `33966149186`, the `Native` run for `efae9c9`,

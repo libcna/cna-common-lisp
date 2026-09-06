@@ -19,7 +19,7 @@ CNA-Lisp is **CNA for Common Lisp**:
 * ASDF as the system, build and test definition mechanism.
 
 No other Lisp dialect is implemented here. The repository is
-`openeggbert/cna-common-lisp`; the ASDF system is `cna-common-lisp`; the product
+`libcna/cna-common-lisp`; the ASDF system is `cna-common-lisp`; the product
 is called CNA-Lisp.
 
 **The CNA C ABI is an internal implementation detail.** The dependency direction

@@ -59,12 +59,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # A pinned commit on openeggbert/cna's `next` branch, not the branch tip.
+  # A pinned commit on libcna/cna's `next` branch, not the branch tip.
   #
   # **The old reason is gone and this is not it.** Between 2026-09-04 and
   # 2026-09-05 this pin existed because cna:next called
   # SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride and
-  # openeggbert/sharp-runtime:next did not publish that member, so the tip did not
+  # libcna/sharp-runtime:next did not publish that member, so the tip did not
   # build from published sources at all. sharp-runtime:next has since caught up
   # (bfc826e1 declares and defines it), and a cna:next build is reproducible again.
   #
@@ -88,7 +88,7 @@ env:
   # build", in CNA's own CHANGELOG, which calls recording the revision a stopgap.
   # So the pairing is this workflow's to make, and getting it wrong is a compile
   # error deep in CNA's storage module rather than anything a version check
-  # catches: openeggbert/cna:next needs openeggbert/sharp-runtime:next, and
+  # catches: libcna/cna:next needs libcna/sharp-runtime:next, and
   # sharp-runtime's default branch is develop.
   SHARP_RUNTIME_REF: ${{ github.event.inputs.sharp_runtime_ref || 'next' }}
 
@@ -106,20 +106,20 @@ jobs:
       - name: Checkout the template
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: openeggbert/cna-common-lisp-template
+          repository: libcna/cna-common-lisp-template
           path: cna-common-lisp-template
 
       - name: Checkout CNA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: openeggbert/cna
+          repository: libcna/cna
           ref: ${{ env.CNA_REF }}
           path: cna
 
       - name: Checkout sharp-runtime
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: openeggbert/sharp-runtime
+          repository: libcna/sharp-runtime
           ref: ${{ env.SHARP_RUNTIME_REF }}
           path: sharp-runtime
 
@@ -362,7 +362,7 @@ jobs:
               "cna": {
                   "ref_requested": os.environ.get("CNA_REF"),
                   "commit": os.environ.get("CNA_SOURCE_SHA"),
-                  "repository": "openeggbert/cna",
+                  "repository": "libcna/cna",
                   "renderer": "HEADLESS",
                   "sharp_runtime_ref_requested": os.environ.get("SHARP_RUNTIME_REF"),
                   "sharp_runtime_commit": os.environ.get("SHARP_RUNTIME_SHA"),
@@ -409,20 +409,20 @@ jobs:
       - name: Checkout the template
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: openeggbert/cna-common-lisp-template
+          repository: libcna/cna-common-lisp-template
           path: cna-common-lisp-template
 
       - name: Checkout CNA
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: openeggbert/cna
+          repository: libcna/cna
           ref: ${{ env.CNA_REF }}
           path: cna
 
       - name: Checkout sharp-runtime
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: openeggbert/sharp-runtime
+          repository: libcna/sharp-runtime
           ref: ${{ env.SHARP_RUNTIME_REF }}
           path: sharp-runtime
 

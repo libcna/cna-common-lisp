@@ -266,7 +266,7 @@ CNA-Lisp is an ordinary ASDF system. Quicklisp or Qlot may be used to obtain its
 dependencies, but nothing Quicklisp-specific is part of the runtime.
 
 ```sh
-git clone https://github.com/openeggbert/cna-common-lisp
+git clone https://github.com/libcna/cna-common-lisp
 ```
 
 Make the checkout visible to ASDF — for example:

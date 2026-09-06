@@ -38,7 +38,7 @@ Locally, the reference runtime is Debian's build of the same upstream release
 
 ## The CNA source
 
-The intent is to follow a moving branch: `openeggbert/cna`, branch `next`. That
+The intent is to follow a moving branch: `libcna/cna`, branch `next`. That
 is where the CNA C ABI lives, and pinning by preference would mean the binding
 stops noticing the day CNA's ABI moves — which is the one thing this
 qualification exists to notice.
@@ -159,10 +159,10 @@ no recorded revision. CNA's own `CHANGELOG.md` says so in as many words --
 revision here is a stopgap" -- so the pairing is the consumer's to make.
 
 Getting it wrong is not a version error. It is a compile error a long way inside
-CNA: building `openeggbert/cna:next` against `sharp-runtime`'s default `develop`
+CNA: building `libcna/cna:next` against `sharp-runtime`'s default `develop`
 branch fails in `modules/storage/src/StorageDevice.cpp` with
 `SetIsolatedStorageRootOverride is not a member of StoragePaths`, eleven minutes
-into the build. `openeggbert/cna:next` needs `openeggbert/sharp-runtime:next`.
+into the build. `libcna/cna:next` needs `libcna/sharp-runtime:next`.
 
 So the workflow checks out `sharp-runtime` at `SHARP_RUNTIME_REF`, defaulting to
 `next` alongside CNA's `next`, records the commit it resolved to next to the CNA
