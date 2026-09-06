@@ -232,6 +232,14 @@ jobs:
       - name: Build a minimal HEADLESS CNA C API
         working-directory: cna
         env:
+          # Bounded on purpose, and this is **not** the shared-cache mistake the
+          # openeggbert build rules forbid. That rule is about a developer machine
+          # where one physical ccache (~/.cache/ccache, which /rv/cnaccache is a
+          # symlink to) is shared by every agent, and where exporting a maximum
+          # size overrides ccache.conf and evicts other agents' entries. A GitHub
+          # runner is ephemeral and its cache is this job's alone, restored and
+          # saved by actions/cache above -- so the size has to be capped here or
+          # the cache entry grows without bound.
           CCACHE_MAXSIZE: 2G
         run: |
           set -eu

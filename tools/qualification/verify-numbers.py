@@ -261,7 +261,16 @@ def block_native_abi_summary(abi, compat):
         "| Bound callback typedefs | %d |" % counts["callbacks"],
         "| By-value aggregates admitted | %d |" % counts["by_value_aggregates"],
         "| Routes proved unbindable, and shimmed | %d |" % counts["shimmed_routes"],
-        "| Admitted ABI versions | %d.%d.%d only (encoded %d) |"
+        # **The admitted set is a set, and this line used to render one member of
+        # it as "only".** It printed the version constant baked into the
+        # checked-in generated layer -- which is one of the admitted versions and
+        # says nothing about the others -- so from the day 0.22.0 was admitted
+        # this table said "0.21.0 only" about a binding that admits two. A number
+        # in prose is a claim; so is the word beside it.
+        "| Admitted ABI versions | %s |"
+        % ", ".join("%s (encoded %d)" % (entry["version"], entry["encoded"])
+                    for entry in abi["admitted_abi_versions"]),
+        "| Version constant in the generated layer | %d.%d.%d (encoded %d) |"
         % (version["major"], version["minor"], version["patch"],
            version["encoded"]),
     ))

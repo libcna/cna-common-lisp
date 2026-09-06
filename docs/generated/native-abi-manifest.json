@@ -29,9 +29,9 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 503,
-    "structs": 72,
-    "struct_fields": 544,
+    "functions": 572,
+    "structs": 73,
+    "struct_fields": 546,
     "constants": 511,
     "callbacks": 11,
     "by_value_aggregates": 6,
@@ -12755,6 +12755,1764 @@
       "ownership": "destroys",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_audio_unsubscribe_ext(CNA_AudioEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_model_bone_create_default",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_bone",
+          "c_type": "CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_create_default(CNA_ModelBoneHandle* out_bone)"
+    },
+    {
+      "name": "cna_model_bone_create",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_bone",
+          "c_type": "CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_create(int32_t index, CNA_StringView name, CNA_ModelBoneHandle* out_bone)"
+    },
+    {
+      "name": "cna_model_bone_destroy",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:model-bone",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_destroy(CNA_ModelBoneHandle bone)"
+    },
+    {
+      "name": "cna_model_bone_get_name_byte_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_get_name_byte_count(CNA_ModelBoneHandle bone, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_model_bone_copy_name",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_copy_name(CNA_ModelBoneHandle bone, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_model_bone_get_index",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_index",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_get_index(CNA_ModelBoneHandle bone, int32_t* out_index)"
+    },
+    {
+      "name": "cna_model_bone_get_transform",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_transform",
+          "c_type": "CNA_Matrix*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_get_transform(CNA_ModelBoneHandle bone, CNA_Matrix* out_transform)"
+    },
+    {
+      "name": "cna_model_bone_get_parent",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_parent",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_parent",
+          "c_type": "CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_get_parent(CNA_ModelBoneHandle bone, CNA_Bool* out_has_parent, CNA_ModelBoneHandle* out_parent)"
+    },
+    {
+      "name": "cna_model_bone_get_children",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_children",
+          "c_type": "CNA_ModelBoneCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone-collection:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_get_children(CNA_ModelBoneHandle bone, CNA_ModelBoneCollectionHandle* out_children)"
+    },
+    {
+      "name": "cna_model_bone_add_child",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "child",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_add_child(CNA_ModelBoneHandle bone, CNA_ModelBoneHandle child)"
+    },
+    {
+      "name": "cna_model_bone_collection_create",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_collection",
+          "c_type": "CNA_ModelBoneCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone-collection:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_collection_create(CNA_ModelBoneCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_model_bone_collection_destroy",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelBoneCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:model-bone-collection",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_collection_destroy(CNA_ModelBoneCollectionHandle collection)"
+    },
+    {
+      "name": "cna_model_bone_collection_get_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelBoneCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_collection_get_count(CNA_ModelBoneCollectionHandle collection, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_model_bone_collection_get_at",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelBoneCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bone",
+          "c_type": "CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_collection_get_at(CNA_ModelBoneCollectionHandle collection, uint64_t index, CNA_ModelBoneHandle* out_bone)"
+    },
+    {
+      "name": "cna_model_bone_collection_find",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelBoneCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_found",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_bone",
+          "c_type": "CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_collection_find(CNA_ModelBoneCollectionHandle collection, CNA_StringView name, CNA_Bool* out_found, CNA_ModelBoneHandle* out_bone)"
+    },
+    {
+      "name": "cna_model_bone_collection_contains",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelBoneCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "bone",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_contains",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_bone_collection_contains(CNA_ModelBoneCollectionHandle collection, CNA_ModelBoneHandle bone, CNA_Bool* out_contains)"
+    },
+    {
+      "name": "cna_model_mesh_part_create_default",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_part",
+          "c_type": "CNA_ModelMeshPartHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_create_default(CNA_ModelMeshPartHandle* out_part)"
+    },
+    {
+      "name": "cna_model_mesh_part_create",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "num_vertices",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "primitive_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "start_index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "vertex_offset",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_part",
+          "c_type": "CNA_ModelMeshPartHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_create(CNA_VertexBufferHandle vertex_buffer, CNA_IndexBufferHandle index_buffer, int32_t num_vertices, int32_t primitive_count, int32_t start_index, int32_t vertex_offset, CNA_ModelMeshPartHandle* out_part)"
+    },
+    {
+      "name": "cna_model_mesh_part_destroy",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:model-mesh-part",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_destroy(CNA_ModelMeshPartHandle part)"
+    },
+    {
+      "name": "cna_model_mesh_part_get_num_vertices",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_get_num_vertices(CNA_ModelMeshPartHandle part, int32_t* out_value)"
+    },
+    {
+      "name": "cna_model_mesh_part_set_num_vertices",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_set_num_vertices(CNA_ModelMeshPartHandle part, int32_t value)"
+    },
+    {
+      "name": "cna_model_mesh_part_get_primitive_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_get_primitive_count(CNA_ModelMeshPartHandle part, int32_t* out_value)"
+    },
+    {
+      "name": "cna_model_mesh_part_set_primitive_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_set_primitive_count(CNA_ModelMeshPartHandle part, int32_t value)"
+    },
+    {
+      "name": "cna_model_mesh_part_get_start_index",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_get_start_index(CNA_ModelMeshPartHandle part, int32_t* out_value)"
+    },
+    {
+      "name": "cna_model_mesh_part_set_start_index",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_set_start_index(CNA_ModelMeshPartHandle part, int32_t value)"
+    },
+    {
+      "name": "cna_model_mesh_part_get_vertex_offset",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_get_vertex_offset(CNA_ModelMeshPartHandle part, int32_t* out_value)"
+    },
+    {
+      "name": "cna_model_mesh_part_set_vertex_offset",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "value",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_set_vertex_offset(CNA_ModelMeshPartHandle part, int32_t value)"
+    },
+    {
+      "name": "cna_model_mesh_part_get_effect",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_effect",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_get_effect(CNA_ModelMeshPartHandle part, CNA_Bool* out_has_effect, CNA_EffectHandle* out_effect)"
+    },
+    {
+      "name": "cna_model_mesh_part_set_effect",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_set_effect(CNA_ModelMeshPartHandle part, CNA_EffectHandle effect)"
+    },
+    {
+      "name": "cna_model_mesh_part_get_vertex_buffer",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_buffer",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_buffer",
+          "c_type": "CNA_VertexBufferHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_get_vertex_buffer(CNA_ModelMeshPartHandle part, CNA_Bool* out_has_buffer, CNA_VertexBufferHandle* out_buffer)"
+    },
+    {
+      "name": "cna_model_mesh_part_set_vertex_buffer",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "vertex_buffer",
+          "c_type": "CNA_VertexBufferHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_set_vertex_buffer(CNA_ModelMeshPartHandle part, CNA_VertexBufferHandle vertex_buffer)"
+    },
+    {
+      "name": "cna_model_mesh_part_get_index_buffer",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_buffer",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_buffer",
+          "c_type": "CNA_IndexBufferHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_get_index_buffer(CNA_ModelMeshPartHandle part, CNA_Bool* out_has_buffer, CNA_IndexBufferHandle* out_buffer)"
+    },
+    {
+      "name": "cna_model_mesh_part_set_index_buffer",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "part",
+          "c_type": "CNA_ModelMeshPartHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index_buffer",
+          "c_type": "CNA_IndexBufferHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_set_index_buffer(CNA_ModelMeshPartHandle part, CNA_IndexBufferHandle index_buffer)"
+    },
+    {
+      "name": "cna_model_mesh_part_collection_create",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "parts",
+          "c_type": "const CNA_ModelMeshPartHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "part_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_ModelMeshPartCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part-collection:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_collection_create(const CNA_ModelMeshPartHandle* parts, uint64_t part_count, CNA_ModelMeshPartCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_model_mesh_part_collection_destroy",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelMeshPartCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:model-mesh-part-collection",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_collection_destroy(CNA_ModelMeshPartCollectionHandle collection)"
+    },
+    {
+      "name": "cna_model_mesh_part_collection_get_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelMeshPartCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_collection_get_count(CNA_ModelMeshPartCollectionHandle collection, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_model_mesh_part_collection_get_at",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelMeshPartCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_part",
+          "c_type": "CNA_ModelMeshPartHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_part_collection_get_at(CNA_ModelMeshPartCollectionHandle collection, uint64_t index, CNA_ModelMeshPartHandle* out_part)"
+    },
+    {
+      "name": "cna_model_mesh_create",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "parts",
+          "c_type": "const CNA_ModelMeshPartHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "part_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_mesh",
+          "c_type": "CNA_ModelMeshHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:model-mesh:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_create(CNA_Handle graphics_device, const CNA_ModelMeshPartHandle* parts, uint64_t part_count, CNA_ModelMeshHandle* out_mesh)"
+    },
+    {
+      "name": "cna_model_mesh_create_named",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "parts",
+          "c_type": "const CNA_ModelMeshPartHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "part_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_mesh",
+          "c_type": "CNA_ModelMeshHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:model-mesh:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_create_named(CNA_Handle graphics_device, CNA_StringView name, const CNA_ModelMeshPartHandle* parts, uint64_t part_count, CNA_ModelMeshHandle* out_mesh)"
+    },
+    {
+      "name": "cna_model_mesh_destroy",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:model-mesh",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_destroy(CNA_ModelMeshHandle mesh)"
+    },
+    {
+      "name": "cna_model_mesh_get_bounding_sphere",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_value",
+          "c_type": "CNA_BoundingSphere*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_get_bounding_sphere(CNA_ModelMeshHandle mesh, CNA_BoundingSphere* out_value)"
+    },
+    {
+      "name": "cna_model_mesh_get_mesh_parts",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_parts",
+          "c_type": "CNA_ModelMeshPartCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part-collection:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_get_mesh_parts(CNA_ModelMeshHandle mesh, CNA_ModelMeshPartCollectionHandle* out_parts)"
+    },
+    {
+      "name": "cna_model_mesh_get_effects",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_effects",
+          "c_type": "CNA_ModelEffectCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-effect-collection:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_get_effects(CNA_ModelMeshHandle mesh, CNA_ModelEffectCollectionHandle* out_effects)"
+    },
+    {
+      "name": "cna_model_mesh_get_name_byte_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_get_name_byte_count(CNA_ModelMeshHandle mesh, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_model_mesh_copy_name",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_copy_name(CNA_ModelMeshHandle mesh, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_model_mesh_get_parent_bone",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_parent",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_parent",
+          "c_type": "CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_get_parent_bone(CNA_ModelMeshHandle mesh, CNA_Bool* out_has_parent, CNA_ModelBoneHandle* out_parent)"
+    },
+    {
+      "name": "cna_model_mesh_set_parent_bone",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "parent",
+          "c_type": "CNA_ModelBoneHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_set_parent_bone(CNA_ModelMeshHandle mesh, CNA_ModelBoneHandle parent)"
+    },
+    {
+      "name": "cna_model_mesh_collection_create",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "meshes",
+          "c_type": "const CNA_ModelMeshHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "mesh_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_ModelMeshCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-collection:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_collection_create(const CNA_ModelMeshHandle* meshes, uint64_t mesh_count, CNA_ModelMeshCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_model_mesh_collection_destroy",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelMeshCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:model-mesh-collection",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_collection_destroy(CNA_ModelMeshCollectionHandle collection)"
+    },
+    {
+      "name": "cna_model_mesh_collection_get_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelMeshCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_collection_get_count(CNA_ModelMeshCollectionHandle collection, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_model_mesh_collection_get_at",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelMeshCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_mesh",
+          "c_type": "CNA_ModelMeshHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_collection_get_at(CNA_ModelMeshCollectionHandle collection, uint64_t index, CNA_ModelMeshHandle* out_mesh)"
+    },
+    {
+      "name": "cna_model_mesh_collection_find",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelMeshCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_found",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_mesh",
+          "c_type": "CNA_ModelMeshHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_collection_find(CNA_ModelMeshCollectionHandle collection, CNA_StringView name, CNA_Bool* out_found, CNA_ModelMeshHandle* out_mesh)"
+    },
+    {
+      "name": "cna_model_mesh_collection_contains",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelMeshCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "mesh",
+          "c_type": "CNA_ModelMeshHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_contains",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_mesh_collection_contains(CNA_ModelMeshCollectionHandle collection, CNA_ModelMeshHandle mesh, CNA_Bool* out_contains)"
+    },
+    {
+      "name": "cna_model_effect_collection_destroy",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelEffectCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:model-effect-collection",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_effect_collection_destroy(CNA_ModelEffectCollectionHandle collection)"
+    },
+    {
+      "name": "cna_model_effect_collection_get_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelEffectCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_effect_collection_get_count(CNA_ModelEffectCollectionHandle collection, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_model_effect_collection_get_at",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelEffectCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_effect",
+          "c_type": "CNA_EffectHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_effect_collection_get_at(CNA_ModelEffectCollectionHandle collection, uint64_t index, CNA_EffectHandle* out_effect)"
+    },
+    {
+      "name": "cna_model_effect_collection_contains",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ModelEffectCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "effect",
+          "c_type": "CNA_EffectHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_contains",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_effect_collection_contains(CNA_ModelEffectCollectionHandle collection, CNA_EffectHandle effect, CNA_Bool* out_contains)"
+    },
+    {
+      "name": "cna_model_create_default",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_model",
+          "c_type": "CNA_ModelHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_create_default(CNA_ModelHandle* out_model)"
+    },
+    {
+      "name": "cna_model_create",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "bones",
+          "c_type": "const CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "bone_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "meshes",
+          "c_type": "const CNA_ModelMeshHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "mesh_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_model",
+          "c_type": "CNA_ModelHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:model:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_create(CNA_Handle graphics_device, const CNA_ModelBoneHandle* bones, uint64_t bone_count, const CNA_ModelMeshHandle* meshes, uint64_t mesh_count, CNA_ModelHandle* out_model)"
+    },
+    {
+      "name": "cna_model_create_with_parents",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "bones",
+          "c_type": "const CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "bone_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "meshes",
+          "c_type": "const CNA_ModelMeshHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "mesh_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "mesh_parents",
+          "c_type": "const CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "mesh_parent_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "root_bone_index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_model",
+          "c_type": "CNA_ModelHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:model:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_create_with_parents(CNA_Handle graphics_device, const CNA_ModelBoneHandle* bones, uint64_t bone_count, const CNA_ModelMeshHandle* meshes, uint64_t mesh_count, const CNA_ModelBoneHandle* mesh_parents, uint64_t mesh_parent_count, uint64_t root_bone_index, CNA_ModelHandle* out_model)"
+    },
+    {
+      "name": "cna_model_destroy",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "model",
+          "c_type": "CNA_ModelHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:model",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_destroy(CNA_ModelHandle model)"
+    },
+    {
+      "name": "cna_model_get_bones",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "model",
+          "c_type": "CNA_ModelHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bones",
+          "c_type": "CNA_ModelBoneCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone-collection:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_get_bones(CNA_ModelHandle model, CNA_ModelBoneCollectionHandle* out_bones)"
+    },
+    {
+      "name": "cna_model_get_meshes",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "model",
+          "c_type": "CNA_ModelHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_meshes",
+          "c_type": "CNA_ModelMeshCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-collection:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_get_meshes(CNA_ModelHandle model, CNA_ModelMeshCollectionHandle* out_meshes)"
+    },
+    {
+      "name": "cna_model_get_root",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "model",
+          "c_type": "CNA_ModelHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_root",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_root",
+          "c_type": "CNA_ModelBoneHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_get_root(CNA_ModelHandle model, CNA_Bool* out_has_root, CNA_ModelBoneHandle* out_root)"
+    },
+    {
+      "name": "cna_model_get_bone_transform_count",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "model",
+          "c_type": "CNA_ModelHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_get_bone_transform_count(CNA_ModelHandle model, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_model_copy_absolute_bone_transforms",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "model",
+          "c_type": "CNA_ModelHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_Matrix*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_copy_absolute_bone_transforms(CNA_ModelHandle model, CNA_Matrix* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_model_copy_bone_transforms",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "model",
+          "c_type": "CNA_ModelHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_Matrix*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_copy_bone_transforms(CNA_ModelHandle model, CNA_Matrix* destination, uint64_t capacity, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_model_set_bone_transforms",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "model",
+          "c_type": "CNA_ModelHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "source",
+          "c_type": "const CNA_Matrix*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_model_set_bone_transforms(CNA_ModelHandle model, const CNA_Matrix* source, uint64_t count)"
+    },
+    {
+      "name": "cna_content_manager_load_model",
+      "header": "models.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "content_manager",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "asset_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "asset_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_model",
+          "c_type": "CNA_ModelHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "game",
+      "ownership": "creates-owned:model:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_content_manager_load_model(CNA_Handle content_manager, CNA_StringView asset_name, CNA_ModelHandle* out_model)"
     }
   ],
   "structs": [
@@ -18450,6 +20208,34 @@
       "header": "audio.h",
       "direction": "inout",
       "versioned": true
+    },
+    {
+      "name": "CNA_BoundingSphere",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "center",
+          "c_type": "CNA_Vector3",
+          "offset": 0,
+          "size": 12,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_Vector3",
+          "kind": "aggregate"
+        },
+        {
+          "name": "radius",
+          "c_type": "float",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "math_values.h",
+      "direction": "out",
+      "versioned": false
     }
   ],
   "callbacks": [

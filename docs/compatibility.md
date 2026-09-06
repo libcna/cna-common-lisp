@@ -477,9 +477,9 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=503 -->
-<!-- generated:bound native structs=72 -->
-<!-- generated:bound native struct fields=544 -->
+<!-- generated:bound native functions=572 -->
+<!-- generated:bound native structs=73 -->
+<!-- generated:bound native struct fields=546 -->
 <!-- generated:bound native constants=511 -->
 <!-- generated:bound native callbacks=11 -->
 <!-- generated:by-value aggregates=6 -->
@@ -489,14 +489,15 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 503 |
-| Bound structs | 72 |
-| Bound struct fields | 544 |
+| Bound functions | 572 |
+| Bound structs | 73 |
+| Bound struct fields | 546 |
 | Bound constants | 511 |
 | Bound callback typedefs | 11 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
-| Admitted ABI versions | 0.21.0 only (encoded 5376) |
+| Admitted ABI versions | 0.21.0 (encoded 5376), 0.22.0 (encoded 5632) |
+| Version constant in the generated layer | 0.21.0 (encoded 5376) |
 <!-- /generated-block:native-abi-summary -->
 
 See `docs/native-abi.md` for what the C compiler proves about each of those.

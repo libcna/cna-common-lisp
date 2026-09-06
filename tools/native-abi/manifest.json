@@ -768,6 +768,11 @@
       "name": "CNA_AudioEmitter",
       "direction": "inout",
       "versioned": true
+    },
+    {
+      "name": "CNA_BoundingSphere",
+      "direction": "out",
+      "versioned": false
     }
   ],
   "callbacks": [
@@ -3834,6 +3839,420 @@
       "header": "audio.h",
       "thread": "owner",
       "ownership": "destroys"
+    },
+    {
+      "name": "cna_model_bone_create_default",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless"
+    },
+    {
+      "name": "cna_model_bone_create",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless"
+    },
+    {
+      "name": "cna_model_bone_destroy",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "destroys:model-bone"
+    },
+    {
+      "name": "cna_model_bone_get_name_byte_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_bone_copy_name",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_bone_get_index",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_bone_get_transform",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_bone_get_parent",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless"
+    },
+    {
+      "name": "cna_model_bone_get_children",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone-collection:rootless"
+    },
+    {
+      "name": "cna_model_bone_add_child",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_bone_collection_create",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone-collection:rootless"
+    },
+    {
+      "name": "cna_model_bone_collection_destroy",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "destroys:model-bone-collection"
+    },
+    {
+      "name": "cna_model_bone_collection_get_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_bone_collection_get_at",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless"
+    },
+    {
+      "name": "cna_model_bone_collection_find",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless"
+    },
+    {
+      "name": "cna_model_bone_collection_contains",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_create_default",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part:rootless"
+    },
+    {
+      "name": "cna_model_mesh_part_create",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part:rootless"
+    },
+    {
+      "name": "cna_model_mesh_part_destroy",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "destroys:model-mesh-part"
+    },
+    {
+      "name": "cna_model_mesh_part_get_num_vertices",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_set_num_vertices",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_get_primitive_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_set_primitive_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_get_start_index",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_set_start_index",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_get_vertex_offset",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_set_vertex_offset",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_get_effect",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_model_mesh_part_set_effect",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_get_vertex_buffer",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_model_mesh_part_set_vertex_buffer",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_get_index_buffer",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_model_mesh_part_set_index_buffer",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_collection_create",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part-collection:rootless"
+    },
+    {
+      "name": "cna_model_mesh_part_collection_destroy",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "destroys:model-mesh-part-collection"
+    },
+    {
+      "name": "cna_model_mesh_part_collection_get_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_part_collection_get_at",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part:rootless"
+    },
+    {
+      "name": "cna_model_mesh_create",
+      "header": "models.h",
+      "thread": "game",
+      "ownership": "creates-owned:model-mesh:rootless"
+    },
+    {
+      "name": "cna_model_mesh_create_named",
+      "header": "models.h",
+      "thread": "game",
+      "ownership": "creates-owned:model-mesh:rootless"
+    },
+    {
+      "name": "cna_model_mesh_destroy",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "destroys:model-mesh"
+    },
+    {
+      "name": "cna_model_mesh_get_bounding_sphere",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_get_mesh_parts",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-part-collection:rootless"
+    },
+    {
+      "name": "cna_model_mesh_get_effects",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-effect-collection:rootless"
+    },
+    {
+      "name": "cna_model_mesh_get_name_byte_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_copy_name",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_get_parent_bone",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless"
+    },
+    {
+      "name": "cna_model_mesh_set_parent_bone",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_collection_create",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-collection:rootless"
+    },
+    {
+      "name": "cna_model_mesh_collection_destroy",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "destroys:model-mesh-collection"
+    },
+    {
+      "name": "cna_model_mesh_collection_get_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_mesh_collection_get_at",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh:rootless"
+    },
+    {
+      "name": "cna_model_mesh_collection_find",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh:rootless"
+    },
+    {
+      "name": "cna_model_mesh_collection_contains",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_effect_collection_destroy",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "destroys:model-effect-collection"
+    },
+    {
+      "name": "cna_model_effect_collection_get_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_effect_collection_get_at",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_model_effect_collection_contains",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_create_default",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model:rootless"
+    },
+    {
+      "name": "cna_model_create",
+      "header": "models.h",
+      "thread": "game",
+      "ownership": "creates-owned:model:rootless"
+    },
+    {
+      "name": "cna_model_create_with_parents",
+      "header": "models.h",
+      "thread": "game",
+      "ownership": "creates-owned:model:rootless"
+    },
+    {
+      "name": "cna_model_destroy",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "destroys:model"
+    },
+    {
+      "name": "cna_model_get_bones",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone-collection:rootless"
+    },
+    {
+      "name": "cna_model_get_meshes",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-mesh-collection:rootless"
+    },
+    {
+      "name": "cna_model_get_root",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "creates-owned:model-bone:rootless"
+    },
+    {
+      "name": "cna_model_get_bone_transform_count",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_copy_absolute_bone_transforms",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_copy_bone_transforms",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_model_set_bone_transforms",
+      "header": "models.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_content_manager_load_model",
+      "header": "models.h",
+      "thread": "game",
+      "ownership": "creates-owned:model:child-of-game"
     }
   ],
   "shimmed_routes": [

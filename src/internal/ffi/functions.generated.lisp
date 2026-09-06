@@ -2026,6 +2026,282 @@
 (defcfun ("cna_audio_unsubscribe_ext" %audio-unsubscribe-ext) :uint32
   (registration :uint64))
 
+;;; CNA_Result cna_model_bone_create_default(CNA_ModelBoneHandle* out_bone)
+(defcfun ("cna_model_bone_create_default" %model-bone-create-default) :uint32
+  (out-bone :pointer))
+
+;;; CNA_Result cna_model_bone_create(int32_t index, CNA_StringView name, CNA_ModelBoneHandle* out_bone)
+(defcfun ("cna_model_bone_create" %model-bone-create) :uint32
+  (index :int32) (name-0 :pointer) (name-1 :uint64) (out-bone :pointer))
+
+;;; CNA_Result cna_model_bone_destroy(CNA_ModelBoneHandle bone)
+(defcfun ("cna_model_bone_destroy" %model-bone-destroy) :uint32
+  (bone :uint64))
+
+;;; CNA_Result cna_model_bone_get_name_byte_count(CNA_ModelBoneHandle bone, uint64_t* out_byte_count)
+(defcfun ("cna_model_bone_get_name_byte_count" %model-bone-get-name-byte-count) :uint32
+  (bone :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_model_bone_copy_name(CNA_ModelBoneHandle bone, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_model_bone_copy_name" %model-bone-copy-name) :uint32
+  (bone :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_model_bone_get_index(CNA_ModelBoneHandle bone, int32_t* out_index)
+(defcfun ("cna_model_bone_get_index" %model-bone-get-index) :uint32
+  (bone :uint64) (out-index :pointer))
+
+;;; CNA_Result cna_model_bone_get_transform(CNA_ModelBoneHandle bone, CNA_Matrix* out_transform)
+(defcfun ("cna_model_bone_get_transform" %model-bone-get-transform) :uint32
+  (bone :uint64) (out-transform :pointer))
+
+;;; CNA_Result cna_model_bone_get_parent(CNA_ModelBoneHandle bone, CNA_Bool* out_has_parent, CNA_ModelBoneHandle* out_parent)
+(defcfun ("cna_model_bone_get_parent" %model-bone-get-parent) :uint32
+  (bone :uint64) (out-has-parent :pointer) (out-parent :pointer))
+
+;;; CNA_Result cna_model_bone_get_children(CNA_ModelBoneHandle bone, CNA_ModelBoneCollectionHandle* out_children)
+(defcfun ("cna_model_bone_get_children" %model-bone-get-children) :uint32
+  (bone :uint64) (out-children :pointer))
+
+;;; CNA_Result cna_model_bone_add_child(CNA_ModelBoneHandle bone, CNA_ModelBoneHandle child)
+(defcfun ("cna_model_bone_add_child" %model-bone-add-child) :uint32
+  (bone :uint64) (child :uint64))
+
+;;; CNA_Result cna_model_bone_collection_create(CNA_ModelBoneCollectionHandle* out_collection)
+(defcfun ("cna_model_bone_collection_create" %model-bone-collection-create) :uint32
+  (out-collection :pointer))
+
+;;; CNA_Result cna_model_bone_collection_destroy(CNA_ModelBoneCollectionHandle collection)
+(defcfun ("cna_model_bone_collection_destroy" %model-bone-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_model_bone_collection_get_count(CNA_ModelBoneCollectionHandle collection, uint64_t* out_count)
+(defcfun ("cna_model_bone_collection_get_count" %model-bone-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_model_bone_collection_get_at(CNA_ModelBoneCollectionHandle collection, uint64_t index, CNA_ModelBoneHandle* out_bone)
+(defcfun ("cna_model_bone_collection_get_at" %model-bone-collection-get-at) :uint32
+  (collection :uint64) (index :uint64) (out-bone :pointer))
+
+;;; CNA_Result cna_model_bone_collection_find(CNA_ModelBoneCollectionHandle collection, CNA_StringView name, CNA_Bool* out_found, CNA_ModelBoneHandle* out_bone)
+(defcfun ("cna_model_bone_collection_find" %model-bone-collection-find) :uint32
+  (collection :uint64) (name-0 :pointer) (name-1 :uint64) (out-found :pointer) (out-bone :pointer))
+
+;;; CNA_Result cna_model_bone_collection_contains(CNA_ModelBoneCollectionHandle collection, CNA_ModelBoneHandle bone, CNA_Bool* out_contains)
+(defcfun ("cna_model_bone_collection_contains" %model-bone-collection-contains) :uint32
+  (collection :uint64) (bone :uint64) (out-contains :pointer))
+
+;;; CNA_Result cna_model_mesh_part_create_default(CNA_ModelMeshPartHandle* out_part)
+(defcfun ("cna_model_mesh_part_create_default" %model-mesh-part-create-default) :uint32
+  (out-part :pointer))
+
+;;; CNA_Result cna_model_mesh_part_create(CNA_VertexBufferHandle vertex_buffer, CNA_IndexBufferHandle index_buffer, int32_t num_vertices, int32_t primitive_count, int32_t start_index, int32_t vertex_offset, CNA_ModelMeshPartHandle* out_part)
+(defcfun ("cna_model_mesh_part_create" %model-mesh-part-create) :uint32
+  (vertex-buffer :uint64) (index-buffer :uint64) (num-vertices :int32) (primitive-count :int32) (start-index :int32) (vertex-offset :int32) (out-part :pointer))
+
+;;; CNA_Result cna_model_mesh_part_destroy(CNA_ModelMeshPartHandle part)
+(defcfun ("cna_model_mesh_part_destroy" %model-mesh-part-destroy) :uint32
+  (part :uint64))
+
+;;; CNA_Result cna_model_mesh_part_get_num_vertices(CNA_ModelMeshPartHandle part, int32_t* out_value)
+(defcfun ("cna_model_mesh_part_get_num_vertices" %model-mesh-part-get-num-vertices) :uint32
+  (part :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_model_mesh_part_set_num_vertices(CNA_ModelMeshPartHandle part, int32_t value)
+(defcfun ("cna_model_mesh_part_set_num_vertices" %model-mesh-part-set-num-vertices) :uint32
+  (part :uint64) (value :int32))
+
+;;; CNA_Result cna_model_mesh_part_get_primitive_count(CNA_ModelMeshPartHandle part, int32_t* out_value)
+(defcfun ("cna_model_mesh_part_get_primitive_count" %model-mesh-part-get-primitive-count) :uint32
+  (part :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_model_mesh_part_set_primitive_count(CNA_ModelMeshPartHandle part, int32_t value)
+(defcfun ("cna_model_mesh_part_set_primitive_count" %model-mesh-part-set-primitive-count) :uint32
+  (part :uint64) (value :int32))
+
+;;; CNA_Result cna_model_mesh_part_get_start_index(CNA_ModelMeshPartHandle part, int32_t* out_value)
+(defcfun ("cna_model_mesh_part_get_start_index" %model-mesh-part-get-start-index) :uint32
+  (part :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_model_mesh_part_set_start_index(CNA_ModelMeshPartHandle part, int32_t value)
+(defcfun ("cna_model_mesh_part_set_start_index" %model-mesh-part-set-start-index) :uint32
+  (part :uint64) (value :int32))
+
+;;; CNA_Result cna_model_mesh_part_get_vertex_offset(CNA_ModelMeshPartHandle part, int32_t* out_value)
+(defcfun ("cna_model_mesh_part_get_vertex_offset" %model-mesh-part-get-vertex-offset) :uint32
+  (part :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_model_mesh_part_set_vertex_offset(CNA_ModelMeshPartHandle part, int32_t value)
+(defcfun ("cna_model_mesh_part_set_vertex_offset" %model-mesh-part-set-vertex-offset) :uint32
+  (part :uint64) (value :int32))
+
+;;; CNA_Result cna_model_mesh_part_get_effect(CNA_ModelMeshPartHandle part, CNA_Bool* out_has_effect, CNA_EffectHandle* out_effect)
+(defcfun ("cna_model_mesh_part_get_effect" %model-mesh-part-get-effect) :uint32
+  (part :uint64) (out-has-effect :pointer) (out-effect :pointer))
+
+;;; CNA_Result cna_model_mesh_part_set_effect(CNA_ModelMeshPartHandle part, CNA_EffectHandle effect)
+(defcfun ("cna_model_mesh_part_set_effect" %model-mesh-part-set-effect) :uint32
+  (part :uint64) (effect :uint64))
+
+;;; CNA_Result cna_model_mesh_part_get_vertex_buffer(CNA_ModelMeshPartHandle part, CNA_Bool* out_has_buffer, CNA_VertexBufferHandle* out_buffer)
+(defcfun ("cna_model_mesh_part_get_vertex_buffer" %model-mesh-part-get-vertex-buffer) :uint32
+  (part :uint64) (out-has-buffer :pointer) (out-buffer :pointer))
+
+;;; CNA_Result cna_model_mesh_part_set_vertex_buffer(CNA_ModelMeshPartHandle part, CNA_VertexBufferHandle vertex_buffer)
+(defcfun ("cna_model_mesh_part_set_vertex_buffer" %model-mesh-part-set-vertex-buffer) :uint32
+  (part :uint64) (vertex-buffer :uint64))
+
+;;; CNA_Result cna_model_mesh_part_get_index_buffer(CNA_ModelMeshPartHandle part, CNA_Bool* out_has_buffer, CNA_IndexBufferHandle* out_buffer)
+(defcfun ("cna_model_mesh_part_get_index_buffer" %model-mesh-part-get-index-buffer) :uint32
+  (part :uint64) (out-has-buffer :pointer) (out-buffer :pointer))
+
+;;; CNA_Result cna_model_mesh_part_set_index_buffer(CNA_ModelMeshPartHandle part, CNA_IndexBufferHandle index_buffer)
+(defcfun ("cna_model_mesh_part_set_index_buffer" %model-mesh-part-set-index-buffer) :uint32
+  (part :uint64) (index-buffer :uint64))
+
+;;; CNA_Result cna_model_mesh_part_collection_create(const CNA_ModelMeshPartHandle* parts, uint64_t part_count, CNA_ModelMeshPartCollectionHandle* out_collection)
+(defcfun ("cna_model_mesh_part_collection_create" %model-mesh-part-collection-create) :uint32
+  (parts :pointer) (part-count :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_model_mesh_part_collection_destroy(CNA_ModelMeshPartCollectionHandle collection)
+(defcfun ("cna_model_mesh_part_collection_destroy" %model-mesh-part-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_model_mesh_part_collection_get_count(CNA_ModelMeshPartCollectionHandle collection, uint64_t* out_count)
+(defcfun ("cna_model_mesh_part_collection_get_count" %model-mesh-part-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_model_mesh_part_collection_get_at(CNA_ModelMeshPartCollectionHandle collection, uint64_t index, CNA_ModelMeshPartHandle* out_part)
+(defcfun ("cna_model_mesh_part_collection_get_at" %model-mesh-part-collection-get-at) :uint32
+  (collection :uint64) (index :uint64) (out-part :pointer))
+
+;;; CNA_Result cna_model_mesh_create(CNA_Handle graphics_device, const CNA_ModelMeshPartHandle* parts, uint64_t part_count, CNA_ModelMeshHandle* out_mesh)
+(defcfun ("cna_model_mesh_create" %model-mesh-create) :uint32
+  (graphics-device :uint64) (parts :pointer) (part-count :uint64) (out-mesh :pointer))
+
+;;; CNA_Result cna_model_mesh_create_named(CNA_Handle graphics_device, CNA_StringView name, const CNA_ModelMeshPartHandle* parts, uint64_t part_count, CNA_ModelMeshHandle* out_mesh)
+(defcfun ("cna_model_mesh_create_named" %model-mesh-create-named) :uint32
+  (graphics-device :uint64) (name-0 :pointer) (name-1 :uint64) (parts :pointer) (part-count :uint64) (out-mesh :pointer))
+
+;;; CNA_Result cna_model_mesh_destroy(CNA_ModelMeshHandle mesh)
+(defcfun ("cna_model_mesh_destroy" %model-mesh-destroy) :uint32
+  (mesh :uint64))
+
+;;; CNA_Result cna_model_mesh_get_bounding_sphere(CNA_ModelMeshHandle mesh, CNA_BoundingSphere* out_value)
+(defcfun ("cna_model_mesh_get_bounding_sphere" %model-mesh-get-bounding-sphere) :uint32
+  (mesh :uint64) (out-value :pointer))
+
+;;; CNA_Result cna_model_mesh_get_mesh_parts(CNA_ModelMeshHandle mesh, CNA_ModelMeshPartCollectionHandle* out_parts)
+(defcfun ("cna_model_mesh_get_mesh_parts" %model-mesh-get-mesh-parts) :uint32
+  (mesh :uint64) (out-parts :pointer))
+
+;;; CNA_Result cna_model_mesh_get_effects(CNA_ModelMeshHandle mesh, CNA_ModelEffectCollectionHandle* out_effects)
+(defcfun ("cna_model_mesh_get_effects" %model-mesh-get-effects) :uint32
+  (mesh :uint64) (out-effects :pointer))
+
+;;; CNA_Result cna_model_mesh_get_name_byte_count(CNA_ModelMeshHandle mesh, uint64_t* out_byte_count)
+(defcfun ("cna_model_mesh_get_name_byte_count" %model-mesh-get-name-byte-count) :uint32
+  (mesh :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_model_mesh_copy_name(CNA_ModelMeshHandle mesh, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_model_mesh_copy_name" %model-mesh-copy-name) :uint32
+  (mesh :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_model_mesh_get_parent_bone(CNA_ModelMeshHandle mesh, CNA_Bool* out_has_parent, CNA_ModelBoneHandle* out_parent)
+(defcfun ("cna_model_mesh_get_parent_bone" %model-mesh-get-parent-bone) :uint32
+  (mesh :uint64) (out-has-parent :pointer) (out-parent :pointer))
+
+;;; CNA_Result cna_model_mesh_set_parent_bone(CNA_ModelMeshHandle mesh, CNA_ModelBoneHandle parent)
+(defcfun ("cna_model_mesh_set_parent_bone" %model-mesh-set-parent-bone) :uint32
+  (mesh :uint64) (parent :uint64))
+
+;;; CNA_Result cna_model_mesh_collection_create(const CNA_ModelMeshHandle* meshes, uint64_t mesh_count, CNA_ModelMeshCollectionHandle* out_collection)
+(defcfun ("cna_model_mesh_collection_create" %model-mesh-collection-create) :uint32
+  (meshes :pointer) (mesh-count :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_model_mesh_collection_destroy(CNA_ModelMeshCollectionHandle collection)
+(defcfun ("cna_model_mesh_collection_destroy" %model-mesh-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_model_mesh_collection_get_count(CNA_ModelMeshCollectionHandle collection, uint64_t* out_count)
+(defcfun ("cna_model_mesh_collection_get_count" %model-mesh-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_model_mesh_collection_get_at(CNA_ModelMeshCollectionHandle collection, uint64_t index, CNA_ModelMeshHandle* out_mesh)
+(defcfun ("cna_model_mesh_collection_get_at" %model-mesh-collection-get-at) :uint32
+  (collection :uint64) (index :uint64) (out-mesh :pointer))
+
+;;; CNA_Result cna_model_mesh_collection_find(CNA_ModelMeshCollectionHandle collection, CNA_StringView name, CNA_Bool* out_found, CNA_ModelMeshHandle* out_mesh)
+(defcfun ("cna_model_mesh_collection_find" %model-mesh-collection-find) :uint32
+  (collection :uint64) (name-0 :pointer) (name-1 :uint64) (out-found :pointer) (out-mesh :pointer))
+
+;;; CNA_Result cna_model_mesh_collection_contains(CNA_ModelMeshCollectionHandle collection, CNA_ModelMeshHandle mesh, CNA_Bool* out_contains)
+(defcfun ("cna_model_mesh_collection_contains" %model-mesh-collection-contains) :uint32
+  (collection :uint64) (mesh :uint64) (out-contains :pointer))
+
+;;; CNA_Result cna_model_effect_collection_destroy(CNA_ModelEffectCollectionHandle collection)
+(defcfun ("cna_model_effect_collection_destroy" %model-effect-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_model_effect_collection_get_count(CNA_ModelEffectCollectionHandle collection, uint64_t* out_count)
+(defcfun ("cna_model_effect_collection_get_count" %model-effect-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_model_effect_collection_get_at(CNA_ModelEffectCollectionHandle collection, uint64_t index, CNA_EffectHandle* out_effect)
+(defcfun ("cna_model_effect_collection_get_at" %model-effect-collection-get-at) :uint32
+  (collection :uint64) (index :uint64) (out-effect :pointer))
+
+;;; CNA_Result cna_model_effect_collection_contains(CNA_ModelEffectCollectionHandle collection, CNA_EffectHandle effect, CNA_Bool* out_contains)
+(defcfun ("cna_model_effect_collection_contains" %model-effect-collection-contains) :uint32
+  (collection :uint64) (effect :uint64) (out-contains :pointer))
+
+;;; CNA_Result cna_model_create_default(CNA_ModelHandle* out_model)
+(defcfun ("cna_model_create_default" %model-create-default) :uint32
+  (out-model :pointer))
+
+;;; CNA_Result cna_model_create(CNA_Handle graphics_device, const CNA_ModelBoneHandle* bones, uint64_t bone_count, const CNA_ModelMeshHandle* meshes, uint64_t mesh_count, CNA_ModelHandle* out_model)
+(defcfun ("cna_model_create" %model-create) :uint32
+  (graphics-device :uint64) (bones :pointer) (bone-count :uint64) (meshes :pointer) (mesh-count :uint64) (out-model :pointer))
+
+;;; CNA_Result cna_model_create_with_parents(CNA_Handle graphics_device, const CNA_ModelBoneHandle* bones, uint64_t bone_count, const CNA_ModelMeshHandle* meshes, uint64_t mesh_count, const CNA_ModelBoneHandle* mesh_parents, uint64_t mesh_parent_count, uint64_t root_bone_index, CNA_ModelHandle* out_model)
+(defcfun ("cna_model_create_with_parents" %model-create-with-parents) :uint32
+  (graphics-device :uint64) (bones :pointer) (bone-count :uint64) (meshes :pointer) (mesh-count :uint64) (mesh-parents :pointer) (mesh-parent-count :uint64) (root-bone-index :uint64) (out-model :pointer))
+
+;;; CNA_Result cna_model_destroy(CNA_ModelHandle model)
+(defcfun ("cna_model_destroy" %model-destroy) :uint32
+  (model :uint64))
+
+;;; CNA_Result cna_model_get_bones(CNA_ModelHandle model, CNA_ModelBoneCollectionHandle* out_bones)
+(defcfun ("cna_model_get_bones" %model-get-bones) :uint32
+  (model :uint64) (out-bones :pointer))
+
+;;; CNA_Result cna_model_get_meshes(CNA_ModelHandle model, CNA_ModelMeshCollectionHandle* out_meshes)
+(defcfun ("cna_model_get_meshes" %model-get-meshes) :uint32
+  (model :uint64) (out-meshes :pointer))
+
+;;; CNA_Result cna_model_get_root(CNA_ModelHandle model, CNA_Bool* out_has_root, CNA_ModelBoneHandle* out_root)
+(defcfun ("cna_model_get_root" %model-get-root) :uint32
+  (model :uint64) (out-has-root :pointer) (out-root :pointer))
+
+;;; CNA_Result cna_model_get_bone_transform_count(CNA_ModelHandle model, uint64_t* out_count)
+(defcfun ("cna_model_get_bone_transform_count" %model-get-bone-transform-count) :uint32
+  (model :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_model_copy_absolute_bone_transforms(CNA_ModelHandle model, CNA_Matrix* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_model_copy_absolute_bone_transforms" %model-copy-absolute-bone-transforms) :uint32
+  (model :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_model_copy_bone_transforms(CNA_ModelHandle model, CNA_Matrix* destination, uint64_t capacity, uint64_t* out_count)
+(defcfun ("cna_model_copy_bone_transforms" %model-copy-bone-transforms) :uint32
+  (model :uint64) (destination :pointer) (capacity :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_model_set_bone_transforms(CNA_ModelHandle model, const CNA_Matrix* source, uint64_t count)
+(defcfun ("cna_model_set_bone_transforms" %model-set-bone-transforms) :uint32
+  (model :uint64) (source :pointer) (count :uint64))
+
+;;; CNA_Result cna_content_manager_load_model(CNA_Handle content_manager, CNA_StringView asset_name, CNA_ModelHandle* out_model)
+(defcfun ("cna_content_manager_load_model" %content-manager-load-model) :uint32
+  (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-model :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -2529,6 +2805,75 @@
     ("cna_dynamic_sound_effect_instance_get_sample_duration_ticks" %dynamic-sound-effect-instance-get-sample-duration-ticks :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "none")
     ("cna_dynamic_sound_effect_instance_get_sample_size_in_bytes" %dynamic-sound-effect-instance-get-sample-size-in-bytes :uint32 (:uint64 :int64 :pointer) :thread :owner :ownership "none")
     ("cna_dynamic_sound_effect_instance_subscribe_buffer_needed" %dynamic-sound-effect-instance-subscribe-buffer-needed :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
-    ("cna_audio_unsubscribe_ext" %audio-unsubscribe-ext :uint32 (:uint64) :thread :owner :ownership "destroys"))
+    ("cna_audio_unsubscribe_ext" %audio-unsubscribe-ext :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_model_bone_create_default" %model-bone-create-default :uint32 (:pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
+    ("cna_model_bone_create" %model-bone-create :uint32 (:int32 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
+    ("cna_model_bone_destroy" %model-bone-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-bone")
+    ("cna_model_bone_get_name_byte_count" %model-bone-get-name-byte-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_bone_copy_name" %model-bone-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_bone_get_index" %model-bone-get-index :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_bone_get_transform" %model-bone-get-transform :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_bone_get_parent" %model-bone-get-parent :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
+    ("cna_model_bone_get_children" %model-bone-get-children :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:model-bone-collection:rootless")
+    ("cna_model_bone_add_child" %model-bone-add-child :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_model_bone_collection_create" %model-bone-collection-create :uint32 (:pointer) :thread :owner :ownership "creates-owned:model-bone-collection:rootless")
+    ("cna_model_bone_collection_destroy" %model-bone-collection-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-bone-collection")
+    ("cna_model_bone_collection_get_count" %model-bone-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_bone_collection_get_at" %model-bone-collection-get-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
+    ("cna_model_bone_collection_find" %model-bone-collection-find :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
+    ("cna_model_bone_collection_contains" %model-bone-collection-contains :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_create_default" %model-mesh-part-create-default :uint32 (:pointer) :thread :owner :ownership "creates-owned:model-mesh-part:rootless")
+    ("cna_model_mesh_part_create" %model-mesh-part-create :uint32 (:uint64 :uint64 :int32 :int32 :int32 :int32 :pointer) :thread :owner :ownership "creates-owned:model-mesh-part:rootless")
+    ("cna_model_mesh_part_destroy" %model-mesh-part-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-mesh-part")
+    ("cna_model_mesh_part_get_num_vertices" %model-mesh-part-get-num-vertices :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_set_num_vertices" %model-mesh-part-set-num-vertices :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_get_primitive_count" %model-mesh-part-get-primitive-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_set_primitive_count" %model-mesh-part-set-primitive-count :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_get_start_index" %model-mesh-part-get-start-index :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_set_start_index" %model-mesh-part-set-start-index :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_get_vertex_offset" %model-mesh-part-get-vertex-offset :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_set_vertex_offset" %model-mesh-part-set-vertex-offset :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_get_effect" %model-mesh-part-get-effect :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_model_mesh_part_set_effect" %model-mesh-part-set-effect :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_get_vertex_buffer" %model-mesh-part-get-vertex-buffer :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_model_mesh_part_set_vertex_buffer" %model-mesh-part-set-vertex-buffer :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_get_index_buffer" %model-mesh-part-get-index-buffer :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_model_mesh_part_set_index_buffer" %model-mesh-part-set-index-buffer :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_collection_create" %model-mesh-part-collection-create :uint32 (:pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:model-mesh-part-collection:rootless")
+    ("cna_model_mesh_part_collection_destroy" %model-mesh-part-collection-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-mesh-part-collection")
+    ("cna_model_mesh_part_collection_get_count" %model-mesh-part-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_part_collection_get_at" %model-mesh-part-collection-get-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "creates-owned:model-mesh-part:rootless")
+    ("cna_model_mesh_create" %model-mesh-create :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates-owned:model-mesh:rootless")
+    ("cna_model_mesh_create_named" %model-mesh-create-named :uint32 (:uint64 :pointer :uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates-owned:model-mesh:rootless")
+    ("cna_model_mesh_destroy" %model-mesh-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-mesh")
+    ("cna_model_mesh_get_bounding_sphere" %model-mesh-get-bounding-sphere :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_get_mesh_parts" %model-mesh-get-mesh-parts :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:model-mesh-part-collection:rootless")
+    ("cna_model_mesh_get_effects" %model-mesh-get-effects :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:model-effect-collection:rootless")
+    ("cna_model_mesh_get_name_byte_count" %model-mesh-get-name-byte-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_copy_name" %model-mesh-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_get_parent_bone" %model-mesh-get-parent-bone :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
+    ("cna_model_mesh_set_parent_bone" %model-mesh-set-parent-bone :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_model_mesh_collection_create" %model-mesh-collection-create :uint32 (:pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:model-mesh-collection:rootless")
+    ("cna_model_mesh_collection_destroy" %model-mesh-collection-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-mesh-collection")
+    ("cna_model_mesh_collection_get_count" %model-mesh-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_mesh_collection_get_at" %model-mesh-collection-get-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "creates-owned:model-mesh:rootless")
+    ("cna_model_mesh_collection_find" %model-mesh-collection-find :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:model-mesh:rootless")
+    ("cna_model_mesh_collection_contains" %model-mesh-collection-contains :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_effect_collection_destroy" %model-effect-collection-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-effect-collection")
+    ("cna_model_effect_collection_get_count" %model-effect-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_effect_collection_get_at" %model-effect-collection-get-at :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_model_effect_collection_contains" %model-effect-collection-contains :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_create_default" %model-create-default :uint32 (:pointer) :thread :owner :ownership "creates-owned:model:rootless")
+    ("cna_model_create" %model-create :uint32 (:uint64 :pointer :uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates-owned:model:rootless")
+    ("cna_model_create_with_parents" %model-create-with-parents :uint32 (:uint64 :pointer :uint64 :pointer :uint64 :pointer :uint64 :uint64 :pointer) :thread :game :ownership "creates-owned:model:rootless")
+    ("cna_model_destroy" %model-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model")
+    ("cna_model_get_bones" %model-get-bones :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:model-bone-collection:rootless")
+    ("cna_model_get_meshes" %model-get-meshes :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:model-mesh-collection:rootless")
+    ("cna_model_get_root" %model-get-root :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
+    ("cna_model_get_bone_transform_count" %model-get-bone-transform-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_copy_absolute_bone_transforms" %model-copy-absolute-bone-transforms :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_copy_bone_transforms" %model-copy-bone-transforms :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_model_set_bone_transforms" %model-set-bone-transforms :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_content_manager_load_model" %content-manager-load-model :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates-owned:model:child-of-game"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 
