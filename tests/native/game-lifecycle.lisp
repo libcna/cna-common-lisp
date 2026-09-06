@@ -17,7 +17,13 @@
     (is (= 1 (end-draws game)))))
 
 (define-native-test run-delivers-begin-run-and-end-run-exactly-once
+  ;; Variable timing, because two of these four are exact counts and a fixed step
+  ;; does not deliver one update per frame: CNA's `Game::Tick' runs its catch-up
+  ;; `while' loop to the end without re-reading the exit request, so a frame that
+  ;; overran its target can update again after EXIT was called. See
+  ;; A-FIXED-STEP-MAY-DELIVER-CATCH-UP-UPDATES, which pins that on purpose.
   (with-counting-game (game :exit-after 5)
+    (setf (xna:is-fixed-time-step game) nil)
     (xna:run game)
     (is (= 1 (begin-runs game)))
     (is (= 1 (end-runs game)))
@@ -26,14 +32,42 @@
                             fifth frame does not draw")))
 
 (define-native-test the-callbacks-resolve-to-the-right-clos-object
-  ;; Two games cannot be live at once, so identity is checked by running two in
-  ;; sequence and confirming each counted only its own frames.
-  (with-counting-game (first :exit-after 2)
-    (xna:run first)
-    (is (= 2 (updates first))))
-  (with-counting-game (second :exit-after 3)
-    (xna:run second)
-    (is (= 3 (updates second)))))
+  "A native callback token resolves to the CLOS object that registered it, and a
+new object's callbacks do not resolve to a destroyed one's.
+
+Two games cannot be live at once, so identity is checked by running two in
+sequence. **Frames are stepped explicitly, one at a time.** This used to call RUN
+with an exit-after count and assert that count as the update count, and it failed
+once under load and passed on the re-run -- which is the failure this repository
+already has a rule about: a fixed time step runs catch-up updates after a frame
+that overran its target, so a frame count is not an update count and the exit
+request only ends the frame it is made in. Nothing about token identity needed
+the loop. RUN-ONE-FRAME delivers exactly one update per call, which makes the
+count a fact about dispatch rather than about how busy the machine was.
+
+The discriminating assertion is the last one: the first game's counter must not
+move while the second game is the one running frames. A binding that resolved
+every token to the most recently registered object, or to the first, would pass
+the other three and fail that."
+  (let (first-updates)
+    (with-counting-game (first)
+      ;; Variable timing: under a fixed step one frame is not one update, which
+      ;; A-FIXED-STEP-MAY-DELIVER-CATCH-UP-UPDATES measures. Identity has nothing
+      ;; to do with the clock, so the clock is taken out of it.
+      (setf (xna:is-fixed-time-step first) nil)
+      (xna:run-one-frame first)
+      (is (= 1 (updates first)) "one explicit frame is one update")
+      (setf first-updates (updates first))
+      (xna:dispose first)
+      (with-counting-game (second)
+        (setf (xna:is-fixed-time-step second) nil)
+        (xna:run-one-frame second)
+        (xna:run-one-frame second)
+        (is (= 2 (updates second))
+            "the second game counted its own two frames and nothing else")
+        (is (= first-updates (updates first))
+            "and the first game's counter did not move: its callbacks were not ~
+             delivered to it, and the second's were not delivered to it either")))))
 
 (define-native-test update-receives-a-real-game-time
   (with-counting-game (game :exit-after 3)
