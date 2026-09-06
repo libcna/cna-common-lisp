@@ -80,10 +80,12 @@ ABI to be produced against:
 | Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: every kind its registry requires (<!-- generated:rasterizer proof count=8 -->) |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Audio, unavailable branch | a driver that does not exist: no device, and every route needing one refused with `NO-AUDIO-HARDWARE-ERROR` |
+| Audio, streaming unavailable branch | the same driver: `DynamicSoundEffectInstance`'s constructor **succeeded** anyway and took a buffer, and the refusal arrived at `Play`. Recorded because it is CNA's asymmetry with `SoundEffect`, not asserted away |
 | Audio, state machine | `SDL_AUDIODRIVER=dummy`: a device opened with no speaker behind it, and play/pause/resume/stop transitioned |
+| Audio, dynamic streaming | the same device: generated PCM16 submitted, the pending-buffer count observed rising to two, and the native streaming state machine observed consuming both while the game loop ran |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
-| Construction atomicity | an exploding subclass of twelve resource families, plus `Game` and `GraphicsDeviceManager`, leaves no live child and lets the game shut down |
+| Construction atomicity | an exploding subclass of twelve resource families, plus `Game` and `GraphicsDeviceManager`, leaves no live child and lets the game shut down -- and one that **subscribed before it failed** leaves no registration and no rooted token either |
 | Content transaction | a load made to fail at the texture's storage query, the font's info, its glyph table, or the **cache insertion** gives every handle back exactly once |
 | Render-target cross-check | six ways a remembered binding can drift are each refused; an unmutated one is accepted first |
 
@@ -98,6 +100,14 @@ and a `SaveAsPng`/`FromStream` round trip returns every texel of a known texture
 Neither lane is a claim about a physical monitor. `docs/qualification.md` defines
 `REFERENCE_QUALIFIED`, `CI_TESTED`, `HEADLESS` and `NOT RUN`, and no claim here
 may collapse two of them.
+
+**The four audio rows are four claims and not one**, for the same reason. That a
+transport transitioned says nothing about whether a submitted buffer was ever
+taken, and `tools/qualification/audio.sh` requires each kind of evidence by name
+rather than reading one out of another. **`dummy device != speaker`**: the
+strongest thing the streaming row supports is that generated PCM was accepted and
+consumed by the native streaming state machine, and no test in this repository
+says a sound was heard.
 
 ## Continuous integration
 
@@ -135,36 +145,47 @@ sharp-runtime commits it landed on, in the step summary and in
 
 **Read this section's numbers as Foundation 1's, and the generated scoreboard
 below as the whole binding's.** They were the same figure when this was written
-and they are not any more: Audio landed after the freeze and added eight complete
-types and 57 members to the selection. Foundation 1 at its release commit was
+and they are not any more: Audio landed after the freeze, in two closures, and
+added nine types and 67 members to the selection. Foundation 1 at its release
+commit was
 
     157 selected types, 2332 selected members
     141 complete types, 16 partial, 0 missing
     1854 complete members, 19 partial, 35 missing, 424 not applicable
     0 disagreement diagnostics
 
-and the generated blocks further down are that plus Audio. Every non-complete
-member is still Foundation 1's -- Audio contributed none -- so the category table
-below describes the same 54 members it always did.
+and the generated blocks further down are that plus Audio.
+
+**Audio contributed three of the frontier's members, and this paragraph used to
+say it contributed none.** That was written when Audio was believed 8/8 complete
+and was already false when the re-audit corrected two of its members; the
+streaming closure added a third. The frontier is 57 members now, not the 54 it was
+at the freeze, and the three that are not Foundation 1's are `SoundEffect.Duration`,
+`SoundEffectInstance.Apply3D(AudioListener[], AudioEmitter)` and
+`DynamicSoundEffectInstance.new(Int32, AudioChannels)`. **Foundation 1's own 54
+are unchanged**, which is the claim the freeze actually rests on: still 35 missing
+and 19 partial there, still no missing type, still no disagreement.
 
 The decision was about the *foundation as a coherent milestone*, not about the
-scoreboard reaching zero. It never will: of those 54, 39 are held up by CNA
-0.21.0, 6 by types the profile has not selected, 5 by the Common Lisp projection,
-3 by an object-model closure and 1 by a missing proof.
+scoreboard reaching zero. It never will: of the 57, 41 cannot be represented
+across the admitted ABI set, 6 need types the profile has not selected, 5 are held
+up by the Common Lisp projection, 3 by an object-model closure and 2 by a missing
+proof. Regenerate that split from `tools/api-compat/mapping-rules.json` rather
+than reading it here -- it has been stale once.
 
 The eight conditions, and what each rests on:
 
 | Condition | Evidence |
 | --- | --- |
 | All gates green | the gates in "Reproduce the state" and the table above, re-run at each audit; the suite reports no failure and nothing not run in all three native configurations, and in the fourth it reports the native layer as not run rather than as passed |
-| The freeze holds | Audio landed after it and changed no Foundation 1 member: still 35 missing and 19 partial, still 0 missing types, still 0 disagreements |
+| The freeze holds | Audio landed after it, twice, and changed no Foundation 1 member: still 35 missing and 19 partial *there*, still 0 missing types, still 0 disagreements. The whole-binding partial count is 22 because Audio owns three of them |
 | No known ownership or lifetime defect | ownership stress, construction atomicity over twelve resource families, content transaction rollback at four injection points, callback registry empty after each cycle |
 | Zero structural disagreements | `verify.py --strict`, over <!-- generated:diagnostic categories=18 --> diagnostic categories |
-| No stale live-state documentation | two audits; the second is recorded below, and found what the first left behind |
-| Admitted ABI set truthful | `{0.21.0, 0.22.0}`, and both are evidenced: the whole gate set ran against a real 0.22.0 library built from an exact published source pair, and 0.21.0 was re-run afterwards. `cna:next` is 0.23.0 and is **correctly not admitted** -- nothing has run against it |
+| No stale live-state documentation | three audits now. The third ran with the streaming closure and found four survivals the first two missed: `LOAD-ASSET` still promising two objects for one name, `UNLOAD` still telling a program to dispose what the manager now disposes, `docs/ownership-and-lifetimes.md` still describing the pre-cache content model, and this section's own claim that Audio contributed no frontier members. The first two are **public generated documentation** -- they are dumped into `docs/generated/public-surface.json` -- which is what makes them a release-condition failure rather than a comment |
+| Admitted ABI set truthful | `{0.21.0, 0.22.0}`, and both are evidenced: the whole gate set is run against a real library of each at every closure, not once. `cna:next` is 0.23.0 and is **correctly not admitted** -- nothing here has run against it, and the measurement at the end of this file is of its headers rather than of a run |
 | CI green | both workflows `success`, and named by run id below rather than by "the latest run" |
 | Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must also be *described* |
-| Every non-complete member has a concrete reason | 54 of 54, each naming a route or an IL fact, each in one of seven categories, with **zero** in either implementable category |
+| Every non-complete member has a concrete reason | 57 of 57, each naming a route or an IL fact, each in one of seven categories, with **zero** in either implementable category. `verify.py` refuses an uncategorised one and refuses a category the taxonomy does not define, which is what carried the `CNA_0_21_ABI_LIMIT` rename |
 
 That last row is the one to re-read before believing this.
 <!-- generated:high-value frontier members=0 --> members are
@@ -201,7 +222,17 @@ place for that decision. The proposed version is the one
 qualified foundation that projects a selected subset and says so. The choice is
 the project's.
 
-### What the two documentation audits found
+**`FOUNDATION_1_RELEASE_READY` is still `yes`, and the third audit is why it is
+still a claim rather than a habit.** The condition is truthful live documentation,
+not documentation that was truthful once; two public docstrings contradicting
+their own implementations would have failed it, and they were found and corrected
+before this was re-stated. **Foundation 1's implementation was not reopened**:
+the only Foundation 1 material touched was that stale documentation, plus one
+additive fix to shared construction machinery -- a subscription made during a
+failed construction is now given back -- which closes a hole that no Foundation 1
+type had ever been shown to fall into and any of them could have.
+
+### What the three documentation audits found
 
 The generated machinery had become much stronger than the hand-written prose, and
 the gap is where every finding was, both times.
@@ -231,12 +262,29 @@ worth keeping:
   `GameServiceContainer` "arrives with the device-settings closure". It did not,
   and that closure is over.
 
+The **third** audit ran with the streaming closure and found a fourth shape, the
+worst of the four because the reader has no way to notice it:
+
+* **a docstring outlives the implementation it documents, and is published.**
+  `LOAD-ASSET` still said "Loading the same name twice answers two distinct
+  objects here" after the manager grew XNA's cache, and `UNLOAD` still said "This
+  does not destroy objects already handed out. Dispose them yourself" after it
+  began disposing them. Both are dumped into
+  `docs/generated/public-surface.json`, so they were published API documentation
+  telling a program to do the opposite of the right thing.
+  `docs/ownership-and-lifetimes.md` carried the same model one level up, and this
+  file's own Foundation 1 section claimed Audio had contributed no frontier
+  member when it had contributed two.
+
 The remedy is structural rather than a checker: a closure's landing commit deletes
 the prose that described it as future, this file carries **one** generation of
 next-work, and `docs/limitations.md` marks a retained historical finding as
-historical in its own heading. `verify.py` and `verify-numbers.py` already refuse
-every *number* that drifts; what neither can check is a paragraph, so the paragraph
-count is kept low on purpose.
+historical in its own heading. To that the third audit adds one rule: **a closure
+that changes what a member does re-reads that member's docstring in the same
+commit**, because the generated public surface is where a stale one ends up.
+`verify.py` and `verify-numbers.py` already refuse every *number* that drifts;
+what neither can check is a paragraph, so the paragraph count is kept low on
+purpose.
 
 ### The extraordinary claims, re-read
 
@@ -542,87 +590,117 @@ what this proves.
 ## What to do next
 
 **One closure, and this file carries one.** When the next one lands, this section
-is replaced rather than added to.
+is replaced rather than added to. The streaming closure that used to be
+recommended here has landed and its recommendation is deleted rather than left to
+age; what it did is recorded above, under Audio.
 
-### The five candidates, measured
+### The four candidates and one infrastructure task, measured
 
-Audio was chosen last time because it was *measured* to be reachable rather than
-taken off a list, and this is that measurement repeated for the five closures in
-front of it. Type and member counts are the pinned 257-type contract's; route
-counts are `grep` over CNA 0.22.0's own headers; every determinism claim names the
-header sentence it rests on.
+Type and member counts are the pinned 257-type contract's. **Route counts are
+`grep` over both admitted ABIs' headers, not one of them**, because the previous
+measurement counted 0.22.0 only and the binding admits a set. Every determinism
+claim names the header sentence it rests on.
 
-| | Types | Members | CNA 0.22 routes | Selected deps missing | Hardware | Deterministic in CI |
-| --- | ---: | ---: | ---: | --- | --- | --- |
-| `DynamicSoundEffectInstance` | 1 | 10 | 12 | none | a playback device | **yes** — the SDL `dummy` driver already qualifies the audio lanes |
-| `Microphone` family | 3 | 21 | 18 | none | a **capture** device | **half** — see below |
-| `Model` family | 12 | 48 | 133 | none | none | **yes** — HEADLESS for lifecycle, SOFTWARE for pixels |
-| `Media` | 24 | 223 | 270 | none | a playback device; `MediaLibrary` scans the machine | **half** — an empty library is "an ordinary result" |
-| `Storage` | 3 | 35 | 49 | `IAsyncResult` | none — the filesystem | **yes** |
+| | Types | Members | Routes 0.21 | Routes 0.22 | Deps outside the selection | Hardware | Deterministic in CI |
+| --- | ---: | ---: | ---: | ---: | --- | --- | --- |
+| `Model` family | 12 | 48 | 133 | 133 | none | **none** | **yes** |
+| `Microphone` family | 3 | 21 | 18 | 18 | none | a **capture** device | half |
+| `Storage` | 3 | 35 | 35 | 35 | `IAsyncResult`, `AsyncCallback`, `FileMode`/`FileAccess`/`FileShare` | none -- the filesystem | **yes** |
+| `Media` | 24 | 223 | 267 | 267 | none | a playback device; `MediaLibrary` scans the machine | half |
+| Admit CNA **0.23.0** | -- | -- | -- | -- | -- | none | **yes** |
 
-**Every one of the five has complete CNA route coverage**, so route count is not
-the discriminator it was when Audio was chosen. Three things are.
+**The both-ABI column is not a discriminator, and measuring it is what says so.**
+The two admitted header trees differ in exactly six files:
+`abi.h` (the version constant), `graphics.h` (six new renderer identity
+constants), `net_sessions.h` (one added route), `devices.h` and `engine_layer.h`
+(documentation corrections), and `runtime.h` (a *behavioural* documentation
+change to `cna_launch_parameters_add`, from "overwrites an existing entry" to
+"keeps its first value"). None of the four candidates' route families differs at
+all, and the one behavioural change is to a route this binding does not bind. So
+no candidate is version-dependent and none needs a fallback. That had to be
+checked rather than assumed: it is exactly the check the streaming closure's route
+matrix turned out to need and pass.
 
-**Qualification determinism.** `cna_microphone_get_count`'s header says "a machine
-with no capture device answers zero, which is an ordinary answer and the one every
-verification tree gives" -- so the *absent* branch is deterministic and the
-*present* branch needs hardware CI does not have. There is no capture equivalent
-of `SDL_AUDIODRIVER=dummy` in this ABI. `Media` is the same shape one level up:
-`cna_media_library_create` "scans the device's music and picture locations" and an
-empty library is ordinary, so the empty branch qualifies and nothing else does.
-A closure whose interesting half cannot be qualified is worth less than its route
-count suggests, whatever Section 29's route inventory says.
+**Two entries in the previous measurement were wrong and are corrected here.**
+`Storage`'s dependency was recorded as `IAsyncResult` alone; it is also
+`System.AsyncCallback` and three `System.IO` enumerations, which is more BCL
+surface to decide about, not less. And `Media`'s route count was recorded as 270
+against a family that answers 267 to the same `grep`.
 
-**Projection novelty.** `Storage`'s members are `BeginShowSelector` /
-`EndShowSelector` / `BeginOpenContainer` / `EndOpenContainer` -- the .NET
-asynchronous pair, returning `IAsyncResult`. CNA has already collapsed them:
-`cna_storage_device_show_selector` and its three siblings are synchronous. So the
-projection is possible and it needs a *decision* about how an async pair becomes
-one Common Lisp call, which is the first member in this binding to raise that
-question. `Model` raises a different one: XNA's `Model` has **no public
-constructor**, so `ContentManager.Load<Model>` is the only way in, and a
-qualification needs a `.cnb` model fixture -- generatable, because the CNB writer
-routes are there and `tools/qualification/` already generates a font and a wave
-byte for byte, but it is the largest fixture this repository would own.
-`DynamicSoundEffectInstance` raises none: it derives from `SoundEffectInstance`,
-which is already projected, and its one novelty is the `BufferNeeded` event, for
-which the event machinery already exists.
+### The recommendation: the `Model` family
 
-**Size.** 10 members against 223. `Media` is larger than the whole Audio closure
-by a factor of four and would be the biggest single expansion this binding has
-attempted; `Model`'s 48 members include four collection-and-enumerator pairs whose
-projection is settled work rather than new work.
+It is the only candidate that is **fully qualifiable with no hardware of any
+kind** and also adds a capability, and it is the last one on this list of which
+that is true.
 
-### The recommendation: `DynamicSoundEffectInstance`
+* **Every level of qualification is reachable.** HEADLESS proves the lifecycle
+  and the ownership graph; the SOFTWARE lane can prove a drawn mesh reaches the
+  pixels its geometry covers, exactly the way it already proves a
+  `DrawUserPrimitives` triangle does. Nothing in it needs a device that a
+  verification tree may not have.
+* **It is the largest missing capability.** 133 routes are waiting in both
+  admitted ABIs, and a binding that can draw a triangle but cannot load a mesh is
+  missing the thing most XNA programs are actually built around.
+* **Its projection novelty is settled work rather than new work.** Four
+  collection-and-enumerator pairs, and this binding has already projected
+  `CurveKeyCollection`, `DisplayModeCollection` and `GameComponentCollection`.
+* **Its one real cost is a `.cnb` model fixture**, and that decision is now
+  better informed than it was. `tools/qualification/` already generates a font
+  and a wave byte for byte, so a generated model is the same kind of work at a
+  larger size, and CNA's CNB writer routes are bound-able. Worth knowing before
+  starting: `cna_model_create` and `cna_model_create_with_parents` exist in both
+  admitted ABIs, so the *ABI* can build a model from bone and mesh handles with
+  no container at all -- but XNA's `Model` has no public constructor, so a
+  *public-surface* qualification of `ContentManager.Load<Model>` still needs the
+  fixture. The two are different claims and the closure needs both.
 
-It wins on the same grounds Audio won on, and the reasoning is the same shape.
+**Not `Microphone`, for the reason it was not chosen last time and one more.**
+`cna_microphone_get_count`'s header says a machine with no capture device
+"answers zero, which is an ordinary answer and the one every verification tree
+gives", so the *absent* branch is deterministic and the *present* branch is not
+reachable in CI -- there is no capture equivalent of `SDL_AUDIODRIVER=dummy` in
+either admitted ABI. Its buffer-ready event would now cost almost nothing, since
+`add-buffer-needed-handler` proved the audio event machinery, but that makes the
+qualifiable half cheaper without making the unqualifiable half reachable.
 
-* **Every qualification level is reachable with no hardware.** Its buffers are
-  PCM the test generates, its state machine is `SoundEffectInstance`'s -- already
-  qualified against the `dummy` driver in a separate process -- and
-  `cna_dynamic_sound_effect_instance_get_pending_buffer_count` makes buffer
-  consumption *observable*, so "the runtime took the buffer" is an assertion and
-  not an assumption. Nothing else on the list can say that of its whole surface.
-* **It needs nothing this binding does not already have.** One type, ten members,
-  a base class that is projected, and an event.
-* **It is the only candidate that adds a capability rather than a surface.**
-  Procedurally generated and streamed audio is not reachable through any member
-  the binding has; `Storage` and `Media` largely re-express things a Lisp program
-  can already do with `OPEN`.
+**Not `Storage`**, which is smaller than `Model` and asks a bigger question. Its
+four public members are `BeginShowSelector`/`EndShowSelector` and
+`BeginOpenContainer`/`EndOpenContainer`, the .NET asynchronous pair returning
+`IAsyncResult`. CNA has already collapsed them --
+`cna_storage_device_show_selector` "collapses the canonical
+`BeginShowSelector`/`EndShowSelector` pair, which CNA completes synchronously; no
+operation handle is invented for work that never pends" -- so the projection is
+possible and needs a *decision* about how an async pair becomes one Common Lisp
+call, plus a decision about three `System.IO` enumerations. That is a public API
+decision rather than an implementation, and it should not be made in the same
+task that implements it.
 
-**Not `Microphone`, and deliberately not "Audio phase 2".** It shares a namespace
-with `DynamicSoundEffectInstance` and nothing else: its route family is the same
-size, and half of it cannot be qualified without a capture device. Bundling the
-two would attach an unqualifiable half to a fully qualifiable closure and let the
-first hide behind the second's evidence.
+**Not `Media`**, which is larger than everything this binding has added since
+Foundation 1 put together, and whose interesting half -- a library with music in
+it -- cannot be produced in CI any more than a microphone can.
 
-**`Model` is the runner-up and is the bigger prize** -- it is the largest missing
-*capability*, 133 routes are waiting, and the SOFTWARE lane can prove a drawn mesh
-reached pixels the same way it proves a drawn triangle does. What it needs first
-is the `.cnb` model fixture, and deciding to build one is a bigger decision than
-this measurement should make on its own.
+### The infrastructure task, and why it is not the recommendation
 
-**Do not implement it yet.** This is a measurement, and the next task chooses.
+**Admitting CNA 0.23.0 is measured to be cheap**, and that is worth writing down
+even though it is not being done. The 0.22.0-to-0.23.0 delta is three files:
+`abi.h`'s version constant, one added route (`cna_decal_pass_is_supported`, in
+`engine_layer.h`, which this binding does not bind), and documentation
+corrections in `models.h` and `engine_layer.h`. **No route this binding binds
+changed**, so the expected cost is a build of the 0.23.0 library and a gate run,
+with no code change -- which is precisely what the admitted-set machinery was
+built for.
+
+It is still not the next closure. Chasing a moving branch is a task that never
+finishes and never adds a member, and the version policy in
+`docs/qualification.md` exists so that the binding can *notice* an ABI move
+without having to follow every one. Do it as a side task when a 0.23.0 library is
+built for some other reason.
+
+**CNA 0.23.0 is not admitted and not qualified.** Nothing in this repository has
+run against it, and this section is a measurement of headers rather than a run.
+
+**Do not implement the recommendation yet.** This is a measurement, and the next
+task chooses.
 
 ## Architectural facts a future agent must not undo
 
