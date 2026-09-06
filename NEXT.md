@@ -163,6 +163,27 @@ sharp-runtime commits it landed on, in the step summary and in
 `cna_ref: 056e57d47...` reproduces the 0.21.0 half of the admitted set.
 `docs/qualification.md` has the policy and the evidence.
 
+## Four milestone statuses, and they are four
+
+**One boolean must not cover several milestones**, which is why these are stated
+separately and each names what it rests on:
+
+| | |
+| --- | --- |
+| `FOUNDATION_1_IMPLEMENTATION_FROZEN` | **yes**. Its 35 missing and 19 partial members are unchanged, and every closure since has added types rather than reopening it. What later work has touched is shared *machinery*, additively, and each such change is named where it landed |
+| `FOUNDATION_1_RELEASE_READY` | **yes**, decided at `5a7f7c1` and re-affirmed at each audit against the eight conditions below |
+| `AUDIO_FOUNDATION_READY` | **yes**. Six complete types and three partial over nine types and 67 members, each partial with a measured reason; two lanes, neither claiming a sound was heard |
+| `DYNAMIC_AUDIO_READY` | **yes**. `BufferNeeded` is complete for real now: its `+=` and `-=` match the IL before *and* after disposal, and a handler's condition is delivered rather than lost. Both were overclaimed until the pre-Model audit and both are fixed |
+| `MODEL_READY` | **on 0.22.0 only**, and that is a measurement rather than a hedge: on 0.21.0 `Load<Model>` refuses because a loaded model cannot be released there, so the family has no public producer on that ABI |
+
+**The template is deliberately unchanged, and the Model closure strengthens that
+decision rather than weakening it.** The canary's whole value is that it produces
+the same counts and the same pixels on every admitted ABI; a model in it would
+load on 0.22.0 and refuse on 0.21.0, so it would either fail half the matrix or
+have to branch — and a canary that branches is a canary that has stopped being
+one. The library's own isolated Model evidence is stronger than a template demo
+would be, and it is where a reader should look.
+
 ## Foundation 1 is release-ready, and frozen
 
 **`FOUNDATION_1_RELEASE_READY = yes`**, decided at `5a7f7c1` and unchanged since.
