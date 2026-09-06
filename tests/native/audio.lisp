@@ -1721,6 +1721,55 @@ several callbacks may arrive before a submission and that is not a defect."
     (xna:dispose game)
     (is (xna:disposed-p game)))
 
+(define-condition buffer-needed-handler-blew-up (error) ()
+  (:report (lambda (condition stream)
+             (declare (ignore condition))
+             (format stream "boom, from a BufferNeeded handler"))))
+
+(define-audio-device-test a-signalling-buffer-needed-handler-is-contained
+  "A condition signalled by a BufferNeeded handler must not unwind across the C
+frame, and this is where that is proved for the audio event family rather than
+argued from the game family.
+
+`CNA_AudioEventCallback` returns **void**, exactly as `CNA_GameEventCallback`
+does, so there is no result code and no diagnostic structure to report a failure
+through. `docs/callbacks-and-threading.md` states the consequence and this test is
+it: the condition is contained, the frame completes, later frames still run, and
+the game still shuts down.
+
+**The condition is then lost, and that is the documented limit rather than a
+defect this test is hiding.** It is preserved in the place a lifecycle callback's
+is, and the next native call that returns anything other than
+`CNA_RESULT_CALLBACK` clears it -- which a frame whose own routes all succeeded
+does. A handler that needs its failures seen has to catch them itself, and the
+public documentation says so.
+
+What would fail without containment is not an assertion but the process: a Lisp
+condition unwinding through a C frame is undefined behaviour, and the game would
+not shut down afterwards."
+
+    (let ((calls 0))
+      (with-dynamic-instance (d :sample-rate 8000 :channels :mono)
+        (audio:add-buffer-needed-handler
+         d (lambda (sender)
+             (declare (ignore sender))
+             (incf calls)
+             (error 'buffer-needed-handler-blew-up)))
+        (audio:submit-buffer d (dynamic-pcm 800))
+        (audio:play d)
+        ;; Frames keep running even though every one of them reaches a handler
+        ;; that signals. None of these calls may signal here.
+        (dotimes (frame 30) (xna:run-one-frame game))
+        (is (plusp calls) "the handler really did run, and really did signal")
+        (is (not (audio:is-disposed d))
+            "and the instance is still usable afterwards")
+        ;; still usable, not merely alive
+        (audio:submit-buffer d (dynamic-pcm 800))
+        (is (plusp (audio:pending-buffer-count d)))))
+    ;; The property the whole containment layer exists for.
+    (xna:dispose game)
+    (is (xna:disposed-p game)))
+
 (define-audio-device-test the-dynamic-sample-computations-are-xnas-and-cnas-are-pinned
   "Both sides, exactly as the two static computations on SoundEffect pin both.
 

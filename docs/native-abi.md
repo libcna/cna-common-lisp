@@ -42,7 +42,12 @@ of encoded versions -- not a range, not "any 0.x", not "this minor or newer":
 
 | Version | Encoded | Evidence |
 | --- | --- | --- |
-| 0.21.0 | 5376 | `probe.generated.c` compiled against this version's canonical headers, `valueprobe.generated.c` run against a real library built from them |
+| 0.21.0 | 5376 | `probe.generated.c` compiled against this version's canonical headers, `valueprobe.generated.c` run against a real library built from them, and the whole gate set re-run against it at every closure since |
+| 0.22.0 | 5632 | the same, against a library built from an exact published source pair -- CNA `fb62662c9`, sharp-runtime `bfc826e1` -- and `generate.py --check` proving the generated layer identical but for the four version constants |
+
+**This table listed 0.21.0 alone until 2026-09-06**, four commits after 0.22.0 was
+admitted and its evidence written into `docs/qualification.md`. The set is a set
+in the manifest, in the gate and in the tests; it was a set of one only here.
 
 `cna_get_abi_version` is the first route CNA-Lisp ever calls, before anything
 else. A version outside the set is refused, and the refusal names the library
@@ -52,6 +57,45 @@ supply a qualified library.
 A matching major number is not evidence: 0.7.0 and 0.21.0 share a major and do
 not share a surface. A version enters the set only after the whole bound surface
 has passed the compiler-backed gate against that version's headers.
+
+**What actually differs between the two admitted versions**, measured by diffing
+the header trees rather than inferred from the version bump: six files. `abi.h`'s
+version constant; six new renderer identity constants in `graphics.h`; one added
+route in `net_sessions.h`; documentation corrections in `devices.h` and
+`engine_layer.h`; and one *behavioural* documentation change in `runtime.h`, where
+`cna_launch_parameters_add` goes from "overwrites an existing entry" to "keeps its
+first value". **None of the routes this binding binds differs**, which is why
+`generate.py --check` passes against both from one set of generated files, and the
+one behavioural change is to a route the manifest does not name.
+
+That is a fact about these two versions and not a rule. The next version to be
+proposed gets the same diff and the same gate set, because "the delta looked
+small" is not evidence.
+
+### A closure's route matrix names both versions
+
+A new closure has to state, per member, which route it takes **in each admitted
+version** and whether the semantics agree -- not which route it takes in the
+newest one. `DynamicSoundEffectInstance` is the worked example, and its matrix is
+one column wide because `modules/c-api/include/CNA/C/audio.h` is byte for byte
+identical in 0.21.0 and 0.22.0:
+
+| XNA member | CNA 0.21.0 route | CNA 0.22.0 route | Semantics | Strategy |
+| --- | --- | --- | --- | --- |
+| `new(Int32, AudioChannels)` | `cna_dynamic_sound_effect_instance_create` | same | equal | XNA's two bounds first, in the IL's order, then the route; owner is the game |
+| `SubmitBuffer(Byte[])` | `cna_dynamic_sound_effect_instance_submit_buffer` | same | equal | offset 0, count = length, after XNA's own checks |
+| `SubmitBuffer(Byte[], Int32, Int32)` | the same route | same | equal | XNA's five checks in its order, then the route |
+| `GetSampleDuration(Int32)` | `..._get_sample_duration_ticks` | same | **different** | computed from `AudioFormat.DurationFromSize`; the route quantises differently and is pinned by a test instead |
+| `GetSampleSizeInBytes(TimeSpan)` | `..._get_sample_size_in_bytes` | same | **different** | the same treatment, from `SizeFromDuration` |
+| `Play()` | `cna_sound_effect_instance_play` | same | equal | inherited, because the create route says every `cna_sound_effect_instance_*` route accepts the handle |
+| `IsLooped` get/set | none | none | n/a | pure managed: XNA's getter answers a constant and its setter refuses a true value |
+| `PendingBufferCount` | `..._get_pending_buffer_count` | same | equal | direct |
+| `BufferNeeded` +=/-= | `..._subscribe_buffer_needed`, `cna_audio_unsubscribe_ext` | same | equal | the existing event machinery, with its own callback and its own unsubscribe route |
+| `Dispose(Boolean)` | n/a | n/a | n/a | not applicable: no finalizer touches a native resource here |
+
+Destruction is not in that table because there is no dynamic destroy route in
+either version, and that is deliberate rather than missing: the create route
+documents that `cna_sound_effect_instance_destroy` accepts the handle.
 
 ## What the compiler proves
 
