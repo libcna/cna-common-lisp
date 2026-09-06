@@ -688,7 +688,15 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
                                % (contract_type["name"], type_rule["lisp_name"]))
                     statuses[sig] = "missing"
                     continue
-            statuses[sig] = "complete"
+            # A constructor may be declared partial, exactly as any other member
+            # may. It could not be until DynamicSoundEffectInstance needed it:
+            # this branch answered "complete" and returned before the
+            # declared-status check further down was reached, so `"status":
+            # "partial"' on a constructor was silently ignored and the member was
+            # reported complete. A rule that cannot be believed is worse than no
+            # rule, so the check is here as well as there.
+            statuses[sig] = ("partial" if override.get("status") == "partial"
+                             else "complete")
             continue
         # A member may project onto a symbol in another package -- GraphicsResource's
         # Dispose() is MICROSOFT.XNA.FRAMEWORK:DISPOSE, because disposal is one
