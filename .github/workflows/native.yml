@@ -61,28 +61,39 @@ concurrency:
 env:
   # A pinned commit on libcna/cna's `next` branch, not the branch tip.
   #
-  # **The old reason is gone and this is not it.** Between 2026-09-04 and
-  # 2026-09-05 this pin existed because cna:next called
+  # **Two earlier reasons for this pin are both gone.** Between 2026-09-04 and
+  # 2026-09-05 it existed because cna:next called
   # SharpRuntime::Storage::StoragePaths::SetIsolatedStorageRootOverride and
   # libcna/sharp-runtime:next did not publish that member, so the tip did not
-  # build from published sources at all. sharp-runtime:next has since caught up
-  # (bfc826e1 declares and defines it), and a cna:next build is reproducible again.
+  # build from published sources at all; sharp-runtime:next caught up (bfc826e1).
+  # Then it existed because cna:next had moved to ABI 0.23.0 and this binding
+  # admitted {0.21.0, 0.22.0}, so the tip would have failed the gate. 0.23.0 was
+  # qualified and admitted on 2026-09-06, so that reason is gone too.
   #
-  # The reason now is the ABI gate doing its job. cna:next has moved on to ABI
-  # **0.23.0** (e18854238, 2026-09-04), and this binding admits {0.21.0, 0.22.0} --
-  # see src/internal/abi-gate.lisp. Defaulting to the tip would fail the gate on
-  # the first run, which is the gate working rather than a build to fix.
+  # **The reason now is that evidence has to be reproducible.** `next` moved from
+  # 0.22.0 to 0.23.0 in a single day and moved again fifteen commits later while
+  # 0.23.0 was being qualified. A job that follows the branch tip qualifies
+  # whatever the tip happened to be that hour, which is not a claim anyone can
+  # re-run. docs/qualification.md records an exact pair per admitted version, and
+  # this pin is the newest of those pairs.
   #
-  # fb62662c9 is the newest commit on origin/next that this binding admits: ABI
-  # 0.22.0, the parent of the 0.23.0 bump, carrying every route
-  # docs/generated/native-abi-manifest.json binds. Moving the pin here from the
-  # 0.21.0 commit is what qualifies the newly admitted version continuously.
+  # 5c8840657 is that commit: ABI 0.23.0, on origin/next, the newest commit whose
+  # headers declare it, carrying every route
+  # docs/generated/native-abi-manifest.json binds, and the exact commit the
+  # 0.23.0 evidence in docs/qualification.md was produced against.
   #
-  # To measure the next bump: workflow_dispatch with cna_ref: next. To reproduce
-  # the 0.21.0 half of the admitted set: workflow_dispatch with
-  # cna_ref: 056e57d478f8e6accfa9124337803e735b39f1e4. docs/qualification.md has
-  # the policy and the evidence for both.
-  CNA_REF: ${{ github.event.inputs.cna_ref || 'fb62662c9536f30a6a8bd080597002b8443b28d4' }}
+  # Reproducing the other two members of the admitted set, both of which the
+  # release standard still requires a full run against:
+  #
+  #   0.22.0 -- workflow_dispatch with
+  #             cna_ref: fb62662c9536f30a6a8bd080597002b8443b28d4
+  #   0.21.0 -- workflow_dispatch with
+  #             cna_ref: 056e57d478f8e6accfa9124337803e735b39f1e4
+  #
+  # To measure the next bump before it is admitted: workflow_dispatch with
+  # cna_ref: next, which is how 0.23.0 was found. docs/qualification.md has the
+  # policy and the evidence for all three.
+  CNA_REF: ${{ github.event.inputs.cna_ref || '5c8840657caa448149af9374b96bbd6acee354a1' }}
   # CNA consumes sharp-runtime as a sibling checkout with add_subdirectory and
   # pins no revision -- "sharp-runtime is the exception and is not pinned by the
   # build", in CNA's own CHANGELOG, which calls recording the revision a stopgap.
