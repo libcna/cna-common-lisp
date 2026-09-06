@@ -96,6 +96,7 @@ library at all, so it has no ABI to be produced against:
 | Render-target cross-check | six ways a remembered binding can drift are each refused; an unmutated one is accepted first |
 | Model, on 0.22.0 and 0.23.0 | a `.cnj` fixture loads through `ContentManager.Load<Model>`, its three-bone hierarchy and two meshes answer XNA's object identity, the transform copies compose in the IL's order, and `Unload` leaves every view refusing |
 | Model, on 0.21.0 | `Load<Model>` **refuses**, because `cna_model_destroy` on a loaded model is a null dereference there. Asserted as a result, not skipped |
+| Microphone, on 0.21.0 | everything works except a 1000 ms `BufferDuration`, the top of XNA's range, which that ABI alone refuses. The other four capture lanes are identical on all three |
 | Model effect safety, all three | every one of the 17 bound routes that read a content-published effect's missing adapter state refuses with a condition. Enumerated from CNA's source, not listed by hand, and the count was four until this was measured |
 | Model pixels | the SOFTWARE lane's `model` proof: two meshes of a loaded model each put their own colour on the pixels their own triangle covers |
 | Microphone, unavailable | a driver that does not exist: no capture device enumerated, `Microphone.All` answered the empty list and `Microphone.Default` answered NIL -- which `audio.h` calls an ordinary answer, so this is a result and not a skip |
@@ -105,6 +106,7 @@ library at all, so it has no ABI to be produced against:
 | Microphone, BufferReady | the same devices: the event arrived, its sender was `EQ` to the object `All` and `Default` hand out, removing the handler released the native registration and stopped delivery, and the callback registry returned to its baseline |
 | Microphone, public-only consumer | a complete capture session through the two exported packages alone, under a mechanical audit for the internal package, CFFI, handles, result codes and private `%`-symbols |
 | Microphone, XNA over CNA | five measured disagreements between CNA and the pinned XNA behaviour, each asserted in **both** directions so a CNA that changed would fail a test rather than silently changing this binding |
+| Microphone, the one ABI limit | `BufferDuration` is **partial**: XNA accepts [100, 1000] ms in steps of ten inclusive, CNA 0.21.0 accepts [100, **990**] and refuses exactly 1000, and 0.22.0 and 0.23.0 take the whole range. Nothing is rounded down to hide it; the refusal names the ABI rather than the argument, and both branches assert |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
 -- **the SOFTWARE lane is what does**, and it needs no display: a CPU rasteriser
@@ -425,11 +427,11 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 <!-- generated:selected types=181 -->
 <!-- generated:selected members=2468 -->
-<!-- generated:complete types=159 -->
-<!-- generated:partial types=22 -->
+<!-- generated:complete types=158 -->
+<!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1976 -->
-<!-- generated:partial members=25 -->
+<!-- generated:complete members=1975 -->
+<!-- generated:partial members=26 -->
 <!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=432 -->
 <!-- generated:disagreement total=0 -->
@@ -441,11 +443,11 @@ Selection **Foundation 1 and the managed closures**: 181 types, 2468 members.
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **159** |
-| Types partial | **22** |
+| Types complete | **158** |
+| Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **1976** |
-| Members partial | **25** |
+| Members complete | **1975** |
+| Members partial | **26** |
 | Members missing | **35** |
 | Members not applicable | **432** |
 | **Disagreement diagnostics** | **0** |
@@ -488,6 +490,7 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.Audio.SoundEffect` | 0 | 1 |
 | `M.X.F.Audio.SoundEffectInstance` | 0 | 1 |
 | `M.X.F.Audio.DynamicSoundEffectInstance` | 0 | 1 |
+| `M.X.F.Audio.Microphone` | 0 | 1 |
 | `M.X.F.Graphics.Model` | 0 | 1 |
 | `M.X.F.Graphics.ModelMesh` | 0 | 1 |
 | `M.X.F.Graphics.ModelMeshPart` | 0 | 1 |
@@ -505,7 +508,7 @@ had moved. Regenerate the table after every closure and read it there.
 | Category | Members | What it means |
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_ADMITTED_ABI_LIMIT` | **44** | No admitted CNA ABI can represent the member. |
+| `CNA_ADMITTED_ABI_LIMIT` | **45** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |

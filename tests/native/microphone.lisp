@@ -369,13 +369,49 @@ halves -- that the binding refuses it, and that CNA would not have."
       (if (null microphone)
           (%note-unavailable)
           (let ((index (audio::%microphone-index microphone)))
-            ;; Accepted: the bounds themselves and a step inside them.
-            (dolist (milliseconds '(100 110 500 1000))
+            ;; Accepted: the bottom of XNA's range, a step inside it, and the
+            ;; middle. **1000 is handled separately**, because it is the one
+            ;; value of XNA's range an admitted ABI will not take.
+            (dolist (milliseconds '(100 110 500 990))
               (let ((ticks (* milliseconds 10000)))
                 (finishes (setf (audio:buffer-duration microphone) ticks))
                 (is (= ticks (audio:buffer-duration microphone))
                     "the getter answers the value the setter was given, ~
                      unchanged: ~d ms" milliseconds)))
+            ;; **The top of XNA's range, and the one place the admitted ABIs
+            ;; disagree.** XNA accepts exactly 1000 ms; CNA 0.21.0 answers
+            ;; CNA_RESULT_INVALID_ARGUMENT for it and 0.22.0 and 0.23.0 take it.
+            ;; Both branches assert, and the refusal must name the ABI rather
+            ;; than blame the argument -- a caller told its value was out of
+            ;; range would go and change a value XNA accepts.
+            (let ((limited (eql (int:loaded-abi-version)
+                                (audio::%microphone-buffer-duration-abi-limit))))
+              (if limited
+                  (progn
+                    (signals xna:cna-not-supported-error
+                      (setf (audio:buffer-duration microphone) 10000000))
+                    (handler-case (setf (audio:buffer-duration microphone) 10000000)
+                      (xna:cna-not-supported-error (condition)
+                        (let ((text (princ-to-string condition)))
+                          (is (search "0.21.0" text)
+                              "the refusal must name the ABI whose limit it is")
+                          (is (search "990" text)
+                              "and the highest value that ABI will take"))))
+                    (is (/= 10000000 (audio:buffer-duration microphone))
+                        "a refused setter must not have moved the stored value")
+                    (note-microphone-divergence
+                     "BufferDuration: XNA accepts [100, 1000] ms in steps of ten ~
+                      inclusive; CNA 0.21.0 accepts [100, 990] and refuses exactly ~
+                      1000, which 0.22.0 and 0.23.0 take. The member is partial on ~
+                      0.21.0 and the refusal names the ABI rather than the argument"))
+                  (progn
+                    (finishes (setf (audio:buffer-duration microphone) 10000000))
+                    (is (= 10000000 (audio:buffer-duration microphone))
+                        "this ABI takes the whole of XNA's range")))
+              ;; Leave the device where the other tests expect it: the highest
+              ;; value *this* ABI accepts.
+              (setf (audio:buffer-duration microphone)
+                    (if limited 9900000 10000000)))
             ;; Refused, each for its own one of the three tests.
             (dolist (case '((990000    "99 ms, below the minimum")
                             (10010000  "1001 ms, above the maximum")
@@ -390,8 +426,11 @@ halves -- that the binding refuses it, and that CNA would not have."
             (signals xna:cna-argument-out-of-range-error
               (setf (audio:buffer-duration microphone) 1/2))
             ;; And the refusals changed nothing: the last accepted value stands.
-            (is (= 10000000 (audio:buffer-duration microphone))
-                "a refused setter must not have moved the stored value")
+            (let ((expected (if (eql (int:loaded-abi-version)
+                                     (audio::%microphone-buffer-duration-abi-limit))
+                                9900000 10000000)))
+              (is (= expected (audio:buffer-duration microphone))
+                  "a refused setter must not have moved the stored value"))
             ;; **CNA would have accepted the one between two steps.** Recorded as
             ;; a measurement so the divergence is a fact rather than a comment.
             (let ((result (%probe-microphone-set-buffer-duration game index 1005000)))
@@ -408,8 +447,12 @@ halves -- that the binding refuses it, and that CNA would not have."
                   cna_microphone_set_buffer_duration_ticks_at accepts it and ~
                   stores 1005000 ticks unchanged, despite documenting itself as a ~
                   setter that \"validates and rounds\""))
-              ;; Put the device back where the other tests expect it.
-              (setf (audio:buffer-duration microphone) 10000000)))))))
+              ;; Put the device back where the other tests expect it: the
+              ;; highest value this ABI accepts.
+              (setf (audio:buffer-duration microphone)
+                    (if (eql (int:loaded-abi-version)
+                             (audio::%microphone-buffer-duration-abi-limit))
+                        9900000 10000000))))))))
 
 ;;; --- the capture state machine ----------------------------------------------
 
@@ -849,7 +892,7 @@ CNA raises it on every buffer check until `GET-DATA' drains the backlog."
                      returned to its baseline"
                     calls))
               (ignore-errors (audio:stop microphone))
-              (ignore-errors (setf (audio:buffer-duration microphone) 10000000))))))))
+              (ignore-errors (setf (audio:buffer-duration microphone) 9900000))))))))
 
 (define-native-test a-condition-from-a-buffer-ready-handler-uses-the-shared-rule
   "The BufferReady family uses the common callback-condition rule and does not
@@ -888,7 +931,7 @@ asserted here is that this event family is wired to it."
               (ignore-errors (audio:stop microphone))
               (when handler
                 (ignore-errors (audio:remove-buffer-ready-handler microphone handler)))
-              (ignore-errors (setf (audio:buffer-duration microphone) 10000000))))))))
+              (ignore-errors (setf (audio:buffer-duration microphone) 9900000))))))))
 
 (define-native-test a-refused-microphone-unsubscribe-keeps-its-registration
   "The rule the Dynamic closure fixed, asserted for this event family too.

@@ -303,11 +303,11 @@ moves with every test added and no report can pin it.
 
 <!-- generated:selected types=181 -->
 <!-- generated:selected members=2468 -->
-<!-- generated:complete types=159 -->
-<!-- generated:partial types=22 -->
+<!-- generated:complete types=158 -->
+<!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1976 -->
-<!-- generated:partial members=25 -->
+<!-- generated:complete members=1975 -->
+<!-- generated:partial members=26 -->
 <!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=432 -->
 <!-- generated:disagreement total=0 -->
@@ -319,11 +319,11 @@ Selection **Foundation 1 and the managed closures**: 181 types, 2468 members.
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **159** |
-| Types partial | **22** |
+| Types complete | **158** |
+| Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **1976** |
-| Members partial | **25** |
+| Members complete | **1975** |
+| Members partial | **26** |
 | Members missing | **35** |
 | Members not applicable | **432** |
 | **Disagreement diagnostics** | **0** |

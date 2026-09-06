@@ -1938,7 +1938,7 @@ and a native acceptance are what these prove. Where a human would perceive a sou
 is not established here, and a future hardware qualification would be a different
 claim with different evidence.
 
-## Microphone: runtime-owned devices, and five more places XNA wins
+## Microphone: runtime-owned devices, and six more places XNA wins
 
 The capture half of `Microsoft.Xna.Framework.Audio` is projected and complete:
 `Microphone`, `MicrophoneState` and `NoMicrophoneConnectedException`, three types
@@ -2040,10 +2040,13 @@ and the whole `SoundEffect` surface already close, closed the same way: CNA perm
 one active game per process, so there is exactly one game a microphone operation
 could mean. **No public member here grew a `:game` parameter to satisfy CNA.**
 
-### Five measured disagreements, and XNA wins all five
+### Six measured disagreements, and XNA wins the five it can
 
 Each is pinned by a test that asserts **both** sides, so a CNA that changed would
-fail a test rather than silently changing this binding's public behaviour.
+fail a test rather than silently changing this binding's public behaviour. The
+sixth is different in kind and is the `BufferDuration` range below: there XNA
+cannot win, because no binding can make a library accept a value it refuses, and
+the member is partial instead.
 
 #### `IsHeadset` is always true, and `SafeIsHeadset` is dead code
 
@@ -2080,6 +2083,40 @@ it accepts 1005000 ticks — 100.5 ms — and afterwards reports 1005000. It nei
 rounded nor refused. So the guard is reproduced here, before the route is called,
 and CNA's rounding is implementation support rather than the compatibility
 contract.
+
+#### One value of `BufferDuration`'s range is unreachable on CNA 0.21.0
+
+XNA accepts [100, 1000] milliseconds in steps of ten, **inclusive at both ends**.
+Measured across all three admitted ABIs with the same probe:
+
+| ABI | accepted | 1000 ms |
+| --- | --- | --- |
+| 0.21.0 | [100, **990**] step 10 | `CNA_RESULT_INVALID_ARGUMENT` |
+| 0.22.0 | [100, 1000] step 10 | accepted |
+| 0.23.0 | [100, 1000] step 10 | accepted |
+
+Every other value behaves identically on all three — 99, 101, 1001, 100.5, zero
+and negative are refused by each, and 100 through 990 in steps of ten are
+accepted by each. So exactly one value of XNA's range is unreachable on exactly
+one admitted ABI, and `BufferDuration` is **partial** rather than complete: the
+binding promises the same public surface against every version it admits, and a
+member one admitted version cannot express is as narrowed as one none can.
+
+**Nothing is rounded down to hide it.** Rounding 1000 to 990 would answer a
+question the caller did not ask and would make the getter disagree with what was
+set, which is the one thing XNA's setter guarantees. The value is offered to CNA,
+and its refusal is re-raised as `CNA-NOT-SUPPORTED-ERROR` naming the ABI and the
+highest value it will take — not as an argument error, because a caller told its
+value was out of range would go and change a value XNA accepts.
+
+**The device's initial duration is 1000 ms on all three**, so on 0.21.0 a
+microphone starts at a duration its own setter refuses. That is CNA's
+inconsistency, recorded rather than worked around: the getter answers 1000 there,
+as it should, and only the setter refuses.
+
+Both branches are asserted by the qualification, so this cannot go stale in
+either direction — a 0.21.0 that started accepting 1000, or a 0.22.0 that stopped,
+would fail a test.
 
 #### `GetSampleDuration` rounds where CNA truncates
 

@@ -489,6 +489,64 @@ is a measurement rather than a footnote.
 (defconstant +microphone-buffer-milliseconds-step+ 10
   "The step XNA's setter requires: `TotalMilliseconds % 10 == 0' in the IL.")
 
+(defparameter *microphone-buffer-duration-abi-limit*
+  (cna-lisp.internal:encode-abi-version 0 21 0)
+  "The one admitted ABI whose setter will not take the top of XNA's range.
+
+**Measured across all three admitted ABIs with the same probe.** XNA accepts
+[100, 1000] milliseconds in steps of ten, inclusive at both ends. CNA 0.21.0
+accepts [100, **990**] and answers `CNA_RESULT_INVALID_ARGUMENT` for exactly
+1000; 0.22.0 and 0.23.0 accept the whole range. Every other value behaves
+identically on all three -- 99, 101, 1001, 100.5, zero and negative are refused
+by each, and 100 through 990 in steps of ten are accepted by each.
+
+**The device's own initial duration is 1000 ms on all three**, so on 0.21.0 a
+microphone starts at a duration its own setter will not accept. That is CNA's
+inconsistency and is recorded rather than worked around: the getter answers 1000
+there, as it should, and only the setter refuses.
+
+There is no fallback worth having. Rounding 1000 down to 990 would answer a
+question the caller did not ask and would make `BufferDuration' disagree with
+what was set, which is the one thing XNA's setter guarantees. So the value is
+offered to CNA, and its refusal is re-raised as a condition that says whose
+limit it is -- see %REFUSE-BUFFER-DURATION-ABI-LIMIT. `BufferDuration' is
+therefore **partial on 0.21.0 and complete on 0.22.0 and 0.23.0**, which is what
+`tools/api-compat/mapping-rules.json' declares.")
+
+(defun %microphone-buffer-duration-abi-limit ()
+  "The encoded ABI version whose setter refuses the top of XNA's range.
+
+A reader rather than the variable, so the qualification can branch on it without
+naming a special variable it does not own."
+  *microphone-buffer-duration-abi-limit*)
+
+(defun %refuse-buffer-duration-abi-limit (ticks operation)
+  "Re-raise CNA's refusal of a duration XNA accepts, naming whose limit it is.
+
+Reached only after XNA's own three tests have passed, so the caller's value is
+one the original would have taken. A bare `CNA_RESULT_INVALID_ARGUMENT' would say
+the argument was wrong; it was not, and the difference matters to whoever has to
+decide whether to change their program or their library."
+  (let ((loaded (cna-lisp.internal:loaded-abi-version)))
+    (error 'xna:cna-not-supported-error
+           :operation operation :object-type 'microphone
+           :format-control
+           "CNA ABI ~a will not set a capture buffer duration of ~d ticks (~d ~
+            milliseconds). XNA accepts [~d, ~d] milliseconds in steps of ~d and ~
+            this value is one of them, so the refusal is the ABI's and not your ~
+            program's: 0.21.0 accepts [~d, 990] and answers ~
+            CNA_RESULT_INVALID_ARGUMENT for exactly ~d, where 0.22.0 and 0.23.0 ~
+            take the whole range. Run against a 0.22.0 or later library and this ~
+            value works; 990 milliseconds is the highest 0.21.0 will take."
+           :format-arguments
+           (list (cna-lisp.internal:format-abi-version loaded)
+                 ticks (round ticks 10000)
+                 +microphone-minimum-buffer-milliseconds+
+                 +microphone-maximum-buffer-milliseconds+
+                 +microphone-buffer-milliseconds-step+
+                 +microphone-minimum-buffer-milliseconds+
+                 +microphone-maximum-buffer-milliseconds+))))
+
 (defgeneric buffer-duration (microphone)
   (:documentation
    "Microphone.BufferDuration: how much audio the capture buffer holds, in ticks.
@@ -526,7 +584,13 @@ ABIs, it accepts 1005000 ticks -- 100.5 ms -- and afterwards reports 1005000: it
 neither rounded nor refused. Reproducing XNA means refusing that here, before the
 route is called, which is what makes CNA's rounding claim implementation support
 rather than the compatibility contract. The qualification asserts the public
-refusal and records CNA's acceptance beside it."))
+refusal and records CNA's acceptance beside it.
+
+**And one value of XNA's range is unreachable on CNA 0.21.0**: exactly 1000
+milliseconds, the top of it, which 0.22.0 and 0.23.0 accept. That refusal is
+CNA's and is reported as such rather than as an argument error -- see
+*MICROPHONE-BUFFER-DURATION-ABI-LIMIT*. It is why this member is declared
+**partial on 0.21.0**; nothing is rounded down to hide it."))
 
 (defmethod buffer-duration ((microphone microphone))
   (%buffer-duration microphone))
@@ -558,11 +622,15 @@ refusal and records CNA's acceptance beside it."))
                                        +microphone-minimum-buffer-milliseconds+
                                        +microphone-maximum-buffer-milliseconds+
                                        ticks milliseconds)))
-      (let ((handle (%microphone-game-handle operation)))
-        (%check-microphone-result
-         (cna-lisp.internal.ffi::%microphone-set-buffer-duration-ticks-at
-          handle (%microphone-index microphone) ticks)
-         operation))
+      (let* ((handle (%microphone-game-handle operation))
+             (code (cna-lisp.internal.ffi::%microphone-set-buffer-duration-ticks-at
+                    handle (%microphone-index microphone) ticks)))
+        ;; The value has already passed XNA's own three tests, so an
+        ;; invalid-argument answer here is the ABI's limit rather than the
+        ;; caller's mistake, and is reported as one.
+        (if (= code cna-lisp.internal.ffi::+result-invalid-argument+)
+            (%refuse-buffer-duration-abi-limit ticks operation)
+            (%check-microphone-result code operation)))
       ;; XNA stores the value it was given, not one it read back.
       (setf (%buffer-duration microphone) ticks))))
 

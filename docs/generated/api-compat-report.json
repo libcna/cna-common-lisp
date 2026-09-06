@@ -18,14 +18,14 @@
   "types": 181,
   "members": 2468,
   "types_by_status": {
-   "partial": 22,
-   "complete": 159
+   "partial": 23,
+   "complete": 158
   },
   "members_by_status": {
-   "complete": 1976,
+   "complete": 1975,
    "missing": 35,
    "not-applicable": 432,
-   "partial": 25
+   "partial": 26
   },
   "diagnostics": 35,
   "diagnostics_by_category": {
@@ -3614,7 +3614,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Audio.Microphone",
-   "status": "complete",
+   "status": "partial",
    "members": {
     "Finalize()": "not-applicable",
     "GetSampleSizeInBytes(TimeSpan)": "complete",
@@ -3626,7 +3626,7 @@
     "All": "complete",
     "Default": "complete",
     "State": "complete",
-    "BufferDuration": "complete",
+    "BufferDuration": "partial",
     "SampleRate": "complete",
     "IsHeadset": "complete",
     "BufferReady": "complete",
