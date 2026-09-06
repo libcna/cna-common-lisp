@@ -1358,10 +1358,18 @@ rather than anything about the projection — and the second one is the larger.
 **`cna_model_destroy` applied to a model that came from
 `cna_content_manager_load_model` is a null dereference on 0.21.0** — a memory
 fault at offset 0x490, not a result code. Taking a mesh or a part view first only
-defers the fault to `cna_game_destroy`. It is **fixed in 0.22.0**: the same
-fixture, through the same binding, disposes cleanly there. Both were measured
-with a raw-FFI probe that loads a model and then destroys it with zero, one, two,
-three or four intermediate view acquisitions.
+defers the fault to `cna_game_destroy`. It is **fixed in 0.22.0 and still fixed in
+0.23.0**: the same fixture, through the same binding, disposes cleanly on both.
+
+**Re-measured for 0.23.0 with `tools/qualification/model-defect-matrix.sh`**,
+which runs each step in its own process and reads the child's exit status, so a
+fault is evidence rather than a lost test run. On 0.21.0 the fault arrives at
+0x490 in `cna_model_destroy` itself — and the probe's `baseline` stage, which
+loads a model and never touches it again, dies at the same address *after*
+`cna_game_destroy` has already returned 0. So on 0.21.0 it is not the destroy
+call that is unsafe so much as the load: a process that has loaded a model cannot
+exit cleanly whatever it does next. On 0.22.0 and 0.23.0 every one of `baseline`,
+`destroy` and the teardown that follows exits 0.
 
 There is no sound fallback. Leaking the handle is not one: CNA refuses to destroy
 a game that still owns a model, so a program would get a game that cannot shut
@@ -1379,20 +1387,41 @@ the refusal on that ABI rather than skipping it, the way the rasterization tests
 assert the no-readback branch — a lane that quietly skipped would stop proving
 anything on the ABI it skipped.
 
-### A loaded model's own effect cannot answer for its graph, on either ABI
+### A loaded model's own effect cannot answer for its graph, on any admitted ABI
 
 `cna_content_manager_load_model` publishes one handle per distinct effect its
 model owns, and `PublishModelResource` fills in the value and the parent game and
 nothing else: the `adapterState` every technique, parameter and texture route
 reads is left null. `GetEffectState` is a cast of that null pointer, so
 `cna_effect_get_techniques` on such a handle is a **memory fault at offset
-0x20**, on 0.21.0 and 0.22.0 alike, and an exception barrier cannot contain it.
+0x20**, on 0.21.0, 0.22.0 and 0.23.0 alike, and an exception barrier cannot
+contain it. **0.23.0 does not fix this one.** It was measured, not assumed: the
+same subprocess matrix that shows `cna_model_destroy` working on 0.23.0 shows
+`cna_effect_get_techniques` taking SIGSEGV at 0x20 there, `..._get_parameters` at
+0x10, `..._get_current_technique` at 0x20 and `cna_effect_clone` at 0x8.
 
-**22 of `effects.h`'s 322 routes read that field.** The other 300 answer normally
-on the same handle — `cna_effect_matrices_get_world` was measured working on one
-— which is why the effect object this binding hands back is real, is the concrete
-class CNA's own type name reports, and refuses only the four members that would
-read the missing state. A condition stands where a crash was.
+**22 of `effects.h`'s 322 routes read that field**, and which 22 is now
+enumerated out of CNA's own source rather than listed by hand — every route in
+`CnaCApiEffects.cpp` whose body reaches `GetEffectState`. **This binding binds 17
+of them and refuses all 17** on a content-published handle; the remaining five
+are shader-effect and PBR routes it does not project at all, so no public member
+can reach them.
+
+That audit corrected an earlier undercount. The refusal used to cover four
+members — `Techniques`, `Parameters`, `CurrentTechnique` and `Clone` — and the
+other thirteen were reachable: the stock effects' `Texture` pairs,
+`DualTextureEffect`'s two layers, `EnvironmentMapEffect.EnvironmentMap`, and the
+three directional-light readers. `BasicEffect.Texture` is the sharpest case,
+because a `.cnj` model publishes a `BasicEffect` and reading its `Texture` is an
+ordinary thing to do: it was measured killing a subprocess at address 0x0 on
+0.22.0 and on 0.23.0, and removing the guard and running the suite gives
+`Memory fault at (nil)` inside SBCL.
+
+The other 300 routes answer normally on the same handle —
+`cna_effect_matrices_get_world` was measured working on one — which is why the
+effect object this binding hands back is real, is the concrete class CNA's own
+type name reports, and refuses only the members that would read the missing
+state. A condition stands where a crash was.
 
 **The remedy is an ordinary XNA idiom and it works completely**: assigning your
 own effect to the part replaces the handle with one that has adapter state.

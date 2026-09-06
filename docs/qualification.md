@@ -103,6 +103,105 @@ rather than one particular one — and nothing else is relaxed, so a version tha
 changed a route, a layout or any other constant still fails. Verified by breaking
 it.
 
+### ABI 0.23.0 is admitted, and this is the evidence
+
+Qualified on 2026-09-06 against an exact, published source pair:
+
+| | |
+| --- | --- |
+| CNA | `5c8840657caa448149af9374b96bbd6acee354a1` — `origin/next`, the tip, and the newest commit whose headers declare 0.23.0 |
+| sharp-runtime | `bfc826e1fa7eef1adb36df1c64782e9939a0af37` — `libcna/sharp-runtime:next`, unchanged since 0.22.0 was qualified against it |
+
+Neither is a local commit and neither tree was patched; `git status` is clean in
+each. Both libraries were built from that one tree with
+`-DCNA_BUILD_C_API=ON -DCNA_PLATFORM=SDL3 -DCNA_AUDIO_PLATFORM=SDL3` and the two
+renderer settings, against `-DCNA_SHARP_RUNTIME_ROOT` pointing at the
+sharp-runtime worktree, and both report encoded **5888**.
+
+**The ABI delta was measured before the build.** Three headers differ from
+`fb62662c9`: `abi.h`'s minor version; one added route,
+`cna_decal_pass_is_supported`, which this binding does not bind; and
+documentation in `models.h`. No struct, field, constant, callback, ownership
+annotation or by-value aggregate changed, and nothing was removed. So the
+generated layer had to be identical apart from the version constants, and it is —
+verified with a throwaway manifest **before** the admission, so that a change
+would have stopped it rather than arriving inside it.
+
+**Both gates were watched refusing 0.23.0 first**, while the set was still two:
+the C probe fails its `_Static_assert` against 0.23.0's headers, and
+`ENSURE-ABI-ADMITTED` rejects the library by name.
+
+| Gate | Result |
+| --- | --- |
+| Headers declare 0.23.0 | encoded **5888**, and `tools/c-api/abi_baseline.json` agrees |
+| Generated foreign layer regenerated against 0.23.0's headers | **identical** but for the four version constants — 572 functions, 73 structs, 511 constants, 11 callbacks, the same as 0.21.0 and 0.22.0 |
+| Compiler-backed probe, 0.23.0 headers | **passes** at `-Wall -Wextra -Werror -Wpedantic` |
+| The gate accepts it | `ENSURE-ABI-ADMITTED` answers 0.23.0 |
+| Whole suite, HEADLESS, native + shim | **0 failures, nothing not run** |
+| Whole suite, HEADLESS, no shim | **0 failures, nothing not run** |
+| Whole suite, SOFTWARE, with the rasterizer proof registry | **0 failures, nothing not run**, and every one of the nine required pixel proofs |
+| Audio lanes, in separate processes | all four: unavailable, dynamic-unavailable, dummy-device state machine, dynamic streaming |
+| Structural verifier, strict | 178 types / 2447 members, **0 disagreements** |
+| Isolated consumer, 60 and 600 frames, HEADLESS and SOFTWARE | passes, and the SOFTWARE run asserts the triangle's own pixel |
+
+**And 0.21.0 and 0.22.0 were re-run after the set grew**, because admitting a
+third version changes the other two's gate as well: both 0 failures with nothing
+not run, each with `ENSURE-ABI-ADMITTED` answering its own version.
+
+**Making the set three needed two test edits**, the same class of thing making it
+two needed three of. `the-admitted-set-is-explicit-and-small` asserted a length of
+2, and `the-loaded-library-is-one-of-the-two-admitted-versions` carried two
+literals in its body and a count in its name. Both keep their literals on purpose
+— that is what makes growing the set an edit a reviewer sees rather than a
+consequence of a version bump — and the second was renamed, because a name that
+says "two" about three versions is a name that lies.
+
+### Three admitted versions, and what CI runs against which
+
+Admitting a third version is an invitation to triple the CI bill, and this
+project does not take it — because it never ran all of them on every push in the
+first place. The shape was already right and is now written down rather than
+implied:
+
+| When | Against what |
+| --- | --- |
+| Every push and pull request | the **newest admitted** ABI, pinned to its exact qualified commit: the whole `native` job (HEADLESS, gate, suite, consumer) and the whole `rasterizer` job (SOFTWARE, pixels) |
+| On demand, `workflow_dispatch` with `cna_ref` | any other admitted version, or `next` to measure a bump before it is admitted |
+
+**Measured before deciding.** A `Native` run takes three to five minutes with a
+warm ccache, and its cache key is the resolved CNA commit — so a second ABI is
+not a marginal cost, it is a second CNA build from a cold cache. Two more ABIs on
+every push would buy re-running gates against libraries that did not change,
+paid for on every documentation commit.
+
+**The release standard is not weakened by that.** Before this binding is
+described as compatible with an admitted ABI, the full gate set must have run
+against that exact ABI — every push is not the only occasion that can happen on,
+and `docs/qualification.md` records which run it did happen on for each of the
+three. What the per-push job buys is early warning on the version most likely to
+move; what the dispatch runs buy is the claim itself.
+
+### What differs between the admitted versions, in behaviour this binding sees
+
+Not a route-by-route matrix: only the differences that reach the public surface.
+
+| | 0.21.0 | 0.22.0 | 0.23.0 |
+| --- | --- | --- | --- |
+| `cna_model_destroy` on a content-loaded model | **null dereference at 0x490** | works | works |
+| A process that merely *loaded* a model exiting | **faults after `cna_game_destroy` returns 0** | clean | clean |
+| `ContentManager.Load<Model>` in this binding | **safe refusal**, naming the defect and 0.22.0 | works | works |
+| The `model` pixel proof | **not obtainable** — no model can be loaded | produced | produced |
+| A content-published `Effect`'s graph and texture routes | **null dereference** | **null dereference** | **null dereference** |
+| The remedy — assign your own effect to the part | n/a, no model | works | works |
+
+The second row is the one worth stating separately: on 0.21.0 the fault is not
+confined to the destroy call. The subprocess probe's `baseline` stage loads a
+model, touches nothing, and still dies at 0x490 after teardown reported success.
+
+**0.23.0 fixes neither defect that this binding refuses for.** It fixes nothing
+here at all — its one added route is in a family this binding does not bind. It is
+admitted because it is *compatible*, which is the only thing admission claims.
+
 ### Why the `Native` workflow is still pinned, and to what
 
 `CNA_REF` defaults to `fb62662c9536f30a6a8bd080597002b8443b28d4` — the 0.22.0
