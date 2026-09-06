@@ -34,11 +34,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 590,
-    "structs": 73,
-    "struct_fields": 546,
-    "constants": 513,
-    "callbacks": 11,
+    "functions": 654,
+    "structs": 74,
+    "struct_fields": 550,
+    "constants": 517,
+    "callbacks": 12,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
   },
@@ -13263,6 +13263,1523 @@
       "c_prototype": "CNA_Result cna_microphone_copy_type_name(CNA_Handle game, char* destination, uint64_t capacity, uint64_t* out_bytes)"
     },
     {
+      "name": "cna_song_create",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "file_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "file_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_song",
+          "c_type": "CNA_SongHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:song:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_create(CNA_Handle game, CNA_StringView file_name, CNA_StringView name, CNA_SongHandle* out_song)"
+    },
+    {
+      "name": "cna_song_create_with_duration",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "file_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "file_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "asset_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "asset_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "duration_milliseconds",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_song",
+          "c_type": "CNA_SongHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:song:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_create_with_duration(CNA_Handle game, CNA_StringView file_name, CNA_StringView asset_name, int32_t duration_milliseconds, CNA_SongHandle* out_song)"
+    },
+    {
+      "name": "cna_song_create_from_uri",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "uri-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "uri-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_song",
+          "c_type": "CNA_SongHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:song:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_create_from_uri(CNA_Handle game, CNA_StringView name, CNA_StringView uri, CNA_SongHandle* out_song)"
+    },
+    {
+      "name": "cna_song_get_name_size",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_name_size(CNA_SongHandle song, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_song_copy_name",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_copy_name(CNA_SongHandle song, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_song_get_duration",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_duration(CNA_SongHandle song, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_song_get_is_protected",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_protected",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_is_protected(CNA_SongHandle song, CNA_Bool* out_protected)"
+    },
+    {
+      "name": "cna_song_get_is_rated",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_rated",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_is_rated(CNA_SongHandle song, CNA_Bool* out_rated)"
+    },
+    {
+      "name": "cna_song_get_play_count",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_play_count",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_play_count(CNA_SongHandle song, int32_t* out_play_count)"
+    },
+    {
+      "name": "cna_song_get_rating",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_rating",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_rating(CNA_SongHandle song, int32_t* out_rating)"
+    },
+    {
+      "name": "cna_song_get_track_number",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_track_number",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_track_number(CNA_SongHandle song, int32_t* out_track_number)"
+    },
+    {
+      "name": "cna_song_get_is_disposed",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_is_disposed(CNA_SongHandle song, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_song_dispose",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_dispose(CNA_SongHandle song)"
+    },
+    {
+      "name": "cna_song_destroy",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_destroy(CNA_SongHandle song)"
+    },
+    {
+      "name": "cna_song_equals",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "left",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "right",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_equal",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_equals(CNA_SongHandle left, CNA_SongHandle right, CNA_Bool* out_equal)"
+    },
+    {
+      "name": "cna_song_get_hash_code",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_hash",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_hash_code(CNA_SongHandle song, int32_t* out_hash)"
+    },
+    {
+      "name": "cna_song_get_type_name_size",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_type_name_size(CNA_SongHandle song, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_song_copy_type_name",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_copy_type_name(CNA_SongHandle song, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_song_collection_create",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "songs",
+          "c_type": "const CNA_SongHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_collection",
+          "c_type": "CNA_SongCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:song-collection:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_collection_create(CNA_Handle game, const CNA_SongHandle* songs, uint64_t count, CNA_SongCollectionHandle* out_collection)"
+    },
+    {
+      "name": "cna_song_collection_get_at",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_song",
+          "c_type": "CNA_SongHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:song:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_collection_get_at(CNA_SongCollectionHandle collection, int32_t index, CNA_SongHandle* out_song)"
+    },
+    {
+      "name": "cna_song_collection_get_count",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_collection_get_count(CNA_SongCollectionHandle collection, int32_t* out_count)"
+    },
+    {
+      "name": "cna_song_collection_get_is_disposed",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_collection_get_is_disposed(CNA_SongCollectionHandle collection, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_song_collection_dispose",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_collection_dispose(CNA_SongCollectionHandle collection)"
+    },
+    {
+      "name": "cna_song_collection_destroy",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_collection_destroy(CNA_SongCollectionHandle collection)"
+    },
+    {
+      "name": "cna_song_collection_get_type_name_size",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_collection_get_type_name_size(CNA_SongCollectionHandle collection, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_song_collection_copy_type_name",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_collection_copy_type_name(CNA_SongCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_visualization_data_init",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_data",
+          "c_type": "CNA_VisualizationData*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_visualization_data_init(CNA_VisualizationData* out_data)"
+    },
+    {
+      "name": "cna_visualization_data_get_type_name_size",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_visualization_data_get_type_name_size(uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_visualization_data_copy_type_name",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_visualization_data_copy_type_name(char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_player_get_game_has_control",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_control",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_game_has_control(CNA_Handle game, CNA_Bool* out_has_control)"
+    },
+    {
+      "name": "cna_media_player_get_is_muted",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_muted",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_is_muted(CNA_Handle game, CNA_Bool* out_muted)"
+    },
+    {
+      "name": "cna_media_player_set_is_muted",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "muted",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_set_is_muted(CNA_Handle game, CNA_Bool muted)"
+    },
+    {
+      "name": "cna_media_player_get_is_repeating",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_repeating",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_is_repeating(CNA_Handle game, CNA_Bool* out_repeating)"
+    },
+    {
+      "name": "cna_media_player_set_is_repeating",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "repeating",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_set_is_repeating(CNA_Handle game, CNA_Bool repeating)"
+    },
+    {
+      "name": "cna_media_player_get_is_shuffled",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_shuffled",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_is_shuffled(CNA_Handle game, CNA_Bool* out_shuffled)"
+    },
+    {
+      "name": "cna_media_player_set_is_shuffled",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "shuffled",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_set_is_shuffled(CNA_Handle game, CNA_Bool shuffled)"
+    },
+    {
+      "name": "cna_media_player_get_play_position_ticks",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_play_position_ticks(CNA_Handle game, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_media_player_get_state",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_state",
+          "c_type": "CNA_MediaState*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_state(CNA_Handle game, CNA_MediaState* out_state)"
+    },
+    {
+      "name": "cna_media_player_get_volume",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_volume",
+          "c_type": "float*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_volume(CNA_Handle game, float* out_volume)"
+    },
+    {
+      "name": "cna_media_player_set_volume",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "volume",
+          "c_type": "float",
+          "cffi_type": ":float"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_set_volume(CNA_Handle game, float volume)"
+    },
+    {
+      "name": "cna_media_player_get_is_visualization_enabled",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_enabled",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_is_visualization_enabled(CNA_Handle game, CNA_Bool* out_enabled)"
+    },
+    {
+      "name": "cna_media_player_set_is_visualization_enabled",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "enabled",
+          "c_type": "CNA_Bool",
+          "cffi_type": ":uint8"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_set_is_visualization_enabled(CNA_Handle game, CNA_Bool enabled)"
+    },
+    {
+      "name": "cna_media_player_get_visualization_data",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "data",
+          "c_type": "CNA_VisualizationData*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_visualization_data(CNA_Handle game, CNA_VisualizationData* data)"
+    },
+    {
+      "name": "cna_media_player_get_queue",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_queue",
+          "c_type": "CNA_MediaQueueHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_get_queue(CNA_Handle game, CNA_MediaQueueHandle* out_queue)"
+    },
+    {
+      "name": "cna_media_player_play_song",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_play_song(CNA_Handle game, CNA_SongHandle song)"
+    },
+    {
+      "name": "cna_media_player_play_songs",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "songs",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_play_songs(CNA_Handle game, CNA_SongCollectionHandle songs)"
+    },
+    {
+      "name": "cna_media_player_play_songs_from",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "songs",
+          "c_type": "CNA_SongCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_play_songs_from(CNA_Handle game, CNA_SongCollectionHandle songs, int32_t index)"
+    },
+    {
+      "name": "cna_media_player_move_next",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_move_next(CNA_Handle game)"
+    },
+    {
+      "name": "cna_media_player_move_previous",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_move_previous(CNA_Handle game)"
+    },
+    {
+      "name": "cna_media_player_pause",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_pause(CNA_Handle game)"
+    },
+    {
+      "name": "cna_media_player_resume",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_resume(CNA_Handle game)"
+    },
+    {
+      "name": "cna_media_player_stop",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_stop(CNA_Handle game)"
+    },
+    {
+      "name": "cna_media_player_subscribe_active_song_changed_ext",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "callback",
+          "c_type": "CNA_MediaPlayerEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_MediaPlayerEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_subscribe_active_song_changed_ext(CNA_MediaPlayerEventCallback callback, void* context, CNA_MediaPlayerEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_media_player_subscribe_media_state_changed_ext",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "callback",
+          "c_type": "CNA_MediaPlayerEventCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_MediaPlayerEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_subscribe_media_state_changed_ext(CNA_MediaPlayerEventCallback callback, void* context, CNA_MediaPlayerEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_media_player_unsubscribe_ext",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_MediaPlayerEventRegistrationHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_unsubscribe_ext(CNA_MediaPlayerEventRegistrationHandle registration)"
+    },
+    {
+      "name": "cna_media_player_raise_active_song_changed_ext",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_raise_active_song_changed_ext(CNA_Handle game)"
+    },
+    {
+      "name": "cna_media_player_raise_media_state_changed_ext",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_player_raise_media_state_changed_ext(CNA_Handle game)"
+    },
+    {
+      "name": "cna_media_queue_get_count",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "queue",
+          "c_type": "CNA_MediaQueueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_queue_get_count(CNA_MediaQueueHandle queue, int32_t* out_count)"
+    },
+    {
+      "name": "cna_media_queue_get_active_song_index",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "queue",
+          "c_type": "CNA_MediaQueueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_index",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_queue_get_active_song_index(CNA_MediaQueueHandle queue, int32_t* out_index)"
+    },
+    {
+      "name": "cna_media_queue_set_active_song_index",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "queue",
+          "c_type": "CNA_MediaQueueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_queue_set_active_song_index(CNA_MediaQueueHandle queue, int32_t index)"
+    },
+    {
+      "name": "cna_media_queue_get_active_song",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "queue",
+          "c_type": "CNA_MediaQueueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_song",
+          "c_type": "CNA_SongHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_available",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:song:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_queue_get_active_song(CNA_MediaQueueHandle queue, CNA_SongHandle* out_song, CNA_Bool* out_available)"
+    },
+    {
+      "name": "cna_media_queue_get_at",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "queue",
+          "c_type": "CNA_MediaQueueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_song",
+          "c_type": "CNA_SongHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:song:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_queue_get_at(CNA_MediaQueueHandle queue, int32_t index, CNA_SongHandle* out_song)"
+    },
+    {
+      "name": "cna_media_queue_get_type_name_size",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "queue",
+          "c_type": "CNA_MediaQueueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_queue_get_type_name_size(CNA_MediaQueueHandle queue, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_queue_copy_type_name",
+      "header": "media_player.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "queue",
+          "c_type": "CNA_MediaQueueHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_queue_copy_type_name(CNA_MediaQueueHandle queue, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
       "name": "cna_model_bone_create_default",
       "header": "models.h",
       "c_returns": "CNA_Result",
@@ -20742,6 +22259,64 @@
       "header": "math_values.h",
       "direction": "out",
       "versioned": false
+    },
+    {
+      "name": "CNA_VisualizationData",
+      "size": 2056,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "frequencies",
+          "c_type": "float",
+          "offset": 8,
+          "size": 1024,
+          "count": 256,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        },
+        {
+          "name": "samples",
+          "c_type": "float",
+          "offset": 1032,
+          "size": 1024,
+          "count": 256,
+          "cffi_type": ":float",
+          "kind": "scalar"
+        }
+      ],
+      "header": "media.h",
+      "direction": "inout",
+      "versioned": true,
+      "fields_absent_from_baseline": {
+        "frequencies": {
+          "offset": 8,
+          "size": 1024,
+          "reason": "CNA's own tools/c-api/abi_baseline.json records this struct's two scalar fields and its total size of 2056 bytes, but not the two 256-element float arrays that account for the remaining 2048. The offset and size here are asserted against the real compiler in the generated probe, which is the stronger of the two checks."
+        },
+        "samples": {
+          "offset": 1032,
+          "size": 1024,
+          "reason": "The second of the two arrays; see `frequencies'."
+        }
+      }
     }
   ],
   "callbacks": [
@@ -20932,6 +22507,18 @@
     },
     {
       "name": "CNA_AudioEventCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
+      "name": "CNA_MediaPlayerEventCallback",
       "returns": ":void",
       "c_returns": "void",
       "params": [
@@ -21299,6 +22886,9 @@
     "CNA_KEY_Z": 90,
     "CNA_KEY_ZOOM": 251,
     "CNA_MAX_SAMPLERS": 16,
+    "CNA_MEDIA_STATE_PAUSED": 2,
+    "CNA_MEDIA_STATE_PLAYING": 1,
+    "CNA_MEDIA_STATE_STOPPED": 0,
     "CNA_MICROPHONE_STATE_STARTED": 0,
     "CNA_MICROPHONE_STATE_STOPPED": 1,
     "CNA_MOUSE_BUTTON_LEFT": 1,
@@ -21456,6 +23046,7 @@
     "CNA_VERTEX_TYPE_POSITION_COLOR": 0,
     "CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE": 1,
     "CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE": 4,
-    "CNA_VERTEX_TYPE_POSITION_TEXTURE": 6
+    "CNA_VERTEX_TYPE_POSITION_TEXTURE": 6,
+    "CNA_VISUALIZATION_DATA_SIZE": 256
   }
 }

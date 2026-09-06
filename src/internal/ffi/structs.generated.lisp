@@ -1000,6 +1000,16 @@
 (defconstant +sizeof-cna-bounding-sphere+ 16)
 (defconstant +alignof-cna-bounding-sphere+ 4)
 
+;;; CNA_VisualizationData -- 2056 bytes, 4-byte aligned, from media.h.
+(defcstruct (cna-visualization-data :size 2056)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (frequencies :float :offset 8 :count 256)
+  (samples :float :offset 1032 :count 256))
+
+(defconstant +sizeof-cna-visualization-data+ 2056)
+(defconstant +alignof-cna-visualization-data+ 4)
+
 ;;; Offsets and sizes the ABI gate re-checks against CFFI's own view.
 (defparameter *native-struct-layouts*
   '(
@@ -1075,6 +1085,7 @@
     (cna-sound-effect-instance-info 32 4 ((struct-size 0 4) (struct-version 4 4) (state 8 4) (is-looped 12 1) (reserved-0 13 3) (volume 16 4) (pitch 20 4) (pan 24 4) (reserved-1 28 4)))
     (cna-audio-listener 56 4 ((struct-size 0 4) (struct-version 4 4) (forward 8 12) (position 20 12) (up 32 12) (velocity 44 12)))
     (cna-audio-emitter 60 4 ((struct-size 0 4) (struct-version 4 4) (doppler-scale 8 4) (forward 12 12) (position 24 12) (up 36 12) (velocity 48 12)))
-    (cna-bounding-sphere 16 4 ((center 0 12) (radius 12 4))))
+    (cna-bounding-sphere 16 4 ((center 0 12) (radius 12 4)))
+    (cna-visualization-data 2056 4 ((struct-size 0 4) (struct-version 4 4) (frequencies 8 1024) (samples 1032 1024))))
   "NAME SIZE ALIGN ((FIELD OFFSET SIZE)...) for every bound native struct.")
 

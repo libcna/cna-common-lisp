@@ -2098,6 +2098,262 @@
 (defcfun ("cna_microphone_copy_type_name" %microphone-copy-type-name) :uint32
   (game :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
 
+;;; CNA_Result cna_song_create(CNA_Handle game, CNA_StringView file_name, CNA_StringView name, CNA_SongHandle* out_song)
+(defcfun ("cna_song_create" %song-create) :uint32
+  (game :uint64) (file-name-0 :pointer) (file-name-1 :uint64) (name-0 :pointer) (name-1 :uint64) (out-song :pointer))
+
+;;; CNA_Result cna_song_create_with_duration(CNA_Handle game, CNA_StringView file_name, CNA_StringView asset_name, int32_t duration_milliseconds, CNA_SongHandle* out_song)
+(defcfun ("cna_song_create_with_duration" %song-create-with-duration) :uint32
+  (game :uint64) (file-name-0 :pointer) (file-name-1 :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (duration-milliseconds :int32) (out-song :pointer))
+
+;;; CNA_Result cna_song_create_from_uri(CNA_Handle game, CNA_StringView name, CNA_StringView uri, CNA_SongHandle* out_song)
+(defcfun ("cna_song_create_from_uri" %song-create-from-uri) :uint32
+  (game :uint64) (name-0 :pointer) (name-1 :uint64) (uri-0 :pointer) (uri-1 :uint64) (out-song :pointer))
+
+;;; CNA_Result cna_song_get_name_size(CNA_SongHandle song, uint64_t* out_bytes)
+(defcfun ("cna_song_get_name_size" %song-get-name-size) :uint32
+  (song :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_song_copy_name(CNA_SongHandle song, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_song_copy_name" %song-copy-name) :uint32
+  (song :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_song_get_duration(CNA_SongHandle song, int64_t* out_ticks)
+(defcfun ("cna_song_get_duration" %song-get-duration) :uint32
+  (song :uint64) (out-ticks :pointer))
+
+;;; CNA_Result cna_song_get_is_protected(CNA_SongHandle song, CNA_Bool* out_protected)
+(defcfun ("cna_song_get_is_protected" %song-get-is-protected) :uint32
+  (song :uint64) (out-protected :pointer))
+
+;;; CNA_Result cna_song_get_is_rated(CNA_SongHandle song, CNA_Bool* out_rated)
+(defcfun ("cna_song_get_is_rated" %song-get-is-rated) :uint32
+  (song :uint64) (out-rated :pointer))
+
+;;; CNA_Result cna_song_get_play_count(CNA_SongHandle song, int32_t* out_play_count)
+(defcfun ("cna_song_get_play_count" %song-get-play-count) :uint32
+  (song :uint64) (out-play-count :pointer))
+
+;;; CNA_Result cna_song_get_rating(CNA_SongHandle song, int32_t* out_rating)
+(defcfun ("cna_song_get_rating" %song-get-rating) :uint32
+  (song :uint64) (out-rating :pointer))
+
+;;; CNA_Result cna_song_get_track_number(CNA_SongHandle song, int32_t* out_track_number)
+(defcfun ("cna_song_get_track_number" %song-get-track-number) :uint32
+  (song :uint64) (out-track-number :pointer))
+
+;;; CNA_Result cna_song_get_is_disposed(CNA_SongHandle song, CNA_Bool* out_disposed)
+(defcfun ("cna_song_get_is_disposed" %song-get-is-disposed) :uint32
+  (song :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_song_dispose(CNA_SongHandle song)
+(defcfun ("cna_song_dispose" %song-dispose) :uint32
+  (song :uint64))
+
+;;; CNA_Result cna_song_destroy(CNA_SongHandle song)
+(defcfun ("cna_song_destroy" %song-destroy) :uint32
+  (song :uint64))
+
+;;; CNA_Result cna_song_equals(CNA_SongHandle left, CNA_SongHandle right, CNA_Bool* out_equal)
+(defcfun ("cna_song_equals" %song-equals) :uint32
+  (left :uint64) (right :uint64) (out-equal :pointer))
+
+;;; CNA_Result cna_song_get_hash_code(CNA_SongHandle song, int32_t* out_hash)
+(defcfun ("cna_song_get_hash_code" %song-get-hash-code) :uint32
+  (song :uint64) (out-hash :pointer))
+
+;;; CNA_Result cna_song_get_type_name_size(CNA_SongHandle song, uint64_t* out_bytes)
+(defcfun ("cna_song_get_type_name_size" %song-get-type-name-size) :uint32
+  (song :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_song_copy_type_name(CNA_SongHandle song, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_song_copy_type_name" %song-copy-type-name) :uint32
+  (song :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_song_collection_create(CNA_Handle game, const CNA_SongHandle* songs, uint64_t count, CNA_SongCollectionHandle* out_collection)
+(defcfun ("cna_song_collection_create" %song-collection-create) :uint32
+  (game :uint64) (songs :pointer) (count :uint64) (out-collection :pointer))
+
+;;; CNA_Result cna_song_collection_get_at(CNA_SongCollectionHandle collection, int32_t index, CNA_SongHandle* out_song)
+(defcfun ("cna_song_collection_get_at" %song-collection-get-at) :uint32
+  (collection :uint64) (index :int32) (out-song :pointer))
+
+;;; CNA_Result cna_song_collection_get_count(CNA_SongCollectionHandle collection, int32_t* out_count)
+(defcfun ("cna_song_collection_get_count" %song-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_song_collection_get_is_disposed(CNA_SongCollectionHandle collection, CNA_Bool* out_disposed)
+(defcfun ("cna_song_collection_get_is_disposed" %song-collection-get-is-disposed) :uint32
+  (collection :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_song_collection_dispose(CNA_SongCollectionHandle collection)
+(defcfun ("cna_song_collection_dispose" %song-collection-dispose) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_song_collection_destroy(CNA_SongCollectionHandle collection)
+(defcfun ("cna_song_collection_destroy" %song-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_song_collection_get_type_name_size(CNA_SongCollectionHandle collection, uint64_t* out_bytes)
+(defcfun ("cna_song_collection_get_type_name_size" %song-collection-get-type-name-size) :uint32
+  (collection :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_song_collection_copy_type_name(CNA_SongCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_song_collection_copy_type_name" %song-collection-copy-type-name) :uint32
+  (collection :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_visualization_data_init(CNA_VisualizationData* out_data)
+(defcfun ("cna_visualization_data_init" %visualization-data-init) :uint32
+  (out-data :pointer))
+
+;;; CNA_Result cna_visualization_data_get_type_name_size(uint64_t* out_bytes)
+(defcfun ("cna_visualization_data_get_type_name_size" %visualization-data-get-type-name-size) :uint32
+  (out-bytes :pointer))
+
+;;; CNA_Result cna_visualization_data_copy_type_name(char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_visualization_data_copy_type_name" %visualization-data-copy-type-name) :uint32
+  (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_player_get_game_has_control(CNA_Handle game, CNA_Bool* out_has_control)
+(defcfun ("cna_media_player_get_game_has_control" %media-player-get-game-has-control) :uint32
+  (game :uint64) (out-has-control :pointer))
+
+;;; CNA_Result cna_media_player_get_is_muted(CNA_Handle game, CNA_Bool* out_muted)
+(defcfun ("cna_media_player_get_is_muted" %media-player-get-is-muted) :uint32
+  (game :uint64) (out-muted :pointer))
+
+;;; CNA_Result cna_media_player_set_is_muted(CNA_Handle game, CNA_Bool muted)
+(defcfun ("cna_media_player_set_is_muted" %media-player-set-is-muted) :uint32
+  (game :uint64) (muted :uint8))
+
+;;; CNA_Result cna_media_player_get_is_repeating(CNA_Handle game, CNA_Bool* out_repeating)
+(defcfun ("cna_media_player_get_is_repeating" %media-player-get-is-repeating) :uint32
+  (game :uint64) (out-repeating :pointer))
+
+;;; CNA_Result cna_media_player_set_is_repeating(CNA_Handle game, CNA_Bool repeating)
+(defcfun ("cna_media_player_set_is_repeating" %media-player-set-is-repeating) :uint32
+  (game :uint64) (repeating :uint8))
+
+;;; CNA_Result cna_media_player_get_is_shuffled(CNA_Handle game, CNA_Bool* out_shuffled)
+(defcfun ("cna_media_player_get_is_shuffled" %media-player-get-is-shuffled) :uint32
+  (game :uint64) (out-shuffled :pointer))
+
+;;; CNA_Result cna_media_player_set_is_shuffled(CNA_Handle game, CNA_Bool shuffled)
+(defcfun ("cna_media_player_set_is_shuffled" %media-player-set-is-shuffled) :uint32
+  (game :uint64) (shuffled :uint8))
+
+;;; CNA_Result cna_media_player_get_play_position_ticks(CNA_Handle game, int64_t* out_ticks)
+(defcfun ("cna_media_player_get_play_position_ticks" %media-player-get-play-position-ticks) :uint32
+  (game :uint64) (out-ticks :pointer))
+
+;;; CNA_Result cna_media_player_get_state(CNA_Handle game, CNA_MediaState* out_state)
+(defcfun ("cna_media_player_get_state" %media-player-get-state) :uint32
+  (game :uint64) (out-state :pointer))
+
+;;; CNA_Result cna_media_player_get_volume(CNA_Handle game, float* out_volume)
+(defcfun ("cna_media_player_get_volume" %media-player-get-volume) :uint32
+  (game :uint64) (out-volume :pointer))
+
+;;; CNA_Result cna_media_player_set_volume(CNA_Handle game, float volume)
+(defcfun ("cna_media_player_set_volume" %media-player-set-volume) :uint32
+  (game :uint64) (volume :float))
+
+;;; CNA_Result cna_media_player_get_is_visualization_enabled(CNA_Handle game, CNA_Bool* out_enabled)
+(defcfun ("cna_media_player_get_is_visualization_enabled" %media-player-get-is-visualization-enabled) :uint32
+  (game :uint64) (out-enabled :pointer))
+
+;;; CNA_Result cna_media_player_set_is_visualization_enabled(CNA_Handle game, CNA_Bool enabled)
+(defcfun ("cna_media_player_set_is_visualization_enabled" %media-player-set-is-visualization-enabled) :uint32
+  (game :uint64) (enabled :uint8))
+
+;;; CNA_Result cna_media_player_get_visualization_data(CNA_Handle game, CNA_VisualizationData* data)
+(defcfun ("cna_media_player_get_visualization_data" %media-player-get-visualization-data) :uint32
+  (game :uint64) (data :pointer))
+
+;;; CNA_Result cna_media_player_get_queue(CNA_Handle game, CNA_MediaQueueHandle* out_queue)
+(defcfun ("cna_media_player_get_queue" %media-player-get-queue) :uint32
+  (game :uint64) (out-queue :pointer))
+
+;;; CNA_Result cna_media_player_play_song(CNA_Handle game, CNA_SongHandle song)
+(defcfun ("cna_media_player_play_song" %media-player-play-song) :uint32
+  (game :uint64) (song :uint64))
+
+;;; CNA_Result cna_media_player_play_songs(CNA_Handle game, CNA_SongCollectionHandle songs)
+(defcfun ("cna_media_player_play_songs" %media-player-play-songs) :uint32
+  (game :uint64) (songs :uint64))
+
+;;; CNA_Result cna_media_player_play_songs_from(CNA_Handle game, CNA_SongCollectionHandle songs, int32_t index)
+(defcfun ("cna_media_player_play_songs_from" %media-player-play-songs-from) :uint32
+  (game :uint64) (songs :uint64) (index :int32))
+
+;;; CNA_Result cna_media_player_move_next(CNA_Handle game)
+(defcfun ("cna_media_player_move_next" %media-player-move-next) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_media_player_move_previous(CNA_Handle game)
+(defcfun ("cna_media_player_move_previous" %media-player-move-previous) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_media_player_pause(CNA_Handle game)
+(defcfun ("cna_media_player_pause" %media-player-pause) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_media_player_resume(CNA_Handle game)
+(defcfun ("cna_media_player_resume" %media-player-resume) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_media_player_stop(CNA_Handle game)
+(defcfun ("cna_media_player_stop" %media-player-stop) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_media_player_subscribe_active_song_changed_ext(CNA_MediaPlayerEventCallback callback, void* context, CNA_MediaPlayerEventRegistrationHandle* out_registration)
+(defcfun ("cna_media_player_subscribe_active_song_changed_ext" %media-player-subscribe-active-song-changed-ext) :uint32
+  (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_media_player_subscribe_media_state_changed_ext(CNA_MediaPlayerEventCallback callback, void* context, CNA_MediaPlayerEventRegistrationHandle* out_registration)
+(defcfun ("cna_media_player_subscribe_media_state_changed_ext" %media-player-subscribe-media-state-changed-ext) :uint32
+  (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_media_player_unsubscribe_ext(CNA_MediaPlayerEventRegistrationHandle registration)
+(defcfun ("cna_media_player_unsubscribe_ext" %media-player-unsubscribe-ext) :uint32
+  (registration :uint64))
+
+;;; CNA_Result cna_media_player_raise_active_song_changed_ext(CNA_Handle game)
+(defcfun ("cna_media_player_raise_active_song_changed_ext" %media-player-raise-active-song-changed-ext) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_media_player_raise_media_state_changed_ext(CNA_Handle game)
+(defcfun ("cna_media_player_raise_media_state_changed_ext" %media-player-raise-media-state-changed-ext) :uint32
+  (game :uint64))
+
+;;; CNA_Result cna_media_queue_get_count(CNA_MediaQueueHandle queue, int32_t* out_count)
+(defcfun ("cna_media_queue_get_count" %media-queue-get-count) :uint32
+  (queue :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_media_queue_get_active_song_index(CNA_MediaQueueHandle queue, int32_t* out_index)
+(defcfun ("cna_media_queue_get_active_song_index" %media-queue-get-active-song-index) :uint32
+  (queue :uint64) (out-index :pointer))
+
+;;; CNA_Result cna_media_queue_set_active_song_index(CNA_MediaQueueHandle queue, int32_t index)
+(defcfun ("cna_media_queue_set_active_song_index" %media-queue-set-active-song-index) :uint32
+  (queue :uint64) (index :int32))
+
+;;; CNA_Result cna_media_queue_get_active_song(CNA_MediaQueueHandle queue, CNA_SongHandle* out_song, CNA_Bool* out_available)
+(defcfun ("cna_media_queue_get_active_song" %media-queue-get-active-song) :uint32
+  (queue :uint64) (out-song :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_media_queue_get_at(CNA_MediaQueueHandle queue, int32_t index, CNA_SongHandle* out_song)
+(defcfun ("cna_media_queue_get_at" %media-queue-get-at) :uint32
+  (queue :uint64) (index :int32) (out-song :pointer))
+
+;;; CNA_Result cna_media_queue_get_type_name_size(CNA_MediaQueueHandle queue, uint64_t* out_bytes)
+(defcfun ("cna_media_queue_get_type_name_size" %media-queue-get-type-name-size) :uint32
+  (queue :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_queue_copy_type_name(CNA_MediaQueueHandle queue, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_media_queue_copy_type_name" %media-queue-copy-type-name) :uint32
+  (queue :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
 ;;; CNA_Result cna_model_bone_create_default(CNA_ModelBoneHandle* out_bone)
 (defcfun ("cna_model_bone_create_default" %model-bone-create-default) :uint32
   (out-bone :pointer))
@@ -2896,6 +3152,70 @@
     ("cna_microphone_check_all_buffers_ext" %microphone-check-all-buffers-ext :uint32 (:uint64) :thread :owner :ownership "none")
     ("cna_microphone_get_type_name_size" %microphone-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_microphone_copy_type_name" %microphone-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_create" %song-create :uint32 (:uint64 :pointer :uint64 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:song:child-of-game")
+    ("cna_song_create_with_duration" %song-create-with-duration :uint32 (:uint64 :pointer :uint64 :pointer :uint64 :int32 :pointer) :thread :owner :ownership "creates-owned:song:child-of-game")
+    ("cna_song_create_from_uri" %song-create-from-uri :uint32 (:uint64 :pointer :uint64 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:song:child-of-game")
+    ("cna_song_get_name_size" %song-get-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_copy_name" %song-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_duration" %song-get-duration :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_is_protected" %song-get-is-protected :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_is_rated" %song-get-is-rated :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_play_count" %song-get-play-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_rating" %song-get-rating :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_track_number" %song-get-track-number :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_is_disposed" %song-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_dispose" %song-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_song_destroy" %song-destroy :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_song_equals" %song-equals :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_hash_code" %song-get-hash-code :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_type_name_size" %song-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_copy_type_name" %song-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_collection_create" %song-collection-create :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:song-collection:child-of-game")
+    ("cna_song_collection_get_at" %song-collection-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "creates-owned:song:child-of-game")
+    ("cna_song_collection_get_count" %song-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_collection_get_is_disposed" %song-collection-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_collection_dispose" %song-collection-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_song_collection_destroy" %song-collection-destroy :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_song_collection_get_type_name_size" %song-collection-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_collection_copy_type_name" %song-collection-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_visualization_data_init" %visualization-data-init :uint32 (:pointer) :thread :owner :ownership "none")
+    ("cna_visualization_data_get_type_name_size" %visualization-data-get-type-name-size :uint32 (:pointer) :thread :owner :ownership "none")
+    ("cna_visualization_data_copy_type_name" %visualization-data-copy-type-name :uint32 (:pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_get_game_has_control" %media-player-get-game-has-control :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_get_is_muted" %media-player-get-is-muted :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_set_is_muted" %media-player-set-is-muted :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_media_player_get_is_repeating" %media-player-get-is-repeating :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_set_is_repeating" %media-player-set-is-repeating :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_media_player_get_is_shuffled" %media-player-get-is-shuffled :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_set_is_shuffled" %media-player-set-is-shuffled :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_media_player_get_play_position_ticks" %media-player-get-play-position-ticks :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_get_state" %media-player-get-state :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_get_volume" %media-player-get-volume :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_set_volume" %media-player-set-volume :uint32 (:uint64 :float) :thread :owner :ownership "none")
+    ("cna_media_player_get_is_visualization_enabled" %media-player-get-is-visualization-enabled :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_set_is_visualization_enabled" %media-player-set-is-visualization-enabled :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
+    ("cna_media_player_get_visualization_data" %media-player-get-visualization-data :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_get_queue" %media-player-get-queue :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_player_play_song" %media-player-play-song :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_media_player_play_songs" %media-player-play-songs :uint32 (:uint64 :uint64) :thread :owner :ownership "none")
+    ("cna_media_player_play_songs_from" %media-player-play-songs-from :uint32 (:uint64 :uint64 :int32) :thread :owner :ownership "none")
+    ("cna_media_player_move_next" %media-player-move-next :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_media_player_move_previous" %media-player-move-previous :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_media_player_pause" %media-player-pause :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_media_player_resume" %media-player-resume :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_media_player_stop" %media-player-stop :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_media_player_subscribe_active_song_changed_ext" %media-player-subscribe-active-song-changed-ext :uint32 (:pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_media_player_subscribe_media_state_changed_ext" %media-player-subscribe-media-state-changed-ext :uint32 (:pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_media_player_unsubscribe_ext" %media-player-unsubscribe-ext :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_media_player_raise_active_song_changed_ext" %media-player-raise-active-song-changed-ext :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_media_player_raise_media_state_changed_ext" %media-player-raise-media-state-changed-ext :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_media_queue_get_count" %media-queue-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_queue_get_active_song_index" %media-queue-get-active-song-index :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_queue_set_active_song_index" %media-queue-set-active-song-index :uint32 (:uint64 :int32) :thread :owner :ownership "none")
+    ("cna_media_queue_get_active_song" %media-queue-get-active-song :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:song:child-of-game")
+    ("cna_media_queue_get_at" %media-queue-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "creates-owned:song:child-of-game")
+    ("cna_media_queue_get_type_name_size" %media-queue-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_queue_copy_type_name" %media-queue-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_model_bone_create_default" %model-bone-create-default :uint32 (:pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
     ("cna_model_bone_create" %model-bone-create :uint32 (:int32 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
     ("cna_model_bone_destroy" %model-bone-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-bone")

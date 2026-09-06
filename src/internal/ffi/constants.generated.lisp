@@ -368,6 +368,9 @@
 (defconstant +key-z+ 90)
 (defconstant +key-zoom+ 251)
 (defconstant +max-samplers+ 16)
+(defconstant +media-state-paused+ 2)
+(defconstant +media-state-playing+ 1)
+(defconstant +media-state-stopped+ 0)
 (defconstant +microphone-state-started+ 0)
 (defconstant +microphone-state-stopped+ 1)
 (defconstant +mouse-button-left+ 1)
@@ -526,6 +529,7 @@
 (defconstant +vertex-type-position-color-texture+ 1)
 (defconstant +vertex-type-position-normal-texture+ 4)
 (defconstant +vertex-type-position-texture+ 6)
+(defconstant +visualization-data-size+ 256)
 
 ;;; keys family: 160 members.
 (defparameter *keys-table*

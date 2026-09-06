@@ -1320,6 +1320,17 @@ _Static_assert(sizeof(((CNA_BoundingSphere *)0)->center) == 12, "CNA_BoundingSph
 _Static_assert(offsetof(CNA_BoundingSphere, radius) == 12, "CNA_BoundingSphere.radius offset");
 _Static_assert(sizeof(((CNA_BoundingSphere *)0)->radius) == 4, "CNA_BoundingSphere.radius size");
 
+_Static_assert(sizeof(CNA_VisualizationData) == 2056, "CNA_VisualizationData size");
+_Static_assert(_Alignof(CNA_VisualizationData) == 4, "CNA_VisualizationData alignment");
+_Static_assert(offsetof(CNA_VisualizationData, struct_size) == 0, "CNA_VisualizationData.struct_size offset");
+_Static_assert(sizeof(((CNA_VisualizationData *)0)->struct_size) == 4, "CNA_VisualizationData.struct_size size");
+_Static_assert(offsetof(CNA_VisualizationData, struct_version) == 4, "CNA_VisualizationData.struct_version offset");
+_Static_assert(sizeof(((CNA_VisualizationData *)0)->struct_version) == 4, "CNA_VisualizationData.struct_version size");
+_Static_assert(offsetof(CNA_VisualizationData, frequencies) == 8, "CNA_VisualizationData.frequencies offset");
+_Static_assert(sizeof(((CNA_VisualizationData *)0)->frequencies) == 1024, "CNA_VisualizationData.frequencies size");
+_Static_assert(offsetof(CNA_VisualizationData, samples) == 1032, "CNA_VisualizationData.samples offset");
+_Static_assert(sizeof(((CNA_VisualizationData *)0)->samples) == 1024, "CNA_VisualizationData.samples size");
+
 /* --- prototypes: assigning each route to its declared type is a compile
    error unless the declaration matches exactly --- */
 uint32_t (*const cna_lisp_probe_cna_get_abi_version)(void) = cna_get_abi_version;
@@ -1843,6 +1854,70 @@ CNA_Result (*const cna_lisp_probe_cna_microphone_subscribe_buffer_ready_at)(CNA_
 CNA_Result (*const cna_lisp_probe_cna_microphone_check_all_buffers_ext)(CNA_Handle) = cna_microphone_check_all_buffers_ext;
 CNA_Result (*const cna_lisp_probe_cna_microphone_get_type_name_size)(CNA_Handle, uint64_t*) = cna_microphone_get_type_name_size;
 CNA_Result (*const cna_lisp_probe_cna_microphone_copy_type_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_microphone_copy_type_name;
+CNA_Result (*const cna_lisp_probe_cna_song_create)(CNA_Handle, CNA_StringView, CNA_StringView, CNA_SongHandle*) = cna_song_create;
+CNA_Result (*const cna_lisp_probe_cna_song_create_with_duration)(CNA_Handle, CNA_StringView, CNA_StringView, int32_t, CNA_SongHandle*) = cna_song_create_with_duration;
+CNA_Result (*const cna_lisp_probe_cna_song_create_from_uri)(CNA_Handle, CNA_StringView, CNA_StringView, CNA_SongHandle*) = cna_song_create_from_uri;
+CNA_Result (*const cna_lisp_probe_cna_song_get_name_size)(CNA_SongHandle, uint64_t*) = cna_song_get_name_size;
+CNA_Result (*const cna_lisp_probe_cna_song_copy_name)(CNA_SongHandle, char*, uint64_t, uint64_t*) = cna_song_copy_name;
+CNA_Result (*const cna_lisp_probe_cna_song_get_duration)(CNA_SongHandle, int64_t*) = cna_song_get_duration;
+CNA_Result (*const cna_lisp_probe_cna_song_get_is_protected)(CNA_SongHandle, CNA_Bool*) = cna_song_get_is_protected;
+CNA_Result (*const cna_lisp_probe_cna_song_get_is_rated)(CNA_SongHandle, CNA_Bool*) = cna_song_get_is_rated;
+CNA_Result (*const cna_lisp_probe_cna_song_get_play_count)(CNA_SongHandle, int32_t*) = cna_song_get_play_count;
+CNA_Result (*const cna_lisp_probe_cna_song_get_rating)(CNA_SongHandle, int32_t*) = cna_song_get_rating;
+CNA_Result (*const cna_lisp_probe_cna_song_get_track_number)(CNA_SongHandle, int32_t*) = cna_song_get_track_number;
+CNA_Result (*const cna_lisp_probe_cna_song_get_is_disposed)(CNA_SongHandle, CNA_Bool*) = cna_song_get_is_disposed;
+CNA_Result (*const cna_lisp_probe_cna_song_dispose)(CNA_SongHandle) = cna_song_dispose;
+CNA_Result (*const cna_lisp_probe_cna_song_destroy)(CNA_SongHandle) = cna_song_destroy;
+CNA_Result (*const cna_lisp_probe_cna_song_equals)(CNA_SongHandle, CNA_SongHandle, CNA_Bool*) = cna_song_equals;
+CNA_Result (*const cna_lisp_probe_cna_song_get_hash_code)(CNA_SongHandle, int32_t*) = cna_song_get_hash_code;
+CNA_Result (*const cna_lisp_probe_cna_song_get_type_name_size)(CNA_SongHandle, uint64_t*) = cna_song_get_type_name_size;
+CNA_Result (*const cna_lisp_probe_cna_song_copy_type_name)(CNA_SongHandle, char*, uint64_t, uint64_t*) = cna_song_copy_type_name;
+CNA_Result (*const cna_lisp_probe_cna_song_collection_create)(CNA_Handle, const CNA_SongHandle*, uint64_t, CNA_SongCollectionHandle*) = cna_song_collection_create;
+CNA_Result (*const cna_lisp_probe_cna_song_collection_get_at)(CNA_SongCollectionHandle, int32_t, CNA_SongHandle*) = cna_song_collection_get_at;
+CNA_Result (*const cna_lisp_probe_cna_song_collection_get_count)(CNA_SongCollectionHandle, int32_t*) = cna_song_collection_get_count;
+CNA_Result (*const cna_lisp_probe_cna_song_collection_get_is_disposed)(CNA_SongCollectionHandle, CNA_Bool*) = cna_song_collection_get_is_disposed;
+CNA_Result (*const cna_lisp_probe_cna_song_collection_dispose)(CNA_SongCollectionHandle) = cna_song_collection_dispose;
+CNA_Result (*const cna_lisp_probe_cna_song_collection_destroy)(CNA_SongCollectionHandle) = cna_song_collection_destroy;
+CNA_Result (*const cna_lisp_probe_cna_song_collection_get_type_name_size)(CNA_SongCollectionHandle, uint64_t*) = cna_song_collection_get_type_name_size;
+CNA_Result (*const cna_lisp_probe_cna_song_collection_copy_type_name)(CNA_SongCollectionHandle, char*, uint64_t, uint64_t*) = cna_song_collection_copy_type_name;
+CNA_Result (*const cna_lisp_probe_cna_visualization_data_init)(CNA_VisualizationData*) = cna_visualization_data_init;
+CNA_Result (*const cna_lisp_probe_cna_visualization_data_get_type_name_size)(uint64_t*) = cna_visualization_data_get_type_name_size;
+CNA_Result (*const cna_lisp_probe_cna_visualization_data_copy_type_name)(char*, uint64_t, uint64_t*) = cna_visualization_data_copy_type_name;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_game_has_control)(CNA_Handle, CNA_Bool*) = cna_media_player_get_game_has_control;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_is_muted)(CNA_Handle, CNA_Bool*) = cna_media_player_get_is_muted;
+CNA_Result (*const cna_lisp_probe_cna_media_player_set_is_muted)(CNA_Handle, CNA_Bool) = cna_media_player_set_is_muted;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_is_repeating)(CNA_Handle, CNA_Bool*) = cna_media_player_get_is_repeating;
+CNA_Result (*const cna_lisp_probe_cna_media_player_set_is_repeating)(CNA_Handle, CNA_Bool) = cna_media_player_set_is_repeating;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_is_shuffled)(CNA_Handle, CNA_Bool*) = cna_media_player_get_is_shuffled;
+CNA_Result (*const cna_lisp_probe_cna_media_player_set_is_shuffled)(CNA_Handle, CNA_Bool) = cna_media_player_set_is_shuffled;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_play_position_ticks)(CNA_Handle, int64_t*) = cna_media_player_get_play_position_ticks;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_state)(CNA_Handle, CNA_MediaState*) = cna_media_player_get_state;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_volume)(CNA_Handle, float*) = cna_media_player_get_volume;
+CNA_Result (*const cna_lisp_probe_cna_media_player_set_volume)(CNA_Handle, float) = cna_media_player_set_volume;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_is_visualization_enabled)(CNA_Handle, CNA_Bool*) = cna_media_player_get_is_visualization_enabled;
+CNA_Result (*const cna_lisp_probe_cna_media_player_set_is_visualization_enabled)(CNA_Handle, CNA_Bool) = cna_media_player_set_is_visualization_enabled;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_visualization_data)(CNA_Handle, CNA_VisualizationData*) = cna_media_player_get_visualization_data;
+CNA_Result (*const cna_lisp_probe_cna_media_player_get_queue)(CNA_Handle, CNA_MediaQueueHandle*) = cna_media_player_get_queue;
+CNA_Result (*const cna_lisp_probe_cna_media_player_play_song)(CNA_Handle, CNA_SongHandle) = cna_media_player_play_song;
+CNA_Result (*const cna_lisp_probe_cna_media_player_play_songs)(CNA_Handle, CNA_SongCollectionHandle) = cna_media_player_play_songs;
+CNA_Result (*const cna_lisp_probe_cna_media_player_play_songs_from)(CNA_Handle, CNA_SongCollectionHandle, int32_t) = cna_media_player_play_songs_from;
+CNA_Result (*const cna_lisp_probe_cna_media_player_move_next)(CNA_Handle) = cna_media_player_move_next;
+CNA_Result (*const cna_lisp_probe_cna_media_player_move_previous)(CNA_Handle) = cna_media_player_move_previous;
+CNA_Result (*const cna_lisp_probe_cna_media_player_pause)(CNA_Handle) = cna_media_player_pause;
+CNA_Result (*const cna_lisp_probe_cna_media_player_resume)(CNA_Handle) = cna_media_player_resume;
+CNA_Result (*const cna_lisp_probe_cna_media_player_stop)(CNA_Handle) = cna_media_player_stop;
+CNA_Result (*const cna_lisp_probe_cna_media_player_subscribe_active_song_changed_ext)(CNA_MediaPlayerEventCallback, void*, CNA_MediaPlayerEventRegistrationHandle*) = cna_media_player_subscribe_active_song_changed_ext;
+CNA_Result (*const cna_lisp_probe_cna_media_player_subscribe_media_state_changed_ext)(CNA_MediaPlayerEventCallback, void*, CNA_MediaPlayerEventRegistrationHandle*) = cna_media_player_subscribe_media_state_changed_ext;
+CNA_Result (*const cna_lisp_probe_cna_media_player_unsubscribe_ext)(CNA_MediaPlayerEventRegistrationHandle) = cna_media_player_unsubscribe_ext;
+CNA_Result (*const cna_lisp_probe_cna_media_player_raise_active_song_changed_ext)(CNA_Handle) = cna_media_player_raise_active_song_changed_ext;
+CNA_Result (*const cna_lisp_probe_cna_media_player_raise_media_state_changed_ext)(CNA_Handle) = cna_media_player_raise_media_state_changed_ext;
+CNA_Result (*const cna_lisp_probe_cna_media_queue_get_count)(CNA_MediaQueueHandle, int32_t*) = cna_media_queue_get_count;
+CNA_Result (*const cna_lisp_probe_cna_media_queue_get_active_song_index)(CNA_MediaQueueHandle, int32_t*) = cna_media_queue_get_active_song_index;
+CNA_Result (*const cna_lisp_probe_cna_media_queue_set_active_song_index)(CNA_MediaQueueHandle, int32_t) = cna_media_queue_set_active_song_index;
+CNA_Result (*const cna_lisp_probe_cna_media_queue_get_active_song)(CNA_MediaQueueHandle, CNA_SongHandle*, CNA_Bool*) = cna_media_queue_get_active_song;
+CNA_Result (*const cna_lisp_probe_cna_media_queue_get_at)(CNA_MediaQueueHandle, int32_t, CNA_SongHandle*) = cna_media_queue_get_at;
+CNA_Result (*const cna_lisp_probe_cna_media_queue_get_type_name_size)(CNA_MediaQueueHandle, uint64_t*) = cna_media_queue_get_type_name_size;
+CNA_Result (*const cna_lisp_probe_cna_media_queue_copy_type_name)(CNA_MediaQueueHandle, char*, uint64_t, uint64_t*) = cna_media_queue_copy_type_name;
 CNA_Result (*const cna_lisp_probe_cna_model_bone_create_default)(CNA_ModelBoneHandle*) = cna_model_bone_create_default;
 CNA_Result (*const cna_lisp_probe_cna_model_bone_create)(int32_t, CNA_StringView, CNA_ModelBoneHandle*) = cna_model_bone_create;
 CNA_Result (*const cna_lisp_probe_cna_model_bone_destroy)(CNA_ModelBoneHandle) = cna_model_bone_destroy;
@@ -1925,6 +2000,7 @@ _Static_assert(sizeof(CNA_RenderTargetContentLostCallback) == sizeof(void (*)(vo
 _Static_assert(sizeof(CNA_GameComponentEventCallback) == sizeof(void (*)(void)), "CNA_GameComponentEventCallback size");
 _Static_assert(sizeof(CNA_GameComponentCollectionCallback) == sizeof(void (*)(void)), "CNA_GameComponentCollectionCallback size");
 _Static_assert(sizeof(CNA_AudioEventCallback) == sizeof(void (*)(void)), "CNA_AudioEventCallback size");
+_Static_assert(sizeof(CNA_MediaPlayerEventCallback) == sizeof(void (*)(void)), "CNA_MediaPlayerEventCallback size");
 
 /* --- constants --- */
 /* The four ABI-version constants are asserted to be *an admitted*
@@ -2288,6 +2364,9 @@ _Static_assert((int64_t)(CNA_KEY_Y) == INT64_C(89), "CNA_KEY_Y value");
 _Static_assert((int64_t)(CNA_KEY_Z) == INT64_C(90), "CNA_KEY_Z value");
 _Static_assert((int64_t)(CNA_KEY_ZOOM) == INT64_C(251), "CNA_KEY_ZOOM value");
 _Static_assert((int64_t)(CNA_MAX_SAMPLERS) == INT64_C(16), "CNA_MAX_SAMPLERS value");
+_Static_assert((int64_t)(CNA_MEDIA_STATE_PAUSED) == INT64_C(2), "CNA_MEDIA_STATE_PAUSED value");
+_Static_assert((int64_t)(CNA_MEDIA_STATE_PLAYING) == INT64_C(1), "CNA_MEDIA_STATE_PLAYING value");
+_Static_assert((int64_t)(CNA_MEDIA_STATE_STOPPED) == INT64_C(0), "CNA_MEDIA_STATE_STOPPED value");
 _Static_assert((int64_t)(CNA_MICROPHONE_STATE_STARTED) == INT64_C(0), "CNA_MICROPHONE_STATE_STARTED value");
 _Static_assert((int64_t)(CNA_MICROPHONE_STATE_STOPPED) == INT64_C(1), "CNA_MICROPHONE_STATE_STOPPED value");
 _Static_assert((int64_t)(CNA_MOUSE_BUTTON_LEFT) == INT64_C(1), "CNA_MOUSE_BUTTON_LEFT value");
@@ -2446,5 +2525,6 @@ _Static_assert((int64_t)(CNA_VERTEX_TYPE_POSITION_COLOR) == INT64_C(0), "CNA_VER
 _Static_assert((int64_t)(CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE) == INT64_C(1), "CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE value");
 _Static_assert((int64_t)(CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE) == INT64_C(4), "CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE value");
 _Static_assert((int64_t)(CNA_VERTEX_TYPE_POSITION_TEXTURE) == INT64_C(6), "CNA_VERTEX_TYPE_POSITION_TEXTURE value");
+_Static_assert((int64_t)(CNA_VISUALIZATION_DATA_SIZE) == INT64_C(256), "CNA_VISUALIZATION_DATA_SIZE value");
 
 int cna_lisp_probe_ok(void) { return 1; }
