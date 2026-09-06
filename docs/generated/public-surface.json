@@ -34646,7 +34646,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "StorageDevice.EndShowSelector: finish choosing, and answer the device.\n\n**This is the half that does the work**, which is XNA's arrangement: its `End'\nconstructs the `StorageDevice' and its `Begin' constructs nothing. Here it is the\nhalf that calls CNA's selector route.\n\nTwo guards in the IL's order -- a result that is not the matching `Begin''s is\n`ArgumentNullException(\"result\")', and a second `End' on one result is\n`InvalidOperationException(CannotEndTwice)' -- and then the device.\n\nThe device is **owned by the caller**: dispose it when finished, and it closes\nevery container and stream opened under it."
+          "documentation": "StorageDevice.EndShowSelector: finish choosing, and answer the device.\n\n**This is the half that does the work**, which is XNA's arrangement: its `End'\nconstructs the `StorageDevice' and its `Begin' constructs nothing. Here it is the\nhalf that calls CNA's selector route.\n\nTwo guards in the IL's order -- a result that is not the matching `Begin''s is\n`ArgumentNullException(\"result\")', and a second `End' on one result is\n`InvalidOperationException(CannotEndTwice)' -- and then the device.\n\nThe device is **owned by the caller**: dispose it when finished, after the\ncontainers opened on it and the streams opened in those. Ownership does not\ncascade here, so a device disposed too early refuses and says what is still\nlive."
         },
         {
           "name": "storage-device-not-connected-error",
