@@ -100,6 +100,28 @@ process-global in CNA exactly as it is static in XNA.")
     (when dispatcher
       (ignore-errors (funcall dispatcher (pointer-address context))))))
 
+(defvar *storage-event-dispatcher* nil
+  "Function of one integer token, called when CNA raises a storage event.
+
+`CNA_StorageCompletionCallback' has `CNA_GameEventCallback''s exact shape --
+`void (*)(void* context)' -- and answers nothing, so a handler's failure has the
+same nowhere to go and is contained the same way. It is a **fourth** callback and
+a fourth dispatcher because the routes that install it are storage's and its
+registrations are released by two routes of storage's own.
+
+CNA uses the one type for two unrelated things: the `DeviceChanged' and
+`Disposing' event subscriptions, and the *completion* callback the four selector
+routes and the container-open route take. The completion use never reaches this
+dispatcher -- those callbacks fire before their route returns and this binding
+calls the caller's function directly rather than through CNA, for the reason
+`src/storage/storage-device.lisp' gives.")
+
+(defcallback storage-event-callback :void ((context :pointer))
+  (let ((dispatcher *storage-event-dispatcher*))
+    ;; No dispatcher means the registry was torn down under a live subscription.
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context))))))
+
 (defvar *resource-disposing-dispatcher* nil
   "Function of one integer token, called when CNA raises a graphics resource's
 Disposing event. Void-returning, like the game event dispatcher.")
@@ -169,6 +191,10 @@ of doing what the registry does exactly."
 (defun media-player-event-callback-pointer ()
   "The one top-level callback CNA is given for every media-player subscription."
   (callback media-player-event-callback))
+
+(defun storage-event-callback-pointer ()
+  "The one top-level callback CNA is given for every storage event subscription."
+  (callback storage-event-callback))
 
 (defun lifecycle-callback-pointer (kind)
   "The top-level callback pointer CNA is given for KIND."

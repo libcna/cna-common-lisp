@@ -362,7 +362,21 @@
       "CNA_MEDIA_STATE_STOPPED",
       "CNA_MEDIA_STATE_PLAYING",
       "CNA_MEDIA_STATE_PAUSED",
-      "CNA_VISUALIZATION_DATA_SIZE"
+      "CNA_VISUALIZATION_DATA_SIZE",
+      "CNA_FILE_MODE_CREATE_NEW",
+      "CNA_FILE_MODE_CREATE",
+      "CNA_FILE_MODE_OPEN",
+      "CNA_FILE_MODE_OPEN_OR_CREATE",
+      "CNA_FILE_MODE_TRUNCATE",
+      "CNA_FILE_MODE_APPEND",
+      "CNA_FILE_ACCESS_READ",
+      "CNA_FILE_ACCESS_WRITE",
+      "CNA_FILE_ACCESS_READ_WRITE",
+      "CNA_FILE_SHARE_NONE",
+      "CNA_FILE_SHARE_READ",
+      "CNA_FILE_SHARE_WRITE",
+      "CNA_FILE_SHARE_READ_WRITE",
+      "CNA_FILE_SHARE_DELETE"
     ],
     "prefix_families": [
       {
@@ -839,6 +853,9 @@
     },
     {
       "name": "CNA_MediaPlayerEventCallback"
+    },
+    {
+      "name": "CNA_StorageCompletionCallback"
     }
   ],
   "functions": [
@@ -4362,6 +4379,300 @@
       "header": "media_player.h",
       "thread": "owner",
       "ownership": "none"
+    },
+    {
+      "name": "cna_storage_set_app_name_ext",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_get_root_size_ext",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_copy_root_ext",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_device_show_selector",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-device:rootless"
+    },
+    {
+      "name": "cna_storage_device_show_selector_for_player",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-device:rootless"
+    },
+    {
+      "name": "cna_storage_device_show_selector_with_space",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-device:rootless"
+    },
+    {
+      "name": "cna_storage_device_show_selector_for_player_with_space",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-device:rootless"
+    },
+    {
+      "name": "cna_storage_device_get_free_space",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_device_get_is_connected",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_device_get_total_space",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_device_delete_container",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_device_subscribe_device_changed",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_storage_device_unsubscribe_device_changed",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "destroys"
+    },
+    {
+      "name": "cna_storage_device_destroy",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "destroys"
+    },
+    {
+      "name": "cna_storage_container_open",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-container:child-of-storage-device"
+    },
+    {
+      "name": "cna_storage_container_get_display_name_size",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_copy_display_name",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_get_type_name_size",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_copy_type_name",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_get_is_disposed",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_get_storage_device",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_dispose",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_subscribe_disposing",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_storage_container_unsubscribe_disposing",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "destroys"
+    },
+    {
+      "name": "cna_storage_container_create_directory",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_directory_exists",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_delete_directory",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_file_exists",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_delete_file",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_get_directory_name_count",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_copy_directory_name",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_get_file_name_count",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_copy_file_name",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_container_create_file",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-stream:child-of-storage-container"
+    },
+    {
+      "name": "cna_storage_container_open_file",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-stream:child-of-storage-container"
+    },
+    {
+      "name": "cna_storage_container_open_file_access",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-stream:child-of-storage-container"
+    },
+    {
+      "name": "cna_storage_container_open_file_share",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "creates-owned:storage-stream:child-of-storage-container"
+    },
+    {
+      "name": "cna_storage_container_destroy",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "destroys"
+    },
+    {
+      "name": "cna_storage_stream_read",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_write",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_seek",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_get_position",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_get_length",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_set_length",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_get_can_read",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_get_can_write",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_get_can_seek",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_flush",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_storage_stream_close",
+      "header": "storage.h",
+      "thread": "owner",
+      "ownership": "destroys"
     },
     {
       "name": "cna_model_bone_create_default",

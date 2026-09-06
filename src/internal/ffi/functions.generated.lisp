@@ -2354,6 +2354,202 @@
 (defcfun ("cna_media_queue_copy_type_name" %media-queue-copy-type-name) :uint32
   (queue :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
 
+;;; CNA_Result cna_storage_set_app_name_ext(CNA_StringView app_name)
+(defcfun ("cna_storage_set_app_name_ext" %storage-set-app-name-ext) :uint32
+  (app-name-0 :pointer) (app-name-1 :uint64))
+
+;;; CNA_Result cna_storage_get_root_size_ext(uint64_t* out_bytes)
+(defcfun ("cna_storage_get_root_size_ext" %storage-get-root-size-ext) :uint32
+  (out-bytes :pointer))
+
+;;; CNA_Result cna_storage_copy_root_ext(char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_storage_copy_root_ext" %storage-copy-root-ext) :uint32
+  (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_storage_device_show_selector(CNA_StorageCompletionCallback callback, void* context, CNA_StorageDeviceHandle* out_device)
+(defcfun ("cna_storage_device_show_selector" %storage-device-show-selector) :uint32
+  (callback :pointer) (context :pointer) (out-device :pointer))
+
+;;; CNA_Result cna_storage_device_show_selector_for_player(CNA_PlayerIndex player, CNA_StorageCompletionCallback callback, void* context, CNA_StorageDeviceHandle* out_device)
+(defcfun ("cna_storage_device_show_selector_for_player" %storage-device-show-selector-for-player) :uint32
+  (player :uint32) (callback :pointer) (context :pointer) (out-device :pointer))
+
+;;; CNA_Result cna_storage_device_show_selector_with_space(int32_t size_in_bytes, int32_t directory_count, CNA_StorageCompletionCallback callback, void* context, CNA_StorageDeviceHandle* out_device)
+(defcfun ("cna_storage_device_show_selector_with_space" %storage-device-show-selector-with-space) :uint32
+  (size-in-bytes :int32) (directory-count :int32) (callback :pointer) (context :pointer) (out-device :pointer))
+
+;;; CNA_Result cna_storage_device_show_selector_for_player_with_space(CNA_PlayerIndex player, int32_t size_in_bytes, int32_t directory_count, CNA_StorageCompletionCallback callback, void* context, CNA_StorageDeviceHandle* out_device)
+(defcfun ("cna_storage_device_show_selector_for_player_with_space" %storage-device-show-selector-for-player-with-space) :uint32
+  (player :uint32) (size-in-bytes :int32) (directory-count :int32) (callback :pointer) (context :pointer) (out-device :pointer))
+
+;;; CNA_Result cna_storage_device_get_free_space(CNA_StorageDeviceHandle device, int64_t* out_free_space)
+(defcfun ("cna_storage_device_get_free_space" %storage-device-get-free-space) :uint32
+  (device :uint64) (out-free-space :pointer))
+
+;;; CNA_Result cna_storage_device_get_is_connected(CNA_StorageDeviceHandle device, CNA_Bool* out_is_connected)
+(defcfun ("cna_storage_device_get_is_connected" %storage-device-get-is-connected) :uint32
+  (device :uint64) (out-is-connected :pointer))
+
+;;; CNA_Result cna_storage_device_get_total_space(CNA_StorageDeviceHandle device, int64_t* out_total_space)
+(defcfun ("cna_storage_device_get_total_space" %storage-device-get-total-space) :uint32
+  (device :uint64) (out-total-space :pointer))
+
+;;; CNA_Result cna_storage_device_delete_container(CNA_StorageDeviceHandle device, CNA_StringView title_name)
+(defcfun ("cna_storage_device_delete_container" %storage-device-delete-container) :uint32
+  (device :uint64) (title-name-0 :pointer) (title-name-1 :uint64))
+
+;;; CNA_Result cna_storage_device_subscribe_device_changed(CNA_StorageCompletionCallback callback, void* context, CNA_Handle* out_registration)
+(defcfun ("cna_storage_device_subscribe_device_changed" %storage-device-subscribe-device-changed) :uint32
+  (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_storage_device_unsubscribe_device_changed(CNA_Handle registration)
+(defcfun ("cna_storage_device_unsubscribe_device_changed" %storage-device-unsubscribe-device-changed) :uint32
+  (registration :uint64))
+
+;;; CNA_Result cna_storage_device_destroy(CNA_StorageDeviceHandle device)
+(defcfun ("cna_storage_device_destroy" %storage-device-destroy) :uint32
+  (device :uint64))
+
+;;; CNA_Result cna_storage_container_open(CNA_StorageDeviceHandle device, CNA_StringView display_name, CNA_StorageCompletionCallback callback, void* context, CNA_StorageContainerHandle* out_container)
+(defcfun ("cna_storage_container_open" %storage-container-open) :uint32
+  (device :uint64) (display-name-0 :pointer) (display-name-1 :uint64) (callback :pointer) (context :pointer) (out-container :pointer))
+
+;;; CNA_Result cna_storage_container_get_display_name_size(CNA_StorageContainerHandle container, uint64_t* out_bytes)
+(defcfun ("cna_storage_container_get_display_name_size" %storage-container-get-display-name-size) :uint32
+  (container :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_storage_container_copy_display_name(CNA_StorageContainerHandle container, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_storage_container_copy_display_name" %storage-container-copy-display-name) :uint32
+  (container :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_storage_container_get_type_name_size(CNA_StorageContainerHandle container, uint64_t* out_bytes)
+(defcfun ("cna_storage_container_get_type_name_size" %storage-container-get-type-name-size) :uint32
+  (container :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_storage_container_copy_type_name(CNA_StorageContainerHandle container, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_storage_container_copy_type_name" %storage-container-copy-type-name) :uint32
+  (container :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_storage_container_get_is_disposed(CNA_StorageContainerHandle container, CNA_Bool* out_is_disposed)
+(defcfun ("cna_storage_container_get_is_disposed" %storage-container-get-is-disposed) :uint32
+  (container :uint64) (out-is-disposed :pointer))
+
+;;; CNA_Result cna_storage_container_get_storage_device(CNA_StorageContainerHandle container, CNA_StorageDeviceHandle* out_device)
+(defcfun ("cna_storage_container_get_storage_device" %storage-container-get-storage-device) :uint32
+  (container :uint64) (out-device :pointer))
+
+;;; CNA_Result cna_storage_container_dispose(CNA_StorageContainerHandle container)
+(defcfun ("cna_storage_container_dispose" %storage-container-dispose) :uint32
+  (container :uint64))
+
+;;; CNA_Result cna_storage_container_subscribe_disposing(CNA_StorageContainerHandle container, CNA_StorageCompletionCallback callback, void* context, CNA_Handle* out_registration)
+(defcfun ("cna_storage_container_subscribe_disposing" %storage-container-subscribe-disposing) :uint32
+  (container :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_storage_container_unsubscribe_disposing(CNA_Handle registration)
+(defcfun ("cna_storage_container_unsubscribe_disposing" %storage-container-unsubscribe-disposing) :uint32
+  (registration :uint64))
+
+;;; CNA_Result cna_storage_container_create_directory(CNA_StorageContainerHandle container, CNA_StringView directory)
+(defcfun ("cna_storage_container_create_directory" %storage-container-create-directory) :uint32
+  (container :uint64) (directory-0 :pointer) (directory-1 :uint64))
+
+;;; CNA_Result cna_storage_container_directory_exists(CNA_StorageContainerHandle container, CNA_StringView directory, CNA_Bool* out_exists)
+(defcfun ("cna_storage_container_directory_exists" %storage-container-directory-exists) :uint32
+  (container :uint64) (directory-0 :pointer) (directory-1 :uint64) (out-exists :pointer))
+
+;;; CNA_Result cna_storage_container_delete_directory(CNA_StorageContainerHandle container, CNA_StringView directory)
+(defcfun ("cna_storage_container_delete_directory" %storage-container-delete-directory) :uint32
+  (container :uint64) (directory-0 :pointer) (directory-1 :uint64))
+
+;;; CNA_Result cna_storage_container_file_exists(CNA_StorageContainerHandle container, CNA_StringView file, CNA_Bool* out_exists)
+(defcfun ("cna_storage_container_file_exists" %storage-container-file-exists) :uint32
+  (container :uint64) (file-0 :pointer) (file-1 :uint64) (out-exists :pointer))
+
+;;; CNA_Result cna_storage_container_delete_file(CNA_StorageContainerHandle container, CNA_StringView file)
+(defcfun ("cna_storage_container_delete_file" %storage-container-delete-file) :uint32
+  (container :uint64) (file-0 :pointer) (file-1 :uint64))
+
+;;; CNA_Result cna_storage_container_get_directory_name_count(CNA_StorageContainerHandle container, CNA_StringView search_pattern, uint64_t* out_count)
+(defcfun ("cna_storage_container_get_directory_name_count" %storage-container-get-directory-name-count) :uint32
+  (container :uint64) (search-pattern-0 :pointer) (search-pattern-1 :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_storage_container_copy_directory_name(CNA_StorageContainerHandle container, CNA_StringView search_pattern, uint64_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_storage_container_copy_directory_name" %storage-container-copy-directory-name) :uint32
+  (container :uint64) (search-pattern-0 :pointer) (search-pattern-1 :uint64) (index :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_storage_container_get_file_name_count(CNA_StorageContainerHandle container, CNA_StringView search_pattern, uint64_t* out_count)
+(defcfun ("cna_storage_container_get_file_name_count" %storage-container-get-file-name-count) :uint32
+  (container :uint64) (search-pattern-0 :pointer) (search-pattern-1 :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_storage_container_copy_file_name(CNA_StorageContainerHandle container, CNA_StringView search_pattern, uint64_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_storage_container_copy_file_name" %storage-container-copy-file-name) :uint32
+  (container :uint64) (search-pattern-0 :pointer) (search-pattern-1 :uint64) (index :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_storage_container_create_file(CNA_StorageContainerHandle container, CNA_StringView file, CNA_StorageStreamHandle* out_stream)
+(defcfun ("cna_storage_container_create_file" %storage-container-create-file) :uint32
+  (container :uint64) (file-0 :pointer) (file-1 :uint64) (out-stream :pointer))
+
+;;; CNA_Result cna_storage_container_open_file(CNA_StorageContainerHandle container, CNA_StringView file, CNA_FileMode file_mode, CNA_StorageStreamHandle* out_stream)
+(defcfun ("cna_storage_container_open_file" %storage-container-open-file) :uint32
+  (container :uint64) (file-0 :pointer) (file-1 :uint64) (file-mode :uint32) (out-stream :pointer))
+
+;;; CNA_Result cna_storage_container_open_file_access(CNA_StorageContainerHandle container, CNA_StringView file, CNA_FileMode file_mode, CNA_FileAccess file_access, CNA_StorageStreamHandle* out_stream)
+(defcfun ("cna_storage_container_open_file_access" %storage-container-open-file-access) :uint32
+  (container :uint64) (file-0 :pointer) (file-1 :uint64) (file-mode :uint32) (file-access :uint32) (out-stream :pointer))
+
+;;; CNA_Result cna_storage_container_open_file_share(CNA_StorageContainerHandle container, CNA_StringView file, CNA_FileMode file_mode, CNA_FileAccess file_access, CNA_FileShare file_share, CNA_StorageStreamHandle* out_stream)
+(defcfun ("cna_storage_container_open_file_share" %storage-container-open-file-share) :uint32
+  (container :uint64) (file-0 :pointer) (file-1 :uint64) (file-mode :uint32) (file-access :uint32) (file-share :uint32) (out-stream :pointer))
+
+;;; CNA_Result cna_storage_container_destroy(CNA_StorageContainerHandle container)
+(defcfun ("cna_storage_container_destroy" %storage-container-destroy) :uint32
+  (container :uint64))
+
+;;; CNA_Result cna_storage_stream_read(CNA_StorageStreamHandle stream, uint8_t* destination, uint64_t capacity, uint64_t* out_read)
+(defcfun ("cna_storage_stream_read" %storage-stream-read) :uint32
+  (stream :uint64) (destination :pointer) (capacity :uint64) (out-read :pointer))
+
+;;; CNA_Result cna_storage_stream_write(CNA_StorageStreamHandle stream, const uint8_t* data, uint64_t count)
+(defcfun ("cna_storage_stream_write" %storage-stream-write) :uint32
+  (stream :uint64) (data :pointer) (count :uint64))
+
+;;; CNA_Result cna_storage_stream_seek(CNA_StorageStreamHandle stream, int64_t offset, CNA_SeekOrigin origin, int64_t* out_position)
+(defcfun ("cna_storage_stream_seek" %storage-stream-seek) :uint32
+  (stream :uint64) (offset :int64) (origin :uint32) (out-position :pointer))
+
+;;; CNA_Result cna_storage_stream_get_position(CNA_StorageStreamHandle stream, int64_t* out_position)
+(defcfun ("cna_storage_stream_get_position" %storage-stream-get-position) :uint32
+  (stream :uint64) (out-position :pointer))
+
+;;; CNA_Result cna_storage_stream_get_length(CNA_StorageStreamHandle stream, int64_t* out_length)
+(defcfun ("cna_storage_stream_get_length" %storage-stream-get-length) :uint32
+  (stream :uint64) (out-length :pointer))
+
+;;; CNA_Result cna_storage_stream_set_length(CNA_StorageStreamHandle stream, int64_t length)
+(defcfun ("cna_storage_stream_set_length" %storage-stream-set-length) :uint32
+  (stream :uint64) (length :int64))
+
+;;; CNA_Result cna_storage_stream_get_can_read(CNA_StorageStreamHandle stream, CNA_Bool* out_can_read)
+(defcfun ("cna_storage_stream_get_can_read" %storage-stream-get-can-read) :uint32
+  (stream :uint64) (out-can-read :pointer))
+
+;;; CNA_Result cna_storage_stream_get_can_write(CNA_StorageStreamHandle stream, CNA_Bool* out_can_write)
+(defcfun ("cna_storage_stream_get_can_write" %storage-stream-get-can-write) :uint32
+  (stream :uint64) (out-can-write :pointer))
+
+;;; CNA_Result cna_storage_stream_get_can_seek(CNA_StorageStreamHandle stream, CNA_Bool* out_can_seek)
+(defcfun ("cna_storage_stream_get_can_seek" %storage-stream-get-can-seek) :uint32
+  (stream :uint64) (out-can-seek :pointer))
+
+;;; CNA_Result cna_storage_stream_flush(CNA_StorageStreamHandle stream)
+(defcfun ("cna_storage_stream_flush" %storage-stream-flush) :uint32
+  (stream :uint64))
+
+;;; CNA_Result cna_storage_stream_close(CNA_StorageStreamHandle stream)
+(defcfun ("cna_storage_stream_close" %storage-stream-close) :uint32
+  (stream :uint64))
+
 ;;; CNA_Result cna_model_bone_create_default(CNA_ModelBoneHandle* out_bone)
 (defcfun ("cna_model_bone_create_default" %model-bone-create-default) :uint32
   (out-bone :pointer))
@@ -3216,6 +3412,55 @@
     ("cna_media_queue_get_at" %media-queue-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "creates-owned:song:child-of-game")
     ("cna_media_queue_get_type_name_size" %media-queue-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_media_queue_copy_type_name" %media-queue-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_set_app_name_ext" %storage-set-app-name-ext :uint32 (:pointer :uint64) :thread :owner :ownership "none")
+    ("cna_storage_get_root_size_ext" %storage-get-root-size-ext :uint32 (:pointer) :thread :owner :ownership "none")
+    ("cna_storage_copy_root_ext" %storage-copy-root-ext :uint32 (:pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_device_show_selector" %storage-device-show-selector :uint32 (:pointer :pointer :pointer) :thread :owner :ownership "creates-owned:storage-device:rootless")
+    ("cna_storage_device_show_selector_for_player" %storage-device-show-selector-for-player :uint32 (:uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates-owned:storage-device:rootless")
+    ("cna_storage_device_show_selector_with_space" %storage-device-show-selector-with-space :uint32 (:int32 :int32 :pointer :pointer :pointer) :thread :owner :ownership "creates-owned:storage-device:rootless")
+    ("cna_storage_device_show_selector_for_player_with_space" %storage-device-show-selector-for-player-with-space :uint32 (:uint32 :int32 :int32 :pointer :pointer :pointer) :thread :owner :ownership "creates-owned:storage-device:rootless")
+    ("cna_storage_device_get_free_space" %storage-device-get-free-space :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_device_get_is_connected" %storage-device-get-is-connected :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_device_get_total_space" %storage-device-get-total-space :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_device_delete_container" %storage-device-delete-container :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_storage_device_subscribe_device_changed" %storage-device-subscribe-device-changed :uint32 (:pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_storage_device_unsubscribe_device_changed" %storage-device-unsubscribe-device-changed :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_storage_device_destroy" %storage-device-destroy :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_storage_container_open" %storage-container-open :uint32 (:uint64 :pointer :uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates-owned:storage-container:child-of-storage-device")
+    ("cna_storage_container_get_display_name_size" %storage-container-get-display-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_copy_display_name" %storage-container-copy-display-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_get_type_name_size" %storage-container-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_copy_type_name" %storage-container-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_get_is_disposed" %storage-container-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_get_storage_device" %storage-container-get-storage-device :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_dispose" %storage-container-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_storage_container_subscribe_disposing" %storage-container-subscribe-disposing :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_storage_container_unsubscribe_disposing" %storage-container-unsubscribe-disposing :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_storage_container_create_directory" %storage-container-create-directory :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_storage_container_directory_exists" %storage-container-directory-exists :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_delete_directory" %storage-container-delete-directory :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_storage_container_file_exists" %storage-container-file-exists :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_delete_file" %storage-container-delete-file :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_storage_container_get_directory_name_count" %storage-container-get-directory-name-count :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_copy_directory_name" %storage-container-copy-directory-name :uint32 (:uint64 :pointer :uint64 :uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_get_file_name_count" %storage-container-get-file-name-count :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_copy_file_name" %storage-container-copy-file-name :uint32 (:uint64 :pointer :uint64 :uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_container_create_file" %storage-container-create-file :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:storage-stream:child-of-storage-container")
+    ("cna_storage_container_open_file" %storage-container-open-file :uint32 (:uint64 :pointer :uint64 :uint32 :pointer) :thread :owner :ownership "creates-owned:storage-stream:child-of-storage-container")
+    ("cna_storage_container_open_file_access" %storage-container-open-file-access :uint32 (:uint64 :pointer :uint64 :uint32 :uint32 :pointer) :thread :owner :ownership "creates-owned:storage-stream:child-of-storage-container")
+    ("cna_storage_container_open_file_share" %storage-container-open-file-share :uint32 (:uint64 :pointer :uint64 :uint32 :uint32 :uint32 :pointer) :thread :owner :ownership "creates-owned:storage-stream:child-of-storage-container")
+    ("cna_storage_container_destroy" %storage-container-destroy :uint32 (:uint64) :thread :owner :ownership "destroys")
+    ("cna_storage_stream_read" %storage-stream-read :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_stream_write" %storage-stream-write :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_storage_stream_seek" %storage-stream-seek :uint32 (:uint64 :int64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_stream_get_position" %storage-stream-get-position :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_stream_get_length" %storage-stream-get-length :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_stream_set_length" %storage-stream-set-length :uint32 (:uint64 :int64) :thread :owner :ownership "none")
+    ("cna_storage_stream_get_can_read" %storage-stream-get-can-read :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_stream_get_can_write" %storage-stream-get-can-write :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_stream_get_can_seek" %storage-stream-get-can-seek :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_storage_stream_flush" %storage-stream-flush :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_storage_stream_close" %storage-stream-close :uint32 (:uint64) :thread :owner :ownership "destroys")
     ("cna_model_bone_create_default" %model-bone-create-default :uint32 (:pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
     ("cna_model_bone_create" %model-bone-create :uint32 (:int32 :pointer :uint64 :pointer) :thread :owner :ownership "creates-owned:model-bone:rootless")
     ("cna_model_bone_destroy" %model-bone-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:model-bone")

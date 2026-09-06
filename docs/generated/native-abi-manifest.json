@@ -34,11 +34,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 654,
+    "functions": 703,
     "structs": 74,
     "struct_fields": 550,
-    "constants": 517,
-    "callbacks": 12,
+    "constants": 531,
+    "callbacks": 13,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
   },
@@ -14780,6 +14780,1423 @@
       "c_prototype": "CNA_Result cna_media_queue_copy_type_name(CNA_MediaQueueHandle queue, char* destination, uint64_t capacity, uint64_t* out_bytes)"
     },
     {
+      "name": "cna_storage_set_app_name_ext",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "app_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "app_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_set_app_name_ext(CNA_StringView app_name)"
+    },
+    {
+      "name": "cna_storage_get_root_size_ext",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_get_root_size_ext(uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_storage_copy_root_ext",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_copy_root_ext(char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_storage_device_show_selector",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "callback",
+          "c_type": "CNA_StorageCompletionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_device",
+          "c_type": "CNA_StorageDeviceHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-device:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_show_selector(CNA_StorageCompletionCallback callback, void* context, CNA_StorageDeviceHandle* out_device)"
+    },
+    {
+      "name": "cna_storage_device_show_selector_for_player",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "player",
+          "c_type": "CNA_PlayerIndex",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_StorageCompletionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_device",
+          "c_type": "CNA_StorageDeviceHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-device:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_show_selector_for_player(CNA_PlayerIndex player, CNA_StorageCompletionCallback callback, void* context, CNA_StorageDeviceHandle* out_device)"
+    },
+    {
+      "name": "cna_storage_device_show_selector_with_space",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "size_in_bytes",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "directory_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_StorageCompletionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_device",
+          "c_type": "CNA_StorageDeviceHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-device:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_show_selector_with_space(int32_t size_in_bytes, int32_t directory_count, CNA_StorageCompletionCallback callback, void* context, CNA_StorageDeviceHandle* out_device)"
+    },
+    {
+      "name": "cna_storage_device_show_selector_for_player_with_space",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "player",
+          "c_type": "CNA_PlayerIndex",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "size_in_bytes",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "directory_count",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_StorageCompletionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_device",
+          "c_type": "CNA_StorageDeviceHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-device:rootless",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_show_selector_for_player_with_space(CNA_PlayerIndex player, int32_t size_in_bytes, int32_t directory_count, CNA_StorageCompletionCallback callback, void* context, CNA_StorageDeviceHandle* out_device)"
+    },
+    {
+      "name": "cna_storage_device_get_free_space",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "device",
+          "c_type": "CNA_StorageDeviceHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_free_space",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_get_free_space(CNA_StorageDeviceHandle device, int64_t* out_free_space)"
+    },
+    {
+      "name": "cna_storage_device_get_is_connected",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "device",
+          "c_type": "CNA_StorageDeviceHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_is_connected",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_get_is_connected(CNA_StorageDeviceHandle device, CNA_Bool* out_is_connected)"
+    },
+    {
+      "name": "cna_storage_device_get_total_space",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "device",
+          "c_type": "CNA_StorageDeviceHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_total_space",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_get_total_space(CNA_StorageDeviceHandle device, int64_t* out_total_space)"
+    },
+    {
+      "name": "cna_storage_device_delete_container",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "device",
+          "c_type": "CNA_StorageDeviceHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "title_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "title_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_delete_container(CNA_StorageDeviceHandle device, CNA_StringView title_name)"
+    },
+    {
+      "name": "cna_storage_device_subscribe_device_changed",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "callback",
+          "c_type": "CNA_StorageCompletionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_subscribe_device_changed(CNA_StorageCompletionCallback callback, void* context, CNA_Handle* out_registration)"
+    },
+    {
+      "name": "cna_storage_device_unsubscribe_device_changed",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_unsubscribe_device_changed(CNA_Handle registration)"
+    },
+    {
+      "name": "cna_storage_device_destroy",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "device",
+          "c_type": "CNA_StorageDeviceHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_device_destroy(CNA_StorageDeviceHandle device)"
+    },
+    {
+      "name": "cna_storage_container_open",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "device",
+          "c_type": "CNA_StorageDeviceHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "display_name-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "display_name-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_StorageCompletionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_container",
+          "c_type": "CNA_StorageContainerHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-container:child-of-storage-device",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_open(CNA_StorageDeviceHandle device, CNA_StringView display_name, CNA_StorageCompletionCallback callback, void* context, CNA_StorageContainerHandle* out_container)"
+    },
+    {
+      "name": "cna_storage_container_get_display_name_size",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_get_display_name_size(CNA_StorageContainerHandle container, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_storage_container_copy_display_name",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_copy_display_name(CNA_StorageContainerHandle container, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_storage_container_get_type_name_size",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_get_type_name_size(CNA_StorageContainerHandle container, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_storage_container_copy_type_name",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_copy_type_name(CNA_StorageContainerHandle container, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_storage_container_get_is_disposed",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_is_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_get_is_disposed(CNA_StorageContainerHandle container, CNA_Bool* out_is_disposed)"
+    },
+    {
+      "name": "cna_storage_container_get_storage_device",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_device",
+          "c_type": "CNA_StorageDeviceHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_get_storage_device(CNA_StorageContainerHandle container, CNA_StorageDeviceHandle* out_device)"
+    },
+    {
+      "name": "cna_storage_container_dispose",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_dispose(CNA_StorageContainerHandle container)"
+    },
+    {
+      "name": "cna_storage_container_subscribe_disposing",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_StorageCompletionCallback",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_subscribe_disposing(CNA_StorageContainerHandle container, CNA_StorageCompletionCallback callback, void* context, CNA_Handle* out_registration)"
+    },
+    {
+      "name": "cna_storage_container_unsubscribe_disposing",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "registration",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_unsubscribe_disposing(CNA_Handle registration)"
+    },
+    {
+      "name": "cna_storage_container_create_directory",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "directory-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "directory-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_create_directory(CNA_StorageContainerHandle container, CNA_StringView directory)"
+    },
+    {
+      "name": "cna_storage_container_directory_exists",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "directory-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "directory-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_exists",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_directory_exists(CNA_StorageContainerHandle container, CNA_StringView directory, CNA_Bool* out_exists)"
+    },
+    {
+      "name": "cna_storage_container_delete_directory",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "directory-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "directory-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_delete_directory(CNA_StorageContainerHandle container, CNA_StringView directory)"
+    },
+    {
+      "name": "cna_storage_container_file_exists",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "file-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "file-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_exists",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_file_exists(CNA_StorageContainerHandle container, CNA_StringView file, CNA_Bool* out_exists)"
+    },
+    {
+      "name": "cna_storage_container_delete_file",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "file-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "file-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_delete_file(CNA_StorageContainerHandle container, CNA_StringView file)"
+    },
+    {
+      "name": "cna_storage_container_get_directory_name_count",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "search_pattern-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "search_pattern-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_get_directory_name_count(CNA_StorageContainerHandle container, CNA_StringView search_pattern, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_storage_container_copy_directory_name",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "search_pattern-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "search_pattern-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_copy_directory_name(CNA_StorageContainerHandle container, CNA_StringView search_pattern, uint64_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_storage_container_get_file_name_count",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "search_pattern-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "search_pattern-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_get_file_name_count(CNA_StorageContainerHandle container, CNA_StringView search_pattern, uint64_t* out_count)"
+    },
+    {
+      "name": "cna_storage_container_copy_file_name",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "search_pattern-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "search_pattern-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "index",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_copy_file_name(CNA_StorageContainerHandle container, CNA_StringView search_pattern, uint64_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_storage_container_create_file",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "file-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "file-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "out_stream",
+          "c_type": "CNA_StorageStreamHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-stream:child-of-storage-container",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_create_file(CNA_StorageContainerHandle container, CNA_StringView file, CNA_StorageStreamHandle* out_stream)"
+    },
+    {
+      "name": "cna_storage_container_open_file",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "file-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "file-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "file_mode",
+          "c_type": "CNA_FileMode",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_stream",
+          "c_type": "CNA_StorageStreamHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-stream:child-of-storage-container",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_open_file(CNA_StorageContainerHandle container, CNA_StringView file, CNA_FileMode file_mode, CNA_StorageStreamHandle* out_stream)"
+    },
+    {
+      "name": "cna_storage_container_open_file_access",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "file-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "file-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "file_mode",
+          "c_type": "CNA_FileMode",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "file_access",
+          "c_type": "CNA_FileAccess",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_stream",
+          "c_type": "CNA_StorageStreamHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-stream:child-of-storage-container",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_open_file_access(CNA_StorageContainerHandle container, CNA_StringView file, CNA_FileMode file_mode, CNA_FileAccess file_access, CNA_StorageStreamHandle* out_stream)"
+    },
+    {
+      "name": "cna_storage_container_open_file_share",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "file-0",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":pointer",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 0
+        },
+        {
+          "name": "file-1",
+          "c_type": "CNA_StringView",
+          "cffi_type": ":uint64",
+          "flattened_from": "CNA_StringView",
+          "eightbyte": 1
+        },
+        {
+          "name": "file_mode",
+          "c_type": "CNA_FileMode",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "file_access",
+          "c_type": "CNA_FileAccess",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "file_share",
+          "c_type": "CNA_FileShare",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_stream",
+          "c_type": "CNA_StorageStreamHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:storage-stream:child-of-storage-container",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_open_file_share(CNA_StorageContainerHandle container, CNA_StringView file, CNA_FileMode file_mode, CNA_FileAccess file_access, CNA_FileShare file_share, CNA_StorageStreamHandle* out_stream)"
+    },
+    {
+      "name": "cna_storage_container_destroy",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "container",
+          "c_type": "CNA_StorageContainerHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_container_destroy(CNA_StorageContainerHandle container)"
+    },
+    {
+      "name": "cna_storage_stream_read",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_read",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_read(CNA_StorageStreamHandle stream, uint8_t* destination, uint64_t capacity, uint64_t* out_read)"
+    },
+    {
+      "name": "cna_storage_stream_write",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "data",
+          "c_type": "const uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_write(CNA_StorageStreamHandle stream, const uint8_t* data, uint64_t count)"
+    },
+    {
+      "name": "cna_storage_stream_seek",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "offset",
+          "c_type": "int64_t",
+          "cffi_type": ":int64"
+        },
+        {
+          "name": "origin",
+          "c_type": "CNA_SeekOrigin",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_position",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_seek(CNA_StorageStreamHandle stream, int64_t offset, CNA_SeekOrigin origin, int64_t* out_position)"
+    },
+    {
+      "name": "cna_storage_stream_get_position",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_position",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_get_position(CNA_StorageStreamHandle stream, int64_t* out_position)"
+    },
+    {
+      "name": "cna_storage_stream_get_length",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_length",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_get_length(CNA_StorageStreamHandle stream, int64_t* out_length)"
+    },
+    {
+      "name": "cna_storage_stream_set_length",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "length",
+          "c_type": "int64_t",
+          "cffi_type": ":int64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_set_length(CNA_StorageStreamHandle stream, int64_t length)"
+    },
+    {
+      "name": "cna_storage_stream_get_can_read",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_can_read",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_get_can_read(CNA_StorageStreamHandle stream, CNA_Bool* out_can_read)"
+    },
+    {
+      "name": "cna_storage_stream_get_can_write",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_can_write",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_get_can_write(CNA_StorageStreamHandle stream, CNA_Bool* out_can_write)"
+    },
+    {
+      "name": "cna_storage_stream_get_can_seek",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_can_seek",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_get_can_seek(CNA_StorageStreamHandle stream, CNA_Bool* out_can_seek)"
+    },
+    {
+      "name": "cna_storage_stream_flush",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_flush(CNA_StorageStreamHandle stream)"
+    },
+    {
+      "name": "cna_storage_stream_close",
+      "header": "storage.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "stream",
+          "c_type": "CNA_StorageStreamHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_storage_stream_close(CNA_StorageStreamHandle stream)"
+    },
+    {
       "name": "cna_model_bone_create_default",
       "header": "models.h",
       "c_returns": "CNA_Result",
@@ -22528,6 +23945,18 @@
           "cffi_type": ":pointer"
         }
       ]
+    },
+    {
+      "name": "CNA_StorageCompletionCallback",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
     }
   ],
   "constants": {
@@ -22642,6 +24071,20 @@
     "CNA_ERROR_CATEGORY_STATE": 3,
     "CNA_ERROR_CATEGORY_THREAD": 8,
     "CNA_FALSE": 0,
+    "CNA_FILE_ACCESS_READ": 1,
+    "CNA_FILE_ACCESS_READ_WRITE": 3,
+    "CNA_FILE_ACCESS_WRITE": 2,
+    "CNA_FILE_MODE_APPEND": 6,
+    "CNA_FILE_MODE_CREATE": 2,
+    "CNA_FILE_MODE_CREATE_NEW": 1,
+    "CNA_FILE_MODE_OPEN": 3,
+    "CNA_FILE_MODE_OPEN_OR_CREATE": 4,
+    "CNA_FILE_MODE_TRUNCATE": 5,
+    "CNA_FILE_SHARE_DELETE": 4,
+    "CNA_FILE_SHARE_NONE": 0,
+    "CNA_FILE_SHARE_READ": 1,
+    "CNA_FILE_SHARE_READ_WRITE": 3,
+    "CNA_FILE_SHARE_WRITE": 2,
     "CNA_FILL_SOLID": 0,
     "CNA_FILL_WIREFRAME": 1,
     "CNA_GAMEPAD_BUTTON_A": 4096,

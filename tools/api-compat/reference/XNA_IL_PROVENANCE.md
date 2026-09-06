@@ -15,15 +15,16 @@ from them are committed.
 ## Pinned assemblies
 
 The XNA 4.0 Windows profile is more than one assembly, and the types this
-projection covers are spread across three of them.
+projection covers are spread across four of them.
 
 | Assembly | Bytes | SHA-256 |
 | --- | ---: | --- |
 | `Microsoft.Xna.Framework.dll` 4.0.0.0 | 679424 | `38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130` |
 | `Microsoft.Xna.Framework.Graphics.dll` 4.0.0.0 | 427520 | `560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55` |
 | `Microsoft.Xna.Framework.Game.dll` 4.0.0.0 | 74752 | `b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0` |
+| `Microsoft.Xna.Framework.Storage.dll` 4.0.0.0 | 20992 | `798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8` |
 
-All three carry the public key token `842cf8be1de50553`.
+All four carry the public key token `842cf8be1de50553`.
 
 `Microsoft.Xna.Framework.dll` holds the value types -- `Color`, `Vector*`,
 `Matrix`, `Quaternion`, `Plane`, the bounding volumes, `Curve`, `MathHelper` --
@@ -34,12 +35,22 @@ and `ContentManager` and `TitleContainer`.
 `GraphicsDeviceManager`. A behavioural question about a type is answered by
 reading the assembly that declares it.
 
-**The Game assembly was added to this table after the fact, and that is worth
+`Microsoft.Xna.Framework.Storage.dll` holds `StorageDevice`, `StorageContainer`
+and `StorageDeviceNotConnectedException`, and its two private `IAsyncResult`
+implementations -- which is where the answer to "what is XNA's async actually
+doing" lives.
+
+**Two assemblies have been added to this table after the fact, and that is worth
 recording rather than quietly fixing.** Behavioural claims already rested on it --
 that `Game.Run` sets `inRun` *after* `Initialize()` returns, which is why a
 component added in `LoadContent` is never initialized -- and the handoff already
 called it "the pinned Game assembly" while this file pinned only two. A claim
 whose authority is not named here is not sourced, so the authority is now named.
+
+The Storage assembly was added the same way and *before* any claim rested on it:
+the Storage closure's first act was to notice that its IL was not pinned here and
+pin it, rather than to read it and pin it afterwards. That is the order this
+paragraph exists to ask for.
 
 An assembly is located **by hash, never by filename**: any copy whose SHA-256
 matches is equally authoritative, and any copy whose SHA-256 does not match is
