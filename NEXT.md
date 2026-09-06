@@ -701,11 +701,20 @@ is replaced rather than added to.
 
 ### The candidates, re-measured
 
-| | Types | Members | Routes | Deps outside the selection | Hardware | Deterministic in CI |
+Type and member counts are the pinned 257-type contract's. **Route counts are
+re-measured here and two of the inherited ones were wrong**: they are
+`grep -c '^CNA_C_API'` over the family's own headers, in both admitted ABIs,
+which is a pattern a reader can re-run rather than a number to trust. Storage was
+recorded as 35 and is 49; Media was recorded as 267 and is 270 once
+`media_library.h` is counted with `media.h`, `media_player.h` and `video.h`
+instead of being missed. Neither number changes a recommendation, and both were
+wrong, which is the reason to state the pattern beside the count.
+
+| | Types | Members | Routes (identical in both ABIs) | Deps outside the selection | Hardware | Deterministic in CI |
 | --- | ---: | ---: | ---: | --- | --- | --- |
-| `Microphone` family | 3 | 21 | 18 | none | a **capture** device | half |
-| `Storage` | 3 | 35 | 35 | `IAsyncResult`, `AsyncCallback`, `FileMode`/`FileAccess`/`FileShare` | none — the filesystem | **yes** |
-| `Media` | 24 | 223 | 267 | none | a playback device; `MediaLibrary` scans the machine | half |
+| `Microphone` family | 3 | 21 | 18, in `audio.h` | none | a **capture** device | half |
+| `Storage` | 3 | 35 | 49, `storage.h` | `IAsyncResult`, `AsyncCallback`, `FileMode`/`FileAccess`/`FileShare` | none — the filesystem | **yes** |
+| `Media` | 24 | 223 | 270 over four headers — `media.h` 39, `media_library.h` 148, `media_player.h` 41, `video.h` 42 | none | a playback device; `MediaLibrary` scans the machine | half |
 | Admit CNA **0.23.0** | — | — | — | — | none | **yes** |
 
 **The infrastructure task is now the recommendation, and the Model closure is
