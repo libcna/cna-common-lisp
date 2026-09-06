@@ -13,7 +13,8 @@
   ;; Regenerate with tools/native-abi/generate.py; the evidence for each entry is
   ;; recorded in docs/generated/native-abi-manifest.json.
   '((5376 . "0.21.0")
-    (5632 . "0.22.0"))
+    (5632 . "0.22.0")
+    (5888 . "0.23.0"))
   "Encoded CNA C ABI versions this build has qualified, with their spelling.")
 
 (defvar *loaded-abi-version* nil)

@@ -22,19 +22,26 @@
   ;; Not a range and not "any 0.x": each entry is a version whose whole bound
   ;; surface a compiler has checked, and the set is written out so that adding one
   ;; is a decision rather than a consequence.
+  ;;
+  ;; **The literals are the assertion.** Reading the set back out of
+  ;; INT:ADMITTED-ABI-VERSIONS and comparing it to itself would pass whatever the
+  ;; set became, which is the failure mode this test exists to prevent: an
+  ;; unqualified version reaching the set by edit rather than by evidence. So
+  ;; growing the set means editing this line, and this line is where a reviewer
+  ;; is asked whether the evidence for the new entry exists.
   (int:ensure-abi-admitted)
-  (is (= 2 (length (int:admitted-abi-versions))))
-  (is (equal '(5376 5632) (int:admitted-abi-versions))
-      "0.21.0 and 0.22.0, in that order"))
+  (is (= 3 (length (int:admitted-abi-versions))))
+  (is (equal '(5376 5632 5888) (int:admitted-abi-versions))
+      "0.21.0, 0.22.0 and 0.23.0, in that order"))
 
-(define-native-test the-loaded-library-is-one-of-the-two-admitted-versions
-  ;; Which one depends on which library CNA_NATIVE_LIBRARY names, and both are
-  ;; qualified: docs/qualification.md records a run against each. This asserts the
-  ;; set has not quietly become a range -- a third version would be admitted by
-  ;; neither branch.
+(define-native-test the-loaded-library-is-one-of-the-admitted-versions
+  ;; Which one depends on which library CNA_NATIVE_LIBRARY names, and all three
+  ;; are qualified: docs/qualification.md records a run against each. This asserts
+  ;; the set has not quietly become a range -- a fourth version would be admitted
+  ;; by no branch here, whatever the gate itself had been persuaded to accept.
   (let ((found (int:ensure-abi-admitted)))
-    (is (member found '(5376 5632))
-        "the loaded library reports ~a, which is neither admitted version"
+    (is (member found '(5376 5632 5888))
+        "the loaded library reports ~a, which is none of the admitted versions"
         (int:format-abi-version found))))
 
 (define-native-test a-version-outside-the-set-is-refused

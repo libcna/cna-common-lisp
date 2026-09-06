@@ -44,8 +44,8 @@ stops noticing the day CNA's ABI moves — which is the one thing this
 qualification exists to notice.
 
 **It has since moved twice.** CNA bumped the ABI to **0.22.0** on 2026-09-04 and
-to **0.23.0** later the same day. This binding admits **{0.21.0, 0.22.0}**, and
-both halves of that set are qualified.
+to **0.23.0** later the same day. This binding admits **{0.21.0, 0.22.0, 0.23.0}**,
+and all three members of that set are qualified.
 
 ### ABI 0.22.0 is admitted, and this is the evidence
 

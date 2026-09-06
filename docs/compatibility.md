@@ -499,7 +499,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated:bound native callbacks=11 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
-<!-- generated:abi version encoded=5376 -->
+<!-- generated:abi version encoded=5888 -->
 
 <!-- generated-block:native-abi-summary -->
 | | |
@@ -511,8 +511,8 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 | Bound callback typedefs | 11 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
-| Admitted ABI versions | 0.21.0 (encoded 5376), 0.22.0 (encoded 5632) |
-| Version constant in the generated layer | 0.21.0 (encoded 5376) |
+| Admitted ABI versions | 0.21.0 (encoded 5376), 0.22.0 (encoded 5632), 0.23.0 (encoded 5888) |
+| Version constant in the generated layer | 0.23.0 (encoded 5888) |
 <!-- /generated-block:native-abi-summary -->
 
 See `docs/native-abi.md` for what the C compiler proves about each of those.

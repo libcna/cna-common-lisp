@@ -15,6 +15,11 @@
       "version": "0.22.0",
       "encoded": 5632,
       "evidence": "tools/native-abi/probe.generated.c compiled against this version's canonical headers; every bound prototype, struct size, alignment, field offset and field size in this manifest verified by the C compiler, and every by-value aggregate verified at run time through tools/native-abi/valueprobe.generated.c."
+    },
+    {
+      "version": "0.23.0",
+      "encoded": 5888,
+      "evidence": "tools/native-abi/probe.generated.c compiled against this version's canonical headers; every bound prototype, struct size, alignment, field offset and field size in this manifest verified by the C compiler, and every by-value aggregate verified at run time through tools/native-abi/valueprobe.generated.c."
     }
   ],
   "by_value_aggregate_rule": {

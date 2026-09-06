@@ -44,6 +44,7 @@ of encoded versions -- not a range, not "any 0.x", not "this minor or newer":
 | --- | --- | --- |
 | 0.21.0 | 5376 | `probe.generated.c` compiled against this version's canonical headers, `valueprobe.generated.c` run against a real library built from them, and the whole gate set re-run against it at every closure since |
 | 0.22.0 | 5632 | the same, against a library built from an exact published source pair -- CNA `fb62662c9`, sharp-runtime `bfc826e1` -- and `generate.py --check` proving the generated layer identical but for the four version constants |
+| 0.23.0 | 5888 | the same, against CNA `5c8840657` with the same sharp-runtime `bfc826e1`, both `HEADLESS` and `SOFTWARE`; the whole gate set, the four audio lanes, the nine pixel proofs and the isolated consumer |
 
 **This table listed 0.21.0 alone until 2026-09-06**, four commits after 0.22.0 was
 admitted and its evidence written into `docs/qualification.md`. The set is a set
@@ -58,7 +59,7 @@ A matching major number is not evidence: 0.7.0 and 0.21.0 share a major and do
 not share a surface. A version enters the set only after the whole bound surface
 has passed the compiler-backed gate against that version's headers.
 
-**What actually differs between the two admitted versions**, measured by diffing
+**What actually differs between 0.21.0 and 0.22.0**, measured by diffing
 the header trees rather than inferred from the version bump: six files. `abi.h`'s
 version constant; six new renderer identity constants in `graphics.h`; one added
 route in `net_sessions.h`; documentation corrections in `devices.h` and
@@ -68,17 +69,31 @@ first value". **None of the routes this binding binds differs**, which is why
 `generate.py --check` passes against both from one set of generated files, and the
 one behavioural change is to a route the manifest does not name.
 
-That is a fact about these two versions and not a rule. The next version to be
-proposed gets the same diff and the same gate set, because "the delta looked
-small" is not evidence.
+**And what differs between 0.22.0 and 0.23.0**, measured the same way: three
+files, and the delta is the smallest yet. `abi.h`'s version constant; one added
+route, `cna_decal_pass_is_supported` in `engine_layer.h`, which this binding does
+not bind and which closes a gap CNA had recorded against itself; and prose in
+`models.h` documenting which model formats `cna_content_manager_load_model`
+opens. No struct, no field, no constant but the four version ones, no callback,
+no ownership annotation and no by-value aggregate changed, and nothing was
+removed. `generate.py` run against 0.23.0's headers produces a byte-identical
+`functions.generated.lisp`, `structs.generated.lisp`,
+`predefined-colors.generated.lisp`, `valueprobe.generated.c` and
+`shim.generated.c`, with the same 572 functions, 73 structs, 511 constants and 11
+callbacks.
 
-### A closure's route matrix names both versions
+That is a fact about these three versions and not a rule. The next version to be
+proposed gets the same diff and the same gate set, because "the delta looked
+small" is not evidence -- and the 0.22 -> 0.23 delta looking small is exactly why
+it was diffed rather than assumed.
+
+### A closure's route matrix names every version
 
 A new closure has to state, per member, which route it takes **in each admitted
 version** and whether the semantics agree -- not which route it takes in the
 newest one. `DynamicSoundEffectInstance` is the worked example, and its matrix is
 one column wide because `modules/c-api/include/CNA/C/audio.h` is byte for byte
-identical in 0.21.0 and 0.22.0:
+identical in 0.21.0, 0.22.0 and 0.23.0:
 
 | XNA member | CNA 0.21.0 route | CNA 0.22.0 route | Semantics | Strategy |
 | --- | --- | --- | --- | --- |
