@@ -500,7 +500,28 @@ CNA_Matrix* and need nothing."
    (%native-parts :initform '() :accessor %effect-native-parts
                   :documentation
                   "Every owned CNA handle this effect must give back, newest
-first. See %RETAIN-NATIVE-PART."))
+first. See %RETAIN-NATIVE-PART.")
+   (%content-published
+    :initarg :%content-published :initform nil :reader %effect-content-published-p
+    :documentation
+    "True for an effect handle a loaded Model published rather than a create route.
+
+**This exists because of a measured CNA defect, and it is a refusal rather than a
+workaround.** `cna_content_manager_load_model' publishes one handle per distinct
+effect its model owns, and `PublishModelResource' fills in only the value and the
+parent game: the `adapterState' every technique, parameter and texture route
+reads is left null. So `cna_effect_get_techniques' on such a handle is a **null
+dereference inside CNA** -- a memory fault at offset 0x20, not a result code --
+and it takes the process with it. Measured on 0.21.0 and 0.22.0 alike; 22 of
+`effects.h''s routes read that field and are unsafe on such a handle, and the
+other 300 are fine.
+
+So the graph is not built for one of these and the members that would read it
+refuse by name. Everything else on the effect works, because it does not go
+through `adapterState': the matrices, the fog, the lights and every material
+scalar answer normally. Assigning your own effect to the part -- which is an
+ordinary XNA idiom and is what the qualification does -- replaces the handle with
+one that has adapter state, and every member works again."))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.Effect.
 
@@ -520,12 +541,33 @@ docs/limitations.md has the consequences, the largest of which is that no
 `Effect' in this binding has ever been observed with a non-empty
 `Parameters'."))
 
+(defun %refuse-content-published-graph (effect operation)
+  "Refuse a member that would read a model-published handle's adapter state."
+  (when (%effect-content-published-p effect)
+    (error 'microsoft.xna.framework:cna-not-supported-error
+           :operation operation
+           :object-type (type-of effect)
+           :format-control
+           "~a came from ContentManager.Load<Model>, and CNA publishes a loaded ~
+            model's effect handle without the adapter state this member reads: ~
+            cna_effect_get_techniques, cna_effect_get_parameters, ~
+            cna_effect_get_current_technique, cna_effect_clone and the texture ~
+            setters all dereference a null shared_ptr on such a handle rather than ~
+            refusing, on both admitted ABIs. Refusing here is what keeps that a ~
+            condition instead of a memory fault. Assign your own effect to the ~
+            mesh part -- (setf (model-mesh-part-effect part) my-basic-effect) -- ~
+            and every member works, which is what this binding's own ~
+            qualification does before it draws."
+           :format-arguments (list (type-of effect)))))
+
 (defmethod effect-techniques ((effect effect))
   (cna-lisp.internal:check-live effect "effect-techniques")
+  (%refuse-content-published-graph effect "effect-techniques")
   (slot-value effect '%techniques))
 
 (defmethod effect-parameters ((effect effect))
   (cna-lisp.internal:check-live effect "effect-parameters")
+  (%refuse-content-published-graph effect "effect-parameters")
   (slot-value effect '%parameters))
 
 (defun %build-effect-graph (effect)
@@ -608,6 +650,7 @@ CNA-USAGE-ERROR here."))
 
 (defmethod effect-current-technique ((effect effect))
   (cna-lisp.internal:check-live effect "effect-current-technique")
+  (%refuse-content-published-graph effect "effect-current-technique")
   (slot-value effect '%current-technique))
 
 (defmethod (setf effect-current-technique) (technique (effect effect))
@@ -753,8 +796,11 @@ ArgumentException, and the code is checked before the device is."
               (cna-lisp.internal:invalidate effect))))
   (cna-lisp.internal:record-construction-undo
    effect (lambda () (%release-native-parts effect :quietly t)))
-  (%build-effect-graph effect)
-  (%build-effect-extras effect))
+  (unless (%effect-content-published-p effect)
+    ;; See the %CONTENT-PUBLISHED slot: reading the graph of a model-published
+    ;; handle is a null dereference inside CNA, so it is not read.
+    (%build-effect-graph effect)
+    (%build-effect-extras effect)))
 
 (defgeneric clone-effect (effect)
   (:documentation
@@ -766,6 +812,7 @@ consumers use unqualified."))
 
 (defmethod clone-effect ((effect effect))
   (cna-lisp.internal:check-usable effect "clone-effect")
+  (%refuse-content-published-graph effect "clone-effect")
   (cffi:with-foreign-object (out :uint64)
     (cna-lisp.internal:check-result
      (cna-lisp.internal.ffi::%effect-clone (cna-lisp.internal:handle-of effect) out)
@@ -803,7 +850,7 @@ not in the selection either. A name not in this table answers an EFFECT, which i
      (cna-lisp.internal.ffi::%effect-copy-type-name handle buffer capacity out))
    operation))
 
-(defun %adopt-loaded-effect (game handle operation)
+(defun %adopt-loaded-effect (game handle operation &key content-published)
   "Wrap an effect a ContentManager created, as the class its type name names.
 
 **The handle's destruction is recorded by MAKE-INSTANCE and not by the caller.**
@@ -816,7 +863,8 @@ path for the same reason."
   (let* ((name (%effect-type-name handle operation))
          (class (or (cdr (assoc name %loaded-effect-classes :test #'string=))
                     'effect))
-         (effect (make-instance class :%adopted-handle handle :%adopted-game game)))
+         (effect (make-instance class :%adopted-handle handle :%adopted-game game
+                                      :%content-published content-published)))
     (setf (%resource-device effect) (microsoft.xna.framework:graphics-device game))
     effect))
 

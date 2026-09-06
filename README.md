@@ -135,7 +135,7 @@ stubs:
   XNA's `Load<SpriteFont>`, with the type as an argument because Common Lisp can
   name one where C cannot. The asset types CNA has a route for are
   <!-- generated-block:loadable-asset-type-names -->
-`Texture2D`, `TextureCube`, `SpriteFont`, `Effect` and `SoundEffect`
+`Texture2D`, `TextureCube`, `SpriteFont`, `Effect`, `SoundEffect` and `Model`
 <!-- /generated-block:loadable-asset-type-names -->,
   which is `LOADABLE-ASSET-TYPES` rendered from the live loader table rather than
   a list kept beside it. The manager
@@ -223,13 +223,13 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=166 -->
-<!-- generated:selected members=2399 -->
-<!-- generated:complete types=147 -->
-<!-- generated:partial types=19 -->
+<!-- generated:selected types=178 -->
+<!-- generated:selected members=2447 -->
+<!-- generated:complete types=156 -->
+<!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1912 -->
-<!-- generated:partial members=22 -->
+<!-- generated:complete members=1957 -->
+<!-- generated:partial members=25 -->
 <!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=430 -->
 <!-- generated:disagreement total=0 -->
@@ -237,12 +237,12 @@ placeholder methods that answer a default and claim success.
 <!-- generated:bound native structs=73 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **166 XNA types and 2399 members**:
+The generated scoreboard, over a selection of **178 XNA types and 2447 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **147 / 19 / 0** |
-| Members complete / missing | **1912 / 35** |
+| Types complete / partial / missing | **156 / 22 / 0** |
+| Members complete / missing | **1957 / 35** |
 | Members not applicable | **430** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->

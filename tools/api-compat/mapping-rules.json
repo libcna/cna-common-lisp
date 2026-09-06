@@ -7691,6 +7691,373 @@
       "not_applicable": {
         "Dispose(Boolean)": "The protected disposing/finalizing overload. CNA-Lisp has no finalizer that touches a native resource by policy, so the boolean it exists to carry -- 'am I being called from Dispose or from the finalizer' -- has only one possible answer here and nothing to express. The same statement SoundEffectInstance's makes; this class overrides it in XNA only to unregister itself from the static instance table first, which is bookkeeping for a mechanism this binding does not have."
       }
+    },
+    "Microsoft.Xna.Framework.Graphics.Model": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "Draw(Matrix,Matrix,Matrix)": {
+          "lisp": "draw-model",
+          "generic": true,
+          "status": "partial",
+          "reason": "Transcribed from the IL rather than delegated to `cna_model_draw': the member is observable through the effects it configures -- it assigns World, View and Projection on every effect of every mesh and a program can read them back -- and it throws two distinct InvalidOperationExceptions before drawing anything. `cna_model_draw' also takes three CNA_Matrix by value, three MEMORY-class aggregates. **Partial** because a model still carrying the effects the content loader gave it cannot be drawn: CNA publishes a loaded model's effect handle without the adapter state every technique, parameter and texture route reads. `PublishModelResource' in CnaCApiModels.cpp fills in the value and the parent game and nothing else, and `GetEffectState' is a cast of that null pointer, so `cna_effect_get_techniques' on such a handle is a memory fault at offset 0x20 rather than a result code -- measured on 0.21.0 and 0.22.0 alike, and not containable by an exception barrier. 22 of effects.h's 322 routes read that field; the other 300 answer normally on the same handle, which is why the effect object is real and only its graph refuses. Assigning your own effect to the part replaces the handle with one that has adapter state and every member works again; that is an ordinary XNA idiom and it is what this binding's own pixel proof does."
+        },
+        "Root": {
+          "lisp": "model-root",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, as XNA's is, and the same object `Bones' answers for that index -- the graph is resolved through one index map."
+        },
+        "Bones": {
+          "lisp": "model-bones",
+          "generic": true,
+          "setf": false,
+          "reason": "The same collection object every time, as XNA's field is."
+        },
+        "Meshes": {
+          "lisp": "model-meshes",
+          "generic": true,
+          "setf": false,
+          "reason": "The same collection object every time, as XNA's field is."
+        },
+        "Tag": {
+          "lisp": "tag",
+          "generic": true,
+          "setf": true,
+          "reason": "XNA's Tag is System.Object -- arbitrary consumer data the framework never reads -- and CNA's is a uint64 token, which cannot hold a Lisp object and could only hold a pointer to one. Putting a pointer to a moving object into C is the thing this binding never does, so the tag is a Lisp slot and the three `cna_model_*_tag' routes are not bound at all. It is also the only projection that preserves EQ-ness of what a program puts in. GraphicsResource.Tag settled this first and this is the same decision."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelBone": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-bone",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "Name": {
+          "lisp": "model-bone-name",
+          "generic": true,
+          "setf": false,
+          "reason": "The package already carries GRAPHICS-RESOURCE-NAME and EFFECT-TECHNIQUE-NAME for the same reason: a bare NAME would meet every other named thing here."
+        },
+        "Index": {
+          "lisp": "model-bone-index",
+          "generic": true,
+          "setf": false,
+          "reason": "Type-prefixed like every other reference-type member in this package; a bare INDEX says nothing about what it indexes."
+        },
+        "Transform": {
+          "lisp": "model-bone-transform",
+          "generic": true,
+          "setf": true,
+          "reason": "The setter is written through `cna_model_set_bone_transforms', which takes a pointer, rather than `cna_model_bone_set_transform', which takes CNA_Matrix by value and would need a fifth shimmed route and a member that refuses without a C toolchain. It reads the model's local transforms, replaces this bone's and writes them all back -- the same value written the same way, because every handle in a model is affine to one thread and nothing can change in between."
+        },
+        "Parent": {
+          "lisp": "model-bone-parent",
+          "generic": true,
+          "setf": false,
+          "reason": "The *object* XNA answers, not a fresh view: CNA's `CreateBoneHandle' makes a new handle on every call, so the parent's index is read and resolved through the model's map. `(eq (model-bone-parent child) root)' is what XNA guarantees and what this preserves."
+        },
+        "Children": {
+          "lisp": "model-bone-children",
+          "generic": true,
+          "setf": false,
+          "reason": "Resolved through the same index map, so a bone's child is the same object `Bones' answers for it."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelBoneCollection": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-bone-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "GetEnumerator()": {
+          "lisp": "collection-enumerator",
+          "generic": true,
+          "reason": "The four model collections are one contract four times over, so they share the generic functions the effect collections already established rather than growing twelve names for three questions. COLLECTION-COUNT and the integer COLLECTION-ITEM serve them too and are not measured here: those come from `ReadOnlyCollection<T>', which is the base-class library's, so the contract records them on the BCL type. See GameComponentCollection's declared extensions for the same situation."
+        },
+        "Item(String)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "The string indexer throws where the effect collections' answers NIL, and that is read out of the IL rather than assumed: `get_Item(string)' calls TryGetValue and, when it answers false, does `newobj KeyNotFoundException; throw'. TryGetValue itself tests `String.IsNullOrEmpty' first and throws ArgumentNullException for both null and the empty string, then compares with `String.Compare(a, b, StringComparison.Ordinal)' -- ordinal, so case-sensitive -- and the first match wins."
+        },
+        "TryGetValue(String,ModelBone&)": {
+          "lisp": "collection-try-get-value",
+          "generic": true,
+          "reason": "An `out' parameter plus a boolean is two values in Common Lisp: (values element found-p). The string indexer throws where the effect collections' answers NIL, and that is read out of the IL rather than assumed: `get_Item(string)' calls TryGetValue and, when it answers false, does `newobj KeyNotFoundException; throw'. TryGetValue itself tests `String.IsNullOrEmpty' first and throws ArgumentNullException for both null and the empty string, then compares with `String.Compare(a, b, StringComparison.Ordinal)' -- ordinal, so case-sensitive -- and the first match wins."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-bone-collection-enumerator",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "MoveNext()": {
+          "lisp": "enumerator-move-next",
+          "generic": true,
+          "reason": "XNA declares each nested `Enumerator' a mutable struct whose MoveNext advances a field, and C# mutates a foreach-local copy of it. A projected value type here is an immutable structure, and a value that mutates is not a value -- so a cursor projects onto an object with identity or it does not work at all. COLLECTION-ELEMENTS is what a Lisp program actually iterates; this exists because GetEnumerator has a return type and the profile admits it."
+        },
+        "Current": {
+          "lisp": "enumerator-current",
+          "generic": true,
+          "setf": false,
+          "reason": "XNA declares each nested `Enumerator' a mutable struct whose MoveNext advances a field, and C# mutates a foreach-local copy of it. A projected value type here is an immutable structure, and a value that mutates is not a value -- so a cursor projects onto an object with identity or it does not work at all. COLLECTION-ELEMENTS is what a Lisp program actually iterates; this exists because GetEnumerator has a return type and the profile admits it."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "reason": "IEnumerator<T> requires it and XNA's body is one `ret'. It is DISPOSE, the declared extension every native object here already carries, exactly as GraphicsResource.Dispose() is."
+        }
+      },
+      "base_type_exception": {
+        "reason": "System.ValueType, which is not a projected type: a CLR struct's base is the runtime's own and there is nothing in this profile for it to project onto. The enumerator is a CLOS class rather than a structure for the reason its members record."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMesh": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-mesh",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "Draw()": {
+          "lisp": "draw-model-mesh",
+          "generic": true,
+          "status": "partial",
+          "reason": "Transcribed from the IL, over this binding's own public device surface: SET-VERTEX-BUFFER, `(setf INDICES)' and DRAW-INDEXED-PRIMITIVES are exactly the three calls `ModelMeshPart.Draw' makes, and `part.Draw()' is inside the pass loop where XNA puts it. Needs no shim, unlike DRAW-MODEL. **Partial** for the same reason DRAW-MODEL is: CNA publishes a loaded model's effect handle without the adapter state every technique, parameter and texture route reads. `PublishModelResource' in CnaCApiModels.cpp fills in the value and the parent game and nothing else, and `GetEffectState' is a cast of that null pointer, so `cna_effect_get_techniques' on such a handle is a memory fault at offset 0x20 rather than a result code -- measured on 0.21.0 and 0.22.0 alike, and not containable by an exception barrier. 22 of effects.h's 322 routes read that field; the other 300 answer normally on the same handle, which is why the effect object is real and only its graph refuses. Assigning your own effect to the part replaces the handle with one that has adapter state and every member works again; that is an ordinary XNA idiom and it is what this binding's own pixel proof does."
+        },
+        "Name": {
+          "lisp": "model-mesh-name",
+          "generic": true,
+          "setf": false,
+          "reason": "Type-prefixed, as GRAPHICS-RESOURCE-NAME is."
+        },
+        "ParentBone": {
+          "lisp": "model-mesh-parent-bone",
+          "generic": true,
+          "setf": false,
+          "reason": "The object `Model.Bones' answers for that index, resolved through the model's map rather than wrapped again."
+        },
+        "BoundingSphere": {
+          "lisp": "model-mesh-bounding-sphere",
+          "generic": true,
+          "setf": false,
+          "reason": "Read once when the graph is built, as XNA's `ldfld' over a field its constructor sets. Type-prefixed so it cannot be mistaken for the BOUNDING-SPHERE value type."
+        },
+        "MeshParts": {
+          "lisp": "model-mesh-parts",
+          "generic": true,
+          "setf": false,
+          "reason": "The same collection object every time, as XNA's field is."
+        },
+        "Effects": {
+          "lisp": "model-mesh-effects",
+          "generic": true,
+          "setf": false,
+          "reason": "The deduplicated set of its parts' effects, not a list per part: `ModelMeshPart.set_Effect' walks the siblings and removes the old only when no other part still uses it. CNA's `SetPartEffect' runs the same walk, and the tests assert the two agree."
+        },
+        "Tag": {
+          "lisp": "tag",
+          "generic": true,
+          "setf": true,
+          "reason": "XNA's Tag is System.Object -- arbitrary consumer data the framework never reads -- and CNA's is a uint64 token, which cannot hold a Lisp object and could only hold a pointer to one. Putting a pointer to a moving object into C is the thing this binding never does, so the tag is a Lisp slot and the three `cna_model_*_tag' routes are not bound at all. It is also the only projection that preserves EQ-ness of what a program puts in. GraphicsResource.Tag settled this first and this is the same decision."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshCollection": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-mesh-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "GetEnumerator()": {
+          "lisp": "collection-enumerator",
+          "generic": true,
+          "reason": "The four model collections are one contract four times over, so they share the generic functions the effect collections already established rather than growing twelve names for three questions. COLLECTION-COUNT and the integer COLLECTION-ITEM serve them too and are not measured here: those come from `ReadOnlyCollection<T>', which is the base-class library's, so the contract records them on the BCL type. See GameComponentCollection's declared extensions for the same situation."
+        },
+        "Item(String)": {
+          "lisp": "collection-item",
+          "generic": true,
+          "setf": false,
+          "distinguished_by": "dispatch",
+          "reason": "The string indexer throws where the effect collections' answers NIL, and that is read out of the IL rather than assumed: `get_Item(string)' calls TryGetValue and, when it answers false, does `newobj KeyNotFoundException; throw'. TryGetValue itself tests `String.IsNullOrEmpty' first and throws ArgumentNullException for both null and the empty string, then compares with `String.Compare(a, b, StringComparison.Ordinal)' -- ordinal, so case-sensitive -- and the first match wins."
+        },
+        "TryGetValue(String,ModelMesh&)": {
+          "lisp": "collection-try-get-value",
+          "generic": true,
+          "reason": "An `out' parameter plus a boolean is two values in Common Lisp: (values element found-p). The string indexer throws where the effect collections' answers NIL, and that is read out of the IL rather than assumed: `get_Item(string)' calls TryGetValue and, when it answers false, does `newobj KeyNotFoundException; throw'. TryGetValue itself tests `String.IsNullOrEmpty' first and throws ArgumentNullException for both null and the empty string, then compares with `String.Compare(a, b, StringComparison.Ordinal)' -- ordinal, so case-sensitive -- and the first match wins."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-mesh-collection-enumerator",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "MoveNext()": {
+          "lisp": "enumerator-move-next",
+          "generic": true,
+          "reason": "XNA declares each nested `Enumerator' a mutable struct whose MoveNext advances a field, and C# mutates a foreach-local copy of it. A projected value type here is an immutable structure, and a value that mutates is not a value -- so a cursor projects onto an object with identity or it does not work at all. COLLECTION-ELEMENTS is what a Lisp program actually iterates; this exists because GetEnumerator has a return type and the profile admits it."
+        },
+        "Current": {
+          "lisp": "enumerator-current",
+          "generic": true,
+          "setf": false,
+          "reason": "XNA declares each nested `Enumerator' a mutable struct whose MoveNext advances a field, and C# mutates a foreach-local copy of it. A projected value type here is an immutable structure, and a value that mutates is not a value -- so a cursor projects onto an object with identity or it does not work at all. COLLECTION-ELEMENTS is what a Lisp program actually iterates; this exists because GetEnumerator has a return type and the profile admits it."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "reason": "IEnumerator<T> requires it and XNA's body is one `ret'. It is DISPOSE, the declared extension every native object here already carries, exactly as GraphicsResource.Dispose() is."
+        }
+      },
+      "base_type_exception": {
+        "reason": "System.ValueType, which is not a projected type: a CLR struct's base is the runtime's own and there is nothing in this profile for it to project onto. The enumerator is a CLOS class rather than a structure for the reason its members record."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPart": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-mesh-part",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "StartIndex": {
+          "lisp": "model-mesh-part-start-index",
+          "generic": true,
+          "setf": false,
+          "reason": "Type-prefixed like every other reference-type member in this package. Read live from CNA rather than cached: XNA's is an `ldfld' over a field nothing public can change, and reading the value CNA holds is the same answer without a second copy of it."
+        },
+        "PrimitiveCount": {
+          "lisp": "model-mesh-part-primitive-count",
+          "generic": true,
+          "setf": false,
+          "reason": "Type-prefixed like every other reference-type member in this package. Read live from CNA rather than cached: XNA's is an `ldfld' over a field nothing public can change, and reading the value CNA holds is the same answer without a second copy of it."
+        },
+        "VertexOffset": {
+          "lisp": "model-mesh-part-vertex-offset",
+          "generic": true,
+          "setf": false,
+          "reason": "Type-prefixed like every other reference-type member in this package. Read live from CNA rather than cached: XNA's is an `ldfld' over a field nothing public can change, and reading the value CNA holds is the same answer without a second copy of it."
+        },
+        "NumVertices": {
+          "lisp": "model-mesh-part-num-vertices",
+          "generic": true,
+          "setf": false,
+          "reason": "Type-prefixed like every other reference-type member in this package. Read live from CNA rather than cached: XNA's is an `ldfld' over a field nothing public can change, and reading the value CNA holds is the same answer without a second copy of it."
+        },
+        "IndexBuffer": {
+          "lisp": "model-mesh-part-index-buffer",
+          "generic": true,
+          "setf": false,
+          "reason": "An ordinary INDEX-BUFFER, not a model-only wrapper. A handle a program already owns answers that program's own object; one only the model owns gets a :PARENT-OWNED wrapper whose DISPOSE refuses and says to dispose the parent, which is also what CNA does."
+        },
+        "VertexBuffer": {
+          "lisp": "model-mesh-part-vertex-buffer",
+          "generic": true,
+          "setf": false,
+          "reason": "An ordinary VERTEX-BUFFER, on the same terms as IndexBuffer. Its VertexDeclaration is rebuilt from the elements CNA holds rather than invented."
+        },
+        "Effect": {
+          "lisp": "model-mesh-part-effect",
+          "generic": true,
+          "setf": true,
+          "status": "partial",
+          "reason": "The setter is XNA's, transcribed: it walks the siblings and maintains the mesh's Effects collection, and NIL clears the effect. The getter answers the one object for that effect -- two parts sharing one answer the same object, because CNA's loader publishes one handle per distinct native effect. **Partial** because the object a content-loaded model hands back cannot answer for its own graph: CNA publishes a loaded model's effect handle without the adapter state every technique, parameter and texture route reads. `PublishModelResource' in CnaCApiModels.cpp fills in the value and the parent game and nothing else, and `GetEffectState' is a cast of that null pointer, so `cna_effect_get_techniques' on such a handle is a memory fault at offset 0x20 rather than a result code -- measured on 0.21.0 and 0.22.0 alike, and not containable by an exception barrier. 22 of effects.h's 322 routes read that field; the other 300 answer normally on the same handle, which is why the effect object is real and only its graph refuses. Assigning your own effect to the part replaces the handle with one that has adapter state and every member works again; that is an ordinary XNA idiom and it is what this binding's own pixel proof does."
+        },
+        "Tag": {
+          "lisp": "tag",
+          "generic": true,
+          "setf": true,
+          "reason": "XNA's Tag is System.Object -- arbitrary consumer data the framework never reads -- and CNA's is a uint64 token, which cannot hold a Lisp object and could only hold a pointer to one. Putting a pointer to a moving object into C is the thing this binding never does, so the tag is a Lisp slot and the three `cna_model_*_tag' routes are not bound at all. It is also the only projection that preserves EQ-ness of what a program puts in. GraphicsResource.Tag settled this first and this is the same decision."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-mesh-part-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "GetEnumerator()": {
+          "lisp": "collection-enumerator",
+          "generic": true,
+          "reason": "The four model collections are one contract four times over, so they share the generic functions the effect collections already established rather than growing twelve names for three questions. COLLECTION-COUNT and the integer COLLECTION-ITEM serve them too and are not measured here: those come from `ReadOnlyCollection<T>', which is the base-class library's, so the contract records them on the BCL type. See GameComponentCollection's declared extensions for the same situation."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-mesh-part-collection-enumerator",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "MoveNext()": {
+          "lisp": "enumerator-move-next",
+          "generic": true,
+          "reason": "XNA declares each nested `Enumerator' a mutable struct whose MoveNext advances a field, and C# mutates a foreach-local copy of it. A projected value type here is an immutable structure, and a value that mutates is not a value -- so a cursor projects onto an object with identity or it does not work at all. COLLECTION-ELEMENTS is what a Lisp program actually iterates; this exists because GetEnumerator has a return type and the profile admits it."
+        },
+        "Current": {
+          "lisp": "enumerator-current",
+          "generic": true,
+          "setf": false,
+          "reason": "XNA declares each nested `Enumerator' a mutable struct whose MoveNext advances a field, and C# mutates a foreach-local copy of it. A projected value type here is an immutable structure, and a value that mutates is not a value -- so a cursor projects onto an object with identity or it does not work at all. COLLECTION-ELEMENTS is what a Lisp program actually iterates; this exists because GetEnumerator has a return type and the profile admits it."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "reason": "IEnumerator<T> requires it and XNA's body is one `ret'. It is DISPOSE, the declared extension every native object here already carries, exactly as GraphicsResource.Dispose() is."
+        }
+      },
+      "base_type_exception": {
+        "reason": "System.ValueType, which is not a projected type: a CLR struct's base is the runtime's own and there is nothing in this profile for it to project onto. The enumerator is a CLOS class rather than a structure for the reason its members record."
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-effect-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "GetEnumerator()": {
+          "lisp": "collection-enumerator",
+          "generic": true,
+          "reason": "The four model collections are one contract four times over, so they share the generic functions the effect collections already established rather than growing twelve names for three questions. COLLECTION-COUNT and the integer COLLECTION-ITEM serve them too and are not measured here: those come from `ReadOnlyCollection<T>', which is the base-class library's, so the contract records them on the BCL type. See GameComponentCollection's declared extensions for the same situation."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "model-effect-collection-enumerator",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "MoveNext()": {
+          "lisp": "enumerator-move-next",
+          "generic": true,
+          "reason": "XNA declares each nested `Enumerator' a mutable struct whose MoveNext advances a field, and C# mutates a foreach-local copy of it. A projected value type here is an immutable structure, and a value that mutates is not a value -- so a cursor projects onto an object with identity or it does not work at all. COLLECTION-ELEMENTS is what a Lisp program actually iterates; this exists because GetEnumerator has a return type and the profile admits it."
+        },
+        "Current": {
+          "lisp": "enumerator-current",
+          "generic": true,
+          "setf": false,
+          "reason": "XNA declares each nested `Enumerator' a mutable struct whose MoveNext advances a field, and C# mutates a foreach-local copy of it. A projected value type here is an immutable structure, and a value that mutates is not a value -- so a cursor projects onto an object with identity or it does not work at all. COLLECTION-ELEMENTS is what a Lisp program actually iterates; this exists because GetEnumerator has a return type and the profile admits it."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "reason": "IEnumerator<T> requires it and XNA's body is one `ret'. It is DISPOSE, the declared extension every native object here already carries, exactly as GraphicsResource.Dispose() is."
+        }
+      },
+      "base_type_exception": {
+        "reason": "System.ValueType, which is not a projected type: a CLR struct's base is the runtime's own and there is nothing in this profile for it to project onto. The enumerator is a CLOS class rather than a structure for the reason its members record."
+      }
     }
   },
   "frontier_category_kinds": {
@@ -7759,7 +8126,10 @@
     "Microsoft.Xna.Framework.GraphicsDeviceManager.OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT"
+    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.Model.Draw(Matrix,Matrix,Matrix)": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.ModelMesh.Draw()": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPart.Effect": "CNA_ADMITTED_ABI_LIMIT"
   },
   "frontier_categories_description": "One category per non-complete selected member, keyed by '<type>.<signature>' exactly as the generated report names it. Every missing and partial member must appear here and nothing else may: verify.py reports an uncategorised_absence otherwise, so a member cannot go non-complete without saying what kind of thing is stopping it. The prose reason stays where it was -- per member in 'unimplemented' and in 'member_overrides' -- because a reason names a route and a category sorts it. See 'frontier_category_kinds'."
 }

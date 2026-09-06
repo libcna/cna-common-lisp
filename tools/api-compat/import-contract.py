@@ -200,6 +200,42 @@ SELECTED = [
     "Microsoft.Xna.Framework.Audio.AudioChannels",
     "Microsoft.Xna.Framework.Audio.NoAudioHardwareException",
     "Microsoft.Xna.Framework.Audio.InstancePlayLimitException",
+    # --- the Model family ------------------------------------------------
+    # Dependency-complete and measured rather than listed: the closure of these
+    # twelve over the pinned snapshot's own `baseType`, `interfaces`, member
+    # return types and parameter types adds **nothing**. Every XNA type they
+    # reach -- Effect, Matrix, BoundingSphere, VertexBuffer, IndexBuffer,
+    # GraphicsDevice -- was already selected, and everything else they reach is
+    # the base-class library's: System.Object, System.String, and the generic
+    # collection interfaces `ReadOnlyCollection<T>` carries.
+    #
+    # **The four nested enumerators are in, and that is what dependency-complete
+    # means here.** `ModelBoneCollection.GetEnumerator()` returns
+    # `ModelBoneCollection+Enumerator`, an XNA type in this profile rather than
+    # a BCL one -- unlike `DisplayModeCollection`'s and the effect collections',
+    # whose enumerators are `List<T>.Enumerator` and are therefore outside the
+    # selection by the same rule that keeps `System.IO.Stream` out. Selecting
+    # the collection and not its enumerator would leave `GetEnumerator()`
+    # answering a type the profile does not admit.
+    #
+    # CNA's own model extensions -- morph targets, the skinned-model EXT family,
+    # animation clips, SkinningData, AnimationPlayer, the glTF import report,
+    # cameras, skins and material variants -- are **not** here and are not XNA.
+    # They share `models.h` with these routes and nothing else; a CNA route is
+    # not an argument for a member, which is the rule `cna_sprite_font_create`
+    # is already unbound under.
+    "Microsoft.Xna.Framework.Graphics.Model",
+    "Microsoft.Xna.Framework.Graphics.ModelBone",
+    "Microsoft.Xna.Framework.Graphics.ModelBoneCollection",
+    "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator",
+    "Microsoft.Xna.Framework.Graphics.ModelMesh",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshCollection",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
 ]
 
 

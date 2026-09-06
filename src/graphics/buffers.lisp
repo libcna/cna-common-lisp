@@ -215,10 +215,104 @@ it."
           ,operation :object-type 'vertex-declaration)
        ,@body)))
 
+(defun %adopt-existing-buffer (buffer game handle)
+  "Take an existing CNA buffer handle without creating or owning one.
+
+**The one caller is the Model family**, and the handle is a model's rather than a
+program's: `cna_content_manager_load_model' publishes a handle for each part's
+vertex and index buffer and says that the handles this route creates for them
+are released when the model is destroyed, and that a caller must not release them
+by hand. So this
+records **no** destruction and registers **no** child. The model re-parents the
+object to itself and marks it `:PARENT-OWNED', whose DISPOSE already refuses and
+says to dispose the parent -- which is the truth here twice over, because CNA
+refuses the destroy as well.
+
+Split out rather than folded into the constructors' `:AFTER' methods so that the
+ordinary path keeps its single ledger: a constructor that creates a handle records
+its destruction, and this one has nothing to record."
+  (setf (cna-lisp.internal:handle-of buffer) handle
+        (slot-value buffer 'cna-lisp.internal::owner) game
+        (slot-value buffer 'cna-lisp.internal::owner-thread)
+        (cna-lisp.internal:owner-thread-of game))
+  buffer)
+
+(defun %adopted-vertex-buffer-metadata (buffer handle operation)
+  "Fill an adopted vertex buffer's three read-only slots from CNA.
+
+`cna_vertex_buffer_get_info' answers the count, the usage and the stride, and
+`cna_vertex_buffer_copy_declaration_elements' answers the elements -- so the
+VertexDeclaration a model's buffer reports is rebuilt from the layout CNA holds
+rather than invented. XNA's VertexBuffer.VertexDeclaration is a field its
+constructor sets; this is the same value read back from the only place that has
+it."
+  (cffi:with-foreign-object (info '(:struct cna-lisp.internal.ffi::cna-vertex-buffer-info))
+    (cffi:foreign-funcall "memset" :pointer info :int 0
+                          :size cna-lisp.internal.ffi::+sizeof-cna-vertex-buffer-info+ :void)
+    (macrolet ((slot (name)
+                 `(cffi:foreign-slot-value
+                   info '(:struct cna-lisp.internal.ffi::cna-vertex-buffer-info) ',name)))
+      (setf (slot cna-lisp.internal.ffi::struct-size)
+            cna-lisp.internal.ffi::+sizeof-cna-vertex-buffer-info+
+            (slot cna-lisp.internal.ffi::struct-version) 1)
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%vertex-buffer-get-info handle info)
+       operation :object-type (type-of buffer))
+      (setf (slot-value buffer 'vertex-count) (slot cna-lisp.internal.ffi::vertex-count)
+            (slot-value buffer 'buffer-usage)
+            (%member-of %buffer-usage-to-native (slot cna-lisp.internal.ffi::buffer-usage)
+                      "buffer-usage")
+            (slot-value buffer 'vertex-declaration)
+            (%adopted-vertex-declaration
+             handle (slot cna-lisp.internal.ffi::vertex-stride)
+             (slot cna-lisp.internal.ffi::vertex-element-count) operation))))
+  buffer)
+
+(defun %adopted-vertex-declaration (handle stride element-count operation)
+  "The VertexDeclaration CNA holds for an adopted buffer, as a projected object."
+  (let ((elements
+          (if (zerop element-count)
+              '()
+              (cffi:with-foreign-object
+                  (buffer '(:struct cna-lisp.internal.ffi::cna-vertex-element) element-count)
+                (cffi:with-foreign-object (out :uint64)
+                  (cna-lisp.internal:check-result
+                   (cna-lisp.internal.ffi::%vertex-buffer-copy-declaration-elements
+                    handle buffer element-count out)
+                   operation))
+                (loop for index from 0 below element-count
+                      for pointer = (cffi:mem-aptr
+                                     buffer
+                                     '(:struct cna-lisp.internal.ffi::cna-vertex-element) index)
+                      collect (macrolet ((slot (name)
+                                           `(cffi:foreign-slot-value
+                                             pointer
+                                             '(:struct cna-lisp.internal.ffi::cna-vertex-element)
+                                             ',name)))
+                                (make-vertex-element
+                                 (slot cna-lisp.internal.ffi::offset)
+                                 (%member-of %vertex-element-format-to-native
+                                           (slot cna-lisp.internal.ffi::format)
+                                           "vertex-element-format")
+                                 (%member-of %vertex-element-usage-to-native
+                                           (slot cna-lisp.internal.ffi::usage)
+                                           "vertex-element-usage")
+                                 (slot cna-lisp.internal.ffi::usage-index))))))))
+    (make-instance 'vertex-declaration :elements elements :vertex-stride stride)))
+
 (defmethod initialize-instance :after ((buffer vertex-buffer)
                                        &key graphics-device vertex-declaration
                                             vertex-type vertex-count
-                                            (buffer-usage :none))
+                                            (buffer-usage :none)
+                                            %adopted-handle %adopted-game
+                                       &allow-other-keys)
+  (when %adopted-handle
+    ;; A model's buffer: the handle exists and is the model's. See
+    ;; %ADOPT-EXISTING-BUFFER for why nothing is recorded and nothing registered.
+    (%adopt-existing-buffer buffer %adopted-game %adopted-handle)
+    (%adopted-vertex-buffer-metadata buffer %adopted-handle "adopted vertex-buffer")
+    (setf (%resource-device buffer) (microsoft.xna.framework:graphics-device %adopted-game))
+    (return-from initialize-instance))
   (let ((operation "make-instance vertex-buffer"))
     (unless graphics-device
       (error 'microsoft.xna.framework:cna-usage-error
@@ -312,10 +406,40 @@ rather say it that way."))
                   :format-control
                   "an index buffer needs :INDEX-ELEMENT-SIZE or :INDEX-TYPE."))))
 
+(defun %adopted-index-buffer-metadata (buffer handle operation)
+  "Fill an adopted index buffer's three read-only slots from CNA."
+  (cffi:with-foreign-object (info '(:struct cna-lisp.internal.ffi::cna-index-buffer-info))
+    (cffi:foreign-funcall "memset" :pointer info :int 0
+                          :size cna-lisp.internal.ffi::+sizeof-cna-index-buffer-info+ :void)
+    (macrolet ((slot (name)
+                 `(cffi:foreign-slot-value
+                   info '(:struct cna-lisp.internal.ffi::cna-index-buffer-info) ',name)))
+      (setf (slot cna-lisp.internal.ffi::struct-size)
+            cna-lisp.internal.ffi::+sizeof-cna-index-buffer-info+
+            (slot cna-lisp.internal.ffi::struct-version) 1)
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%index-buffer-get-info handle info)
+       operation :object-type (type-of buffer))
+      (setf (slot-value buffer 'index-count) (slot cna-lisp.internal.ffi::index-count)
+            (slot-value buffer 'index-element-size)
+            (%member-of %index-element-size-to-native
+                      (slot cna-lisp.internal.ffi::index-element-size) "index-element-size")
+            (slot-value buffer 'buffer-usage)
+            (%member-of %buffer-usage-to-native (slot cna-lisp.internal.ffi::buffer-usage)
+                      "buffer-usage"))))
+  buffer)
+
 (defmethod initialize-instance :after ((buffer index-buffer)
                                        &key graphics-device index-element-size
                                             index-type index-count
-                                            (buffer-usage :none))
+                                            (buffer-usage :none)
+                                            %adopted-handle %adopted-game
+                                       &allow-other-keys)
+  (when %adopted-handle
+    (%adopt-existing-buffer buffer %adopted-game %adopted-handle)
+    (%adopted-index-buffer-metadata buffer %adopted-handle "adopted index-buffer")
+    (setf (%resource-device buffer) (microsoft.xna.framework:graphics-device %adopted-game))
+    (return-from initialize-instance))
   (let ((operation "make-instance index-buffer"))
     (unless graphics-device
       (error 'microsoft.xna.framework:cna-usage-error

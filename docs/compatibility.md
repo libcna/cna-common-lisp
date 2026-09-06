@@ -118,29 +118,29 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=166 -->
-<!-- generated:selected members=2399 -->
-<!-- generated:complete types=147 -->
-<!-- generated:partial types=19 -->
+<!-- generated:selected types=178 -->
+<!-- generated:selected members=2447 -->
+<!-- generated:complete types=156 -->
+<!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1912 -->
-<!-- generated:partial members=22 -->
+<!-- generated:complete members=1957 -->
+<!-- generated:partial members=25 -->
 <!-- generated:missing members=35 -->
 <!-- generated:not-applicable members=430 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 166 types, 2399 members.
+Selection **Foundation 1 and the managed closures**: 178 types, 2447 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **147** |
-| Types partial | **19** |
+| Types complete | **156** |
+| Types partial | **22** |
 | Types missing | **0** |
-| Members complete | **1912** |
-| Members partial | **22** |
+| Members complete | **1957** |
+| Members partial | **25** |
 | Members missing | **35** |
 | Members not applicable | **430** |
 | **Disagreement diagnostics** | **0** |
@@ -320,6 +320,18 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Audio.AudioChannels` | **complete** | 2 | 0 | 0 | 1 |
 | `M.X.F.Audio.NoAudioHardwareException` | **complete** | 3 | 0 | 0 | 0 |
 | `M.X.F.Audio.InstancePlayLimitException` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.Model` | **partial** | 7 | 1 | 0 | 0 |
+| `M.X.F.Graphics.ModelBone` | **complete** | 5 | 0 | 0 | 0 |
+| `M.X.F.Graphics.ModelBoneCollection` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.ModelBoneCollection+Enumerator` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.ModelMesh` | **partial** | 6 | 1 | 0 | 0 |
+| `M.X.F.Graphics.ModelMeshCollection` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.ModelMeshCollection+Enumerator` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.ModelMeshPart` | **partial** | 7 | 1 | 0 | 0 |
+| `M.X.F.Graphics.ModelMeshPartCollection` | **complete** | 1 | 0 | 0 | 0 |
+| `M.X.F.Graphics.ModelMeshPartCollection+Enumerator` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.ModelEffectCollection` | **complete** | 1 | 0 | 0 | 0 |
+| `M.X.F.Graphics.ModelEffectCollection+Enumerator` | **complete** | 3 | 0 | 0 | 0 |
 <!-- /generated-block:per-type-table -->
 
 ### Not applicable, and why so many
@@ -382,6 +394,9 @@ back-reference.
 | `M.X.F.Audio.SoundEffect` | 0 | 1 |
 | `M.X.F.Audio.SoundEffectInstance` | 0 | 1 |
 | `M.X.F.Audio.DynamicSoundEffectInstance` | 0 | 1 |
+| `M.X.F.Graphics.Model` | 0 | 1 |
+| `M.X.F.Graphics.ModelMesh` | 0 | 1 |
+| `M.X.F.Graphics.ModelMeshPart` | 0 | 1 |
 <!-- /generated-block:partial-frontier -->
 
 The counts in that table are the real remaining surface, and the table is where to
@@ -411,7 +426,7 @@ and so is a category left behind by a member that has since been completed.
 | Category | Members | What it means |
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
+| `CNA_ADMITTED_ABI_LIMIT` | **44** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **6** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |

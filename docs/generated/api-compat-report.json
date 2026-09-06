@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 166,
-  "member_count": 2399
+  "type_count": 178,
+  "member_count": 2447
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,17 +15,17 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 166,
-  "members": 2399,
+  "types": 178,
+  "members": 2447,
   "types_by_status": {
-   "partial": 19,
-   "complete": 147
+   "partial": 22,
+   "complete": 156
   },
   "members_by_status": {
-   "complete": 1912,
+   "complete": 1957,
    "missing": 35,
    "not-applicable": 430,
-   "partial": 22
+   "partial": 25
   },
   "diagnostics": 35,
   "diagnostics_by_category": {
@@ -3611,6 +3611,138 @@
     "new(String,Exception)": "complete"
    },
    "lisp": "microsoft.xna.framework.audio:instance-play-limit-error"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.Model",
+   "status": "partial",
+   "members": {
+    "CopyBoneTransformsTo(Matrix[])": "complete",
+    "CopyAbsoluteBoneTransformsTo(Matrix[])": "complete",
+    "CopyBoneTransformsFrom(Matrix[])": "complete",
+    "Draw(Matrix,Matrix,Matrix)": "partial",
+    "Root": "complete",
+    "Bones": "complete",
+    "Tag": "complete",
+    "Meshes": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelBone",
+   "status": "complete",
+   "members": {
+    "Name": "complete",
+    "Index": "complete",
+    "Transform": "complete",
+    "Parent": "complete",
+    "Children": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-bone"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection",
+   "status": "complete",
+   "members": {
+    "TryGetValue(String,ModelBone&)": "complete",
+    "GetEnumerator()": "complete",
+    "Item(String)": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-bone-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator",
+   "status": "complete",
+   "members": {
+    "MoveNext()": "complete",
+    "Dispose()": "complete",
+    "Current": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-bone-collection-enumerator"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelMesh",
+   "status": "partial",
+   "members": {
+    "Draw()": "partial",
+    "Name": "complete",
+    "ParentBone": "complete",
+    "BoundingSphere": "complete",
+    "Tag": "complete",
+    "MeshParts": "complete",
+    "Effects": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-mesh"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelMeshCollection",
+   "status": "complete",
+   "members": {
+    "TryGetValue(String,ModelMesh&)": "complete",
+    "GetEnumerator()": "complete",
+    "Item(String)": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-mesh-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
+   "status": "complete",
+   "members": {
+    "MoveNext()": "complete",
+    "Dispose()": "complete",
+    "Current": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-mesh-collection-enumerator"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
+   "status": "partial",
+   "members": {
+    "StartIndex": "complete",
+    "PrimitiveCount": "complete",
+    "VertexOffset": "complete",
+    "NumVertices": "complete",
+    "IndexBuffer": "complete",
+    "VertexBuffer": "complete",
+    "Effect": "partial",
+    "Tag": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-mesh-part"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection",
+   "status": "complete",
+   "members": {
+    "GetEnumerator()": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-mesh-part-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
+   "status": "complete",
+   "members": {
+    "MoveNext()": "complete",
+    "Dispose()": "complete",
+    "Current": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-mesh-part-collection-enumerator"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
+   "status": "complete",
+   "members": {
+    "GetEnumerator()": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-effect-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
+   "status": "complete",
+   "members": {
+    "MoveNext()": "complete",
+    "Dispose()": "complete",
+    "Current": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:model-effect-collection-enumerator"
   }
  ],
  "diagnostics": [

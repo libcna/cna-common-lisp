@@ -100,6 +100,8 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "graphics/effect-parameter")
    (:file "graphics/basic-effect")
    (:file "graphics/stock-effects")
+   ;; The Model family, which needs the effect graph and both buffer kinds.
+   (:file "graphics/model")
    (:file "graphics/state-collections")
    ;; SpriteFont is not a GraphicsResource -- XNA derives it from Object --
    ;; and SpriteBatch.DrawString specialises on it, so it loads first.

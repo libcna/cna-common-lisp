@@ -181,3 +181,43 @@
       (%commit-loaded-asset
        manager asset-name record
        (microsoft.xna.framework.audio::%adopt-loaded-sound-effect game handle record)))))
+
+;;; --- Model --------------------------------------------------------------------
+;;;
+;;; `cna_content_manager_load_model' "maps the canonical `Load<Model>'
+;;; specialization -- the route an XNA game's `ContentManager.Load<Model>' takes".
+;;; It reads a compiled `.xnb' model and CNA's own self-contained `.cnj' model
+;;; document; the fixture this suite uses is the second, for the reason
+;;; `docs/limitations.md' gives for the font and the effect.
+;;;
+;;; **The model owns what it publishes, and the loader must not record any of
+;;; it.** The route's header is explicit: "A loaded part's effect and buffers are
+;;; objects the model already owned, and the handles this route creates for them
+;;; are released when the model is destroyed -- do not release them by hand". So
+;;; there is exactly one handle for this loader to be responsible for, the
+;;; model's, and %ADOPT-MODEL is what receives it and therefore what records its
+;;; destruction. One asset load, one ledger, as every other loader here.
+;;;
+;;; **The cache is this binding's, in front of CNA's.** CNA's own route does cache
+;;; -- "the asset is cached by name exactly as every other load is, so a second
+;;; call re-publishes handles over the same underlying model rather than re-reading
+;;; the file" -- but re-publishing answers a *new* model handle over the same
+;;; native model, and XNA's `Load<T>' answers the same object. Two model handles
+;;; for one name would be two objects for one name and two graphs to keep in step.
+;;; So `%COMMIT-LOADED-ASSET' caches, and a second `Load<Model>' never reaches CNA.
+
+(%define-asset-loader (microsoft.xna.framework.graphics:model manager asset-name)
+  (let* ((operation "load-asset 'model")
+         (game (%loading-game manager operation)))
+    (cna-lisp.internal:with-native-rollback (record)
+      (let ((model (make-instance 'microsoft.xna.framework.graphics::model
+                                  :%adopted-handle
+                                  (%load-one-handle
+                                   manager asset-name
+                                   #'cna-lisp.internal.ffi::%content-manager-load-model
+                                   operation)
+                                  :%adopted-game game)))
+        ;; Construction committed and dropped its own ledger, so from here the undo
+        ;; is the model's disposal, which gives the whole graph back.
+        (funcall record (lambda () (microsoft.xna.framework:dispose model)))
+        (%commit-loaded-asset manager asset-name record model)))))

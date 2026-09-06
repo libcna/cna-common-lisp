@@ -415,6 +415,25 @@
    #:effect-specular-color #:effect-specular-power #:effect-texture
    #:effect-texture-enabled #:effect-vertex-color-enabled
    #:effect-prefer-per-pixel-lighting
+   ;; --- the Model family ---------------------------------------------------
+   #:model #:model-bones #:model-meshes #:model-root
+   #:copy-bone-transforms-to #:copy-absolute-bone-transforms-to
+   #:copy-bone-transforms-from #:draw-model
+   #:model-bone #:model-bone-name #:model-bone-index #:model-bone-transform
+   #:model-bone-parent #:model-bone-children
+   #:model-mesh #:model-mesh-name #:model-mesh-parent-bone
+   #:model-mesh-bounding-sphere #:model-mesh-parts #:model-mesh-effects
+   #:draw-model-mesh
+   #:model-mesh-part #:model-mesh-part-start-index #:model-mesh-part-primitive-count
+   #:model-mesh-part-vertex-offset #:model-mesh-part-num-vertices
+   #:model-mesh-part-index-buffer #:model-mesh-part-vertex-buffer
+   #:model-mesh-part-effect
+   #:model-bone-collection #:model-mesh-collection #:model-mesh-part-collection
+   #:model-effect-collection
+   #:model-bone-collection-enumerator #:model-mesh-collection-enumerator
+   #:model-mesh-part-collection-enumerator #:model-effect-collection-enumerator
+   #:collection-try-get-value #:collection-enumerator
+   #:enumerator-move-next #:enumerator-current
    ;; --- the device's state and texture collections -------------------------
    #:sampler-state-collection #:texture-collection #:item
    #:sampler-states #:vertex-sampler-states #:textures #:vertex-textures
