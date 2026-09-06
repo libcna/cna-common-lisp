@@ -1938,6 +1938,278 @@ and a native acceptance are what these prove. Where a human would perceive a sou
 is not established here, and a future hardware qualification would be a different
 claim with different evidence.
 
+## Microphone: runtime-owned devices, and five more places XNA wins
+
+The capture half of `Microsoft.Xna.Framework.Audio` is projected and complete:
+`Microphone`, `MicrophoneState` and `NoMicrophoneConnectedException`, three types
+and twenty-one members over eighteen `cna_microphone_*` routes that are identical
+in all three admitted ABIs — `audio.h` is byte for byte the same file in 0.21.0,
+0.22.0 and 0.23.0.
+
+### A microphone is not an object this binding owns
+
+Every other CNA-Lisp type with a handle is a `NATIVE-OBJECT`: created, a child of
+something, destroyed. A microphone is none of those. `audio.h` says the canonical
+list "hands out pointers the runtime owns" and that "the microphone itself is
+owned by the runtime and outlives every registration a caller can hold", and
+there is no create route, no destroy route and no handle at all.
+
+XNA agrees, and the pinned IL is where that was read rather than assumed:
+`Microphone`'s only constructor is `assembly`-private and the only thing that
+calls it is `MicrophoneCollection.EnumerateMicrophones`. A program never makes
+one; it asks `All` or `Default` for the ones that exist.
+
+So `MICROPHONE` is a plain CLOS facade over an active game and a device index. It
+has no handle slot, it is not registered as a child of the game, and **there is no
+`DISPOSE`** — not because disposal was skipped, but because XNA has none either.
+`START` and `STOP` change what the device is doing; neither ends the object.
+
+### Object identity is guaranteed, and the guarantee is XNA's own
+
+`MicrophoneCollection` holds a `List<Microphone>` its static constructor makes
+once and never replaces. `EnumerateMicrophones` is, in full:
+
+```
+GetMicrophoneCount(out count)
+if (count < allMicrophones.Count) throw new InvalidOperationException();
+for (i = allMicrophones.Count; i < count; i++)
+    if (CreateMicrophone(i, out handle) == 0)
+        allMicrophones.Add(new Microphone(handle));
+```
+
+**Append-only.** An existing element is never replaced, never removed and never
+re-targeted, and a count that has *shrunk* is an error rather than a reason to
+rebuild. So `Microphone.All[i]` is reference-identical across every query for the
+life of the process, and `MICROPHONE-ALL` reproduces that with one process-global
+cache keyed by index. `EQ` holds, and a test asserts it rather than asserting that
+two facades have equal slots.
+
+**The key is the index and not the name.** Two capture devices may share a display
+name — the qualification environment's two differ, but nothing guarantees that —
+so a name is a label and not an identity.
+
+**It is not a generation either, and that is deliberate.** A generation would
+claim a hot-plug story neither runtime has: CNA exposes a count and an index and
+nothing else, no device id and no device-changed event. What the cache does
+instead is refuse the one case that would silently re-target — a count below the
+number already handed out is `CNA-INVALID-STATE-ERROR`, which is XNA's
+`InvalidOperationException` in the same position.
+
+**The cache is process-global rather than per-game, and that was measured.**
+Destroying a game and creating another leaves CNA's device list identical — same
+count, same names, same default index, same sample rates — and leaves a microphone
+that was capturing still capturing. The runtime owns the devices, exactly as the
+header says. That is XNA's model too, where the collection belongs to a static
+field and there is no game to scope it to.
+
+### `All` is a list, and `Default` is one of its elements
+
+`ReadOnlyCollection<Microphone>` projects onto a Common Lisp **list**, which is the
+same language projection `GraphicsAdapter.Adapters` already declares: a list is
+what Common Lisp reads a sequence you must not mutate as, and **no XNA type is
+invented to model the BCL wrapper**. The list is fresh on every call so that
+nothing a caller does to it can reach the identity cache; the elements are the
+cached facades so that `EQ` holds across calls.
+
+`MICROPHONE-DEFAULT` is `EQ` to one of them or it is `NIL`. XNA's
+`SelectDefaultMicrophone` picks an element of the very list `All` answers — it asks
+each for `IsDefault` and falls back to index zero — so no facade is ever
+manufactured outside `All` to satisfy `Default`. If CNA ever reported a default
+index its own count does not cover, that is a native inconsistency and is signalled
+as one.
+
+**`Default` is cached once and `All` is not**, and that asymmetry is the IL's:
+`get_Default` returns its stored `defaultMic` without enumerating whenever it is
+already set, while `get_All` calls `EnumerateMicrophones` on every read. So the
+first `MICROPHONE-DEFAULT` needs an active game and later ones do not.
+
+### A facade retained across game disposal
+
+`NAME`, `SAMPLE-RATE`, `IS-HEADSET` and `BUFFER-DURATION` keep answering, because
+in XNA all four are **fields** their getters read and there is nothing native to
+reach. `STATE`, `START`, `STOP` and `GET-DATA` call the device, so they need an
+active game and refuse with the established projection-limit condition without
+one. After another game is created the same facade works again and is still the
+same device — which is not a hope: it is the measured process-global device list.
+
+### Microphone has no game argument either
+
+`Microphone.All`, `Microphone.Default` and every instance member take no game in
+XNA; every CNA microphone route takes one. This is the same gap `Keyboard.GetState`
+and the whole `SoundEffect` surface already close, closed the same way: CNA permits
+one active game per process, so there is exactly one game a microphone operation
+could mean. **No public member here grew a `:game` parameter to satisfy CNA.**
+
+### Five measured disagreements, and XNA wins all five
+
+Each is pinned by a test that asserts **both** sides, so a CNA that changed would
+fail a test rather than silently changing this binding's public behaviour.
+
+#### `IsHeadset` is always true, and `SafeIsHeadset` is dead code
+
+`Microphone`'s constructor stores a literal:
+
+```
+IL_004a:  ldarg.0
+IL_004b:  ldc.i4.1
+IL_004c:  stfld      bool Microsoft.Xna.Framework.Audio.Microphone::isHeadset
+```
+
+and `get_IsHeadset` is a bare `ldfld` of that field. It is the **only** `stfld` of
+`isHeadset` in the assembly. There is a `SafeIsHeadset` method that asks the native
+layer for the real answer, and it has **no call sites at all**: it is compiled in
+and never called.
+
+`cna_microphone_get_is_headset_at` reports the device's real answer, and on the
+qualification's capture devices that answer is false. Reporting it would be more
+informative and would be **a different API from the one this binding projects**: a
+program ported from XNA that branches on `IsHeadset` took the true branch there
+and must take it here. The native route is bound and the qualification records both
+answers side by side.
+
+#### `BufferDuration` validates and does not round; CNA's header says otherwise
+
+XNA's setter tests `TotalMilliseconds` three ways — `< 100`, `> 1000`,
+`% 10 != 0` — each raising `ArgumentOutOfRangeException("value")`, and then stores
+**the value it was given**: `set_BufferDuration` ends with `stfld
+captureBufferDuration` of its own argument. There is no rounding anywhere in it.
+
+`cna_microphone_set_buffer_duration_ticks_at` documents its argument as one "the
+canonical setter validates and rounds". Measured against all three admitted ABIs
+it accepts 1005000 ticks — 100.5 ms — and afterwards reports 1005000. It neither
+rounded nor refused. So the guard is reproduced here, before the route is called,
+and CNA's rounding is implementation support rather than the compatibility
+contract.
+
+#### `GetSampleDuration` rounds where CNA truncates
+
+`AudioFormat.DurationFromSize` divides in **binary32** and then calls
+`TimeSpan.FromMilliseconds`, which rounds half away from zero to a whole
+millisecond. At 44100 Hz, 46 bytes is 23 frames and 0.5215 ms, so XNA answers
+10000 ticks; `cna_microphone_get_sample_duration_ticks_at` truncates and answers 0.
+This is the same rounding divergence `SoundEffect.GetSampleDuration` already
+records, in a second place.
+
+#### `GetSampleSizeInBytes` computes in binary32, and CNA accepts a negative
+
+`AudioFormat.SizeFromDuration` is
+`(int)(TotalMilliseconds * (double)((float)sampleRate / 1000f))`, then
+`(n + n % Channels) * BlockAlign`, all checked. **The division is binary32 and the
+multiplication is binary64**: `(float)44100 / 1000f` is 44.09999847412109375, not
+44.1, so one second of 44.1 kHz mono PCM16 is **88198** bytes and not 88200.
+`cna_microphone_get_sample_size_in_bytes_at` answers 88200.
+
+The same route also accepts a negative duration and answers a negative byte count,
+where XNA's first guard is `TotalMilliseconds < 0 -> ArgumentOutOfRangeException`.
+Both are why the arithmetic is computed here and the two `cna_microphone_get_sample_*`
+routes are bound only so the qualification can pin the divergence.
+
+### `GetData`'s fifth condition, which no other member has
+
+The first four checks are the three shared validators `SoundEffect` and
+`DynamicSoundEffectInstance` already use, in the same order and raising the same
+three `FrameworkResources` strings. `Microphone.GetData` adds one more to the last
+`||` chain:
+
+```
+format.DurationFromSize(count) == TimeSpan.Zero
+```
+
+— a count whose duration rounds to zero milliseconds is refused. At 44100 Hz that
+is every count below 46 bytes. A projection that dropped it would accept a two-byte
+read XNA refuses, so it is implemented and tested against a threshold recomputed
+from the device's own rate.
+
+**A short read is success, including a read of zero bytes.** `audio.h` says so in
+as many words — "a short read is **not** a failure here: the canonical operation
+fills what it can and reports how much, because capture is a stream rather than a
+value" — and XNA returns the count the native layer wrote. So `GET-DATA` answers a
+byte count, exactly `[offset, offset + answer)` of the buffer is written, and
+**every other byte is left as it was**. Nothing is filled in and a short read is
+never turned into a buffer-too-small condition.
+
+**A microphone that is not started answers 0 and reads nothing.** XNA's last act
+before the native call is `if (State != Started) return 0`, so that is a normal
+answer rather than a refusal.
+
+### `Microphone.Stop` shares a generic function and refuses its optional
+
+`SoundEffectInstance.Stop` has two overloads that collapse onto one generic
+function with an optional flag. `Microphone.Stop` has **one** overload and takes no
+argument. CLOS congruence forces the optional onto the microphone's method, so
+supplying it is **refused rather than ignored** — a method that accepted and
+dropped it would give `Microphone` a `Stop(bool)` XNA has not got. That is the rule
+`%CHECK-OVERLOAD-KEYWORDS` enforces for keyword sets, applied in the one place an
+*optional* reaches a member that has none.
+
+### `BufferReady`'s sender is the object `All` hands out
+
+`MicrophoneCollection.OnBufferReady(handle)` walks its own list for the element
+whose handle matches and raises the event on **that element**. So the sender is the
+object `All` and `Default` hand out, and a projection that built a fresh facade
+from the device index inside the callback would deliver an object with equal slots
+and the wrong identity. The qualification asserts it with `EQ`.
+
+The registration is an owned `CNA_AudioEventRegistrationHandle` released by
+`cna_audio_unsubscribe_ext`, exactly as `DynamicSoundEffectInstance`'s is, and it
+goes through the shared event machinery: the logical handler list and the live
+native registration are two facts with different lifetimes, a failing unsubscribe
+keeps the row it did not release, and a condition signalled in a handler is
+contained and re-signalled at the established outer boundary.
+
+**There is no disposal seam here**, and that is the difference from every other
+event in this binding. `%EVENT-SOURCE-DISPOSED-P` exists because a
+`GraphicsResource` or a `DynamicSoundEffectInstance` can be destroyed while its
+handler list survives. A microphone cannot, so the default `NIL` is correct and a
+subscription is always a real native registration.
+
+**Neither framework publishes the threshold at which the event is due, and this
+binding claims none.** Measured, CNA raises it once per buffer check after the
+unread backlog reaches `BufferDuration`, and keeps raising it until `GET-DATA`
+drains the backlog — so a program that polls every frame never sees it, which is
+what `examples/microphone-consumer.lisp` demonstrates by reporting zero. No test
+asserts a rate.
+
+## What the microphone tests prove, and what they do not
+
+**No test in this repository claims a sound was captured, and none may.** The
+evidence levels are kept apart the way the audio and rasterization kinds are:
+
+| Level | What it means |
+| --- | --- |
+| `unavailable` | no capture device was enumerated; `All` answered the empty list and `Default` answered NIL, which `audio.h` calls an ordinary answer |
+| `enumeration` | devices were enumerated, `All[i]` was the same object on every query, `Default` was `EQ` to one of them, and the stored properties answered |
+| `capture-state-machine` | `Start`, `Stop` and `State` transitioned, and a repeated call of either was accepted without moving the state |
+| `capture-data` | `GetData` wrote into exactly the range it reported, left every byte outside it unchanged, and advanced at the rate the device's own `SampleRate` implies |
+| `buffer-ready` | the event arrived with the right sender, removing the handler released the registration and stopped delivery, and the callback registry came back |
+
+`tools/qualification/microphone.sh` produces them **in separate processes**, for
+the reason `audio.sh` does: SDL's audio driver selection is process-global and
+latches at initialisation. It is a **separate script from `audio.sh`** because
+playback and capture are different devices behind different CNA routes — a machine
+may have a speaker and no microphone or the reverse — and a lane that read one out
+of the other would let either be reported as the other.
+
+It also runs `examples/microphone-consumer.lisp`, a complete capture session
+through nothing but the two exported packages, under a mechanical audit: no
+internal package, no CFFI, no handle, no result code, no private `%`-symbol. The
+suite's own tests reach two private symbols — a device index, to cross-check CNA's
+routes, and a cache reset, so one image can observe a first enumeration twice — and
+both are legitimate for a test. The consumer is the independent evidence that
+neither is *needed*.
+
+**A dummy capture device is not a microphone.** SDL's dummy backend produces
+silence — every byte zero — and no assertion anywhere inspects a captured byte. The
+strongest claim this evidence supports is:
+
+> the native capture device enumerated by the SDL dummy backend advances its PCM16
+> capture stream at the reported sample rate, and CNA-Lisp reproduces the XNA
+> state, buffer and event semantics over that stream.
+
+It is **not** a claim that microphone audio is correct, that speech was captured,
+or that a physical microphone works. A hardware qualification would be a different
+claim with different evidence.
+
 ## Not implemented in this milestone
 
 These are absent, and measured as absent, not faked:
@@ -1948,10 +2220,13 @@ These are absent, and measured as absent, not faked:
   eight-type `SoundEffect` closure is selected and complete. What is still absent
   *within* audio is XACT — `AudioEngine`, `SoundBank`, `WaveBank`, `Cue`,
   `AudioCategory`, `RendererDetail` — for which CNA has no route at all, and
-  `DynamicSoundEffectInstance` and the three `Microphone` types, which have full
-  CNA route families and are each a closure of their own;
-* the rest of the 3D resource surface — `Model`, `Texture3D`, and the
-  `EffectParameter` member that needs one.
+  nothing else: `DynamicSoundEffectInstance` and the three `Microphone`
+  types were on this list while each was a closure of its own, and both
+  closures have landed — **which is exactly the staleness the paragraph
+  below warns about, caught twice in one sentence**;
+* the rest of the 3D resource surface — `Texture3D` and the `EffectParameter`
+  member that needs one. `Model` was on this list too and its family is
+  projected now; the generated per-type table is the authority.
 
 **This list is the one place in this file that must name only what is absent
 now**, and it had stopped doing that. It carried `ContentManager` and the XNB

@@ -43,9 +43,15 @@ CNA_NATIVE_LIBRARY=/absolute/path/to/software/libcna_c_api.so \
 # 7. the audio lanes, in separate processes because SDL's driver selection is
 #    process-global and latches at initialisation. Needs no sound card.
 tools/qualification/audio.sh
+
+# 8. the capture lanes, the same way and for the same reason, plus the
+#    public-only consumer. Needs no microphone. A separate script from the one
+#    above because playback and capture are different devices behind different
+#    CNA routes, and a machine may have either without the other.
+tools/qualification/microphone.sh
 ```
 
-The two qualification scripts do that for themselves. `with-virtual-screen.sh`
+The three qualification scripts do that for themselves. `with-virtual-screen.sh`
 runs its command on a fresh Xvfb display **only when `DISPLAY` is set** -- so a
 developer's own screen is left alone, and CI, which runs with no display at all,
 is unchanged. That last part is deliberate: the `Native` workflow proves the
@@ -92,6 +98,13 @@ library at all, so it has no ABI to be produced against:
 | Model, on 0.21.0 | `Load<Model>` **refuses**, because `cna_model_destroy` on a loaded model is a null dereference there. Asserted as a result, not skipped |
 | Model effect safety, all three | every one of the 17 bound routes that read a content-published effect's missing adapter state refuses with a condition. Enumerated from CNA's source, not listed by hand, and the count was four until this was measured |
 | Model pixels | the SOFTWARE lane's `model` proof: two meshes of a loaded model each put their own colour on the pixels their own triangle covers |
+| Microphone, unavailable | a driver that does not exist: no capture device enumerated, `Microphone.All` answered the empty list and `Microphone.Default` answered NIL -- which `audio.h` calls an ordinary answer, so this is a result and not a skip |
+| Microphone, enumeration | `SDL_AUDIODRIVER=dummy`: capture devices enumerated, `All[i]` was the **same object** on every query, the returned list was fresh, and `Default` was `EQ` to an entry in `All` rather than a second object with equal slots |
+| Microphone, state machine | the same devices: `:STOPPED -> :STARTED -> :STOPPED` through `Start` and `Stop`, and a repeated call of either accepted without moving the state |
+| Microphone, capture data | the same devices: `GetData` wrote into **exactly** the range it reported, left every byte outside it unchanged -- including the rest of the requested range on a short read -- and advanced inside a justified window around what the device's own `SampleRate` implies |
+| Microphone, BufferReady | the same devices: the event arrived, its sender was `EQ` to the object `All` and `Default` hand out, removing the handler released the native registration and stopped delivery, and the callback registry returned to its baseline |
+| Microphone, public-only consumer | a complete capture session through the two exported packages alone, under a mechanical audit for the internal package, CFFI, handles, result codes and private `%`-symbols |
+| Microphone, XNA over CNA | five measured disagreements between CNA and the pinned XNA behaviour, each asserted in **both** directions so a CNA that changed would fail a test rather than silently changing this binding |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
 -- **the SOFTWARE lane is what does**, and it needs no display: a CPU rasteriser
@@ -112,6 +125,27 @@ rather than reading one out of another. **`dummy device != speaker`**: the
 strongest thing the streaming row supports is that generated PCM was accepted and
 consumed by the native streaming state machine, and no test in this repository
 says a sound was heard.
+
+**The five microphone rows are five claims and not one**, and the same discipline
+applies twice over. Devices that enumerate say nothing about whether capture
+advances; a stream that advances says nothing about the event that announces it;
+and `tools/qualification/microphone.sh` requires each kind by name. It is a
+**separate script from `audio.sh`** because playback and capture are different
+devices behind different CNA routes -- the GitHub runner has neither, a
+developer's laptop may have one and not the other -- and a lane that read one out
+of the other would let either be reported as the other.
+
+**`dummy capture device != microphone`**, and this is the strongest sentence the
+capture rows support, written out in full because a shorter one would overstate
+it:
+
+> the native capture device enumerated by the SDL dummy backend advances its
+> PCM16 capture stream at the reported sample rate, and CNA-Lisp reproduces the
+> XNA state, buffer and event semantics over that stream.
+
+Every byte that backend produces is zero and **no assertion anywhere inspects a
+captured byte**. Nothing here says microphone audio is correct, that speech was
+captured, or that a physical microphone works.
 
 ## The canonical repositories are `libcna`, not `openeggbert`
 
@@ -389,31 +423,31 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 ## The measured frontier
 
-<!-- generated:selected types=178 -->
-<!-- generated:selected members=2447 -->
-<!-- generated:complete types=156 -->
+<!-- generated:selected types=181 -->
+<!-- generated:selected members=2468 -->
+<!-- generated:complete types=159 -->
 <!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=1957 -->
+<!-- generated:complete members=1976 -->
 <!-- generated:partial members=25 -->
 <!-- generated:missing members=35 -->
-<!-- generated:not-applicable members=430 -->
+<!-- generated:not-applicable members=432 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 178 types, 2447 members.
+Selection **Foundation 1 and the managed closures**: 181 types, 2468 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **156** |
+| Types complete | **159** |
 | Types partial | **22** |
 | Types missing | **0** |
-| Members complete | **1957** |
+| Members complete | **1976** |
 | Members partial | **25** |
 | Members missing | **35** |
-| Members not applicable | **430** |
+| Members not applicable | **432** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

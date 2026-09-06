@@ -447,6 +447,39 @@ observable behaviour is pixels, the tests here assert command and state
 submission and say so; the limitation is recorded in `docs/limitations.md` rather
 than papered over.
 
+## The device lanes, which need no device
+
+Three qualification scripts prove branches the suite alone cannot, and each runs
+its lanes in **separate processes** because SDL's audio driver selection is
+process-global and latches at initialisation: one image cannot answer for two
+drivers.
+
+| Script | Lanes | Needs |
+| --- | --- | --- |
+| `tools/qualification/audio.sh` | `AUDIO_UNAVAILABLE`, `AUDIO_DYNAMIC_UNAVAILABLE`, `AUDIO_AVAILABLE_STATE_MACHINE`, `AUDIO_DYNAMIC_STREAMING` | no sound card |
+| `tools/qualification/microphone.sh` | `MICROPHONE_UNAVAILABLE`, `MICROPHONE_ENUMERATION`, `MICROPHONE_CAPTURE_STATE_MACHINE`, `MICROPHONE_CAPTURE_DATA`, `MICROPHONE_BUFFER_READY` | no microphone |
+| `tools/qualification/rasterizer.sh` | the pixel proofs above | a rasterising renderer, no display |
+
+**Playback and capture are two scripts and not one**, because they are different
+devices behind different CNA routes: a machine may have a speaker and no
+microphone or the reverse, and a lane that read one out of the other would let
+either be reported as the other. The GitHub runner has neither, and both scripts
+produce both of their branches there anyway — a driver name SDL cannot load gives
+the unavailable branch deterministically, and SDL's `dummy` driver opens a
+playback device with no speaker and enumerates capture devices that advance a
+stream of silence.
+
+**Every level in those two tables is a separate claim and none may be read out of
+another.** A transport that transitioned says nothing about whether a submitted
+buffer was consumed; devices that enumerated say nothing about whether capture
+advances; a stream that advances says nothing about the event that announces it.
+Each script requires each kind of evidence *by name*.
+
+**Neither is a claim about sound.** A dummy playback device is not a speaker and a
+dummy capture device is not a microphone. No test in this repository says a sound
+was heard or that a sound was captured, and the strongest supportable sentence is
+written out in full at the end of each script. `docs/limitations.md` carries both.
+
 ## Where the evidence is
 
 | Evidence | Where |
