@@ -154,7 +154,9 @@ comes from `END-SHOW-SELECTOR', which is the half of the pair that does the work
 See this file's header for why the pair is kept rather than collapsed.
 
 It owns every container opened on it, and each container owns every stream it
-opens, so disposing a device closes the whole tree in the order CNA requires.
+opens -- a graph three deep, and one that **does not cascade**. Close the
+streams, then the containers, then the device; a device that still owns a live
+container refuses disposal and names it.
 
 **It needs no game.** None of `storage.h`'s routes takes a game handle -- unlike
 audio, capture and media, which all do -- so a storage program can run with no
@@ -283,8 +285,10 @@ Two guards in the IL's order -- a result that is not the matching `Begin''s is
 `ArgumentNullException(\"result\")', and a second `End' on one result is
 `InvalidOperationException(CannotEndTwice)' -- and then the device.
 
-The device is **owned by the caller**: dispose it when finished, and it closes
-every container and stream opened under it."
+The device is **owned by the caller**: dispose it when finished, after the
+containers opened on it and the streams opened in those. Ownership does not
+cascade here, so a device disposed too early refuses and says what is still
+live."
   (let ((operation "storage-device-end-show-selector"))
     (%check-async-result result :selector operation)
     ;; **The gate every native entry point goes through, and Storage is the first
