@@ -512,13 +512,15 @@ effect its model owns, and `PublishModelResource' fills in only the value and th
 parent game: the `adapterState' every technique, parameter and texture route
 reads is left null. So `cna_effect_get_techniques' on such a handle is a **null
 dereference inside CNA** -- a memory fault at offset 0x20, not a result code --
-and it takes the process with it. Measured on 0.21.0 and 0.22.0 alike; 22 of
-`effects.h''s routes read that field and are unsafe on such a handle, and the
-other 300 are fine.
+and it takes the process with it. Measured on 0.21.0, 0.22.0 and 0.23.0 alike --
+0.23.0 fixes the other loaded-model defect and not this one. 22 of `effects.h''s
+322 routes read that field, enumerated from CNA''s source rather than listed by
+hand; this binding binds 17 of them and refuses every one, and the 5 it does not
+bind belong to families it does not project. The other 300 are fine.
 
-So the graph is not built for one of these and the members that would read it
-refuse by name. Everything else on the effect works, because it does not go
-through `adapterState': the matrices, the fog, the lights and every material
+So the graph is not built for one of these, and every member that would read the
+missing state refuses by name. Everything else on the effect works, because it
+does not go through `adapterState'': the matrices, the fog and every material
 scalar answer normally. Assigning your own effect to the part -- which is an
 ordinary XNA idiom and is what the qualification does -- replaces the handle with
 one that has adapter state, and every member works again."))

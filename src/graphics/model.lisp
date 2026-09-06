@@ -1094,7 +1094,7 @@ destroy too, because `cna_content_manager_load_model' marks a model-owned effect
                      ;; **The graph is deliberately not read.** CNA publishes a
                      ;; loaded model's effect handle with no adapter state, and
                      ;; every route that reads it dereferences null rather than
-                     ;; refusing -- measured on both admitted ABIs. The class is
+                     ;; refusing -- measured on all three admitted ABIs. The class is
                      ;; still the one CNA's own type name reports, because that
                      ;; route is safe, so the object is the right type with the
                      ;; right identity and says so when asked for what it cannot

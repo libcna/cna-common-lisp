@@ -121,7 +121,7 @@ for all of them. `cna_dynamic_sound_effect_instance_create' says so about the on
 this file did not create: \"The handle is a **sound-effect instance**: every
 `cna_sound_effect_instance_*' route accepts it, including the transport, the
 mixing setters and `cna_sound_effect_instance_destroy'.\" That sentence is
-identical in both admitted ABIs -- `audio.h' is byte for byte the same in 0.21.0
+identical in every admitted ABI -- `audio.h' is byte for byte the same in 0.21.0
 and 0.22.0 -- so what varies between the kinds is the creation route and the
 owner, not the handle's type and not the way it is given back.
 

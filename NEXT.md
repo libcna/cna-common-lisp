@@ -61,11 +61,11 @@ check count, which is why this file no longer carries one and
 ## What is green, exactly
 
 Locally, on the reference runtime (SBCL 2.5.2, Linux x86-64), against CNA C ABI
-**0.21.0** (encoded 5376) and **0.22.0** (encoded 5632), each built with the
-`SDL3` platform, `SDL3` audio and the **HEADLESS** renderer. Both are in the
-admitted set, and every row below that involves a library was produced against
-each of them -- the fourth row is the lane with no library at all, so it has no
-ABI to be produced against:
+**0.21.0** (encoded 5376), **0.22.0** (encoded 5632) and **0.23.0** (encoded
+5888), each built with the `SDL3` platform, `SDL3` audio and the **HEADLESS**
+renderer. All three are in the admitted set, and every row below that involves a
+library was produced against each of them -- the fourth row is the lane with no
+library at all, so it has no ABI to be produced against:
 
 | Gate | Result |
 | --- | --- |
@@ -88,8 +88,9 @@ ABI to be produced against:
 | Construction atomicity | an exploding subclass of twelve resource families, plus `Game` and `GraphicsDeviceManager`, leaves no live child and lets the game shut down -- and one that **subscribed before it failed** leaves no registration and no rooted token either |
 | Content transaction | a load made to fail at the texture's storage query, the font's info, its glyph table, or the **cache insertion** gives every handle back exactly once |
 | Render-target cross-check | six ways a remembered binding can drift are each refused; an unmutated one is accepted first |
-| Model, on 0.22.0 | a `.cnj` fixture loads through `ContentManager.Load<Model>`, its three-bone hierarchy and two meshes answer XNA's object identity, the transform copies compose in the IL's order, and `Unload` leaves every view refusing |
+| Model, on 0.22.0 and 0.23.0 | a `.cnj` fixture loads through `ContentManager.Load<Model>`, its three-bone hierarchy and two meshes answer XNA's object identity, the transform copies compose in the IL's order, and `Unload` leaves every view refusing |
 | Model, on 0.21.0 | `Load<Model>` **refuses**, because `cna_model_destroy` on a loaded model is a null dereference there. Asserted as a result, not skipped |
+| Model effect safety, all three | every one of the 17 bound routes that read a content-published effect's missing adapter state refuses with a condition. Enumerated from CNA's source, not listed by hand, and the count was four until this was measured |
 | Model pixels | the SOFTWARE lane's `model` proof: two meshes of a loaded model each put their own colour on the pixels their own triangle covers |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
@@ -151,17 +152,54 @@ they have never executed is stale.
 killed proves nothing in either direction. Cite a run by id and conclusion, never
 by "the last run"; `gh run list` prints all three fields.
 
-The `Native` job is **pinned to CNA commit `fb62662c9`** -- ABI 0.22.0, the newest
-commit on `origin/next` whose ABI this binding admits, and the parent of the
-0.23.0 bump. The pin is no longer the sharp-runtime one: that blocker closed on
-2026-09-05 and the pin's old comment said otherwise until this task. It is the ABI
-gate now. `cna:next` is 0.23.0, which is not admitted, so an unpinned job would
-fail the gate on its first run -- correctly. Every run records the CNA and
-sharp-runtime commits it landed on, in the step summary and in
-`qualification-run.json` inside the run's artifact, and `workflow_dispatch` takes
-`cna_ref` and `sharp_runtime_ref` -- `cna_ref: next` measures the tip, and
-`cna_ref: 056e57d47...` reproduces the 0.21.0 half of the admitted set.
-`docs/qualification.md` has the policy and the evidence.
+The `Native` job is **pinned to CNA commit `5c8840657`** -- ABI 0.23.0, the newest
+commit on `origin/next`, and the exact commit 0.23.0 was qualified against. Two
+earlier reasons for pinning are both gone: the sharp-runtime blocker closed on
+2026-09-05, and the "the tip's ABI is not admitted" reason closed when 0.23.0 was
+admitted. What is left is that evidence has to be reproducible -- `next` moved
+from 0.22.0 to 0.23.0 in a day and moved fifteen more commits while 0.23.0 was
+being qualified, so a job following the tip qualifies whatever the tip was that
+hour.
+
+**One admitted ABI per push, the others on dispatch**, and that was measured
+rather than assumed: a `Native` run is three to five minutes with a warm ccache
+and its cache key is the resolved CNA commit, so a second ABI on every push is a
+second cold CNA build. `cna_ref: fb62662c9...` requalifies 0.22.0,
+`cna_ref: 056e57d47...` requalifies 0.21.0, and `cna_ref: next` measures the next
+bump before admitting it. The release standard is unchanged: the full gate set
+must have run against an exact ABI before this binding is called compatible with
+it. Every run records the CNA and sharp-runtime commits it landed on, in the step
+summary and in `qualification-run.json` inside the run's artifact.
+`docs/qualification.md` has the policy and the evidence for all three.
+
+## Whether to keep 0.21.0 admitted, now that there are three
+
+Admitting 0.23.0 makes 0.21.0 look expensive: it is the only admitted ABI on
+which a whole projected family has no public producer, and dropping it would turn
+`Load<Model>` from "refuses on one third of the matrix" into "works everywhere".
+That is exactly why it must be an argued decision and not a side effect, and
+**the decision here is to keep it**.
+
+| | Compatibility benefit | User cost | Test and maintenance burden | Effect on Model completeness | Versioning implication |
+| --- | --- | --- | --- | --- | --- |
+| **A. Keep 0.21.0 admitted** | a program built against a 0.21.0 CNA keeps working; the binding stays usable on the oldest CNA anyone has | `Load<Model>` refuses there, and the three Model members stay partial for everyone | the `model` pixel proof must stay capability-gated, and the refusal branch stays asserted | 45 of 48 complete, 3 partial | none |
+| **B. Deprecate 0.21.0, drop it later** | the same as A today | the same as A today, plus a warning to act on | the same as A, plus a deprecation mechanism the binding does not have | the same as A | needs a deprecation policy first, and there is none |
+| **C. Drop 0.21.0 now** | none -- it removes compatibility rather than adding it | a working configuration stops being admitted, with no release to blame it on | smaller: the refusal branch and the capability gate could both go | the three Model members could be re-argued as complete | a **breaking** change to what the binding claims to support |
+
+**A, and not because C is wrong in principle.** C buys a tidier scoreboard and
+nothing else, and it buys it by removing support from users who have it. There is
+no project policy authorising a drop, and "the newest ABI fixes it" is not one:
+0.23.0 has been admitted for a day and 0.21.0 has been the qualified baseline for
+weeks.
+
+**The scoreboard is not the argument it looks like.** The three Model members
+would not become complete under C anyway -- `ModelMeshPart.Effect`, `Model.Draw`
+and `ModelMesh.Draw` are partial because a content-published effect cannot answer
+for its graph, and that defect is present in **0.22.0 and 0.23.0 too**. Dropping
+0.21.0 would remove a refusal, not a partial.
+
+If a drop is ever wanted, the thing to write first is the deprecation policy --
+what warns, when, and against what release -- not the drop.
 
 ## Four milestone statuses, and they are four
 
@@ -174,7 +212,7 @@ separately and each names what it rests on:
 | `FOUNDATION_1_RELEASE_READY` | **yes**, decided at `5a7f7c1` and re-affirmed at each audit against the eight conditions below |
 | `AUDIO_FOUNDATION_READY` | **yes**. Six complete types and three partial over nine types and 67 members, each partial with a measured reason; two lanes, neither claiming a sound was heard |
 | `DYNAMIC_AUDIO_READY` | **yes**. `BufferNeeded` is complete for real now: its `+=` and `-=` match the IL before *and* after disposal, and a handler's condition is delivered rather than lost. Both were overclaimed until the pre-Model audit and both are fixed |
-| `MODEL_READY` | **on 0.22.0 only**, and that is a measurement rather than a hedge: on 0.21.0 `Load<Model>` refuses because a loaded model cannot be released there, so the family has no public producer on that ABI |
+| `MODEL_READY` | **on 0.22.0 and 0.23.0**, and that is a measurement rather than a hedge: on 0.21.0 `Load<Model>` refuses because a loaded model cannot be released there, so the family has no public producer on that ABI. 0.23.0 was measured, not assumed -- it fixes the destroy defect that 0.22.0 already fixed, and fixes neither the effect-graph one |
 
 **The template is deliberately unchanged, and the Model closure strengthens that
 decision rather than weakening it.** The canary's whole value is that it produces
@@ -227,7 +265,7 @@ The eight conditions, and what each rests on:
 | No known ownership or lifetime defect | ownership stress, construction atomicity over twelve resource families, content transaction rollback at four injection points, callback registry empty after each cycle |
 | Zero structural disagreements | `verify.py --strict`, over <!-- generated:diagnostic categories=18 --> diagnostic categories |
 | No stale live-state documentation | three audits now. The third ran with the streaming closure and found four survivals the first two missed: `LOAD-ASSET` still promising two objects for one name, `UNLOAD` still telling a program to dispose what the manager now disposes, `docs/ownership-and-lifetimes.md` still describing the pre-cache content model, and this section's own claim that Audio contributed no frontier members. The first two are **public generated documentation** -- they are dumped into `docs/generated/public-surface.json` -- which is what makes them a release-condition failure rather than a comment |
-| Admitted ABI set truthful | `{0.21.0, 0.22.0}`, and both are evidenced: the whole gate set is run against a real library of each at every closure, not once. `cna:next` is 0.23.0 and is **correctly not admitted** -- nothing here has run against it, and the measurement at the end of this file is of its headers rather than of a run |
+| Admitted ABI set truthful | `{0.21.0, 0.22.0, 0.23.0}`, and all three are evidenced: the whole gate set is run against a real library of each at every closure, not once. 0.23.0 was admitted on 2026-09-06 against an exact published pair, after its ABI delta was diffed, its generated layer proved unchanged, and both gates were watched refusing it first |
 | CI green | both workflows `success`, and named by run id below rather than by "the latest run" |
 | Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must also be *described* |
 | Every non-complete member has a concrete reason | 57 of 57, each naming a route or an IL fact, each in one of seven categories, with **zero** in either implementable category. `verify.py` refuses an uncategorised one and refuses a category the taxonomy does not define, which is what carried the `CNA_0_21_ABI_LIMIT` rename |
@@ -578,9 +616,9 @@ in the ordinary constructor.
 `cna_dynamic_sound_effect_instance_create` says its handle "is a **sound-effect
 instance**: every `cna_sound_effect_instance_*` route accepts it, including the
 transport, the mixing setters and `cna_sound_effect_instance_destroy`", and that
-sentence is byte for byte the same in both admitted ABIs -- the whole of
-`audio.h` is. There is no dynamic *destroy* route in either, and that is not an
-omission. What XNA overrides is exactly two members and both are projected as
+sentence is byte for byte the same in all three admitted ABIs -- the whole of
+`audio.h` is. There is no dynamic *destroy* route in any of them, and that is not
+an omission. What XNA overrides is exactly two members and both are projected as
 overrides: `IsLooped`, whose getter tests `IsDisposed` where the base class's
 bare `ldfld` does not and then answers a constant false, and whose setter refuses
 a true assignment and stores nothing either way; and `Play`, whose override is
@@ -699,54 +737,99 @@ geometry on screen, for the same reason.
 **One closure, and this file carries one.** When the next one lands, this section
 is replaced rather than added to.
 
-### The candidates, re-measured
+### The candidates, re-measured against all three admitted ABIs
 
-Type and member counts are the pinned 257-type contract's. **Route counts are
-re-measured here and two of the inherited ones were wrong**: they are
-`grep -c '^CNA_C_API'` over the family's own headers, in both admitted ABIs,
-which is a pattern a reader can re-run rather than a number to trust. Storage was
-recorded as 35 and is 49; Media was recorded as 267 and is 270 once
-`media_library.h` is counted with `media.h`, `media_player.h` and `video.h`
-instead of being missed. Neither number changes a recommendation, and both were
-wrong, which is the reason to state the pattern beside the count.
+Type and member counts are the pinned 257-type contract's, recomputed here from
+`xna40-windows-runtime-contract.json`. Route counts are
+`grep -c '^CNA_C_API'` over each family's own headers, **in all three admitted
+ABIs** -- and every one of them is identical in 0.21.0, 0.22.0 and 0.23.0, which
+is the first thing 0.23.0's arrival changes about this table: it changes nothing.
+0.23.0's one added route is `cna_decal_pass_is_supported`, in the engine layer.
+**It unlocks no candidate.**
 
-| | Types | Members | Routes (identical in both ABIs) | Deps outside the selection | Hardware | Deterministic in CI |
-| --- | ---: | ---: | ---: | --- | --- | --- |
-| `Microphone` family | 3 | 21 | 18, in `audio.h` | none | a **capture** device | half |
-| `Storage` | 3 | 35 | 49, `storage.h` | `IAsyncResult`, `AsyncCallback`, `FileMode`/`FileAccess`/`FileShare` | none — the filesystem | **yes** |
-| `Media` | 24 | 223 | 270 over four headers — `media.h` 39, `media_library.h` 148, `media_player.h` 41, `video.h` 42 | none | a playback device; `MediaLibrary` scans the machine | half |
-| Admit CNA **0.23.0** | — | — | — | — | none | **yes** |
+| Candidate | Types | Members | Routes (identical in all three ABIs) | Deps outside the selection | Hardware | New language design | Deterministic CI | User value | Complexity |
+| --- | ---: | ---: | ---: | --- | --- | --- | --- | --- | --- |
+| `Microphone` | 3 | 21 | 18, in `audio.h` | `Byte[]`, `TimeSpan`, `Int32`, `String`, `Exception` -- all already projected | a capture device | **none** | **yes, both branches** | moderate | **low** |
+| `Storage` | 3 | 35 | 49, `storage.h` | `IAsyncResult`, `AsyncCallback`, `Stream`, `FileMode`/`FileAccess`/`FileShare` | none -- the filesystem | **two open questions** | yes | high | medium |
+| `Media` / `MediaPlayer` | 7 | 61 | ~80 of `media.h` + `media_player.h` | `Uri`, `Stream` | a playback device | none | yes | moderate | medium |
+| `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 8 `IEnumerator<T>` instantiations, `IList<MediaSource>` | scans the machine | collection protocol | **empty only** | low | high |
+| `Media` / `Video` | 2 | 20 | 42, `video.h` | `Stream` | an optional FFmpeg decoder | none | build-dependent | low | medium |
 
-**The infrastructure task is now the recommendation, and the Model closure is
-why.** Admitting 0.23.0 was measured cheap before and is worth more now than it
-was: the 0.22.0-to-0.23.0 delta is `abi.h`'s version constant, one added route
-this binding does not bind, and documentation corrections in `models.h` and
-`engine_layer.h`. What changed is the *value*: 0.21.0 is now an ABI on which an
-entire projected family has no public producer, and `models.h`'s documentation
-was one of the three things 0.23.0 touched. Whether either defect is fixed there
-is **not known and must not be assumed** — it is a measurement somebody has to
-make, and making it is the task.
+**The recommendation is `Microphone`, and the reason is new evidence.**
 
-If 0.23.0 fixes the loaded-model destroy, the admitted set can move forward and
-three partial members and one refusal become questions to re-ask. If it does not,
-that is worth knowing too, and worth reporting upstream: both defects are
-reproducible from the public C API in a few lines, and neither is subtle.
+It was rejected last time because "its present branch has no capture equivalent of
+`SDL_AUDIODRIVER=dummy` in either admitted ABI". **That is false, and it was
+measured this time rather than repeated.** A probe that creates a game and asks
+`cna_microphone_get_count` finds, on 0.23.0:
 
-**Not `Storage`**, for the reason it was not chosen last time: its four public
-members are the .NET asynchronous pair returning `IAsyncResult`, CNA has already
-collapsed them synchronously, and how an async pair becomes one Common Lisp call
-is a public API decision that should not be made in the same task that implements
-it.
+| `SDL_AUDIODRIVER` | devices | default | what it gives |
+| --- | ---: | --- | --- |
+| unset (this machine) | 3 | index 0, available | a real capture device |
+| `dummy` | **2** | index 0, available | **a deterministic positive branch** |
+| a name SDL cannot load | 0 | not available | the deterministic negative branch |
 
-**Not `Microphone`**, whose absent branch is deterministic and whose present
-branch has no capture equivalent of `SDL_AUDIODRIVER=dummy` in either admitted
-ABI.
+And the dummy device does not merely enumerate. Started, it reports
+`sample_rate` 44100 and a one-second buffer, transitions `Stopped -> Started ->
+Stopped` through `Start` and `Stop`, and over 180 frames answered **130
+`GetData` reads totalling 266 240 bytes** -- against 264 600 expected for three
+seconds of 44.1 kHz PCM16, so the *capture clock runs at the sample rate*, which
+is a checkable claim rather than "a call succeeded".
 
-**Not `Media`**, which is larger than everything added since Foundation 1 put
-together, and whose interesting half cannot be produced in CI.
+**The bytes are silence**, every one of them zero. So Microphone would qualify
+exactly the way Audio already does, with the same honesty and the same wording
+discipline: a dummy capture device is not a microphone, and no test would say a
+sound was heard. What it *can* say is that the device enumerated, the state
+machine transitioned, the buffer duration round-tripped, and PCM arrived at the
+rate the sample rate implies. That is a **full two-branch qualification**, not the
+negative-capability-only qualification this family was assumed to be limited to.
+
+It is also the smallest candidate by every measure -- 3 types, 21 members, 18
+routes -- it needs no type the binding has not already projected, and it needs no
+public API decision at all.
+
+**Not `Storage`, and the reason is two open design questions rather than size.**
+CNA has already collapsed XNA's fake-async pair: `storage.h` says in as many words
+that "the canonical API uses XNA's fake-async `BeginXxx`/`EndXxx` pair, which CNA
+completes synchronously", and the C route is one synchronous call whose optional
+completion callback fires *before it returns*. So the C side is easy and the
+projection is not:
+
+1. **How does `BeginShowSelector`/`EndShowSelector` become Common Lisp?** Four
+   `Begin` overloads and two `End` methods, plus `IAsyncResult` and
+   `AsyncCallback`, neither of which is in the selection. Candidate designs: a
+   literal `IAsyncResult` object projection; one idiomatic synchronous call with
+   the `Begin`/`End` pair measured separately; a promise or future extension; a
+   partial projection that implements `Begin` and refuses `End`. **Do not choose
+   one in the task that implements it** -- the choice is a public API decision and
+   deserves its own argument.
+2. **What does `OpenFile` return?** `StorageContainer.CreateFile` and its three
+   `OpenFile` overloads answer `System.IO.Stream`, and CNA backs that with eleven
+   real `cna_storage_stream_*` routes. There is a precedent -- `SaveAsPng` and
+   `FromStream` project `Stream` onto an ordinary Common Lisp binary stream -- but
+   that precedent moves *byte arrays* across the boundary. A CNA-owned, seekable,
+   readable-and-writable stream is a different object, and making it an ordinary
+   CL stream means Gray streams. `ContentManager.OpenStream` is currently
+   unimplemented precisely because "no stream object crosses CNA's C boundary";
+   Storage is where one would have to.
+
+Both questions are worth answering. Neither should be answered in passing.
+
+**Not `Media` as one closure**, and the measurement says why: at 24 types and 223
+members it is larger than everything added since Foundation 1 put together, and
+it **splits cleanly into three sub-closures** whose XNA dependencies do not cross.
+`MediaPlayer` (7 types, 61 members) is producible in CI -- `cna_song_create` takes
+a file path, so a Song comes from a fixture and playback goes through the same
+dummy audio device the existing lanes use. `MediaLibrary` (15 types, 142 members)
+scans the machine's music and picture locations; `media_library.h` says an empty
+library is an ordinary result, so CI can qualify *empty* and nothing else, and
+fifteen collection types that are only ever empty are not a closure worth having
+yet. `Video` (2 types, 20 members) needs CNA's optional FFmpeg decoder and answers
+`CNA_RESULT_NOT_SUPPORTED` without it. If Media is ever done, `MediaPlayer` first
+and alone.
 
 **Do not implement the recommendation yet.** This is a measurement, and the next
 task chooses.
+
 
 ## Architectural facts a future agent must not undo
 
@@ -756,7 +839,7 @@ decision and the reason it is not an oversight.
 
 **About the ABI**
 
-* **The admitted set is `{0.21.0, 0.22.0}`, and it is a *set*.** 0.22.0 was
+* **The admitted set is `{0.21.0, 0.22.0, 0.23.0}`, and it is a *set*.** 0.22.0 was
   qualified on 2026-09-05 against an exact published pair -- CNA `fb62662c9` and
   sharp-runtime `bfc826e1`, both detached worktrees of `origin/next`, neither
   patched -- and the whole gate set was run against a real library built from it.
@@ -774,20 +857,35 @@ decision and the reason it is not an oversight.
   expect when a third version arrives: not the layer, but the machinery that
   checks it.
 
-  **The layer really is identical across the set.** 496 functions, 72 structs,
-  511 constants and 10 callbacks, byte for byte, differing only in
-  `+abi-version+` and `+abi-version-minor+`. All 496 bound routes are exported by
-  the 0.22.0 library.
-* **`cna:next` is ABI 0.23.0 and is not admitted.** Auditing and qualifying it is
-  the same job this task did for 0.22.0, and the machinery is now in place for it.
-  Do not widen the gate to a range to avoid doing it: the explicit set is what
-  makes "qualified" mean something.
+  **The layer really is identical across the set.** Byte for byte across all
+  three versions, differing only in `+abi-version+` and `+abi-version-minor+`;
+  regenerate against any admitted version's headers and `--check` passes.
+  `docs/compatibility.md` carries the current counts.
+
+  **Admitting 0.23.0 cost two more of these**, exactly as predicted:
+  `the-admitted-set-is-explicit-and-small` asserted a length of 2, and
+  `the-loaded-library-is-one-of-the-two-admitted-versions` carried the count in
+  its name. Both keep their literals -- that is the point of them -- and the
+  second was renamed. Expect the same when a fourth version arrives, and look for
+  it in the tests rather than in the layer.
+* **Do not widen the gate to a range.** Three admitted versions is the moment
+  "any 0.2x" starts to look reasonable. The explicit set is what makes "qualified"
+  mean something: each entry is a version whose whole bound surface a compiler has
+  checked against that version's own headers, and a range would admit versions
+  nobody has compiled against.
+* **A newer CNA is not evidence of anything.** 0.23.0 was admitted because its
+  header delta was diffed, its generated layer was proved unchanged, both gates
+  were watched refusing it first, and the whole suite ran against real libraries
+  built from an exact published pair. It fixed nothing here -- both Model defects
+  were re-measured on it and neither is fixed -- and it was admitted anyway,
+  because admission claims compatibility and not improvement.
 * To reproduce the 0.21.0 gates, point `CNA_ABI_BASELINE` at a 0.21.0 baseline --
   `cnanext 2b0c374a1` is the last commit carrying one -- rather than at whatever
   the checkout is on today, or the generator refuses with "supplied headers
   declare ABI ... which the manifest does not admit", which is the gate working.
-  `~/deps/cna-c-abi-0.21.0/` and `~/deps/cna-c-abi-0.22.0/` hold a built library
-  and its baseline for each.
+  `~/deps/cna-c-abi-0.21.0/`, `~/deps/cna-c-abi-0.22.0/` and
+  `~/deps/cna-c-abi-0.23.0/` hold a built library, its headers and its baseline
+  for each, with a `-software` directory beside each holding the SOFTWARE build.
 * **A private shim is the permitted remedy for a proved ABI impedance mismatch**,
   and it stays optional: a release must load with no C toolchain.
 

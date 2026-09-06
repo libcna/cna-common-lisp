@@ -1766,7 +1766,7 @@ both constructors, and `FromStream`, which parses the wave header on the way pas
 — and those are exact. A `SoundEffect` obtained through `ContentManager.Load` was
 never handed to this binding as bytes, and **neither admitted ABI** has a route
 reporting an effect's sample rate, channel count or data length -- `audio.h` is
-byte for byte the same in 0.21.0 and 0.22.0 -- so there is nothing to compute
+byte for byte the same in 0.21.0, 0.22.0 and 0.23.0 -- so there is nothing to compute
 from. Its duration is CNA's tick count and can differ from XNA's by up to half a
 millisecond. Answering it is better than refusing a member XNA always answers;
 calling it complete would be claiming an agreement that was measured to be false.
@@ -1780,7 +1780,7 @@ which this binding raises as `NoAudioHardwareException`, and the
 
 `DynamicSoundEffectInstance`'s constructor does not.
 `cna_dynamic_sound_effect_instance_create` answers `CNA_RESULT_SUCCESS` with no
-device — measured against 0.21.0 and 0.22.0, with a driver name SDL cannot
+device — measured against 0.21.0, 0.22.0 and 0.23.0, with a driver name SDL cannot
 resolve — and the handle it gives back accepts `SubmitBuffer`. The refusal
 arrives at `Play`.
 
@@ -1897,9 +1897,9 @@ emitter loudest — decides the applied attenuation, pan and Doppler."
 That is a different function of the listener array from XNA's, not an
 approximation of it within a tolerance, and no argument this binding can pass
 makes the two agree. The member is `CNA_ADMITTED_ABI_LIMIT`, and the concrete
-evidence is the same in both admitted versions: `audio.h` is byte for byte
-identical in 0.21.0 and 0.22.0, so the multi-listener route approximates the
-same way in each.
+evidence is the same in every admitted version: `audio.h` is byte for byte
+identical in 0.21.0, 0.22.0 and 0.23.0, so the multi-listener route approximates
+the same way in each.
 
 **The single-listener overload is unaffected**, and the IL is why:
 `Apply3D(AudioListener, AudioEmitter)` is `Apply3D(new[] { listener }, emitter)` —

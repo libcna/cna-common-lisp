@@ -28,8 +28,8 @@
 ;;;;     queue below. Unlike an instance created from a sound effect, it has no
 ;;;;     parent effect -- the caller is the source.
 ;;;;
-;;;; That sentence is **byte for byte the same in CNA 0.21.0 and 0.22.0** -- the
-;;;; whole of `audio.h' is identical between the two admitted versions -- so the
+;;;; That sentence is **byte for byte the same in every admitted CNA ABI** -- the
+;;;; whole of `audio.h' is identical across all three admitted versions -- so the
 ;;;; transport, the four settings, `Apply3D' and disposal are inherited on
 ;;;; evidence rather than on the accident that CLOS would inherit them anyway.
 ;;;;
