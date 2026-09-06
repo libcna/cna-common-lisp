@@ -226,13 +226,16 @@ others so one mechanism serves every type.")
 Every handler runs even if an earlier one signalled: XNA invokes a multicast
 delegate, and one handler's failure does not cancel the others. The first
 condition is re-signalled afterwards, because unlike the native path there is a
-Lisp caller here to report it to."
+Lisp caller here to report it to.
+
+**The handler list is not emptied.** `GraphicsResource.Dispose(bool)' raises
+`Disposing' from its backing field and never clears it, so a `-=' after disposal
+still finds what a `+=' put there. See %EVENT-SOURCE-DISPOSED-P."
   (let ((failure nil))
     (dolist (entry (microsoft.xna.framework::%event-handlers resource))
       (when (eq (first entry) :disposing)
         (handler-case (funcall (second entry) resource)
           (serious-condition (condition) (unless failure (setf failure condition))))))
-    (setf (microsoft.xna.framework::%event-handlers resource) '())
     (when failure (error failure))))
 
 (defmethod microsoft.xna.framework::%subscribe-natively

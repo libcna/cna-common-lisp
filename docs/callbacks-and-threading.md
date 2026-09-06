@@ -11,7 +11,9 @@ every callback CNA can reach runs inside `with-contained-callback`, which:
 3. invokes the correct generic function;
 4. catches **every** `serious-condition`;
 5. keeps the condition object itself in `*pending-callback-condition*` -- it is
-   not flattened into a string;
+   not flattened into a string. A callback that answers `void` rather than a
+   result code keeps it in `*pending-event-condition*` instead, which is a
+   different slot because it is delivered by a different rule; see below;
 6. writes CNA's `CNA_CallbackError` diagnostic with the condition's own printed
    representation;
 7. returns `CNA_RESULT_CALLBACK`, which is how a callback is *supposed* to fail;
@@ -111,31 +113,56 @@ depend on it will stay absent until that exact configuration has been qualified
 on SBCL. An untested claim about foreign-thread callbacks would be worth less
 than no claim.
 
-## An event handler has nowhere to report a failure
+## An event handler has nowhere to report a failure *to CNA*
 
 The lifecycle callbacks return a `CNA_Result` and fill in a diagnostic structure,
 so a condition contained inside one is reported to CNA, turned into
 `CNA_RESULT_CALLBACK`, and re-signalled on the Lisp side with the original
 condition attached. That is the whole containment story for the game loop.
 
-`CNA_GameEventCallback` returns **void**. There is no result code and no
-diagnostic structure, so a condition signalled by a handler passed to
-`add-activated-handler` and its neighbours cannot be reported to the framework at
-all. What happens instead:
+`CNA_GameEventCallback` returns **void**. So does `CNA_AudioEventCallback`, the
+graphics-resource and graphics-device callbacks, the six component handlers and
+the component-collection callback. There is no result code and no diagnostic
+structure, so a condition signalled by a handler passed to
+`add-activated-handler` and its neighbours cannot be reported to the *framework*
+at all. It is still reported to the *program*:
 
-* the condition is contained -- it never unwinds across the C frame, which is the
-  rule that matters most;
-* it is preserved in the same place a lifecycle callback's is, so the next native
-  call that drains that place re-signals the real condition;
-* and if no such call ever comes, it is lost. The case where that happens is
-  `Disposed`, which is raised inside `cna_game_destroy` while the game is going
-  away.
+* **the condition is contained** -- it never unwinds across the C frame, which is
+  the rule that matters most;
+* **it is preserved as itself**, in `*pending-event-condition*`, not flattened
+  into a string and not merged with the lifecycle channel;
+* **the first native call that returns to your program signals it.** That is the
+  `run`, `run-one-frame` or `tick` the event was raised inside, or the component
+  addition, or the disposal -- whichever call CNA raised the event during. The
+  condition object itself arrives, not a copy.
 
-This is a real limit of the C ABI's event shape, not of the binding, and a
-handler that needs its failures seen should catch them itself.
+Four rules make that precise, and each of them is a decision:
+
+| | |
+| --- | --- |
+| **First one wins** | Two handlers on one event, or two events inside one native call, do not overwrite each other. You are told about the failure that happened first. |
+| **Delivered outside every callback** | The drain answers nothing while this thread is inside an event dispatch or a lifecycle callback, so a pending condition is never signalled through a C frame. It waits for the enclosing call. |
+| **A native failure outranks it** | If the call that would have delivered it failed on its own, that failure is what is signalled and the handler's condition is its `cna-error-cause`. Both are real and neither is dropped. |
+| **Delivered once** | Taking it clears it. The next call is ordinary. |
+
+**This section used to say the condition was lost**, and the audio suite recorded
+the loss as "the documented limit" while `add-buffer-needed-handler`'s own
+docstring promised a re-signal. Both could not be true:
+`call-native-frame` cleared the pending slot unread on every successful call. The
+docstring's version is the one that is now implemented, and
+`src/internal/callback-conditions.lisp` is where the rule lives.
+
+**What is still not claimed.** A condition raised by an event that no further
+native call follows has nowhere to arrive. `Disposed`, raised inside
+`cna_game_destroy`, is delivered by that disposal itself -- but a handler on the
+*last* native operation a program ever performs, with the process exiting
+afterwards, is not something any mechanism here can report. A handler that needs
+its failures seen for certain should still catch them itself.
 
 `CNA_AudioEventCallback` has exactly the same shape -- `void (*)(void* context)`
--- and everything above applies to `add-buffer-needed-handler` unchanged. It is a
+-- and everything above applies to `add-buffer-needed-handler` unchanged, which
+`tests/native/audio.lisp` asserts on its own evidence rather than by argument
+from the game family. It is a
 **separate** top-level callback and a separate dispatcher rather than the game
 one reused, because the routes that install it are audio's and the registration
 it produces is released by `cna_audio_unsubscribe_ext` rather than by

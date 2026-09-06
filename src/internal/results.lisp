@@ -83,16 +83,29 @@ a failure is safe and repeatable."
 
 OPERATION is the CNA-Lisp operation being performed, in Lisp terms. The CNA
 diagnostic text and error category are read before anything else can disturb the
-thread-local diagnostic."
-  (if (= code +result-success+)
-      t
-      (let* ((message (last-native-message))
-             (category (last-error-category))
-             (class (or (cdr (assoc code *result-conditions*))
-                        'microsoft.xna.framework:cna-native-error)))
-        (if (and (eql class 'microsoft.xna.framework:cna-callback-error) callback-condition)
-            (error class :operation operation :native-message message
-                         :object-type object-type :%result code :%category category
-                         :underlying-condition callback-condition)
-            (error class :operation operation :native-message message
-                         :object-type object-type :%result code :%category category)))))
+thread-local diagnostic.
+
+**This is also where a void-returning callback's contained condition is
+delivered.** A `CNA_GameEventCallback' and its five siblings answer nothing, so a
+handler's failure has no result code to travel on; it waits in
+*PENDING-EVENT-CONDITION* until control has genuinely come back to the program,
+and every native route in this binding ends here. TAKE-PENDING-EVENT-CONDITION
+answers NIL inside any callback, so nothing is ever signalled through a C frame.
+The precedence when both happened is the native failure's, with the handler's
+condition attached as its CAUSE; src/internal/callback-conditions.lisp states the
+whole rule and why it is this one."
+  (let ((event-condition (take-pending-event-condition)))
+    (if (= code +result-success+)
+        (if event-condition (error event-condition) t)
+        (let* ((message (last-native-message))
+               (category (last-error-category))
+               (class (or (cdr (assoc code *result-conditions*))
+                          'microsoft.xna.framework:cna-native-error)))
+          (if (and (eql class 'microsoft.xna.framework:cna-callback-error) callback-condition)
+              (error class :operation operation :native-message message
+                           :object-type object-type :%result code :%category category
+                           :cause event-condition
+                           :underlying-condition callback-condition)
+              (error class :operation operation :native-message message
+                           :object-type object-type :%result code :%category category
+                           :cause event-condition))))))

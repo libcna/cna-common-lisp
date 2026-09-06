@@ -1212,8 +1212,10 @@ down, because both are decisions rather than mechanics.
 
 **A subscription needs the callback scope; releasing one does not.** The device is
 a facade with no handle, and the subscribe route wants the borrowed,
-callback-scoped one — so `add-device-lost-handler` outside a lifecycle method is a
-`CNA-SCOPE-ERROR`, exactly as every other device operation is. Unsubscribing is
+callback-scoped one — so `add-device-lost-handler` on a live device outside a
+lifecycle method is a `CNA-SCOPE-ERROR`, exactly as every other device operation
+is. Once the game is gone there is no handle to need and the managed path applies;
+see "An event's `+=` outlives the object". Unsubscribing is
 different: `cna_graphics_device_unsubscribe` takes only the registration. That
 asymmetry is what makes the teardown possible at all, because CNA requires every
 registration to be **released before `cna_game_destroy` succeeds** and the game
@@ -1343,6 +1345,81 @@ current limitation.
 The count used to read "ten" because it counted `PreparingDeviceSettingsEventArgs`
 — a type, and not one of this type's members. The generated frontier table in
 `docs/compatibility.md` is what to count from.
+
+## An event's `+=` outlives the object, and its registration does not
+
+**Every one of the twenty-one event accessors in the three pinned assemblies is a
+delegate field mutation and nothing else.** `Game`'s four events,
+`GraphicsDeviceManager`'s five, `GraphicsDevice`'s six, `GraphicsResource`'s,
+`GameComponent`'s, `GameComponentCollection`'s two, `GameWindow`'s three and
+`DynamicSoundEffectInstance.BufferNeeded` all compile to a `Delegate.Combine` or
+`Delegate.Remove` against a backing field — most of them through an
+`Interlocked.CompareExchange` loop, the manager's four `IGraphicsDeviceService`
+ones through a plain `stfld` — with **no** `IsDisposed` test and no other call at
+all. Nor does any disposal clear such a field:
+`DynamicSoundEffectInstance.Dispose(bool)` removes the instance from the static
+`allInstances` table its raiser looks itself up in and then calls the base
+disposal, and `GraphicsResource.Dispose(bool)` raises `Disposing` from its
+backing store and leaves it there.
+
+So in the original, **subscribing to and unsubscribing from a disposed object are
+both legal**, `-=` still finds a handler that `+=` added before the disposal, and
+what disposal ended is the event being *raised* rather than the list being
+mutated.
+
+This binding used to refuse the add. It does not any more, and the way it stops
+refusing matters as much as that it stopped:
+
+**A subscription is two facts with two lifetimes.** The *logical handler list* is
+what `+=` and `-=` mutate; it is managed, and it survives disposal. The *live CNA
+registration* is what makes a handler reachable; it exists only while the object
+can raise the event, and disposal gives every one of them back.
+`%EVENT-SOURCE-DISPOSED-P` in `src/runtime/event-machinery.lisp` is the seam.
+Adding to a disposed object therefore updates the list and **acquires nothing** —
+no registration, no callback-registry token, nothing rooted. Faking a
+registration against a dead handle so that the code path could stay uniform would
+have been the wrong repair, and the tests assert the registry count across every
+post-disposal add and remove so that it cannot creep back.
+
+**Why this is one mechanism and not one per type.** The audit that found it read
+all twenty-one accessors rather than the one that was reported, and found the
+same shape in every one. A type-specific fix for `BufferNeeded` would have left
+the other twenty diverging in exactly the same way.
+
+**One refusal is unchanged and is a different question.** `GraphicsDevice`'s
+subscribe route wants the callback-scoped handle, so `add-device-lost-handler` on
+a *live* device outside a lifecycle method is still a `CNA-SCOPE-ERROR` — see
+"The device raises four events". On a device whose game is gone there is no
+handle to want, so the managed path applies there like everywhere else. The two
+answers are answers to two questions, not an inconsistency.
+
+### A failing unsubscribe means the registration is still live
+
+Both routes have one shape. `cna_audio_unsubscribe_ext` and `cna_game_unsubscribe`
+look the registration up in the runtime handle registry and only then release it,
+and every failure either can answer comes from the lookup or from the release,
+under the registry's own mutex, **before anything is released**: an unknown or
+already-released handle is `CNA_RESULT_INVALID_HANDLE`, and a call from a thread
+other than the one that created the registration is `CNA_RESULT_THREAD`. The
+registration object — whose destructor is what removes the C++ event token — is
+untouched in both cases.
+
+So the Lisp side must not forget a registration it did not get back.
+`%UNSUBSCRIBE-EVENT` now releases first and forgets afterwards; a refusal
+propagates with the row and its token intact, and the same removal on the right
+thread still works. The thread failure is **reachable from a program**, which is
+why this is a fix rather than a note: removal is the one event operation that
+needs no handle, so it never checked the thread, and the previous order dropped
+the row before the route refused. A registration nothing can release is one
+`cna_game_destroy` refuses to shut down over, so the symptom would have been a
+game that would not close, nowhere near the removal that caused it.
+
+**Teardown is the one place a failed release is forgotten**, in
+`%RELEASE-EVENT-HANDLERS`, and it is sound only there: it runs on the object's own
+thread, after the object's own destruction, over registrations nothing can reach
+any more — so an invalid handle means already-done and a thread mismatch cannot
+occur. Nothing on that path may signal, either, because a condition would leave
+the rest of the object undestroyed.
 
 ## Disposal does not cascade by default, and one type overrides that
 

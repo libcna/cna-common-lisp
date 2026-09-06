@@ -9,11 +9,13 @@
 ;;;;
 ;;;;   C context pointer -> integer token -> strongly rooted entry -> CLOS game
 ;;;;
-;;;; No Lisp condition may unwind across a C callback boundary. Every callback
-;;;; body runs inside WITH-CONTAINED-CALLBACK, which catches every serious
-;;;; condition, preserves the condition object, writes CNA's diagnostic structure,
-;;;; and returns CNA_RESULT_CALLBACK. The preserved condition is re-signalled on
-;;;; the Lisp side only after the enclosing C call has returned.
+;;;; No Lisp condition may unwind across a C callback boundary. A callback that
+;;;; answers a result code runs inside WITH-CONTAINED-CALLBACK, which catches
+;;;; every serious condition, preserves the condition object, writes CNA's
+;;;; diagnostic structure and returns CNA_RESULT_CALLBACK; one that answers
+;;;; `void' runs inside WITH-EVENT-DISPATCH instead, which has no code to answer
+;;;; with. src/internal/callback-conditions.lisp is where both preserved
+;;;; conditions live and where the rule for delivering each of them is written.
 
 (in-package #:cna-lisp.internal)
 
@@ -46,33 +48,12 @@ game reachable while CNA still holds its context pointer.")
 (defun map-callback-registry (function)
   (maphash function *callback-registry*))
 
-;;; --- callback scope ----------------------------------------------------
-
-(defvar *callback-depth* 0
-  "How many CNA lifecycle callbacks are active on this thread.")
-
-(defun in-callback-scope-p ()
-  "True while the calling thread is inside a CNA lifecycle callback.
-
-Some CNA routes -- borrowing the graphics device is the important one -- are
-legal only here, and the handles they answer are valid only until the callback
-returns."
-  (plusp *callback-depth*))
-
-(defun call-with-callback-scope (function)
-  (let ((*callback-depth* (1+ *callback-depth*)))
-    (funcall function)))
-
 ;;; --- condition containment ---------------------------------------------
-
-(defvar *pending-callback-condition* nil
-  "The condition a callback contained, waiting to be re-signalled after the C
-call that entered the callback has returned.")
-
-(defun take-pending-callback-condition ()
-  "Answer and clear the contained callback condition, if any."
-  (prog1 *pending-callback-condition*
-    (setf *pending-callback-condition* nil)))
+;;;
+;;; The callback scope, both pending-condition variables and the delivery rule
+;;; are in src/internal/callback-conditions.lisp, which is loaded before the
+;;; result translation that has to read them. What is left here is the part that
+;;; needs the foreign layer: CNA's diagnostic structure, and the two boundaries.
 
 (defvar *callback-error-buffer* nil
   "The foreign buffer holding the diagnostic bytes of the most recent contained
@@ -149,6 +130,11 @@ come back out of C, where signalling is safe again."
              (check-result code operation :object-type object-type
                                           :callback-condition
                                           (take-pending-callback-condition))
+             ;; A lifecycle condition with no CNA_RESULT_CALLBACK beside it is
+             ;; one CNA never acted on, so it is dropped rather than left to
+             ;; surface at an unrelated later call. **An event condition is not
+             ;; dropped here**: it has no result code to be paired with, and
+             ;; CHECK-RESULT below is what delivers it.
              (progn (setf *pending-callback-condition* nil)
                     (check-result code operation :object-type object-type)))
       (release-callback-error-buffer))))

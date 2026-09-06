@@ -28,6 +28,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "framework/overloads")
    ;; --- private runtime ---------------------------------------------------
    (:file "internal/float-semantics")
+   (:file "internal/callback-conditions")
    (:file "internal/results")
    (:file "internal/utf8")
    (:file "internal/utf16")

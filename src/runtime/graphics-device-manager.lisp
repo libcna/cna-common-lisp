@@ -11,8 +11,9 @@
   ((game :initarg :game :initform nil :reader game)
    (event-handlers :initform '() :accessor %event-handlers
                    :documentation
-                   "One entry per live event subscription, in the shape
-runtime/events.lisp defines."))
+                   "One entry per subscription, in the shape
+runtime/event-machinery.lisp defines -- live or purely logical; see
+%EVENT-SOURCE-DISPOSED-P."))
   (:documentation
    "Microsoft.Xna.Framework.GraphicsDeviceManager.
 

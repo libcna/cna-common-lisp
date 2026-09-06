@@ -31,6 +31,18 @@
   "A subscription needs the borrowed handle, so it needs the callback scope too."
   (%resolve-device-handle object operation))
 
+(defmethod microsoft.xna.framework::%event-source-disposed-p ((object graphics-device))
+  "The device is a facade the game owns, so the game is what has been disposed.
+
+Once the game is gone the device can raise nothing, so `+=' and `-=' are the
+managed list operations XNA's always were. While the game is alive they still
+need the handle CNA lends only inside a lifecycle method, which is this binding's
+own limit and is documented as one -- the two answers are different questions,
+not an inconsistency."
+  (let ((game (cna-lisp.internal:owner-of object)))
+    (or (null game) (cna-lisp.internal:disposed-state-of game)
+        (cna-lisp.internal:disposed-state-of object))))
+
 (defmethod microsoft.xna.framework::%subscribe-natively
     ((object graphics-device) value token registration)
   (cna-lisp.internal.ffi::%graphics-device-subscribe-event
@@ -51,7 +63,9 @@
 
 HANDLER is called with the device. Subscribing is legal only inside a game
 lifecycle method, because that is when CNA lends the handle the subscription is
-made through.")
+made through -- and legal on a device whose game has been disposed, where there
+is no handle to need and nothing left to raise the event, so the handler list is
+all there is to update. XNA's `+=' is `Delegate.Combine' either way.")
 
 ;;; `DeviceReset' and `DeviceResetting' get **their own generic functions in this
 ;;; package**, and are not the manager's. One XNA namespace is one Common Lisp

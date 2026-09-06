@@ -38,9 +38,14 @@ Both answer the same object, because in CNA they are the same device."))
    (content-loaded :initform nil :accessor %content-loaded-p)
    (event-handlers :initform '() :accessor %event-handlers
                    :documentation
-                   "One entry per live event subscription: (EVENT FUNCTION TOKEN
+                   "One entry per subscription: (EVENT FUNCTION TOKEN
 . REGISTRATION-HANDLE). Kept on the game because XNA's -= takes the handler
-itself, so the binding has to be able to find the registration from it.")
+itself, so the binding has to be able to find the registration from it.
+
+TOKEN and REGISTRATION-HANDLE are NIL and 0 for a subscription with no live CNA
+registration behind it -- one made after the game was disposed, or one whose
+registration was given back when it was. The row itself survives, because XNA's
+disposal never empties the delegate field a `-=' would look in.")
    ;; Three facades made lazily and answered by identity, because XNA's are
    ;; fields. Filled in by src/runtime/game-components.lisp and
    ;; src/content/game-content.lisp, both of which load after this.

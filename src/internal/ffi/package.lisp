@@ -89,6 +89,10 @@ registry. Private; not part of the published API.")
    #:with-contained-callback #:*pending-callback-condition*
    #:take-pending-callback-condition #:release-callback-error-buffer
    #:call-native-frame
+   ;; a void-returning callback's condition, and its delivery ---------------
+   #:*pending-event-condition* #:*in-event-dispatch*
+   #:contain-event-condition #:take-pending-event-condition
+   #:call-with-event-dispatch #:with-event-dispatch
    ;; floating point ---------------------------------------------------------
    #:with-binary32-semantics #:nan-p #:infinity-p #:negative-zero-p
    #:single-float-bits #:bits-single-float))

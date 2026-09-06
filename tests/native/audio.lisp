@@ -1726,29 +1726,30 @@ several callbacks may arrive before a submission and that is not a defect."
              (declare (ignore condition))
              (format stream "boom, from a BufferNeeded handler"))))
 
-(define-audio-device-test a-signalling-buffer-needed-handler-is-contained
+(define-audio-device-test a-signalling-buffer-needed-handler-is-contained-and-delivered
   "A condition signalled by a BufferNeeded handler must not unwind across the C
-frame, and this is where that is proved for the audio event family rather than
-argued from the game family.
+frame, and must not be lost either. This is where both are proved for the audio
+event family rather than argued from the game family.
 
 `CNA_AudioEventCallback` returns **void**, exactly as `CNA_GameEventCallback`
 does, so there is no result code and no diagnostic structure to report a failure
-through. `docs/callbacks-and-threading.md` states the consequence and this test is
-it: the condition is contained, the frame completes, later frames still run, and
-the game still shuts down.
+through. The condition is therefore contained inside the callback, the frame
+completes, and the **frame call itself re-signals it** once control is back in
+Lisp -- the original condition object, not a description of it.
 
-**The condition is then lost, and that is the documented limit rather than a
-defect this test is hiding.** It is preserved in the place a lifecycle callback's
-is, and the next native call that returns anything other than
-`CNA_RESULT_CALLBACK` clears it -- which a frame whose own routes all succeeded
-does. A handler that needs its failures seen has to catch them itself, and the
-public documentation says so.
+**This test used to assert the opposite**, that the condition was contained and
+then lost, and called the loss "the documented limit", while the public
+docstring on ADD-BUFFER-NEEDED-HANDLER promised a re-signal. Both could not be
+true: CALL-NATIVE-FRAME cleared the pending condition unread on every successful
+call. src/internal/callback-conditions.lisp is the mechanism that makes the
+docstring's version the true one.
 
 What would fail without containment is not an assertion but the process: a Lisp
 condition unwinding through a C frame is undefined behaviour, and the game would
-not shut down afterwards."
+not shut down afterwards. So the two halves are separate claims -- the frame
+completed, *and* the caller was told."
 
-    (let ((calls 0))
+    (let ((calls 0) (delivered 0))
       (with-dynamic-instance (d :sample-rate 8000 :channels :mono)
         (audio:add-buffer-needed-handler
          d (lambda (sender)
@@ -1757,16 +1758,70 @@ not shut down afterwards."
              (error 'buffer-needed-handler-blew-up)))
         (audio:submit-buffer d (dynamic-pcm 800))
         (audio:play d)
-        ;; Frames keep running even though every one of them reaches a handler
-        ;; that signals. None of these calls may signal here.
-        (dotimes (frame 30) (xna:run-one-frame game))
+        ;; Frames keep running even though some of them reach a handler that
+        ;; signals: the frame is finished by CNA before the condition is raised
+        ;; here, so the next frame starts from a whole game.
+        (let ((mismatched 0))
+          (dotimes (frame 30)
+            (let ((before calls) (signalled nil))
+              (handler-case (xna:run-one-frame game)
+                (buffer-needed-handler-blew-up () (setf signalled t) (incf delivered)))
+              ;; A frame reports exactly when a handler signalled during it: no
+              ;; frame swallows one and no frame invents one. **One report per
+              ;; frame** even when CNA raised the event several times inside it,
+              ;; which is the first-wins rule and not a loss of the first.
+              (unless (eq signalled (> calls before)) (incf mismatched))))
+          (is (zerop mismatched)
+              "~d of 30 frames disagreed with whether a handler had signalled in them"
+              mismatched))
         (is (plusp calls) "the handler really did run, and really did signal")
+        (is (plusp delivered) "and the caller of the frame was told")
+        (is (<= delivered calls))
+        (is (null int:*pending-event-condition*) "and none was left pending")
         (is (not (audio:is-disposed d))
             "and the instance is still usable afterwards")
         ;; still usable, not merely alive
         (audio:submit-buffer d (dynamic-pcm 800))
         (is (plusp (audio:pending-buffer-count d)))))
     ;; The property the whole containment layer exists for.
+    (xna:dispose game)
+    (is (xna:disposed-p game)))
+
+(define-audio-device-test buffer-needed-add-and-remove-are-legal-after-disposal
+  "`DynamicSoundEffectInstance.add_BufferNeeded` is forty-one IL bytes: an
+`Interlocked.CompareExchange` loop around `Delegate.Combine` against the private
+`BufferNeeded` field. `remove_BufferNeeded` is the same around `Delegate.Remove`.
+Neither reads `IsDisposed`, and `Dispose(bool)` removes the instance from the
+static `allInstances` table -- which is what stops the event ever being raised --
+and never touches the field. So both are legal after disposal there.
+
+They are legal here, and **purely managed** there: the CNA registration was given
+back with the instance, and no event can arrive, so an add acquires nothing and
+the callback registry must not move. Faking a registration against a destroyed
+handle would make this pass for the wrong reason, which is why the registry count
+is asserted rather than assumed."
+
+    (let* ((before (int:callback-registry-count))
+           (d (make-instance 'audio:dynamic-sound-effect-instance
+                             :sample-rate 8000 :channels :mono))
+           (early (lambda (sender) (declare (ignore sender))))
+           (late (lambda (sender) (declare (ignore sender)))))
+      (audio:add-buffer-needed-handler d early)
+      (is (< before (int:callback-registry-count))
+          "a live subscription roots its handler")
+      (xna:dispose d)
+      (is (= before (int:callback-registry-count))
+          "and disposal gives the registration and the token back")
+      (is (eq late (audio:add-buffer-needed-handler d late))
+          "adding to a disposed instance answers the handler rather than refusing")
+      (is (= before (int:callback-registry-count))
+          "and roots nothing")
+      (is (eq t (audio:remove-buffer-needed-handler d late)))
+      (is (eq t (audio:remove-buffer-needed-handler d early))
+          "the handler added before the disposal is still there to remove")
+      (is (null (audio:remove-buffer-needed-handler d early))
+          "and removing it twice answers NIL, as `-=' against an emptied field does")
+      (is (= before (int:callback-registry-count))))
     (xna:dispose game)
     (is (xna:disposed-p game)))
 

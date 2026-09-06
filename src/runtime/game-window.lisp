@@ -228,6 +228,11 @@ neither, because XNA has no overload with one."))
 (defmethod %check-event-usable ((object game-window) operation)
   (%window-game object operation))
 
+(defmethod %event-source-disposed-p ((object game-window))
+  "The window is a facade over the game, so the game is what has been disposed."
+  (let ((game (cna-lisp.internal:owner-of object)))
+    (or (null game) (cna-lisp.internal:disposed-state-of game))))
+
 (defmethod %subscribe-natively ((object game-window) value token registration)
   (cna-lisp.internal.ffi::%game-window-subscribe
    (%window-game object "add-event-handler") value

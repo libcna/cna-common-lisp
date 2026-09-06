@@ -411,12 +411,25 @@ ObjectDisposedException before reading anything."
 ;;;   args        `EventArgs.Empty', which carries nothing -- so the projected
 ;;;               handler takes the sender and nothing else, the same decision
 ;;;               every other event here makes.
-;;;   add/remove  ordinary `Delegate.Combine'/`Remove' with no `IsDisposed' test,
-;;;               so subscribing to or unsubscribing from a disposed instance is
-;;;               legal there. It is legal here too: the subscription is native,
-;;;               so *adding* one needs a live handle, but REMOVE-BUFFER-NEEDED-HANDLER
-;;;               after disposal finds nothing and answers NIL rather than
-;;;               refusing, which is what `-=' against an emptied field does.
+;;;   add/remove  ordinary `Delegate.Combine'/`Remove' against the private
+;;;               `BufferNeeded' field, through an `Interlocked.CompareExchange'
+;;;               loop, with **no** `IsDisposed' test and no other call at all --
+;;;               and `Dispose(bool)' removes the instance from `allInstances'
+;;;               and never touches that field. So both are legal on a disposed
+;;;               instance there, `-=' still finds a handler `+=' put there
+;;;               before the disposal, and neither reaches anything native.
+;;;
+;;;               **Both are legal here, and this is what that costs.** A live
+;;;               subscription is two things -- the logical handler list and a
+;;;               CNA registration -- and only the first of them survives
+;;;               disposal. Adding to a disposed instance updates the list and
+;;;               acquires nothing, which is honest rather than convenient: no
+;;;               event can be raised on a destroyed instance, so there is
+;;;               nothing to register for and faking a registration against a
+;;;               dead handle would be inventing one. %EVENT-SOURCE-DISPOSED-P in
+;;;               src/runtime/event-machinery.lisp is the seam, and it is shared
+;;;               because the audit that found this found the same twenty-one
+;;;               accessors behaving the same way across all three assemblies.
 ;;;   raising     a static `RaiseBufferNeededOnInstance(handle)' looks the
 ;;;               instance up in a table keyed by voice handle and calls
 ;;;               `OnBufferNeeded' on it. `Dispose(bool)' removes it from that
@@ -444,8 +457,16 @@ ignore.
 
 It is called on the thread that advances the buffer queue, which is the game
 thread while the loop runs. A condition it signals cannot be reported to CNA --
-the callback answers `void' -- so it is preserved and re-signalled by the next
-native call that drains it, exactly as a game event's is.")
+the callback answers `void' -- so it is contained there and re-signalled by the
+first native call that returns to your program afterwards, which for a handler
+reached during the loop is the RUN, RUN-ONE-FRAME or TICK that was running. The
+condition object itself arrives, not a description of it; if a native call fails
+in the same breath, that failure is what is signalled and the handler's condition
+is its CNA-ERROR-CAUSE.
+
+Legal on a disposed instance, and purely managed there: XNA's `+=' is
+`Delegate.Combine' against a field its disposal never clears, so the handler list
+outlives the instance even though nothing can raise the event any more.")
 
 (defparameter *dynamic-instance-event-values*
   (list (cons :buffer-needed 0))

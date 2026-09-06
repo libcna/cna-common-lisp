@@ -9524,7 +9524,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-activated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-activated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-client-size-changed-handler",
@@ -9546,7 +9546,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-client-size-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-client-size-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-component",
@@ -9590,7 +9590,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-component-added-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-component-added-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-component-at",
@@ -9634,7 +9634,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-component-removed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-component-removed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-deactivated-handler",
@@ -9656,7 +9656,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-deactivated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-deactivated-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-device-created-handler",
@@ -9678,7 +9678,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-device-created-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-device-created-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-device-disposing-handler",
@@ -9700,7 +9700,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-device-disposing-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-device-disposing-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-device-reset-handler",
@@ -9722,7 +9722,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-device-reset-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-device-reset-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-device-resetting-handler",
@@ -9744,7 +9744,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-device-resetting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-device-resetting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-disposed-handler",
@@ -9766,7 +9766,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-disposed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-disposed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-draw-order-changed-handler",
@@ -9788,7 +9788,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-draw-order-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-draw-order-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-enabled-changed-handler",
@@ -9810,7 +9810,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-enabled-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-enabled-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-exiting-handler",
@@ -9832,7 +9832,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-exiting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-exiting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-orientation-changed-handler",
@@ -9854,7 +9854,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-orientation-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-orientation-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-screen-device-name-changed-handler",
@@ -9876,7 +9876,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-screen-device-name-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-screen-device-name-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-update-order-changed-handler",
@@ -9898,7 +9898,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-update-order-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-update-order-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-visible-changed-handler",
@@ -9920,7 +9920,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-visible-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-visible-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "reset-elapsed-time",
@@ -12991,7 +12991,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "GraphicsDevice.DeviceLost: the device was lost.\n\nHANDLER is called with the device. Subscribing is legal only inside a game\nlifecycle method, because that is when CNA lends the handle the subscription is\nmade through."
+          "documentation": "GraphicsDevice.DeviceLost: the device was lost.\n\nHANDLER is called with the device. Subscribing is legal only inside a game\nlifecycle method, because that is when CNA lends the handle the subscription is\nmade through -- and legal on a device whose game has been disposed, where there\nis no handle to need and nothing left to raise the event, so the handler list is\nall there is to update. XNA's `+=' is `Delegate.Combine' either way."
         },
         {
           "name": "add-device-reset-handler",
@@ -19927,7 +19927,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-content-lost-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-content-lost-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-device-lost-handler",
@@ -19949,7 +19949,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-device-lost-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-device-lost-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-device-reset-handler",
@@ -19971,7 +19971,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-device-reset-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-device-reset-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-device-resetting-handler",
@@ -19993,7 +19993,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-device-resetting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-device-resetting-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "remove-disposing-handler",
@@ -20015,7 +20015,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-disposing-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-disposing-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "render-target-2d",
@@ -30551,7 +30551,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "DynamicSoundEffectInstance.BufferNeeded's `+=': call HANDLER when the queue runs low.\n\n    (add-buffer-needed-handler instance\n                               (lambda (instance)\n                                 (submit-buffer instance (next-block))))\n\nHANDLER takes the sender and nothing else, because XNA passes `EventArgs.Empty'\nand a second always-empty argument would be one every handler had to write and\nignore.\n\nIt is called on the thread that advances the buffer queue, which is the game\nthread while the loop runs. A condition it signals cannot be reported to CNA --\nthe callback answers `void' -- so it is preserved and re-signalled by the next\nnative call that drains it, exactly as a game event's is."
+          "documentation": "DynamicSoundEffectInstance.BufferNeeded's `+=': call HANDLER when the queue runs low.\n\n    (add-buffer-needed-handler instance\n                               (lambda (instance)\n                                 (submit-buffer instance (next-block))))\n\nHANDLER takes the sender and nothing else, because XNA passes `EventArgs.Empty'\nand a second always-empty argument would be one every handler had to write and\nignore.\n\nIt is called on the thread that advances the buffer queue, which is the game\nthread while the loop runs. A condition it signals cannot be reported to CNA --\nthe callback answers `void' -- so it is contained there and re-signalled by the\nfirst native call that returns to your program afterwards, which for a handler\nreached during the loop is the RUN, RUN-ONE-FRAME or TICK that was running. The\ncondition object itself arrives, not a description of it; if a native call fails\nin the same breath, that failure is what is signalled and the handler's condition\nis its CNA-ERROR-CAUSE.\n\nLegal on a disposed instance, and purely managed there: XNA's `+=' is\n`Delegate.Combine' against a field its disposal never clears, so the handler list\noutlives the instance even though nothing can raise the event any more."
         },
         {
           "name": "all-audio-channels",
@@ -31174,7 +31174,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "The `-=' of add-buffer-needed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently."
+          "documentation": "The `-=' of add-buffer-needed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
           "name": "resume",

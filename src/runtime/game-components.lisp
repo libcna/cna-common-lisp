@@ -232,8 +232,11 @@ call has returned, which is the same containment every callback here gets."
               (:load-content (load-content component))
               (:unload-content (unload-content component))
               (:dispose (component-dispose component)))))
+        ;; A component handler answers `void', exactly as an event callback does,
+        ;; so its condition is delivered by the same rule rather than by a result
+        ;; code CNA never asked for.
         (serious-condition (condition)
-          (setf cna-lisp.internal:*pending-callback-condition* condition)))))
+          (cna-lisp.internal:contain-event-condition condition)))))
   (values))
 
 (setf cna-lisp.internal.ffi:*component-dispatcher* #'%dispatch-component-callback)
@@ -599,6 +602,11 @@ handler lists.")
   "The collection has no handle of its own; what must be usable is the game."
   (cna-lisp.internal:check-usable (%collection-game object) operation))
 
+(defmethod %event-source-disposed-p ((object game-component-collection))
+  "The collection dies with its game, so the game is what has been disposed."
+  (let ((game (%collection-game object)))
+    (or (null game) (cna-lisp.internal:disposed-state-of game))))
+
 (defmethod %subscribe-natively ((object game-component-collection) value token
                                 registration)
   (let ((handle (%collection-handle object "subscribe"))
@@ -619,14 +627,12 @@ handler lists.")
   (let ((entry (cna-lisp.internal:callback-target token)))
     (when entry
       (destructuring-bind (sender . function) entry
-        (handler-case
-            (funcall function sender
-                     (make-instance 'game-component-collection-event-args
-                                    :game-component
-                                    (%component-for-handle
-                                     sender component-handle "component event")))
-          (serious-condition (condition)
-            (setf cna-lisp.internal:*pending-callback-condition* condition)))))))
+        (cna-lisp.internal:with-event-dispatch
+          (funcall function sender
+                   (make-instance 'game-component-collection-event-args
+                                  :game-component
+                                  (%component-for-handle
+                                   sender component-handle "component event"))))))))
 
 (setf cna-lisp.internal.ffi:*component-collection-dispatcher*
       #'%dispatch-component-collection-event)
