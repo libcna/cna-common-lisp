@@ -139,7 +139,10 @@ stubs:
 `Texture2D`, `TextureCube`, `SpriteFont`, `Effect`, `SoundEffect` and `Model`
 <!-- /generated-block:loadable-asset-type-names -->,
   which is `LOADABLE-ASSET-TYPES` rendered from the live loader table rather than
-  a list kept beside it. The manager
+  a list kept beside it. `Model` is the one of the six that is **not offered on
+  every admitted ABI**: on CNA 0.21.0 a loaded model can never be released, so
+  `Load<Model>` refuses there and says why rather than handing a program a call
+  that kills the process. See `docs/limitations.md`. The manager
   keeps XNA's two collections, so a name loaded twice answers the same object and
   `Unload` disposes what it loaded -- in the order they have to go, a `SpriteFont`
   before the atlas it draws from;
@@ -169,6 +172,21 @@ stubs:
   it: generated PCM is submitted, the pending count rises and the native streaming
   state machine consumes it while the game loop runs. **A consumed buffer is not
   a buffer anyone heard**, and no test says otherwise;
+* the **`Model` family**: `Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`,
+  their four collections and the four nested enumerators those collections
+  answer. A program loads one with `(load-asset content 'gfx:model "robot")`,
+  walks its bone hierarchy with **XNA's object identity** -- `Bones[0]` twice is
+  one object and `child.Parent` is the parent object, which CNA's handles alone
+  cannot give, because it makes a new handle on every read -- copies or replaces
+  the bone transforms, and draws it. `Model.Draw` and `ModelMesh.Draw` are
+  transcribed from the pinned IL rather than delegated to CNA's one-shot routes,
+  because `Draw` is observable through the effects it configures and throws two
+  distinct exceptions before drawing anything. The SOFTWARE lane proves a loaded
+  model's own geometry reaches pixels. **Two measured CNA defects bound it**: a
+  loaded model's effect cannot answer for its own technique graph on either
+  admitted ABI, and on 0.21.0 a loaded model cannot be released at all, so
+  `Load<Model>` refuses there. `docs/limitations.md` has both, with the exact
+  reproduction and the remedy;
 * **`System.IO.Stream` as an ordinary Common Lisp binary stream**, which is what
   a language with its own equivalent abstraction should do with a BCL type that is
   not even in the profile's contract. `Texture2D.FromStream`, `SaveAsPng` and

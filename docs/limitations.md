@@ -1346,6 +1346,147 @@ The count used to read "ten" because it counted `PreparingDeviceSettingsEventArg
 — a type, and not one of this type's members. The generated frontier table in
 `docs/compatibility.md` is what to count from.
 
+## The Model family, and the two CNA defects that bound it
+
+Twelve types, forty-eight members, and the dependency closure adds nothing: every
+XNA type the family reaches was already selected. Forty-five of the members are
+complete. What the other three are, and why, is two measured defects in CNA
+rather than anything about the projection — and the second one is the larger.
+
+### `Load<Model>` is refused on CNA 0.21.0, because the model could never be released
+
+**`cna_model_destroy` applied to a model that came from
+`cna_content_manager_load_model` is a null dereference on 0.21.0** — a memory
+fault at offset 0x490, not a result code. Taking a mesh or a part view first only
+defers the fault to `cna_game_destroy`. It is **fixed in 0.22.0**: the same
+fixture, through the same binding, disposes cleanly there. Both were measured
+with a raw-FFI probe that loads a model and then destroys it with zero, one, two,
+three or four intermediate view acquisitions.
+
+There is no sound fallback. Leaking the handle is not one: CNA refuses to destroy
+a game that still owns a model, so a program would get a game that cannot shut
+down instead of a crash — a worse failure, and further from its cause. So the
+loader **refuses on 0.21.0, before anything is created**, with a condition naming
+the defect and the version that does not have it.
+
+**A binding may hand a program a refusal. It may not hand it a call that kills
+the process.** That is the whole reasoning, and it is why this is not a
+"limitation" in the usual sense: nothing here is unimplemented.
+
+XNA has no public `Model` constructor either, so the consequence is exact: **on
+CNA 0.21.0 the Model family has no public producer at all.** The suite asserts
+the refusal on that ABI rather than skipping it, the way the rasterization tests
+assert the no-readback branch — a lane that quietly skipped would stop proving
+anything on the ABI it skipped.
+
+### A loaded model's own effect cannot answer for its graph, on either ABI
+
+`cna_content_manager_load_model` publishes one handle per distinct effect its
+model owns, and `PublishModelResource` fills in the value and the parent game and
+nothing else: the `adapterState` every technique, parameter and texture route
+reads is left null. `GetEffectState` is a cast of that null pointer, so
+`cna_effect_get_techniques` on such a handle is a **memory fault at offset
+0x20**, on 0.21.0 and 0.22.0 alike, and an exception barrier cannot contain it.
+
+**22 of `effects.h`'s 322 routes read that field.** The other 300 answer normally
+on the same handle — `cna_effect_matrices_get_world` was measured working on one
+— which is why the effect object this binding hands back is real, is the concrete
+class CNA's own type name reports, and refuses only the four members that would
+read the missing state. A condition stands where a crash was.
+
+**The remedy is an ordinary XNA idiom and it works completely**: assigning your
+own effect to the part replaces the handle with one that has adapter state.
+
+```lisp
+(setf (model-mesh-part-effect part) my-basic-effect)
+```
+
+Measured end to end: the part reports the new handle, its technique graph reads,
+and the mesh's `Effects` collection is maintained across the swap. The pixel proof
+does exactly this before it draws, which is what makes it a proof about geometry
+rather than about a CNA bug.
+
+So `ModelMeshPart.Effect`, `Model.Draw` and `ModelMesh.Draw` are partial under
+`CNA_ADMITTED_ABI_LIMIT`: a model still carrying the effects its loader gave it
+cannot be drawn.
+
+### Both draws are transcribed rather than delegated
+
+CNA has `cna_model_draw` and `cna_model_mesh_draw` and neither is bound. Three
+reasons, in order of weight:
+
+1. **`Model.Draw` is observable through its effects.** Its whole body assigns
+   `World`, `View` and `Projection` on every effect of every mesh, and a program
+   can read them back. A native route that drew the same pixels while leaving
+   different values there would be a different member.
+2. **Two refusals are part of the contract**: a null effect and an effect that is
+   not `IEffectMatrices` are each an `InvalidOperationException`, thrown before
+   anything is drawn. Nothing says CNA's route produces them.
+3. `cna_model_draw` takes three `CNA_Matrix` **by value** — three MEMORY-class
+   aggregates — so binding it would need a fourth shimmed route for no gain.
+
+What they are transcribed onto is this binding's own public surface:
+`SET-VERTEX-BUFFER`, `(setf INDICES)` and `DRAW-INDEXED-PRIMITIVES` are exactly
+the three calls `ModelMeshPart.Draw` makes, and `part.Draw()` is inside the pass
+loop where XNA puts it. `ModelMesh.Draw` therefore needs no shim; `Model.Draw`
+does, because assigning the three matrices does.
+
+### Object identity, and why the graph is built eagerly
+
+**CNA handle identity is not XNA object identity.** `CreateBoneHandle` makes a
+new registry handle on every call, so `Bones[0]` twice answers two handles for
+one bone where XNA answers one object. The whole graph is therefore read once, at
+construction, into a fixed vector per collection, and everything that names a
+bone — a parent, a child, a mesh's parent bone, the root — is resolved through
+the model's index map. `(eq (model-bone-parent child) parent)` is what XNA
+guarantees and what this preserves.
+
+Effects and buffers are the exception, and resolve differently: `published` in
+CNA's loader is keyed on the native object address, so one native effect really
+is one handle. A handle a program already owns answers that program's own object;
+one only the model owns gets a `:PARENT-OWNED` wrapper whose `DISPOSE` refuses
+and says to dispose the parent — which is the truth twice over, because CNA
+refuses the destroy as well.
+
+### `Tag` is a Lisp slot, and that is the only projection that works
+
+XNA's `Tag` is `System.Object` — arbitrary consumer data the framework never
+reads. CNA's is a `uint64` token, which cannot hold a Lisp object and could only
+hold a pointer to one, and putting a pointer to a moving object into C is the
+thing this binding never does. So the tag is a managed slot, the three
+`cna_model_*_tag` routes are not bound at all, and `(eq (tag model) whatever-you-put-there)`
+holds — which a `uint64` could not deliver. `GraphicsResource.Tag` settled this
+first; this is the same decision.
+
+### `ModelBone.Transform`'s setter goes through the model
+
+`cna_model_bone_set_transform` takes `CNA_Matrix` by value, which would need a
+fifth shimmed route and a member that refuses without a C toolchain.
+`cna_model_set_bone_transforms` takes a pointer, so the setter reads the model's
+local transforms, replaces this bone's and writes them all back. Nothing can
+change in between — every handle in a model is affine to one thread — so it is
+the same value written the same way, and the member is complete rather than
+packaging-dependent.
+
+### What the `.cnj` model reader actually honours
+
+Measured, after a first fixture assumed otherwise. A mesh entry honours `name`,
+`vertices`, `indices`, `vertexStride`, `effect`, `vertexColorEnabled`,
+`parentBone` and the material fields, and **derives** the vertex and primitive
+counts from the file sizes — it reads no `vertexCount`, `primitiveCount`,
+`startIndex` or `vertexOffset`. Bone entry 0 gets the identity transform whatever
+the file says. `vertexColorEnabled` matters for anything that reads pixels: both
+`BasicEffect` and `SkinnedEffect` default `VertexColorEnabled` to false, so
+without it the colour bytes are uploaded and the shader ignores them.
+
+### CNA's model extensions are not in the selection
+
+`models.h` carries morph targets, the skinned-model EXT family, animation clips,
+`SkinningData`, `AnimationPlayer`, the glTF import report, cameras, skins and
+material variants. None of them is XNA and none is selected. They share a header
+with these routes and nothing else; a CNA route is not an argument for a member,
+which is the rule `cna_sprite_font_create` is already unbound under.
+
 ## An event's `+=` outlives the object, and its registration does not
 
 **Every one of the twenty-one event accessors in the three pinned assemblies is a

@@ -88,6 +88,9 @@ ABI to be produced against:
 | Construction atomicity | an exploding subclass of twelve resource families, plus `Game` and `GraphicsDeviceManager`, leaves no live child and lets the game shut down -- and one that **subscribed before it failed** leaves no registration and no rooted token either |
 | Content transaction | a load made to fail at the texture's storage query, the font's info, its glyph table, or the **cache insertion** gives every handle back exactly once |
 | Render-target cross-check | six ways a remembered binding can drift are each refused; an unmutated one is accepted first |
+| Model, on 0.22.0 | a `.cnj` fixture loads through `ContentManager.Load<Model>`, its three-bone hierarchy and two meshes answer XNA's object identity, the transform copies compose in the IL's order, and `Unload` leaves every view refusing |
+| Model, on 0.21.0 | `Load<Model>` **refuses**, because `cna_model_destroy` on a loaded model is a null dereference there. Asserted as a result, not skipped |
+| Model pixels | the SOFTWARE lane's `model` proof: two meshes of a loaded model each put their own colour on the pixels their own triangle covers |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
 -- **the SOFTWARE lane is what does**, and it needs no display: a CPU rasteriser
@@ -611,117 +614,106 @@ process-global and latches at initialisation. **A dummy audio device is not
 audible hardware.** A state transition, a duration and a native acceptance are
 what this proves.
 
+## The Model family has landed, and one admitted ABI cannot produce a model
+
+Twelve types, forty-eight members, **45 complete and 3 partial**, and the closure
+adds no type: every XNA type the family reaches was already selected and
+everything else it reaches is the base-class library's. The recommendation this
+section used to carry has been carried out and is deleted rather than left to
+age; what remains is what a future reader needs that the scoreboard does not say.
+
+**Two CNA defects were measured while building it, and they are the whole of the
+three partials.** Neither is a limit of the projection. `docs/limitations.md` has
+the reasoning; these are the facts:
+
+| | 0.21.0 | 0.22.0 |
+| --- | --- | --- |
+| `cna_model_destroy` on a **loaded** model | **null dereference at 0x490** | works |
+| `cna_effect_get_techniques` on a loaded model's effect handle | **null dereference at 0x20** | **null dereference at 0x20** |
+
+The first is the larger. **On CNA 0.21.0 a model obtained from
+`ContentManager.Load<Model>` can never be released** — and taking a mesh view
+first only defers the fault to `cna_game_destroy`. There is no sound fallback,
+because leaking the handle gives a game that cannot shut down instead of a crash.
+So `Load<Model>` refuses on 0.21.0, before anything is created, and names the
+defect. XNA has no public `Model` constructor either, so the consequence is
+exact: **on 0.21.0 the Model family has no public producer at all.** The suite
+asserts that refusal on that ABI rather than skipping it.
+
+The second is on both, and it is narrower: 22 of `effects.h`'s 322 routes read
+the `adapterState` CNA's model loader never fills in, and the other 300 answer
+normally on the same handle. So the effect object a loaded model hands back is
+real and refuses exactly four members — and **assigning your own effect to the
+part repairs it completely**, which is an ordinary XNA idiom and is what the
+pixel proof does before it draws.
+
+**A binding may hand a program a refusal. It may not hand it a call that kills
+the process.** That is the rule both decisions come from.
+
+### What the Model qualification proves, and what it does not
+
+* **Structural**: 178 types and 2447 members measured, 0 disagreement
+  diagnostics, all four nested enumerators projected.
+* **XNA behaviour**: the identity map (`Bones[0]` twice is one object,
+  `child.Parent` is the parent *object*), the three transform copies with the
+  IL's validation order, and `absolute[i] = local[i] * absolute[parent]` — proved
+  with a fixture whose child carries a **scale**, so the reverse order gives a
+  different number.
+* **Native**: buffers and effects resolved to one object per handle, model-owned
+  wrappers that refuse disposal, and stale views that refuse after `Unload`.
+* **Content**: `Load<Model>` twice answers one object; `Unload` disposes it and
+  every view then refuses.
+* **SOFTWARE pixel**: the `model` proof, registered in
+  `tools/qualification/rasterizer-proofs.json` so the lane fails without it. Two
+  meshes in two colours, so a pixel says which mesh drew it.
+
+**What it does not prove.** `Model.Draw` has no pixel evidence: it sets World,
+View and Projection, which needs the optional shim, and the rasterizer lane has
+none. Its *logic* is transcribed and its refusals are tested; that a matrix it
+set changed a pixel is not claimed. Nor is anything about a bone transform moving
+geometry on screen, for the same reason.
+
 ## What to do next
 
 **One closure, and this file carries one.** When the next one lands, this section
-is replaced rather than added to. The streaming closure that used to be
-recommended here has landed and its recommendation is deleted rather than left to
-age; what it did is recorded above, under Audio.
+is replaced rather than added to.
 
-### The four candidates and one infrastructure task, measured
+### The candidates, re-measured
 
-Type and member counts are the pinned 257-type contract's. **Route counts are
-`grep` over both admitted ABIs' headers, not one of them**, because the previous
-measurement counted 0.22.0 only and the binding admits a set. Every determinism
-claim names the header sentence it rests on.
+| | Types | Members | Routes | Deps outside the selection | Hardware | Deterministic in CI |
+| --- | ---: | ---: | ---: | --- | --- | --- |
+| `Microphone` family | 3 | 21 | 18 | none | a **capture** device | half |
+| `Storage` | 3 | 35 | 35 | `IAsyncResult`, `AsyncCallback`, `FileMode`/`FileAccess`/`FileShare` | none — the filesystem | **yes** |
+| `Media` | 24 | 223 | 267 | none | a playback device; `MediaLibrary` scans the machine | half |
+| Admit CNA **0.23.0** | — | — | — | — | none | **yes** |
 
-| | Types | Members | Routes 0.21 | Routes 0.22 | Deps outside the selection | Hardware | Deterministic in CI |
-| --- | ---: | ---: | ---: | ---: | --- | --- | --- |
-| `Model` family | 12 | 48 | 133 | 133 | none | **none** | **yes** |
-| `Microphone` family | 3 | 21 | 18 | 18 | none | a **capture** device | half |
-| `Storage` | 3 | 35 | 35 | 35 | `IAsyncResult`, `AsyncCallback`, `FileMode`/`FileAccess`/`FileShare` | none -- the filesystem | **yes** |
-| `Media` | 24 | 223 | 267 | 267 | none | a playback device; `MediaLibrary` scans the machine | half |
-| Admit CNA **0.23.0** | -- | -- | -- | -- | -- | none | **yes** |
+**The infrastructure task is now the recommendation, and the Model closure is
+why.** Admitting 0.23.0 was measured cheap before and is worth more now than it
+was: the 0.22.0-to-0.23.0 delta is `abi.h`'s version constant, one added route
+this binding does not bind, and documentation corrections in `models.h` and
+`engine_layer.h`. What changed is the *value*: 0.21.0 is now an ABI on which an
+entire projected family has no public producer, and `models.h`'s documentation
+was one of the three things 0.23.0 touched. Whether either defect is fixed there
+is **not known and must not be assumed** — it is a measurement somebody has to
+make, and making it is the task.
 
-**The both-ABI column is not a discriminator, and measuring it is what says so.**
-The two admitted header trees differ in exactly six files:
-`abi.h` (the version constant), `graphics.h` (six new renderer identity
-constants), `net_sessions.h` (one added route), `devices.h` and `engine_layer.h`
-(documentation corrections), and `runtime.h` (a *behavioural* documentation
-change to `cna_launch_parameters_add`, from "overwrites an existing entry" to
-"keeps its first value"). None of the four candidates' route families differs at
-all, and the one behavioural change is to a route this binding does not bind. So
-no candidate is version-dependent and none needs a fallback. That had to be
-checked rather than assumed: it is exactly the check the streaming closure's route
-matrix turned out to need and pass.
+If 0.23.0 fixes the loaded-model destroy, the admitted set can move forward and
+three partial members and one refusal become questions to re-ask. If it does not,
+that is worth knowing too, and worth reporting upstream: both defects are
+reproducible from the public C API in a few lines, and neither is subtle.
 
-**Two entries in the previous measurement were wrong and are corrected here.**
-`Storage`'s dependency was recorded as `IAsyncResult` alone; it is also
-`System.AsyncCallback` and three `System.IO` enumerations, which is more BCL
-surface to decide about, not less. And `Media`'s route count was recorded as 270
-against a family that answers 267 to the same `grep`.
+**Not `Storage`**, for the reason it was not chosen last time: its four public
+members are the .NET asynchronous pair returning `IAsyncResult`, CNA has already
+collapsed them synchronously, and how an async pair becomes one Common Lisp call
+is a public API decision that should not be made in the same task that implements
+it.
 
-### The recommendation: the `Model` family
+**Not `Microphone`**, whose absent branch is deterministic and whose present
+branch has no capture equivalent of `SDL_AUDIODRIVER=dummy` in either admitted
+ABI.
 
-It is the only candidate that is **fully qualifiable with no hardware of any
-kind** and also adds a capability, and it is the last one on this list of which
-that is true.
-
-* **Every level of qualification is reachable.** HEADLESS proves the lifecycle
-  and the ownership graph; the SOFTWARE lane can prove a drawn mesh reaches the
-  pixels its geometry covers, exactly the way it already proves a
-  `DrawUserPrimitives` triangle does. Nothing in it needs a device that a
-  verification tree may not have.
-* **It is the largest missing capability.** 133 routes are waiting in both
-  admitted ABIs, and a binding that can draw a triangle but cannot load a mesh is
-  missing the thing most XNA programs are actually built around.
-* **Its projection novelty is settled work rather than new work.** Four
-  collection-and-enumerator pairs, and this binding has already projected
-  `CurveKeyCollection`, `DisplayModeCollection` and `GameComponentCollection`.
-* **Its one real cost is a `.cnb` model fixture**, and that decision is now
-  better informed than it was. `tools/qualification/` already generates a font
-  and a wave byte for byte, so a generated model is the same kind of work at a
-  larger size, and CNA's CNB writer routes are bound-able. Worth knowing before
-  starting: `cna_model_create` and `cna_model_create_with_parents` exist in both
-  admitted ABIs, so the *ABI* can build a model from bone and mesh handles with
-  no container at all -- but XNA's `Model` has no public constructor, so a
-  *public-surface* qualification of `ContentManager.Load<Model>` still needs the
-  fixture. The two are different claims and the closure needs both.
-
-**Not `Microphone`, for the reason it was not chosen last time and one more.**
-`cna_microphone_get_count`'s header says a machine with no capture device
-"answers zero, which is an ordinary answer and the one every verification tree
-gives", so the *absent* branch is deterministic and the *present* branch is not
-reachable in CI -- there is no capture equivalent of `SDL_AUDIODRIVER=dummy` in
-either admitted ABI. Its buffer-ready event would now cost almost nothing, since
-`add-buffer-needed-handler` proved the audio event machinery, but that makes the
-qualifiable half cheaper without making the unqualifiable half reachable.
-
-**Not `Storage`**, which is smaller than `Model` and asks a bigger question. Its
-four public members are `BeginShowSelector`/`EndShowSelector` and
-`BeginOpenContainer`/`EndOpenContainer`, the .NET asynchronous pair returning
-`IAsyncResult`. CNA has already collapsed them --
-`cna_storage_device_show_selector` "collapses the canonical
-`BeginShowSelector`/`EndShowSelector` pair, which CNA completes synchronously; no
-operation handle is invented for work that never pends" -- so the projection is
-possible and needs a *decision* about how an async pair becomes one Common Lisp
-call, plus a decision about three `System.IO` enumerations. That is a public API
-decision rather than an implementation, and it should not be made in the same
-task that implements it.
-
-**Not `Media`**, which is larger than everything this binding has added since
-Foundation 1 put together, and whose interesting half -- a library with music in
-it -- cannot be produced in CI any more than a microphone can.
-
-### The infrastructure task, and why it is not the recommendation
-
-**Admitting CNA 0.23.0 is measured to be cheap**, and that is worth writing down
-even though it is not being done. The 0.22.0-to-0.23.0 delta is three files:
-`abi.h`'s version constant, one added route (`cna_decal_pass_is_supported`, in
-`engine_layer.h`, which this binding does not bind), and documentation
-corrections in `models.h` and `engine_layer.h`. **No route this binding binds
-changed**, so the expected cost is a build of the 0.23.0 library and a gate run,
-with no code change -- which is precisely what the admitted-set machinery was
-built for.
-
-It is still not the next closure. Chasing a moving branch is a task that never
-finishes and never adds a member, and the version policy in
-`docs/qualification.md` exists so that the binding can *notice* an ABI move
-without having to follow every one. Do it as a side task when a 0.23.0 library is
-built for some other reason.
-
-**CNA 0.23.0 is not admitted and not qualified.** Nothing in this repository has
-run against it, and this section is a measurement of headers rather than a run.
+**Not `Media`**, which is larger than everything added since Foundation 1 put
+together, and whose interesting half cannot be produced in CI.
 
 **Do not implement the recommendation yet.** This is a measurement, and the next
 task chooses.
