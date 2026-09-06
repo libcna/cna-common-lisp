@@ -54,9 +54,15 @@ tools/qualification/microphone.sh
 #    sound card. A third script because a song is neither a sound effect nor a
 #    capture device: it goes through media_player.h routes of its own.
 tools/qualification/media.sh
+
+# 10. the save-game lanes, plus their own public-only consumer. Needs no device
+#     at all and no game either -- and its own processes for two other reasons:
+#     CNA's storage application name is process-global and cannot be unset, and
+#     one claim is that a save written by one process is read back by another.
+tools/qualification/storage.sh
 ```
 
-The four qualification scripts do that for themselves. `with-virtual-screen.sh`
+The five qualification scripts do that for themselves. `with-virtual-screen.sh`
 runs its command on a fresh Xvfb display **only when `DISPLAY` is set** -- so a
 developer's own screen is left alone, and CI, which runs with no display at all,
 is unchanged. That last part is deliberate: the `Native` workflow proves the
@@ -118,6 +124,14 @@ library at all, so it has no ABI to be produced against:
 | Media, queue | the same device: `Play` enqueued, `ActiveSong` answered a **fresh** object `SONG-EQUAL` to its entry and not `EQ` to it, `MoveNext` and `MovePrevious` wrapped at both ends in the managed layer, and the active-index setter clamped where the indexer refuses |
 | Media, static events | both events reached handlers that take **no arguments** -- XNA raises them with a null sender because they are static -- subscribing needed no game because CNA's two routes take none, and removing released the registration and stopped delivery |
 | Media, public-only consumer | a complete playback session through the two exported packages alone, under the same mechanical audit the capture consumer passes |
+| Storage, the root | an application name produced a storage root read back from CNA, and an unusable one was **refused on all three ABIs** with the working root left standing -- which is this binding's doing: 0.21.0 accepts such a name and fails later at the reader, 0.22.0 and 0.23.0 refuse and destroy the root on the way out |
+| Storage, no root | a process whose **very first** application name is refused: `STORAGE-ROOT` refuses, a device still selects, `IsConnected` answers **false**, and every container open is refused. XNA's disconnected device, forced by construction rather than waited for |
+| Storage, no game | a device selected, a container opened and a save written with **no `GAME` in the image**. The only surface here that needs none, and the consumer lane refuses the example if it ever constructs one |
+| Storage, the stream | bytes written through `WRITE-SEQUENCE` came back through `READ-SEQUENCE` after a close and a reopen; `FILE-POSITION`, `READ-BYTE`, `WRITE-BYTE`, `FORCE-OUTPUT` and `WITH-OPEN-STREAM` all work, and a read-only stream refused a write from CNA's own `can_write` rather than from the `FileAccess` asked for |
+| Storage, persistence | **two processes**: one writes a save and exits, the other finds the file, reads the bytes back and deletes the container. The one claim in this repository that spans processes, and the reason the surface exists |
+| Storage, ownership | the graph is three deep -- device to container to stream -- and **does not cascade**: a container with an open stream and a device with a live container each refused disposal, naming what was still live, and closing children first closed all three |
+| Storage, the overloads | `OpenFile`'s three keyword sets and `BeginShowSelector`'s four were accepted, and every shape XNA has not -- a subset, a superset, a mixture -- was refused |
+| Storage, the Disposing event | reached a handler taking the sender alone, stopped when the handler was removed, and left the callback registry where it found it. The last of those was a **real leak**: the container had no `:AROUND` releasing its subscriptions, and the stress lanes caught it |
 | Microphone, the one ABI limit | `BufferDuration` is **partial**: XNA accepts [100, 1000] ms in steps of ten inclusive, CNA 0.21.0 accepts [100, **990**] and refuses exactly 1000, and 0.22.0 and 0.23.0 take the whole range. Nothing is rounded down to hide it; the refusal names the ABI rather than the argument, and both branches assert |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
@@ -167,6 +181,27 @@ The strongest sentence the media rows support is:
 
 It is **not** a claim that music was audible, that the file was decoded, or that a
 physical output device works.
+
+**The eight storage rows are eight claims and not one**, and the discipline
+applies a fourth time -- from a different direction, because storage needs no
+device and its branch is not the environment's to choose. A container that opens
+says nothing about whether bytes come back; bytes that come back in one process
+say nothing about whether they reached the filesystem.
+`tools/qualification/storage.sh` requires each kind by name, and it is a
+**fourth script** because two of its claims cannot be made inside one image at
+all: the application name is process-global with no route to unset it, and
+"another process reads it back" needs another process.
+
+The strongest sentence the storage rows support is:
+
+> a save file written through CNA-Lisp's public API is on the filesystem under a
+> root the program named, is found and read back byte for byte by a different
+> process, and the three-deep device/container/stream graph opens and closes in
+> the order CNA requires -- and CNA-Lisp reproduces the XNA semantics over that.
+
+It is **not** a claim that the data survives a power cut, a full disk, or a
+filesystem that lies about `fsync`. **No test in this repository qualifies
+durability**, and none may.
 
 **`dummy capture device != microphone`**, and this is the strongest sentence the
 capture rows support, written out in full because a shorter one would overstate
@@ -276,10 +311,13 @@ for its graph, and that defect is present in **0.22.0 and 0.23.0 too**. Dropping
 If a drop is ever wanted, the thing to write first is the deprecation policy --
 what warns, when, and against what release -- not the drop.
 
-## Four milestone statuses, and they are four
+## Eight milestone statuses, and they are eight
 
 **One boolean must not cover several milestones**, which is why these are stated
-separately and each names what it rests on:
+separately and each names what it rests on. The heading said *four* while the
+table held five and two more closures had landed without a row at all -- the
+staleness this file exists to prevent, found in the file's own scoreboard. The
+three that were missing are below.
 
 | | |
 | --- | --- |
@@ -288,6 +326,9 @@ separately and each names what it rests on:
 | `AUDIO_FOUNDATION_READY` | **yes**. Six complete types and three partial over nine types and 67 members, each partial with a measured reason; two lanes, neither claiming a sound was heard |
 | `DYNAMIC_AUDIO_READY` | **yes**. `BufferNeeded` is complete for real now: its `+=` and `-=` match the IL before *and* after disposal, and a handler's condition is delivered rather than lost. Both were overclaimed until the pre-Model audit and both are fixed |
 | `MODEL_READY` | **on 0.22.0 and 0.23.0**, and that is a measurement rather than a hedge: on 0.21.0 `Load<Model>` refuses because a loaded model cannot be released there, so the family has no public producer on that ABI. 0.23.0 was measured, not assumed -- it fixes the destroy defect that 0.22.0 already fixed, and fixes neither the effect-graph one |
+| `MICROPHONE_READY` | **yes on all three ABIs**, with one measured partial: `BufferDuration` refuses exactly 1000 ms on 0.21.0, which is the top of XNA's range, and both branches assert. Three environments qualified rather than two, because a capture device that enumerates is not one that delivers |
+| `MEDIA_PLAYBACK_READY` | **yes on all three ABIs**. Six complete types over the *playback* half of the namespace; the media **library** -- `MediaLibrary` and its eight companions -- and `Video`/`VideoPlayer` are deliberately not in the closure and are measured as absent, not faked |
+| `STORAGE_READY` | **yes on all three ABIs**, and it is the first closure to finish its whole namespace: three types, three complete, nothing left in `Microsoft.Xna.Framework.Storage` to be absent. The one place it is narrower than XNA is a lifetime rather than a member -- XNA lets a container be disposed with a stream still open and CNA does not |
 
 **The template is deliberately unchanged, and the Model closure strengthens that
 decision rather than weakening it.** The canary's whole value is that it produces
@@ -456,31 +497,31 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 ## The measured frontier
 
-<!-- generated:selected types=187 -->
-<!-- generated:selected members=2525 -->
-<!-- generated:complete types=163 -->
+<!-- generated:selected types=190 -->
+<!-- generated:selected members=2560 -->
+<!-- generated:complete types=166 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2021 -->
+<!-- generated:complete members=2054 -->
 <!-- generated:partial members=26 -->
 <!-- generated:missing members=38 -->
-<!-- generated:not-applicable members=440 -->
+<!-- generated:not-applicable members=442 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 187 types, 2525 members.
+Selection **Foundation 1 and the managed closures**: 190 types, 2560 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **163** |
+| Types complete | **166** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2021** |
+| Members complete | **2054** |
 | Members partial | **26** |
 | Members missing | **38** |
-| Members not applicable | **440** |
+| Members not applicable | **442** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -560,11 +601,14 @@ two facts are:
   "there is no more local work" would be false.
 
 What the retired boolean actually claimed -- **"there is nothing externally
-blocked at all"** -- was false when it was written. Thirty-nine selected members
-are classified `CNA_ADMITTED_ABI_LIMIT`: they need a CNA release, not a commit
-here.
-Six more need a type the profile has not selected, which is a profile decision
-rather than an implementation. Say which category, not which boolean.
+blocked at all"** -- was false when it was written, and the generated table above
+says by how much: the members in `CNA_ADMITTED_ABI_LIMIT` need a CNA release
+rather than a commit here, and the ones in `DEPENDENCY_NOT_SELECTED` need a
+profile decision rather than an implementation. **The counts are deliberately not
+repeated in this paragraph.** They were, as "thirty-nine" and "six", and both had
+drifted from the block a few lines above them -- the exact failure the section on
+the frontier table warns about, two headings earlier, in this same file. Say
+which category, not which boolean, and never which number.
 
 The one thing the retired section got right is worth keeping.
 `GraphicsDevice.Viewport`'s setter was once recorded as an external blocker on the
@@ -814,79 +858,160 @@ geometry on screen, for the same reason.
 **One closure, and this file carries one.** When the next one lands, this section
 is replaced rather than added to.
 
+`Storage` was the last recommendation and it has landed: three types, three
+complete, the first closure to finish its own namespace and the first surface
+that needs no `Game`. Both of the open questions that section said to answer
+first were answered, and both answers are in `docs/limitations.md` rather than
+here:
+
+* **`Begin`/`End` became four functions and an opaque result.** Not an
+  `IAsyncResult` object with a projected interface, because `System.IAsyncResult`
+  is not in the selection and three of its four members are constants in XNA. The
+  result is opaque, `ASYNC-STATE` reads back the one thing a caller put in, and
+  the callback fires before `Begin` returns because that is what both XNA and CNA
+  do. The overloads are told apart by **complete keyword sets**, the rule this
+  binding already applies everywhere.
+* **`OpenFile` answers an ordinary Common Lisp binary stream**, over
+  `trivial-gray-streams` -- a few hundred lines of portable Common Lisp with no
+  foreign code and no build step, so the dependency costs a released binding
+  nothing that the `cffi-libffi` refusal is protecting. `WITH-OPEN-STREAM`,
+  `READ-SEQUENCE`, `FILE-POSITION` and the rest work. `FILE-LENGTH` does not,
+  because `CL:FILE-LENGTH` takes a *file stream* and the Gray protocol has no
+  generic behind it; `(file-position stream :end)` is the length.
+
+### One thing Storage measured that changes how the next one should be measured
+
+`CNA/C/storage.h` is **byte for byte identical in 0.21.0, 0.22.0 and 0.23.0** --
+and the three libraries do not behave the same. An application name CNA cannot
+build a directory from is accepted by 0.21.0's setter and refused by the other
+two, and the two that refuse destroy the storage root on their way out. Nothing
+in the header says which.
+
+Every route-count table in this file has said "identical in all three ABIs"
+meaning *the header is identical*, and that was always a statement about surface.
+It is now demonstrably not a statement about behaviour. **A candidate whose
+headers match across the admitted set is not thereby qualified on all three**,
+and the next closure's plan must include running its lanes against each library
+rather than reading the sameness off a hash.
+
 ### The candidates, re-measured against all three admitted ABIs
 
 Counts are the pinned 257-type contract's, and they are each candidate's
-**dependency closure over the selection as it now stands** -- so `MediaLibrary`
-and `Video` are smaller than they were, because `Song`, `SongCollection` and
-`MediaState` are selected now and no longer count against them. Route counts are
-`grep -c '^CNA_C_API'` over each family's own headers in all three admitted ABIs,
-and every one of those headers is byte for byte identical in 0.21.0, 0.22.0 and
-0.23.0.
+**dependency closure over the selection as it now stands** -- so the three
+`Media` rows are smaller than they were, because `Song`, `SongCollection` and
+`MediaState` are selected now and no longer count against them. **Sixty-seven of
+the snapshot's 257 types are still unselected.** Route counts are
+`grep -c '^CNA_C_API'` over each family's own headers, and the "new routes" column
+is what is **not already bound**, which is the number that costs work.
 
-| Candidate | Types | Members | Routes (identical in all three ABIs) | New language design | Deterministic CI | User value | Complexity |
-| --- | ---: | ---: | ---: | --- | --- | --- | --- |
-| `Storage` | 3 | 35 | 49, `storage.h` | **two open questions** | yes | high | medium |
-| `Media` / `Video` | 3 | 24 | 42, `video.h` | none | **build-dependent** | low | medium |
-| XACT | 7 | 72 | 62, `xact.h` | none | **no fixture can exist** | low | high |
-| `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | collection protocol | **empty only** | low | high |
+| Candidate | Types | Members | New routes | Closes, in selected types | Deterministic CI | User value | Complexity |
+| --- | ---: | ---: | ---: | ---: | --- | --- | --- |
+| **Game services and device selection** | 5 | 17 | 17 | **13 missing members** | **yes, no device** | medium | medium |
+| `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **build-dependent** | low | medium |
+| XACT | 7 | 72 | 62, `xact.h` | 0 | **no fixture can exist** | low | high |
+| `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 3 (`Song`'s `Artist`, `Album`, `Genre`) | **empty only** | low | high |
 
-**Seventy of the snapshot's 257 types are still unselected**, and those four
-groups are all of them that CNA has any route for.
+**The recommendation is the game-services and device-selection closure**, and for
+the first time in four measurements the recommendation is not blocked on anything
+external.
 
-**The recommendation is `Storage`, and the two open questions are now the whole
-of the argument** rather than a reason to defer.
-
-Everything else on the list is blocked on something no amount of care in this
-repository can fix:
+The three that are still blocked are blocked for the reasons they always were,
+re-checked rather than copied:
 
 * **`Video`** needs CNA's optional FFmpeg decoder and answers
-  `CNA_RESULT_NOT_SUPPORTED` without it. The pinned build does not have it, so
-  the positive branch would be build-dependent -- a worse deal than a dummy
-  driver, which is what every other device closure here qualifies against.
-* **XACT** cannot be qualified at all. `cna_audio_engine_create` takes an `.xgs`
-  settings file, `cna_wave_bank_create` an `.xwb` and `cna_sound_bank_create` an
-  `.xsb`, and those are binaries built by Microsoft's XACT authoring tool. **No
+  `CNA_RESULT_NOT_SUPPORTED` without it. The pinned build does not have it, so the
+  positive branch would be build-dependent -- a worse deal than a dummy driver,
+  which is what every device closure here qualifies against.
+* **XACT** cannot be qualified at all. Its three creation routes take `.xgs`,
+  `.xwb` and `.xsb` files built by Microsoft's XACT authoring tool, and **no
   fixture for them can be generated here**, which is the standard every other
   fixture in this repository meets. It could be implemented and could only be
   proved to refuse.
-* **`MediaLibrary`** scans the machine's music and picture locations.
-  `media_library.h` says an empty library is an ordinary result, so CI can
-  qualify *empty* and nothing else, and fifteen types that are only ever empty
-  are not a closure worth having. The three `Song` members this milestone left
-  missing -- `Artist`, `Album` and `Genre` -- would land with it, which is the
-  one thing in its favour and is not enough.
+* **`MediaLibrary`** scans the machine's music and picture locations, and
+  `media_library.h` says an empty library is an ordinary result -- so CI can
+  qualify *empty* and nothing else. Fifteen types that are only ever empty are not
+  a closure worth having.
 
-`Storage` is blocked on nothing external. It touches only the filesystem, both of
-its branches are producible in CI, and it is the last piece of high user value
-left. What it needs first is a decision, and the two questions are unchanged:
+### What the recommended closure is, exactly
 
-1. **How does `BeginShowSelector`/`EndShowSelector` become Common Lisp?** Four
-   `Begin` overloads and two `End` methods, plus `IAsyncResult` and
-   `AsyncCallback`, neither in the selection. `storage.h` says in as many words
-   that "the canonical API uses XNA's fake-async `BeginXxx`/`EndXxx` pair, which
-   CNA completes synchronously", and the C route is one synchronous call whose
-   optional completion callback fires *before it returns*. So the C side is easy
-   and the **projection** is the question. Candidate designs: a literal
-   `IAsyncResult` object; one idiomatic synchronous call with the pair measured
-   separately; a promise or future extension; a partial projection that
-   implements `Begin` and refuses `End`.
-2. **What does `OpenFile` return?** `StorageContainer.CreateFile` and its three
-   `OpenFile` overloads answer `System.IO.Stream`, and CNA backs that with eleven
-   `cna_storage_stream_*` routes. The `SaveAsPng`/`FromStream` precedent moves
-   *byte arrays* across the boundary; a CNA-owned seekable read-write stream is a
-   different object, and making it an ordinary CL stream means Gray streams.
-   `ContentManager.OpenStream` is unimplemented precisely because no stream
-   object crosses CNA's C boundary; Storage is where one would have to.
+Five unselected types, and the thirteen already-selected members that have been
+waiting for them:
 
-**Both deserve their own argument, and neither should be answered in passing.**
-That is a reason to start `Storage` with a design decision rather than a reason
-to pick something else: the three alternatives are blocked on FFmpeg, on a
-Microsoft authoring tool, and on there being nothing to enumerate.
+| Type | Members | What it is |
+| --- | ---: | --- |
+| `GameServiceContainer` | 4 | XNA's own `Dictionary<Type, object>` behind `AddService`, `GetService`, `RemoveService` |
+| `GraphicsDeviceInformation` | 7 | the adapter, profile and presentation parameters a device would be made from |
+| `IGraphicsDeviceManager` | 3 | `CreateDevice`, `BeginDraw`, `EndDraw` -- the contract `GraphicsDeviceManager` implements |
+| `PreparingDeviceSettingsEventArgs` | 2 | the mutable settings a handler may change before the device exists |
+| `FrameworkDispatcher` | 1 | `Update()`, XNA's pump for audio and media off the game thread |
+
+and it closes, in types that are already selected and already partial:
+
+* `Game.Services` -- the one member that makes `GameServiceContainer` reachable;
+* **all nine** of `GraphicsDeviceManager`'s missing members -- `FindBestDevice`,
+  `CanResetDevice`, `RankDevices`, the four `OnDevice*` raisers,
+  `OnPreparingDeviceSettings` and the `PreparingDeviceSettings` event -- which
+  would take that type from partial to **complete**;
+* `ContentManager`'s two `IServiceProvider` constructors and its `ServiceProvider`
+  property, taking it from four missing members to one.
+
+**CNA has real support for it, and one measured shape that will need saying out
+loud.** `cna_graphics_device_manager_subscribe_preparing_device_settings_ext`
+hands a handler a **mutable** `CNA_GraphicsDeviceInformation*`, which the header
+says was a canonical limitation until it was fixed at the source -- so the event
+that is *the* way an XNA application overrides device settings is reachable rather
+than decorative. `cna_graphics_device_information_init` and `_clone` are pure POD
+operations on a by-value struct. Seventeen routes are unbound and would be bound:
+fourteen in `runtime_graphics_manager.h` (the four information routes,
+`create_device`, `begin_draw`, `end_draw`, `dispose`, the two type-name routes,
+the two preferred-presentation-mode routes and both `preparing_device_settings`
+subscriptions) plus `cna_game_services_contains_ext`,
+`cna_game_services_remove_ext` and `cna_framework_dispatcher_update`.
+
+**The shape to decide first**, and it is one question rather than two:
+
+> `Game.Services` is an arbitrary `Type`-keyed container in XNA and a **fixed
+> two-slot set** in CNA.
+
+`CNA_GameServiceType` has exactly two values -- `GRAPHICS_DEVICE_MANAGER` and
+`GRAPHICS_DEVICE_SERVICE` -- and the only routes are `contains_ext` and
+`remove_ext`. There is no add, and no way to name a third service. XNA's
+container holds anything a program puts in it under any type it likes.
+
+That is not the obstacle it looks like, and the argument is worth making before
+any code is written. XNA's `GameServiceContainer` **is** a managed dictionary;
+nothing about it crosses into native code, and CNA's own `content.h` says a
+service provider "is a Sharp Runtime object and never crosses the C boundary", so
+a manager created with one "behaves identically" and "the field is inert on both
+sides of the boundary". So the container should be a Lisp hash table, keyed by
+whatever a Lisp program uses for a service type, and CNA's two-slot
+`contains_ext` becomes a **native cross-check** -- after a
+`GraphicsDeviceManager` exists, CNA reports the graphics-device service present,
+and the Lisp container that reports the same thing is being checked rather than
+trusted. That is the same shape as `StorageContainer.StorageDevice`, whose
+managed answer is cross-checked against `cna_storage_container_get_storage_device`
+in `tests/native/storage.lisp`.
+
+What must **not** happen is the container being narrowed to CNA's two slots
+because CNA has two. That would be the projection taking the runtime for the
+oracle, which is the one thing this repository has been consistent about
+refusing.
+
+Two smaller questions, each answerable by measurement rather than by design:
+
+1. **Does `subscribe_preparing_device_settings_ext` actually deliver a mutable
+   argument on all three libraries?** The header is byte-identical across them
+   and, as Storage just demonstrated, that proves nothing. Measure it on each
+   before promising the event is complete.
+2. **What does `IGraphicsDeviceManager.CreateDevice` mean here?** CNA has
+   `cna_graphics_device_manager_create_device`, and
+   `GraphicsDevice.new(GraphicsAdapter, GraphicsProfile, PresentationParameters)`
+   is a *missing* member of an already-selected type. Whether the interface
+   member can be complete without the constructor is a measurement on the route,
+   not a decision.
 
 **Do not implement the recommendation yet.** This is a measurement, and the next
 task chooses.
-
 
 ## Architectural facts a future agent must not undo
 

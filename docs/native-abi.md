@@ -112,6 +112,36 @@ Destruction is not in that table because there is no dynamic destroy route in
 either version, and that is deliberate rather than missing: the create route
 documents that `cna_sound_effect_instance_destroy` accepts the handle.
 
+### An identical header is not identical behaviour
+
+**"One column wide because the header is byte for byte identical" is a statement
+about surface, and the Storage closure measured a case where it is not a
+statement about semantics.** `CNA/C/storage.h` has the same SHA-256 in 0.21.0,
+0.22.0 and 0.23.0 -- same forty-nine routes, same doc comments, same result codes
+-- and the three libraries do not agree about what one of them does. Given an
+application name it cannot build a directory from:
+
+| ABI | `cna_storage_set_app_name_ext` | the first `cna_storage_get_root_size_ext` after it |
+| --- | --- | --- |
+| 0.21.0 | `CNA_RESULT_SUCCESS` | `CNA_RESULT_INVALID_STATE` |
+| 0.22.0 | `CNA_RESULT_INVALID_STATE` | `SUCCESS` with a size of zero |
+| 0.23.0 | `CNA_RESULT_INVALID_STATE` | `SUCCESS` with a size of zero |
+
+Where the refusal arrives moved between 0.21.0 and 0.22.0, and the two that
+refuse do not restore the root they had. Nothing in the header says which, and
+nothing could: the header documents the result codes a route *may* answer, not
+which one a given build *will*.
+
+So a route matrix's "same" column means **the same route with the same
+signature**, and a closure still has to run its lanes against every admitted
+library. Hashing the header is what makes the *surface* claim cheap; it is not
+evidence for the behaviour claim, and this document said it was.
+
+`SET-STORAGE-APPLICATION-NAME` is what a projection does about it: it reads the
+root back after the route accepts, and restores the last accepted name when
+either half refuses, so all three ABIs behave alike above the boundary.
+`docs/limitations.md` has the whole measurement.
+
 ## What the compiler proves
 
 `tools/native-abi/verify.sh <cna-header-root>` compiles `probe.generated.c`

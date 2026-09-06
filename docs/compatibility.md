@@ -118,31 +118,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=187 -->
-<!-- generated:selected members=2525 -->
-<!-- generated:complete types=163 -->
+<!-- generated:selected types=190 -->
+<!-- generated:selected members=2560 -->
+<!-- generated:complete types=166 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2021 -->
+<!-- generated:complete members=2054 -->
 <!-- generated:partial members=26 -->
 <!-- generated:missing members=38 -->
-<!-- generated:not-applicable members=440 -->
+<!-- generated:not-applicable members=442 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 187 types, 2525 members.
+Selection **Foundation 1 and the managed closures**: 190 types, 2560 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **163** |
+| Types complete | **166** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2021** |
+| Members complete | **2054** |
 | Members partial | **26** |
 | Members missing | **38** |
-| Members not applicable | **440** |
+| Members not applicable | **442** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -341,6 +341,9 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Media.Song` | **partial** | 12 | 0 | 3 | 5 |
 | `M.X.F.Media.SongCollection` | **complete** | 4 | 0 | 0 | 2 |
 | `M.X.F.Media.VisualizationData` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Storage.StorageDevice` | **complete** | 12 | 0 | 0 | 0 |
+| `M.X.F.Storage.StorageContainer` | **complete** | 18 | 0 | 0 | 1 |
+| `M.X.F.Storage.StorageDeviceNotConnectedException` | **complete** | 3 | 0 | 0 | 1 |
 <!-- /generated-block:per-type-table -->
 
 ### Not applicable, and why so many
@@ -503,11 +506,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=654 -->
+<!-- generated:bound native functions=703 -->
 <!-- generated:bound native structs=74 -->
 <!-- generated:bound native struct fields=550 -->
-<!-- generated:bound native constants=517 -->
-<!-- generated:bound native callbacks=12 -->
+<!-- generated:bound native constants=535 -->
+<!-- generated:bound native callbacks=13 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
 <!-- generated:abi version encoded=5888 -->
@@ -515,11 +518,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 654 |
+| Bound functions | 703 |
 | Bound structs | 74 |
 | Bound struct fields | 550 |
-| Bound constants | 517 |
-| Bound callback typedefs | 12 |
+| Bound constants | 535 |
+| Bound callback typedefs | 13 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
 | Admitted ABI versions | 0.21.0 (encoded 5376), 0.22.0 (encoded 5632), 0.23.0 (encoded 5888) |

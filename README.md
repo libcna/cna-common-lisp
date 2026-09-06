@@ -25,6 +25,7 @@ This is what has actually been run, not what might work.
 | --- | --- |
 | Implementation | SBCL 2.5.2 (Linux x86-64) |
 | Foreign layer | CFFI, Babel, bordeaux-threads — no `cffi-libffi` |
+| Portable dependency | `trivial-gray-streams`, so that a CNA file stream is an ordinary CL stream |
 | Build system | ASDF |
 | CNA C ABI | **0.21.0** (encoded 5376), **0.22.0** (encoded 5632) and **0.23.0** (encoded 5888) — an explicit set, all three qualified |
 | CNA build | `SDL3` platform, `SDL3` audio, **HEADLESS** renderer |
@@ -232,6 +233,37 @@ stubs:
   and because both take UTF-8, which cannot hold the unpaired surrogate a
   `System.String` can. `System.Char` is projected as an integer in [0, 65535],
   which is what a UTF-16 code unit is;
+* the three **`Microphone`** types -- `Microphone`, `MicrophoneState` and
+  `NoMicrophoneConnectedException`. A microphone is **not an object this binding
+  owns**: CNA addresses capture devices by index and creates no handle, so `All`
+  is a process-global identity cache and the same index answers the same object
+  forever, which is what XNA's own static list does. `GetData` writes into a
+  caller's byte vector with XNA's five refusal conditions in XNA's order, and
+  `BufferReady` announces it. Qualified without a microphone, in three
+  environments rather than two: none enumerated, some enumerated and delivering,
+  and -- the runner's own -- some enumerated and delivering nothing, each
+  asserted rather than skipped. **No test claims a sound was captured**;
+* the **media playback closure**: `MediaPlayer`, `Song`, `SongCollection`,
+  `MediaQueue`, `MediaState` and `VisualizationData`. `MediaPlayer` is a static
+  class with two **static** events, whose handlers therefore take no arguments at
+  all because XNA raises them with a null sender; the queue is one object forever
+  and `ActiveSong` a fresh one every time, which is XNA's own identity and not
+  CNA's. Qualified under SDL's `dummy` driver in four separate claims -- the
+  transport, the play clock, the queue and the events -- and **no test claims
+  music was heard**;
+* the whole of **`Microsoft.Xna.Framework.Storage`**, which is the first closure
+  to finish its own namespace: `StorageDevice`, `StorageContainer` and
+  `StorageDeviceNotConnectedException`, all three complete. It is also the first
+  surface that **needs no `Game`** -- no storage route takes one, so the entry
+  points open the ABI gate themselves -- and the first with a three-deep
+  ownership graph, device to container to stream. A file inside a container opens
+  as an **ordinary Common Lisp binary stream**, so `WITH-OPEN-STREAM`,
+  `READ-SEQUENCE` and `FILE-POSITION` are how a save is written and read. Two
+  routes have no XNA member behind them at all -- naming the storage root and
+  reading it back -- because off the Xbox nothing derives a title's directory for
+  it, and they flatten a three-way disagreement between the admitted ABIs about
+  where an unusable name is refused. A separate process reads back what another
+  one wrote; **no test claims durability**;
 * the CLR **event projection**: `game.Activated += handler` becomes
   `(add-activated-handler game handler)`, over CNA's own subscription routes,
   with the registrations released deterministically with the object. `Game`'s
@@ -242,27 +274,27 @@ stubs:
 Everything else in XNA is **absent and measured as absent**. There are no
 placeholder methods that answer a default and claim success.
 
-<!-- generated:selected types=187 -->
-<!-- generated:selected members=2525 -->
-<!-- generated:complete types=163 -->
+<!-- generated:selected types=190 -->
+<!-- generated:selected members=2560 -->
+<!-- generated:complete types=166 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2021 -->
+<!-- generated:complete members=2054 -->
 <!-- generated:partial members=26 -->
 <!-- generated:missing members=38 -->
-<!-- generated:not-applicable members=440 -->
+<!-- generated:not-applicable members=442 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=654 -->
+<!-- generated:bound native functions=703 -->
 <!-- generated:bound native structs=74 -->
 
 <!-- generated-block:scoreboard-headline -->
-The generated scoreboard, over a selection of **187 XNA types and 2525 members**:
+The generated scoreboard, over a selection of **190 XNA types and 2560 members**:
 
 | | |
 | --- | --- |
-| Types complete / partial / missing | **163 / 24 / 0** |
-| Members complete / missing | **2021 / 38** |
-| Members not applicable | **440** |
+| Types complete / partial / missing | **166 / 24 / 0** |
+| Members complete / missing | **2054 / 38** |
+| Members not applicable | **442** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
 
@@ -275,7 +307,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **654 native routes** and **74 native structs**,
+The private foreign layer binds **703 native routes** and **74 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

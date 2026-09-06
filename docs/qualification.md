@@ -449,17 +449,39 @@ than papered over.
 
 ## The device lanes, which need no device
 
-Three qualification scripts prove branches the suite alone cannot, and each runs
-its lanes in **separate processes** because SDL's audio driver selection is
-process-global and latches at initialisation: one image cannot answer for two
-drivers.
+Four qualification scripts prove branches the suite alone cannot, and each runs
+its lanes in **separate processes**. For three of them the reason is SDL's audio
+driver selection, which is process-global and latches at initialisation: one
+image cannot answer for two drivers. For the fourth it is a different
+process-global — CNA's storage application name, which cannot be unset — and a
+claim that needs two processes by definition.
 
 | Script | Lanes | Needs |
 | --- | --- | --- |
 | `tools/qualification/audio.sh` | `AUDIO_UNAVAILABLE`, `AUDIO_DYNAMIC_UNAVAILABLE`, `AUDIO_AVAILABLE_STATE_MACHINE`, `AUDIO_DYNAMIC_STREAMING` | no sound card |
 | `tools/qualification/microphone.sh` | `MICROPHONE_UNAVAILABLE`, `MICROPHONE_ENUMERATION`, `MICROPHONE_CAPTURE_STATE_MACHINE`, `MICROPHONE_CAPTURE_DATA`, `MICROPHONE_BUFFER_READY`, plus a public-API-only consumer | no microphone |
 | `tools/qualification/media.sh` | `MEDIA_UNAVAILABLE`, `MEDIA_PLAYBACK`, `MEDIA_PLAY_CLOCK`, `MEDIA_QUEUE`, `MEDIA_EVENTS`, plus a public-API-only consumer | no sound card |
+| `tools/qualification/storage.sh` | `STORAGE_NO_ROOT`, `STORAGE_SUITE`, `STORAGE_PERSISTENCE`, plus a public-API-only consumer that constructs no `GAME` | a writable home directory |
 | `tools/qualification/rasterizer.sh` | the pixel proofs above | a rasterising renderer, no display |
+
+**The storage lanes are the only ones whose branch is not the environment's to
+choose.** A machine either has a sound card or it has not, and the audio, capture
+and playback scripts have to force the negative branch with a driver name SDL
+cannot load. Storage's negative branch is *forced by construction*: an
+application name CNA cannot build a directory from is refused on every admitted
+ABI, and after it a device still selects, answers `IsConnected` false and refuses
+every container — XNA's disconnected device, reached deterministically. That
+lane needs its own process because the application name is process-global and
+there is no route to unset it, so "an image whose very first name was refused" is
+a state an image can be in exactly once.
+
+**`STORAGE_PERSISTENCE` is the one claim in this repository that spans
+processes.** The first process writes a save and exits; the second shares nothing
+with it but the application name, and finds the file, reads the bytes back and
+deletes the container. A single-process round trip cannot say that the bytes
+reached the filesystem rather than a buffer. It is still **not** a durability
+claim: nothing here survives a power cut, a full disk, or a filesystem that lies
+about `fsync`, and `docs/limitations.md` says so in the same words.
 
 **Playback, capture and song playback are three scripts and not one.** Playback
 and capture are different devices behind different CNA routes -- a machine may
@@ -472,7 +494,7 @@ the unavailable branch deterministically, and SDL's `dummy` driver opens a
 playback device with no speaker and enumerates capture devices that advance a
 stream of silence.
 
-**Every level in those two tables is a separate claim and none may be read out of
+**Every level in those tables is a separate claim and none may be read out of
 another.** A transport that transitioned says nothing about whether a submitted
 buffer was consumed; devices that enumerated say nothing about whether capture
 advances; a stream that advances says nothing about the event that announces it.
@@ -486,10 +508,13 @@ suite therefore branches on a bounded probe and asserts in both directions —
 writes no byte — while `microphone.sh`, which chooses the driver, requires the
 positive lanes that `SDL_AUDIODRIVER=dummy` does produce.
 
-**Neither is a claim about sound.** A dummy playback device is not a speaker and a
-dummy capture device is not a microphone. No test in this repository says a sound
-was heard or that a sound was captured, and the strongest supportable sentence is
-written out in full at the end of each script. `docs/limitations.md` carries both.
+**None of them is a claim about sound, and the storage one is not a claim about
+durability.** A dummy playback device is not a speaker and a dummy capture device
+is not a microphone; bytes that cross a process boundary have reached the
+filesystem and nothing more. No test in this repository says a sound was heard,
+that a sound was captured, or that a save would survive a power cut, and the
+strongest supportable sentence is written out in full at the end of each script.
+`docs/limitations.md` carries all of them.
 
 ## Where the evidence is
 

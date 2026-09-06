@@ -542,11 +542,21 @@ either.
 
 What stops that being done here and now is scope, not doubt: `GameServiceContainer`
 is **not in the selection**, and putting it there means importing the type from the
-pinned contract and reading its three members out of the IL. That is a closure of
-its own and it is not scheduled — the device-settings closure this was once
-assigned to has landed, and did not take it. A Lisp dictionary *on its own* — one
-that answered a program's own services and invented the two canonical ones —
-remains refused, because inventing them is the part that would be wrong.
+pinned contract and reading its four members out of the IL. That is a closure of
+its own — and as of the Storage milestone it is **`NEXT.md`'s recommendation**,
+the first one in four measurements that is blocked on nothing external. The
+argument there settles the shape this section leaves open: the container is a
+Lisp hash table, because XNA's own is a managed dictionary that never crosses
+into native code — `content.h` says exactly that about the service provider a
+`ContentManager` holds — and CNA's two-slot `contains_ext` becomes a **native
+cross-check** on the two canonical keys rather than the storage for them. What
+must not happen is the container being narrowed to CNA's two slots because CNA
+has two.
+
+A Lisp dictionary *on its own* — one that answered a program's own services and
+**invented** the two canonical ones without asking CNA whether they are
+registered — remains refused, because inventing them is the part that would be
+wrong. Cross-checking them is not inventing them.
 
 
 ### LaunchParameters is empty unless the program fills it
@@ -2469,13 +2479,276 @@ supports is:
 It is **not** a claim that music was audible, that the file was decoded, or that
 a physical output device works.
 
+## Storage: three types, no game, and a root nothing derives
+
+The `Microsoft.Xna.Framework.Storage` namespace is **three types**, and all three
+are complete: `StorageDevice`, `StorageContainer` and
+`StorageDeviceNotConnectedException`. There is no fourth. What an XNA program
+also touches — `System.IO.Stream`, `FileMode`, `FileAccess`, `FileShare`,
+`IAsyncResult` — belongs to the base-class library, is not in the selected
+contract, and is projected the way this binding projects the BCL everywhere
+else: a `Stream` becomes an ordinary Common Lisp stream, and the three
+enumerations become keyword tables declared as extensions in
+`src/capabilities.lisp`.
+
+### The first surface that needs no `Game`
+
+Every other closure in this repository reaches CNA through a `GAME`. The game
+loads the library, opens the ABI gate and owns the graphics device the resources
+hang off, so no other type has ever had to think about how the library got
+loaded.
+
+**No storage route takes a game**, so a storage program may never make one. Three
+entry points therefore call `ENSURE-ABI-ADMITTED` themselves —
+`STORAGE-DEVICE-END-SHOW-SELECTOR`, `SET-STORAGE-APPLICATION-NAME` and
+`STORAGE-ROOT` — and without that the first route would have found an unloaded
+library and failed as an undefined foreign symbol rather than with the diagnostic
+the gate exists to give. `examples/storage-consumer.lisp` is a complete
+save-and-load session with no game in the image, and
+`tools/qualification/storage.sh` refuses it if it ever constructs one.
+
+### Two routes with no XNA member behind them, and the divergence they flatten
+
+On Windows and the Xbox an XNA title's storage root is decided *for* it: the CLR
+knows the entry assembly, the framework builds a per-title directory from it, and
+`StorageDevice` has no member that names or reads it because none has to.
+
+A Common Lisp image is not a title. SBCL running a script has no entry assembly,
+no title id and no product name, so nothing derives the root, and CNA answers
+with two `_ext` routes instead. They are projected as
+`SET-STORAGE-APPLICATION-NAME` and `STORAGE-ROOT`, declared extensions rather
+than members, named so that nobody mistakes them for XNA. Hiding them would have
+left every program's saves in CNA's default directory — `~/.local/share/game` on
+this machine — with no way to choose another and no way to learn which one it
+was.
+
+They also cover a **measured three-way disagreement**. With the application name
+`"/proc/nope"`, which CNA cannot build a directory from, on 2026-09-06:
+
+| ABI | `cna_storage_set_app_name_ext` | the first `cna_storage_get_root_size_ext` after it |
+| --- | --- | --- |
+| 0.21.0 | `CNA_RESULT_SUCCESS` | `CNA_RESULT_INVALID_STATE`, "Unable to create the storage directory." |
+| 0.22.0 | `CNA_RESULT_INVALID_STATE`, same message | `SUCCESS` with a size of **zero** |
+| 0.23.0 | `CNA_RESULT_INVALID_STATE`, same message | `SUCCESS` with a size of **zero** |
+
+So on one ABI the setter accepts a name it cannot use and the reader carries the
+failure; on the other two the setter refuses — **and does not put back the root
+it had**, which leaves the process with an empty root, a device that answers
+`IsConnected` false, and every container open refused with "The storage container
+name must resolve within the storage root". Both shapes recover on the next
+accepted set.
+
+Neither is something a caller can build on, so **neither is passed through**.
+`SET-STORAGE-APPLICATION-NAME` reads the root back after the route accepts —
+a measurement, not a guess about how CNA builds a path — and restores the last
+accepted name when either half refuses. All three ABIs then behave the same way:
+an unusable name is refused by the setter and the storage root is what it was
+before the call. `STORAGE-ROOT` folds the two "there is no root" shapes together
+as well, so it refuses rather than answering an empty string.
+
+The one case that cannot be repaired is a refusal on the **first** call in a
+process: there is no previous name to put back and CNA offers no way to ask for
+the default it started with. The condition says exactly that, and
+`tools/qualification/storage.sh` has a whole lane for it, in a process of its
+own, because "an image that has never had a usable name" is a state one image can
+be in once.
+
+### `StorageDeviceNotConnectedException` is declared, and thrown by nobody
+
+The type is projected: a condition class under `CNA-NOT-SUPPORTED-ERROR`, left
+open to subclassing because XNA does not seal this one, with the three
+constructors that are ways to make an exception. What is **not** projected is a
+route that signals it, and that is a finding rather than an omission. Both sides
+were measured:
+
+* the pinned `Microsoft.Xna.Framework.Storage.dll` names the type six times — the
+  class, its four constructors and its `[Serializable]` attribute — and
+  constructs it **zero** times. There is no `newobj` of it in that assembly, and
+  no other pinned assembly mentions it at all. **XNA declares this exception and
+  never throws it.**
+* `CNA/C/storage.h` documents the result codes each of the forty-nine storage
+  routes can answer, and `CNA_RESULT_NOT_SUPPORTED` is not among them for any of
+  them, in any of the three admitted ABIs.
+
+So nothing here maps a result code onto it. A mapping — "a device route that
+answered `NOT_SUPPORTED` means the device went away" — would put this binding's
+guess where XNA has a fact, and would mislabel any unrelated `NOT_SUPPORTED` a
+future ABI starts answering. The class is real, catchable and signallable by a
+program; no CNA-Lisp route signals it.
+
+The *state* it describes is reachable, which is what makes the absence worth
+stating rather than shrugging at: a process with no storage root selects a device
+that answers `IsConnected` false and refuses every container. CNA reports that
+with `CNA_RESULT_INVALID_ARGUMENT`, not `NOT_SUPPORTED`, so the condition that
+arrives is `CNA-INVALID-ARGUMENT-ERROR`.
+
+### The ownership graph is three deep, and it does not cascade
+
+    StorageDevice -> StorageContainer -> StorageStream
+
+which is a level deeper than anything else in this binding. The existing
+ownership layer handles it unchanged, **including its refusal to cascade**:
+disposing a parent that still owns a live child is a `CNA-OWNERSHIP-ERROR` naming
+what is still live, not a quiet recursive close. A program closes its streams,
+then its containers, then its device.
+
+Both sides ask for that. `cna_storage_container_destroy` says "streams opened
+from the container must be closed first" and refuses the other order, and
+`cna_storage_device_destroy` says the same about containers. And the pinned IL is
+not asking for a cascade either: `StorageContainer.Dispose(bool)` sets
+`_isDisposed`, calls an **empty** `DisposeOverride`, and raises `Disposing`. It
+closes nothing, because XNA's `OpenFile` answers a `FileStream` the caller owns
+outright.
+
+**One place the two really differ**, and it is a `CNA_ADMITTED_ABI_LIMIT` on a
+lifetime rather than on a member: XNA lets a container be disposed while a stream
+opened from it is still open — the `FileStream` simply outlives it — and CNA does
+not. Both `Dispose` members are complete; the order in which they may be called
+is narrower here than in XNA.
+
+### The disposal order is the IL's, which cost one line
+
+`StorageContainer.Dispose(bool)` sets `_isDisposed` **before** raising
+`Disposing`, so an XNA handler runs on a container that already reports
+`IsDisposed` and whose members already throw `ObjectDisposedException` from
+`VerifyNotDisposed`. Here `Disposing` is raised inside
+`cna_storage_container_dispose`, and the ownership layer would otherwise not set
+the disposed state until the whole destruction returned — one step out of order.
+`DESTROY-NATIVE` sets it first. That costs nothing: `DISPOSE` marks the object
+disposed on the way out whether the destruction succeeds or fails, so nothing is
+hidden by setting it early.
+
+### `EndOpenContainer` spends the result before it checks the device
+
+The IL is explicit about the order, and the consequence is not a nicety:
+
+    result is not the matching Begin's       -> ArgumentNullException("result")
+    endHasBeenCalled                         -> InvalidOperationException(CannotEndTwice)
+    endHasBeenCalled = true                     <- IL_0028, here
+    ReferenceEquals(this, result.storageDevice) -> ArgumentException(IAsyncNotFromBegin)
+
+So a result ended on the *wrong* device is spent: the right device afterwards
+raises `CannotEndTwice`, not a container. This binding does the same, and
+`tests/native/storage.lisp` asserts it, because the tempting improvement —
+checking the device first and leaving the result usable — would be this binding
+quietly bettering the original.
+
+`EndShowSelector` has only the first two guards; there is no third device to
+compare against.
+
+### `FileShare` is combinable, and every admitted ABI ignores it
+
+The neighbouring enumerations are single identities and this one is not.
+`cna_storage_container_open_file_share` documents its parameter as "zero or more
+`CNA_FILE_SHARE_*` bits", and all three admitted ABIs define six of them
+including `CNA_FILE_SHARE_INHERITABLE` (16), which an earlier draft of this
+binding had recorded as having "no CNA identity at all". It has one. The table
+carries all six and combines, so `(:read :delete)` and `:read-write` are both
+accepted, exactly as `FileShare.Read | FileShare.Delete` and
+`FileShare.ReadWrite` both are in XNA. `FILE-SHARE-FROM-VALUE` answers every
+member whose bits are all present, so 3 decodes as `(:read :write :read-write)` —
+the honest reading of a value that really does name all three.
+
+**And the sharing has no effect.** The same header says so: "The canonical
+implementation currently ignores @p file_share, so this route differs from
+`cna_storage_container_open_file_access` only in which selection the caller
+states explicitly." The third `OpenFile` overload is real, reachable and
+accepted; what it states is not enforced, on any admitted ABI. That is a
+`CNA_ADMITTED_ABI_LIMIT` on behaviour rather than on surface, and it is not a
+reason to refuse the overload: a program that would have written
+`FileShare.None` in XNA still writes it, and gets the stream XNA would have given
+it on a platform with no mandatory locking.
+
+### `directoryCount` is accepted and ignored, by XNA
+
+Two of `BeginShowSelector`'s four overloads take `(Int32 sizeInBytes, Int32
+directoryCount)`. The IL validates `sizeInBytes` — negative is
+`ArgumentOutOfRangeException` — and **never reads `directoryCount` at all**. It
+stays in the projection's keyword set because removing it would remove two of the
+four overloads, and it is checked to be an integer because a non-integer is not a
+call the original can express, but nothing downstream looks at it. This one is
+XNA's own dead parameter, not CNA's.
+
+### `FILE-LENGTH` is not available; `(file-position stream :end)` is the length
+
+`CL:FILE-LENGTH` is specified to take a *file stream*, and the Gray stream
+protocol has no generic behind it — `trivial-gray-streams` offers
+`stream-file-position` and nothing for length. So `STORAGE-STREAM` does not
+answer `FILE-LENGTH`, and `(file-position stream :end)` is how a program asks how
+long the file is. Everything else an ordinary binary stream does works:
+`READ-SEQUENCE`, `WRITE-SEQUENCE`, `READ-BYTE`, `WRITE-BYTE`, `FILE-POSITION`,
+`FORCE-OUTPUT`, `FINISH-OUTPUT`, `CLOSE`, `OPEN-STREAM-P`, `INPUT-STREAM-P`,
+`OUTPUT-STREAM-P`, `STREAM-ELEMENT-TYPE` and `WITH-OPEN-STREAM`.
+
+Whether a stream can be read, written or sought is **CNA's answer**, read from
+`can_read`, `can_write` and `can_seek` when the stream opened, rather than a
+guess from the `FileAccess` that was asked for.
+
+### A subscription that outlived its container
+
+`STORAGE-CONTAINER` had no `:AROUND` on `DESTROY-NATIVE` releasing its event
+subscriptions, so every subscribed container left a rooted callback token behind
+after it was disposed. It was caught by `tests/native/stress.lisp` — "graphics
+cycle 0 left 2 registry entries", a long way from where it was caused — and it is
+now asserted next to its cause as well, in
+`STORAGE-SUBSCRIPTIONS-DO-NOT-OUTLIVE-THEIR-CONTAINER`. The release happens
+*after* the native destruction, for the reason `GRAPHICS-RESOURCE`'s does:
+`Disposing` is raised inside the destruction, and a subscription released first
+would swallow the last thing the container ever says.
+
+## What the storage tests prove, and what they do not
+
+**No test in this repository claims durability, and none may.**
+
+| Level | What it means |
+| --- | --- |
+| `root` | an application name produced a storage root, read back from CNA rather than from anything remembered here |
+| `no-root` | an unusable application name was refused on this ABI and the root that was working survived the refusal |
+| `device` | a device was selected with no game in the image, and `IsConnected`, `FreeSpace` and `TotalSpace` answered |
+| `container` | a container opened and listed, and CNA's own parent route named the same handle as the ownership graph |
+| `stream` | bytes made a round trip through the ordinary CL stream protocol — write, close, reopen, read — and a read-only stream refused a write |
+| `overloads` | every overload shape XNA has was accepted and every shape it has not was refused, for both `OpenFile` and `BeginShowSelector` |
+| `ownership` | a container with an open stream and a device with a live container each refused disposal, and closing children first closed all three |
+| `events` | the container's `Disposing` event reached a handler taking the sender alone, and stopped when the handler was removed |
+
+`tools/qualification/storage.sh` produces them, and adds two claims the suite
+cannot make in one image:
+
+* **`STORAGE_NO_ROOT`**, in a process whose very first application name is
+  refused — the unrepairable half of the branch, which needs an image that has
+  never had a usable name;
+* **`STORAGE_PERSISTENCE`**, in two processes: the first writes a save and exits,
+  the second finds the file, reads the bytes back and deletes the container. This
+  is the claim a single-process round trip cannot make — that the bytes are in
+  the filesystem rather than in a buffer — and it is the reason the storage
+  surface exists at all.
+
+It also runs `examples/storage-consumer.lisp` under the same mechanical audit the
+other consumers get, plus one no other consumer can pass: **it never constructs a
+`GAME`**.
+
+**Bytes that cross a process boundary have reached the filesystem.** The
+strongest claim this evidence supports is:
+
+> a save file written through CNA-Lisp's public API is on the filesystem under a
+> root the program named, is found and read back byte for byte by a different
+> process, and the three-deep device/container/stream graph opens and closes in
+> the order CNA requires — and CNA-Lisp reproduces the XNA semantics over that.
+
+It is **not** a claim that the data survives a power cut, a full disk, or a
+filesystem that lies about `fsync`. A durability qualification would be a
+different claim with different evidence, and this repository has none of it.
+
 ## Not implemented in this milestone
 
 These are absent, and measured as absent, not faked:
 
 * `GameServiceContainer` and `Game.Services` — see below;
-* whole XNA namespaces outside the selected profile: **storage, gamer services
-  and networking**. Media was on this list and is not any more: the six-type
+* whole XNA namespaces outside the selected profile: **gamer services and
+  networking**. Storage was on this list and is not any more: the namespace is
+  three types and all three are projected complete, so there is nothing left in
+  it to be absent — the only closure so far that finished its whole namespace.
+  Media was on this list and is not any more: the six-type
   *playback* closure is selected, and what is still absent within it is the
   media **library** -- `MediaLibrary`, `Album`, `Artist`, `Genre`, `Picture`,
   `Playlist`, `MediaSource` and the six collection types -- plus `Video` and

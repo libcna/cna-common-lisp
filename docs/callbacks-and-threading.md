@@ -43,8 +43,21 @@ released once the enclosing native call has come back, in
 ## Top-level callbacks only
 
 Every CFFI callback in CNA-Lisp is a top-level `defcallback`, defined once, in
-`src/internal/ffi/callbacks.lisp`. Ten of them exist -- one per lifecycle hook --
-and they all funnel into one dispatcher.
+`src/internal/ffi/callbacks.lisp`, and each has **one dispatcher variable** that
+the layer owning it installs.
+
+There is no longer one dispatcher for all of them, and the count is deliberately
+not written here. It said "ten of them exist -- one per lifecycle hook", which
+was true when the only callbacks were the game loop's; every closure since that
+raises an event has added one, and the sentence would have gone stale again with
+this one. `grep -c defcallback src/internal/ffi/callbacks.lisp` is the answer,
+and `docs/generated/native-abi-manifest.json` is the authority for how many the
+ABI declares.
+
+The reason each event family gets its own callback rather than reusing the game's
+is that the routes are not interchangeable: an audio subscription is released by
+an audio route, a storage subscription by a storage route, and one dispatcher
+demultiplexing them by token would be one place able to release the wrong thing.
 
 No Lisp object is ever handed to C as a `void*`. The chain is:
 

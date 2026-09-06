@@ -26,10 +26,22 @@ lowercased:
 | `Microsoft.Xna.Framework` | `microsoft.xna.framework` |
 | `Microsoft.Xna.Framework.Graphics` | `microsoft.xna.framework.graphics` |
 | `Microsoft.Xna.Framework.Input` | `microsoft.xna.framework.input` |
+| `Microsoft.Xna.Framework.Input.Touch` | `microsoft.xna.framework.input.touch` |
+| `Microsoft.Xna.Framework.Content` | `microsoft.xna.framework.content` |
+| `Microsoft.Xna.Framework.Graphics.PackedVector` | `microsoft.xna.framework.graphics.packed-vector` |
+| `Microsoft.Xna.Framework.Audio` | `microsoft.xna.framework.audio` |
+| `Microsoft.Xna.Framework.Media` | `microsoft.xna.framework.media` |
+| `Microsoft.Xna.Framework.Storage` | `microsoft.xna.framework.storage` |
 
 Namespaces not yet reached keep their obvious names when they arrive:
-`microsoft.xna.framework.input.touch`, `.content`, `.audio`, `.media`,
-`.storage`, `.gamer-services`, `.net`, `.graphics.packed-vector`.
+`microsoft.xna.framework.gamer-services` and `microsoft.xna.framework.net`.
+
+`microsoft.xna.framework.storage` is the one package that **shadows** a
+`COMMON-LISP` symbol: `StorageContainer.DeleteFile` is `delete-file`, and
+`CL:DELETE-FILE` is a standard function. The XNA name wins inside that package
+because a projection that renamed the member would be answering a different
+question, and a consumer reaching it through `:local-nicknames` writes
+`storage:delete-file` and `cl:delete-file` without ambiguity either way.
 
 There is no single flattened package. Two members named the same thing in two
 namespaces stay two symbols in two packages, which is what lets `Game.Draw` and
@@ -472,6 +484,36 @@ extension.
 
 No fake .NET base class library is invented. Only the BCL surface the selected
 XNA profile actually reaches is projected, and each projection is recorded here.
+
+### 10b. `System.IO.Stream` is a Common Lisp stream, in both directions
+
+`Stream` is not in the selected contract and never was — it is the BCL's. Six
+selected members hand one across anyway, and all six take or answer an **ordinary
+Common Lisp binary stream**:
+
+| Member | Direction |
+| --- | --- |
+| `Texture2D.FromStream` (both overloads) | a stream the program opened, read by the projection |
+| `Texture2D.SaveAsPng`, `SaveAsJpeg` | a stream the program opened, written by the projection |
+| `TitleContainer.OpenStream` | a stream the projection answers |
+| `StorageContainer.CreateFile`, `OpenFile` (three overloads) | a **CNA-owned** stream the projection answers |
+
+The first five move bytes across the boundary and can be served by reading or
+writing a vector at the edge. The last is different in kind: a CNA-owned,
+seekable, read-write file handle that outlives the call, so it is a real stream
+class — `STORAGE-STREAM`, over `trivial-gray-streams`, and simultaneously a
+`NATIVE-OBJECT` in the ownership graph.
+
+What a program gets is an ordinary stream and nothing new to learn:
+`WITH-OPEN-STREAM`, `READ-SEQUENCE`, `WRITE-SEQUENCE`, `READ-BYTE`, `WRITE-BYTE`,
+`FILE-POSITION`, `FORCE-OUTPUT`, `FINISH-OUTPUT`, `CLOSE`, `OPEN-STREAM-P`,
+`INPUT-STREAM-P`, `OUTPUT-STREAM-P` and `STREAM-ELEMENT-TYPE` all work, and
+`CLOSE` is also its disposal.
+
+**`FILE-LENGTH` is the one that does not**, and the reason is the standard's
+rather than this binding's: `CL:FILE-LENGTH` is specified to take a *file
+stream*, and the Gray protocol has no generic behind it. `(file-position stream
+:end)` is how a program asks how long the file is.
 
 ### 10a. `System.Char` is a code unit, and so is a string's element
 

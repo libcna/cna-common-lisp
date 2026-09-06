@@ -65,7 +65,7 @@ cna-common-lisp/
 │   │   │   ├── types.lisp
 │   │   │   ├── constants.generated.lisp
 │   │   │   ├── structs.generated.lisp
-│   │   │   ├── callbacks.lisp   ten top-level CFFI callbacks, one dispatcher
+│   │   │   ├── callbacks.lisp   every top-level CFFI callback, one dispatcher each
 │   │   │   └── functions.generated.lisp
 │   │   ├── results.lisp         result code -> condition, once, here
 │   │   ├── utf8.lisp            exact UTF-8, count-then-copy
@@ -77,6 +77,10 @@ cna-common-lisp/
 │   ├── framework/               Microsoft.Xna.Framework
 │   ├── graphics/                Microsoft.Xna.Framework.Graphics
 │   ├── input/                   Microsoft.Xna.Framework.Input
+│   ├── content/                 Microsoft.Xna.Framework.Content
+│   ├── audio/                   Microsoft.Xna.Framework.Audio
+│   ├── media/                   Microsoft.Xna.Framework.Media
+│   ├── storage/                 Microsoft.Xna.Framework.Storage
 │   └── runtime/                 Game and GraphicsDeviceManager
 ├── tests/{unit,structure,behavior,native}/
 ├── tools/{native-abi,api-compat,qualification}/
@@ -278,7 +282,29 @@ for.
   `Texture2D`, as XNA has it, and its two transfer families are the closure's only
   partial members: CNA's cube route takes `const CNA_Color*` with no texel-kind
   argument, so a face is transferable only as `Color` where XNA's `SetData<T>` is
-  generic.
+  generic;
+* the **audio foundation** -- the `SoundEffect` family and its enumerations and
+  exceptions -- and then **`DynamicSoundEffectInstance`**, which is the one member
+  of that namespace that adds a *capability* rather than a surface;
+* the **`Model` family**, whose members are transcribed from the pinned IL rather
+  than delegated to CNA's one-shot routes, and which has no public producer at all
+  on 0.21.0;
+* the three **`Microphone`** types, where a device is addressed by index and no
+  handle exists, so object identity is a process-global cache rather than
+  ownership;
+* the **media playback** closure -- `MediaPlayer` and the five types around it --
+  the first with **static** events, whose handlers therefore take no arguments;
+* the whole of **`Microsoft.Xna.Framework.Storage`**, the first closure to finish
+  its namespace, the first surface that needs no `Game`, and the first with a
+  three-deep ownership graph. It is also where the `Game.Services` audit above
+  changed its conclusion. That audit was right about CNA -- a closed two-member
+  enum, `contains_ext` and `remove_ext`, no get route and no registration route --
+  and wrong about what follows from it: XNA's own `GameServiceContainer` is a
+  managed dictionary that never crosses into native code, which `content.h` says
+  in as many words about the service provider a `ContentManager` holds. So
+  `GetService` does not have to be answered *from CNA*, and CNA's two-slot
+  `contains_ext` is a cross-check rather than the storage. `NEXT.md` recommends
+  that closure next and makes the argument in full.
 
 ## 6. Measured status
 
@@ -301,31 +327,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=187 -->
-<!-- generated:selected members=2525 -->
-<!-- generated:complete types=163 -->
+<!-- generated:selected types=190 -->
+<!-- generated:selected members=2560 -->
+<!-- generated:complete types=166 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2021 -->
+<!-- generated:complete members=2054 -->
 <!-- generated:partial members=26 -->
 <!-- generated:missing members=38 -->
-<!-- generated:not-applicable members=440 -->
+<!-- generated:not-applicable members=442 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 187 types, 2525 members.
+Selection **Foundation 1 and the managed closures**: 190 types, 2560 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **163** |
+| Types complete | **166** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2021** |
+| Members complete | **2054** |
 | Members partial | **26** |
 | Members missing | **38** |
-| Members not applicable | **440** |
+| Members not applicable | **442** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

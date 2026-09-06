@@ -77,6 +77,34 @@ The order a Foundation 1 program uses is:
       (xna:dispose game))))
 ```
 
+### Three deep, in Storage
+
+Every graph in this binding was two deep until the Storage closure, which is
+three:
+
+    StorageDevice -> StorageContainer -> StorageStream
+
+The layer needed no change to carry it, and the rule at every level is the one
+above: a stream is closed before its container, a container is disposed before
+its device, and a parent that still owns a live child refuses and names what is
+still live. There is no cascade at either level.
+
+**The pinned IL agrees, and CNA insists.** `StorageContainer.Dispose(bool)` sets
+`_isDisposed`, calls an empty `DisposeOverride` and raises `Disposing` — it
+closes nothing, because XNA's `OpenFile` answers a `FileStream` the caller owns
+outright. And `cna_storage_container_destroy` says "streams opened from the
+container must be closed first" and refuses the other order. So the deviation
+from XNA here is the same one this document already records for `Game`: XNA
+*permits* the wrong order and leaves the stream alive; CNA requires the right
+one.
+
+One thing about the stream is worth stating separately, because it is the only
+object in this binding that is both a `NATIVE-OBJECT` and a Common Lisp stream:
+**`CLOSE` is its disposal.** CNA has one route where a CL stream has two ideas —
+flushing and releasing — and `cna_storage_stream_close` does both, so there is no
+separate destroy route. `WITH-OPEN-STREAM` therefore participates in the
+ownership graph exactly as `unwind-protect` around `dispose` would.
+
 ### A parent that is not the native parent: SpriteFont and its atlas
 
 CNA makes a `SpriteFont` a child of the *game*. CNA-Lisp records it as a child of
