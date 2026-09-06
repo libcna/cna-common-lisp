@@ -162,6 +162,28 @@
         (format t "No media claim above is about audible output. A dummy device~%")
         (format t "accepting a transport transition is not music being heard, and~%")
         (format t "a play position that advances is a clock rather than a sound.~%")))
+    ;; The storage surface, reported separately for a reason none of the others
+    ;; have: it is the only one that needs no game, and it is the only one that
+    ;; writes to the filesystem. Its eight levels are eight claims, and none of
+    ;; them is about durability.
+    (when (native-library-requested-p)
+      (if *storage-evidence*
+          (dolist (entry (reverse *storage-evidence*))
+            (format t "~&storage       : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&storage       : NOT RUN -- no storage test recorded evidence~%"))
+      (when (and (storage-proved-p :root) (not (storage-proved-p :no-root)))
+        (format t "A storage root was named and the refusal of an unusable name~%")
+        (format t "was not observed: those are two claims and this run supports~%")
+        (format t "one.~%"))
+      (when (and (storage-proved-p :container) (not (storage-proved-p :stream)))
+        (format t "A container opened and no stream round-tripped: a container~%")
+        (format t "that opens says nothing about whether bytes come back.~%"))
+      (when (storage-proved-p :stream)
+        (format t "No storage claim above is about durability. Bytes written,~%")
+        (format t "closed, reopened and read back in one process are evidence~%")
+        (format t "about the stream protocol and CNA's routes, and not that the~%")
+        (format t "data survives a power cut, a full disk, or a filesystem that~%")
+        (format t "lies about fsync.~%")))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))

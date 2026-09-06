@@ -88,7 +88,7 @@ jobs:
           fi
           sbcl --non-interactive --load ~/quicklisp/setup.lisp \
                --eval '(ql-dist:install-dist "http://beta.quicklisp.org/dist/quicklisp/2026-01-01/distinfo.txt" :replace t :prompt nil)' \
-               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :fiveam))'
+               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :trivial-gray-streams :fiveam))'
 
       - name: Compile and load from a fresh image, with no warnings tolerated
         run: |

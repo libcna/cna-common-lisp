@@ -324,7 +324,7 @@ jobs:
           fi
           sbcl --non-interactive --load ~/quicklisp/setup.lisp \
                --eval '(ql-dist:install-dist "http://beta.quicklisp.org/dist/quicklisp/2026-01-01/distinfo.txt" :replace t :prompt nil)' \
-               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :fiveam))'
+               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :trivial-gray-streams :fiveam))'
 
       - name: Native runtime tests
         working-directory: cna-common-lisp
@@ -409,6 +409,31 @@ jobs:
         env:
           CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
         run: tools/qualification/media.sh
+
+      # The save-game surface, and a **fourth** step for a reason none of the
+      # three above have: storage needs no device at all, and no game either.
+      # Its lanes are in their own processes because CNA's storage application
+      # name is process-global and cannot be unset -- so "an image whose very
+      # first name was refused" is a state an image can be in exactly once --
+      # and because one of the claims needs two processes by definition: a save
+      # written by one and read back by another.
+      #
+      # Both branches are forced rather than environmental. An application name
+      # CNA cannot build a directory from is refused on every admitted ABI, and
+      # after it a device still selects, answers IsConnected false and refuses
+      # every container: XNA's disconnected device, reached deterministically on
+      # a runner whose home directory is perfectly writable.
+      #
+      # It also runs the public-only consumer, audited for the usual reaches into
+      # the internals and for one thing no other consumer can claim -- it never
+      # constructs a Game.
+      #
+      # Nothing here is a claim about durability, and the script says so.
+      - name: Storage qualification, no-root, persistence and consumer lanes
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: tools/qualification/storage.sh
 
       - name: Isolated consumer qualification, 60 and 600 frames
         working-directory: cna-common-lisp
@@ -611,7 +636,7 @@ jobs:
           fi
           sbcl --non-interactive --load ~/quicklisp/setup.lisp \
                --eval '(ql-dist:install-dist "http://beta.quicklisp.org/dist/quicklisp/2026-01-01/distinfo.txt" :replace t :prompt nil)' \
-               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :fiveam))'
+               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :trivial-gray-streams :fiveam))'
 
       # No Xvfb and no DISPLAY: the SOFTWARE renderer is a CPU rasteriser. The
       # script fails if the run silently took the no-readback branch, which is
