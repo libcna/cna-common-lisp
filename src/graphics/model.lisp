@@ -316,7 +316,7 @@ member exists because `IEnumerator<T>' requires it."
 (defclass model-bone (%model-view)
   ((%name :reader model-bone-name)
    (%index :reader model-bone-index)
-   (%parent :initform nil :reader model-bone-parent)
+   (%parent :initform nil :reader %bone-parent)
    (%children :initform nil))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.ModelBone: one node of a model's skeleton.
@@ -332,7 +332,35 @@ through `Model.Bones', `ModelBone.Parent', `ModelBone.Children' or
 `ModelMesh.ParentBone' -- all of which answer the same object for the same bone."))
 
 (defmethod %collection-element-model-name ((element model-bone))
-  (model-bone-name element))
+  ;; The slot directly: this runs inside COLLECTION-TRY-GET-VALUE, which has
+  ;; already checked that the model is live, and a cached name is not a reason to
+  ;; check twice per element.
+  (slot-value element '%name))
+
+;;; A cached value still belongs to a live model. `Name' and `Index' are read once
+;;; when the graph is built, so their slot readers would happily answer for a bone
+;;; whose model has been unloaded -- a live-looking object over a released handle,
+;;; which is the one thing a stale view must never be. The check is an :AROUND so
+;;; that the reader stays a reader.
+(defmethod model-bone-name :around ((bone model-bone))
+  (cna-lisp.internal:check-usable bone "model-bone-name")
+  (call-next-method))
+
+(defmethod model-bone-index :around ((bone model-bone))
+  (cna-lisp.internal:check-usable bone "model-bone-index")
+  (call-next-method))
+
+(defgeneric model-bone-parent (bone)
+  (:documentation
+   "`ModelBone.Parent': the bone this one hangs off, or NIL for the root.
+
+The parent **object**, not a fresh view of it: CNA answers a new handle on every
+read, so the index is resolved through the model's map. `(eq (model-bone-parent
+child) root)' is what XNA guarantees and what this preserves."))
+
+(defmethod model-bone-parent ((bone model-bone))
+  (cna-lisp.internal:check-usable bone "model-bone-parent")
+  (%bone-parent bone))
 
 (defgeneric model-bone-children (bone)
   (:documentation "`ModelBone.Children': this bone's child bones, in model order."))
@@ -384,8 +412,8 @@ rather than packaging-dependent."))
 (defclass model-mesh-part (%model-view)
   ((%mesh :initarg :mesh :initform nil :reader %part-mesh)
    (%effect :initform nil)
-   (%vertex-buffer :initform nil :reader model-mesh-part-vertex-buffer)
-   (%index-buffer :initform nil :reader model-mesh-part-index-buffer)
+   (%vertex-buffer :initform nil :reader %part-vertex-buffer)
+   (%index-buffer :initform nil :reader %part-index-buffer)
    (%tag :initform nil))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.ModelMeshPart: one draw call's worth of a mesh.
@@ -419,6 +447,27 @@ prove the sequence rather than assert it."))
   (scalar model-mesh-part-num-vertices
           cna-lisp.internal.ffi::%model-mesh-part-get-num-vertices
           "`ModelMeshPart.NumVertices': how many vertices the part uses."))
+
+(defgeneric model-mesh-part-vertex-buffer (part)
+  (:documentation
+   "`ModelMeshPart.VertexBuffer': the buffer this part draws from.
+
+An ordinary VERTEX-BUFFER, not a model-only wrapper -- and the same object every
+time. One a program already owns answers that program's own object; one only the
+model owns gets a `:PARENT-OWNED' wrapper whose DISPOSE refuses."))
+
+(defmethod model-mesh-part-vertex-buffer ((part model-mesh-part))
+  (cna-lisp.internal:check-usable part "model-mesh-part-vertex-buffer")
+  (%part-vertex-buffer part))
+
+(defgeneric model-mesh-part-index-buffer (part)
+  (:documentation
+   "`ModelMeshPart.IndexBuffer': the indices this part draws with, on the same
+terms as VertexBuffer."))
+
+(defmethod model-mesh-part-index-buffer ((part model-mesh-part))
+  (cna-lisp.internal:check-usable part "model-mesh-part-index-buffer")
+  (%part-index-buffer part))
 
 (defgeneric model-mesh-part-effect (part)
   (:documentation
@@ -517,7 +566,19 @@ once when the graph is built and the last two are the objects built with it.
 `Tag' has a setter and is a managed slot; `Draw()' is DRAW-MODEL-MESH."))
 
 (defmethod %collection-element-model-name ((element model-mesh))
-  (model-mesh-name element))
+  (slot-value element '%name))
+
+(defmethod model-mesh-name :around ((mesh model-mesh))
+  (cna-lisp.internal:check-usable mesh "model-mesh-name")
+  (call-next-method))
+
+(defmethod model-mesh-bounding-sphere :around ((mesh model-mesh))
+  (cna-lisp.internal:check-usable mesh "model-mesh-bounding-sphere")
+  (call-next-method))
+
+(defmethod model-mesh-parent-bone :around ((mesh model-mesh))
+  (cna-lisp.internal:check-usable mesh "model-mesh-parent-bone")
+  (call-next-method))
 
 (defgeneric model-mesh-parts (mesh)
   (:documentation "`ModelMesh.MeshParts': the parts this mesh is drawn as."))
@@ -762,13 +823,13 @@ first `Bones.Count' elements are read."))
          (absolute (make-array count)))
     (dotimes (index count absolute)
       (let* ((bone (aref bones index))
-             (parent (model-bone-parent bone)))
+             (parent (%bone-parent bone)))
         (setf (aref absolute index)
               (if (null parent)
                   (aref locals index)
                   (microsoft.xna.framework:matrix-multiply
                    (aref locals index)
-                   (aref absolute (model-bone-index parent)))))))))
+                   (aref absolute (slot-value parent '%index)))))))))
 
 (defgeneric copy-absolute-bone-transforms-to (model destination)
   (:documentation

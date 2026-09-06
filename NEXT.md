@@ -77,7 +77,7 @@ ABI to be produced against:
 | CFFI-vs-recorded layout check | 0 disagreements |
 | Structural verification | **0 disagreement diagnostics** |
 | Prose consistency | every generated fact and block matches the reports |
-| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: every kind its registry requires (<!-- generated:rasterizer proof count=8 -->) |
+| Rasterizer lane | `tools/qualification/rasterizer.sh` against a SOFTWARE-renderer library: every kind its registry requires (<!-- generated:rasterizer proof count=9 -->) |
 | Template canary | exactly 60/60 and 600/600 updates and draws |
 | Audio, unavailable branch | a driver that does not exist: no device, and every route needing one refused with `NO-AUDIO-HARDWARE-ERROR` |
 | Audio, streaming unavailable branch | the same driver: `DynamicSoundEffectInstance`'s constructor **succeeded** anyway and took a buffer, and the refusal arrived at `Play`. Recorded because it is CNA's asymmetry with `SoundEffect`, not asserted away |

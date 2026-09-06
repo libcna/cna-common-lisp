@@ -194,7 +194,7 @@ init only adds nested codec submodules this build disables anyway.
 | Lane | Renderer | What it proves |
 | --- | --- | --- |
 | `Native` | `HEADLESS` | the lifecycle ran, handles were valid, and draw commands were submitted and accepted. **Nothing about pixels**, and the back-buffer readback refuses by name rather than answering zeroes. |
-| `Rasterizer` | `SOFTWARE` | the same suite, plus <!-- generated:rasterizer proof count=8 --> separate kinds of pixel proof — see below. |
+| `Rasterizer` | `SOFTWARE` | the same suite, plus <!-- generated:rasterizer proof count=9 --> separate kinds of pixel proof — see below. |
 
 The rasterizer lane's proofs are kept apart because they are different claims,
 and one of them used to be asserted on the strength of the other:
@@ -211,6 +211,7 @@ and one of them used to be asserted on the strength of the other:
 | `stock-effect` | clear, make an `AlphaTestEffect` (then a `SkinnedEffect`), apply its pass, draw the same clip-space triangle through it, read inside and outside | **each is a usable draw effect**: its technique graph, its pass and the draw through it all work, and the triangle's own colour lands where its geometry is. **Not** the alpha test and **not** skinning — `docs/limitations.md` measures why neither is reachable under this renderer |
 | `loaded-text` | the same `"AB"` draw, with the `SpriteFont` obtained through `ContentManager.Load<SpriteFont>` from a `.cnj` descriptor on disk — no test-only producer anywhere in the path — and asserted at the same coordinates as the hand-built font | **the public content path yields a font that draws the same pixels**: the descriptor, the loader, the glyph table CNA hands back and the layout all agree with the font the suite builds itself. A descriptor that drifted from the suite's glyph rows would put a glyph somewhere else and fail |
 | `text` | the same with `"A\nA"` | the line advance is `LineSpacing` (12) and not the glyph height (8): the second line's glyph reads red twelve rows down, and the four rows between the two eight-row glyphs stay the clear colour, which an advance of 8 would have filled |
+| `model` | clear, load `three-bone-triangles` through `ContentManager.Load<Model>`, replace each mesh part's effect with one `BasicEffect` (`VertexColorEnabled` on, lighting off), call `ModelMesh.Draw` on both meshes, and read three points inside each triangle and four outside both | **a loaded model's own geometry rasterises**: the vertex and index buffers the *model* owns feed the pipeline through the three calls `ModelMeshPart.Draw` makes, and the two meshes are **two colours**, so a pixel says which mesh drew it — one mesh drawing twice, or neither drawing, reads differently from both drawing. The vertices are clip-space, so World, View and Projection stay at identity and no matrix setter and therefore no optional shim takes part. The effect is replaced first because a model still carrying the one its loader published cannot be drawn at all; `docs/limitations.md` measures why |
 
 The textures are **generated**, not drawn:
 `tools/qualification/make-pixel-fixtures.py` states every texel in source, so the
@@ -226,7 +227,7 @@ script, the script's own loop, and the prose — and the three disagreed: the
 comment said seven, the loop required eight, and one document still said four.
 
 <!-- generated-block:rasterizer-proof-kinds -->
-8 kinds -- `clear`, `sprite`, `primitive`, `text`, `loaded-text`, `stock-effect`, `render-target` and `render-target-data`.
+9 kinds -- `clear`, `sprite`, `primitive`, `text`, `loaded-text`, `stock-effect`, `render-target`, `render-target-data` and `model`.
 <!-- /generated-block:rasterizer-proof-kinds -->
 
 <!-- generated-block:rasterizer-proofs -->
@@ -240,6 +241,7 @@ comment said seven, the loop required eight, and one document still said four.
 | `stock-effect` | a pass applied through an AlphaTestEffect and through a SkinnedEffect made a primitive draw legal and covered the right pixels -- that they are usable draw effects, and nothing about the alpha test or about skinning, neither of which this renderer applies to the geometry these tests can give it |
 | `render-target` | a clear into a bound RenderTarget2D left the back buffer untouched, and the target's own contents then reached the back buffer through the texture path -- the first evidence here that does not depend on the back-buffer readback being the only way to see a pixel |
 | `render-target-data` | every texel of a bound-and-cleared RenderTarget2D read back through Texture2D.GetData -- which reads a texture and not a back buffer, so it is the one pixel claim here that does not depend on GetBackBufferData at all |
+| `model` | a Model loaded through ContentManager.Load<Model>, whose mesh geometry lives in a VertexBuffer and an IndexBuffer the model owns, reached the back buffer through ModelMesh.Draw -- each of its two meshes painting its own colour on the pixels its own triangle covers, and neither on the other's |
 <!-- /generated-block:rasterizer-proofs -->
 
 So the lane cannot pass on a clear alone, the sprite path cannot stand in for the

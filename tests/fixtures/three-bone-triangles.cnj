@@ -18,6 +18,28 @@
         0.0,
         1.0,
         0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "name": "Arm",
+      "parent": 0,
+      "transform": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
         10.0,
         0.0,
         0.0,
@@ -25,8 +47,8 @@
       ]
     },
     {
-      "name": "Child",
-      "parent": 0,
+      "name": "Hand",
+      "parent": 1,
       "transform": [
         2.0,
         0.0,
@@ -50,26 +72,21 @@
   "meshes": [
     {
       "name": "LeftTriangle",
-      "parentBone": 0,
-      "vertices": "two-bone-quads-verts.bin",
-      "indices": "two-bone-quads-index.bin",
+      "parentBone": 1,
+      "vertices": "three-bone-triangles-left-verts.bin",
+      "indices": "three-bone-triangles-left-index.bin",
       "vertexStride": 16,
-      "vertexCount": 3,
-      "startIndex": 0,
-      "primitiveCount": 1,
-      "effect": "BasicEffect"
+      "effect": "BasicEffect",
+      "vertexColorEnabled": true
     },
     {
       "name": "RightTriangle",
-      "parentBone": 1,
-      "vertices": "two-bone-quads-verts.bin",
-      "indices": "two-bone-quads-index.bin",
+      "parentBone": 2,
+      "vertices": "three-bone-triangles-right-verts.bin",
+      "indices": "three-bone-triangles-right-index.bin",
       "vertexStride": 16,
-      "vertexCount": 3,
-      "vertexOffset": 3,
-      "startIndex": 3,
-      "primitiveCount": 1,
-      "effect": "BasicEffect"
+      "effect": "BasicEffect",
+      "vertexColorEnabled": true
     }
   ]
 }

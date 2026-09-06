@@ -19874,7 +19874,7 @@
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "object"
+            "bone"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -19887,7 +19887,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": null
+          "documentation": "`ModelBone.Parent': the bone this one hangs off, or NIL for the root.\n\nThe parent **object**, not a fresh view of it: CNA answers a new handle on every\nread, so the index is resolved through the model's map. `(eq (model-bone-parent\nchild) root)' is what XNA guarantees and what this preserves."
         },
         {
           "name": "model-bone-transform",
@@ -20250,7 +20250,7 @@
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "object"
+            "part"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -20263,7 +20263,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": null
+          "documentation": "`ModelMeshPart.IndexBuffer': the indices this part draws with, on the same\nterms as VertexBuffer."
         },
         {
           "name": "model-mesh-part-num-vertices",
@@ -20334,7 +20334,7 @@
           "macro": false,
           "generic": true,
           "lambda_list": [
-            "object"
+            "part"
           ],
           "keywords": [],
           "setf_fbound": false,
@@ -20347,7 +20347,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": null
+          "documentation": "`ModelMeshPart.VertexBuffer': the buffer this part draws from.\n\nAn ordinary VERTEX-BUFFER, not a model-only wrapper -- and the same object every\ntime. One a program already owns answers that program's own object; one only the\nmodel owns gets a `:PARENT-OWNED' wrapper whose DISPOSE refuses."
         },
         {
           "name": "model-mesh-part-vertex-offset",

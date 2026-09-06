@@ -97,7 +97,7 @@ different claims:
   the test says which happened instead of quietly proving nothing.
 
 `tools/qualification/rasterizer.sh` requires
-<!-- generated:rasterizer proof count=8 --> kinds of proof and fails when any is
+<!-- generated:rasterizer proof count=9 --> kinds of proof and fails when any is
 absent — and fails as well when a run produces a kind the registry does not name,
 so neither half can drift. The required set is
 `tools/qualification/rasterizer-proofs.json`; `docs/qualification.md` renders it.

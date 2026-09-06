@@ -206,9 +206,47 @@
 ;;; for one name would be two objects for one name and two graphs to keep in step.
 ;;; So `%COMMIT-LOADED-ASSET' caches, and a second `Load<Model>' never reaches CNA.
 
+(defparameter *model-load-abi-defect*
+  (cna-lisp.internal:encode-abi-version 0 21 0)
+  "The one admitted ABI on which `Load<Model>' cannot be offered at all.
+
+**Measured, and it is a process death rather than a refusal.** On CNA 0.21.0,
+`cna_model_destroy' applied to a model that came from
+`cna_content_manager_load_model' is a null dereference at offset 0x490 -- so a
+loaded model can never be released. Taking a mesh or a part view first only
+defers the fault to `cna_game_destroy'. It is fixed in 0.22.0, where the same
+sequence disposes cleanly; both were measured with the same fixture and the same
+binding.
+
+There is no sound fallback. Leaking the handle is not one: CNA refuses to destroy
+a game that still owns a model, so the program would get a game that cannot shut
+down instead of a crash, which is a worse failure and further from its cause. So
+the loader refuses on 0.21.0, before anything is created, and names the defect.
+
+A binding may hand a program a refusal. It may not hand it a call that kills the
+process.")
+
+(defun %refuse-model-load-on-defective-abi (operation)
+  (let ((loaded (cna-lisp.internal:loaded-abi-version)))
+    (when (eql loaded *model-load-abi-defect*)
+      (error 'microsoft.xna.framework:cna-not-supported-error
+             :operation operation
+             :object-type 'microsoft.xna.framework.content:content-manager
+             :format-control
+             "Load<Model> is not offered on CNA ABI ~a. `cna_model_destroy' on a ~
+              model that route produced is a null dereference there -- measured, at ~
+              offset 0x490 -- so a loaded model could never be released and the ~
+              process would die at the disposal rather than here. It is fixed in ~
+              0.22.0; run against a 0.22.0 library and this member works. Every ~
+              other Model member works on both: only the loaded model's ~
+              *destruction* is defective."
+             :format-arguments
+             (list (cna-lisp.internal:format-abi-version loaded))))))
+
 (%define-asset-loader (microsoft.xna.framework.graphics:model manager asset-name)
   (let* ((operation "load-asset 'model")
          (game (%loading-game manager operation)))
+    (%refuse-model-load-on-defective-abi operation)
     (cna-lisp.internal:with-native-rollback (record)
       (let ((model (make-instance 'microsoft.xna.framework.graphics::model
                                   :%adopted-handle
