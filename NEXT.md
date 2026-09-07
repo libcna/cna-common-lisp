@@ -1152,37 +1152,80 @@ audit had left open:
   nothing; the replaced facade is only unreferenced, so a program can put it
   back. That is the answer to the question the audit said had to be *chosen*
   rather than fallen into.
-* **One requirement the audit stated does not exist.** It said the setter must
+* **One requirement the audit stated did not exist yet.** It said the setter must
   make `DeviceDisposing` reach the assigned manager. XNA's private handler is
-  real and `HookDeviceEvents` subscribes it, but **this binding has never
-  implemented that hookup at all**, so there was nothing to redirect. It is a
-  separate piece of work about the game's device-event wiring and it was not
-  done here -- deliberately, because it is not this member.
+  real and `HookDeviceEvents` subscribes it, but the binding had not implemented
+  that hookup at all, so there was nothing to redirect. It was recorded as
+  separate work -- and **it has since been done**, below. The setter needed no
+  change, which is what "separate" meant: the handler reads the field, and a
+  field holding a reference is all it needs.
+
+### Both of the two open items are now closed too
+
+**`Game`'s private device-event wiring is implemented and qualified.** The pinned
+`HookDeviceEvents` was re-read in full, and the finding that mattered was a
+measurement rather than a transcription: CNA's native game already drives
+`Game.UnloadContent` at the point XNA's private handler calls it, so the binding
+supplies `ContentManager.Unload` alone and the pair lands in XNA's order. Eight
+kinds of evidence on all three admitted ABIs, including a real `SpriteFont` and
+its atlas reaching their disposed state, the **current** `Game.Content` being
+chosen over a replaced one, and the framework's listener running in subscription
+order between two program handlers. **No compatibility cell moved**, which is
+correct: none of the four handlers is a public XNA member. One adjacent handler
+is deliberately still missing and is measured rather than guessed at --
+`DeviceCreated -> LoadContent` after a *later* device re-creation; see
+`docs/limitations.md`.
+
+**The four-shim contradiction is resolved.** The rule -- a member is `complete`
+when it is reachable in every supported installation, not merely in the fully
+equipped one -- is written down in `docs/compatibility.md` and applied uniformly,
+which moved `BasicEffect.World`, `.View` and `.Projection` from `complete` to
+`partial` beside `GraphicsDevice.Viewport`. It was settled by the project's own
+precedent rather than by preference: `ModelBone.Transform` avoided a fifth shimmed
+route specifically so it could be "complete rather than packaging-dependent".
+Their category is the new `PACKAGING_ABI_BRIDGE_LIMIT`, because what must change
+is packaging and not the public API.
 
 ### What is next
 
-**Nothing inside the selected profile is both unblocked and worth doing**, which
-is where the frontier stood before the audit and is where it stands again -- this
-time with 27 partial members each backed by evidence re-read against all three
-admitted ABIs. So the next task is one of two kinds, and they are measured
-differently:
+**Nothing inside the selected profile is both unblocked and worth doing.**
+`IMPLEMENTABLE_AND_HIGH_VALUE` is empty, and it is empty because the work was
+done: the two members the audit found are implemented, the lifecycle hole it
+uncovered is closed, and the classification contradiction it declined to settle
+is settled. The frontier is 53 members, each with a concrete reason in one of
+eight categories.
 
-1. **A profile expansion.** The candidates are below and none has changed; the
-   honest reading is still that each is blocked on evidence rather than on
-   difficulty.
-2. **The one inconsistency this audit found and did not resolve** -- the four
-   shimmed members, of which one is reported partial and three complete. That is
-   a decision about what "complete" means when an optional build artifact is
-   absent, and it moves three members reported complete whichever way it goes. It
-   is the smallest genuinely open question in the frontier.
+So the next task is a **profile expansion**, and the candidates are below. Each
+is blocked on evidence rather than on difficulty, and the evidence was re-measured
+on 2026-09-07 rather than carried forward:
 
-A third possibility, smaller than either and not a frontier member: implement
-`Game`'s `DeviceDisposing` hookup, which the `Game.Content` work found missing.
+**Recommendation: `Media` / `MediaLibrary`.** It is the only candidate whose
+blocker is a *test-environment* question rather than a permanent one, and it is
+the only one that closes members already in the selection -- `Song`'s `Artist`,
+`Album` and `Genre`, three of the 23 missing. Its cost is real (15 types, ~142
+members, 148 routes) and its open question is narrow and answerable: whether a CI
+runner can be made to enumerate a non-empty library, or whether the closure is
+honest with enumeration proved empty-only. Answer that question first, in a
+probe, before committing to the closure -- the same order the Storage and Model
+closures used.
 
-### The candidates, if neither is taken
+The other three stay ruled out, and none of their reasons changed:
 
-Unchanged, and none of them is the recommendation while a member is still
-implementable inside the selection.
+* **`Texture3D`** -- re-measured on 2026-09-07 across all six combinations
+  (HEADLESS and SOFTWARE x 0.21.0, 0.22.0, 0.23.0): `cna_texture3d_create`
+  answers `CNA_RESULT_NOT_SUPPORTED` every time, with the HiDef profile so the
+  refusal is not the profile's doing. Neither qualification renderer can
+  construct one at all, so every member would be unreachable in CI.
+* **`Video`** -- still an optional decoder, so still build-dependent.
+* **XACT** -- still needs an authoring-tool fixture that cannot be produced here.
+
+Do not implement any of them without first measuring the blocker again.
+
+### The candidates, measured
+
+Re-measured on 2026-09-07 rather than carried forward. `MediaLibrary` is the
+recommendation above; the other three stay ruled out for the reasons in their
+rows.
 
 | Candidate | Types | Members | New routes | Closes, in selected types | Deterministic CI | User value | Complexity |
 | --- | ---: | ---: | ---: | --- | --- | --- | --- |

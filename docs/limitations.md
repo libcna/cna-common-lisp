@@ -600,6 +600,54 @@ the graphics device `cna_content_manager_create` takes; a game's own manager is 
 facade built by `MICROSOFT.XNA.FRAMEWORK:CONTENT` and by nothing else, and
 refuses both that device and a root directory at construction.
 
+## Game's private device-event wiring, and the one handler still missing
+
+XNA's `Game` subscribes to `IGraphicsDeviceService` on its own behalf, from the
+private `HookDeviceEvents`, and until 2026-09-07 this binding implemented none of
+it. Nothing in the compatibility report could say so: not one of the four
+handlers that method installs is a public XNA member, so a game whose graphics
+device was disposed kept every asset its content manager had loaded and the
+scoreboard read 100 % for every cell involved. It is implemented now, and
+`tools/qualification/game-device-events.sh` qualifies it on all three admitted
+ABIs.
+
+The pinned flow is transcribed in full in `src/runtime/game-device-events.lisp`.
+Two of XNA's four handlers are deliberately **not** reproduced here, and both
+omissions are measurements rather than shortcuts.
+
+**`DeviceDisposing` is half CNA's already.** XNA's handler is
+`this.content.Unload(); this.UnloadContent();`. Disposing a
+`GraphicsDeviceManager` on ABI 0.23.0 produces, in order:
+
+    EVENT device-disposing
+    LIFECYCLE unload-content        <- CNA's own callback
+    EVENT disposed
+
+so CNA's native game already drives `Game.UnloadContent` at exactly the point
+XNA's handler calls it. The binding supplies `ContentManager.Unload` alone, and
+the pair lands in XNA's order because the event precedes the callback. Calling
+both would run the program's overridable method twice for one device disposal.
+
+**`DeviceCreated -> LoadContent` is the one that is still missing, and it is a
+narrower hole than it looks.** In XNA that handler exists because
+`Game::RunGame` calls `CreateDevice()` *before* `Initialize()`, so the first
+device creation happens while nothing is subscribed and `Initialize`'s tail calls
+`LoadContent` once; the handler is what reloads content after a *later* device
+re-creation. CNA reproduces the ordinary path natively — the measured sequence is
+`device-created`, then `initialize`, then `load-content` — so wiring the handler
+would double `LoadContent` on every ordinary run.
+
+What is genuinely not covered is the rare path: two `CREATE-DEVICE` calls raise
+`created`, `resetting`, `reset`, `created` and **no** `load-content`, so a
+program that re-creates its device does not get its content reloaded. Closing
+that needs a way to tell a first creation from a later one that does not depend
+on CNA's own callback ordering, which is a separate piece of work and is recorded
+here rather than guessed at. It is not the same invariant as the unload one, and
+wiring it blind would break the common path to fix the rare one.
+
+`DeviceResetting` and `DeviceReset` are a single `ret` in the pinned assembly and
+are empty here too.
+
 ## The component engine runs, and two things around it do not
 
 `GameComponent`, `DrawableGameComponent`, `GameComponentCollection`,
