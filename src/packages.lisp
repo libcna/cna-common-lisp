@@ -241,6 +241,7 @@
    #:synchronize-with-vertical-retrace
    #:on-device-created #:on-device-disposing
    #:on-device-reset #:on-device-resetting
+   #:find-best-device #:can-reset-device #:rank-devices
    ;; --- events ------------------------------------------------------------
    #:add-activated-handler #:remove-activated-handler
    #:add-deactivated-handler #:remove-deactivated-handler

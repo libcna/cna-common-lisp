@@ -332,3 +332,261 @@ made at construction, where both sides are supposed to agree."
        (cna-lisp.internal.ffi::%graphics-device-manager-copy-type-name
         handle buffer capacity out))
      "clr-type-name")))
+
+;;; --- the protected device-selection surface ----------------------------------
+;;;
+;;; `FindBestDevice', `CanResetDevice' and `RankDevices' are `family hidebysig
+;;; newslot virtual' -- protected virtual -- and in XNA they are called from
+;;; `ChangeDevice(bool)', which is the private method behind both `ApplyChanges'
+;;; and device creation:
+;;;
+;;;     GraphicsDeviceInformation best = FindBestDevice(forceCreate);
+;;;     game.Window.BeginScreenDeviceChange(best.PresentationParameters.IsFullScreen);
+;;;     if (!forceCreate && device != null) {
+;;;         OnPreparingDeviceSettings(this, new PreparingDeviceSettingsEventArgs(best));
+;;;         if (CanResetDevice(best)) { ... device.Reset(...) }
+;;;     }
+;;;
+;;; and `FindBestDevice' -> `FindBestPlatformDevice' -> `AddDevices' ->
+;;; `RankDevices(foundDevices)' -> `foundDevices[0]'.
+;;;
+;;; **All three are partial here, for two independent measured reasons**, and
+;;; both are worth stating because either alone would be enough.
+;;;
+;;; **1. No admitted CNA ABI has a seam to insert them into device creation.**
+;;; The three are `virtual' in CNA's own C++ (`GraphicsDeviceManager.hpp' declares
+;;; them so) and `grep' over `GraphicsDeviceManager.cpp' finds **no call site for
+;;; any of them** outside their own definitions: CNA's `CreateDevice' and
+;;; `ApplyChanges' go through `INTERNAL_CreateGraphicsDeviceInformation', which
+;;; calls none of the three. Nor is any of them exposed as a C route in 0.21.0,
+;;; 0.22.0 or 0.23.0. So a subclass may override these and call them, and the
+;;; override will not change which device is created. In XNA it would.
+;;;
+;;; **2. XNA's own bodies reach two members this binding reports missing.**
+;;; `AddDevices' reads `game.Window.Handle' and writes
+;;; `PresentationParameters.DeviceWindowHandle', and both are absent here for
+;;; reasons of their own -- CNA answers the window handle with
+;;; `CNA_RESULT_NOT_SUPPORTED' by design, "a native window handle is not something
+;;; the stable C boundary hands out". The candidate enumeration below is therefore
+;;; XNA's shape without XNA's window filtering, which is a different function of
+;;; the adapters and is described as one.
+;;;
+;;; They are implemented rather than left absent because the *members* are
+;;; genuinely useful and genuinely XNA-shaped -- `CanResetDevice' reproduces its
+;;; body exactly, and ranking a candidate list is a real operation a program can
+;;; do. What is not claimed is that overriding them changes anything the framework
+;;; does. `docs/limitations.md' carries the classification.
+
+(defgeneric can-reset-device (manager information)
+  (:documentation
+   "GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation).
+
+    (can-reset-device manager candidate)
+
+XNA's whole body, which is three instructions and one comparison:
+
+    device.GraphicsProfile == newDeviceInfo.GraphicsProfile
+
+-- true when the existing device's profile equals the candidate's, false
+otherwise. Nothing else is consulted. Notably it does **not** consider the back
+buffer, the format or the adapter, so a candidate that differs in every one of
+those is still resettable as long as the profile matches.
+
+Protected and virtual in XNA, so a subclass may override it, and a CLOS method is
+that override. **Partial**: no admitted CNA ABI calls this during device change,
+so an override does not affect whether a device is reset. See this file's comment
+on the device-selection surface.
+
+Refuses when there is no device yet, because XNA's body dereferences the field
+and would throw `NullReferenceException'; a condition naming the reason is the
+projection of that.")
+  (:method ((manager graphics-device-manager) information)
+    (cna-lisp.internal:check-usable manager "can-reset-device")
+    (check-type information graphics-device-information)
+    (let ((device (graphics-device manager)))
+      (unless device
+        (error 'cna-invalid-state-error
+               :operation "can-reset-device" :object-type 'graphics-device-manager
+               :format-control
+               "there is no graphics device to compare against. XNA reads
+                `device.GraphicsProfile' with no null test and throws
+                NullReferenceException here."))
+      (eq (microsoft.xna.framework.graphics:graphics-profile device)
+          (graphics-profile-of information)))))
+
+(defgeneric rank-devices (manager candidates)
+  (:documentation
+   "GraphicsDeviceManager.RankDevices(List<GraphicsDeviceInformation>).
+
+    (setf candidates (rank-devices manager candidates))
+
+**Answers the ranked sequence, and callers must use the answer.** XNA's signature
+returns void and sorts the caller's `List<T>' in place -- `RankDevicesPlatform' is
+`foundDevices.Sort(new GraphicsDeviceInformationComparer(this))' -- and
+`FindBestPlatformDevice' then takes `foundDevices[0]' from the list it passed in.
+A Common Lisp list cannot be reordered in place in a way a caller's variable would
+see, and `SORT' is permitted to destroy its argument, so this projection is
+explicit about both halves: the argument may be destroyed, and the ranked sequence
+is the return value. A caller that ignores the answer has ignored the ranking,
+which is exactly the failure a silent temporary copy would have hidden.
+
+A list stays a list and a vector stays a vector; `List<GraphicsDeviceInformation>'
+is not projected as a BCL type, for the reason no other generic collection here is.
+
+The order is XNA's `GraphicsDeviceInformationComparer', which is a private type
+and therefore not a member of anything -- see %RANK-DEVICE-CANDIDATES for the
+comparison it makes and which parts of it this binding can reproduce.
+
+Protected and virtual in XNA, so a subclass may override it. **Partial**: no
+admitted CNA ABI calls this during device change.")
+  (:method ((manager graphics-device-manager) candidates)
+    (cna-lisp.internal:check-usable manager "rank-devices")
+    (%rank-device-candidates manager candidates)))
+
+(defun %device-candidate-rank-key (manager information)
+  "The sort key XNA's private comparer orders candidates by, as far as it applies.
+
+`GraphicsDeviceInformationComparer.Compare' is a chain of tie-breaks, and this
+reproduces the ones whose inputs exist in this projection, in its order:
+
+  1. the higher `GraphicsProfile' first -- `HiDef' before `Reach';
+  2. the candidate whose `IsFullScreen' matches the manager's preference first;
+  3. the higher-ranked back-buffer format first, by the comparer's own
+     `RankFormat';
+  4. the higher `MultiSampleCount' first;
+  5. the candidate whose aspect ratio is closest to the preferred one, where the
+     comparer treats differences within `0.2' as a tie and falls back to the
+     preferred back-buffer size when none was set.
+
+The tie-breaks after those read `Adapter.CurrentDisplayMode' and the window
+handle, and the window half has no counterpart here; ranking stops where its
+inputs do rather than inventing an order."
+  (let* ((pp (presentation-parameters-of information))
+         (preferred-width (preferred-back-buffer-width manager))
+         (preferred-height (preferred-back-buffer-height manager))
+         (preferred-ratio
+           (if (and (plusp preferred-width) (plusp preferred-height))
+               (/ (float preferred-width 1.0f0) (float preferred-height 1.0f0))
+               (/ (float (graphics-device-manager-default-back-buffer-width) 1.0f0)
+                  (float (graphics-device-manager-default-back-buffer-height) 1.0f0))))
+         (width (microsoft.xna.framework.graphics:back-buffer-width pp))
+         (height (microsoft.xna.framework.graphics:back-buffer-height pp))
+         (ratio (if (plusp height)
+                    (/ (float width 1.0f0) (float height 1.0f0))
+                    preferred-ratio)))
+    (list (- (microsoft.xna.framework.graphics:graphics-profile-value
+              (graphics-profile-of information)))
+          (if (eq (not (microsoft.xna.framework.graphics:is-full-screen pp))
+                  (not (is-full-screen manager)))
+              0 1)
+          (- (%rank-surface-format
+              (microsoft.xna.framework.graphics:back-buffer-format pp)))
+          (- (microsoft.xna.framework.graphics:multi-sample-count pp))
+          ;; The comparer calls differences below 0.2 a tie, so the key is
+          ;; quantised to that step rather than being the raw distance.
+          (floor (abs (- ratio preferred-ratio)) 0.2f0))))
+
+(defun %rank-surface-format (format)
+  "The comparer's `RankFormat', as far as the selected profile's formats reach.
+
+XNA's private `RankFormat' walks a fixed preference order over the D3D9-era
+back-buffer formats. The three the selected profile can actually present are
+ranked in that relative order and everything else ranks below them, which is what
+the original's default arm does."
+  (case format
+    (:color 3)
+    (:bgr565 2)
+    (:bgra5551 1)
+    (t 0)))
+
+(defun %rank-device-candidates (manager candidates)
+  "Sort CANDIDATES by %DEVICE-CANDIDATE-RANK-KEY, best first. May destroy them."
+  (let ((keyed (map 'list (lambda (candidate)
+                            (cons (%device-candidate-rank-key manager candidate)
+                                  candidate))
+                    candidates)))
+    (let ((ranked (mapcar #'cdr (stable-sort keyed
+                                             (lambda (a b)
+                                               (loop for x in a for y in b
+                                                     do (cond ((< x y) (return t))
+                                                              ((> x y) (return nil)))
+                                                     finally (return nil)))
+                                             :key #'car))))
+      (if (listp candidates)
+          ranked
+          (map (type-of candidates) #'identity ranked)))))
+
+(defgeneric find-best-device (manager any-suitable-device)
+  (:documentation
+   "GraphicsDeviceManager.FindBestDevice(Boolean).
+
+    (find-best-device manager nil)   ; => a GRAPHICS-DEVICE-INFORMATION
+
+XNA's `FindBestPlatformDevice' in shape:
+
+  1. build a candidate for every adapter that supports the manager's profile;
+  2. if none and `PreferMultiSampling' is set, **clear it and try again** -- a
+     side effect on the manager, and one the IL really has: `set_PreferMultiSampling(false)';
+  3. if still none, refuse;
+  4. `RANK-DEVICES' the candidates -- the virtual one, so a subclass's override
+     runs here;
+  5. answer the first.
+
+ANY-SUITABLE-DEVICE is XNA's `anySuitableDevice', which there means \"do not
+restrict to adapters the game's window is on\". **This binding cannot make that
+restriction either way**: it needs `GameWindow.Handle', which is a missing member
+because CNA answers the window handle with `CNA_RESULT_NOT_SUPPORTED' by design.
+So the argument is accepted, is part of the member's shape, and does not change
+the answer -- which is why the member is reported partial rather than complete,
+alongside the seam reason this file's comment gives.
+
+Protected and virtual in XNA, so a subclass may override it. Nothing in any
+admitted CNA ABI calls it during device creation.")
+  (:method ((manager graphics-device-manager) any-suitable-device)
+    (declare (ignore any-suitable-device))
+    (cna-lisp.internal:check-usable manager "find-best-device")
+    (let ((candidates (%device-candidates manager)))
+      (when (and (null candidates) (prefer-multi-sampling manager))
+        (setf (prefer-multi-sampling manager) nil)
+        (setf candidates (%device-candidates manager)))
+      (unless candidates
+        (error 'cna-invalid-state-error
+               :operation "find-best-device" :object-type 'graphics-device-manager
+               :format-control
+               "no adapter supports the ~s profile. XNA throws
+                NoSuitableGraphicsDeviceException here, with the profile in the message."
+               :format-arguments (list (graphics-profile manager))))
+      (let ((ranked (rank-devices manager candidates)))
+        (unless (and ranked (plusp (length ranked)))
+          (error 'cna-invalid-state-error
+                 :operation "find-best-device" :object-type 'graphics-device-manager
+                 :format-control
+                 "ranking left no candidate. XNA throws NoSuitableGraphicsDeviceException
+                  here too, with a different message, because a RankDevices override may
+                  empty the list."))
+        (elt ranked 0)))))
+
+(defun %device-candidates (manager)
+  "One candidate per adapter that supports the manager's profile, XNA's fields set.
+
+`AddDevices' builds each candidate from the manager's own preferences -- the
+profile, the full-screen flag, the multisample preference and the presentation
+interval -- and this sets the same ones. The two it also sets are
+`PresentationParameters.DeviceWindowHandle' and the window-on-adapter filter, and
+both are the missing window handle."
+  (let ((profile (graphics-profile manager)))
+    (loop for adapter in (microsoft.xna.framework.graphics:graphics-adapter-adapters)
+          when (microsoft.xna.framework.graphics:graphics-adapter-is-profile-supported
+                adapter profile)
+            collect (let* ((info (make-instance 'graphics-device-information
+                                                :adapter adapter
+                                                :graphics-profile profile))
+                           (pp (presentation-parameters-of info)))
+                      (setf (microsoft.xna.framework.graphics:multi-sample-count pp)
+                            (if (prefer-multi-sampling manager) 16 0)
+                            (microsoft.xna.framework.graphics:is-full-screen pp)
+                            (is-full-screen manager)
+                            (microsoft.xna.framework.graphics:presentation-interval pp)
+                            (if (synchronize-with-vertical-retrace manager)
+                                :one :immediate))
+                      info))))
