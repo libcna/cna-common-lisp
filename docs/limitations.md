@@ -2866,8 +2866,9 @@ cannot make in one image:
   surface exists at all.
 
 It also runs `examples/storage-consumer.lisp` under the same mechanical audit the
-other consumers get, plus one no other consumer can pass: **it never constructs a
-`GAME`**.
+other consumers get, plus one that until the owned-device closure no other
+consumer could pass: **it never constructs a `GAME`**.
+`examples/owned-graphics-device-consumer.lisp` is the second, and it renders.
 
 **Bytes that cross a process boundary have reached the filesystem.** The
 strongest claim this evidence supports is:
