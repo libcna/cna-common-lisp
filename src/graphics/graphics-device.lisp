@@ -1,15 +1,37 @@
 ;;;; graphics-device.lisp --- Microsoft.Xna.Framework.Graphics.GraphicsDevice.
 ;;;;
-;;;; CNA lends the graphics device only from inside a game lifecycle callback,
-;;;; and the handle it lends is valid only until that callback returns. So this
-;;;; class stores no handle at all: it is a parent-owned facade over the game,
-;;;; and every operation resolves a fresh borrowed handle at the moment it is
-;;;; performed. Keeping the borrowed handle in a slot would be the classic bug
-;;;; -- it would look like it worked, right up to the first use after the frame
-;;;; that produced it.
+;;;; **One public type, two native lifetimes.** XNA permits both and CNA supplies
+;;;; both, and the whole shape of this file is keeping them behind one
+;;;; `GraphicsDevice' rather than two classes a consumer would have to choose
+;;;; between. `%DEVICE-LIFETIME-MODE' names which one an instance has:
 ;;;;
-;;;; A device operation attempted outside a callback is refused by CNA-Lisp with
-;;;; a CNA-SCOPE-ERROR before anything reaches the ABI.
+;;;;   :PARENT-OWNED   the game's device. CNA lends it only from inside a
+;;;;                   lifecycle callback and the borrowed handle is valid only
+;;;;                   until that callback returns, so this mode stores **no
+;;;;                   handle at all** and resolves a fresh one per operation.
+;;;;                   Keeping the borrowed handle in a slot would be the classic
+;;;;                   bug: it would look like it worked, right up to the first
+;;;;                   use after the frame that produced it. An operation
+;;;;                   attempted outside a callback is refused with a
+;;;;                   CNA-SCOPE-ERROR before anything reaches the ABI, and the
+;;;;                   caller may not dispose it -- the game owns it.
+;;;;
+;;;;   :OWNED          a device the caller made with XNA's own constructor,
+;;;;                   outside any game. It holds a persistent handle from
+;;;;                   `cna_graphics_device_create', needs no callback scope, is
+;;;;                   disposed by the caller, and owns its own graphics
+;;;;                   resources rather than lending the game's.
+;;;;
+;;;; `%RESOLVE-DEVICE-HANDLE' is the single seam between the two: every member
+;;;; below goes through it and none of them knows which mode it has. The two
+;;;; places where XNA's *own* behaviour differs -- `Adapter' and
+;;;; `PresentationParameters', which an owned device can answer exactly from what
+;;;; its constructor was given and a facade can only approximate from CNA -- say
+;;;; so at the member rather than here.
+;;;;
+;;;; Everything CNA does under a caller-created device was measured before any of
+;;;; this was written; `tools/qualification/owned-device-matrix.sh' is that
+;;;; measurement and `docs/compatibility.md' records what it found.
 
 (in-package #:microsoft.xna.framework.graphics)
 
@@ -36,56 +58,120 @@
    ;; no handle, so the subscriptions live here and the *game* releases them:
    ;; CNA requires every registration released before `cna_game_destroy'
    ;; succeeds, and the game is what performs that destroy.
-   (event-handlers :initform '() :accessor microsoft.xna.framework::%event-handlers))
+   (event-handlers :initform '() :accessor microsoft.xna.framework::%event-handlers)
+   ;; What XNA's constructor stores, and only an :OWNED device has it. The
+   ;; adapter is `pCurrentAdapter', assigned `ldarg.1' -- the caller's own
+   ;; object, by reference -- and the parameters are `pPublicCachedParams', the
+   ;; second of the constructor's two `PresentationParameters::Clone()' calls.
+   ;; A :PARENT-OWNED facade leaves all three NIL and asks CNA instead, because
+   ;; there was no constructor call here for it to remember.
+   (%owned-adapter :initform nil :reader %device-owned-adapter)
+   (%owned-profile :initform nil :reader %device-owned-profile)
+   (%owned-presentation-parameters :initform nil
+                                   :reader %device-owned-presentation-parameters))
   (:default-initargs :ownership :parent-owned)
   (:documentation
-   "The game's graphics device. Instances are produced by the runtime and reached
-through MICROSOFT.XNA.FRAMEWORK:GRAPHICS-DEVICE; a consumer does not create one.
+   "Microsoft.Xna.Framework.Graphics.GraphicsDevice: a device to draw through.
 
-Every operation on a graphics device is legal only inside a game lifecycle
-method -- LOAD-CONTENT, UPDATE, DRAW and their neighbours -- because that is the
-only time CNA lends the device out."))
+**There are two ways to have one, and they are one type because XNA has one
+type.**
+
+The game's device is reached through MICROSOFT.XNA.FRAMEWORK:GRAPHICS-DEVICE. A
+consumer does not create it and may not dispose it; every operation on it is
+legal only inside a game lifecycle method -- LOAD-CONTENT, UPDATE, DRAW and their
+neighbours -- because that is the only time CNA lends the device out.
+
+A device of your own is made with XNA's constructor, needs no game at all, and
+is yours to dispose:
+
+    (make-instance \='graphics-device
+                   :adapter adapter
+                   :graphics-profile :reach
+                   :presentation-parameters parameters)
+
+It works outside every callback, owns the graphics resources created against it,
+and coexists with a game's device and with other devices of its own kind. See
+DISPOSE, and `docs/ownership-and-lifetimes.md'."))
+
+(defun %device-lifetime-mode (device)
+  "Which of the two native lifetimes DEVICE has: :PARENT-OWNED or :OWNED.
+
+The private discriminator this whole file turns on. It is read from the
+ownership token NATIVE-OBJECT already carries rather than stored twice, so the
+two can never disagree."
+  (if (eq (cna-lisp.internal:ownership-of device) :owned) :owned :parent-owned))
+
+(defun %owned-device-p (device)
+  "True when DEVICE is one the caller made and owns."
+  (eq (%device-lifetime-mode device) :owned))
 
 (defmethod microsoft.xna.framework::%check-disposable ((device graphics-device))
   "A game's graphics device is lent, not owned, and disposing it is refused.
 
-XNA's `GraphicsDevice.Dispose' is reported *missing* by the compatibility report
-for the same reason this refuses: a CNA-Lisp program never constructs a device,
-so it never has one to dispose. Without this method the refusal was a
-NO-APPLICABLE-METHOD on DESTROY-NATIVE raised from inside DISPOSE's
-UNWIND-PROTECT, which invalidated the facade on the way out and left the game
-with a device it could no longer draw through."
-  (declare (ignorable device))
-  (error 'microsoft.xna.framework:cna-ownership-error
-         :operation "dispose" :object-type 'graphics-device
-         :format-control
-         "a game's graphics device is lent by CNA for the duration of a callback and is ~
-          released with its game; there is no handle here to dispose. Dispose the game ~
-          instead. This device is untouched and remains usable."
-         :format-arguments '()))
+**Only the parent-owned facade refuses.** A device the caller constructed is the
+caller's to dispose -- that is what makes it a different lifetime rather than a
+different type -- so this method lets an :OWNED device through and DISPOSE goes
+on to do XNA's disposal on it.
+
+The refusal has to be here rather than in DESTROY-NATIVE, and that was a real
+bug: DISPOSE invalidates through an UNWIND-PROTECT, so a refusal raised from the
+destruction still ran the invalidation on the way out and left the game with a
+device it could no longer draw through. CNA agrees with the refusal from its own
+side -- `cna_graphics_device_dispose' answers NOT_SUPPORTED for a borrowed
+handle -- but the refusal is made here, before anything is touched."
+  (unless (%owned-device-p device)
+    (error 'microsoft.xna.framework:cna-ownership-error
+           :operation "dispose" :object-type 'graphics-device
+           :format-control
+           "a game's graphics device is lent by CNA for the duration of a callback and is ~
+            released with its game; there is no handle here to dispose. Dispose the game ~
+            instead, or construct a GRAPHICS-DEVICE of your own, which is yours to ~
+            dispose. This device is untouched and remains usable."
+           :format-arguments '())))
 
 (defun %resolve-device-handle (device operation)
-  "The borrowed native handle of DEVICE, valid for this operation only."
+  "The native handle to perform OPERATION on DEVICE through.
+
+**The one seam between the two lifetimes.** Every device member goes through it,
+which is why none of them has to be written twice.
+
+For an :OWNED device the handle is the device's own and persists, so there is
+nothing to resolve beyond the checks: no callback scope is required, and the
+measurement says CNA agrees -- clear, present, viewport get and set, texture
+create and bind all answer SUCCESS on a caller-created device with no game in
+the process at all.
+
+For the :PARENT-OWNED facade the handle is the game's, borrowed, and valid only
+until the current callback returns. It is fetched fresh here and never stored.
+
+The owner-thread check runs *before* either, deliberately. CNA's own answer to a
+wrong-thread call on an owned device is INVALID_HANDLE from the getters and
+THREAD only from destroy -- measured -- and neither is what a caller who used
+the wrong thread needs to read."
   (cna-lisp.internal:check-live device operation)
   (cna-lisp.internal:check-owner-thread
    (cna-lisp.internal:owner-thread-of device) operation :object-type 'graphics-device)
-  (unless (cna-lisp.internal:in-callback-scope-p)
-    (error 'microsoft.xna.framework:cna-scope-error
-           :operation operation
-           :object-type 'graphics-device
-           :format-control
-           "~a is only legal inside a game lifecycle method. CNA lends the graphics device ~
-            for the duration of a callback and no longer, so there is no valid device ~
-            handle outside one. Do graphics work in LOAD-CONTENT, DRAW or another ~
-            lifecycle method."
-           :format-arguments (list operation)))
-  (let ((game (cna-lisp.internal:owner-of device)))
-    (cffi:with-foreign-object (out :uint64)
-      (cna-lisp.internal:check-result
-       (cna-lisp.internal.ffi::%game-get-graphics-device
-        (cna-lisp.internal:handle-of game) out)
-       operation :object-type 'graphics-device)
-      (mem-ref-handle out))))
+  (if (%owned-device-p device)
+      (cna-lisp.internal:handle-of device)
+      (progn
+        (unless (cna-lisp.internal:in-callback-scope-p)
+          (error 'microsoft.xna.framework:cna-scope-error
+                 :operation operation
+                 :object-type 'graphics-device
+                 :format-control
+                 "~a is only legal inside a game lifecycle method. CNA lends the game's ~
+                  graphics device for the duration of a callback and no longer, so there ~
+                  is no valid device handle outside one. Do graphics work in LOAD-CONTENT, ~
+                  DRAW or another lifecycle method -- or construct a GRAPHICS-DEVICE of ~
+                  your own, which needs no game and no callback."
+                 :format-arguments (list operation)))
+        (let ((game (cna-lisp.internal:owner-of device)))
+          (cffi:with-foreign-object (out :uint64)
+            (cna-lisp.internal:check-result
+             (cna-lisp.internal.ffi::%game-get-graphics-device
+              (cna-lisp.internal:handle-of game) out)
+             operation :object-type 'graphics-device)
+            (mem-ref-handle out))))))
 
 (defun mem-ref-handle (pointer)
   (cffi:mem-ref pointer :uint64))
@@ -334,10 +420,57 @@ and everything else work regardless."))
   (values))
 
 (defun device-handle-for-child (device operation)
-  "The borrowed device handle a child resource is created against.
+  "The device handle a child resource is created against.
 
 Exported to the rest of CNA-Lisp only; a consumer never sees it."
   (%resolve-device-handle device operation))
+
+(defun native-resource-owner-for-device (device)
+  "The NATIVE-OBJECT a resource created against DEVICE becomes a child of.
+
+**The one place that answers this question, and there are two answers.** CNA has
+two native ownership graphs under XNA's one public hierarchy:
+
+    game   -> borrowed device facade -> the game's graphics resources
+    caller -> owned device           -> that device's graphics resources
+
+For the facade the owner is the *game*: CNA requires every graphics resource
+destroyed before `cna_game_destroy' succeeds, so the game is what has to know
+about them. For an owned device the owner is the *device*, and the measurement
+says CNA means it -- `cna_graphics_device_get_tracked_resource_count' rises and
+falls per device, and `cna_game_destroy' succeeds with an owned device and its
+resources still live.
+
+Every native graphics resource derives its owner through this function rather
+than reaching for the game itself, so no resource family can be left behind when
+a second kind of device appears. Pretending an owned device has a game parent
+would be the same bug in the other direction: the game would then gate resources
+it does not own."
+  (if (%owned-device-p device)
+      device
+      (cna-lisp.internal:owner-of device)))
+
+(defun adopt-native-resource (resource device)
+  "Register RESOURCE, which already holds its handle, as a child of DEVICE's owner.
+
+The other half of NATIVE-RESOURCE-OWNER-FOR-DEVICE, and the reason every native
+graphics resource records the *same three things* in the same order: the native
+owner CNA will hold it against, the thread that owner runs on, and -- the part
+this closure added -- **the public GRAPHICS-DEVICE object it was made from**.
+
+That last one is `GraphicsResource::_parent' in the pinned IL, which
+`get_GraphicsDevice' returns with a bare `ldfld'. Before there were owned
+devices the binding could get away with answering the active game's facade,
+because that was the only device a program could have. With two kinds of device
+that answer is wrong for one of them, so the resource remembers the object
+rather than looking one up."
+  (let ((owner (native-resource-owner-for-device device)))
+    (setf (slot-value resource 'cna-lisp.internal::owner) owner
+          (slot-value resource 'cna-lisp.internal::owner-thread)
+          (cna-lisp.internal:owner-thread-of owner)
+          (%resource-device resource) device)
+    (cna-lisp.internal:register-child owner resource)
+    resource))
 
 
 ;;; --- the device's own state ---------------------------------------------------
