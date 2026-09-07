@@ -1199,15 +1199,49 @@ So the next task is a **profile expansion**, and the candidates are below. Each
 is blocked on evidence rather than on difficulty, and the evidence was re-measured
 on 2026-09-07 rather than carried forward:
 
-**Recommendation: `Media` / `MediaLibrary`.** It is the only candidate whose
-blocker is a *test-environment* question rather than a permanent one, and it is
-the only one that closes members already in the selection -- `Song`'s `Artist`,
-`Album` and `Genre`, three of the 23 missing. Its cost is real (15 types, ~142
-members, 148 routes) and its open question is narrow and answerable: whether a CI
-runner can be made to enumerate a non-empty library, or whether the closure is
-honest with enumeration proved empty-only. Answer that question first, in a
-probe, before committing to the closure -- the same order the Storage and Model
-closures used.
+**Recommendation: `Media` / `MediaLibrary`, and its blocker has now been
+measured away.** It is the only candidate that closes members already in the
+selection -- `Song`'s `Artist`, `Album` and `Genre`, three of the 23 missing --
+and the open question was whether a runner could be made to enumerate a
+*non-empty* library, or whether the closure would have to be honest about
+enumeration being empty-only. **That probe has been run, and the answer is that
+positive, deterministic evidence is producible.**
+
+`media_library.h` says opening "scans the device's music and picture locations"
+and that an empty library is an ordinary result -- so a zero count proves nothing
+either way. `tools/native-abi/media-library-probe.c` asks the question directly
+and `tools/qualification/make-media-library-fixture.py` builds the fixture.
+Measured 2026-09-07, `SDL_AUDIODRIVER=dummy`:
+
+| Run | Music/picture roots | songs | albums | artists | genres | playlists | pictures |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| A | this machine's real XDG folders | 0 | 0 | 0 | 0 | 0 | **48** |
+| B | generated fixture, one tagged MP3 | **1** | **1** | **1** | **1** | 0 | 0 |
+| C | the same fixture, emptied | 0 | 0 | 0 | 0 | 0 | 0 |
+
+**B is identical on 0.21.0, 0.22.0 and 0.23.0, and repeated three times without
+varying.** A is what the fear was about: 48 pictures that are whatever happens to
+be in the developer's home directory. C is the control -- same override, no
+music -- and it proves the count follows the fixture rather than something else
+on the machine.
+
+The mechanism is CNA's own, not an invention here: SDL resolves the user folders
+through `$XDG_CONFIG_HOME/user-dirs.dirs`, and CNA's C-API suite builds its
+`MediaLibrarySmoke` fixture exactly that way, saying in its CMake that this
+"keeps the test from ever reading or writing a real user directory". The fixture
+MP3 carries ID3v2.3 tags and no audio frames, which is also CNA's technique --
+the index reads a song's title, artist, album and genre from its tags, so a
+frame-only file produces a real song, album, artist and genre with no recording
+in the source tree.
+
+**One thing that fixture cannot support, recorded so it is not discovered late:**
+a tag-only MP3 indexes but will not decode -- the probe run prints ffmpeg's
+"Failed to find two consecutive MPEG audio frames". A closure that wants to
+*play* a library song needs a real encoded file, which is a different fixture
+question from enumeration and was not measured here.
+
+So the remaining cost is size, not evidence: 15 types, ~142 members, 148 routes,
+none of them bound today. That is a large closure and should be planned as one.
 
 The other three stay ruled out, and none of their reasons changed:
 
@@ -1232,7 +1266,7 @@ rows.
 | `Texture3D` | 1 | ~13 | 8, `texture_volume.h` | 1 (`EffectParameter.GetValueTexture3D`) | **no -- see below** | low | low |
 | `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **build-dependent** | low | medium |
 | XACT | 7 | 72 | 62, `xact.h` | 0 | **no fixture can exist** | low | high |
-| `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 3 (`Song`'s `Artist`, `Album`, `Genre`) | **empty only** | low | high |
+| `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 3 (`Song`'s `Artist`, `Album`, `Genre`) | **yes -- measured, see below** | low | high |
 | `GameWindow`'s seven | 0 | 0 | 0 | 0 | n/a | low | **blocked** |
 
 **`Texture3D` is ruled out by measurement and that measurement has not changed.**
