@@ -22,10 +22,10 @@
    "complete": 172
   },
   "members_by_status": {
-   "complete": 2088,
+   "complete": 2085,
    "missing": 23,
    "not-applicable": 443,
-   "partial": 27
+   "partial": 30
   },
   "diagnostics": 23,
   "diagnostics_by_category": {
@@ -2475,9 +2475,9 @@
     "Clone()": "complete",
     "EnableDefaultLighting()": "complete",
     "OnApply()": "missing",
-    "World": "complete",
-    "View": "complete",
-    "Projection": "complete",
+    "World": "partial",
+    "View": "partial",
+    "Projection": "partial",
     "DiffuseColor": "complete",
     "EmissiveColor": "complete",
     "SpecularColor": "complete",

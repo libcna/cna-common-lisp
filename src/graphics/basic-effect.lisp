@@ -113,10 +113,17 @@ than approximated."))
           (defgeneric (setf ,name) (value effect)
             (:documentation
              ,(format nil "~a's setter.~%~%One of the four members that need the ~
-optional private shim: the route takes CNA_Matrix by value, and the System V ~
-AMD64 ABI passes a 64-byte aggregate in memory, which CFFI cannot do without ~
-cffi-libffi. Without the shim it refuses with an actionable ~
-CNA-NOT-SUPPORTED-ERROR; the reader works regardless." documentation)))
+optional private shim -- these three and GraphicsDevice.Viewport, which is the ~
+whole of that list. The route takes CNA_Matrix by value, and the System V AMD64 ~
+ABI passes a 64-byte aggregate in memory, which CFFI cannot do without ~
+cffi-libffi, a load-time libffi-and-C-compiler dependency a released CNA-Lisp ~
+must not take. Without the shim it refuses with an actionable ~
+CNA-NOT-SUPPORTED-ERROR; the reader works regardless.~%~%**Reported partial for ~
+that reason**, as all four are: a released CNA-Lisp does not ship the shim, so ~
+an ordinary installation cannot reach this setter. It was reported complete ~
+until 2026-09-07, while GraphicsDevice.Viewport was reported partial on the ~
+identical blocker. See docs/compatibility.md on what `complete' means across ~
+configurations." documentation)))
           (defmethod ,name ((effect effect))
             (cna-lisp.internal:check-usable effect ,(string-downcase (symbol-name name)))
             (cffi:with-foreign-object (out '(:struct cna-lisp.internal.ffi::cna-matrix))

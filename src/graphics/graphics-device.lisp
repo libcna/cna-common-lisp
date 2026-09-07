@@ -390,11 +390,17 @@ cffi-libffi, a dependency a released CNA-Lisp must not have."
   (:documentation
    "GraphicsDevice.Viewport's setter.
 
-This is the one member of the projection that goes through the optional private
-shim: the route takes CNA_Viewport by value, and the System V AMD64 ABI passes a
-24-byte aggregate in memory, which CFFI cannot do without cffi-libffi. Without the
+One of the four members that go through the optional private shim -- this one and
+BasicEffect's World, View and Projection, which is the whole of that list. The
+route takes CNA_Viewport by value, and the System V AMD64 ABI passes a 24-byte
+aggregate in memory, which CFFI cannot do without cffi-libffi, a load-time
+libffi-and-C-compiler dependency a released CNA-Lisp must not take. Without the
 shim it refuses with a CNA-NOT-SUPPORTED-ERROR saying how to build one; the reader
-and everything else work regardless."))
+and everything else work regardless.
+
+**Reported partial for that reason**, as all four are: a released CNA-Lisp does
+not ship the shim, so an ordinary installation cannot reach this setter. See
+docs/compatibility.md on what `complete' means across configurations."))
 
 (defmethod (setf viewport) (new-viewport (device graphics-device))
   (let ((entry (cna-lisp.internal:shim-entry-point

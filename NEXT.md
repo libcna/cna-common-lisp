@@ -412,33 +412,61 @@ and the generated blocks further down are that plus Audio.
 **Audio contributed three of the frontier's members, and this paragraph used to
 say it contributed none.** That was written when Audio was believed 8/8 complete
 and was already false when the re-audit corrected two of its members; the
-streaming closure added a third. The frontier is 57 members now, not the 54 it was
-at the freeze, and the three that are not Foundation 1's are `SoundEffect.Duration`,
-`SoundEffectInstance.Apply3D(AudioListener[], AudioEmitter)` and
-`DynamicSoundEffectInstance.new(Int32, AudioChannels)`. **Foundation 1's own 54
-are unchanged**, which is the claim the freeze actually rests on: still 35 missing
-and 19 partial there, still no missing type, still no disagreement.
+streaming closure added a third. The three that are not Foundation 1's are
+`SoundEffect.Duration`, `SoundEffectInstance.Apply3D(AudioListener[],
+AudioEmitter)` and `DynamicSoundEffectInstance.new(Int32, AudioChannels)`.
+
+**Foundation 1's own members changed classification on 2026-09-07, and no
+Foundation 1 member changed behaviour.** The completeness rule in
+`docs/compatibility.md` was made explicit for the first time, and applying it
+uniformly moved `BasicEffect.World`, `.View` and `.Projection` from `complete` to
+`partial`: they need the optional private shim, exactly as
+`GraphicsDevice.Viewport` does, and were labelled differently from it on an
+identical blocker. `BasicEffect` is a Foundation 1 type, so **Foundation 1's own
+frontier is 22 partial where it was 19**, and its missing count is still 35.
+
+Those are two different facts and the freeze rests on the second:
+
+| | At the release commit `5a7f7c1` | Now |
+| --- | --- | --- |
+| Foundation 1 partial | 19 | **22** |
+| Foundation 1 missing | 35 | 35 |
+| What changed in the code | — | nothing: no member gained or lost a capability |
+
+The release commit's measured numbers stay as they were measured; they are not
+rewritten as though the rule had always been written down. What moved is the
+classification, and the row for it below says so.
 
 The decision was about the *foundation as a coherent milestone*, not about the
-scoreboard reaching zero. It never will: of the 57, 41 cannot be represented
-across the admitted ABI set, 6 need types the profile has not selected, 5 are held
-up by the Common Lisp projection, 3 by an object-model closure and 2 by a missing
-proof. Regenerate that split from `tools/api-compat/mapping-rules.json` rather
-than reading it here -- it has been stale once.
+scoreboard reaching zero. It never will. The whole-binding frontier is **53
+members** and splits like this -- regenerate it from
+`tools/api-compat/mapping-rules.json` rather than reading it here, because it has
+now been stale twice:
+
+| Category | Members |
+| --- | ---: |
+| `CNA_ADMITTED_ABI_LIMIT` | 40 |
+| `DEPENDENCY_NOT_SELECTED` | 4 |
+| `PACKAGING_ABI_BRIDGE_LIMIT` | 4 |
+| `LANGUAGE_PROJECTION_LIMIT` | 3 |
+| `QUALIFICATION_LIMIT` | 2 |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | 0 |
+| `IMPLEMENTABLE_AND_HIGH_VALUE` | 0 |
+| `IMPLEMENTABLE_BUT_LOW_VALUE` | 0 |
 
 The eight conditions, and what each rests on:
 
 | Condition | Evidence |
 | --- | --- |
 | All gates green | the gates in "Reproduce the state" and the table above, re-run at each audit; the suite reports no failure and nothing not run in all three native configurations, and in the fourth it reports the native layer as not run rather than as passed |
-| The freeze holds | Audio landed after it, twice, and changed no Foundation 1 member: still 35 missing and 19 partial *there*, still 0 missing types, still 0 disagreements. The whole-binding partial count is 22 because Audio owns three of them |
+| The freeze holds | **Re-run on 2026-09-07 and it does, for a reason it did not need before.** Audio landed after the freeze, twice, and changed no Foundation 1 member. What did change three of them is a *classification* correction: `BasicEffect.World`, `.View` and `.Projection` moved `complete` -> `partial` when the completeness rule was written down and applied uniformly, so Foundation 1 is 22 partial where it was 19, and 35 missing as before. **No code changed and nothing that worked stopped working** -- the qualified configuration still exercises all four shim setters -- so this is the scoreboard becoming truthful about an installation that was always the ordinary one, not the foundation reopening. Still 0 missing types, still 0 disagreements |
 | No known ownership or lifetime defect | ownership stress, construction atomicity over twelve resource families, content transaction rollback at four injection points, callback registry empty after each cycle |
 | Zero structural disagreements | `verify.py --strict`, over <!-- generated:diagnostic categories=18 --> diagnostic categories |
 | No stale live-state documentation | three audits now. The third ran with the streaming closure and found four survivals the first two missed: `LOAD-ASSET` still promising two objects for one name, `UNLOAD` still telling a program to dispose what the manager now disposes, `docs/ownership-and-lifetimes.md` still describing the pre-cache content model, and this section's own claim that Audio contributed no frontier members. The first two are **public generated documentation** -- they are dumped into `docs/generated/public-surface.json` -- which is what makes them a release-condition failure rather than a comment |
 | Admitted ABI set truthful | `{0.21.0, 0.22.0, 0.23.0}`, and all three are evidenced: the whole gate set is run against a real library of each at every closure, not once. 0.23.0 was admitted on 2026-09-06 against an exact published pair, after its ABI delta was diffed, its generated layer proved unchanged, and both gates were watched refusing it first |
 | CI green | both workflows `success`, and named by run id below rather than by "the latest run" |
 | Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must also be *described* |
-| Every non-complete member has a concrete reason | 57 of 57, each naming a route or an IL fact, each in one of seven categories. `verify.py` refuses an uncategorised one and refuses a category the taxonomy does not define, which is what carried the `CNA_0_21_ABI_LIMIT` rename. **This row used to add "with zero in either implementable category", and that half is no longer true**: the 2026-09-07 audit moved two members into `IMPLEMENTABLE_AND_HIGH_VALUE`. It was true at the release commit named below, and the condition it states is about *reasons being concrete*, which is unchanged -- but the parenthesis was a second claim riding on the first and it has now moved, so it is stated separately below rather than left here to age |
+| Every non-complete member has a concrete reason | 53 of 53, each naming a route or an IL fact, each in one of **eight** categories -- `PACKAGING_ABI_BRIDGE_LIMIT` was added on 2026-09-07 for the four shim-dependent setters, because what must change to close them is a packaging decision and `LANGUAGE_PROJECTION_LIMIT` would have told a contributor the false thing that Common Lisp cannot express a Matrix. `verify.py` refuses an uncategorised one and refuses a category the taxonomy does not define, which is what carried the `CNA_0_21_ABI_LIMIT` rename. **This row used to add "with zero in either implementable category", and that half is no longer true**: the 2026-09-07 audit moved two members into `IMPLEMENTABLE_AND_HIGH_VALUE`. It was true at the release commit named below, and the condition it states is about *reasons being concrete*, which is unchanged -- but the parenthesis was a second claim riding on the first and it has now moved, so it is stated separately below rather than left here to age |
 
 That last row is the one to re-read before believing this.
 <!-- generated:high-value frontier members=0 --> members are
@@ -572,8 +600,8 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 <!-- generated:complete types=172 -->
 <!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2088 -->
-<!-- generated:partial members=27 -->
+<!-- generated:complete members=2085 -->
+<!-- generated:partial members=30 -->
 <!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
@@ -588,8 +616,8 @@ Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 | Types complete | **172** |
 | Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **2088** |
-| Members partial | **27** |
+| Members complete | **2085** |
+| Members partial | **30** |
 | Members missing | **23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
@@ -623,7 +651,7 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
-| `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.Graphics.BasicEffect` | 1 | 3 |
 | `M.X.F.TitleContainer` | 0 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 0 | 3 |
 | `M.X.F.Content.ContentManager` | 0 | 1 |
@@ -649,7 +677,8 @@ had moved. Regenerate the table after every closure and read it there.
 <!-- generated-block:frontier-categories -->
 | Category | Members | What it means |
 | --- | ---: | --- |
-| `LANGUAGE_PROJECTION_LIMIT` | **4** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
+| `LANGUAGE_PROJECTION_LIMIT` | **3** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
+| `PACKAGING_ABI_BRIDGE_LIMIT` | **4** | The projection and every admitted CNA route exist and work, and the member is reachable only in an installation that has built an optional compiled artifact. |
 | `CNA_ADMITTED_ABI_LIMIT` | **40** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |

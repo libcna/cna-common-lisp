@@ -6362,19 +6362,22 @@
           "lisp": "effect-world",
           "generic": true,
           "setf": true,
-          "reason": "One of the three IEffect* contracts, so the generic function is specialised on EFFECT and BasicEffect answers it by inheriting -- which is what implementing the interface means here."
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on EFFECT and BasicEffect answers it by inheriting -- which is what implementing the interface means here. **The reader is unconditional; the setter needs the optional private shim.** cna_effect_matrices_set_world takes CNA_Matrix by value, and at 64 bytes the System V AMD64 ABI passes it in memory rather than in registers, which CFFI cannot express without cffi-libffi -- a load-time libffi-and-C-compiler dependency a released CNA-Lisp must not take. The shim is not shipped prebuilt, so an ordinary installation gets a CNA-NOT-SUPPORTED-ERROR naming CNA_LISP_SHIM and the command that builds one. **Reclassified complete -> partial on 2026-09-07** under the completeness rule docs/compatibility.md now states outright: a member is complete when it is reachable in every supported configuration, and the no-shim lane is a supported configuration the Native workflow gates on every commit. This member and GraphicsDevice.Viewport have the same blocker and the same measured refusal -- same condition class, same message, same working reader -- and were reported differently until this correction. The precedent is the project's own: ModelBone.Transform avoided a fifth shimmed route specifically so that it could be \"complete rather than packaging-dependent\", which is that rule applied before it was written down.",
+          "status": "partial"
         },
         "View": {
           "lisp": "effect-view",
           "generic": true,
           "setf": true,
-          "reason": "One of the three IEffect* contracts, so the generic function is specialised on EFFECT and BasicEffect answers it by inheriting -- which is what implementing the interface means here."
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on EFFECT and BasicEffect answers it by inheriting -- which is what implementing the interface means here. **The reader is unconditional; the setter needs the optional private shim.** cna_effect_matrices_set_view takes CNA_Matrix by value, and at 64 bytes the System V AMD64 ABI passes it in memory rather than in registers, which CFFI cannot express without cffi-libffi -- a load-time libffi-and-C-compiler dependency a released CNA-Lisp must not take. The shim is not shipped prebuilt, so an ordinary installation gets a CNA-NOT-SUPPORTED-ERROR naming CNA_LISP_SHIM and the command that builds one. **Reclassified complete -> partial on 2026-09-07** under the completeness rule docs/compatibility.md now states outright: a member is complete when it is reachable in every supported configuration, and the no-shim lane is a supported configuration the Native workflow gates on every commit. This member and GraphicsDevice.Viewport have the same blocker and the same measured refusal -- same condition class, same message, same working reader -- and were reported differently until this correction. The precedent is the project's own: ModelBone.Transform avoided a fifth shimmed route specifically so that it could be \"complete rather than packaging-dependent\", which is that rule applied before it was written down.",
+          "status": "partial"
         },
         "Projection": {
           "lisp": "effect-projection",
           "generic": true,
           "setf": true,
-          "reason": "One of the three IEffect* contracts, so the generic function is specialised on EFFECT and BasicEffect answers it by inheriting -- which is what implementing the interface means here."
+          "reason": "One of the three IEffect* contracts, so the generic function is specialised on EFFECT and BasicEffect answers it by inheriting -- which is what implementing the interface means here. **The reader is unconditional; the setter needs the optional private shim.** cna_effect_matrices_set_projection takes CNA_Matrix by value, and at 64 bytes the System V AMD64 ABI passes it in memory rather than in registers, which CFFI cannot express without cffi-libffi -- a load-time libffi-and-C-compiler dependency a released CNA-Lisp must not take. The shim is not shipped prebuilt, so an ordinary installation gets a CNA-NOT-SUPPORTED-ERROR naming CNA_LISP_SHIM and the command that builds one. **Reclassified complete -> partial on 2026-09-07** under the completeness rule docs/compatibility.md now states outright: a member is complete when it is reachable in every supported configuration, and the no-shim lane is a supported configuration the Native workflow gates on every commit. This member and GraphicsDevice.Viewport have the same blocker and the same measured refusal -- same condition class, same message, same working reader -- and were reported differently until this correction. The precedent is the project's own: ModelBone.Transform avoided a fifth shimmed route specifically so that it could be \"complete rather than packaging-dependent\", which is that rule applied before it was written down.",
+          "status": "partial"
         },
         "AmbientLightColor": {
           "lisp": "effect-ambient-light-color",
@@ -9006,6 +9009,7 @@
   },
   "frontier_category_kinds": {
     "LANGUAGE_PROJECTION_LIMIT": "The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. IntPtr is the standing example: the number sometimes exists and a bare integer is not a pointer type. Changing this needs a decision about the public API, not a CNA release.",
+    "PACKAGING_ABI_BRIDGE_LIMIT": "The projection and every admitted CNA route exist and work, and the member is reachable only in an installation that has built an optional compiled artifact. The four by-value aggregate setters are the standing example: cna_graphics_device_set_viewport takes CNA_Viewport (24 bytes) and the three cna_effect_matrices_set_* take CNA_Matrix (64 bytes), the System V AMD64 ABI classifies both as MEMORY, and CFFI cannot pass MEMORY without cffi-libffi -- so they go through the private shim tools/native-abi/verify.sh builds. This is NOT LANGUAGE_PROJECTION_LIMIT: Common Lisp expresses a Matrix and a Viewport perfectly well and the setters work whenever the shim is loaded, so nothing about the public API is in question. It is NOT CNA_ADMITTED_ABI_LIMIT either: every admitted version has the route and the route does what the member means. **Changing this needs a packaging decision, not a public-API decision and not a CNA release** -- ship the shim prebuilt per platform, or take cffi-libffi as a load-time dependency, or get a pointer-taking variant into a future CNA ABI. That is a materially different resolution path from every other category here, which is the only reason this one exists.",
     "CNA_ADMITTED_ABI_LIMIT": "No admitted CNA ABI can represent the member. At least one of the versions in the admitted set has no route for it, or its route cannot express what the member means. The category names the compatibility policy rather than a version, because the admitted set is a set -- a member that only one admitted version could express is as unrepresentable as one no version can, since the binding promises the same public surface against every version it admits. Includes every protected On<Event> raiser, because CNA raises the event itself and offers no hook to stand in front of it. Changing this needs a CNA release and a re-qualification, and each entry names the route it read -- concrete per-version evidence such as \"0.21.0 lacks route X\" stays in the entry, where it is a fact, rather than in the category name, where it was a policy. This category was called CNA_0_21_ABI_LIMIT while exactly one version was admitted.",
     "PUBLIC_OBJECT_MODEL_CLOSURE": "Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. The owned GraphicsDevice is the standing example: the routes exist and supporting them means a second kind of device beside the parent-owned facade. This read \"implementable against 0.21.0\" while exactly one version was admitted.",
     "DEPENDENCY_NOT_SELECTED": "Blocked on a type that is not in the selected profile. Resolved by selecting that type, which is a profile decision.",
@@ -9042,7 +9046,7 @@
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Present(Nullable`1,Nullable`1,IntPtr)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceCreated": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceDestroyed": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport": "LANGUAGE_PROJECTION_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport": "PACKAGING_ABI_BRIDGE_LIMIT",
     "Microsoft.Xna.Framework.Graphics.Model.Draw(Matrix,Matrix,Matrix)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.ModelMesh.Draw()": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.ModelMeshPart.Effect": "CNA_ADMITTED_ABI_LIMIT",
@@ -9063,7 +9067,10 @@
     "Microsoft.Xna.Framework.Media.Song.Album": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.Media.Song.Artist": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.Media.Song.Genre": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT"
+    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.BasicEffect.World": "PACKAGING_ABI_BRIDGE_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.BasicEffect.View": "PACKAGING_ABI_BRIDGE_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.BasicEffect.Projection": "PACKAGING_ABI_BRIDGE_LIMIT"
   },
   "frontier_categories_description": "One category per non-complete selected member, keyed by '<type>.<signature>' exactly as the generated report names it. Every missing and partial member must appear here and nothing else may: verify.py reports an uncategorised_absence otherwise, so a member cannot go non-complete without saying what kind of thing is stopping it. The prose reason stays where it was -- per member in 'unimplemented' and in 'member_overrides' -- because a reason names a route and a category sorts it. See 'frontier_category_kinds'."
 }

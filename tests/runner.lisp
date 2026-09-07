@@ -260,6 +260,20 @@
         (format t "point -- measured -- so the binding supplies ContentManager.~%")
         (format t "Unload alone and the pair lands in XNA's order. Calling both~%")
         (format t "would run the program's overridable method twice.~%")))
+    ;; The four shim-dependent setters. **One line per branch, and a run can
+    ;; only produce one**: the shim is process-global, latched by the loader, so
+    ;; one image cannot answer for two configurations. The lane runs two.
+    (when (native-library-requested-p)
+      (if *shim-policy-evidence*
+          (dolist (entry (reverse *shim-policy-evidence*))
+            (format t "~&shim policy   : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&shim policy   : NOT RUN -- no shim-policy test recorded evidence~%"))
+      (when *shim-policy-evidence*
+        (format t "All four are reported partial for exactly this reason: a~%")
+        (format t "released CNA-Lisp does not ship the shim, so an ordinary~%")
+        (format t "installation cannot reach any of the four setters. See~%")
+        (format t "docs/compatibility.md on what complete means across~%")
+        (format t "configurations.~%")))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))

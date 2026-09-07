@@ -1026,30 +1026,33 @@ the variable, the command and the reason. The readers work either way.
 The qualified configuration includes the shim, and the test suite asserts both
 outcomes.
 
-**Four members need it, one is reported partial, and the 2026-09-07 audit could
-not make that consistent.** The generated manifest lists four shimmed routes and
-`basic-effect.lisp`'s own docstring calls them "the four members that need the
-optional private shim". All four refuse identically without it — the same
-`refuse-without-shim` path, the same condition — and the readers work either way.
-Yet the scoreboard says:
+**Four members need it, and all four are now reported the same way.** The
+2026-09-07 audit found the scoreboard reporting `GraphicsDevice.Viewport` partial
+and `BasicEffect`'s three matrices complete on an identical blocker, could not
+find a difference that justified the split, and deliberately did not pick a side
+— because deciding it meant deciding what `complete` means across
+configurations, which is a policy question and not a reason correction. **That
+policy is now written down, in `docs/compatibility.md` under "What `complete`
+means across configurations", and all four are `partial`.**
 
-| Member | Shimmed route | Reported |
-| --- | --- | --- |
-| `GraphicsDevice.Viewport` | `cna_graphics_device_set_viewport` | **partial** |
-| `BasicEffect.World` | `cna_effect_matrices_set_world` | complete |
-| `BasicEffect.View` | `cna_effect_matrices_set_view` | complete |
-| `BasicEffect.Projection` | `cna_effect_matrices_set_projection` | complete |
+The rule is that a member is complete when it is reachable in every *supported*
+installation, and the no-shim lane is supported: the `Native` workflow gates on it
+every commit, beside the lane that supplies the shim. The four were re-measured
+on ABI 0.23.0 before the rule was applied, and they are one class with no
+distinguishing feature:
 
-No difference was found that justifies the split: neither the reader, nor an
-alternative route (`cna_graphics_device_set_viewport` is the only viewport setter
-in all three admitted header sets and has no pointer variant), nor the refusal.
-**One of the two labels is wrong**, and this measurement deliberately did not
-pick which. Deciding it means deciding whether an optional build artifact makes a
-member incomplete — if it does, three members reported complete are not; if it
-does not, this one is not partial — and that is a scoreboard decision about the
-meaning of "complete", not a reason correction. It is recorded here and in
-`NEXT.md` so that it cannot be lost, and it is the one thing this audit found
-that it did not resolve.
+| Member | Shimmed route | Without the shim | Reader | Now |
+| --- | --- | --- | --- | --- |
+| `GraphicsDevice.Viewport` | `cna_graphics_device_set_viewport` | `CNA-NOT-SUPPORTED-ERROR`, names `CNA_LISP_SHIM` | works | `partial` |
+| `BasicEffect.World` | `cna_effect_matrices_set_world` | the same | works | `partial` |
+| `BasicEffect.View` | `cna_effect_matrices_set_view` | the same | works | `partial` |
+| `BasicEffect.Projection` | `cna_effect_matrices_set_projection` | the same | works | `partial` |
+
+With the shim loaded all four succeed. Their category moved from
+`LANGUAGE_PROJECTION_LIMIT` to the new `PACKAGING_ABI_BRIDGE_LIMIT`, because the
+old one told a future contributor the false thing — Common Lisp expresses a
+`Matrix` perfectly well, and what must change here is how the binding is
+packaged, not what its public API looks like.
 
 The rest of `Viewport`'s blocker was re-measured and stands: the shim is still
 optional and still source-only, `cffi-libffi` remains a load-time
@@ -3405,6 +3408,14 @@ arguments occupies the same place — so CFFI cannot express the call without
 `CNA_LISP_SHIM` those three setters refuse with an actionable
 `CNA-NOT-SUPPORTED-ERROR`; the three *getters* take `CNA_Matrix*` and work
 regardless.
+
+**All three are reported `partial`, and were reported `complete` until
+2026-09-07.** They need an optional compiled artifact that a released CNA-Lisp
+does not ship, so an ordinary installation cannot reach them — which is what
+`partial` means under the rule `docs/compatibility.md` now states outright. They
+had been labelled differently from `GraphicsDevice.Viewport` on the identical
+blocker; that is the contradiction the rule settles. Nothing about the code
+changed when the labels did.
 
 Nothing else on the effect surface needs it. Every colour in it — fog, ambient
 light, a directional light's diffuse and specular, `BasicEffect`'s diffuse,

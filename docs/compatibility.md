@@ -46,6 +46,66 @@ python3 tools/api-compat/verify.py --strict
 | `not-applicable` | the member has no meaning in Common Lisp, with a declared reason |
 | `externally-blocked` | something outside CNA-Lisp prevents it, with evidence |
 
+### What `complete` means across configurations
+
+`complete` and `partial` are about **reachability**, and reachability has to be
+measured in some configuration or the words mean nothing. The rule, stated once
+here rather than left implicit in individual mapping rows:
+
+> A member is `complete` when it is reachable in **every supported
+> installation of CNA-Lisp**, not merely in the fully equipped
+> `REFERENCE_QUALIFIED` one. A member that a supported installation refuses is
+> `partial`, and its reason must name what that installation is missing.
+
+"Supported" is not a judgement call here; it is whatever the release standard
+already gates on. **The no-shim lane is a supported configuration**: the `Native`
+workflow runs the whole suite without `CNA_LISP_SHIM` on every commit, as a
+required stage beside the one that supplies it, and the release standard requires
+both. A configuration the project qualifies on every commit is one it supports.
+
+The alternative rule — count a member complete if the reference configuration can
+reach it — was rejected for two reasons, and neither is about which number looks
+better. First, it would make the scoreboard claim something that is not so for
+the ordinary case: the shim is deliberately **not shipped prebuilt**, because a
+released CNA-Lisp must load with no C toolchain, so a member reported `complete`
+would refuse in a default installation. This repository calls that class of
+defect a *disagreement* and treats it as the worst kind. Second, the project had
+already decided it in code before writing it down: `ModelBone.Transform` faced
+the same by-value `MEMORY` aggregate and was deliberately routed around the shim,
+and `src/graphics/model.lisp` says why in its own words — "the alternative was a
+fifth shimmed route and a member that refuses without a C toolchain. This is the
+same value written the same way, so the member is **complete rather than
+packaging-dependent**." That sentence is this rule, applied.
+
+**What it costs, applied uniformly: four members.** All four take a by-value
+aggregate the System V AMD64 ABI classifies as `MEMORY` and all four go through
+the optional private shim. Measured 2026-09-07 against ABI 0.23.0, with the shim
+absent, all four refuse identically — same condition class
+`CNA-NOT-SUPPORTED-ERROR`, same message naming `CNA_LISP_SHIM` and the command
+that builds one, and all four readers still working — and with the shim loaded
+all four succeed. Nothing distinguishes them, so nothing may classify them
+differently:
+
+| Member | Shimmed route | Aggregate | Status |
+| --- | --- | --- | --- |
+| `GraphicsDevice.Viewport` | `cna_graphics_device_set_viewport` | `CNA_Viewport`, 24 bytes | `partial` |
+| `BasicEffect.World` | `cna_effect_matrices_set_world` | `CNA_Matrix`, 64 bytes | `partial` |
+| `BasicEffect.View` | `cna_effect_matrices_set_view` | `CNA_Matrix`, 64 bytes | `partial` |
+| `BasicEffect.Projection` | `cna_effect_matrices_set_projection` | `CNA_Matrix`, 64 bytes | `partial` |
+
+The three `BasicEffect` matrices were reported `complete` until 2026-09-07 while
+`GraphicsDevice.Viewport` was reported `partial` on the identical blocker. That
+was the contradiction this rule exists to settle, and settling it moved three
+members from `complete` to `partial`. **It is a classification correction, not a
+regression**: no code changed, nothing that worked stopped working, and the
+qualified configuration still exercises all four setters.
+
+Their frontier category is `PACKAGING_ABI_BRIDGE_LIMIT` rather than
+`LANGUAGE_PROJECTION_LIMIT`, because what must change to close them is a
+packaging decision — ship the shim prebuilt, take `cffi-libffi` as a dependency,
+or get a pointer-taking variant into a future CNA ABI — and not a decision about
+the public API. Common Lisp expresses a `Matrix` perfectly well.
+
 ## Diagnostic categories
 
 <!-- generated:diagnostic categories=18 --> categories are measured.
@@ -123,8 +183,8 @@ genuine absence.
 <!-- generated:complete types=172 -->
 <!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2088 -->
-<!-- generated:partial members=27 -->
+<!-- generated:complete members=2085 -->
+<!-- generated:partial members=30 -->
 <!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
@@ -139,8 +199,8 @@ Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 | Types complete | **172** |
 | Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **2088** |
-| Members partial | **27** |
+| Members complete | **2085** |
+| Members partial | **30** |
 | Members missing | **23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
@@ -263,7 +323,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.IEffectLights` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.Graphics.IEffectFog` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | **partial** | 4 | 0 | 1 | 0 |
-| `M.X.F.Graphics.BasicEffect` | **partial** | 24 | 0 | 1 | 1 |
+| `M.X.F.Graphics.BasicEffect` | **partial** | 21 | 3 | 1 | 1 |
 | `M.X.F.Graphics.AlphaTestEffect` | **complete** | 15 | 0 | 0 | 2 |
 | `M.X.F.Graphics.DualTextureEffect` | **complete** | 14 | 0 | 0 | 2 |
 | `M.X.F.Graphics.SkinnedEffect` | **complete** | 25 | 0 | 0 | 2 |
@@ -402,7 +462,7 @@ back-reference.
 | `M.X.F.Graphics.Effect` | 1 | 0 |
 | `M.X.F.Graphics.EffectParameter` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
-| `M.X.F.Graphics.BasicEffect` | 1 | 0 |
+| `M.X.F.Graphics.BasicEffect` | 1 | 3 |
 | `M.X.F.TitleContainer` | 0 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 0 | 3 |
 | `M.X.F.Content.ContentManager` | 0 | 1 |
@@ -443,7 +503,8 @@ and so is a category left behind by a member that has since been completed.
 <!-- generated-block:frontier-categories -->
 | Category | Members | What it means |
 | --- | ---: | --- |
-| `LANGUAGE_PROJECTION_LIMIT` | **4** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
+| `LANGUAGE_PROJECTION_LIMIT` | **3** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
+| `PACKAGING_ABI_BRIDGE_LIMIT` | **4** | The projection and every admitted CNA route exist and work, and the member is reachable only in an installation that has built an optional compiled artifact. |
 | `CNA_ADMITTED_ABI_LIMIT` | **40** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |

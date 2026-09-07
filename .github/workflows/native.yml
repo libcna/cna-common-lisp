@@ -474,6 +474,40 @@ jobs:
           CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
         run: tools/qualification/owned-graphics-device.sh
 
+      # Game's private device-event wiring, and it needs a step of its own for
+      # the reason the device lanes above each do: the claim is a *lifecycle
+      # invariant with no public member*, so no compatibility cell reports it
+      # and the evidence lines are the only record it holds. Eight kinds,
+      # required by name -- a real font and its atlas released by the device
+      # event, the CURRENT Game.Content chosen over a replaced one, the
+      # framework's listener in subscription order between two program
+      # handlers, and a signalling disposal contained rather than unwound
+      # through C.
+      #
+      # Nothing here claims this binding calls Game.UnloadContent: CNA's native
+      # game drives that callback itself at the same point, measured, and the
+      # binding deliberately does not double it.
+      - name: Game device/content lifecycle qualification
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+          CNA_NATIVE_LIBRARY: ${{ env.CNA_NATIVE_LIBRARY }}
+        run: tools/qualification/game-device-events.sh
+
+      # The four shim-dependent setters, in both configurations, in separate
+      # processes -- the shim handle is process-global and latches in the
+      # loader, so one image cannot answer for two configurations. This is the
+      # evidence behind the classification in docs/compatibility.md: the four
+      # are one class, so no rule may report three of them complete and the
+      # fourth partial, and the suite fails a run in which they disagree.
+      - name: Shim policy, absent and present branches
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+          CNA_NATIVE_LIBRARY: ${{ env.CNA_NATIVE_LIBRARY }}
+          CNA_LISP_SHIM: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-shim.so
+        run: tools/qualification/shim-policy.sh
+
       - name: Isolated consumer qualification, 60 and 600 frames
         working-directory: cna-common-lisp
         run: |

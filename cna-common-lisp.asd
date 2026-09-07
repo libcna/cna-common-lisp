@@ -269,6 +269,11 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/buffers")
    (:file "native/effects")
    (:file "native/stock-effects")
+   ;; The four shim-dependent setters, asserted as one class. After
+   ;; native/stock-effects, whose BasicEffect it builds, and after
+   ;; native/graphics, whose GRAPHICS-GAME it extends and whose viewport test it
+   ;; complements rather than repeats.
+   (:file "native/shim-policy")
    (:file "native/render-target")
    (:file "native/render-target-cube")
    (:file "native/graphics-adapter")
