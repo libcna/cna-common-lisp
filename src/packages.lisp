@@ -234,6 +234,8 @@
    #:apply-changes #:toggle-full-screen #:is-full-screen
    #:preferred-back-buffer-width #:preferred-back-buffer-height
    #:synchronize-with-vertical-retrace
+   #:on-device-created #:on-device-disposing
+   #:on-device-reset #:on-device-resetting
    ;; --- events ------------------------------------------------------------
    #:add-activated-handler #:remove-activated-handler
    #:add-deactivated-handler #:remove-deactivated-handler

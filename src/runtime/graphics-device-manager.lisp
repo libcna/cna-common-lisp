@@ -9,11 +9,19 @@
 
 (defclass graphics-device-manager (cna-lisp.internal:native-object)
   ((game :initarg :game :initform nil :reader game)
-   (event-handlers :initform '() :accessor %event-handlers
+   ;; **Two structures rather than one, and they are two because a manager's
+   ;; events do not work the way every other event in this binding does.** The
+   ;; handler lists are managed state that outlives disposal, as a CLR delegate
+   ;; field does; the raisers are the *one* CNA registration per event kind that
+   ;; makes the framework call the virtual `On*' method. See manager-events.lisp
+   ;; for why one registration per kind rather than one per handler.
+   (%handler-lists :initform '() :accessor %manager-handler-lists
                    :documentation
-                   "One entry per subscription, in the shape
-runtime/event-machinery.lisp defines -- live or purely logical; see
-%EVENT-SOURCE-DISPOSED-P."))
+                   "Alist EVENT -> the handler list, newest first. Raised oldest
+first, which is a multicast delegate's own order.")
+   (%raisers :initform '() :accessor %manager-raisers
+             :documentation
+             "Alist EVENT -> (TOKEN . REGISTRATION-HANDLE), at most one per event."))
   (:documentation
    "Microsoft.Xna.Framework.GraphicsDeviceManager.
 
@@ -32,14 +40,21 @@ Dispose it before the game it belongs to."))
            :operation "make-instance graphics-device-manager"
            :format-control ":GAME is required: a graphics device manager belongs to a game."))
   (cna-lisp.internal:check-usable game "make-instance graphics-device-manager")
-  (when (find-if (lambda (child) (typep child 'graphics-device-manager))
-                 (cna-lisp.internal:children-of game))
+  ;; **XNA's own duplicate check, and it is a service lookup rather than a scan.**
+  ;; The constructor reads `game.Services.GetService(typeof(IGraphicsDeviceManager))'
+  ;; and throws `ArgumentException(GraphicsDeviceManagerAlreadyPresent)' when it
+  ;; answers non-null -- note that it tests only that one key, not both. Before
+  ;; `Game.Services' existed here this had to scan the ownership graph for a live
+  ;; manager instead; now the original's own test is available and is what runs,
+  ;; with CNA's refusal still behind it.
+  (when (get-service (services game) 'igraphics-device-manager)
     (error 'cna-invalid-state-error
            :operation "make-instance graphics-device-manager"
            :object-type 'graphics-device-manager
            :format-control
-           "this game already has a graphics device manager; XNA's constructor refuses a ~
-            second and so does CNA."))
+           "this game already has a graphics device manager registered under ~s; XNA's ~
+            constructor refuses a second and so does CNA."
+           :format-arguments (list 'igraphics-device-manager)))
   (cffi:with-foreign-object (out :uint64)
     (cna-lisp.internal:check-result
      (cna-lisp.internal.ffi::%graphics-device-manager-create
@@ -53,9 +68,40 @@ Dispose it before the game it belongs to."))
             (slot-value manager 'cna-lisp.internal::owner) game
             (slot-value manager 'cna-lisp.internal::owner-thread)
             (cna-lisp.internal:owner-thread-of game))))
+  ;; **The managed service registration, and it is the construction's fifth step
+  ;; rather than something a caller does afterwards.** XNA's constructor adds the
+  ;; manager under both interface keys, in this order, immediately after storing
+  ;; the game -- `AddService(typeof(IGraphicsDeviceManager), this)' then
+  ;; `AddService(typeof(IGraphicsDeviceService), this)'. CNA has already made the
+  ;; two *native* registrations inside `cna_graphics_device_manager_create'; these
+  ;; are the managed ones, and the cross-check below is what says the two agree.
+  (let ((container (services game)))
+    (add-service container 'igraphics-device-manager manager)
+    (cna-lisp.internal:record-construction-undo
+     manager
+     ;; Undoes exactly what was done here and no more: the *native* slot was
+     ;; registered by CNA inside its create route and is given back by the native
+     ;; destroy undo recorded above, so mirroring the removal would be undoing
+     ;; something this binding did not do -- and would do it twice.
+     (lambda () (remhash 'igraphics-device-manager (%service-table container))))
+    (add-service container 'igraphics-device-service manager)
+    (cna-lisp.internal:record-construction-undo
+     manager
+     (lambda () (remhash 'igraphics-device-service (%service-table container)))))
+  (%cross-check-canonical-services game manager "make-instance graphics-device-manager")
   (cna-lisp.internal:register-child game manager)
   (cna-lisp.internal:record-construction-undo
    manager (lambda () (cna-lisp.internal:invalidate manager))))
+
+;;; --- the two interfaces the manager implements -------------------------------
+;;;
+;;; Declared rather than inferred, because `AddService' checks assignability and
+;;; a protocol has no class to test with TYPEP. This is what makes
+;;; `(add-service container 'igraphics-device-service manager)' legal and
+;;; `(add-service container 'igraphics-device-service "not a manager")' refused.
+
+(declare-service-protocol-implementor 'igraphics-device-manager 'graphics-device-manager)
+(declare-service-protocol-implementor 'igraphics-device-service 'graphics-device-manager)
 
 (defmethod graphics-device ((manager graphics-device-manager))
   "GraphicsDeviceManager.GraphicsDevice: the device the manager manages.
@@ -191,11 +237,98 @@ immutability the CLR field does not have."
   480)
 
 (defmethod cna-lisp.internal:destroy-native ((manager graphics-device-manager))
+  "XNA's `Dispose(bool disposing)', in its order, and it is not the symmetric
+undo of the constructor.
+
+The IL, read rather than assumed, and two things in it are surprising enough that
+a careless disposal would get both wrong:
+
+    if (game != null) {
+        if (game.Services.GetService(typeof(IGraphicsDeviceService)) == this)
+            game.Services.RemoveService(typeof(IGraphicsDeviceService));
+        ... unsubscribe the three window events ...
+    }
+    if (device != null) { device.Dispose(); device = null; }
+    if (Disposed != null) Disposed(this, EventArgs.Empty);
+
+**It removes only `IGraphicsDeviceService`.** `IGraphicsDeviceManager' is added by
+the constructor and never removed by anything -- the token appears in `Dispose'
+nowhere -- so a disposed manager is still registered under that key. That
+asymmetry is XNA's and is reproduced.
+
+**And it removes it only if the entry is still this manager.** The `bne.un.s'
+skips the removal when the service under that key is something else, so a program
+that removed the canonical service and put its own provider there keeps its
+provider across the manager's disposal. A disposal that removed the key
+unconditionally would silently delete a user's service.
+
+CNA's own destroy unregisters *both* native slots regardless, so after a disposal
+the managed container and CNA's two slots deliberately disagree about
+`IGraphicsDeviceManager'. That is the managed side being right: the container is
+the public authority and CNA's slots are a cross-check, and the cross-check is
+made at construction, where both sides are supposed to agree."
+  (let ((game (game manager)))
+    (when (and game
+               (not (cna-lisp.internal:disposed-state-of game))
+               (eq (get-service (services game) 'igraphics-device-service) manager))
+      (remove-service (services game) 'igraphics-device-service)))
   (unwind-protect
        (cna-lisp.internal:check-result
         (cna-lisp.internal.ffi::%graphics-device-manager-destroy
          (cna-lisp.internal:handle-of manager))
         "dispose" :object-type 'graphics-device-manager)
     ;; After the destroy, as for the game: the manager's Disposed event is
-    ;; raised inside it, and releasing the subscriptions first would swallow it.
-    (%release-event-handlers manager)))
+    ;; raised inside it, and releasing the registrations first would swallow it.
+    (%release-manager-raisers manager)))
+
+;;; --- IGraphicsDeviceManager's three members ----------------------------------
+;;;
+;;; The interface has exactly three, verified against the pinned assembly's own
+;;; declaration rather than counted off CNA's route list:
+;;;
+;;;     .class interface public abstract auto ansi IGraphicsDeviceManager
+;;;       CreateDevice() : void
+;;;       BeginDraw()    : bool
+;;;       EndDraw()      : void
+;;;
+;;; XNA implements all three *explicitly* -- `private hidebysig newslot virtual
+;;; final instance void Microsoft.Xna.Framework.IGraphicsDeviceManager.CreateDevice()'
+;;; -- so in C# they are reachable only through the interface. Common Lisp has no
+;;; explicit implementation: a generic function is reached the same way whatever
+;;; the caller thinks it is holding, which `docs/common-lisp-mapping.md' records.
+
+(defmethod create-device ((manager graphics-device-manager))
+  (cna-lisp.internal:check-usable manager "create-device")
+  (cna-lisp.internal:check-result
+   (cna-lisp.internal.ffi::%graphics-device-manager-create-device
+    (cna-lisp.internal:handle-of manager))
+   "create-device" :object-type 'graphics-device-manager)
+  (values))
+
+(defmethod begin-draw-device ((manager graphics-device-manager))
+  (cna-lisp.internal:check-usable manager "begin-draw-device")
+  (cffi:with-foreign-object (out :uint8)
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%graphics-device-manager-begin-draw
+      (cna-lisp.internal:handle-of manager) out)
+     "begin-draw-device" :object-type 'graphics-device-manager)
+    (cna-lisp.internal.ffi:cna-true-p (cffi:mem-ref out :uint8))))
+
+(defmethod end-draw-device ((manager graphics-device-manager))
+  (cna-lisp.internal:check-usable manager "end-draw-device")
+  (cna-lisp.internal:check-result
+   (cna-lisp.internal.ffi::%graphics-device-manager-end-draw
+    (cna-lisp.internal:handle-of manager))
+   "end-draw-device" :object-type 'graphics-device-manager)
+  (values))
+
+(defmethod clr-type-name ((manager graphics-device-manager))
+  (cna-lisp.internal:check-usable manager "clr-type-name")
+  (let ((handle (cna-lisp.internal:handle-of manager)))
+    (cna-lisp.internal:count-then-copy-string
+     (lambda (out)
+       (cna-lisp.internal.ffi::%graphics-device-manager-get-type-name-size handle out))
+     (lambda (buffer capacity out)
+       (cna-lisp.internal.ffi::%graphics-device-manager-copy-type-name
+        handle buffer capacity out))
+     "clr-type-name")))
