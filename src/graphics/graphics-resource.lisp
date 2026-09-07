@@ -182,24 +182,27 @@ A state object or a vertex declaration that has never been applied therefore
 answers NIL here, which is that null; one that has been applied answers the
 device it was applied to.
 
-A resource with a handle answers the game's GRAPHICS-DEVICE facade, which is the
-only device a CNA-Lisp program has. The C handle CNA answers there is a
-*borrowed* device handle with the same callback-scoped lifetime as every other
-one, so it is checked against the facade rather than wrapped in a second device
-object -- there is exactly one device and two objects for it would be one too
-many."))
+A resource with a handle answers **the device object it was created against**,
+which is the same field on the same branch: whichever GRAPHICS-DEVICE its
+constructor, its content loader or its decoder was handed.
+
+That is a sentence this file could not write until there was more than one
+device. Before caller-owned devices existed, this method looked up the *active
+game* and answered its facade, and the answer was right for the only reason that
+it could not be wrong -- a program had one device and that was it. With two
+kinds of device the lookup is wrong for one of them and, worse, wrong silently:
+a resource made on a device of your own would have reported the game's. So the
+resource remembers the object, which is also what the IL does -- `_parent', read
+by `get_GraphicsDevice' with a bare `ldfld' and no lookup of any kind.
+
+**No active game is consulted, and none is needed.** A resource on a
+caller-owned device answers correctly in a process with no game in it at all."))
 
 (defmethod graphics-resource-graphics-device ((resource %managed-graphics-resource))
   (%resource-device resource))
 
 (defmethod graphics-resource-graphics-device ((resource %native-graphics-resource))
-  (let ((game (cna-lisp.internal:active-game)))
-    (unless game
-      (error 'microsoft.xna.framework:cna-invalid-state-error
-             :operation "graphics-resource-graphics-device"
-             :format-control
-             "the resource's device is the active game's, and there is no active game."))
-    (microsoft.xna.framework:graphics-device game)))
+  (%resource-device resource))
 
 ;;; --- the Disposing event -----------------------------------------------------
 

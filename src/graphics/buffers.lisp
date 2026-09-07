@@ -62,25 +62,25 @@
   (:documentation "What VertexBuffer and IndexBuffer share: a usage and a handle."))
 
 (defun %buffer-device-handle (graphics-device operation)
-  "The borrowed device handle a buffer is created against, with its game."
-  (values (device-handle-for-child graphics-device operation)
-          (cna-lisp.internal:owner-of graphics-device)))
+  "The device handle a buffer is created against."
+  (device-handle-for-child graphics-device operation))
 
-(defun %adopt-buffer (buffer game handle destroy)
+(defun %adopt-buffer (buffer device handle destroy)
   "Take ownership of HANDLE, recording both halves in the construction ledger.
 
 DESTROY is the route that gives HANDLE back -- a vertex buffer and an index
 buffer have different ones. Both undos are recorded here rather than at the call
 site so that neither constructor can take a handle and forget to say how it goes
 back; see RECORD-CONSTRUCTION-UNDO for why a subclass initializer makes that
-matter."
+matter.
+
+DEVICE is the public GRAPHICS-DEVICE, not a game: which native object ends up
+owning the buffer is ADOPT-NATIVE-RESOURCE's decision, because it is the same
+decision for every graphics resource and there is one place that makes it."
   (cna-lisp.internal:record-construction-undo
    buffer (lambda () (funcall destroy handle)))
-  (setf (cna-lisp.internal:handle-of buffer) handle
-        (slot-value buffer 'cna-lisp.internal::owner) game
-        (slot-value buffer 'cna-lisp.internal::owner-thread)
-        (cna-lisp.internal:owner-thread-of game))
-  (cna-lisp.internal:register-child game buffer)
+  (setf (cna-lisp.internal:handle-of buffer) handle)
+  (adopt-native-resource buffer device)
   (cna-lisp.internal:record-construction-undo
    buffer (lambda () (cna-lisp.internal:invalidate buffer)))
   buffer)
@@ -321,8 +321,7 @@ it."
     (let ((declaration (%declaration-for vertex-declaration vertex-type operation)))
       (check-type vertex-count (integer 0))
       (check-type buffer-usage buffer-usage)
-      (multiple-value-bind (device-handle game)
-          (%buffer-device-handle graphics-device operation)
+      (let ((device-handle (%buffer-device-handle graphics-device operation)))
         (%with-native-declaration (native declaration operation)
           (cffi:with-foreign-object
               (info '(:struct cna-lisp.internal.ffi::cna-vertex-buffer-create-info))
@@ -348,7 +347,7 @@ it."
               (cna-lisp.internal:check-result
                (cna-lisp.internal.ffi::%vertex-buffer-create device-handle info out)
                operation :object-type (type-of buffer))
-              (%adopt-buffer buffer game (cffi:mem-ref out :uint64)
+              (%adopt-buffer buffer graphics-device (cffi:mem-ref out :uint64)
                              #'cna-lisp.internal.ffi::%vertex-buffer-destroy))))
         (setf (slot-value buffer 'vertex-declaration) declaration
               (slot-value buffer 'vertex-count) vertex-count
@@ -448,8 +447,7 @@ rather say it that way."))
     (let ((size (%index-element-size-for index-element-size index-type operation)))
       (check-type index-count (integer 0))
       (check-type buffer-usage buffer-usage)
-      (multiple-value-bind (device-handle game)
-          (%buffer-device-handle graphics-device operation)
+      (let ((device-handle (%buffer-device-handle graphics-device operation)))
         (cffi:with-foreign-object
             (info '(:struct cna-lisp.internal.ffi::cna-index-buffer-create-info))
           (cffi:foreign-funcall
@@ -475,7 +473,7 @@ rather say it that way."))
             (cna-lisp.internal:check-result
              (cna-lisp.internal.ffi::%index-buffer-create device-handle info out)
              operation :object-type (type-of buffer))
-            (%adopt-buffer buffer game (cffi:mem-ref out :uint64)
+            (%adopt-buffer buffer graphics-device (cffi:mem-ref out :uint64)
                            #'cna-lisp.internal.ffi::%index-buffer-destroy)))
         (setf (slot-value buffer 'index-element-size) size
               (slot-value buffer 'index-count) index-count

@@ -703,12 +703,24 @@ CNA-USAGE-ERROR here."))
 ;;; a clone. A subclass says how its handle is made and, if it has more views to
 ;;; take, what else to build.
 
-(defun %effect-adopt (effect game handle)
+(defun %effect-adopt (effect owner handle)
+  "Adopt HANDLE against OWNER, a game -- the clone and content paths.
+
+The constructor path goes through %EFFECT-ADOPT-ON-DEVICE instead, which lets
+ADOPT-NATIVE-RESOURCE choose the owner; this one is for the two places that have
+a game in hand and no device: a clone inherits its original's owner, and a
+content-published effect belongs to the ContentManager's game."
   (setf (cna-lisp.internal:handle-of effect) handle
-        (slot-value effect 'cna-lisp.internal::owner) game
+        (slot-value effect 'cna-lisp.internal::owner) owner
         (slot-value effect 'cna-lisp.internal::owner-thread)
-        (cna-lisp.internal:owner-thread-of game))
-  (cna-lisp.internal:register-child game effect)
+        (cna-lisp.internal:owner-thread-of owner))
+  (cna-lisp.internal:register-child owner effect)
+  effect)
+
+(defun %effect-adopt-on-device (effect device handle)
+  "Adopt HANDLE against DEVICE, whichever native owner that device implies."
+  (setf (cna-lisp.internal:handle-of effect) handle)
+  (adopt-native-resource effect device)
   effect)
 
 (defgeneric %create-effect-handle (effect device-handle effect-code)
@@ -770,10 +782,9 @@ ArgumentException, and the code is checked before the device is."
            :format-control "a graphics device is required to create a resource.")))
 
 (defun %effect-device-handle (graphics-device operation)
-  "The borrowed device handle an effect is created against, with its game."
+  "The device handle an effect is created against."
   (check-type graphics-device graphics-device)
-  (values (device-handle-for-child graphics-device operation)
-          (cna-lisp.internal:owner-of graphics-device)))
+  (device-handle-for-child graphics-device operation))
 
 (defmethod initialize-instance :after ((effect effect)
                                        &key graphics-device effect-code
@@ -797,11 +808,11 @@ ArgumentException, and the code is checked before the device is."
       (%effect-adopt effect %adopted-game %adopted-handle)
       (progn
         (%validate-effect-code effect effect-code graphics-device)
-        (multiple-value-bind (device-handle game)
-            (%effect-device-handle graphics-device "make-instance 'effect")
-          (%effect-adopt effect game
-                         (%create-effect-handle effect device-handle effect-code)))
-        (setf (%resource-device effect) graphics-device)))
+        (let ((device-handle
+                (%effect-device-handle graphics-device "make-instance 'effect")))
+          (%effect-adopt-on-device
+           effect graphics-device
+           (%create-effect-handle effect device-handle effect-code)))))
   ;; Recorded once the handle is adopted, and undone newest-first: the views
   ;; first, in the order CNA wants, then the effect itself. Quietly, because a
   ;; failure here must not mask the one that caused the rollback.
@@ -866,7 +877,7 @@ not in the selection either. A name not in this table answers an EFFECT, which i
      (cna-lisp.internal.ffi::%effect-copy-type-name handle buffer capacity out))
    operation))
 
-(defun %adopt-loaded-effect (game handle operation &key content-published)
+(defun %adopt-loaded-effect (device handle operation &key content-published)
   "Wrap an effect a ContentManager created, as the class its type name names.
 
 **The handle's destruction is recorded by MAKE-INSTANCE and not by the caller.**
@@ -879,9 +890,10 @@ path for the same reason."
   (let* ((name (%effect-type-name handle operation))
          (class (or (cdr (assoc name %loaded-effect-classes :test #'string=))
                     'effect))
-         (effect (make-instance class :%adopted-handle handle :%adopted-game game
+         (effect (make-instance class :%adopted-handle handle
+                                      :%adopted-game (native-resource-owner-for-device device)
                                       :%content-published content-published)))
-    (setf (%resource-device effect) (microsoft.xna.framework:graphics-device game))
+    (setf (%resource-device effect) device)
     effect))
 
 ;;; --- destruction -----------------------------------------------------------

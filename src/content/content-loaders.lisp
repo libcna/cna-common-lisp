@@ -47,20 +47,39 @@
       (cffi:mem-ref out :uint64))))
 
 (defun %loading-game (manager operation)
-  "The game that will own what MANAGER loads."
+  "The native object that will own what MANAGER loads.
+
+Named for the game because that is what it is in every ordinary program, and it
+is deliberately **not** renamed: a manager built on a caller-owned
+GRAPHICS-DEVICE has that device as its owner instead, and every adopter below
+takes this value and asks it only for its owner thread and its child list --
+which a device answers exactly as a game does. Whichever it is, it is the object
+CNA will refuse to destroy while a loaded asset is still live."
   (let ((game (cna-lisp.internal:owner-of manager)))
     (unless game
       (error 'microsoft.xna.framework:cna-invalid-object-error
              :operation operation :object-type 'content-manager
-             :format-control "this content manager has no game to own what it loads."
+             :format-control "this content manager has no owner to own what it loads."
              :format-arguments '()))
     game))
+
+(defun %loading-device (manager operation)
+  "The public GRAPHICS-DEVICE a loaded GraphicsResource belongs to.
+
+`GraphicsResource::_parent' in the pinned IL, which every loaded resource must
+record: the device the ContentManager loads against, whether that is a game's
+facade or one the caller owns."
+  (or (content-manager-graphics-device manager)
+      (error 'microsoft.xna.framework:cna-invalid-object-error
+             :operation operation :object-type 'content-manager
+             :format-control "this content manager has no graphics device."
+             :format-arguments '())))
 
 ;;; --- Texture2D and TextureCube ----------------------------------------------
 
 (%define-asset-loader (microsoft.xna.framework.graphics:texture-2d manager asset-name)
   (let* ((operation "load-asset 'texture-2d")
-         (game (%loading-game manager operation))
+         (device (%loading-device manager operation))
          (handle (%load-one-handle manager asset-name
                                    #'cna-lisp.internal.ffi::%content-manager-load-texture-2d
                                    operation)))
@@ -68,11 +87,11 @@
       (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
       (%commit-loaded-asset
        manager asset-name record
-       (microsoft.xna.framework.graphics::%adopt-loaded-texture-2d game handle record)))))
+       (microsoft.xna.framework.graphics::%adopt-loaded-texture-2d device handle record)))))
 
 (%define-asset-loader (microsoft.xna.framework.graphics:texture-cube manager asset-name)
   (let* ((operation "load-asset 'texture-cube")
-         (game (%loading-game manager operation))
+         (device (%loading-device manager operation))
          (handle (%load-one-handle manager asset-name
                                    #'cna-lisp.internal.ffi::%content-manager-load-texture-cube
                                    operation)))
@@ -80,7 +99,7 @@
       (funcall record (lambda () (cna-lisp.internal.ffi::%texturecube-destroy handle)))
       (%commit-loaded-asset
        manager asset-name record
-       (microsoft.xna.framework.graphics::%adopt-loaded-texture-cube game handle record)))))
+       (microsoft.xna.framework.graphics::%adopt-loaded-texture-cube device handle record)))))
 
 ;;; --- SpriteFont -------------------------------------------------------------
 ;;;
@@ -92,7 +111,7 @@
 
 (%define-asset-loader (microsoft.xna.framework.graphics:sprite-font manager asset-name)
   (let* ((operation "load-asset 'sprite-font")
-         (game (%loading-game manager operation))
+         (device (%loading-device manager operation))
          (handle (%content-manager-handle manager operation)))
     (cffi:with-foreign-objects ((font-out :uint64) (atlas-out :uint64))
       (setf (cffi:mem-ref font-out :uint64) 0
@@ -116,7 +135,7 @@
           (multiple-value-call #'%commit-loaded-asset
             manager asset-name record
             (microsoft.xna.framework.graphics::%adopt-loaded-sprite-font
-             game font-handle atlas-handle record)))))))
+             device font-handle atlas-handle record)))))))
 
 ;;; --- Effect -----------------------------------------------------------------
 ;;;
@@ -130,14 +149,14 @@
 
 (%define-asset-loader (microsoft.xna.framework.graphics:effect manager asset-name)
   (let* ((operation "load-asset 'effect")
-         (game (%loading-game manager operation)))
+         (device (%loading-device manager operation)))
     (cna-lisp.internal:with-native-rollback (record)
       ;; The handle goes straight into the constructor, which is what receives it
       ;; and therefore what records its destruction. Recording it here as well
       ;; would destroy it twice: a construction that fails has already run its own
       ;; ledger by the time this one runs. See %ADOPT-LOADED-EFFECT.
       (let ((effect (microsoft.xna.framework.graphics::%adopt-loaded-effect
-                     game
+                     device
                      (%load-one-handle
                       manager asset-name
                       #'cna-lisp.internal.ffi::%content-manager-load-effect

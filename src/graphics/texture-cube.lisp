@@ -75,8 +75,7 @@ because the base class is what asks.")
     (check-type size (integer 1))
     (check-type format surface-format)
     (let ((device-handle (device-handle-for-child graphics-device
-                                                  "make-instance 'texture-cube"))
-          (game (cna-lisp.internal:owner-of graphics-device)))
+                                                  "make-instance 'texture-cube")))
       (cffi:with-foreign-object
           (info '(:struct cna-lisp.internal.ffi::cna-texture-cube-create-info))
         (cffi:foreign-funcall
@@ -103,17 +102,14 @@ because the base class is what asks.")
             (multiple-value-bind (granted-size levels granted-format)
                 (%texture-cube-info handle "make-instance 'texture-cube")
               (setf (cna-lisp.internal:handle-of texture) handle
-                    (slot-value texture 'cna-lisp.internal::owner) game
-                    (slot-value texture 'cna-lisp.internal::owner-thread)
-                    (cna-lisp.internal:owner-thread-of game)
                     (slot-value texture '%size) granted-size
                     (slot-value texture '%level-count) levels
                     (slot-value texture '%format) granted-format)
-              (cna-lisp.internal:register-child game texture)
+              (adopt-native-resource texture graphics-device)
               (cna-lisp.internal:record-construction-undo
                texture (lambda () (cna-lisp.internal:invalidate texture))))))))))
 
-(defun %adopt-loaded-texture-cube (game handle record)
+(defun %adopt-loaded-texture-cube (device handle record)
   "Wrap a cube a ContentManager created, inside the caller's load transaction.
 
 Unlike a Texture2D, a cube *can* report its own shape: `cna_texturecube_get_info'
@@ -125,13 +121,14 @@ RECORD is the enclosing transaction's recorder, and HANDLE's destruction is
 there. See %ADOPT-TEXTURE-2D for the rule and why it is the rule."
   (multiple-value-bind (size levels format)
       (%texture-cube-info handle "load-asset 'texture-cube")
-    (let ((texture (make-instance 'texture-cube
-                                  :handle handle
-                                  :ownership :owned
-                                  :owner game
-                                  :owner-thread (cna-lisp.internal:owner-thread-of game)
-                                  :size size :level-count levels :format format)))
-      (cna-lisp.internal:register-child game texture)
+    (let* ((owner (native-resource-owner-for-device device))
+           (texture (make-instance 'texture-cube
+                                   :handle handle
+                                   :ownership :owned
+                                   :owner owner
+                                   :owner-thread (cna-lisp.internal:owner-thread-of owner)
+                                   :size size :level-count levels :format format)))
+      (adopt-native-resource texture device)
       (funcall record (lambda () (cna-lisp.internal:invalidate texture)))
       texture)))
 

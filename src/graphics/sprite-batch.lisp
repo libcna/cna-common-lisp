@@ -20,8 +20,7 @@ and disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE before the game is."))
 
 (defmethod initialize-instance :after ((batch sprite-batch) &key graphics-device)
   (when graphics-device
-    (let* ((device-handle (device-handle-for-child graphics-device "make sprite-batch"))
-           (game (cna-lisp.internal:owner-of graphics-device)))
+    (let ((device-handle (device-handle-for-child graphics-device "make sprite-batch")))
       (cffi:with-foreign-object (out :uint64)
         (cna-lisp.internal:check-result
          (cna-lisp.internal.ffi::%sprite-batch-create device-handle out)
@@ -29,11 +28,8 @@ and disposed with MICROSOFT.XNA.FRAMEWORK:DISPOSE before the game is."))
         (let ((handle (cffi:mem-ref out :uint64)))
           (cna-lisp.internal:record-construction-undo
            batch (lambda () (cna-lisp.internal.ffi::%sprite-batch-destroy handle)))
-          (setf (cna-lisp.internal:handle-of batch) handle
-                (slot-value batch 'cna-lisp.internal::owner) game
-                (slot-value batch 'cna-lisp.internal::owner-thread)
-                (cna-lisp.internal:owner-thread-of game))))
-      (cna-lisp.internal:register-child game batch)
+          (setf (cna-lisp.internal:handle-of batch) handle)))
+      (adopt-native-resource batch graphics-device)
       (cna-lisp.internal:record-construction-undo
        batch (lambda () (cna-lisp.internal:invalidate batch))))))
 

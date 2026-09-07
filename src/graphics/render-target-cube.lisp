@@ -65,8 +65,7 @@ and its seven-argument overload, distinguished by keywords rather than by arity.
     (check-type usage render-target-usage)
     (check-type multi-sample-count (integer 0))
     (let ((device-handle (device-handle-for-child graphics-device
-                                                  "make-instance 'render-target-cube"))
-          (game (cna-lisp.internal:owner-of graphics-device)))
+                                                  "make-instance 'render-target-cube")))
       (cffi:with-foreign-object
           (info '(:struct cna-lisp.internal.ffi::cna-render-target-cube-create-info))
         (cffi:foreign-funcall
@@ -111,16 +110,13 @@ and its seven-argument overload, distinguished by keywords rather than by arity.
                         guess which of the two is the edge."
                        :format-arguments (list granted-width granted-height)))
               (setf (cna-lisp.internal:handle-of target) handle
-                    (slot-value target 'cna-lisp.internal::owner) game
-                    (slot-value target 'cna-lisp.internal::owner-thread)
-                    (cna-lisp.internal:owner-thread-of game)
                     (slot-value target '%size) granted-width
                     (slot-value target '%level-count) levels
                     (slot-value target '%format) granted-format
                     (slot-value target '%depth-stencil-format) granted-depth
                     (slot-value target '%multi-sample-count) granted-samples
                     (slot-value target '%usage) granted-usage)
-              (cna-lisp.internal:register-child game target)
+              (adopt-native-resource target graphics-device)
               (cna-lisp.internal:record-construction-undo
                target (lambda () (cna-lisp.internal:invalidate target)))
               target)))))))

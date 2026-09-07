@@ -301,7 +301,7 @@ it the exact window a failure-injection test has to be able to open.")
               (and (plusp (slot cna-lisp.internal.ffi::has-default-character))
                    (slot cna-lisp.internal.ffi::default-character))))))
 
-(defun %adopt-loaded-sprite-font (game font-handle atlas-handle record)
+(defun %adopt-loaded-sprite-font (device font-handle atlas-handle record)
   "Wrap the font *and* the atlas one `Load<SpriteFont>' produced.
 
 CNA answers two owned handles for one asset, because \"a SpriteFont is a font
@@ -321,7 +321,7 @@ had already destroyed, and the game refused to shut down a whole callback later.
 
 Answers the font and the atlas, in that order."
   (let ((operation "load-asset 'sprite-font"))
-    (let ((atlas (%adopt-loaded-texture-2d game atlas-handle record)))
+    (let ((atlas (%adopt-loaded-texture-2d device atlas-handle record)))
       (multiple-value-bind (count line-spacing spacing default-character)
           (%sprite-font-info font-handle operation)
         (multiple-value-bind (characters bounds cropping kerning)
@@ -330,7 +330,7 @@ Answers the font and the atlas, in that order."
                                      :handle font-handle
                                      :ownership :owned
                                      :owner atlas
-                                     :owner-thread (cna-lisp.internal:owner-thread-of game)
+                                     :owner-thread (cna-lisp.internal:owner-thread-of atlas)
                                      :characters characters
                                      :glyphs bounds
                                      :cropping cropping
@@ -339,6 +339,11 @@ Answers the font and the atlas, in that order."
                                      :spacing spacing
                                      :default-character default-character
                                      :texture atlas)))
+            ;; A child of the *atlas*, not of the device: CNA parents the font
+            ;; to the atlas's owner and the atlas is what must outlive it. And
+            ;; unlike the atlas, a SpriteFont is **not** a GraphicsResource in
+            ;; the pinned contract -- it has no `GraphicsDevice' property to
+            ;; answer -- so DEVICE reaches it only through the atlas.
             (cna-lisp.internal:register-child atlas font)
             (funcall record (lambda () (cna-lisp.internal:invalidate font)))
             (values font atlas)))))))

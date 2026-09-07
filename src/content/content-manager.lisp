@@ -262,6 +262,12 @@ extension constructor."
            "a parent-owned content manager has no game to be a facade over. This shape is ~
             produced by MICROSOFT.XNA.FRAMEWORK:CONTENT and is not a public constructor."
            :format-arguments '()))
+  ;; The facade loads against its game's device, and says so rather than leaving
+  ;; the slot empty for a loader to rediscover. Every loaded GraphicsResource
+  ;; records the device it was loaded against, and the game's manager has to
+  ;; answer that question exactly as a caller-built one does.
+  (setf (slot-value manager '%graphics-device)
+        (microsoft.xna.framework:graphics-device (cna-lisp.internal:owner-of manager)))
   manager)
 
 (defun %initialize-owned-content-manager (manager graphics-device root-directory)
@@ -282,7 +288,12 @@ extension constructor."
   (let ((device-handle
           (microsoft.xna.framework.graphics::device-handle-for-child
            graphics-device "make-instance 'content-manager"))
-        (game (cna-lisp.internal:owner-of graphics-device)))
+        ;; A ContentManager is not a GraphicsResource, so it does not go
+        ;; through ADOPT-NATIVE-RESOURCE -- but it answers the same question and
+        ;; must answer it the same way, or the extension constructor would build
+        ;; a manager the game owns on a device the game does not.
+        (owner (microsoft.xna.framework.graphics::native-resource-owner-for-device
+                graphics-device)))
     (let ((handle
             (cffi:with-foreign-object
                 (info '(:struct cna-lisp.internal.ffi::cna-content-manager-create-info))
@@ -312,9 +323,9 @@ extension constructor."
       (cna-lisp.internal:record-construction-undo
        manager (lambda () (cna-lisp.internal.ffi::%content-manager-destroy handle)))
       (setf (cna-lisp.internal:handle-of manager) handle
-            (slot-value manager 'cna-lisp.internal::owner) game
+            (slot-value manager 'cna-lisp.internal::owner) owner
             (slot-value manager 'cna-lisp.internal::owner-thread)
-            (cna-lisp.internal:owner-thread-of game)
+            (cna-lisp.internal:owner-thread-of owner)
             (slot-value manager '%graphics-device) graphics-device)
       ;; The built-in loaders are what make Load<T> answer anything at all.
       ;; CNA registers none by default, so a manager without this call
@@ -322,7 +333,7 @@ extension constructor."
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%content-manager-register-builtin-loaders handle)
        "make-instance 'content-manager" :object-type 'content-manager)
-      (cna-lisp.internal:register-child game manager)
+      (cna-lisp.internal:register-child owner manager)
       (cna-lisp.internal:record-construction-undo
        manager (lambda () (cna-lisp.internal:invalidate manager)))
       manager)))

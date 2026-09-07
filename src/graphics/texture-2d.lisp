@@ -63,7 +63,7 @@ wrong-sized quads; refusing says what is missing."))
 (defmethod height ((texture texture-2d))
   (%texture-dimension texture (%texture-height texture) "height"))
 
-(defun %adopt-texture-2d (game handle record &key width height (class 'texture-2d))
+(defun %adopt-texture-2d (device handle record &key width height (class 'texture-2d))
   "Build the CLOS Texture2D over a handle the caller's transaction already owns.
 
 RECORD is that transaction's recorder, and the division of labour is the rule
@@ -73,32 +73,37 @@ that keeps one asset load to one ledger:
 
 This function did not receive HANDLE from CNA -- the decoder or the content
 loader did -- so it records only the undo for the *Lisp* state it creates: the
-object, and its registration as a child of the game. Recording the handle here
+object, and its registration as a child of its owner. Recording the handle here
 too is the bug this shape exists to make unsayable, because a handle owned by two
 nested ledgers is destroyed twice when the inner one runs first.
+
+DEVICE is the public GRAPHICS-DEVICE the texture belongs to, and which native
+object owns it follows from that through ADOPT-NATIVE-RESOURCE. It used to be
+the game, which was the same thing while a game's device was the only device.
 
 The undo is INVALIDATE rather than UNREGISTER-CHILD. An abandoned object is not
 merely unowned: its handle is about to be destroyed by the step recorded before
 it, so anything still holding a reference must find a disposed object rather than
 a live-looking one over a dead handle."
-  (let ((texture (make-instance class
-                                :handle handle
-                                :ownership :owned
-                                :owner game
-                                :owner-thread (cna-lisp.internal:owner-thread-of game)
-                                :width width :height height)))
+  (let* ((owner (native-resource-owner-for-device device))
+         (texture (make-instance class
+                                 :handle handle
+                                 :ownership :owned
+                                 :owner owner
+                                 :owner-thread (cna-lisp.internal:owner-thread-of owner)
+                                 :width width :height height)))
     (%read-texture-storage texture)
-    (cna-lisp.internal:register-child game texture)
+    (adopt-native-resource texture device)
     (funcall record (lambda () (cna-lisp.internal:invalidate texture)))
     texture))
 
-(defun %adopt-loaded-texture-2d (game handle record)
+(defun %adopt-loaded-texture-2d (device handle record)
   "Wrap a texture a ContentManager created, whose dimensions CNA will not report.
 
 The width and height are NIL rather than zero, so WIDTH and HEIGHT refuse rather
 than answering a plausible wrong number. See WIDTH. RECORD is the enclosing
 load transaction's recorder; see %ADOPT-TEXTURE-2D for what is recorded where."
-  (%adopt-texture-2d game handle record :width nil :height nil))
+  (%adopt-texture-2d device handle record :width nil :height nil))
 
 (defun %texture-storage-dimensions (handle)
   "Read a freshly created texture's dimensions and format back out of CNA."
@@ -162,7 +167,7 @@ CLASS exists for the failure-injection test and defaults to TEXTURE-2D; nothing
 public passes it."
   (cna-lisp.internal:with-native-rollback (record)
     (funcall record (lambda () (cna-lisp.internal.ffi::%texture-2d-destroy handle)))
-    (%adopt-texture-2d (cna-lisp.internal:owner-of device) handle record
+    (%adopt-texture-2d device handle record
                        :width width :height height :class class)))
 
 (defun texture-2d-from-png-bytes (graphics-device octets)
@@ -602,8 +607,7 @@ The three-argument overload is not `everything zero': XNA fills in no mip map an
     (check-type height (integer 1))
     (check-type format surface-format)
     (let ((device-handle (device-handle-for-child graphics-device
-                                                  "make-instance 'texture-2d"))
-          (game (cna-lisp.internal:owner-of graphics-device)))
+                                                  "make-instance 'texture-2d")))
       (cffi:with-foreign-object
           (info '(:struct cna-lisp.internal.ffi::cna-texture-2d-create-info))
         (cffi:foreign-funcall
@@ -631,13 +635,10 @@ The three-argument overload is not `everything zero': XNA fills in no mip map an
             (multiple-value-bind (levels granted)
                 (%texture-storage-dimensions handle)
               (setf (cna-lisp.internal:handle-of texture) handle
-                    (slot-value texture 'cna-lisp.internal::owner) game
-                    (slot-value texture 'cna-lisp.internal::owner-thread)
-                    (cna-lisp.internal:owner-thread-of game)
                     (slot-value texture 'width) width
                     (slot-value texture 'height) height
                     (slot-value texture 'level-count) levels
                     (slot-value texture 'format) granted)
-              (cna-lisp.internal:register-child game texture)
+              (adopt-native-resource texture graphics-device)
               (cna-lisp.internal:record-construction-undo
                texture (lambda () (cna-lisp.internal:invalidate texture))))))))))

@@ -114,8 +114,7 @@ own constructor must not make a plain texture underneath it."
   (check-type usage render-target-usage)
   (check-type multi-sample-count (integer 0))
   (let ((device-handle (device-handle-for-child graphics-device
-                                                "make-instance 'render-target-2d"))
-        (game (cna-lisp.internal:owner-of graphics-device)))
+                                                "make-instance 'render-target-2d")))
     (cffi:with-foreign-object
         (info '(:struct cna-lisp.internal.ffi::cna-render-target-2d-create-info))
       (cffi:foreign-funcall
@@ -152,9 +151,6 @@ own constructor must not make a plain texture underneath it."
                                 granted-samples granted-usage)
               (%render-target-info handle "make-instance 'render-target-2d")
             (setf (cna-lisp.internal:handle-of target) handle
-                  (slot-value target 'cna-lisp.internal::owner) game
-                  (slot-value target 'cna-lisp.internal::owner-thread)
-                  (cna-lisp.internal:owner-thread-of game)
                   (slot-value target 'width) w
                   (slot-value target 'height) h
                   (slot-value target 'level-count) levels
@@ -162,7 +158,7 @@ own constructor must not make a plain texture underneath it."
                   (slot-value target '%depth-stencil-format) granted-depth
                   (slot-value target '%multi-sample-count) granted-samples
                   (slot-value target '%usage) granted-usage)
-            (cna-lisp.internal:register-child game target)
+            (adopt-native-resource target graphics-device)
             (cna-lisp.internal:record-construction-undo
              target (lambda () (cna-lisp.internal:invalidate target)))))))))
 
