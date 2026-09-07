@@ -98,6 +98,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; The adapter reads through the device facade and builds DisplayModes, so it
    ;; loads after both.
    (:file "graphics/graphics-adapter")
+   (:file "graphics/owned-graphics-device")
    (:file "graphics/drawing")
    ;; Effect is a GraphicsResource, and the four view kinds hanging off it are
    ;; not; both halves are here, and BasicEffect after them.

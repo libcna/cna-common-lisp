@@ -288,6 +288,20 @@ is a difference, and `Reset' is not projected yet, so there is nothing here that
 could act on it either."))
 
 (defmethod presentation-parameters ((device graphics-device))
+  ;; **An owned device answers `pPublicCachedParams': the same object every
+  ;; time, and a clone of what the constructor was given.** So mutating the
+  ;; object a program passed to the constructor changes nothing here, and
+  ;; mutating what this answers changes nothing either -- which is exactly XNA,
+  ;; where `get_PresentationParameters' is `ldfld pPublicCachedParams' and the
+  ;; constructor cloned twice so that neither field is the caller's object.
+  ;;
+  ;; A game's facade has no constructor argument to have cloned, so it keeps
+  ;; answering a fresh snapshot read from CNA. That is a *weaker* answer than
+  ;; XNA's -- a fresh object rather than a stable one -- and the difference is
+  ;; recorded in docs/limitations.md rather than papered over.
+  (when (%owned-device-p device)
+    (cna-lisp.internal:check-live device "presentation-parameters")
+    (return-from presentation-parameters (%device-owned-presentation-parameters device)))
   (let ((handle (%resolve-device-handle device "presentation-parameters")))
     (cffi:with-foreign-object
         (native '(:struct cna-lisp.internal.ffi::cna-presentation-parameters))

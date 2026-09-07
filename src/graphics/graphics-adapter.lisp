@@ -58,27 +58,93 @@ the game it asks through, and CNA allows one live game per process, so `the
 current game's adapters' and `the process's adapters' are the same set with the
 stale-game hazard removed.")
 
-(defun %intern-graphics-adapter (game index)
-  "The one GRAPHICS-ADAPTER for INDEX on GAME, made once and answered thereafter.
+(defun %intern-graphics-adapter (context index)
+  "The one GRAPHICS-ADAPTER for INDEX on CONTEXT, made once and answered thereafter.
 
-Reached only from the game's own thread, as every adapter route is: CNA's adapter
-queries take the callback-scoped device handle and refuse another thread, so the
-cache needs no lock to be reached safely."
-  (unless (eq game *interned-adapters-game*)
+CONTEXT is the game whose adapters these are, or **NIL for a process with no
+game** -- the case a caller-owned device introduced, where the adapters belong
+to nothing and resolve a device to ask through per query. NIL is a key like any
+other here, so a game appearing later resets the table exactly as a *different*
+game would.
+
+Reached only from the owning thread, as every adapter route is: CNA's adapter
+queries take a device handle and refuse another thread, so the cache needs no
+lock to be reached safely."
+  (unless (eq context *interned-adapters-game*)
     (clrhash *interned-adapters*)
-    (setf *interned-adapters-game* game))
+    (setf *interned-adapters-game* context))
   (or (gethash index *interned-adapters*)
       (setf (gethash index *interned-adapters*)
-            (make-instance 'graphics-adapter :index index :game game))))
+            (make-instance 'graphics-adapter :index index :game context))))
+
+(defvar *live-owned-devices* '()
+  "Every caller-owned GRAPHICS-DEVICE currently alive, newest first.
+
+**Why a registry exists at all, when the binding avoids them.** Every CNA adapter
+route takes a graphics-device handle -- there is no adapter query that does not
+-- and until this closure the only device was the active game's, so
+`(ACTIVE-GAME)' was the whole answer. A caller-owned device is a second thing an
+adapter can be asked through, and it has no root to be found from: it is
+`rootless' in the manifest's vocabulary, owned by nobody.
+
+This is not a cache and nothing is answered *from* it. It holds no ownership,
+decides no lifetime, and its only use is FIND-IF for something still live to ask
+a question through. A device adds itself when it is constructed and removes
+itself when it is disposed.")
+
+(defun %register-owned-device (device)
+  (pushnew device *live-owned-devices*)
+  device)
+
+(defun %unregister-owned-device (device)
+  (setf *live-owned-devices* (remove device *live-owned-devices* :test #'eq))
+  device)
+
+(defun %any-live-owned-device ()
+  "Some caller-owned device that can still answer a question, or NIL."
+  (find-if (lambda (device)
+             (and (not (microsoft.xna.framework:disposed-p device))
+                  (not (zerop (cna-lisp.internal:handle-of device)))))
+           *live-owned-devices*))
+
+(defvar *transient-adapter-context* nil
+  "A device %WITH-ADAPTER-CONTEXT made, live for the duration of one call.
+
+The bootstrap members -- `Adapters' and `DefaultAdapter' -- have to answer in a
+process with no game and no device, and every CNA adapter route needs one. They
+make a device for the call and dispose it on the way out, and this is where the
+rest of the file finds it while it exists.")
+
+(defun %adapter-context-device (operation)
+  "A device to ask an adapter question through, in the order they are preferred.
+
+The adapter's own context first -- the game or device it was enumerated from --
+then the active game's, then any caller-owned device still alive. XNA needs none
+of this: its `GraphicsAdapter' is a static list built before any device exists.
+CNA has no such route, which is why `Adapters' and `DefaultAdapter' are reported
+partial, and this is the binding making the best of it rather than pretending
+otherwise."
+  (declare (ignorable operation))
+  (let ((game (cna-lisp.internal:active-game)))
+    (or (when game (microsoft.xna.framework:graphics-device game))
+        *transient-adapter-context*
+        (%any-live-owned-device))))
 
 (defun %adapter-device-handle (adapter operation)
-  "The borrowed device handle to ask ADAPTER's questions through."
-  (let ((game (%adapter-game adapter)))
-    (unless game
+  "The device handle to ask ADAPTER's questions through."
+  (let* ((context (%adapter-game adapter))
+         (device (cond ((null context) (%adapter-context-device operation))
+                       ((typep context 'graphics-device) context)
+                       (t (microsoft.xna.framework:graphics-device context)))))
+    (unless device
       (error 'microsoft.xna.framework:cna-invalid-object-error
              :operation operation :object-type 'graphics-adapter
-             :format-control "this adapter has no game to ask through."))
-    (%resolve-device-handle (microsoft.xna.framework:graphics-device game) operation)))
+             :format-control
+             "this adapter has no device to ask through. Every CNA adapter route takes a ~
+              graphics-device handle, so an adapter can only answer while some device is ~
+              alive -- a game's, or one you constructed. Construct a GRAPHICS-DEVICE ~
+              with this adapter and ask again."))
+    (%resolve-device-handle device operation)))
 
 (defun %active-game-for-adapters (operation)
   "The process's one active game, which every adapter query needs."
@@ -437,6 +503,41 @@ first, then what the out parameters would have received --
 
 ;;; --- reaching an adapter --------------------------------------------------------
 
+(defmacro %with-adapter-context ((device operation) &body body)
+  "Run BODY with DEVICE bound to something adapter questions can be asked through.
+
+**No game and no device is where an XNA program starts**, and it is the one
+state CNA has no answer for: `cna_graphics_adapter_get_count' refuses
+`CNA_INVALID_HANDLE' and zero alike -- measured -- so nothing answers while
+nothing is alive. But `cna_graphics_device_create' takes an adapter *index*
+rather than an object, and index zero is valid whenever the runtime is up, so a
+device made for the question can answer it.
+
+When something is already alive -- a game's device, or one the caller owns --
+that is used and nothing is created. Otherwise a device is made, used and
+disposed inside this form, and bound where the rest of the file can find it so
+that a whole enumeration runs through one device rather than one per adapter."
+  (let ((op (gensym "OPERATION")) (existing (gensym "EXISTING")))
+    `(let* ((,op ,operation)
+            (,existing (%adapter-context-device ,op)))
+       (if ,existing
+           (let ((,device ,existing)) ,@body)
+           (%with-transient-enumeration-device (,device ,op)
+             (let ((*transient-adapter-context* ,device)) ,@body))))))
+
+(defun %enumerate-adapters-through (device operation)
+  "Every adapter CNA enumerates, asked through DEVICE."
+  (let ((handle (%resolve-device-handle device operation))
+        (context (if (%owned-device-p device)
+                     nil
+                     (cna-lisp.internal:owner-of device))))
+    (cffi:with-foreign-object (out :uint64)
+      (cna-lisp.internal:check-result
+       (cna-lisp.internal.ffi::%graphics-adapter-get-count handle out)
+       operation :object-type 'graphics-adapter)
+      (loop for index from 0 below (cffi:mem-ref out :uint64)
+            collect (%intern-graphics-adapter context index)))))
+
 (defun graphics-adapter-adapters ()
   "GraphicsAdapter.Adapters: every adapter CNA enumerates, as a list.
 
@@ -447,16 +548,9 @@ handle, so this needs a live game *and* a lifecycle callback to be inside, and b
 then the device has been created. `ReadOnlyCollection<GraphicsAdapter>' has no
 counterpart here either; a list is what Common Lisp reads a sequence you must not
 mutate as."
-  (let* ((operation "graphics-adapter-adapters")
-         (game (%active-game-for-adapters operation))
-         (handle (%resolve-device-handle
-                  (microsoft.xna.framework:graphics-device game) operation)))
-    (cffi:with-foreign-object (out :uint64)
-      (cna-lisp.internal:check-result
-       (cna-lisp.internal.ffi::%graphics-adapter-get-count handle out)
-       operation :object-type 'graphics-adapter)
-      (loop for index from 0 below (cffi:mem-ref out :uint64)
-            collect (%intern-graphics-adapter game index)))))
+  (let ((operation "graphics-adapter-adapters"))
+    (%with-adapter-context (device operation)
+      (%enumerate-adapters-through device operation))))
 
 (defun graphics-adapter-default-adapter ()
   "GraphicsAdapter.DefaultAdapter: the adapter CNA reports as the default one.
@@ -464,7 +558,9 @@ mutate as."
 Partial for the reason GRAPHICS-ADAPTER-ADAPTERS is: XNA's is static and answers
 without a device. Found by asking each adapter rather than assuming index zero,
 because `is_default_adapter' is a field CNA fills and index zero is a guess."
-  (or (find-if #'graphics-adapter-is-default-adapter (graphics-adapter-adapters))
+  (or (%with-adapter-context (device "graphics-adapter-default-adapter")
+        (find-if #'graphics-adapter-is-default-adapter
+                 (%enumerate-adapters-through device "graphics-adapter-default-adapter")))
       (error 'microsoft.xna.framework:cna-invalid-state-error
              :operation "graphics-adapter-default-adapter"
              :object-type 'graphics-adapter
@@ -479,13 +575,27 @@ Through `cna_graphics_device_get_adapter_index', which answers an index into the
 same enumeration `GRAPHICS-ADAPTER-ADAPTERS' walks."))
 
 (defmethod adapter ((device graphics-device))
-  (let ((handle (%resolve-device-handle device "adapter")))
-    (cffi:with-foreign-object (out :uint32)
-      (cna-lisp.internal:check-result
-       (cna-lisp.internal.ffi::%graphics-device-get-adapter-index handle out)
-       "adapter" :object-type 'graphics-device)
-      (%intern-graphics-adapter (cna-lisp.internal:owner-of device)
-                                (cffi:mem-ref out :uint32)))))
+  ;; **A device the caller constructed answers the object it was constructed
+  ;; with, by identity.** `IL_0084: ldarg.1; stfld pCurrentAdapter' stores the
+  ;; caller's own argument and `get_Adapter' is a bare `ldfld' of it, and that
+  ;; matters rather than being a nicety: XNA's GraphicsAdapter overrides neither
+  ;; Equals nor GetHashCode, so every comparison against it is reference
+  ;; equality and a fresh wrapper for the same index would compare false.
+  ;;
+  ;; A game's facade has no such argument -- the runtime created its device --
+  ;; so it asks CNA which adapter index it landed on and interns that, which is
+  ;; the answer the services closure established.
+  (if (%owned-device-p device)
+      (progn
+        (cna-lisp.internal:check-live device "adapter")
+        (%device-owned-adapter device))
+      (let ((handle (%resolve-device-handle device "adapter")))
+        (cffi:with-foreign-object (out :uint32)
+          (cna-lisp.internal:check-result
+           (cna-lisp.internal.ffi::%graphics-device-get-adapter-index handle out)
+           "adapter" :object-type 'graphics-device)
+          (%intern-graphics-adapter (cna-lisp.internal:owner-of device)
+                                    (cffi:mem-ref out :uint32))))))
 
 (defmethod print-object ((adapter graphics-adapter) stream)
   (print-unreadable-object (adapter stream :type t)

@@ -1204,6 +1204,18 @@
       "ownership": "none"
     },
     {
+      "name": "cna_graphics_device_create",
+      "header": "graphics_device.h",
+      "thread": "creates-affinity",
+      "ownership": "creates-owned:graphics-device:rootless"
+    },
+    {
+      "name": "cna_graphics_device_destroy",
+      "header": "graphics_device.h",
+      "thread": "owner",
+      "ownership": "destroys:graphics-device"
+    },
+    {
       "name": "cna_graphics_device_reset",
       "header": "graphics_device.h",
       "thread": "owner",

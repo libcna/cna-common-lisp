@@ -273,12 +273,27 @@ Get-only, as XNA's is: a device's profile is decided when the device is made.
 is settable and is the other side of the same subject."))
 
 (defmethod graphics-profile ((device graphics-device))
+  ;; XNA answers `_graphicsProfile', the value the constructor was *given*,
+  ;; never a value read back from the device. An owned device therefore answers
+  ;; what it was asked for -- and cross-checks CNA against it rather than
+  ;; trusting either alone, because a silent normalisation by CNA would
+  ;; otherwise change a public answer with nothing to notice it.
   (let ((handle (%resolve-device-handle device "graphics-profile")))
     (cffi:with-foreign-object (out :uint32)
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%graphics-device-get-graphics-profile handle out)
        "graphics-profile" :object-type 'graphics-device)
-      (graphics-profile-from-value (cffi:mem-ref out :uint32)))))
+      (let ((reported (graphics-profile-from-value (cffi:mem-ref out :uint32)))
+            (requested (%device-owned-profile device)))
+        (when (and requested (not (eq requested reported)))
+          (error 'microsoft.xna.framework:cna-internal-error
+                 :operation "graphics-profile" :object-type 'graphics-device
+                 :format-control
+                 "this device was created with GraphicsProfile ~s and CNA reports ~s. ~
+                  XNA's property answers the requested profile, so answering either ~
+                  would hide the disagreement; it is reported instead."
+                 :format-arguments (list requested reported)))
+        (or requested reported)))))
 
 (defgeneric is-disposed (graphics-device)
   (:documentation
@@ -471,6 +486,57 @@ rather than looking one up."
           (%resource-device resource) device)
     (cna-lisp.internal:register-child owner resource)
     resource))
+
+;;; --- a device made only to ask a question through ------------------------------
+
+(defun %make-transient-enumeration-device (operation)
+  "A caller-owned device on adapter zero, for one query, over CNA's own defaults.
+
+**Why this has to exist.** Every CNA adapter route takes a graphics-device
+handle: `cna_graphics_adapter_get_count' was measured refusing
+`CNA_INVALID_HANDLE' and zero alike. But XNA's constructor takes a
+`GraphicsAdapter', and a program with no game has no way to obtain one -- which
+is the loop this breaks. `cna_graphics_device_create' takes an adapter *index*,
+not an object, and index zero is valid whenever the runtime is up, so a device
+made on it can answer the enumeration that produces the real adapter objects.
+
+Deliberately not the public constructor: there is no adapter to hand it, and
+building one would be the loop again. Deliberately not exposed, cached or
+reused either -- it is created, asked, and disposed inside one call, and twenty
+such rounds were measured at 53 milliseconds. Its presentation parameters are
+whatever `cna_presentation_parameters_init' says XNA's defaults are, because
+nothing about them matters to a question about adapters."
+  (cna-lisp.internal:ensure-abi-admitted)
+  (cffi:with-foreign-objects
+      ((parameters '(:struct cna-lisp.internal.ffi::cna-presentation-parameters))
+       (out :uint64))
+    (cffi:foreign-funcall
+     "memset" :pointer parameters :int 0
+     :size cna-lisp.internal.ffi::+sizeof-cna-presentation-parameters+ :void)
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%presentation-parameters-init parameters)
+     operation :object-type 'graphics-device)
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%graphics-device-create
+      0 cna-lisp.internal.ffi::+graphics-profile-reach+ parameters out)
+     operation :object-type 'graphics-device)
+    (let ((device (make-instance 'graphics-device
+                                 :ownership :owned
+                                 :handle (cffi:mem-ref out :uint64)
+                                 :%transient t)))
+      device)))
+
+(defmacro %with-transient-enumeration-device ((device operation) &body body)
+  "Run BODY with DEVICE bound to a device that exists only for it.
+
+The device is disposed on the way out, whether BODY finished or signalled: it is
+this function's and nobody else's, and leaving one behind would leak a native
+device for the life of the process."
+  (let ((op (gensym "OPERATION")))
+    `(let* ((,op ,operation)
+            (,device (%make-transient-enumeration-device ,op)))
+       (unwind-protect (progn ,@body)
+         (microsoft.xna.framework:dispose ,device)))))
 
 
 ;;; --- the device's own state ---------------------------------------------------
@@ -748,3 +814,4 @@ member usable as evidence that pixels were produced. See docs/limitations.md."))
             (setf (aref result index)
                   (microsoft.xna.framework:color-from-packed-value
                    (cffi:mem-aref destination :uint32 index)))))))))
+
