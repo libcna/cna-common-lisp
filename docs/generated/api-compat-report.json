@@ -22,15 +22,15 @@
    "complete": 171
   },
   "members_by_status": {
-   "complete": 2084,
-   "missing": 25,
+   "complete": 2086,
+   "missing": 23,
    "not-applicable": 443,
    "partial": 29
   },
-  "diagnostics": 25,
+  "diagnostics": 23,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 25,
+   "missing_member": 23,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -1482,7 +1482,7 @@
    "name": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
    "status": "partial",
    "members": {
-    "new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "missing",
+    "new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "complete",
     "Present(Nullable`1,Nullable`1,IntPtr)": "missing",
     "Present()": "complete",
     "Reset()": "complete",
@@ -1512,7 +1512,7 @@
     "SetVertexBuffer(VertexBuffer)": "complete",
     "SetVertexBuffers(VertexBufferBinding[])": "complete",
     "Dispose(Boolean)": "not-applicable",
-    "Dispose()": "missing",
+    "Dispose()": "complete",
     "Finalize()": "not-applicable",
     "IsDisposed": "complete",
     "ScissorRectangle": "complete",
@@ -4066,18 +4066,8 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.new(GraphicsAdapter,GraphicsProfile,PresentationParameters)",
-   "detail": "The device as an object a program constructs, which a CNA-Lisp program never does: CNA creates the device with the game and lends it for a callback's duration. **cna_graphics_device_create does exist**, so this is a design decision rather than a missing capability -- supporting it means a second kind of GraphicsDevice, an owned one with a handle of its own alongside the parent-owned facade, and every device operation learning which it has. That is a closure of its own, not a member to add."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Present(Nullable`1,Nullable`1,IntPtr)",
    "detail": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected -- and there is no route either: cna_graphics_device_present takes the device and nothing else, so the source rectangle, destination rectangle and override window have nowhere to go. The no-argument Present is complete."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Dispose()",
-   "detail": "CNA refuses this for a game's device by design and says why: cna_graphics_device_dispose 'reports that C cannot dispose the graphics device owned by the active game', because 'disposing it through a borrowed handle would leave that game drawing into a destroyed device'. cna_game_destroy performs the canonical disposal. %CHECK-DISPOSABLE refuses it here for the same reason, one step earlier, and the refusal costs the facade nothing. cna_graphics_device_destroy accepts only a *caller-created* device, so this member arrives with the constructor above or not at all."
   },
   {
    "category": "missing_member",

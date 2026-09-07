@@ -123,9 +123,9 @@ genuine absence.
 <!-- generated:complete types=171 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2084 -->
+<!-- generated:complete members=2086 -->
 <!-- generated:partial members=29 -->
-<!-- generated:missing members=25 -->
+<!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
 
@@ -139,9 +139,9 @@ Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 | Types complete | **171** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2084** |
+| Members complete | **2086** |
 | Members partial | **29** |
-| Members missing | **25** |
+| Members missing | **23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -203,7 +203,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.PlayerIndex` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.DisplayOrientation` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Graphics.GraphicsResource` | **complete** | 6 | 0 | 0 | 3 |
-| `M.X.F.Graphics.GraphicsDevice` | **partial** | 49 | 1 | 5 | 2 |
+| `M.X.F.Graphics.GraphicsDevice` | **partial** | 51 | 1 | 3 | 2 |
 | `M.X.F.Graphics.Viewport` | **complete** | 13 | 0 | 0 | 1 |
 | `M.X.F.Graphics.Texture` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Graphics.Texture2D` | **partial** | 11 | 4 | 0 | 1 |
@@ -393,8 +393,8 @@ back-reference.
 | Type | missing members | partial members |
 | --- | ---: | ---: |
 | `M.X.F.GameWindow` | 7 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
 | `M.X.F.Game` | 3 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 3 | 1 |
 | `M.X.F.Media.Song` | 3 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
@@ -446,7 +446,7 @@ and so is a category left behind by a member that has since been completed.
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
 | `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
-| `PUBLIC_OBJECT_MODEL_CLOSURE` | **2** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
@@ -486,12 +486,18 @@ which this binding decides whether to raise. Projecting them would give a
 consumer a method that looks like an interception point and is not.
 
 `PUBLIC_OBJECT_MODEL_CLOSURE` is the one category that is this binding's own work
-rather than a limit imposed on it. It holds three members -- `GraphicsDevice`'s
-constructor and `Dispose`, and `Game.Services` -- and each is a closure rather
-than a member: the first two need a second kind of `GraphicsDevice`, an owned one
-with a handle of its own beside the parent-owned facade, and the third needs
-`GameServiceContainer` in the selection and a managed container that stays in
-step with CNA's two canonical services. `docs/limitations.md` has both audits.
+rather than a limit imposed on it, and **it is empty**. It is the first category
+to have been emptied, and the row is rendered rather than dropped because its
+being empty is the claim.
+
+It held three members and each was a closure rather than a member.
+`Game.Services` needed `GameServiceContainer` in the selection and a managed
+container that stays in step with CNA's two canonical services; that landed with
+the services closure. `GraphicsDevice`'s constructor and `Dispose` needed a
+second kind of `GraphicsDevice` -- an owned one with a handle of its own beside
+the parent-owned facade -- and that is what the owned-device closure did. The
+category emptying is the measure of it: the object model represents both native
+ownership graphs XNA permits, rather than one of them and a note about the other.
 
 ## Behaviour, as distinct from structure
 
@@ -511,7 +517,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=715 -->
+<!-- generated:bound native functions=717 -->
 <!-- generated:bound native structs=75 -->
 <!-- generated:bound native struct fields=555 -->
 <!-- generated:bound native constants=540 -->
@@ -523,7 +529,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 715 |
+| Bound functions | 717 |
 | Bound structs | 75 |
 | Bound struct fields | 555 |
 | Bound constants | 540 |

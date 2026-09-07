@@ -463,7 +463,15 @@ claim that needs two processes by definition.
 | `tools/qualification/media.sh` | `MEDIA_UNAVAILABLE`, `MEDIA_PLAYBACK`, `MEDIA_PLAY_CLOCK`, `MEDIA_QUEUE`, `MEDIA_EVENTS`, plus a public-API-only consumer | no sound card |
 | `tools/qualification/storage.sh` | `STORAGE_NO_ROOT`, `STORAGE_SUITE`, `STORAGE_PERSISTENCE`, plus a public-API-only consumer that constructs no `GAME` | a writable home directory |
 | `tools/qualification/services.sh` | `SERVICES_MANAGED`, `SERVICES_CANONICAL`, `SERVICES_CONTENT`, `DEVICE_INFORMATION`, `PREPARING_DEVICE_SETTINGS`, `GDM_VIRTUAL_EVENTS`, plus a public-API-only consumer that drives the manager through the *interface* it was retrieved under | **nothing** -- no display, no GPU, no audio or capture device, no content fixture |
+| `tools/qualification/owned-graphics-device.sh` | `OWNED_DEVICE_SUITE` (nine kinds, each required by name), `OWNED_DEVICE_CONSUMER`, and exactly one of `OWNED_DEVICE_SOFTWARE` / `OWNED_DEVICE_HEADLESS` | **nothing** for the lifecycle claim; a rasterising renderer for the pixel claim |
 | `tools/qualification/rasterizer.sh` | the pixel proofs above | a rasterising renderer, no display |
+
+**The owned-device script is the only graphics lane that must contain no game**,
+and that is why it is a script rather than a section of the suite: a suite run
+creates games, so a lane whose claim is "no game is needed" cannot be one of its
+tests. It requires *exactly one* of the two renderer branches -- neither would
+mean the standalone pixel test never ran, and both would mean it ran twice and
+cannot be read.
 
 **The storage lanes are the only ones whose branch is not the environment's to
 choose.** A machine either has a sound card or it has not, and the audio, capture

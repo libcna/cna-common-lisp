@@ -24,21 +24,61 @@ is a resource you dispose. `with-disposal` and `unwind-protect` are how.
 | `:callback-scoped` | borrowed, and valid only inside a lifecycle callback | never |
 | `:parent-owned` | a facade with no handle of its own | never |
 
-## The graphics device is a facade, on purpose
+## The graphics device has two lifetimes, and one public type
 
-CNA lends the graphics device only from inside a lifecycle callback, and the
-handle it lends is valid only until that callback returns.
+XNA permits both and CNA supplies both, so `GraphicsDevice` is one class with a
+private discriminator, `%DEVICE-LIFETIME-MODE`. Making it two public classes was
+the obvious wrong answer: a consumer would have had to choose between them, and
+XNA has one type.
 
-So `graphics-device` **stores no handle at all**. It is a `:parent-owned` facade
-over the game, and every operation resolves a fresh borrowed handle at the moment
-it is performed. Keeping the borrowed handle in a slot is the classic bug here: it
-would appear to work right up to the first use after the frame that produced it,
-and then it would be reaching through a handle that may since have been reissued
-to something else.
+### `:parent-owned` — the game's device, a facade
 
-An operation on the device outside a callback is refused by CNA-Lisp with
+CNA lends the game's graphics device only from inside a lifecycle callback, and
+the handle it lends is valid only until that callback returns.
+
+So this mode **stores no handle at all**. It is a facade over the game, and every
+operation resolves a fresh borrowed handle at the moment it is performed. Keeping
+the borrowed handle in a slot is the classic bug here: it would appear to work
+right up to the first use after the frame that produced it, and then it would be
+reaching through a handle that may since have been reissued to something else.
+
+An operation on such a device outside a callback is refused by CNA-Lisp with
 `cna-scope-error`, before anything reaches the ABI, and the message says where
-graphics work belongs.
+graphics work belongs. Disposal is refused too: the game owns it and releases it,
+and there is no handle here to give back.
+
+### `:owned` — a device the caller constructed
+
+`GraphicsDevice(GraphicsAdapter, GraphicsProfile, PresentationParameters)` makes
+a device from `cna_graphics_device_create` that belongs to the caller. It holds
+a **persistent** handle, needs no callback scope, needs no `GAME` in the process
+at all, and is disposed by whoever made it. Several may be live at once, and one
+may be disposed while another is still drawing.
+
+### Two native ownership graphs under one public hierarchy
+
+That is the part the modes exist for. CNA has
+
+    game   -> borrowed device facade -> the game's graphics resources
+    caller -> owned device           -> that device's graphics resources
+
+and `NATIVE-RESOURCE-OWNER-FOR-DEVICE` is the single place that decides which. A
+resource made against a facade becomes a child of the **game**, because CNA
+requires every graphics resource destroyed before `cna_game_destroy` succeeds.
+One made against an owned device becomes a child of the **device**, and CNA
+means it: `cna_game_destroy` was measured succeeding with an owned device and
+its resources still live.
+
+Every native `GraphicsResource` records the public device it was made against —
+`GraphicsResource::_parent` in the pinned IL, which `get_GraphicsDevice` reads
+with a bare `ldfld` and no lookup of any kind. Before there were two devices the
+binding could answer the active game's facade and be right for the only reason
+it could not be wrong; with two it would be wrong for one of them, and wrong
+silently.
+
+Pretending an owned device has a game parent would be the same bug from the
+other side: the game would then gate resources it does not own, and
+`cna_game_destroy` would refuse where CNA accepts.
 
 ## Generations
 

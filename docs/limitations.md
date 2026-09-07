@@ -310,8 +310,11 @@ the manager finished. So it does here: the assets go, the facade is marked
 disposed, `Game.Content` keeps answering it as XNA's field does, and every member
 on it then refuses. The borrowed native manager CNA lends is left alone, which
 costs nothing. The other parent-owned facade, `GraphicsDevice`, still refuses
-disposal — it has nothing of its own to release, and `GraphicsDevice.Dispose` is
-itself reported missing.
+disposal — it has nothing of its own to release — but the refusal is now the
+*facade's* rather than the type's: `GraphicsDevice.Dispose` is complete, and a
+device the caller constructed is the caller's to dispose. Which of the two a
+`GraphicsDevice` is is its private lifetime mode; see the owned-device section
+below.
 
 
 ### A loaded `Texture2D` cannot report its size
@@ -1061,16 +1064,31 @@ exactly as available here as it is in XNA.
 **The two static members are partial, and the scope is why.**
 `GraphicsAdapter.Adapters` and `.DefaultAdapter` are *static* in XNA and answer
 before any device exists — that is how an XNA program picks the adapter it then
-creates a device on. **Every** CNA adapter route takes a callback-scoped
-graphics-device handle, so here they need a live game *and* a lifecycle method to
-be inside, and by then the device has been created. The capability is there; the
-moment it is available at is not, and the test asserts the refusal outside a
-callback rather than leaving a caller to discover it.
+creates a device on. **Every** CNA adapter route takes a graphics-device handle:
+`cna_graphics_adapter_get_count` was measured refusing `CNA_INVALID_HANDLE` and
+zero alike, so nothing answers while nothing is alive.
+
+**Since the owned-device closure they answer in a process with no game, and the
+way they do it is worth knowing.** `cna_graphics_device_create` takes an adapter
+*index* rather than an object, and index zero is valid whenever the runtime is
+up — so when there is no game and no device, these two make a device for the
+question and dispose it inside the same call. Twenty such rounds were measured
+at 53 milliseconds and nothing observable outlives the call. It breaks the loop
+where the loop is weakest, and it is this binding arranging something rather
+than CNA offering it, which is why the two members remain **partial** rather
+than becoming complete.
+
+The adapters they answer carry no context of their own and resolve a device per
+query afterwards — the active game's, or any caller-owned device still alive. So
+an adapter can be *obtained* before any device exists and can be *asked
+questions* only while one does, which is the shape the standalone consumer's
+comment points at: it describes its adapter after constructing its device, and
+says why there rather than working around it.
 
 An adapter holds **no handle**: CNA names one by a zero-based index into its own
-enumeration, so the class is that index plus the game to ask through, and every
-reader resolves the borrowed device handle per call — which is also what makes the
-scope rule enforce itself.
+enumeration, so the class is that index plus a context to ask through, and every
+reader resolves a device handle per call — which is also what makes the scope
+rule enforce itself for a game's device.
 
 Three smaller things, each measured rather than assumed:
 
@@ -3329,6 +3347,108 @@ Two related things this binding does not do:
   0x300 for `BigButtonPad`. The projection answers the contract's number, and the
   two tables are deliberately separate so that neither can be mistaken for the
   other.
+
+## The caller-owned `GraphicsDevice`, and the four things it measures
+
+`GraphicsDevice` is **one public type with two native lifetimes**, and the
+private discriminator is `%DEVICE-LIFETIME-MODE`. A game's device is a
+parent-owned facade: CNA lends it only inside a lifecycle callback, so the class
+stores no handle, resolves a fresh one per operation, and refuses disposal. A
+device the caller constructs with
+`GraphicsDevice(GraphicsAdapter, GraphicsProfile, PresentationParameters)` holds
+a persistent handle from `cna_graphics_device_create`, needs no callback scope
+and no game at all, owns the graphics resources created against it, and is the
+caller's to dispose. `docs/ownership-and-lifetimes.md` has the two graphs.
+
+Everything below was measured through the C ABI before any of it was written --
+`tools/qualification/owned-device-matrix.sh`, nineteen stages, three admitted
+ABIs, two renderers -- because `graphics_device.h` is byte-identical across
+0.21.0, 0.22.0 and 0.23.0 and Storage already established what that is worth.
+**Here the three do behave identically**, and that is now a measured fact rather
+than an inference from the header.
+
+### Cross-device resource use is not refused, and this binding does not invent it
+
+The ABI header says resources "remember which device made them" and that mixing
+one device's resource into another's call "is refused, whether the devices are
+two caller-created ones or a caller-created one and a Game's". The first half is
+true — `cna_graphics_device_get_tracked_resource_count` rises and falls per
+device. **The second half is not.** Every crossing measured was accepted, in
+every direction, on every admitted ABI and both renderers, and reading the slot
+back afterwards reports the crossed resource really bound there.
+
+XNA does not refuse it either. `TextureCollection::set_Item` in the pinned
+assembly guards disposal, the active render target, the profile's vertex-texture
+formats and the slot index, and compares no devices at all; nothing anywhere in
+that assembly compares a `GraphicsResource::_parent` against the device it is
+being bound to.
+
+So neither authority refuses, and a refusal here would be a member this
+projection gained. The behaviour is asserted in both directions instead, so a
+CNA that started refusing would fail a test rather than silently changing this
+binding.
+
+### CNA's sampler slot table is shared between devices; XNA's is per device
+
+Not mentioned in the header at all, and found by measuring. Bind device A's
+texture into A's slot 0, then B's into B's slot 0, and A's slot 0 reports
+`bound` with an **invalid** handle — CNA's documented way of saying "something
+is here and no C resource owns it". In XNA each device has its own
+`TextureCollection` over its own device state and neither disturbs the other.
+
+The binding's own collections *are* per device, and that is asserted: `A.Textures`
+is stable across reads, is never `B.Textures`, and a game's facade keeps its
+own. What it cannot do is make CNA's slot table per device, so `Textures[i]`
+answers `NIL` for "this binding has nothing bound here" once another device has
+displaced the slot — the same truthful answer it already gave when canonical CNA
+code filled a slot. Answering the cache would be claiming a binding that is gone.
+
+### Disposal cascades, and XNA's child state differs from CNA's
+
+`GraphicsDevice.Dispose()` is `Dispose(true)` then `SuppressFinalize`;
+`~GraphicsDevice` returns early when already disposed, releases natively, and
+raises `Disposing` **last**; and `!GraphicsDevice` sets `isDisposed` *before*
+anything is released and calls `ReleaseAllDeviceResources()` on the children
+before releasing the device. CNA's measured order is the same shape — each live
+child's `Disposing`, then the device's — so this binding lets one native call do
+it and brings the CLOS side with it. It is the second type here to override the
+no-cascade default, after `SoundEffect`, and for the same kind of reason:
+refusing would refuse a call XNA accepts.
+
+**Inside the child the two differ.** XNA calls
+`IGraphicsResource::ReleaseNativeObject(false)`, which releases the native object
+and touches neither `isDisposed` nor the child's `Disposing` — so an XNA child of
+a disposed device reports `IsDisposed == false` over a null `pComPtr`, with the
+plain field reads still answering and everything guarded by
+`Helpers.CheckDisposed` throwing. CNA disposes the child properly: `is_disposed`
+goes 0 → 1 and its `Disposing` fires. This binding follows CNA, because a CLOS
+wrapper reporting itself live over a handle CNA has disposed is exactly the
+zombie the ownership architecture exists to prevent. A child of a disposed
+device therefore reports `DISPOSED-P` true here and `IsDisposed` false there,
+while both refuse the operations that matter and both keep answering
+`GraphicsDevice`.
+
+### `cna_graphics_device_dispose` is not the disposal route
+
+Worth stating because it is the obvious wrong candidate. It answers
+`CNA_RESULT_NOT_SUPPORTED` for a **caller-created** device exactly as it does for
+a borrowed one; `cna_graphics_device_destroy` is the only route. Destroying the
+same handle twice answers `CNA_RESULT_INVALID_HANDLE`, so native disposal is not
+idempotent and `DISPOSE`'s own guard is what makes `Dispose()` so, as
+`~GraphicsDevice`'s `if (isDisposed) return` does there.
+
+### `PresentationParameters` is exact on an owned device and a snapshot on a facade
+
+XNA's constructor calls `PresentationParameters::Clone()` **twice** — `IL_0093`
+into `pInternalCachedParams` and `IL_009f` into `pPublicCachedParams` — and
+`get_PresentationParameters` answers the second. So an owned device answers the
+same object every time, it is not the caller's object, and mutating what the
+caller passed changes nothing. All three are asserted.
+
+A game's facade had no constructor call to clone from, so it keeps answering a
+fresh snapshot read from CNA: the same *values*, but a new object each time
+rather than a stable one. That is weaker than XNA and is recorded here rather
+than papered over.
 
 ## Foreign-thread callbacks
 

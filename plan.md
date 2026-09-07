@@ -350,9 +350,9 @@ moves with every test added and no report can pin it.
 <!-- generated:complete types=171 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2084 -->
+<!-- generated:complete members=2086 -->
 <!-- generated:partial members=29 -->
-<!-- generated:missing members=25 -->
+<!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
 
@@ -366,9 +366,9 @@ Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 | Types complete | **171** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2084** |
+| Members complete | **2086** |
 | Members partial | **29** |
-| Members missing | **25** |
+| Members missing | **23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->

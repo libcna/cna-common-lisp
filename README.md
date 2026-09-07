@@ -73,9 +73,14 @@ stubs:
   `update`, `begin-draw`, `draw`, `end-draw`, `end-run`, `unload-content`,
   `on-exiting`;
 * `GraphicsDeviceManager` over CNA's own manager;
-* `GraphicsDevice` as a parent-owned facade that borrows a valid handle per
+* `GraphicsDevice` in **both** the lifetimes XNA permits, behind one public
+  type: a game's device as a parent-owned facade that borrows a valid handle per
   operation, because that is the only thing CNA's callback-scoped device lending
-  permits;
+  permits — and a device you construct yourself with XNA's own
+  `GraphicsDevice(GraphicsAdapter, GraphicsProfile, PresentationParameters)`,
+  which holds its own handle, needs no callback and no `Game` at all, owns the
+  graphics resources made against it, and is yours to dispose. A program can
+  clear, draw and read pixels back with no game in the image;
 * `Viewport`, `Color` with all 141 predefined XNA colours and its packed,
   float and vector forms, `Point`, `Rectangle`,
   `Vector2`, `Vector3`, `Vector4` and the whole of `MathHelper` — computed in
@@ -279,12 +284,12 @@ placeholder methods that answer a default and claim success.
 <!-- generated:complete types=171 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2084 -->
+<!-- generated:complete members=2086 -->
 <!-- generated:partial members=29 -->
-<!-- generated:missing members=25 -->
+<!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
-<!-- generated:bound native functions=715 -->
+<!-- generated:bound native functions=717 -->
 <!-- generated:bound native structs=75 -->
 
 <!-- generated-block:scoreboard-headline -->
@@ -293,7 +298,7 @@ The generated scoreboard, over a selection of **195 XNA types and 2581 members**
 | | |
 | --- | --- |
 | Types complete / partial / missing | **171 / 24 / 0** |
-| Members complete / missing | **2084 / 25** |
+| Members complete / missing | **2086 / 23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard-headline -->
@@ -307,7 +312,7 @@ missing; **no selected type is missing entirely**. `docs/compatibility.md` is th
 authority, and its per-type table says exactly where the absences are.
 
 <!-- generated-block:native-abi-headline -->
-The private foreign layer binds **715 native routes** and **75 native structs**,
+The private foreign layer binds **717 native routes** and **75 native structs**,
 all of them generated from the canonical CNA headers and checked by a C compiler.
 <!-- /generated-block:native-abi-headline -->
 

@@ -69,9 +69,17 @@ tools/qualification/storage.sh
 #     consumer drives the manager through the *interface* it was retrieved
 #     under, which is the actual IServiceProvider use case.
 tools/qualification/services.sh
+
+# 12. the caller-owned GraphicsDevice, plus its public-only consumer. A seventh
+#     script for a reason of its own: a suite run creates games, and the claim
+#     this lane makes is that a GraphicsDevice needs none. Requires nine kinds
+#     of owned-device evidence by name and exactly one of the two renderer
+#     branches -- the pixel claim under a rasterising renderer, the lifecycle
+#     claim under HEADLESS, and never both or neither.
+tools/qualification/owned-graphics-device.sh
 ```
 
-The five qualification scripts do that for themselves. `with-virtual-screen.sh`
+The six qualification scripts do that for themselves. `with-virtual-screen.sh`
 runs its command on a fresh Xvfb display **only when `DISPLAY` is set** -- so a
 developer's own screen is left alone, and CI, which runs with no display at all,
 is unchanged. That last part is deliberate: the `Native` workflow proves the
@@ -149,6 +157,15 @@ library at all, so it has no ABI to be produced against:
 | Manager virtual events | a `GraphicsDeviceManager` subclass overriding `OnDeviceCreated` saw the public event raised when it called `CALL-NEXT-METHOD` and **suppressed when it did not** -- which is what makes a protected raiser a seam rather than a callable function, and which the old one-registration-per-handler event machinery could not have done |
 | Device selection, and its limit | `FindBestDevice` built candidates from the adapters CNA enumerates and ranked them through the **virtual** `RankDevices`; `CanResetDevice` reproduced XNA's profile comparison exactly. And a real `ApplyChanges` and a real `CreateDevice` **called none of the three**, which the suite asserts directly -- the measured reason all three are partial |
 | Services, public-only consumer | the whole flow through the two exported packages alone, under the same mechanical audit the four other consumers pass, with the manager driven through `CREATE-DEVICE`, `BEGIN-DRAW-DEVICE` and `END-DRAW-DEVICE` on the **interface** it was retrieved under rather than on its concrete class |
+| Owned device, the constructor | XNA's `GraphicsDevice(GraphicsAdapter, GraphicsProfile, PresentationParameters)` in a process with **no `GAME` in it**, with the IL's own guard order asserted -- the *parameters* are tested first and the adapter second, so a call missing both names the parameters -- and the two `Clone()` calls proved: the device answers neither the caller's object nor one clone shared between its two fields |
+| Owned device, coexistence | two owned devices with distinct viewports, distinct collection objects and independent disposal; and a game created and destroyed *around* a live owned device and its texture, with neither gating the other -- which is the strongest proof that no fake game parent leaked into the owned graph |
+| Owned device, resources | seven native `GraphicsResource` families built on **two** owned devices, each reporting the device that made it; and a game's own texture still reporting the game's facade with an owned device alive beside it |
+| Owned device, cross-device | **not refused, and not invented.** CNA accepts every crossing and the binding read XNA's `TextureCollection::set_Item` to check: it guards disposal, the active render target, the profile and the slot index, and compares no devices at all. Asserted in both directions |
+| Owned device, sampler slots | CNA's slot table is **shared between devices** and XNA's is per device -- not mentioned in the header, found by measuring. The collection answers NIL for a displaced slot rather than a binding it can no longer vouch for |
+| Owned device, disposal | a device with three live children disposed all four; every child reports disposed, keeps answering its `GraphicsDevice`, refuses its operations, and accepts a second `Dispose` as a no-op. The facade's refusal is unchanged and survives being refused |
+| Owned device, one member two lifetimes | `Clear` on a game's facade outside a callback is a `CNA-SCOPE-ERROR`; the same `Clear` on an owned device is legal. Paired in one test, because the difference is private native capability and not two public types |
+| Owned device, pixels | **the first graphics evidence in this repository that needs no game.** Under SOFTWARE a standalone device cleared to CornflowerBlue and every one of 128 back-buffer pixels read back (100, 149, 237, 255); a triangle through a BasicEffect pass then covered 36 pixels of 256 with 220 outside it left cleared. Under HEADLESS the readback refuses and that refusal is asserted rather than skipped |
+| Owned device, public-only consumer | a complete render -- enumerate, construct, clear, draw, read back, verify, dispose -- through the two exported packages alone, under the same mechanical audit the five other consumers pass, plus the check only this one and the storage consumer can pass: it constructs no `GAME` |
 | Microphone, the one ABI limit | `BufferDuration` is **partial**: XNA accepts [100, 1000] ms in steps of ten inclusive, CNA 0.21.0 accepts [100, **990**] and refuses exactly 1000, and 0.22.0 and 0.23.0 take the whole range. Nothing is rounded down to hide it; the refusal names the ABI rather than the argument, and both branches assert |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
@@ -531,9 +548,9 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 <!-- generated:complete types=171 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2084 -->
+<!-- generated:complete members=2086 -->
 <!-- generated:partial members=29 -->
-<!-- generated:missing members=25 -->
+<!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
 
@@ -547,9 +564,9 @@ Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 | Types complete | **171** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2084** |
+| Members complete | **2086** |
 | Members partial | **29** |
-| Members missing | **25** |
+| Members missing | **23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
@@ -573,8 +590,8 @@ is a member of a type that is otherwise there, and this is where they are:
 | Type | missing members | partial members |
 | --- | ---: | ---: |
 | `M.X.F.GameWindow` | 7 | 0 |
-| `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
 | `M.X.F.Game` | 3 | 1 |
+| `M.X.F.Graphics.GraphicsDevice` | 3 | 1 |
 | `M.X.F.Media.Song` | 3 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
@@ -611,7 +628,7 @@ had moved. Regenerate the table after every closure and read it there.
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
 | `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
-| `PUBLIC_OBJECT_MODEL_CLOSURE` | **2** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
@@ -1054,11 +1071,28 @@ decision and the reason it is not an oversight.
 
 **About the object model**
 
-* **The graphics device must never keep its handle.** It is lent for a callback's
-  duration. `graphics-device` resolves a fresh borrowed handle per operation, and
-  a device operation outside a callback is refused before anything reaches the
-  ABI. The adapter, the window and the content manager are facades on the same
-  rule.
+* **The graphics device has two lifetimes and one public type, and neither half
+  may be collapsed into the other.** A *game's* device must never keep its
+  handle: CNA lends it for a callback's duration, so the parent-owned mode
+  resolves a fresh borrowed handle per operation and refuses every operation
+  outside a callback before anything reaches the ABI. A device the *caller*
+  constructed holds a persistent handle, needs no callback and no game, and is
+  the caller's to dispose. `%DEVICE-LIFETIME-MODE` is the discriminator and
+  `%RESOLVE-DEVICE-HANDLE` is the only seam -- every device member goes through
+  it and none of them is written twice. Do not make them two public classes;
+  XNA has one. Do not relax the facade's scope rule to match the owned device's;
+  the facade genuinely has no handle out there. The window and the content
+  manager are facades on the parent-owned rule.
+* **One place decides which native object owns a graphics resource.**
+  `NATIVE-RESOURCE-OWNER-FOR-DEVICE` answers the game for a facade and the
+  device for an owned device, and `ADOPT-NATIVE-RESOURCE` acts on it. Nine
+  resource constructors used to spell the game-owned answer inline, and each was
+  correct only because a game's device was the only device. Scattering
+  `if owned-device` back through them is how a resource family gets left behind.
+* **A native `GraphicsResource` records the device it was made against and never
+  looks one up.** `get_GraphicsDevice` is `ldfld _parent` in the pinned IL, with
+  no lookup of any kind. The old implementation answered the *active game's*
+  device, which is wrong for an owned device and wrong silently.
 * **`System.IO.Stream` is a Common Lisp stream, and is not a type.** It is the
   BCL's, not the XNA profile's, so there was never a type here to project --
   members that take one take an ordinary binary stream from `OPEN`. `SeekOrigin`

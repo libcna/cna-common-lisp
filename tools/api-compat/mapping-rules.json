@@ -997,7 +997,9 @@
       "lisp_package": "microsoft.xna.framework.graphics",
       "lisp_name": "graphics-device",
       "lisp_kind": "class",
-      "constructors": {},
+      "constructors": {
+        "new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "make-instance"
+      },
       "member_overrides": {
         "Clear(Color)": {
           "lisp": "clear",
@@ -1278,6 +1280,11 @@
           "lisp": "draw-instanced-primitives",
           "generic": true,
           "reason": "Over cna_graphics_device_draw_instanced_primitives, whose parameter list is XNA's exactly. The **only** draw legal while a vertex stream is bound with a non-zero instance frequency -- every other one refuses in that state -- so this is the one that deliberately does not call %CHECK-NO-INSTANCING. A backend without instancing answers CNA_RESULT_NOT_SUPPORTED, which reaches the caller as a condition rather than as a draw that quietly did nothing."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "reason": "DISPOSE, which is this binding's deterministic disposal, dispatched on the device's private lifetime mode. A device the caller constructed is the caller's to dispose and this performs XNA's `~GraphicsDevice': idempotent, the children's native objects released before the device's own, and `Disposing' raised last. A game's device is still refused, because CNA gives it no handle to release and `cna_graphics_device_dispose' answers NOT_SUPPORTED for a borrowed one -- and measurement adds that it answers NOT_SUPPORTED for a *caller-created* device too, so `cna_graphics_device_destroy' is the only disposal route there is. The two answers are one member with two lifetimes, not two members."
         }
       },
       "not_applicable": {
@@ -1285,8 +1292,6 @@
       },
       "unimplemented": {
         "Present(Nullable`1,Nullable`1,IntPtr)": "Needs Nullable<Rectangle> and IntPtr, neither of which is projected -- and there is no route either: cna_graphics_device_present takes the device and nothing else, so the source rectangle, destination rectangle and override window have nowhere to go. The no-argument Present is complete.",
-        "new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "The device as an object a program constructs, which a CNA-Lisp program never does: CNA creates the device with the game and lends it for a callback's duration. **cna_graphics_device_create does exist**, so this is a design decision rather than a missing capability -- supporting it means a second kind of GraphicsDevice, an owned one with a handle of its own alongside the parent-owned facade, and every device operation learning which it has. That is a closure of its own, not a member to add.",
-        "Dispose()": "CNA refuses this for a game's device by design and says why: cna_graphics_device_dispose 'reports that C cannot dispose the graphics device owned by the active game', because 'disposing it through a borrowed handle would leave that game drawing into a destroyed device'. cna_game_destroy performs the canonical disposal. %CHECK-DISPOSABLE refuses it here for the same reason, one step earlier, and the refusal costs the facade nothing. cna_graphics_device_destroy accepts only a *caller-created* device, so this member arrives with the constructor above or not at all.",
         "ResourceCreated": "Two blockers, either one sufficient. **CNA reports presence, not a resource**: CNA_ResourceCreatedEventInfo carries `has_resource` and nothing else, and the header says why -- \"the canonical event is raised from the graphics-resource base constructor, so the reported object is still under construction: its concrete type does not exist yet and no member of it can be queried. The C event therefore reports only that a resource was supplied, and no native object pointer crosses the ABI.\" And **ResourceCreatedEventArgs is not in the selection**, so there is no type to hand a resource in even if one crossed. The earlier reason said this needed \"a decision about what object a handler is handed\"; there is nothing to hand.",
         "ResourceDestroyed": "As ResourceCreated, from the other end, and blocked the same two ways. CNA_ResourceDestroyedEventInfo carries a callback-scoped name and a `has_tag` boolean -- the header: \"the canonical `System::Object*` tag is caller-owned native state, so it is reported as presence only\" -- and ResourceDestroyedEventArgs is not in the selection. Its Name could be answered; its Tag could not, and half an event args under the event's name would be worse than the absence."
       },
@@ -9037,12 +9042,10 @@
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter.MonitorHandle": "LANGUAGE_PROJECTION_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter.Revision": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter.SubSystemId": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Dispose()": "PUBLIC_OBJECT_MODEL_CLOSURE",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Present(Nullable`1,Nullable`1,IntPtr)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceCreated": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.ResourceDestroyed": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice.Viewport": "LANGUAGE_PROJECTION_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.GraphicsDevice.new(GraphicsAdapter,GraphicsProfile,PresentationParameters)": "PUBLIC_OBJECT_MODEL_CLOSURE",
     "Microsoft.Xna.Framework.Graphics.Model.Draw(Matrix,Matrix,Matrix)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.ModelMesh.Draw()": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.ModelMeshPart.Effect": "CNA_ADMITTED_ABI_LIMIT",
