@@ -127,6 +127,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "runtime/device-service-protocols")
    ;; GraphicsDeviceInformation needs PresentationParameters and GraphicsAdapter,
    ;; both of which are above, and is needed by the manager below.
+   (:file "runtime/graphics-device-information")
    ;; --- Game and the graphics device manager ------------------------------
    (:file "runtime/game")
    (:file "runtime/game-events")

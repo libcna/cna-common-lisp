@@ -223,6 +223,12 @@
    ;; --- the two interfaces GraphicsDeviceManager implements ---------------
    #:igraphics-device-manager #:igraphics-device-service
    #:create-device #:begin-draw-device #:end-draw-device
+   ;; --- GraphicsDeviceInformation -----------------------------------------
+   #:graphics-device-information
+   #:adapter-of #:graphics-profile-of #:presentation-parameters-of
+   #:clone-graphics-device-information
+   #:graphics-device-information-equal-p #:graphics-device-information-hash-code
+   #:graphics-device-information-clr-type-name
    ;; --- GraphicsDeviceManager ---------------------------------------------
    #:graphics-device-manager #:game
    #:apply-changes #:toggle-full-screen #:is-full-screen

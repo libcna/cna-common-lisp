@@ -35,6 +35,42 @@ method, because every CNA adapter route takes the borrowed device handle.
 Holds no native resource and is not disposed: CNA names an adapter by index, and
 this is that index plus the game to ask through."))
 
+(defvar *interned-adapters-game* nil
+  "The game `*INTERNED-ADAPTERS*' was filled for.")
+
+(defvar *interned-adapters* (make-hash-table :test #'eql)
+  "Adapter index -> the one GRAPHICS-ADAPTER object for it.
+
+**XNA's adapters are interned and this binding's must be too**, because object
+identity is load-bearing rather than cosmetic. `GraphicsAdapter' overrides
+neither `Equals' nor `GetHashCode' in the pinned Graphics assembly, and
+`GraphicsDeviceInformation.Equals' compares adapters with `Object.Equals' -- so
+in XNA that comparison is *reference* equality, and it works because
+`GraphicsAdapter.Adapters' is a static `ReadOnlyCollection' built once:
+`get_Adapters' is `ldsfld pAdapterList; ret' and `get_DefaultAdapter' is
+`pAdapterList[0]'. Handing out a fresh object per query, which this binding did
+until the services closure needed adapter identity, made every such comparison
+false.
+
+Keyed by index and reset when the game changes. XNA's cache is process-global and
+never invalidated; this one is scoped to the game because an adapter here holds
+the game it asks through, and CNA allows one live game per process, so `the
+current game's adapters' and `the process's adapters' are the same set with the
+stale-game hazard removed.")
+
+(defun %intern-graphics-adapter (game index)
+  "The one GRAPHICS-ADAPTER for INDEX on GAME, made once and answered thereafter.
+
+Reached only from the game's own thread, as every adapter route is: CNA's adapter
+queries take the callback-scoped device handle and refuse another thread, so the
+cache needs no lock to be reached safely."
+  (unless (eq game *interned-adapters-game*)
+    (clrhash *interned-adapters*)
+    (setf *interned-adapters-game* game))
+  (or (gethash index *interned-adapters*)
+      (setf (gethash index *interned-adapters*)
+            (make-instance 'graphics-adapter :index index :game game))))
+
 (defun %adapter-device-handle (adapter operation)
   "The borrowed device handle to ask ADAPTER's questions through."
   (let ((game (%adapter-game adapter)))
@@ -420,7 +456,7 @@ mutate as."
        (cna-lisp.internal.ffi::%graphics-adapter-get-count handle out)
        operation :object-type 'graphics-adapter)
       (loop for index from 0 below (cffi:mem-ref out :uint64)
-            collect (make-instance 'graphics-adapter :index index :game game)))))
+            collect (%intern-graphics-adapter game index)))))
 
 (defun graphics-adapter-default-adapter ()
   "GraphicsAdapter.DefaultAdapter: the adapter CNA reports as the default one.
@@ -448,9 +484,8 @@ same enumeration `GRAPHICS-ADAPTER-ADAPTERS' walks."))
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%graphics-device-get-adapter-index handle out)
        "adapter" :object-type 'graphics-device)
-      (make-instance 'graphics-adapter
-                     :index (cffi:mem-ref out :uint32)
-                     :game (cna-lisp.internal:owner-of device)))))
+      (%intern-graphics-adapter (cna-lisp.internal:owner-of device)
+                                (cffi:mem-ref out :uint32)))))
 
 (defmethod print-object ((adapter graphics-adapter) stream)
   (print-unreadable-object (adapter stream :type t)
