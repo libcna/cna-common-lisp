@@ -27,11 +27,11 @@
 ;;;; `IServiceProvider', which this binding cannot produce -- see
 ;;;; `docs/limitations.md' on `Game.Services'. So construction here is a declared
 ;;;; extension taking the graphics device, which is what `cna_content_manager_
-;;;; create' takes. `Game.Content`'s *setter* is not projected either: XNA's
-;;;; assigns a reference and CNA's `cna_game_set_content_manager_ext' **copies**,
-;;;; so `(setf (content game) m)' followed by `(content game)' would answer a
-;;;; different object than the one assigned. A setter that silently means
-;;;; something else is worse than a missing one.
+;;;; create' takes. `Game.Content`'s *setter* is not projected either, and
+;;;; that one is local work rather than an ABI limit: the reason used to be that
+;;;; `cna_game_set_content_manager_ext' copies, but nothing in CNA reads the
+;;;; manager it copies into, and XNA's own setter is a null check and a field
+;;;; store. docs/limitations.md has the measurement.
 
 (in-package #:microsoft.xna.framework.content)
 

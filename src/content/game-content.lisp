@@ -15,9 +15,14 @@ handle every time, cannot be destroyed, and is released with its game\" -- so it
 is not disposed, and disposing it is refused with a diagnosable condition rather
 than a native failure.
 
-**XNA's setter is not projected.** `Game.Content = m' assigns a reference there;
-CNA's `cna_game_set_content_manager_ext' *copies*, so reading the property back
-would answer a different object than the one assigned. docs/limitations.md."))
+**XNA's setter is not projected, and the member is reported partial for that.**
+The reason used to be that CNA's `cna_game_set_content_manager_ext' *copies*
+where XNA assigns a reference. That is true of the route and not a reason about
+the member, because the member need not use the route: XNA's `set_Content' is a
+null check and a plain field store, and CNA's copied manager is read by nothing
+in the engine except the route that lends the handle out. So this is local work
+rather than an ABI limit, and docs/limitations.md carries the measurement and
+what implementing it needs."))
 
 (defmethod content ((game game))
   (or (%game-content game)

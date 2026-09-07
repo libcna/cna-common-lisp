@@ -170,6 +170,11 @@ and not a native object: it names a target, it does not own one.
     (make-render-target-binding target)                ; a RENDER-TARGET-2D
     (make-render-target-binding cube-target :positive-x) ; one face of a cube"
   (target nil :read-only t)
+  ;; NIL for a 2D binding, where XNA answers CubeMapFace.PositiveX. Reported
+  ;; partial for that difference, and the frontier now calls it local work rather
+  ;; than a projection limit: :POSITIVE-X is representable, this file already
+  ;; computes it on both native paths below, and nothing else needs the NIL.
+  ;; docs/limitations.md.
   (cube-map-face nil :read-only t))
 
 (defun make-render-target-binding (target &optional cube-map-face)
