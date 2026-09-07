@@ -544,6 +544,7 @@ function.")
   (:export
    ;; --- ContentManager ----------------------------------------------------
    #:content-manager #:root-directory #:load-asset #:unload
+   #:service-provider
    #:loadable-asset-types))
 
 (defpackage #:microsoft.xna.framework.graphics.packed-vector

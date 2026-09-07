@@ -22,7 +22,23 @@ would answer a different object than the one assigned. docs/limitations.md."))
 (defmethod content ((game game))
   (or (%game-content game)
       (setf (%game-content game)
-            (make-instance 'microsoft.xna.framework.content:content-manager
-                           :ownership :parent-owned
-                           :owner game
-                           :owner-thread (cna-lisp.internal:owner-thread-of game)))))
+            (let ((manager (make-instance 'microsoft.xna.framework.content:content-manager
+                                          :ownership :parent-owned
+                                          :owner game
+                                          :owner-thread
+                                          (cna-lisp.internal:owner-thread-of game))))
+              ;; **Game.Content's provider is Game.Services**, and the pinned IL
+              ;; is unambiguous about it: the `Game' constructor loads
+              ;; `this.gameServices' and passes it to
+              ;; `ContentManager..ctor(IServiceProvider)'. So
+              ;; `(service-provider (content game))' is `EQ' to
+              ;; `(services game)', and no second container exists for content.
+              ;;
+              ;; Set here rather than through the canonical constructor because
+              ;; this manager is a *facade* over the handle CNA lends and has no
+              ;; native manager to build -- the provider is the one thing the
+              ;; canonical shape contributes that a facade still needs.
+              (setf (slot-value manager
+                                'microsoft.xna.framework.content::%service-provider)
+                    (services game))
+              manager))))

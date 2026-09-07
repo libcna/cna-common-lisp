@@ -38,6 +38,15 @@
 (defclass content-manager (cna-lisp.internal:native-object)
   ((%graphics-device :initarg :graphics-device :initform nil
                      :reader content-manager-graphics-device)
+   ;; **The provider the canonical constructors were given, held by identity.**
+   ;; `get_ServiceProvider' is `ldarg.0; ldfld serviceProvider; ret' -- a plain
+   ;; field read -- so the object a program passed is the object it reads back,
+   ;; and nothing here may substitute one. CNA's
+   ;; `cna_content_manager_get_has_service_provider' is deliberately not the
+   ;; source of truth for it: `content.h' says a service provider "is a Sharp
+   ;; Runtime object and never crosses the C boundary", so the C ABI could not
+   ;; hold this even in principle.
+   (%service-provider :initform nil)
    ;; XNA's two collections, and they are two rather than one for a reason: the
    ;; cache is keyed by asset name and holds whatever Load answered, while the
    ;; disposal list holds every disposable the load *created*, which for a
@@ -98,26 +107,141 @@ resolving rather than storing costs one call and cannot go stale."
 
 ;;; --- construction -----------------------------------------------------------
 
-(defmethod initialize-instance :after ((manager content-manager)
-                                       &key graphics-device
-                                            (root-directory "" root-directory-supplied))
-  "A declared extension: CNA's `cna_content_manager_create' takes the device.
+(defmethod initialize-instance :after
+    ((manager content-manager)
+     &key (graphics-device nil graphics-device-supplied)
+          (service-provider nil service-provider-supplied)
+          (root-directory "" root-directory-supplied))
+  "XNA's two constructors and this binding's one extension, told apart by their
+complete keyword sets.
 
-XNA's `ContentManager(IServiceProvider)' and `ContentManager(IServiceProvider,
-String)' are both reported missing, because this binding cannot produce an
-`IServiceProvider'. This is not a projection of either -- it is the constructor
-CNA offers, named as such.
+    (make-instance 'content-manager :service-provider (services game))
+    (make-instance 'content-manager :service-provider (services game)
+                                    :root-directory \"Content\")
+    (make-instance 'content-manager :graphics-device device)
+    (make-instance 'content-manager :graphics-device device
+                                    :root-directory \"Content\")
 
-**There are exactly two ways a manager comes into existence, and neither of them
-is \"partly\".** An owned one needs the graphics device CNA's create route takes,
-and refuses to be built without it: the alternative was an object with a zero
-handle and no owner whose first real operation failed, far from the MAKE-INSTANCE
-that produced it. A game's own manager is the other way, is built by
-MICROSOFT.XNA.FRAMEWORK:CONTENT and by nothing else, holds no native object of
-its own, and therefore takes neither of these arguments."
+The first two are `ContentManager(IServiceProvider)' and
+`ContentManager(IServiceProvider, String)'. The last two are the **extension**
+that has been here since before `Game.Services' existed: CNA's
+`cna_content_manager_create' takes a graphics device and cannot carry a service
+provider, so a manager built straight from a device was the only shape available.
+It is kept rather than replaced -- a working constructor is not removed because a
+better-named one arrived.
+
+**The four shapes are exact and do not blend.** `:SERVICE-PROVIDER' with
+`:GRAPHICS-DEVICE', or either with a keyword neither takes, names no constructor
+and is refused rather than being filled in with a default -- the rule
+`%CHECK-OVERLOAD-KEYWORDS' exists for and the one `Play(0.5f, 0, 0)' taught this
+project.
+
+A game's own manager is a fifth way in and is not one of these: it is built by
+MICROSOFT.XNA.FRAMEWORK:CONTENT and by nothing else, is a facade over a handle CNA
+lends, and takes no keywords at all."
   (if (eq (cna-lisp.internal:ownership-of manager) :parent-owned)
-      (%initialize-content-facade manager graphics-device root-directory-supplied)
-      (%initialize-owned-content-manager manager graphics-device root-directory)))
+      (%initialize-content-facade manager
+                                  (or graphics-device service-provider)
+                                  root-directory-supplied)
+      (let ((shape (microsoft.xna.framework::%check-overload-keywords
+                    "make-instance 'content-manager"
+                    (microsoft.xna.framework::%supplied-keywords
+                     "graphics-device" graphics-device-supplied
+                     "service-provider" service-provider-supplied
+                     "root-directory" root-directory-supplied)
+                    '((:graphics-device "graphics-device")
+                      (:service-provider "service-provider")
+                      (:graphics-device-rooted "graphics-device" "root-directory")
+                      (:service-provider-rooted "service-provider" "root-directory"))
+                    :object-type 'content-manager)))
+        (ecase shape
+          ((:graphics-device :graphics-device-rooted)
+           (%initialize-owned-content-manager manager graphics-device root-directory))
+          ((:service-provider :service-provider-rooted)
+           (%initialize-canonical-content-manager
+            manager service-provider root-directory))))))
+
+(defun %initialize-canonical-content-manager (manager provider root-directory)
+  "XNA's `ContentManager(IServiceProvider, String)', in its order.
+
+The IL, which settles four questions a reader would otherwise have to guess at:
+
+    loadedAssets     = new Dictionary<string,object>(OrdinalIgnoreCase)
+    disposableAssets = new List<IDisposable>()
+    Object..ctor()
+    if (serviceProvider == null) throw ArgumentNullException(\"serviceProvider\")
+    if (rootDirectory  == null) throw ArgumentNullException(\"rootDirectory\")
+    RootDirectory = rootDirectory
+    this.serviceProvider = serviceProvider
+
+**The constructor does not resolve anything.** It stores the provider and asks it
+for nothing; `ContentManager' in the pinned assembly calls `GetService' nowhere at
+all. The graphics device is resolved *per load*, in the Graphics assembly's
+`GraphicsContentHelper.GraphicsDeviceFromContentReader':
+
+    contentManager.ServiceProvider.GetService(typeof(IGraphicsDeviceService))
+      -> castclass IGraphicsDeviceService   // a wrong type is InvalidCastException
+      -> null?          ContentLoadException
+      -> .GraphicsDevice
+      -> null?          ContentLoadException
+
+So a provider whose service changes after construction is honoured on the next
+load, and a provider with no graphics device service is an error at load time
+rather than at construction. That is XNA's behaviour and not a convenience.
+
+**CNA cannot be lazy in the same way**, and this is where the two runtimes have to
+be reconciled rather than one being pretended into the other.
+`cna_content_manager_create' takes a graphics device and makes the native manager
+out of it, so a native manager cannot exist before one is resolved. This
+constructor therefore resolves the service **once, here**, to build the native
+manager -- and keeps the provider so that `SERVICE-PROVIDER' answers the object it
+was given and a later load sees whatever the provider then holds. The difference
+is confined to *when* a missing service is reported: here rather than at the first
+load. It is reported with the same information either way, and the alternative --
+a manager with no native object behind it, failing at its first load far from the
+MAKE-INSTANCE that produced it - is the shape this file already refuses for the
+extension constructor."
+  (unless provider
+    (error 'microsoft.xna.framework:cna-argument-error
+           :operation "make-instance 'content-manager" :object-type 'content-manager
+           :parameter-name "service-provider"
+           :format-control
+           "service-provider must not be NIL: XNA throws ArgumentNullException naming
+            \"serviceProvider\"."))
+  (unless root-directory
+    (error 'microsoft.xna.framework:cna-argument-error
+           :operation "make-instance 'content-manager" :object-type 'content-manager
+           :parameter-name "root-directory"
+           :format-control
+           "root-directory must not be NIL: XNA throws ArgumentNullException naming
+            \"rootDirectory\". The one-argument constructor passes `String.Empty', which
+            is why :ROOT-DIRECTORY may be omitted but not given as NIL."))
+  (check-type root-directory string)
+  (let* ((service (microsoft.xna.framework:get-service
+                   provider 'microsoft.xna.framework:igraphics-device-service))
+         (device (and service (microsoft.xna.framework:graphics-device service))))
+    (unless service
+      (error 'microsoft.xna.framework:cna-invalid-state-error
+             :operation "make-instance 'content-manager" :object-type 'content-manager
+             :format-control
+             "the service provider has no ~s. XNA reports this as a ContentLoadException
+              at the first load rather than here, because its constructor resolves
+              nothing; CNA's `cna_content_manager_create' takes a graphics device, so a
+              native manager cannot be built without one."
+             :format-arguments (list 'microsoft.xna.framework:igraphics-device-service)))
+    (unless device
+      (error 'microsoft.xna.framework:cna-invalid-state-error
+             :operation "make-instance 'content-manager" :object-type 'content-manager
+             :format-control
+             "the graphics device service answered no graphics device. XNA raises
+              ContentLoadException for this at load time, with the same two causes it
+              distinguishes: no service, and a service with no device."))
+    (%initialize-owned-content-manager manager device root-directory)
+    ;; After the native manager exists and its undos are recorded: the provider is
+    ;; managed state, and a construction that fails before this point has no
+    ;; provider to forget.
+    (setf (slot-value manager '%service-provider) provider)
+    manager))
 
 (defun %initialize-content-facade (manager graphics-device root-directory-supplied)
   "The game's own manager: a facade over a handle CNA lends, created by CONTENT."
@@ -202,6 +326,32 @@ its own, and therefore takes neither of these arguments."
       (cna-lisp.internal:record-construction-undo
        manager (lambda () (cna-lisp.internal:invalidate manager)))
       manager)))
+
+(defgeneric service-provider (manager)
+  (:documentation
+   "ContentManager.ServiceProvider: the provider this manager was built with.
+
+    (eq (service-provider (content game)) (services game))    ; => T
+
+**The exact object, by identity.** XNA's `get_ServiceProvider' is a plain field
+read, so the object a program passed to the canonical constructor is the object
+it reads back, and this answers that object rather than anything derived from it.
+
+NIL for a manager built with the `:GRAPHICS-DEVICE' extension, which has no
+provider to answer -- the extension exists because CNA's create route takes a
+device and cannot carry a provider at all.
+
+`Game.Content' answers the game's own `SERVICES', because that is what the pinned
+`Game' constructor passes.
+
+**Not read from CNA, and `cna_content_manager_get_has_service_provider' is not
+its source of truth.** `content.h' says a service provider \"is a Sharp Runtime
+object and never crosses the C boundary\" and that \"the field is inert on both
+sides of the boundary\", so the C ABI has nothing to answer with; the managed
+object is where a managed reference lives."))
+
+(defmethod service-provider ((manager content-manager))
+  (slot-value manager '%service-provider))
 
 (defun %write-string-view (pointer data length)
   "Fill the CNA_StringView at POINTER with DATA and LENGTH."
