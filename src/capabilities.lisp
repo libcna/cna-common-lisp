@@ -143,6 +143,52 @@
       the three members map to it. **It is not EQ**: XNA's queue and collection
       indexers both answer `new Song(handle)', so two objects for one underlying
       song are equal and are not identical, and a program needs a way to say so.")
+    (microsoft.xna.framework igraphics-device-manager igraphics-device-service
+     "The two service *type designators* for the interfaces GraphicsDeviceManager
+      implements. A CLR interface projects here as generic functions and has no
+      symbol of its own -- which is right until an interface has to be used as a
+      dictionary **key**, and both of these are: XNA registers the manager under
+      `typeof(IGraphicsDeviceManager)' and `typeof(IGraphicsDeviceService)'. A
+      symbol naming the protocol is what a Lisp program passes where a C# program
+      passes a `System.Type', so it is the projection of the type identity rather
+      than of any member.")
+    (microsoft.xna.framework define-service-protocol
+     declare-service-protocol-implementor service-protocol-p
+     service-protocol-implementors
+     "The service type designator policy. XNA keys GameServiceContainer by
+      `System.Type'; this binding admits a CLOS class or a declared protocol,
+      because those are the two kinds of type a Lisp program can test membership
+      of -- and membership has to be testable, because `AddService' really does
+      check `type.IsAssignableFrom(provider.GetType())'. A protocol is how an
+      interface gets a testable identity without being a class, and these three
+      declare one, record a class as answering it, ask, and read the
+      registry back. **A declared protocol is a real Common Lisp type**, so
+      `(typep manager 'igraphics-device-service)' answers and the assignability
+      guard is one TYPEP for both kinds of designator rather than a branch.")
+    (microsoft.xna.framework service-types
+     "Every service type registered in a container, as a fresh list. XNA's
+      container has no enumeration at all; a test that wants to say `exactly these
+      two keys' needs one, and a fresh list cannot be mutated back into the
+      container.")
+    (microsoft.xna.framework native-service-present-p
+     "Whether CNA reports one of its two canonical services registered. A
+      **cross-check** and not a way to read a service: GET-SERVICE reads the
+      managed container, which is the public authority, and this answers for the
+      only two identities `CNA_GameServiceType' can name. It refuses any other
+      service type rather than answering false, so a caller cannot read `CNA
+      cannot name this' as `not registered'. The same shape
+      StorageContainer.StorageDevice is cross-checked in.")
+    (microsoft.xna.framework graphics-device-information-hash-code
+     "GraphicsDeviceInformation.GetHashCode's *shape* -- a LOGXOR fold over the
+      same members in the same order -- as a named function, because the CLR hash
+      code itself is not observable through a Common Lisp API and is universally
+      not-applicable here. It guarantees what a hash code must, that equal objects
+      hash equally; it is not a promise that a number matches XNA's.")
+    (microsoft.xna.framework graphics-device-information-clr-type-name
+     "The .NET type name CNA reports for its device-configuration type, so
+      `this projects Microsoft.Xna.Framework.GraphicsDeviceInformation' is a
+      checkable claim. CLR-TYPE-NAME's own reason, for a type whose routes take no
+      handle because the name belongs to the type rather than to an object.")
     (microsoft.xna.framework.media make-visualization-data
      "VisualizationData's parameterless constructor. A constructor function
       rather than MAKE-INSTANCE because the type owns nothing native and its

@@ -119,14 +119,27 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "input/mouse")
    (:file "input/game-pad")
    (:file "input/touch")
+   ;; --- the service container and the two device-service interfaces --------
+   ;; Before GAME, because `Game.Services' is a slot of that class and XNA's own
+   ;; constructor fills the field before its body runs. The container reaches
+   ;; nothing but the condition types, so this is the earliest it can go.
+   (:file "runtime/game-services")
+   (:file "runtime/device-service-protocols")
+   ;; GraphicsDeviceInformation needs PresentationParameters and GraphicsAdapter,
+   ;; both of which are above, and is needed by the manager below.
    ;; --- Game and the graphics device manager ------------------------------
    (:file "runtime/game")
    (:file "runtime/game-events")
+   ;; The native cross-check for CNA's two canonical service slots. After GAME,
+   ;; because it reads `Game.Services' and the game's handle.
    (:file "runtime/graphics-device-manager")
    ;; GameWindow is a facade over the game and uses the event machinery, so it
    ;; loads after GAME and before anything that reaches a window.
    (:file "runtime/game-window")
    (:file "runtime/manager-events")
+   ;; PreparingDeviceSettings: the event args, the fifth virtual raiser and the
+   ;; mutable callback. After manager-events, whose raiser table and release it
+   ;; shares, and after graphics-device-information, whose object it carries.
    ;; The graphics device's own four events. After manager-events, because three
    ;; of the four pairs are shared with types declared there and in
    ;; graphics-resource, and a method needs its generic function to exist.
@@ -277,6 +290,12 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; A subclass initializer runs after every base one, including the one that
    ;; took the handle; this proves that costs nothing.
    (:file "native/construction-atomicity")
+   ;; Game.Services and the two canonical registrations. After
+   ;; construction-atomicity, whose EXPLODING-GRAPHICS-DEVICE-MANAGER the
+   ;; ownership lane below reuses rather than defining a second one.
+   ;; GraphicsDeviceInformation, the mutable PreparingDeviceSettings event and
+   ;; the manager's protected virtual surface. After native/services, whose
+   ;; MANAGED-GAME fixture and stand-in service provider it reuses.
    (:file "native/rasterization")
    (:file "native/graphics-resource")
    (:file "native/keyboard")

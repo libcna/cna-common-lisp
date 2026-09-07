@@ -214,6 +214,15 @@
    #:graphics-device #:is-active #:is-mouse-visible #:is-fixed-time-step
    #:target-elapsed-time #:inactive-sleep-time #:window-title #:clr-type-name
    #:+default-target-elapsed-time-ticks+
+   ;; --- GameServiceContainer and the service-type protocol ----------------
+   #:game-service-container #:services
+   #:add-service #:get-service #:remove-service #:service-types
+   #:define-service-protocol #:declare-service-protocol-implementor
+   #:service-protocol-p #:service-protocol-implementors
+   #:native-service-present-p
+   ;; --- the two interfaces GraphicsDeviceManager implements ---------------
+   #:igraphics-device-manager #:igraphics-device-service
+   #:create-device #:begin-draw-device #:end-draw-device
    ;; --- GraphicsDeviceManager ---------------------------------------------
    #:graphics-device-manager #:game
    #:apply-changes #:toggle-full-screen #:is-full-screen
