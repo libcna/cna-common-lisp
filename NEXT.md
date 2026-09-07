@@ -904,112 +904,110 @@ geometry on screen, for the same reason.
 **One closure, and this file carries one.** When the next one lands, this section
 is replaced rather than added to.
 
-Game services and device selection was the last recommendation and it has landed:
-five types, 21 members, all five complete, and thirteen members of already
-selected types closed. **The count in the recommendation was wrong and the
-contract corrected it**, which is the first thing to record. That section said
-five types and 17 members, listing `FrameworkDispatcher` and not
-`Graphics.IGraphicsDeviceService`. Recomputing the dependency closure over the
-pinned snapshot says:
+The owned `GraphicsDevice` was the last recommendation and it has landed. It
+added **no type and no route to the selection** -- `cna_graphics_device_create`
+and `cna_graphics_device_destroy` had existed since 0.21.0 and were unbound
+because nothing needed them -- and it closed the last two
+`PUBLIC_OBJECT_MODEL_CLOSURE` members: `GraphicsDevice.new(GraphicsAdapter,
+GraphicsProfile, PresentationParameters)` and `GraphicsDevice.Dispose()`.
 
-* `IGraphicsDeviceService` is **not optional**. The already-selected
-  `GraphicsDeviceManager` names it in its own `interfaces`, so the closure of the
-  selection *as it already stood* reached it -- a hole in the profile that
-  predated this closure and was filled by it.
-* `FrameworkDispatcher` is **reached by nothing** in the 257-type snapshot: not a
-  base type, not an interface, not a return or parameter type. It is a static
-  pump a program calls itself, and it was not selected, because
-  `cna_framework_dispatcher_update` existing is not an argument for a member.
+**Both measurement questions this file asked were answered, and both by running
+the ABI rather than reading it.**
 
-So: five types, **21** members. Twelve routes were bound rather than seventeen,
-for the same rule -- the manager's `dispose`, its two preferred-presentation-mode
-routes, the observation-only device-settings subscription and the framework
-dispatcher have no member behind them and stay unbound.
+1. *Can a caller-created device coexist with a game's?* **Yes**, on all three
+   admitted ABIs and both renderers. Two owned devices are live at once with
+   distinct handles; one may be destroyed while the other still draws; and
+   `cna_game_destroy` succeeds with an owned device and its resources still
+   live, exactly as the header promises.
+2. *Does creation work under HEADLESS?* **Yes** -- it does not answer
+   `CNA_RESULT_PLATFORM`. HEADLESS and SOFTWARE differ in exactly one place in
+   the whole nineteen-stage matrix: the back-buffer readback, which HEADLESS
+   answers `NOT_SUPPORTED`. So the closure qualifies on the CI renderer for
+   lifecycle and needs the SOFTWARE lane for pixels, which is the discipline
+   this repository already had.
 
-**`GraphicsDeviceManager` did not become complete, and that is the honest
-outcome.** Six of its nine landed complete; `FindBestDevice`, `RankDevices` and
-`CanResetDevice` are implemented, answer XNA's semantics when called, and are
-reported **partial**, because no admitted CNA ABI calls them during device
-creation -- all three are `virtual` in CNA's own C++ with no call site in
-`GraphicsDeviceManager.cpp`, and none is a C route.
-`tests/native/device-selection.lisp` asserts that limit directly rather than
-describing it.
+**Three things the measurement found that nobody asked for**, and each is
+asserted in both directions so a CNA that changed would fail a test:
+
+* **Cross-device resource use is not refused**, though the header says it is.
+  Every crossing measured was accepted and really took. XNA does not refuse it
+  either -- `TextureCollection::set_Item` compares no devices at all -- so this
+  binding does not invent the guard.
+* **CNA's sampler slot table is shared between devices**, and XNA's is per
+  device. The header does not mention it.
+* **The three admitted ABIs behave identically here.** The matrix output is
+  byte-identical apart from the version banner. Unlike Storage, where identical
+  headers hid different behaviour, this time they did not -- and that is now a
+  measured fact rather than an inference.
 
 ### What the frontier looks like now, measured
 
 The generated tables above are the authority; what follows is what changed
 *category*, which a table of counts cannot say.
 
-* **`PUBLIC_OBJECT_MODEL_CLOSURE` is down to two members**, and they are the same
-  two: `GraphicsDevice.new(GraphicsAdapter, GraphicsProfile,
-  PresentationParameters)` and `GraphicsDevice.Dispose()`.
-* **`DEPENDENCY_NOT_SELECTED` is down to four** -- `Song`'s three media-library
-  properties and `EffectParameter.GetValueTexture3D` -- because the four members
-  that carried that reason for `GraphicsDeviceInformation` and
-  `PreparingDeviceSettingsEventArgs` no longer do.
-* **Nothing moved into `IMPLEMENTABLE_AND_HIGH_VALUE`**, which stays empty and is
-  the release condition.
-* **Foundation 1's own frontier is unchanged.** Every member this closure touched
-  belonged to `Game`, `GraphicsDeviceManager` or `ContentManager` and was
-  measured as a *selection* absence rather than a Foundation 1 one.
+* **`PUBLIC_OBJECT_MODEL_CLOSURE` is empty, for the first time.** It is the first
+  frontier category ever to be emptied. Its row is still rendered because its
+  being empty is the claim: the object model now represents both native
+  ownership graphs XNA permits, rather than one of them and a note about the
+  other.
+* **`IMPLEMENTABLE_AND_HIGH_VALUE` stays empty**, which is the release condition
+  and is unchanged.
+* **Nothing else moved.** `CNA_ADMITTED_ABI_LIMIT` is still 41,
+  `LANGUAGE_PROJECTION_LIMIT` 5, `DEPENDENCY_NOT_SELECTED` 4 and
+  `QUALIFICATION_LIMIT` 2. This closure took two members out of a category and
+  put none into any.
+
+**So there is no unblocked member left in the selected profile**, and that is
+the state this measurement has to start from rather than a candidate list. The
+next task is therefore either a new closure that grows the selection, or a
+deeper qualification of what is already here -- and the two are measured
+differently.
 
 ### The candidates, re-measured
 
 | Candidate | Types | Members | New routes | Closes, in selected types | Deterministic CI | User value | Complexity |
 | --- | ---: | ---: | ---: | --- | --- | --- | --- |
-| **The owned `GraphicsDevice`** | **0** | 0 | **0** | **the last 2 `PUBLIC_OBJECT_MODEL_CLOSURE` members** | **yes, no device** | medium | medium |
+| `Texture3D` | 1 | ~13 | 8, `texture_volume.h` | 1 (`EffectParameter.GetValueTexture3D`) | **no -- see below** | low | low |
 | `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **build-dependent** | low | medium |
 | XACT | 7 | 72 | 62, `xact.h` | 0 | **no fixture can exist** | low | high |
 | `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 3 (`Song`'s `Artist`, `Album`, `Genre`) | **empty only** | low | high |
 | `GameWindow`'s seven | 0 | 0 | 0 | 0 | n/a | low | **blocked** |
 
-**The recommendation is the owned `GraphicsDevice` closure**, and it is the first
-candidate in five measurements that adds **no types and no routes at all**.
+**`Texture3D` was the standing next-smallest candidate and this pass rules it
+out, by measurement.** It looked ideal: one type, about thirteen public members,
+a complete set of CNA routes in `texture_volume.h`, no unselected dependency,
+and one selected member unblocked. But `cna_texture3d_create` is documented as
+creating a Texture3D "**when the selected renderer supports volume storage**",
+and both qualification renderers were asked directly, on every admitted ABI --
+with the **HiDef** profile, so that a refusal is not the profile's doing:
 
-`cna_graphics_device_create` takes `(adapter_index, graphics_profile,
-parameters, out_device)` and `cna_graphics_device_destroy` accepts only a
-caller-created handle and refuses a game's borrowed one -- which is the same rule
-this binding already enforces. Both have existed since 0.21.0 and neither is
-bound, because until now there was nothing to bind them *for*.
+    HEADLESS  0.21.0, 0.22.0 and 0.23.0 -> CNA_RESULT_NOT_SUPPORTED
+    SOFTWARE  0.21.0, 0.22.0 and 0.23.0 -> CNA_RESULT_NOT_SUPPORTED
 
-**This closure is what made it approachable, and in two specific ways rather than
-by general progress:**
+Neither renderer can construct one **at all**, so every member of the type would
+be unreachable in CI and the type would land as a shape with no evidence behind
+it. That is a `CNA_ADMITTED_ABI_LIMIT` in everything but name, and selecting it
+would trade one honest `DEPENDENCY_NOT_SELECTED` member for thirteen members
+nothing could exercise. The probe is committed as
+`tools/native-abi/texture3d-support-probe.c`; run it against any library whose
+renderer set has changed, because the day a rasterising renderer grows volume
+storage is the day this candidate becomes the obvious one.
 
-1. **Its three arguments are now one object.** `GraphicsDeviceInformation` holds
-   exactly an adapter, a profile and presentation parameters, and
-   `%WRITE-GRAPHICS-DEVICE-INFORMATION` already converts a `GraphicsAdapter` to
-   the adapter *index* CNA's create route takes. The conversion the constructor
-   needs is written and tested.
-2. **`GraphicsAdapter` has stable identity now.** It is interned per index, which
-   it was not before, so "the adapter this device was created on" can be answered
-   by the same object the caller passed in.
+The other four are unchanged and blocked for their old reasons, each of which is
+about evidence rather than difficulty.
 
-What the closure is, and it is an object-model decision rather than two members:
-`GraphicsDevice` is currently a **parent-owned facade** that resolves the game's
-borrowed handle per call and stores none. An owned device needs a second shape --
-its own handle, its own disposal, its own children -- and every device operation
-needs to know which of the two it has. That is why it has been categorised
-`PUBLIC_OBJECT_MODEL_CLOSURE` rather than `CNA_ADMITTED_ABI_LIMIT` from the
-beginning.
+**The recommendation is therefore a qualification closure rather than a surface
+one, and the honest name for it is: measure whether any of the 29 partial
+members can be made complete.** A first pass over them says most cannot -- the
+`TextureCube` data members are partial because `cna_texturecube_set_data` takes
+`const CNA_Color*` with no texel-kind argument, `Texture2D.Width` and `Height`
+because no admitted ABI reports a loaded texture's dimensions, and
+`GraphicsDeviceManager`'s three because no admitted ABI calls them -- but
+"most cannot" is not a measurement, and three of the 29 have not been re-read
+since the ABI set became three versions.
 
-**Two questions to answer by measurement before writing any of it**, in the shape
-this file has asked for before every closure:
-
-1. **Can a caller-created device coexist with a game's?** CNA says its resources
-   "do not gate `cna_game_destroy` -- they belong to this device, not to a game",
-   which is a statement about *ownership* and not about whether two devices may be
-   live. Measure it on each admitted library rather than reading it off the
-   header: `graphics_device.h` is identical across the three and Storage proved
-   what that is worth.
-2. **Does an owned device work under HEADLESS at all**, or does
-   `cna_graphics_device_create` answer `CNA_RESULT_PLATFORM` there? If it does,
-   that is a supported outcome to assert rather than a skip -- but it decides
-   whether the closure can be qualified on the CI renderer or needs the SOFTWARE
-   lane, and that changes the plan rather than the code.
-
-**Do not implement the recommendation yet.** This is a measurement, and the next
-task chooses.
-
+**Do not implement anything yet.** This is a measurement, and the next task
+chooses.
 
 ## Architectural facts a future agent must not undo
 
