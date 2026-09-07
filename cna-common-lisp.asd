@@ -142,6 +142,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; PreparingDeviceSettings: the event args, the fifth virtual raiser and the
    ;; mutable callback. After manager-events, whose raiser table and release it
    ;; shares, and after graphics-device-information, whose object it carries.
+   (:file "runtime/preparing-device-settings")
    ;; The graphics device's own four events. After manager-events, because three
    ;; of the four pairs are shared with types declared there and in
    ;; graphics-resource, and a method needs its generic function to exist.

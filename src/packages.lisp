@@ -229,6 +229,11 @@
    #:clone-graphics-device-information
    #:graphics-device-information-equal-p #:graphics-device-information-hash-code
    #:graphics-device-information-clr-type-name
+   ;; --- PreparingDeviceSettings -------------------------------------------
+   #:preparing-device-settings-event-args #:graphics-device-information
+   #:add-preparing-device-settings-handler
+   #:remove-preparing-device-settings-handler
+   #:on-preparing-device-settings
    ;; --- GraphicsDeviceManager ---------------------------------------------
    #:graphics-device-manager #:game
    #:apply-changes #:toggle-full-screen #:is-full-screen
