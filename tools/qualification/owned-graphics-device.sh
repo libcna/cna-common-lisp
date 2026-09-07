@@ -29,6 +29,13 @@
 #   CNA_NATIVE_LIBRARY=/abs/path/libcna_c_api.so \
 #     tools/qualification/owned-graphics-device.sh
 #
+# **Do not run two copies of this script at once against one checkout.** Both
+# write build-probe/owned-device-suite.log, and the branch check below reads it
+# back to decide whether this renderer made a pixel claim or a no-readback one --
+# so two interleaved runs can leave a log containing both and fail with "the run
+# produced both a pixel claim and a no-readback result", which is a collision and
+# not a result. CI is unaffected: the HEADLESS and SOFTWARE lanes are separate
+# jobs with separate checkouts.
 set -eu
 
 here=$(cd "$(dirname "$0")" && pwd)
