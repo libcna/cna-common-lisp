@@ -197,6 +197,13 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "content/content-manager")
    (:file "content/content-loaders")
    (:file "content/game-content")
+   ;; Game's private device-event wiring: `HookDeviceEvents' and the four
+   ;; handlers it installs. Last of the three, because the DeviceDisposing
+   ;; handler calls `ContentManager.Unload' on `Game.Content' and so needs both
+   ;; the manager and the property; and after runtime/manager-events, whose
+   ;; framework-listener list it subscribes into. Nothing public is declared
+   ;; here -- the whole file is one XNA lifecycle invariant.
+   (:file "runtime/game-device-events")
    ;; --- Microsoft.Xna.Framework.Storage -------------------------------------
    ;; The one namespace that needs no game at all: no storage route takes one.
    ;; The enumerations and the condition first, then the stream -- which the

@@ -96,7 +96,12 @@ SENDER is the manager. ARGS is the PREPARING-DEVICE-SETTINGS-EVENT-ARGS, and its
 information object is the same object for the whole callback.")
   (:method ((manager graphics-device-manager) sender args)
     (dolist (handler (%manager-handlers manager :preparing-device-settings))
-      (funcall handler sender args))
+      ;; %LISTENER-FUNCTION for the reason %MANAGER-RAISE uses it: a handler list
+      ;; may hold framework listeners beside the program's handlers. The framework
+      ;; installs none on *this* event -- `Game::HookDeviceEvents' subscribes to
+      ;; four and this is not one of them -- so the unwrap is uniformity rather
+      ;; than a live case, and it costs one type test.
+      (funcall (%listener-function handler) sender args))
     (values)))
 
 (%define-event-pair add-preparing-device-settings-handler

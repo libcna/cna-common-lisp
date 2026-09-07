@@ -73,6 +73,19 @@ disposal never empties the delegate field a `-=' would look in.")
    ;; ldfld gameServices; ret' -- so repeated reads answer one object.
    (services :reader services
              :documentation "Game.Services, created with the game and never replaced.")
+   ;; **`Game::graphicsDeviceService' and the private subscriptions on it.**
+   ;; XNA's `HookDeviceEvents' stores the service it found in a field and
+   ;; subscribes four private handlers to it; `UnhookDeviceEvents' reads the same
+   ;; field to give them back. Both are here for the same reason they are there:
+   ;; the service can be gone by the time the game is disposed, and the game must
+   ;; still know which object it subscribed to. See
+   ;; `src/runtime/game-device-events.lisp'.
+   (graphics-device-service :initform nil :accessor %game-graphics-device-service
+                            :documentation
+                            "The IGraphicsDeviceService HookDeviceEvents found, or NIL.")
+   (device-event-listeners :initform '() :accessor %game-device-event-listeners
+                           :documentation
+                           "The %FRAMEWORK-LISTENERs HookDeviceEvents installed.")
    (components :initform nil :accessor %game-components)
    (launch-parameters :initform nil :accessor %game-launch-parameters)
    (content :initform nil :accessor %game-content)
@@ -98,9 +111,37 @@ CNA allows one active game per process, so a second live GAME is refused."))
 ;;; would give them more to do is not part of this milestone, and is reported as
 ;;; missing rather than faked.
 
+(defvar *device-event-hook* nil
+  "Function of (GAME) installing XNA's private device-event subscriptions.
+
+Installed by `src/runtime/game-device-events.lisp', which cannot load until
+`CONTENT-MANAGER' and `GRAPHICS-DEVICE-MANAGER' both exist -- the same
+late-binding this file already uses for the lifecycle dispatchers, and for the
+same reason.")
+
+(defvar *device-event-unhook* nil
+  "Function of (GAME) giving those subscriptions back. See `*DEVICE-EVENT-HOOK*'.")
+
 (defgeneric initialize (game)
-  (:documentation "Game.Initialize(). Runs once, before content loads.")
-  (:method ((game game)) (values)))
+  (:documentation
+   "Game.Initialize(). Runs once, before content loads.
+
+**The default method is where XNA hooks the device events**, because that is
+where the pinned assembly does it -- `HookDeviceEvents()' is the first statement
+of the base `Initialize', before the component loop and before the trailing
+`LoadContent':
+
+    .method family hidebysig newslot virtual instance void Initialize()
+      IL_0000:  ldarg.0
+      IL_0001:  call instance void Game::HookDeviceEvents()
+
+So an override that calls `CALL-NEXT-METHOD' is hooked and one that does not is
+not, exactly as a C# override that omits `base.Initialize()' is not. That is not
+an accident of this projection; it is the seam XNA already has, and
+`src/runtime/game-device-events.lisp' records what the subscriptions do.")
+  (:method ((game game))
+    (when *device-event-hook* (funcall *device-event-hook* game))
+    (values)))
 
 (defgeneric load-content (game)
   (:documentation "Game.LoadContent(). Runs once, after the graphics device exists.")
@@ -584,6 +625,15 @@ there would be a callback arriving after teardown."
         ;; looks live to the next `make-instance'.
         (unwind-protect (call-next-method)
           (progn
+            ;; `UnhookDeviceEvents()', in XNA's position: `Game.Dispose(bool)'
+            ;; disposes the components and the graphics device manager and *then*
+            ;; unhooks, so the manager's disposal -- which is what raises
+            ;; DeviceDisposing -- happens while the private handler is still
+            ;; subscribed. Here the order is forced rather than chosen: this
+            ;; binding refuses to destroy a game that still owns a live child, so
+            ;; the manager is already gone by the time a game can be disposed at
+            ;; all. Cannot signal; see `%UNHOOK-DEVICE-EVENTS'.
+            (when *device-event-unhook* (funcall *device-event-unhook* game))
             (when token (cna-lisp.internal:unregister-callback-target token))
             (setf (slot-value game 'callback-token) nil)
             (when (eq (cna-lisp.internal:active-game) game)

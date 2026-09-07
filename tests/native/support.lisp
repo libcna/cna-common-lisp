@@ -53,7 +53,15 @@ qualified, is a failure and not a skip."
    (last-game-time :initform nil :accessor last-game-time))
   (:documentation "A game that counts every lifecycle call it receives."))
 
-(defmethod xna:initialize    ((game counting-game)) (incf (initializes game)))
+;; CALL-NEXT-METHOD, and it is not optional: XNA's base `Initialize' is where
+;; `HookDeviceEvents' runs, so a C# override that omits `base.Initialize()' hooks
+;; no device events -- and this projection reproduces that rather than hiding it.
+;; A fixture that skipped it would be a game no XNA program should be written
+;; like, and every lane that disposes a graphics device manager depends on the
+;; hook being installed. See src/runtime/game-device-events.lisp.
+(defmethod xna:initialize    ((game counting-game))
+  (incf (initializes game))
+  (call-next-method))
 (defmethod xna:load-content  ((game counting-game)) (incf (loads game)))
 (defmethod xna:begin-run     ((game counting-game)) (incf (begin-runs game)))
 (defmethod xna:end-run       ((game counting-game)) (incf (end-runs game)))

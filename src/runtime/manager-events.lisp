@@ -47,8 +47,91 @@
 ;;; --- the managed handler lists and the raisers -------------------------------
 
 (defun %manager-handlers (manager event)
-  "MANAGER's handler list for EVENT, oldest first."
+  "MANAGER's handler list for EVENT, oldest first.
+
+Entries are user handlers -- functions or symbols -- and, mixed in among them in
+subscription order, the framework listeners described below. Call
+`%LISTENER-FUNCTION' on an entry rather than funcalling it directly."
   (reverse (cdr (assoc event (%manager-handler-lists manager) :test #'eq))))
+
+;;; --- framework listeners ------------------------------------------------
+;;;
+;;; **XNA's framework subscribes to these events itself, and its subscriptions
+;;; sit in the same multicast delegate as the program's.** `Game.Initialize' calls
+;;; the private `Game::HookDeviceEvents', whose whole body is a service lookup and
+;;; four `add_' calls on `IGraphicsDeviceService':
+;;;
+;;;     this.graphicsDeviceService = Services.GetService(IGraphicsDeviceService)
+;;;                                   as IGraphicsDeviceService;
+;;;     if (this.graphicsDeviceService == null) return;
+;;;     graphicsDeviceService.DeviceCreated   += this.DeviceCreated;
+;;;     graphicsDeviceService.DeviceResetting += this.DeviceResetting;
+;;;     graphicsDeviceService.DeviceReset     += this.DeviceReset;
+;;;     graphicsDeviceService.DeviceDisposing += this.DeviceDisposing;
+;;;
+;;; A `Delegate' cannot tell the framework's entries from the program's, and the
+;;; invocation list runs in subscription order, so **where the framework's
+;;; listener falls among the program's handlers depends on when it subscribed** --
+;;; before every handler added after `Initialize', after every handler added
+;;; before it. That is observable, so it is reproduced rather than normalised.
+;;;
+;;; They are a distinct type here for the one thing .NET gets for free and this
+;;; does not: identity. XNA's `-=' takes a delegate, and a program has no way to
+;;; name the framework's, so it cannot remove it by accident. `%MANAGER-ADD-
+;;; HANDLER' accepts only a function or a symbol, so a listener can never be
+;;; `EQ' to anything a program could pass to `%MANAGER-REMOVE-HANDLER' -- the
+;;; private subscription survives every public `-=', which is XNA's behaviour and
+;;; the reason for the wrapper.
+
+(defstruct (%framework-listener (:constructor %make-framework-listener (owner function))
+                                (:copier nil))
+  "One subscription the framework made on its own behalf.
+
+OWNER is the object whose lifecycle installed it -- a `GAME' -- and is what
+`%MANAGER-REMOVE-FRAMEWORK-LISTENERS' keys on, so a game gives back exactly its
+own listeners however many it installed."
+  (owner nil :read-only t)
+  (function nil :read-only t))
+
+(defun %listener-function (entry)
+  "The function to call for one entry of a handler list."
+  (if (%framework-listener-p entry) (%framework-listener-function entry) entry))
+
+(defun %manager-add-framework-listener (manager event owner function)
+  "Subscribe FUNCTION to MANAGER's EVENT on OWNER's behalf, as XNA's framework does.
+
+Goes into the same list, in the same order, as a program's own handler: this is
+one `+=' on one multicast delegate and nothing about it is a second event source.
+Answers the listener, which is the only handle on it that exists."
+  (%ensure-manager-raiser manager event)
+  (let ((listener (%make-framework-listener owner function))
+        (row (assoc event (%manager-handler-lists manager) :test #'eq)))
+    (if row
+        (push listener (cdr row))
+        (push (list event listener) (%manager-handler-lists manager)))
+    listener))
+
+(defun %manager-remove-framework-listeners (manager owner)
+  "Give back every framework listener OWNER installed on MANAGER. Answers how many.
+
+Nothing here may signal: it runs while OWNER is being disposed. The native
+registration is released when a list empties, exactly as a public `-=' releases
+it, so a game that hooked and unhooked leaves the callback registry where it
+found it."
+  (let ((removed 0))
+    (dolist (row (copy-list (%manager-handler-lists manager)))
+      (let ((keep (remove-if (lambda (entry)
+                               (and (%framework-listener-p entry)
+                                    (eq (%framework-listener-owner entry) owner)))
+                             (cdr row))))
+        (unless (= (length keep) (length (cdr row)))
+          (incf removed (- (length (cdr row)) (length keep)))
+          (setf (cdr row) keep)
+          (unless keep
+            (setf (%manager-handler-lists manager)
+                  (remove row (%manager-handler-lists manager)))
+            (ignore-errors (%release-manager-raiser manager (car row)))))))
+    removed))
 
 (defun %manager-raise (manager event sender)
   "Invoke every handler subscribed to EVENT, in subscription order.
@@ -59,7 +142,7 @@ write and ignore a second always-empty argument -- see
 `src/runtime/event-machinery.lisp', which made that decision for `Game''s four
 events and which this follows rather than diverging from."
   (dolist (handler (%manager-handlers manager event))
-    (funcall handler sender))
+    (funcall (%listener-function handler) sender))
   (values))
 
 (defun %manager-event-value (event)

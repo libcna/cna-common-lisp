@@ -5573,7 +5573,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Game.Initialize(). Runs once, before content loads."
+          "documentation": "Game.Initialize(). Runs once, before content loads.\n\n**The default method is where XNA hooks the device events**, because that is\nwhere the pinned assembly does it -- `HookDeviceEvents()' is the first statement\nof the base `Initialize', before the component loop and before the trailing\n`LoadContent':\n\n    .method family hidebysig newslot virtual instance void Initialize()\n      IL_0000:  ldarg.0\n      IL_0001:  call instance void Game::HookDeviceEvents()\n\nSo an override that calls `CALL-NEXT-METHOD' is hooked and one that does not is\nnot, exactly as a C# override that omits `base.Initialize()' is not. That is not\nan accident of this projection; it is the seam XNA already has, and\n`src/runtime/game-device-events.lisp' records what the subscriptions do."
         },
         {
           "name": "insert-component",
