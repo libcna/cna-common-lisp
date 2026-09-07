@@ -133,6 +133,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "runtime/game-events")
    ;; The native cross-check for CNA's two canonical service slots. After GAME,
    ;; because it reads `Game.Services' and the game's handle.
+   (:file "runtime/game-service-sync")
    (:file "runtime/graphics-device-manager")
    ;; GameWindow is a facade over the game and uses the event machinery, so it
    ;; loads after GAME and before anything that reaches a window.

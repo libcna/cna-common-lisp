@@ -19,6 +19,21 @@
 (defconstant +default-target-elapsed-time-ticks+ 166667
   "XNA's default fixed step: 1/60 second, in 100-nanosecond ticks.")
 
+(defgeneric services (game)
+  (:documentation
+   "Game.Services: the game's GameServiceContainer.
+
+    (add-service (services game) 'my-mixer mixer)
+    (get-service (services game) 'igraphics-device-service)
+
+The same object every time, as XNA's field is, and it exists from the moment the
+game does -- see the slot's own comment for why that is a requirement rather than
+a convenience.
+
+An arbitrary type-keyed container and **not** a view onto CNA's two native
+service slots. Those two are cross-checked against it where they overlap; they
+are not what it holds. See `src/runtime/game-services.lisp'."))
+
 (defgeneric graphics-device (object)
   (:documentation
    "Game.GraphicsDevice, and GraphicsDeviceManager.GraphicsDevice.
@@ -49,6 +64,15 @@ disposal never empties the delegate field a `-=' would look in.")
    ;; Three facades made lazily and answered by identity, because XNA's are
    ;; fields. Filled in by src/runtime/game-components.lisp and
    ;; src/content/game-content.lisp, both of which load after this.
+   ;; Game.Services is **not** lazy and must not be: the pinned IL creates the
+   ;; container in the constructor's field-initializer prologue, before
+   ;; `Object..ctor()' and before anything else the constructor does, and a
+   ;; `GraphicsDeviceManager' registers itself into it from its own constructor.
+   ;; A container made on first read would be a container that could not exist
+   ;; early enough. `get_Services' is then a plain field read -- `ldarg.0;
+   ;; ldfld gameServices; ret' -- so repeated reads answer one object.
+   (services :reader services
+             :documentation "Game.Services, created with the game and never replaced.")
    (components :initform nil :accessor %game-components)
    (launch-parameters :initform nil :accessor %game-launch-parameters)
    (content :initform nil :accessor %game-content)
@@ -228,6 +252,11 @@ answers true, exactly as the original's does.")
 (defmethod initialize-instance :after
     ((game game) &key (fixed-time-step t)
                       (target-elapsed-time +default-target-elapsed-time-ticks+))
+  ;; First, and before the ABI gate: the container is pure managed state, XNA
+  ;; fills its field before the constructor body runs at all, and a game that
+  ;; fails to be created should still not be an object whose SERVICES is unbound.
+  (setf (slot-value game 'services)
+        (make-instance 'game-service-container :game game))
   (cna-lisp.internal:ensure-abi-admitted)
   (when (cna-lisp.internal:active-game)
     (error 'cna-invalid-state-error
