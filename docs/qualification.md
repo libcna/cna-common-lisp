@@ -449,12 +449,23 @@ than papered over.
 
 ## The device lanes, which need no device
 
-Four qualification scripts prove branches the suite alone cannot, and each runs
-its lanes in **separate processes**. For three of them the reason is SDL's audio
-driver selection, which is process-global and latches at initialisation: one
-image cannot answer for two drivers. For the fourth it is a different
-process-global — CNA's storage application name, which cannot be unset — and a
-claim that needs two processes by definition.
+Nine qualification scripts prove branches the suite alone cannot, and most of
+them run their lanes in **separate processes** because something the branch
+depends on is process-global and latches once.
+
+Five different process-globals are in play, and naming them is what keeps a lane
+from quietly reading one branch out of another. `audio.sh`, `microphone.sh` and
+`media.sh` split because SDL's driver selection latches at initialisation, so one
+image cannot answer for two drivers. `storage.sh` splits because CNA's storage
+application name cannot be unset, and because "written by one process and read by
+another" needs two by definition. `shim-policy.sh` splits because the shim handle
+latches in CNA-Lisp's own loader: a run that reported both the present and the
+absent branch would be reporting one of them from memory, and the script fails a
+run that does.
+
+`game-device-events.sh` and `shim-policy.sh` also sweep **all three admitted
+ABIs** rather than one. Identical headers across the set are surface evidence
+only — the Storage closure established that — so both measure behaviour on each.
 
 | Script | Lanes | Needs |
 | --- | --- | --- |
@@ -465,6 +476,8 @@ claim that needs two processes by definition.
 | `tools/qualification/services.sh` | `SERVICES_MANAGED`, `SERVICES_CANONICAL`, `SERVICES_CONTENT`, `DEVICE_INFORMATION`, `PREPARING_DEVICE_SETTINGS`, `GDM_VIRTUAL_EVENTS`, plus a public-API-only consumer that drives the manager through the *interface* it was retrieved under | **nothing** -- no display, no GPU, no audio or capture device, no content fixture |
 | `tools/qualification/owned-graphics-device.sh` | `OWNED_DEVICE_SUITE` (nine kinds, each required by name), `OWNED_DEVICE_CONSUMER`, and exactly one of `OWNED_DEVICE_SOFTWARE` / `OWNED_DEVICE_HEADLESS` | **nothing** for the lifecycle claim; a rasterising renderer for the pixel claim |
 | `tools/qualification/rasterizer.sh` | the pixel proofs above | a rasterising renderer, no display |
+| `tools/qualification/game-device-events.sh` | `GAME_DEVICE_HOOK_INSTALLATION`, `GAME_DEVICE_CONTENT_UNLOAD`, `GAME_DEVICE_CONTENT_CURRENT_REFERENCE`, `GAME_DEVICE_EVENT_ORDER`, `GAME_DEVICE_UNLOAD_FAILURE_CONTAINMENT`, `GAME_DEVICE_PRIVATE_SUBSCRIPTION`, `GAME_DEVICE_TEARDOWN` — eight kinds, each required by name, on **each** admitted ABI | a content fixture; no display, no GPU, no audio |
+| `tools/qualification/shim-policy.sh` | `SHIM_ABSENT_ALL_FOUR` and `SHIM_PRESENT_ALL_FOUR`, in separate processes, on **each** admitted ABI | the built shim, for the present branch |
 
 **The owned-device script is the only graphics lane that must contain no game**,
 and that is why it is a script rather than a section of the suite: a suite run

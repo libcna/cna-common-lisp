@@ -274,7 +274,21 @@ and the reason. Nothing else in the binding depends on it, and the suite asserts
 both outcomes -- `tests/native/graphics.lisp` for the viewport and
 `tests/native/effects.lisp` for the matrices -- the setter really setting a value
 when the shim is present, and the refusal naming all three things when it is not.
-The whole suite is run twice in CI, once with the shim and once without.
+The whole suite is run twice in CI, once with the shim and once without, and
+`tools/qualification/shim-policy.sh` asserts the stronger claim the per-type
+tests cannot: that the four are **one class**, taking the same branch as each
+other on every admitted ABI. A run in which they disagree is a failure, because
+that would mean the shim answered for some routes and not others.
+
+**All four members are reported `partial` for this reason.** A released CNA-Lisp
+does not ship the shim, so an ordinary installation cannot reach any of the four
+setters, and `docs/compatibility.md` defines `complete` as reachable in every
+supported installation. Three of them were reported `complete` until 2026-09-07
+while the fourth was `partial` on the identical blocker; that contradiction is
+what the rule settles. Their frontier category is `PACKAGING_ABI_BRIDGE_LIMIT`:
+what must change to close them is packaging -- ship the shim prebuilt, take
+`cffi-libffi` as a load-time dependency, or get a pointer-taking variant into a
+future CNA ABI -- and not anything about the public API.
 
 ## Strings and buffers
 
