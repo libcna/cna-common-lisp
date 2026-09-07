@@ -254,6 +254,30 @@
           "documentation": "100-nanosecond ticks in one second, as System.TimeSpan counts them."
         },
         {
+          "name": "adapter-of",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "info"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "add-activated-handler",
           "fbound": true,
           "macro": false,
@@ -405,7 +429,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "GraphicsDeviceManager.DeviceCreated: a graphics device was created.\n\nHANDLER is called with the manager. The device itself is reached through the\ngame, as it always is: the event carries nothing."
+          "documentation": "GraphicsDeviceManager.DeviceCreated: a graphics device was created.\n\nHANDLER is called with the manager. The device itself is reached through the\ngame, as it always is: the event carries nothing.\n\n**Raised by ON-DEVICE-CREATED and only by it.** A subclass that overrides that\nmethod without calling the next one stops this event, which is what XNA does.\n\nThis is also `IGraphicsDeviceService.DeviceCreated': the service and the class\nare one object, so subscribing through either reaches this one handler list."
         },
         {
           "name": "add-device-disposing-handler",
@@ -427,7 +451,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "GraphicsDeviceManager.DeviceDisposing: the device is about to be disposed."
+          "documentation": "GraphicsDeviceManager.DeviceDisposing: the device is about to be disposed.\nRaised by ON-DEVICE-DISPOSING; also `IGraphicsDeviceService.DeviceDisposing'."
         },
         {
           "name": "add-device-reset-handler",
@@ -449,7 +473,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "GraphicsDeviceManager.DeviceReset: the device finished resetting."
+          "documentation": "GraphicsDeviceManager.DeviceReset: the device finished resetting. Raised by\nON-DEVICE-RESET; also `IGraphicsDeviceService.DeviceReset'."
         },
         {
           "name": "add-device-resetting-handler",
@@ -471,7 +495,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "GraphicsDeviceManager.DeviceResetting: the device is about to reset."
+          "documentation": "GraphicsDeviceManager.DeviceResetting: the device is about to reset. Raised by\nON-DEVICE-RESETTING; also `IGraphicsDeviceService.DeviceResetting'."
         },
         {
           "name": "add-disposed-handler",
@@ -584,6 +608,28 @@
           "documentation": "GameWindow.OrientationChanged: the display orientation changed."
         },
         {
+          "name": "add-preparing-device-settings-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.PreparingDeviceSettings's `+=': change the device settings\nbefore the device is created.\n\n    (add-preparing-device-settings-handler\n     manager\n     (lambda (sender args)\n       (setf (multi-sample-count (presentation-parameters-of\n                                  (graphics-device-information args)))\n             4)))\n\nHANDLER takes **two** arguments -- the sender and the event args -- unlike every\nother event in this binding, whose argument is `EventArgs.Empty' and is collapsed.\nThis one carries the candidate configuration, which is the whole point of the\nevent.\n\nWhat the handler writes is what the device is then created from. The handler runs\ninside device preparation, which CREATE-DEVICE and APPLY-CHANGES both enter, after\nthe manager has computed its proposal and before anything is created -- so this is\ndifferent from setting the manager's preference properties, and it is what XNA\nprograms use to request multisampling, pick a back-buffer format or choose an\nadapter.\n\nRaised by ON-PREPARING-DEVICE-SETTINGS and only by it, so a subclass overriding\nthat method without calling the next one stops this event reaching handlers.\n\nA condition the handler signals cannot be reported to CNA -- the callback answers\nvoid -- so it is contained and re-signalled by the call that entered device\npreparation, and the settings are left as CNA proposed them."
+        },
+        {
           "name": "add-screen-device-name-changed-handler",
           "fbound": true,
           "macro": false,
@@ -604,6 +650,29 @@
           "constant": false,
           "value": null,
           "documentation": "GameWindow.ScreenDeviceNameChanged: the window moved to another display."
+        },
+        {
+          "name": "add-service",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "container",
+            "service-type",
+            "provider"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameServiceContainer.AddService(Type, Object).\n\nXNA's guards, in XNA's order, all four of them:\n\n  1. a null service type is an ArgumentNullException naming \"type\";\n  2. a null provider is an ArgumentNullException naming \"provider\";\n  3. a type already present is an ArgumentException naming \"type\" -- so this is\n     *not* an upsert, and re-registering needs a REMOVE-SERVICE first;\n  4. a provider the type cannot hold is an ArgumentException. XNA really does\n     check `type.IsAssignableFrom(provider.GetType())', and this reproduces it:\n     a class designator tests with TYPEP, a protocol designator tests against the\n     classes declared to implement it.\n\nAnswers no values, as the original returns void."
         },
         {
           "name": "add-update-order-changed-handler",
@@ -828,6 +897,27 @@
           "constant": false,
           "value": null,
           "documentation": "Game.BeginDraw(). Answer NIL to skip this frame's drawing; the default\nanswers true, exactly as the original's does."
+        },
+        {
+          "name": "begin-draw-device",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IGraphicsDeviceManager.BeginDraw(): whether the frame may draw.\n\nAnswers true when drawing may proceed. Named BEGIN-DRAW-DEVICE rather than\nBEGIN-DRAW because `Game.BeginDraw' is a different member on a different type and\nalready owns that name in this package -- the same collision XNA resolves by\nhaving two types."
         },
         {
           "name": "begin-run",
@@ -1686,6 +1776,28 @@
           "documentation": "BoundingSphere.Transform.\n\nThe radius is scaled by the largest of the three row lengths, so a non-uniform\nscale answers a sphere that still contains the transformed one."
         },
         {
+          "name": "can-reset-device",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "information"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation).\n\n    (can-reset-device manager candidate)\n\nXNA's whole body, which is three instructions and one comparison:\n\n    device.GraphicsProfile == newDeviceInfo.GraphicsProfile\n\n-- true when the existing device's profile equals the candidate's, false\notherwise. Nothing else is consulted. Notably it does **not** consider the back\nbuffer, the format or the adapter, so a candidate that differs in every one of\nthose is still resettable as long as the profile matches.\n\nProtected and virtual in XNA, so a subclass may override it, and a CLOS method is\nthat override. **Partial**: no admitted CNA ABI calls this during device change,\nso an override does not affect whether a device is reset. See this file's comment\non the device-selection surface.\n\nRefuses when there is no device yet, because XNA's body dereferences the field\nand would throw `NullReferenceException'; a condition naming the reason is the\nprojection of that."
+        },
+        {
           "name": "clear-components",
           "fbound": true,
           "macro": false,
@@ -1726,6 +1838,27 @@
           "constant": false,
           "value": null,
           "documentation": "GameWindow.ClientBounds: the window's client rectangle."
+        },
+        {
+          "name": "clone-graphics-device-information",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "info"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceInformation.Clone(): a copy, with XNA's exact sharing.\n\n    (let ((copy (clone-graphics-device-information info)))\n      (eq (adapter-of copy) (adapter-of info)))                     ; => T\n      (eq (presentation-parameters-of copy)\n          (presentation-parameters-of info))                        ; => NIL\n\nThe adapter is **shared** and the presentation parameters are **copied**; the\nprofile is a keyword and copies itself. That asymmetry is the IL's, not a\nsimplification: `Clone' stores `this.presentationParameters.Clone()' into the new\nobject and `this.adapter' into it unchanged.\n\nNamed for its type, as CLONE-PRESENTATION-PARAMETERS and CLONE-EFFECT are, rather\nthan putting a bare CLONE into a package consumers use unqualified."
         },
         {
           "name": "clr-type-name",
@@ -3547,6 +3680,27 @@
           "documentation": "Color.Cornflower Blue: a fresh Color each call."
         },
         {
+          "name": "create-device",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IGraphicsDeviceManager.CreateDevice(): create or re-create the managed device.\n\n    (create-device (get-service (services game) 'igraphics-device-manager))\n\nXNA's game calls this while initialising, so a program normally never does. CNA\nsays the same about its route and adds what is different here: \"in this runtime\nthe game already owns its device, so this re-applies the configuration rather\nthan allocating a new device\".\n\n**This is one of the two ways to reach the PreparingDeviceSettings event for\nreal.** CNA's `create_device' runs device preparation, which computes the\nproposal and raises the event before anything is created -- so a handler\nregistered with ADD-PREPARING-DEVICE-SETTINGS-HANDLER is called from inside this\ncall, and what it writes is what the device is configured from.\n\nAnswers no values, as the original returns void."
+        },
+        {
           "name": "current-orientation",
           "fbound": true,
           "macro": false,
@@ -4470,6 +4624,47 @@
           "documentation": "Color.Cyan: a fresh Color each call."
         },
         {
+          "name": "declare-service-protocol-implementor",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "protocol",
+            "class-name"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Record that CLASS-NAME's instances answer PROTOCOL.\n\nSubclasses count, and they cost no metaobject protocol to count: membership is\ntested with `TYPEP' against each declared implementor, and `TYPEP' already\nanswers true for a subclass. That is what `IsAssignableFrom' does for an\ninterface a base class implements."
+        },
+        {
+          "name": "define-service-protocol",
+          "fbound": true,
+          "macro": true,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Declare NAME as a service type designator standing for a protocol.\n\nThe projection of a CLR interface used as a service key. A class states that it\nanswers the protocol with DECLARE-SERVICE-PROTOCOL-IMPLEMENTOR.\n\n**NAME becomes a real Common Lisp type**, and that is what keeps XNA's\nassignability guard honest rather than special-cased: `(typep provider\n'igraphics-device-service)' answers, so `AddService' can apply\n`type.IsAssignableFrom(provider.GetType())' with one `TYPEP' whether the\ndesignator names a class or a protocol. A `DEFTYPE' rather than a class because\nan interface is not a superclass here -- this binding projects one as generic\nfunctions, and a class would force every implementor to inherit from something\nXNA does not make them inherit from.\n\nDefines an internal predicate beside it, because `(satisfies ...)' needs a\nfunction to name. It is not exported: the type is the public thing."
+        },
+        {
           "name": "display-orientation",
           "fbound": false,
           "macro": false,
@@ -4708,6 +4903,27 @@
           "documentation": "Game.EndDraw(). Runs after DRAW, before the frame is presented."
         },
         {
+          "name": "end-draw-device",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IGraphicsDeviceManager.EndDraw(): present the frame the device drew.\n\nNamed for the reason BEGIN-DRAW-DEVICE is. Answers no values, as the original\nreturns void."
+        },
+        {
           "name": "end-run",
           "fbound": true,
           "macro": false,
@@ -4797,6 +5013,28 @@
           "constant": false,
           "value": null,
           "documentation": "Game.Exit(): ask the loop to stop at its next safe point."
+        },
+        {
+          "name": "find-best-device",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "any-suitable-device"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.FindBestDevice(Boolean).\n\n    (find-best-device manager nil)   ; => a GRAPHICS-DEVICE-INFORMATION\n\nXNA's `FindBestPlatformDevice' in shape:\n\n  1. build a candidate for every adapter that supports the manager's profile;\n  2. if none and `PreferMultiSampling' is set, **clear it and try again** -- a\n     side effect on the manager, and one the IL really has: `set_PreferMultiSampling(false)';\n  3. if still none, refuse;\n  4. `RANK-DEVICES' the candidates -- the virtual one, so a subclass's override\n     runs here;\n  5. answer the first.\n\nANY-SUITABLE-DEVICE is XNA's `anySuitableDevice', which there means \"do not\nrestrict to adapters the game's window is on\". **This binding cannot make that\nrestriction either way**: it needs `GameWindow.Handle', which is a missing member\nbecause CNA answers the window handle with `CNA_RESULT_NOT_SUPPORTED' by design.\nSo the argument is accepted, is part of the member's shape, and does not change\nthe answer -- which is why the member is reported partial rather than complete,\nalongside the seam reason this file's comment gives.\n\nProtected and virtual in XNA, so a subclass may override it. Nothing in any\nadmitted CNA ABI calls it during device creation."
         },
         {
           "name": "game",
@@ -4899,6 +5137,30 @@
           "documentation": "Microsoft.Xna.Framework.GameComponentCollectionEventArgs: the argument\nComponentAdded and ComponentRemoved carry.\n\nIts one member is the component that was added or removed."
         },
         {
+          "name": "game-service-container",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:game-service-container",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.GameServiceContainer: a game's type-keyed services.\n\n    (add-service (services game) 'my-audio-mixer mixer)\n    (get-service (services game) 'my-audio-mixer)      ; => mixer\n    (remove-service (services game) 'my-audio-mixer)\n\nAn arbitrary dictionary keyed by service type, exactly as XNA's is, and **not**\nnarrowed to the two services CNA's C ABI can name. It holds no native handle, is\nnot a child of the game, and is not disposed: its lifetime is the game's managed\nobject graph, which is what XNA's is too.\n\nA `GRAPHICS-DEVICE-MANAGER' registers itself here under both\n`IGRAPHICS-DEVICE-MANAGER' and `IGRAPHICS-DEVICE-SERVICE' when it is created,\nand both keys answer the same manager object.\n\nImplements the one-member `IServiceProvider' protocol -- see GET-SERVICE."
+        },
+        {
           "name": "game-time",
           "fbound": false,
           "macro": false,
@@ -4948,6 +5210,28 @@
           "documentation": "Microsoft.Xna.Framework.GameWindow: the window a game runs in.\n\nReached through MICROSOFT.XNA.FRAMEWORK:WINDOW, which answers the same object\nevery time as XNA's property does. A facade over the game, holding no native\nhandle: every CNA window route takes the game's.\n\nAbstract in XNA, and this is not a projection of a concrete platform window --\nit is the members a program can reach, over the routes CNA has."
         },
         {
+          "name": "get-service",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "provider",
+            "service-type"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "IServiceProvider.GetService(Type): the service registered under SERVICE-TYPE,\nor NIL.\n\nThis is the whole of `System.IServiceProvider' as this binding projects it -- one\ngeneric function rather than an imported interface hierarchy, because that is\nwhat the interface is. Anything that answers it is a service provider here, so a\n`ContentManager' built with `:SERVICE-PROVIDER' takes any object with a method on\nthis, not only a GAME-SERVICE-CONTAINER.\n\nSERVICE-TYPE is a service type designator: a CLOS class, a symbol naming one, or\na symbol naming a protocol declared with DEFINE-SERVICE-PROTOCOL.\n\nNIL for a service that is not registered, which is what XNA's answers -- the IL\ntests `ContainsKey' and returns `ldnull' when it fails, rather than throwing."
+        },
+        {
           "name": "graphics-device",
           "fbound": true,
           "macro": false,
@@ -4967,6 +5251,94 @@
           "constant": false,
           "value": null,
           "documentation": "Game.GraphicsDevice, and GraphicsDeviceManager.GraphicsDevice.\n\nBoth answer the same object, because in CNA they are the same device."
+        },
+        {
+          "name": "graphics-device-information",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:graphics-device-information",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.GraphicsDeviceInformation: one candidate device\nconfiguration.\n\n    (let ((info (make-instance 'graphics-device-information)))\n      (setf (graphics-profile-of info) :hi-def)\n      (setf (back-buffer-width (presentation-parameters-of info)) 1280))\n\nMutable and managed: it holds no native handle and is not disposed. The object a\nPREPARING-DEVICE-SETTINGS handler receives is this type, and what a handler\nwrites into it is what the device is then created from.\n\nThe three accessors are named with a `-OF' suffix because all three of\n`ADAPTER', `GRAPHICS-PROFILE' and `PRESENTATION-PARAMETERS' already name members\nof other types in this projection -- `GraphicsDevice.Adapter',\n`GraphicsDeviceManager.GraphicsProfile' and `GraphicsDevice.\nPresentationParameters' -- and XNA tells those apart by the type of the receiver,\nwhich a Lisp reader on a shared generic function could do too but a *setter*\ncould not do safely across unrelated hierarchies."
+        },
+        {
+          "name": "graphics-device-information-clr-type-name",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The .NET type name CNA reports for its device-configuration type.\n\nA CNA-Lisp addition rather than an XNA member, and the same cross-check\nCLR-TYPE-NAME is for a game: it is what makes \"this projects\n`Microsoft.Xna.Framework.GraphicsDeviceInformation'\" a checkable claim rather\nthan an asserted one. A function of no arguments because CNA's two routes take\nnone -- the name belongs to the type."
+        },
+        {
+          "name": "graphics-device-information-equal-p",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "info",
+            "other"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceInformation.Equals(Object).\n\n    (graphics-device-information-equal-p info other)\n\nAnything that is not a GRAPHICS-DEVICE-INFORMATION is unequal, which is the IL's\n`isinst' answering null. Otherwise: the adapters must be the same object, the\nprofiles must match, and nine of the presentation parameters' settings must\nmatch one by one.\n\n**The adapter comparison is object identity**, because XNA's is: `GraphicsAdapter'\noverrides neither `Equals' nor `GetHashCode', so `Object.Equals' on it is\nreference equality. This binding interns adapters for exactly that reason -- see\n`*INTERNED-ADAPTERS*'.\n\n**The parameters are compared by value, not by reference**, so two informations\nholding different parameter objects with equal settings are equal. The tenth\nfield XNA compares is `DeviceWindowHandle', which this binding does not project\nat all; the comparison is nine fields wide here for that one reason.\n\nNamed for its type rather than being a method on a general EQUAL-P, and spelled\nas a predicate because Common Lisp has no `Object.Equals' to specialise."
+        },
+        {
+          "name": "graphics-device-information-hash-code",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "info"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceInformation.GetHashCode().\n\nXNA exclusive-ors the profile's hash with the adapter's and with each compared\nsetting's. This reproduces the *shape* -- a `LOGXOR' fold over the same members,\nin the same order -- and not the numbers, because the numbers are the CLR's:\n`Enum.GetHashCode', `Int32.GetHashCode' and `Object.GetHashCode' are runtime\nimplementations, and the last of them is an object address in disguise.\n\nWhat it guarantees is what a hash code has to guarantee and all XNA's guarantees\ntoo: two informations GRAPHICS-DEVICE-INFORMATION-EQUAL-P have equal hash codes.\nIt is not a promise that a hash matches one computed by XNA, and no test here\nasserts a literal value."
         },
         {
           "name": "graphics-device-manager",
@@ -5056,6 +5428,30 @@
           "documentation": "GraphicsDeviceManager.GraphicsProfile: :REACH or :HI-DEF."
         },
         {
+          "name": "graphics-profile-of",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "gray",
           "fbound": true,
           "macro": false,
@@ -5092,6 +5488,44 @@
           "constant": false,
           "value": null,
           "documentation": "Color.Green: a fresh Color each call."
+        },
+        {
+          "name": "igraphics-device-manager",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.IGraphicsDeviceManager, as a service type designator.\n\nNot a class: this binding projects a CLR interface as generic functions plus a\nname that can key a service. Use it as the key:\n\n    (get-service (services game) 'igraphics-device-manager)\n\nThe three members are CREATE-DEVICE, BEGIN-DRAW-DEVICE and END-DRAW-DEVICE, and\nthe interface has exactly those three -- verified against the pinned assembly's\ninterface declaration rather than assumed from CNA's route list."
+        },
+        {
+          "name": "igraphics-device-service",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService, as a service type\ndesignator.\n\n    (get-service (services game) 'igraphics-device-service)\n\nFive members: the `GraphicsDevice' property and the four device events. **All\nfive are the ones GRAPHICS-DEVICE-MANAGER already exposes**, and deliberately so\n-- GRAPHICS-DEVICE answers the property, and ADD-DEVICE-CREATED-HANDLER and its\nthree siblings are the events. Subscribing through this service key and\nsubscribing through the concrete manager reach one handler list and one native\nregistration, because they reach one object.\n\nThis is the key a `ContentManager' resolves a graphics device through: XNA's\ncontent readers call `contentManager.ServiceProvider.GetService(typeof(\nIGraphicsDeviceService))` and then `.GraphicsDevice` on what comes back."
         },
         {
           "name": "inactive-sleep-time",
@@ -7502,6 +7936,116 @@
           "documentation": "Matrix.Up: the second row's vector part."
         },
         {
+          "name": "native-service-present-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "game",
+            "service-type"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Whether CNA reports SERVICE-TYPE registered with GAME's native game.\n\nA CNA-Lisp addition and a **cross-check**, not the way to read a service: it can\nanswer for exactly the two identities CNA can name, and `GET-SERVICE' is what\nanswers for the container. Refuses a service type CNA has no identity for, rather\nthan answering false and letting a caller read that as \"not registered\"."
+        },
+        {
+          "name": "on-device-created",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "sender"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.OnDeviceCreated(Object, EventArgs): raise DeviceCreated.\n\nProtected and virtual in XNA, and a real seam here:\n\n    (defmethod on-device-created ((manager my-manager) sender)\n      (note-it)\n      (call-next-method))            ; base.OnDeviceCreated -- the event is raised\n\nAn override that does **not** call the next method suppresses the public event,\nbecause the base implementation is the only thing that invokes the handler list.\nThat is XNA's behaviour and not an accident of this projection.\n\nSENDER is the manager: every raise site in the pinned assembly passes `this'."
+        },
+        {
+          "name": "on-device-disposing",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "sender"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.OnDeviceDisposing(Object, EventArgs): raise\nDeviceDisposing. Protected and virtual; see ON-DEVICE-CREATED for the seam."
+        },
+        {
+          "name": "on-device-reset",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "sender"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.OnDeviceReset(Object, EventArgs): raise DeviceReset.\nProtected and virtual; see ON-DEVICE-CREATED for the seam."
+        },
+        {
+          "name": "on-device-resetting",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "sender"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.OnDeviceResetting(Object, EventArgs): raise\nDeviceResetting. Protected and virtual; see ON-DEVICE-CREATED for the seam."
+        },
+        {
           "name": "on-exiting",
           "fbound": true,
           "macro": false,
@@ -7521,6 +8065,29 @@
           "constant": false,
           "value": null,
           "documentation": "Game.OnExiting(). Runs once as the game exits."
+        },
+        {
+          "name": "on-preparing-device-settings",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "sender",
+            "args"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.OnPreparingDeviceSettings(Object,\nPreparingDeviceSettingsEventArgs): raise PreparingDeviceSettings.\n\n`family hidebysig newslot virtual' in the pinned assembly, and a real seam here\nexactly as the four data-free raisers are:\n\n    (defmethod on-preparing-device-settings ((manager my-manager) sender args)\n      (setf (graphics-profile-of (graphics-device-information args)) :reach)\n      (call-next-method))\n\nAn override that does not call the next method suppresses the public event, and\n**still keeps its own mutations**: the write-back happens after this generic\nfunction returns, over whatever state the information object is left in. So an\noverride can both replace the handlers' say and have one of its own, which is what\noverriding a protected raiser is for.\n\nSENDER is the manager. ARGS is the PREPARING-DEVICE-SETTINGS-EVENT-ARGS, and its\ninformation object is the same object for the whole callback."
         },
         {
           "name": "orange",
@@ -8225,6 +8792,54 @@
           "documentation": "GraphicsDeviceManager.PreferredDepthStencilFormat, a DepthFormat."
         },
         {
+          "name": "preparing-device-settings-event-args",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework:preparing-device-settings-event-args",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs.\n\n    (add-preparing-device-settings-handler\n     manager\n     (lambda (sender args)\n       (let ((info (graphics-device-information args)))\n         (setf (back-buffer-width (presentation-parameters-of info)) 1280))))\n\nCarries the candidate configuration a handler may change before the device\nexists. Derives from `System.EventArgs' in XNA, which this projection has no\ncounterpart for and does not invent -- an empty base class with no members is not\na type a Lisp program can use, and this binding collapses `EventArgs.Empty'\neverywhere rather than projecting the hierarchy.\n\n**This is the one event whose handler takes two arguments.** Everywhere else the\nargument is `EventArgs.Empty' and is collapsed away; here it carries the thing the\nevent exists for, so it is passed."
+        },
+        {
+          "name": "presentation-parameters-of",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "new-value",
+            "object"
+          ],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "purple",
           "fbound": true,
           "macro": false,
@@ -8836,6 +9451,28 @@
           "constant": false,
           "value": null,
           "documentation": null
+        },
+        {
+          "name": "rank-devices",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager",
+            "candidates"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GraphicsDeviceManager.RankDevices(List<GraphicsDeviceInformation>).\n\n    (setf candidates (rank-devices manager candidates))\n\n**Answers the ranked sequence, and callers must use the answer.** XNA's signature\nreturns void and sorts the caller's `List<T>' in place -- `RankDevicesPlatform' is\n`foundDevices.Sort(new GraphicsDeviceInformationComparer(this))' -- and\n`FindBestPlatformDevice' then takes `foundDevices[0]' from the list it passed in.\nA Common Lisp list cannot be reordered in place in a way a caller's variable would\nsee, and `SORT' is permitted to destroy its argument, so this projection is\nexplicit about both halves: the argument may be destroyed, and the ranked sequence\nis the return value. A caller that ignores the answer has ignored the ranking,\nwhich is exactly the failure a silent temporary copy would have hidden.\n\nA list stays a list and a vector stays a vector; `List<GraphicsDeviceInformation>'\nis not projected as a BCL type, for the reason no other generic collection here is.\n\nThe order is XNA's `GraphicsDeviceInformationComparer', which is a private type\nand therefore not a member of anything -- see %RANK-DEVICE-CANDIDATES for the\ncomparison it makes and which parts of it this binding can reproduce.\n\nProtected and virtual in XNA, so a subclass may override it. **Partial**: no\nadmitted CNA ABI calls this during device change."
         },
         {
           "name": "ray",
@@ -9857,6 +10494,28 @@
           "documentation": "The `-=' of add-orientation-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
         },
         {
+          "name": "remove-preparing-device-settings-handler",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object",
+            "handler"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The `-=' of add-preparing-device-settings-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
+        },
+        {
           "name": "remove-screen-device-name-changed-handler",
           "fbound": true,
           "macro": false,
@@ -9877,6 +10536,28 @@
           "constant": false,
           "value": null,
           "documentation": "The `-=' of add-screen-device-name-changed-handler. Answers true when it found a handler to remove and NIL when it did not, which is what the original does silently.\n\nLegal after the sender has been disposed, exactly as `Delegate.Remove' against a field no disposal clears is: the handler list survives, and what disposal ended is the event being raised."
+        },
+        {
+          "name": "remove-service",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "container",
+            "service-type"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "GameServiceContainer.RemoveService(Type).\n\nA null service type is an ArgumentNullException naming \"type\". **Removing a\ntype that is not registered is an ordinary success** and not an error: the IL\ncalls `Dictionary.Remove' and discards the boolean it answers.\n\nAnswers no values, as the original returns void."
         },
         {
           "name": "remove-update-order-changed-handler",
@@ -10005,6 +10686,90 @@
           "constant": false,
           "value": null,
           "documentation": "GameWindow.ScreenDeviceName: the display the window is on."
+        },
+        {
+          "name": "service-protocol-implementors",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "protocol"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The class names declared to implement PROTOCOL, newest first.\n\nA CNA-Lisp addition: the registry is what makes `(typep x 'a-protocol)' answer,\nand a test that wants to say which classes were declared needs to read it."
+        },
+        {
+          "name": "service-protocol-p",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "designator"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Whether DESIGNATOR is a declared service protocol name."
+        },
+        {
+          "name": "service-types",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "container"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every service type registered in CONTAINER, as a fresh list.\n\nA CNA-Lisp addition rather than an XNA member: XNA's container has no\nenumeration at all, and a test that wants to say \"exactly these two keys\" needs\none. The list is fresh, so mutating it cannot reach the container."
+        },
+        {
+          "name": "services",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "game"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Game.Services: the game's GameServiceContainer.\n\n    (add-service (services game) 'my-mixer mixer)\n    (get-service (services game) 'igraphics-device-service)\n\nThe same object every time, as XNA's field is, and it exists from the moment the\ngame does -- see the slot's own comment for why that is a requirement rather than\na convenience.\n\nAn arbitrary type-keyed container and **not** a view onto CNA's two native\nservice slots. Those two are cross-checked against it where they overlap; they\nare not what it holds. See `src/runtime/game-services.lisp'."
         },
         {
           "name": "supported-orientations",
@@ -27269,6 +28034,27 @@
           "documentation": "ContentManager.RootDirectory: the directory asset names are resolved against."
         },
         {
+          "name": "service-provider",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "manager"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "ContentManager.ServiceProvider: the provider this manager was built with.\n\n    (eq (service-provider (content game)) (services game))    ; => T\n\n**The exact object, by identity.** XNA's `get_ServiceProvider' is a plain field\nread, so the object a program passed to the canonical constructor is the object\nit reads back, and this answers that object rather than anything derived from it.\n\nNIL for a manager built with the `:GRAPHICS-DEVICE' extension, which has no\nprovider to answer -- the extension exists because CNA's create route takes a\ndevice and cannot carry a provider at all.\n\n`Game.Content' answers the game's own `SERVICES', because that is what the pinned\n`Game' constructor passes.\n\n**Not read from CNA, and `cna_content_manager_get_has_service_provider' is not\nits source of truth.** `content.h' says a service provider \"is a Sharp Runtime\nobject and never crosses the C boundary\" and that \"the field is inert on both\nsides of the boundary\", so the C ABI has nothing to answer with; the managed\nobject is where a managed reference lives."
+        },
+        {
           "name": "unload",
           "fbound": true,
           "macro": false,
@@ -35683,6 +36469,52 @@
         "song-equal"
       ],
       "reason": "Whether two songs are the same song, over cna_song_equals. Song is\n      IEquatable<Song> and declares op_Equality, Equals(Object) and Equals(Song);\n      Common Lisp has no operator overloading and one equality predicate per type\n      is what those project onto, so the predicate itself is the extension and\n      the three members map to it. **It is not EQ**: XNA's queue and collection\n      indexers both answer `new Song(handle)', so two objects for one underlying\n      song are equal and are not identical, and a program needs a way to say so."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "igraphics-device-manager",
+        "igraphics-device-service"
+      ],
+      "reason": "The two service *type designators* for the interfaces GraphicsDeviceManager\n      implements. A CLR interface projects here as generic functions and has no\n      symbol of its own -- which is right until an interface has to be used as a\n      dictionary **key**, and both of these are: XNA registers the manager under\n      `typeof(IGraphicsDeviceManager)' and `typeof(IGraphicsDeviceService)'. A\n      symbol naming the protocol is what a Lisp program passes where a C# program\n      passes a `System.Type', so it is the projection of the type identity rather\n      than of any member."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "define-service-protocol",
+        "declare-service-protocol-implementor",
+        "service-protocol-p",
+        "service-protocol-implementors"
+      ],
+      "reason": "The service type designator policy. XNA keys GameServiceContainer by\n      `System.Type'; this binding admits a CLOS class or a declared protocol,\n      because those are the two kinds of type a Lisp program can test membership\n      of -- and membership has to be testable, because `AddService' really does\n      check `type.IsAssignableFrom(provider.GetType())'. A protocol is how an\n      interface gets a testable identity without being a class, and these three\n      declare one, record a class as answering it, ask, and read the\n      registry back. **A declared protocol is a real Common Lisp type**, so\n      `(typep manager 'igraphics-device-service)' answers and the assignability\n      guard is one TYPEP for both kinds of designator rather than a branch."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "service-types"
+      ],
+      "reason": "Every service type registered in a container, as a fresh list. XNA's\n      container has no enumeration at all; a test that wants to say `exactly these\n      two keys' needs one, and a fresh list cannot be mutated back into the\n      container."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "native-service-present-p"
+      ],
+      "reason": "Whether CNA reports one of its two canonical services registered. A\n      **cross-check** and not a way to read a service: GET-SERVICE reads the\n      managed container, which is the public authority, and this answers for the\n      only two identities `CNA_GameServiceType' can name. It refuses any other\n      service type rather than answering false, so a caller cannot read `CNA\n      cannot name this' as `not registered'. The same shape\n      StorageContainer.StorageDevice is cross-checked in."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "graphics-device-information-hash-code"
+      ],
+      "reason": "GraphicsDeviceInformation.GetHashCode's *shape* -- a LOGXOR fold over the\n      same members in the same order -- as a named function, because the CLR hash\n      code itself is not observable through a Common Lisp API and is universally\n      not-applicable here. It guarantees what a hash code must, that equal objects\n      hash equally; it is not a promise that a number matches XNA's."
+    },
+    {
+      "package": "microsoft.xna.framework",
+      "symbols": [
+        "graphics-device-information-clr-type-name"
+      ],
+      "reason": "The .NET type name CNA reports for its device-configuration type, so\n      `this projects Microsoft.Xna.Framework.GraphicsDeviceInformation' is a\n      checkable claim. CLR-TYPE-NAME's own reason, for a type whose routes take no\n      handle because the name belongs to the type rather than to an object."
     },
     {
       "package": "microsoft.xna.framework.media",

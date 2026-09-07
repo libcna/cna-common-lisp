@@ -314,6 +314,47 @@ SELECTED = [
     # `IAsyncResult' becomes an opaque already-complete object because XNA's own
     # is already complete, and `System.IO.Stream' becomes a real Common Lisp
     # stream because that is what this binding has always said it becomes.
+    # --- game services and device selection --------------------------------
+    # **Five types, 21 members, and the count is the contract's rather than the
+    # planning pass's.** The plan that recommended this closure counted 17
+    # members over five types, with `FrameworkDispatcher' in the list and
+    # `IGraphicsDeviceService' absent. The dependency closure over the pinned
+    # snapshot says otherwise, and it was recomputed rather than trusted:
+    #
+    # * `Graphics.IGraphicsDeviceService' is **not optional**. The already
+    #   selected `GraphicsDeviceManager' names it in its own `interfaces', beside
+    #   `IGraphicsDeviceManager' and `System.IDisposable', so the closure of the
+    #   selection *as it already stood* reached it. It was a hole in the profile
+    #   before this closure and is filled by it.
+    # * `FrameworkDispatcher' is **not reached by anything**. Nothing in the
+    #   257-type snapshot names it in a base type, an interface, a return type or
+    #   a parameter type -- it is a static pump a program calls itself. It is not
+    #   selected here, because `cna_framework_dispatcher_update' existing is not
+    #   an argument for a member: that is the rule `cna_sprite_font_create' is
+    #   already unbound under, and the rule CNA's own model extensions are
+    #   excluded by.
+    #
+    # Adding these five reaches **no** further unselected type: `Adapter',
+    # `GraphicsProfile' and `PresentationParameters' are all already here, and
+    # everything else the five touch is the base-class library's --
+    # `System.Type', `System.Object', `System.IServiceProvider', `System.EventArgs',
+    # `System.EventHandler`1' and the `List<GraphicsDeviceInformation>' that
+    # `RankDevices' takes.
+    #
+    # **None of those BCL types is added to the profile**, and each collapses the
+    # way this binding already collapses its kind. `System.Type' becomes a service
+    # type designator -- a class or a declared protocol -- rather than CLR
+    # reflection; `System.IServiceProvider' becomes the one generic function
+    # `GET-SERVICE', the way `System.IAsyncResult' became an opaque object and
+    # `System.IO.Stream' became a Common Lisp stream; `List<T>' becomes an
+    # ordinary mutable Lisp sequence, as every other generic collection here does;
+    # and `System.EventArgs' stays collapsed, as it has been since `Game''s four
+    # events. `docs/common-lisp-mapping.md' carries all four rules.
+    "Microsoft.Xna.Framework.GameServiceContainer",
+    "Microsoft.Xna.Framework.IGraphicsDeviceManager",
+    "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService",
+    "Microsoft.Xna.Framework.GraphicsDeviceInformation",
+    "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
     "Microsoft.Xna.Framework.Storage.StorageDevice",
     "Microsoft.Xna.Framework.Storage.StorageContainer",
     "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",

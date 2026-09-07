@@ -10,8 +10,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 190,
-  "member_count": 2560
+  "type_count": 195,
+  "member_count": 2581
  },
  "types": [
   {
@@ -45545,6 +45545,323 @@
      "kind": "property",
      "name": "Samples",
      "type": "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GameServiceContainer",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [
+    "System.IServiceProvider"
+   ],
+   "directInterfaces": [
+    "System.IServiceProvider"
+   ],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "AddService",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "type",
+       "type": "System.Type",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      },
+      {
+       "name": "provider",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "RemoveService",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "type",
+       "type": "System.Type",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetService",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Object",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "type",
+       "type": "System.Type",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.IGraphicsDeviceManager",
+   "kind": "interface",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": null,
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "method",
+     "name": "CreateDevice",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "BeginDraw",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "EndDraw",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Void",
+     "genericParameters": [],
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService",
+   "kind": "interface",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": null,
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "property",
+     "name": "GraphicsDevice",
+     "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+     "static": false,
+     "get": true,
+     "set": false,
+     "getAccess": "public",
+     "setAccess": null,
+     "parameters": []
+    },
+    {
+     "kind": "event",
+     "name": "DeviceDisposing",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "DeviceReset",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "DeviceResetting",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    },
+    {
+     "kind": "event",
+     "name": "DeviceCreated",
+     "type": "System.EventHandler`1[System.EventArgs]",
+     "static": false,
+     "add": true,
+     "remove": true
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GraphicsDeviceInformation",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.Object",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Equals",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Boolean",
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "obj",
+       "type": "System.Object",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "method",
+     "name": "GetHashCode",
+     "static": false,
+     "access": "public",
+     "returnType": "System.Int32",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "method",
+     "name": "Clone",
+     "static": false,
+     "access": "public",
+     "returnType": "Microsoft.Xna.Framework.GraphicsDeviceInformation",
+     "genericParameters": [],
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "Adapter",
+     "type": "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "GraphicsProfile",
+     "type": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    },
+    {
+     "kind": "property",
+     "name": "PresentationParameters",
+     "type": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+     "static": false,
+     "get": true,
+     "set": true,
+     "getAccess": "public",
+     "setAccess": "public",
+     "parameters": []
+    }
+   ]
+  },
+  {
+   "name": "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
+   "kind": "class",
+   "flags": false,
+   "sealed": false,
+   "underlyingType": null,
+   "baseType": "System.EventArgs",
+   "interfaces": [],
+   "directInterfaces": [],
+   "genericParameters": [],
+   "members": [
+    {
+     "kind": "constructor",
+     "name": ".ctor",
+     "static": false,
+     "access": "public",
+     "returnType": null,
+     "genericParameters": [],
+     "parameters": [
+      {
+       "name": "graphicsDeviceInformation",
+       "type": "Microsoft.Xna.Framework.GraphicsDeviceInformation",
+       "ref": false,
+       "out": false,
+       "in": false,
+       "optional": false
+      }
+     ]
+    },
+    {
+     "kind": "property",
+     "name": "GraphicsDeviceInformation",
+     "type": "Microsoft.Xna.Framework.GraphicsDeviceInformation",
      "static": false,
      "get": true,
      "set": false,

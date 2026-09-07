@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 190,
-  "member_count": 2560
+  "type_count": 195,
+  "member_count": 2581
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 190,
-  "members": 2560,
+  "types": 195,
+  "members": 2581,
   "types_by_status": {
    "partial": 24,
-   "complete": 166
+   "complete": 171
   },
   "members_by_status": {
-   "complete": 2054,
-   "missing": 38,
-   "not-applicable": 442,
-   "partial": 26
+   "complete": 2084,
+   "missing": 25,
+   "not-applicable": 443,
+   "partial": 29
   },
-  "diagnostics": 38,
+  "diagnostics": 25,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 38,
+   "missing_member": 25,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -80,7 +80,7 @@
     "ShowMissingRequirementMessage(Exception)": "missing",
     "LaunchParameters": "complete",
     "Components": "complete",
-    "Services": "missing",
+    "Services": "complete",
     "InactiveSleepTime": "complete",
     "IsMouseVisible": "complete",
     "TargetElapsedTime": "complete",
@@ -366,15 +366,15 @@
     "new(Game)": "complete",
     "ApplyChanges()": "complete",
     "ToggleFullScreen()": "complete",
-    "FindBestDevice(Boolean)": "missing",
-    "CanResetDevice(GraphicsDeviceInformation)": "missing",
-    "RankDevices(List`1)": "missing",
-    "OnDeviceCreated(Object,EventArgs)": "missing",
-    "OnDeviceDisposing(Object,EventArgs)": "missing",
-    "OnDeviceReset(Object,EventArgs)": "missing",
-    "OnDeviceResetting(Object,EventArgs)": "missing",
+    "FindBestDevice(Boolean)": "partial",
+    "CanResetDevice(GraphicsDeviceInformation)": "partial",
+    "RankDevices(List`1)": "partial",
+    "OnDeviceCreated(Object,EventArgs)": "complete",
+    "OnDeviceDisposing(Object,EventArgs)": "complete",
+    "OnDeviceReset(Object,EventArgs)": "complete",
+    "OnDeviceResetting(Object,EventArgs)": "complete",
     "Dispose(Boolean)": "not-applicable",
-    "OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "missing",
+    "OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "complete",
     "GraphicsProfile": "complete",
     "PreferredDepthStencilFormat": "complete",
     "PreferredBackBufferFormat": "complete",
@@ -389,7 +389,7 @@
     "DeviceResetting": "complete",
     "DeviceReset": "complete",
     "DeviceDisposing": "complete",
-    "PreparingDeviceSettings": "missing",
+    "PreparingDeviceSettings": "complete",
     "Disposed": "complete",
     "DefaultBackBufferWidth": "complete",
     "DefaultBackBufferHeight": "complete"
@@ -400,15 +400,15 @@
    "name": "Microsoft.Xna.Framework.Content.ContentManager",
    "status": "partial",
    "members": {
-    "new(IServiceProvider)": "missing",
-    "new(IServiceProvider,String)": "missing",
+    "new(IServiceProvider)": "complete",
+    "new(IServiceProvider,String)": "complete",
     "Dispose()": "complete",
     "Dispose(Boolean)": "not-applicable",
     "Unload()": "complete",
     "Load(String)": "partial",
     "ReadAsset(String,Action`1)": "not-applicable",
     "OpenStream(String)": "not-applicable",
-    "ServiceProvider": "missing",
+    "ServiceProvider": "complete",
     "RootDirectory": "complete"
    },
    "lisp": "microsoft.xna.framework.content:content-manager"
@@ -3886,6 +3886,62 @@
    "lisp": "microsoft.xna.framework.media:visualization-data"
   },
   {
+   "name": "Microsoft.Xna.Framework.GameServiceContainer",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "AddService(Type,Object)": "complete",
+    "RemoveService(Type)": "complete",
+    "GetService(Type)": "complete"
+   },
+   "lisp": "microsoft.xna.framework:game-service-container"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.IGraphicsDeviceManager",
+   "status": "complete",
+   "members": {
+    "CreateDevice()": "complete",
+    "BeginDraw()": "complete",
+    "EndDraw()": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService",
+   "status": "complete",
+   "members": {
+    "GraphicsDevice": "complete",
+    "DeviceDisposing": "complete",
+    "DeviceReset": "complete",
+    "DeviceResetting": "complete",
+    "DeviceCreated": "complete"
+   },
+   "projection": "interface: its members are generic functions in microsoft.xna.framework.graphics"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.GraphicsDeviceInformation",
+   "status": "complete",
+   "members": {
+    "new()": "complete",
+    "Equals(Object)": "complete",
+    "GetHashCode()": "not-applicable",
+    "Clone()": "complete",
+    "Adapter": "complete",
+    "GraphicsProfile": "complete",
+    "PresentationParameters": "complete"
+   },
+   "lisp": "microsoft.xna.framework:graphics-device-information"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
+   "status": "complete",
+   "members": {
+    "new(GraphicsDeviceInformation)": "complete",
+    "GraphicsDeviceInformation": "complete"
+   },
+   "lisp": "microsoft.xna.framework:preparing-device-settings-event-args"
+  },
+  {
    "name": "Microsoft.Xna.Framework.Storage.StorageDevice",
    "status": "complete",
    "members": {
@@ -3960,11 +4016,6 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Game.Services",
-   "detail": "GameServiceContainer, which CNA does not have a container for. It has cna_game_services_contains_ext and remove_ext over a closed CNA_GAME_SERVICE_TYPE_* enum and no route that registers a service or hands one back, so GetService -- the member the type exists for -- cannot be answered for the two services the runtime registers. Not, as an earlier note claimed, because IGraphicsDeviceService is unprojectable: its five members are already complete on GraphicsDeviceManager, the type that implements it. docs/limitations.md carries the audit."
-  },
-  {
-   "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.GameComponentCollection.new()",
    "detail": "XNA's constructor is public and a standalone collection is legal there, if useless -- a Game makes its own and drives that one. CNA has no route for a collection apart from a game's: `a game owns exactly one component collection, so the collection needs no handle of its own and every route addresses the game's`. So a standalone one is not projected rather than faked."
   },
@@ -4012,66 +4063,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.GraphicsAdapter.MonitorHandle",
    "detail": "A System.IntPtr naming the monitor. CNA refuses the question by design: cna_graphics_adapter_get_native_monitor_handle \"reports the native-monitor-handle mapping as unavailable at the stable C boundary\" and answers CNA_RESULT_NOT_SUPPORTED after validating the adapter index. An IntPtr is not a thing this projection has either."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)",
-   "detail": "One of the three protected members that are XNA's **device-selection algorithm**, not a setting: FindBestDevice ranks candidates and picks one, and its result is a GraphicsDeviceInformation. CNA selects the device itself when it creates the game, and offers the pieces a caller would rank with -- cna_graphics_adapter_query_backbuffer_format, _query_render_target_format, _is_profile_supported -- but no candidate list and no GraphicsDeviceInformation to be a candidate."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation)",
-   "detail": "See FindBestDevice for the missing type, and GraphicsDevice.Reset for the missing operation: asking whether a device *can* be reset presupposes resetting it."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)",
-   "detail": "See FindBestDevice: it is handed the candidate list that type does not exist to hold."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceCreated(Object,EventArgs)",
-   "detail": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceCreated *is* what raises DeviceCreated: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceDisposing(Object,EventArgs)",
-   "detail": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceDisposing *is* what raises DeviceDisposing: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceReset(Object,EventArgs)",
-   "detail": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceReset *is* what raises DeviceReset: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceResetting(Object,EventArgs)",
-   "detail": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceResetting *is* what raises DeviceResetting: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)",
-   "detail": "The raiser problem above, and a second one on top of it: the argument is a PreparingDeviceSettingsEventArgs carrying a GraphicsDeviceInformation, and neither type is in the selection nor has a CNA representation."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings",
-   "detail": "The only event in the selection that carries data. It needs PreparingDeviceSettingsEventArgs and GraphicsDeviceInformation, neither of which is in the selection, and CNA's non-ext callback for it can only observe the settings where XNA's event exists to change them. Projecting the observing form under the event's name would be a quieter kind of wrong than leaving it missing."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Content.ContentManager.new(IServiceProvider)",
-   "detail": "Both of XNA's constructors take a System.IServiceProvider, which this binding cannot produce: see docs/limitations.md on Game.Services, where the obstacle is that CNA's service container has no route that registers a service or hands one back. CNA's own constructor takes the graphics device instead, and MAKE-INSTANCE projects that as a declared extension rather than pretending to be either canonical overload."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Content.ContentManager.new(IServiceProvider,String)",
-   "detail": "Both of XNA's constructors take a System.IServiceProvider, which this binding cannot produce: see docs/limitations.md on Game.Services, where the obstacle is that CNA's service container has no route that registers a service or hands one back. CNA's own constructor takes the graphics device instead, and MAKE-INSTANCE projects that as a declared extension rather than pretending to be either canonical overload."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Content.ContentManager.ServiceProvider",
-   "detail": "The IServiceProvider the manager was built from. There is none: CNA's constructor takes a graphics device, and cna_content_manager_get_has_service_provider reports only whether the native manager has one, not what it is. Answering a service provider this binding cannot represent would be worse than reporting it missing. docs/limitations.md."
   },
   {
    "category": "missing_member",

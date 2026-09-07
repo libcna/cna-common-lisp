@@ -572,7 +572,8 @@ def verify_base_type(report, rules, type_rule, contract_type, entry, name):
                    % (base, expected, entry["precedence"]))
 
 
-def verify_event(report, type_rule, member, subject, symbols, package, claimed):
+def verify_event(report, type_rule, member, subject, symbols, package, claimed,
+                 all_packages=None):
     """Verify one CLR event against its declared projection.
 
     A CLR event is two operations, `add_E` and `remove_E`, and the projection is
@@ -592,10 +593,28 @@ def verify_event(report, type_rule, member, subject, symbols, package, claimed):
     on `T` that any object could reach. Static events therefore project onto
     plain functions of one argument, and the `static` flag that permits it is
     read from the **contract**, never from the rule, so a rule cannot claim it.
+
+    **An event may declare a `package`, and one that does is checked there.**
+    `IGraphicsDeviceService` is the reason: its four events are the *same* pairs
+    `GraphicsDeviceManager` already exposes, and the manager lives in
+    `Microsoft.Xna.Framework` while the interface lives in
+    `Microsoft.Xna.Framework.Graphics`. Defining a second pair in the graphics
+    package to satisfy a namespace would create exactly the duplicate event state
+    that projecting the interface onto the same object exists to avoid. This is
+    the same escape `member_overrides` already has, and it is checked rather than
+    assumed: the symbol must exist and be exported from the package the rule
+    names, and it is claimed there, so a rule cannot point at a package to make
+    an absence disappear.
     """
+    all_packages = all_packages if all_packages is not None else {package: symbols}
     rule = type_rule.get("events", {}).get(member["name"])
     if rule is None:
         report.add("missing_member", subject, "no event projection is declared")
+        return "missing"
+    home = rule.get("package", package)
+    home_symbols = all_packages.get(home)
+    if home_symbols is None:
+        report.add("wrong_package", subject, "no such package %r" % home)
         return "missing"
     for role in ("add", "remove"):
         name = rule.get(role)
@@ -603,12 +622,12 @@ def verify_event(report, type_rule, member, subject, symbols, package, claimed):
             report.add("event_mapping_mismatch", subject,
                        "the event projection declares no %r function" % role)
             return "missing"
-        entry = symbols.get(name)
+        entry = home_symbols.get(name)
         if entry is None:
             report.add("missing_member", subject,
-                       "no exported %r in %s" % (name, package))
+                       "no exported %r in %s" % (name, home))
             return "missing"
-        claimed.setdefault(package, set()).add(name)
+        claimed.setdefault(home, set()).add(name)
         if not entry["generic"] and not member.get("static"):
             report.add("event_mapping_mismatch", subject,
                        "%r is not a generic function, so it cannot be specialised "
@@ -665,7 +684,7 @@ def verify_members(report, rules, type_rule, contract_type, symbols, package, cl
             continue
         if member["kind"] == "event":
             statuses[sig] = verify_event(report, type_rule, member, subject, symbols,
-                                         package, claimed)
+                                         package, claimed, all_packages=all_packages)
             continue
         expected, override = expected_symbol(rules, type_rule, contract_type["name"], member)
         if expected is None:

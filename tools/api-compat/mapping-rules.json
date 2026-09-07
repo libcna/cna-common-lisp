@@ -82,6 +82,11 @@
           "lisp": "window",
           "generic": true,
           "reason": "Game.Window over the GameWindow facade, answering the same object every time as XNA's property does. Get-only, as XNA's is."
+        },
+        "Services": {
+          "lisp": "services",
+          "generic": true,
+          "reason": "`GameServiceContainer' is a **managed Lisp dictionary** and reaches no native code, which is what XNA's is too -- nothing about that type crosses into native code there either. An earlier note here said the member was blocked because CNA's service container has no route that registers a service or hands one back; that was true of CNA and irrelevant to the projection, and it is the mistake of taking the runtime for the oracle that this repository has been consistent about refusing. CNA's own `runtime_components.h' says as much: the canonical container is keyed by C++ type identity which \"has no C expression\", and a consumer keeping its own container beside it \"is not working around a missing feature\". So the container is arbitrary and type-keyed, and CNA's two `CNA_GameServiceType' slots became a native cross-check. Not lazy: the pinned IL fills the field in the constructor's prologue, before `Object..ctor()', and a `GraphicsDeviceManager' registers into it from its own constructor."
         }
       },
       "not_applicable": {
@@ -90,8 +95,7 @@
       "unimplemented": {
         "OnActivated(Object,EventArgs)": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not.",
         "OnDeactivated(Object,EventArgs)": "The protected On<Event> methods are the base class's way of raising an event a subclass may intercept before its handlers run. CNA raises the events itself, so there is no place in this projection for a subclass to stand between CNA and the handlers; the event itself is projected and these two are not.",
-        "ShowMissingRequirementMessage(Exception)": "A **protected** virtual (`.method family` in the pinned Game assembly), and one of the raiser-shaped family rather than a member of its own. XNA calls it from inside `Run`'s two catch handlers -- for NoSuitableGraphicsDeviceException and NoAudioHardwareException -- and *rethrows when it answers false*. CNA runs the loop and catches nothing into Lisp: measured against 0.21.0, CNA_GameCallbacks and CNA_GameFrameHooks have load_content, update, draw, unload_content, exiting, initialize, begin_run, end_run, begin_draw and end_draw, and no hook for a run that failed to start. So an override here would never be called. The reason that used to stand said it needed \"the CLR exception projection and a platform message box\". **CNA has a message box** -- cna_message_box_show_ext and cna_message_box_get_is_supported_ext -- so that half was wrong, and the half that actually blocks it went unmentioned. Its dispatch is also entirely `isinst` on those two exception types, and neither is in the selection.",
-        "Services": "GameServiceContainer, which CNA does not have a container for. It has cna_game_services_contains_ext and remove_ext over a closed CNA_GAME_SERVICE_TYPE_* enum and no route that registers a service or hands one back, so GetService -- the member the type exists for -- cannot be answered for the two services the runtime registers. Not, as an earlier note claimed, because IGraphicsDeviceService is unprojectable: its five members are already complete on GraphicsDeviceManager, the type that implements it. docs/limitations.md carries the audit."
+        "ShowMissingRequirementMessage(Exception)": "A **protected** virtual (`.method family` in the pinned Game assembly), and one of the raiser-shaped family rather than a member of its own. XNA calls it from inside `Run`'s two catch handlers -- for NoSuitableGraphicsDeviceException and NoAudioHardwareException -- and *rethrows when it answers false*. CNA runs the loop and catches nothing into Lisp: measured against 0.21.0, CNA_GameCallbacks and CNA_GameFrameHooks have load_content, update, draw, unload_content, exiting, initialize, begin_run, end_run, begin_draw and end_draw, and no hook for a run that failed to start. So an override here would never be called. The reason that used to stand said it needed \"the CLR exception projection and a platform message box\". **CNA has a message box** -- cna_message_box_show_ext and cna_message_box_get_is_supported_ext -- so that half was wrong, and the half that actually blocks it went unmentioned. Its dispatch is also entirely `isinst` on those two exception types, and neither is in the selection."
       },
       "events": {
         "Activated": {
@@ -413,18 +417,12 @@
         "Disposed": {
           "add": "add-disposed-handler",
           "remove": "remove-disposed-handler"
+        },
+        "PreparingDeviceSettings": {
+          "add": "add-preparing-device-settings-handler",
+          "remove": "remove-preparing-device-settings-handler",
+          "reason": "Over `cna_graphics_device_manager_subscribe_preparing_device_settings_ext', which hands the handler a **mutable** `CNA_GraphicsDeviceInformation*' whose writes \"are kept and are what the device is then created from\". The observation-only sibling `..._subscribe_preparing_device_settings' is deliberately **not bound**: it takes the same structure `const', and projecting a member whose entire purpose is to change something onto a route that cannot would be a quieter kind of wrong than leaving it missing -- which is what an earlier note here said, correctly, before the mutable route existed. **The only event in this binding whose handler takes two arguments**, the sender and the args, because it is the only one whose `EventArgs' carries anything. Raised by the protected ON-PREPARING-DEVICE-SETTINGS and by nothing else."
         }
-      },
-      "unimplemented": {
-        "PreparingDeviceSettings": "The only event in the selection that carries data. It needs PreparingDeviceSettingsEventArgs and GraphicsDeviceInformation, neither of which is in the selection, and CNA's non-ext callback for it can only observe the settings where XNA's event exists to change them. Projecting the observing form under the event's name would be a quieter kind of wrong than leaving it missing.",
-        "OnDeviceCreated(Object,EventArgs)": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceCreated *is* what raises DeviceCreated: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these.",
-        "OnDeviceDisposing(Object,EventArgs)": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceDisposing *is* what raises DeviceDisposing: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these.",
-        "OnDeviceReset(Object,EventArgs)": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceReset *is* what raises DeviceReset: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these.",
-        "OnDeviceResetting(Object,EventArgs)": "The protected raiser of a CLR event, and **the half that cannot be projected is the half the member exists for**. In XNA OnDeviceResetting *is* what raises DeviceResetting: a subclass overrides it to react, and calling the base method is what lets the program's own handlers run at all. Here CNA raises, and reaches Lisp only through one callback per subscribed handler -- there is no moment at which this binding decides whether to raise, so an override could notify but never suppress. Game.OnExiting is projected because CNA models exiting as a *lifecycle callback* rather than as an event subscription; measured against 0.21.0's headers, CNA_GameCallbacks and CNA_GameFrameHooks have no such hook for any of these.",
-        "OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "The raiser problem above, and a second one on top of it: the argument is a PreparingDeviceSettingsEventArgs carrying a GraphicsDeviceInformation, and neither type is in the selection nor has a CNA representation.",
-        "FindBestDevice(Boolean)": "One of the three protected members that are XNA's **device-selection algorithm**, not a setting: FindBestDevice ranks candidates and picks one, and its result is a GraphicsDeviceInformation. CNA selects the device itself when it creates the game, and offers the pieces a caller would rank with -- cna_graphics_adapter_query_backbuffer_format, _query_render_target_format, _is_profile_supported -- but no candidate list and no GraphicsDeviceInformation to be a candidate.",
-        "RankDevices(List`1)": "See FindBestDevice: it is handed the candidate list that type does not exist to hold.",
-        "CanResetDevice(GraphicsDeviceInformation)": "See FindBestDevice for the missing type, and GraphicsDevice.Reset for the missing operation: asking whether a device *can* be reset presupposes resetting it."
       },
       "member_overrides": {
         "GraphicsProfile": {
@@ -464,6 +462,49 @@
         "DefaultBackBufferHeight": {
           "lisp": "graphics-device-manager-default-back-buffer-height",
           "reason": "The height, `ldc.i4 0x1e0`, 480. See the width."
+        },
+        "OnDeviceCreated(Object,EventArgs)": {
+          "lisp": "on-device-created",
+          "generic": true,
+          "reason": "`family hidebysig newslot virtual' -- protected virtual -- and a **real seam**, which is what this member exists for. Its whole body is `if (deviceCreated != null) deviceCreated(sender, args)', so the base implementation is the only thing that raises the public event and an override that does not CALL-NEXT-METHOD suppresses it. That is why the manager's events were reworked to **one** CNA registration per event *kind* driving this generic function, instead of one registration per user handler: with a registration per handler CNA would call every handler directly and an override could suppress nothing. An earlier note here said no such moment existed in this binding; it did not exist because the event machinery had not been given one, and giving it one is this closure's work. `Object sender' is a real argument and is passed; `EventArgs' is `EventArgs.Empty' at every raise site in the assembly and is collapsed, exactly as it is everywhere else in this binding and in Game.OnExiting."
+        },
+        "OnDeviceDisposing(Object,EventArgs)": {
+          "lisp": "on-device-disposing",
+          "generic": true,
+          "reason": "`family hidebysig newslot virtual' -- protected virtual -- and a **real seam**, which is what this member exists for. Its whole body is `if (deviceDisposing != null) deviceDisposing(sender, args)', so the base implementation is the only thing that raises the public event and an override that does not CALL-NEXT-METHOD suppresses it. That is why the manager's events were reworked to **one** CNA registration per event *kind* driving this generic function, instead of one registration per user handler: with a registration per handler CNA would call every handler directly and an override could suppress nothing. An earlier note here said no such moment existed in this binding; it did not exist because the event machinery had not been given one, and giving it one is this closure's work. `Object sender' is a real argument and is passed; `EventArgs' is `EventArgs.Empty' at every raise site in the assembly and is collapsed, exactly as it is everywhere else in this binding and in Game.OnExiting."
+        },
+        "OnDeviceReset(Object,EventArgs)": {
+          "lisp": "on-device-reset",
+          "generic": true,
+          "reason": "`family hidebysig newslot virtual' -- protected virtual -- and a **real seam**, which is what this member exists for. Its whole body is `if (deviceReset != null) deviceReset(sender, args)', so the base implementation is the only thing that raises the public event and an override that does not CALL-NEXT-METHOD suppresses it. That is why the manager's events were reworked to **one** CNA registration per event *kind* driving this generic function, instead of one registration per user handler: with a registration per handler CNA would call every handler directly and an override could suppress nothing. An earlier note here said no such moment existed in this binding; it did not exist because the event machinery had not been given one, and giving it one is this closure's work. `Object sender' is a real argument and is passed; `EventArgs' is `EventArgs.Empty' at every raise site in the assembly and is collapsed, exactly as it is everywhere else in this binding and in Game.OnExiting."
+        },
+        "OnDeviceResetting(Object,EventArgs)": {
+          "lisp": "on-device-resetting",
+          "generic": true,
+          "reason": "`family hidebysig newslot virtual' -- protected virtual -- and a **real seam**, which is what this member exists for. Its whole body is `if (deviceResetting != null) deviceResetting(sender, args)', so the base implementation is the only thing that raises the public event and an override that does not CALL-NEXT-METHOD suppresses it. That is why the manager's events were reworked to **one** CNA registration per event *kind* driving this generic function, instead of one registration per user handler: with a registration per handler CNA would call every handler directly and an override could suppress nothing. An earlier note here said no such moment existed in this binding; it did not exist because the event machinery had not been given one, and giving it one is this closure's work. `Object sender' is a real argument and is passed; `EventArgs' is `EventArgs.Empty' at every raise site in the assembly and is collapsed, exactly as it is everywhere else in this binding and in Game.OnExiting."
+        },
+        "OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": {
+          "lisp": "on-preparing-device-settings",
+          "generic": true,
+          "reason": "The same protected virtual seam the four data-free raisers are, and the one whose argument carries something: `PreparingDeviceSettingsEventArgs' is now a selected type and its `GraphicsDeviceInformation' is the mutable candidate. So this generic function takes three arguments -- the manager, the sender and the args -- where the other four take two, because here the `EventArgs' is not `EventArgs.Empty' and collapsing it would throw away the event's whole payload. An override that does not CALL-NEXT-METHOD suppresses the public event and **keeps its own mutations**, because the write-back into CNA's borrowed structure happens after this returns."
+        },
+        "FindBestDevice(Boolean)": {
+          "lisp": "find-best-device",
+          "generic": true,
+          "reason": "XNA's `FindBestPlatformDevice' in shape: build a candidate per adapter that supports the profile, retry once with `PreferMultiSampling' cleared if none -- a side effect the IL really has -- refuse if still none, RANK-DEVICES them through the *virtual* member so a subclass's override runs, and answer the first. The `anySuitableDevice' argument is accepted and does not change the answer, because the restriction it controls is \"only adapters the game's window is on\" and the window handle is not available. **Implemented with XNA's semantics and reported partial, for two measured reasons that are each sufficient on their own.** (1) *No admitted CNA ABI has a seam to insert it into device creation.* All three are `virtual' in CNA's own C++ -- `GraphicsDeviceManager.hpp' declares them so -- and `GraphicsDeviceManager.cpp' contains **no call site for any of them** outside their own definitions: CNA's `CreateDevice' and `ApplyChanges' go through `INTERNAL_CreateGraphicsDeviceInformation', which calls none. Nor is any exposed as a C route in 0.21.0, 0.22.0 or 0.23.0. So a subclass may override this and call it, and the override will not change which device CNA creates; in XNA it would. (2) *XNA's own algorithm reaches two members this binding reports missing.* `AddDevices' reads `GameWindow.Handle' and writes `PresentationParameters.DeviceWindowHandle', and CNA answers the window handle with `CNA_RESULT_NOT_SUPPORTED' by design. The member is projected rather than left absent because it is genuinely useful and genuinely XNA-shaped; what is not claimed is that overriding it changes anything the framework does.",
+          "status": "partial"
+        },
+        "CanResetDevice(GraphicsDeviceInformation)": {
+          "lisp": "can-reset-device",
+          "generic": true,
+          "reason": "XNA's whole body, reproduced exactly: `device.GraphicsProfile == newDeviceInfo.GraphicsProfile' and nothing else -- not the back buffer, not the format, not the adapter. Refuses when there is no device, because the IL dereferences the field with no null test. **Implemented with XNA's semantics and reported partial, for two measured reasons that are each sufficient on their own.** (1) *No admitted CNA ABI has a seam to insert it into device creation.* All three are `virtual' in CNA's own C++ -- `GraphicsDeviceManager.hpp' declares them so -- and `GraphicsDeviceManager.cpp' contains **no call site for any of them** outside their own definitions: CNA's `CreateDevice' and `ApplyChanges' go through `INTERNAL_CreateGraphicsDeviceInformation', which calls none. Nor is any exposed as a C route in 0.21.0, 0.22.0 or 0.23.0. So a subclass may override this and call it, and the override will not change which device CNA creates; in XNA it would. (2) *XNA's own algorithm reaches two members this binding reports missing.* `AddDevices' reads `GameWindow.Handle' and writes `PresentationParameters.DeviceWindowHandle', and CNA answers the window handle with `CNA_RESULT_NOT_SUPPORTED' by design. The member is projected rather than left absent because it is genuinely useful and genuinely XNA-shaped; what is not claimed is that overriding it changes anything the framework does.",
+          "status": "partial"
+        },
+        "RankDevices(List`1)": {
+          "lisp": "rank-devices",
+          "generic": true,
+          "reason": "`List<GraphicsDeviceInformation>' is **not** projected as a BCL type -- no generic collection here is -- and becomes an ordinary mutable Lisp sequence. **The projection answers the ranked sequence and the caller must use the answer.** XNA returns void and sorts the caller's list in place, and `FindBestPlatformDevice' then takes `[0]' from the list it passed in; a Common Lisp list cannot be reordered in place where a caller's variable would see it, and CL:SORT may destroy its argument. So both halves are stated rather than hidden: the argument may be destroyed, and the ranking is the return value. Sorting a temporary copy and discarding it -- the shape that would have satisfied the signature silently -- is exactly the failure this avoids. The order is XNA's private `GraphicsDeviceInformationComparer', reproduced as far as its inputs exist here: profile, full-screen match, back-buffer format rank, multisample count, and aspect-ratio proximity with the comparer's own 0.2 tie band. Its later tie-breaks read the window handle and stop where that does. **Implemented with XNA's semantics and reported partial, for two measured reasons that are each sufficient on their own.** (1) *No admitted CNA ABI has a seam to insert it into device creation.* All three are `virtual' in CNA's own C++ -- `GraphicsDeviceManager.hpp' declares them so -- and `GraphicsDeviceManager.cpp' contains **no call site for any of them** outside their own definitions: CNA's `CreateDevice' and `ApplyChanges' go through `INTERNAL_CreateGraphicsDeviceInformation', which calls none. Nor is any exposed as a C route in 0.21.0, 0.22.0 or 0.23.0. So a subclass may override this and call it, and the override will not change which device CNA creates; in XNA it would. (2) *XNA's own algorithm reaches two members this binding reports missing.* `AddDevices' reads `GameWindow.Handle' and writes `PresentationParameters.DeviceWindowHandle', and CNA answers the window handle with `CNA_RESULT_NOT_SUPPORTED' by design. The member is projected rather than left absent because it is genuinely useful and genuinely XNA-shaped; what is not claimed is that overriding it changes anything the framework does.",
+          "status": "partial"
         }
       }
     },
@@ -493,6 +534,11 @@
           "lisp": "root-directory",
           "generic": true,
           "setf": true
+        },
+        "ServiceProvider": {
+          "lisp": "service-provider",
+          "generic": true,
+          "reason": "The **exact object** the canonical constructor was given, by identity: `get_ServiceProvider' is `ldarg.0; ldfld; ret'. `Game.Content' answers the game's own SERVICES, because the pinned `Game' constructor passes `this.gameServices' to `ContentManager..ctor(IServiceProvider)'. **`cna_content_manager_get_has_service_provider' is not its source of truth**, and could not be: `content.h' says a service provider \"is a Sharp Runtime object and never crosses the C boundary\" and that \"the field is inert on both sides\". NIL for a manager built with the `:GRAPHICS-DEVICE' extension, which has no provider to answer."
         }
       },
       "not_applicable": {
@@ -500,10 +546,9 @@
         "ReadAsset(String,Action`1)": "A protected hook a subclass overrides to intercept one asset read. CNA's loaders read and construct in one route with no callback in between, so there is nothing for an override to sit inside.",
         "OpenStream(String)": "A protected hook answering a System.IO.Stream. No stream object crosses CNA's C boundary -- the header says so of the content manager explicitly -- and System.IO.Stream is not in the selection."
       },
-      "unimplemented": {
-        "new(IServiceProvider)": "Both of XNA's constructors take a System.IServiceProvider, which this binding cannot produce: see docs/limitations.md on Game.Services, where the obstacle is that CNA's service container has no route that registers a service or hands one back. CNA's own constructor takes the graphics device instead, and MAKE-INSTANCE projects that as a declared extension rather than pretending to be either canonical overload.",
-        "new(IServiceProvider,String)": "Both of XNA's constructors take a System.IServiceProvider, which this binding cannot produce: see docs/limitations.md on Game.Services, where the obstacle is that CNA's service container has no route that registers a service or hands one back. CNA's own constructor takes the graphics device instead, and MAKE-INSTANCE projects that as a declared extension rather than pretending to be either canonical overload.",
-        "ServiceProvider": "The IServiceProvider the manager was built from. There is none: CNA's constructor takes a graphics device, and cna_content_manager_get_has_service_provider reports only whether the native manager has one, not what it is. Answering a service provider this binding cannot represent would be worse than reporting it missing. docs/limitations.md."
+      "constructors": {
+        "new(IServiceProvider)": "make-instance",
+        "new(IServiceProvider,String)": "make-instance"
       }
     },
     "Microsoft.Xna.Framework.Color": {
@@ -8812,6 +8857,148 @@
           "reason": "See new(). A Common Lisp condition is made by MAKE-CONDITION or signalled by ERROR, and one call expresses all three public CLR constructors: the message is the :FORMAT-CONTROL initarg and the inner exception is the :CAUSE initarg, read back by CNA-ERROR-CAUSE. XNA's own exception type, extending System.Runtime.InteropServices.ExternalException -- the CLR's \"a native call failed\" base, which is what CNA-NATIVE-ERROR already is here -- and **not sealed**, unlike every other exception in this selection, so the condition class is left open too. It subclasses the exact result-code condition CNA raises for it, so a program can handle either the XNA-specific class or the CNA result-code class. It shares CNA_RESULT_NOT_SUPPORTED with NO-AUDIO-HARDWARE-ERROR and NO-MICROPHONE-CONNECTED-ERROR and is still a separate class, because the family of routes that answered decides which is meant."
         }
       }
+    },
+    "Microsoft.Xna.Framework.GameServiceContainer": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "game-service-container",
+      "lisp_kind": "class",
+      "constructors": {
+        "new()": "make-instance"
+      },
+      "member_overrides": {
+        "AddService(Type,Object)": {
+          "lisp": "add-service",
+          "generic": true,
+          "reason": "`System.Type' is **not** projected. A service type designator is a CLOS class, a symbol naming one, or a symbol naming a protocol declared with DEFINE-SERVICE-PROTOCOL -- the two kinds of type a Lisp program can test membership of, which is what keeps XNA's own `type.IsAssignableFrom(provider.GetType())' guard answerable. Projecting CLR reflection to key a dictionary would import a whole runtime facility to serve one member. All four of XNA's guards are reproduced in XNA's order, the assignability one included."
+        },
+        "RemoveService(Type)": {
+          "lisp": "remove-service",
+          "generic": true,
+          "reason": "Same designator rule as AddService. Removing a type that is not registered is an ordinary success, because the IL calls `Dictionary.Remove' and discards the boolean. For the two service identities CNA's C ABI can name it also mirrors the removal into `cna_game_services_remove_ext', natively first so that a failure leaves both sides holding the entry."
+        },
+        "GetService(Type)": {
+          "lisp": "get-service",
+          "generic": true,
+          "reason": "This is also the whole of `System.IServiceProvider', which is **not** added to the profile: one generic function is what that one-member interface is, the way `System.IAsyncResult' became an opaque object and `System.IO.Stream' became a Common Lisp stream. So any object with a method on GET-SERVICE is a service provider here, and ContentManager's canonical constructors accept one. Reads the managed container and never asks CNA: CNA's two-slot service table is a cross-check, not the backing store."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.IGraphicsDeviceManager": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "igraphics-device-manager",
+      "lisp_kind": "interface",
+      "member_overrides": {
+        "CreateDevice()": {
+          "lisp": "create-device",
+          "generic": true,
+          "reason": "Over `cna_graphics_device_manager_create_device'. XNA implements all three of this interface's members *explicitly*, so in C# they are reachable only through the interface; Common Lisp has no explicit implementation and a generic function is reached the same way whatever the caller holds. This is also one of the two entries into device preparation, so a PreparingDeviceSettings handler runs inside it."
+        },
+        "BeginDraw()": {
+          "lisp": "begin-draw-device",
+          "generic": true,
+          "reason": "Over `cna_graphics_device_manager_begin_draw'. Named BEGIN-DRAW-DEVICE because `Game.BeginDraw' is a different member of a different type and already holds BEGIN-DRAW in this package -- a collision XNA resolves by having two types and Common Lisp cannot, since both would dispatch on one generic function whose two receivers share no supertype."
+        },
+        "EndDraw()": {
+          "lisp": "end-draw-device",
+          "generic": true,
+          "reason": "Over `cna_graphics_device_manager_end_draw'. Named for the reason BEGIN-DRAW-DEVICE is."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "igraphics-device-service",
+      "lisp_kind": "interface",
+      "member_overrides": {
+        "GraphicsDevice": {
+          "lisp": "graphics-device",
+          "generic": true,
+          "reason": "The same generic function GRAPHICS-DEVICE-MANAGER and GAME already answer, and deliberately not a second one: the manager *is* the service, so the interface view and the concrete view reach one object and one device. A separate reader would have implied a second device. Its five members live in `microsoft.xna.framework' rather than in this interface's own namespace package, and that is the point rather than an oversight: they are **the same generic functions GRAPHICS-DEVICE-MANAGER already answers**, and the manager is a `Microsoft.Xna.Framework' type. Re-exporting them from the graphics package would create a second name for one function, and defining new ones there would create the duplicate event state this projection exists to avoid. `microsoft.xna.framework.graphics:graphics-device' is already taken by the GraphicsDevice *class*, which is the collision that makes this explicit rather than incidental.",
+          "package": "microsoft.xna.framework"
+        }
+      },
+      "events": {
+        "DeviceCreated": {
+          "add": "add-device-created-handler",
+          "remove": "remove-device-created-handler",
+          "reason": "The same event pair GRAPHICS-DEVICE-MANAGER exposes, and **one handler list and one native registration** behind both views -- CNA's own header says the manager's four device events \"are also the canonical graphics-device-service events\". Subscribing through the service key and through the concrete manager cannot produce two logical event sources, because there is only one object. Raised by the protected ON-DEVICE-CREATED. Its five members live in `microsoft.xna.framework' rather than in this interface's own namespace package, and that is the point rather than an oversight: they are **the same generic functions GRAPHICS-DEVICE-MANAGER already answers**, and the manager is a `Microsoft.Xna.Framework' type. Re-exporting them from the graphics package would create a second name for one function, and defining new ones there would create the duplicate event state this projection exists to avoid. `microsoft.xna.framework.graphics:graphics-device' is already taken by the GraphicsDevice *class*, which is the collision that makes this explicit rather than incidental.",
+          "package": "microsoft.xna.framework"
+        },
+        "DeviceDisposing": {
+          "add": "add-device-disposing-handler",
+          "remove": "remove-device-disposing-handler",
+          "reason": "As DeviceCreated; raised by ON-DEVICE-DISPOSING. Its five members live in `microsoft.xna.framework' rather than in this interface's own namespace package, and that is the point rather than an oversight: they are **the same generic functions GRAPHICS-DEVICE-MANAGER already answers**, and the manager is a `Microsoft.Xna.Framework' type. Re-exporting them from the graphics package would create a second name for one function, and defining new ones there would create the duplicate event state this projection exists to avoid. `microsoft.xna.framework.graphics:graphics-device' is already taken by the GraphicsDevice *class*, which is the collision that makes this explicit rather than incidental.",
+          "package": "microsoft.xna.framework"
+        },
+        "DeviceReset": {
+          "add": "add-device-reset-handler",
+          "remove": "remove-device-reset-handler",
+          "reason": "As DeviceCreated; raised by ON-DEVICE-RESET. **Not** GraphicsDevice's same-named event, which is a different pair on a different type. Its five members live in `microsoft.xna.framework' rather than in this interface's own namespace package, and that is the point rather than an oversight: they are **the same generic functions GRAPHICS-DEVICE-MANAGER already answers**, and the manager is a `Microsoft.Xna.Framework' type. Re-exporting them from the graphics package would create a second name for one function, and defining new ones there would create the duplicate event state this projection exists to avoid. `microsoft.xna.framework.graphics:graphics-device' is already taken by the GraphicsDevice *class*, which is the collision that makes this explicit rather than incidental.",
+          "package": "microsoft.xna.framework"
+        },
+        "DeviceResetting": {
+          "add": "add-device-resetting-handler",
+          "remove": "remove-device-resetting-handler",
+          "reason": "As DeviceReset; raised by ON-DEVICE-RESETTING. Its five members live in `microsoft.xna.framework' rather than in this interface's own namespace package, and that is the point rather than an oversight: they are **the same generic functions GRAPHICS-DEVICE-MANAGER already answers**, and the manager is a `Microsoft.Xna.Framework' type. Re-exporting them from the graphics package would create a second name for one function, and defining new ones there would create the duplicate event state this projection exists to avoid. `microsoft.xna.framework.graphics:graphics-device' is already taken by the GraphicsDevice *class*, which is the collision that makes this explicit rather than incidental.",
+          "package": "microsoft.xna.framework"
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.GraphicsDeviceInformation": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "graphics-device-information",
+      "lisp_kind": "class",
+      "constructors": {
+        "new()": "make-instance"
+      },
+      "member_overrides": {
+        "Adapter": {
+          "lisp": "adapter-of",
+          "generic": true,
+          "reason": "A `GraphicsAdapter' object and never CNA's index: CNA names an adapter by a zero-based index because \"a pointer into the runtime's adapter list is nothing a C caller could hold safely\", and the index is converted at the boundary rather than exposed. Suffixed `-OF' because ADAPTER is already `GraphicsDevice.Adapter' in the graphics package and a *setter* on a shared generic function across unrelated hierarchies is not safe. The setter reproduces an XNA defect: `set_Adapter' tests the field it is about to overwrite rather than the value, so assigning NIL succeeds once and the next assignment throws."
+        },
+        "GraphicsProfile": {
+          "lisp": "graphics-profile-of",
+          "generic": true,
+          "reason": "Suffixed for the reason ADAPTER-OF is: GRAPHICS-PROFILE is already GraphicsDevice's and GraphicsDeviceManager's. No guard -- `set_GraphicsProfile' is `ldarg.0; ldarg.1; stfld; ret'."
+        },
+        "PresentationParameters": {
+          "lisp": "presentation-parameters-of",
+          "generic": true,
+          "reason": "Suffixed for the reason ADAPTER-OF is. No guard, and NIL is assignable, because the IL's setter has none."
+        },
+        "Clone()": {
+          "lisp": "clone-graphics-device-information",
+          "generic": true,
+          "reason": "Named for its type, as CLONE-PRESENTATION-PARAMETERS and CLONE-EFFECT are, rather than putting a bare CLONE into a package consumers use unqualified. The **sharing is the IL's and is asymmetric**: the clone's PresentationParameters is a copy and its Adapter is the *same object*, because `Clone' stores `this.presentationParameters.Clone()' and `this.adapter'."
+        },
+        "Equals(Object)": {
+          "lisp": "graphics-device-information-equal-p",
+          "generic": true,
+          "reason": "Common Lisp has no `Object.Equals' to specialise, so the projection is a named predicate, as every other projected equality here is. The adapter comparison is **object identity**, because XNA's is: `GraphicsAdapter' overrides neither Equals nor GetHashCode, so `Object.Equals' on it is reference equality -- and that is why this binding interns adapters per index. The presentation parameters are compared **field by field**, not by reference. Nine of XNA's ten compared fields are checked; the tenth is `DeviceWindowHandle', which is a declared missing member of PresentationParameters because CNA answers it with CNA_RESULT_NOT_SUPPORTED by design, so the same absence accounts for it."
+        }
+      },
+      "not_applicable": {
+        "GetHashCode()": "The CLR hash code is not observable through a Common Lisp API. GRAPHICS-DEVICE-INFORMATION-HASH-CODE is a declared extension that reproduces the *shape* of XNA's fold -- a LOGXOR over the same members in the same order -- and guarantees what a hash code must, that equal objects hash equally; it does not reproduce the CLR's numbers, which are Enum.GetHashCode, Int32.GetHashCode and an object address."
+      }
+    },
+    "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs": {
+      "lisp_package": "microsoft.xna.framework",
+      "lisp_name": "preparing-device-settings-event-args",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDeviceInformation)": "make-instance"
+      },
+      "base_type_exception": {
+        "reason": "`System.EventArgs' is a base-class-library class with no members at all, and this binding has collapsed `EventArgs.Empty' out of every event it projects rather than importing the hierarchy. A CLOS superclass with no slots and no methods would be a type a Lisp program could neither use nor observe, and projecting it would make `EventArgs' look like part of the selected profile when the profile deliberately excludes the base-class library."
+      },
+      "member_overrides": {
+        "GraphicsDeviceInformation": {
+          "lisp": "graphics-device-information",
+          "generic": true,
+          "reason": "A plain field read in the IL -- the constructor sets it once and the getter is `ldarg.0; ldfld; ret' -- so it answers **the same object for the life of the callback**, which is what makes the event's mutation work at all: a fresh object per read would give each handler its own copy and drop every change. Shares its name with the class it answers, which is the naming rule's own result and is what XNA does too."
+        }
+      }
     }
   },
   "frontier_category_kinds": {
@@ -8829,13 +9016,9 @@
     "Microsoft.Xna.Framework.Audio.SoundEffect.Duration": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Audio.SoundEffectInstance.Apply3D(AudioListener[],AudioEmitter)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Content.ContentManager.Load(String)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Content.ContentManager.ServiceProvider": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Content.ContentManager.new(IServiceProvider)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Content.ContentManager.new(IServiceProvider,String)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Game.Content": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Game.OnActivated(Object,EventArgs)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Game.OnDeactivated(Object,EventArgs)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Game.Services": "PUBLIC_OBJECT_MODEL_CLOSURE",
     "Microsoft.Xna.Framework.Game.ShowMissingRequirementMessage(Exception)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.GameComponentCollection.new()": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.GameWindow.Handle": "LANGUAGE_PROJECTION_LIMIT",
@@ -8875,15 +9058,9 @@
     "Microsoft.Xna.Framework.Graphics.TextureCube.SetData(CubeMapFace,!!0[])": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.TextureCube.SetData(CubeMapFace,!!0[],Int32,Int32)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.TextureCube.SetData(CubeMapFace,Int32,Nullable`1,!!0[],Int32,Int32)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation)": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceCreated(Object,EventArgs)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceDisposing(Object,EventArgs)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceReset(Object,EventArgs)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.OnDeviceResetting(Object,EventArgs)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.OnPreparingDeviceSettings(Object,PreparingDeviceSettingsEventArgs)": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.PreparingDeviceSettings": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation)": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Media.Song.Album": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.Media.Song.Artist": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.Media.Song.Genre": "DEPENDENCY_NOT_SELECTED",
