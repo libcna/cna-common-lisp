@@ -266,12 +266,8 @@ for.
   takes a callback set and supplies the object implementing its C++ interfaces,
   and a component's behaviour is its CLOS methods on the same generic functions a
   `Game` specialises. The tests assert counts taken inside CNA's own loop, so an
-  engine that was exported and never wired would fail them. `Game.Services` is
-  deliberately absent, and the reason has since been re-audited route by route
-  against 0.21.0: CNA's container has `contains_ext` and `remove_ext` over a
-  closed two-member enum, no get route at all, and no registration route **by
-  explicit decision**, so `GetService` cannot be answered *from CNA*.
-  `docs/limitations.md` carries the audit and the one option it leaves open;
+  engine that was exported and never wired would fail them. `Game.Services` was
+  deliberately absent here and has since landed in its own closure, below;
 * `Texture2D`'s own construction and data surface -- both constructors and the
   three `SetData` and three `GetData` overloads, as narrow as the buffers' and
   over the same proven layouts. With it the rasterizer lane gained a seventh kind
@@ -296,15 +292,37 @@ for.
   the first with **static** events, whose handlers therefore take no arguments;
 * the whole of **`Microsoft.Xna.Framework.Storage`**, the first closure to finish
   its namespace, the first surface that needs no `Game`, and the first with a
-  three-deep ownership graph. It is also where the `Game.Services` audit above
-  changed its conclusion. That audit was right about CNA -- a closed two-member
-  enum, `contains_ext` and `remove_ext`, no get route and no registration route --
-  and wrong about what follows from it: XNA's own `GameServiceContainer` is a
-  managed dictionary that never crosses into native code, which `content.h` says
-  in as many words about the service provider a `ContentManager` holds. So
-  `GetService` does not have to be answered *from CNA*, and CNA's two-slot
-  `contains_ext` is a cross-check rather than the storage. `NEXT.md` recommends
-  that closure next and makes the argument in full.
+  three-deep ownership graph. It is also where the `Game.Services` audit changed
+  its conclusion. That audit was right about CNA -- a closed two-member enum,
+  `contains_ext` and `remove_ext`, no get route and no registration route -- and
+  wrong about what follows from it: XNA's own `GameServiceContainer` is a managed
+  dictionary that never crosses into native code, which `content.h` says in as
+  many words about the service provider a `ContentManager` holds;
+* **game services and device selection** -- `GameServiceContainer`,
+  `IGraphicsDeviceManager`, `Graphics.IGraphicsDeviceService`,
+  `GraphicsDeviceInformation` and `PreparingDeviceSettingsEventArgs`. The first
+  closure whose main product is *reachability* rather than surface: five new types
+  worth 21 members, and **thirteen members of already-selected types** that had
+  been waiting for them -- `Game.Services`, `ContentManager`'s two
+  `IServiceProvider` constructors and its `ServiceProvider`, and six of
+  `GraphicsDeviceManager`'s nine.
+
+  Three things about it are worth carrying here rather than leaving to
+  `docs/limitations.md`. **The container is a managed Lisp dictionary and CNA's
+  two-slot service table is a cross-check**, which is the decision the Storage
+  closure argued for and this one made. **The manager's events were reworked to
+  one native registration per event *kind*** so that its five protected `On*`
+  methods are real virtual seams -- an override that omits `CALL-NEXT-METHOD`
+  suppresses the public event, as XNA's does, which one registration per handler
+  could not have expressed. And **`GraphicsAdapter` is interned per index now**,
+  because `GraphicsDeviceInformation.Equals` compares adapters by object identity
+  and XNA's static adapter list makes that work.
+
+  It is also the first closure to leave a type **deliberately partial**:
+  `FindBestDevice`, `RankDevices` and `CanResetDevice` answer XNA's semantics when
+  called and no admitted CNA ABI calls them, so an override cannot influence
+  device creation, and the suite asserts that rather than the type being called
+  complete.
 
 ## 6. Measured status
 
@@ -327,31 +345,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=190 -->
-<!-- generated:selected members=2560 -->
-<!-- generated:complete types=166 -->
+<!-- generated:selected types=195 -->
+<!-- generated:selected members=2581 -->
+<!-- generated:complete types=171 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2054 -->
-<!-- generated:partial members=26 -->
-<!-- generated:missing members=38 -->
-<!-- generated:not-applicable members=442 -->
+<!-- generated:complete members=2084 -->
+<!-- generated:partial members=29 -->
+<!-- generated:missing members=25 -->
+<!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 190 types, 2560 members.
+Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **166** |
+| Types complete | **171** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2054** |
-| Members partial | **26** |
-| Members missing | **38** |
-| Members not applicable | **442** |
+| Members complete | **2084** |
+| Members partial | **29** |
+| Members missing | **25** |
+| Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

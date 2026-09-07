@@ -118,31 +118,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=190 -->
-<!-- generated:selected members=2560 -->
-<!-- generated:complete types=166 -->
+<!-- generated:selected types=195 -->
+<!-- generated:selected members=2581 -->
+<!-- generated:complete types=171 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2054 -->
-<!-- generated:partial members=26 -->
-<!-- generated:missing members=38 -->
-<!-- generated:not-applicable members=442 -->
+<!-- generated:complete members=2084 -->
+<!-- generated:partial members=29 -->
+<!-- generated:missing members=25 -->
+<!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 190 types, 2560 members.
+Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **166** |
+| Types complete | **171** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2054** |
-| Members partial | **26** |
-| Members missing | **38** |
-| Members not applicable | **442** |
+| Members complete | **2084** |
+| Members partial | **29** |
+| Members missing | **25** |
+| Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -154,7 +154,7 @@ collapsed overload family says how each of its overloads is expressed.
 <!-- generated-block:per-type-table -->
 | Type | Status | complete | partial | missing | n/a |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `M.X.F.Game` | **partial** | 31 | 1 | 4 | 2 |
+| `M.X.F.Game` | **partial** | 32 | 1 | 3 | 2 |
 | `M.X.F.GameTime` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.IGameComponent` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.IUpdateable` | **complete** | 5 | 0 | 0 | 0 |
@@ -174,8 +174,8 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.PresentationParameters` | **partial** | 12 | 0 | 1 | 0 |
 | `M.X.F.Graphics.GraphicsAdapter` | **partial** | 13 | 4 | 1 | 0 |
 | `M.X.F.Graphics.DisplayModeCollection` | **complete** | 2 | 0 | 0 | 0 |
-| `M.X.F.GraphicsDeviceManager` | **partial** | 20 | 0 | 9 | 1 |
-| `M.X.F.Content.ContentManager` | **partial** | 3 | 1 | 3 | 3 |
+| `M.X.F.GraphicsDeviceManager` | **partial** | 26 | 3 | 0 | 1 |
+| `M.X.F.Content.ContentManager` | **partial** | 6 | 1 | 0 | 3 |
 | `M.X.F.Graphics.RenderTargetCube` | **complete** | 7 | 0 | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetBinding` | **partial** | 3 | 1 | 0 | 1 |
 | `M.X.F.Color` | **complete** | 161 | 0 | 0 | 4 |
@@ -341,6 +341,11 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Media.Song` | **partial** | 12 | 0 | 3 | 5 |
 | `M.X.F.Media.SongCollection` | **complete** | 4 | 0 | 0 | 2 |
 | `M.X.F.Media.VisualizationData` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.GameServiceContainer` | **complete** | 4 | 0 | 0 | 0 |
+| `M.X.F.IGraphicsDeviceManager` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Graphics.IGraphicsDeviceService` | **complete** | 5 | 0 | 0 | 0 |
+| `M.X.F.GraphicsDeviceInformation` | **complete** | 6 | 0 | 0 | 1 |
+| `M.X.F.PreparingDeviceSettingsEventArgs` | **complete** | 2 | 0 | 0 | 0 |
 | `M.X.F.Storage.StorageDevice` | **complete** | 12 | 0 | 0 | 0 |
 | `M.X.F.Storage.StorageContainer` | **complete** | 18 | 0 | 0 | 1 |
 | `M.X.F.Storage.StorageDeviceNotConnectedException` | **complete** | 3 | 0 | 0 | 1 |
@@ -387,11 +392,9 @@ back-reference.
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.GameWindow` | 7 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
-| `M.X.F.Game` | 4 | 1 |
-| `M.X.F.Content.ContentManager` | 3 | 1 |
+| `M.X.F.Game` | 3 | 1 |
 | `M.X.F.Media.Song` | 3 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
@@ -401,6 +404,8 @@ back-reference.
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 | `M.X.F.TitleContainer` | 0 | 1 |
+| `M.X.F.GraphicsDeviceManager` | 0 | 3 |
+| `M.X.F.Content.ContentManager` | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
@@ -440,9 +445,9 @@ and so is a category left behind by a member that has since been completed.
 | Category | Members | What it means |
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_ADMITTED_ABI_LIMIT` | **45** | No admitted CNA ABI can represent the member. |
-| `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
-| `DEPENDENCY_NOT_SELECTED` | **9** | Blocked on a type that is not in the selected profile. |
+| `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | **2** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
+| `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
@@ -506,11 +511,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=703 -->
-<!-- generated:bound native structs=74 -->
-<!-- generated:bound native struct fields=550 -->
-<!-- generated:bound native constants=535 -->
-<!-- generated:bound native callbacks=13 -->
+<!-- generated:bound native functions=715 -->
+<!-- generated:bound native structs=75 -->
+<!-- generated:bound native struct fields=555 -->
+<!-- generated:bound native constants=540 -->
+<!-- generated:bound native callbacks=14 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
 <!-- generated:abi version encoded=5888 -->
@@ -518,11 +523,11 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 703 |
-| Bound structs | 74 |
-| Bound struct fields | 550 |
-| Bound constants | 535 |
-| Bound callback typedefs | 13 |
+| Bound functions | 715 |
+| Bound structs | 75 |
+| Bound struct fields | 555 |
+| Bound constants | 540 |
+| Bound callback typedefs | 14 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
 | Admitted ABI versions | 0.21.0 (encoded 5376), 0.22.0 (encoded 5632), 0.23.0 (encoded 5888) |

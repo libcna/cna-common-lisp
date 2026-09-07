@@ -347,18 +347,39 @@ one of 144×64 are both 9216 elements, so it cannot answer the question, and
 guessing a square from an area would be wrong exactly when it mattered. Closing
 this needs a CNA route, not a cleverer caller.
 
-### Three members of `ContentManager`, and `Game.Content`'s setter
+### One member of `ContentManager`, and `Game.Content`'s setter
 
-* **Both constructors** take a `System.IServiceProvider`, which this binding
-  cannot produce — the same obstacle `Game.Services` runs into above. CNA's own
-  constructor takes the graphics device instead, and `MAKE-INSTANCE` projects
-  *that*, as a declared extension rather than as either canonical overload.
-* **`ServiceProvider`** is missing for the same reason.
-  `cna_content_manager_get_has_service_provider` reports whether the native
-  manager has one, not what it is.
-* **`ReadAsset` and `OpenStream`** are protected hooks. CNA's loaders read and
-  construct in one route with no callback in between, and no stream object
-  crosses its C boundary.
+**Three of the four entries that used to stand here have landed**, with
+`Game.Services`, and this section keeps the correction rather than quietly
+shrinking. Both constructors and `ServiceProvider` were reported missing because
+"this binding cannot produce an `IServiceProvider`" — which was the same wrong
+conclusion the `Game.Services` section above records, drawn from the same audit.
+It can: an `IServiceProvider` is one member, `GET-SERVICE`, and a `Common Lisp`
+generic function is what a one-member interface projects onto.
+
+* **`ContentManager(IServiceProvider)` and `(IServiceProvider, String)`** are
+  projected as `:SERVICE-PROVIDER` and `:SERVICE-PROVIDER` + `:ROOT-DIRECTORY`,
+  told apart from the `:GRAPHICS-DEVICE` extension by complete keyword sets. The
+  extension is **kept**: `cna_content_manager_create` takes a device and cannot
+  carry a provider, so a manager built straight from a device is still the only
+  shape available to a program that has no container.
+* **`ServiceProvider`** answers the exact object the constructor was given, by
+  identity, and `NIL` for a manager built with the extension.
+  `cna_content_manager_get_has_service_provider` is **not** its source of truth
+  and could not be: `content.h` says a service provider "is a Sharp Runtime object
+  and never crosses the C boundary".
+* **One difference from XNA remains, and it is *when* rather than *what*.** XNA's
+  constructor resolves nothing — `ContentManager` in the pinned assembly calls
+  `GetService` nowhere at all — and the graphics device is resolved per load, in
+  `GraphicsContentHelper.GraphicsDeviceFromContentReader`, which raises
+  `ContentLoadException` separately for a missing service and for a service with
+  no device. CNA's `cna_content_manager_create` takes a device, so a native
+  manager cannot exist before one is resolved: this constructor resolves once, at
+  construction. Both of XNA's failures are still distinguished, only earlier, and
+  the provider is kept so a later load sees whatever it then holds.
+* **`ReadAsset` and `OpenStream`** are protected hooks and are the one entry that
+  stays. CNA's loaders read and construct in one route with no callback in
+  between, and no stream object crosses its C boundary.
 
 **`Load<T>` reaches four types, not three.** The entry that used to stand here
 named `cna_content_manager_load_texture2d`, `_load_texture_cube` and
@@ -479,34 +500,26 @@ exactly, measured, and `tests/native/game-components.lisp` pins it — so a CNA
 that changed it would fail rather than pass quietly. Add components in
 `Initialize` or later.
 
-### `Game.Services` is not projected, and not for the reason this file used to give
+### `Game.Services` is a managed dictionary, and CNA's two slots are a cross-check
 
-`Game.Services` is in the selection and is **missing**, categorised
-`PUBLIC_OBJECT_MODEL_CLOSURE`. `GameServiceContainer` itself is not in the
-selection at all, and is not scheduled: the device-settings closure it was once
-said to arrive with has landed without it.
+**This section used to say the member was blocked. It was, twice, and neither
+reason survived contact with the authorities.**
 
-An earlier version of this section said the blocker was that
-`IGraphicsDeviceService` and `IGraphicsDeviceManager` are not projected, and that
-the first needs `GraphicsDevice`'s four device-loss events. **That was wrong, and
-re-reading the pinned metadata is what corrected it.** `IGraphicsDeviceService`
-is five members — the `GraphicsDevice` property and the `DeviceCreated`,
-`DeviceDisposing`, `DeviceReset` and `DeviceResetting` events — and all five are
-already *complete* here, on `GraphicsDeviceManager`, which is the type that
-implements the interface. `IGraphicsDeviceManager` is `CreateDevice`, `BeginDraw`
-and `EndDraw`, which `GraphicsDeviceManager` implements explicitly, and CNA has a
-route for each of the three.
+The first version said the blocker was that `IGraphicsDeviceService` and
+`IGraphicsDeviceManager` are not projected. That was wrong and re-reading the
+pinned metadata corrected it: `IGraphicsDeviceService`'s five members were
+already complete on `GraphicsDeviceManager`, the type that implements it, and the
+paragraph had confused them with `GraphicsDevice`'s own same-named
+`DeviceReset`/`DeviceResetting` pair. Two types with two same-named events was
+enough to produce a confident paragraph about the wrong one.
 
-The mistake was a name collision. `GraphicsDevice` has its own `DeviceReset` and
-`DeviceResetting` events, alongside `Disposing`, `ResourceCreated`,
-`ResourceDestroyed` and `DeviceLost`; those six are all missing, but they are a
-different set on a different type and the service interface does not ask for
-them. Two types with two same-named events was enough to produce a confident
-paragraph about the wrong one.
-
-**The real obstacle is that CNA's service container is not a container.**
-Re-audited against 0.21.0's headers, route by route, so the claim is a
-measurement:
+The second version said the blocker was that **CNA's service container is not a
+container** — that `cna_game_services_contains_ext` and `_remove_ext` are keyed by
+a closed two-member enum with no get and no add, so `GetService`, the member the
+type exists for, could not be answered. Every fact in that audit is still true and
+the route table below is unchanged. **The conclusion was wrong**, and it was wrong
+in the specific way this repository has been most consistent about refusing: it
+took the runtime for the oracle.
 
 | Operation | Route | What it does |
 | --- | --- | --- |
@@ -515,48 +528,59 @@ measurement:
 | get | — | **none** |
 | register / add | — | **none, and deliberately so** |
 
-Both existing routes are keyed by a closed `CNA_GAME_SERVICE_TYPE_*` enum with
-exactly two members, the graphics device manager and the graphics device service.
-CNA says why there is no third and fourth, and the reason is sound: "the canonical
-container is keyed by C++ type identity, which has no C expression: a C consumer
-cannot name a type, and cannot author an object implementing a C++ interface to
-register under one." The registration route is not an omission but a stated
-decision — "A route that accepted an opaque token instead would satisfy neither
-side: native code asking for `IGraphicsDeviceService` needs a vtable, not a
-`void*`" — and CNA's advice is that a consumer keep its own container beside this
-one.
+**Nothing about `GameServiceContainer` crosses into native code in XNA either.**
+It is a `Dictionary<Type, object>` behind three methods; the pinned IL's whole
+implementation is `ContainsKey`, `Add` and `Remove` on that field. And CNA says
+the same thing in its own words, twice: `runtime_components.h` calls the missing
+add route "a decision, not a gap" because "a C consumer cannot name a type, and
+cannot author an object implementing a C++ interface to register under one", and
+adds that a consumer keeping "its own service container beside this one is not
+working around a missing feature; it is holding the only kind of service C can
+express". `content.h` says a service provider "is a Sharp Runtime object and never
+crosses the C boundary".
 
-So `GetService` — the member the type exists for — cannot be answered *from CNA*
-for the two services XNA's own runtime registers. `contains_ext` says whether one
-is registered; it does not hand it back.
+So the projection is:
 
-**A managed-side mirror is conceivable and is not being taken as a shortcut.**
-This binding does hold the object in question: CNA's header records that creating
-the manager "registers it as the game's graphics device manager and graphics
-device service", and the manager is a Lisp object here. So a container could
-answer both canonical keys from the record, ask `contains_ext` before doing so,
-and route a removal through `remove_ext` so the two sides agree — and hold a
-program's own services in a Lisp dictionary, which is exactly where CNA says they
-belong and where XNA keeps them too, since nothing native reads them in XNA
-either.
+* **`GameServiceContainer` is a Common Lisp hash table** keyed by a service type
+  designator, holding anything a program puts in it under any type it likes. It
+  has no handle, no native destruction and no child registration, and its
+  lifetime is the game's managed object graph.
+* **CNA's two slots are a native cross-check.** When a `GraphicsDeviceManager` is
+  created, `cna_graphics_device_manager_create` registers both canonical services
+  natively and the constructor adds both to the managed container; the two are
+  then compared, and a disagreement is **signalled** rather than resolved. That is
+  the same shape `StorageContainer.StorageDevice` already has.
+* **A removal of a canonical key is mirrored** into `cna_game_services_remove_ext`,
+  natively first, so a failure leaves both sides holding the entry.
+* **A re-add after a removal is managed only**, because CNA has no registration
+  route by decision. That costs no observable behaviour, and this was measured on
+  both sides rather than assumed: CNA's game "caches a raw pointer to the graphics
+  device service the first time it resolves one and never clears it", and XNA's
+  `Game.get_GraphicsDevice` reads a `graphicsDeviceService` field and only
+  resolves through `Services` when it is null. A removal changes what a *later*
+  lookup finds, in both runtimes, and nothing this binding projects re-resolves.
 
-What stops that being done here and now is scope, not doubt: `GameServiceContainer`
-is **not in the selection**, and putting it there means importing the type from the
-pinned contract and reading its four members out of the IL. That is a closure of
-its own — and as of the Storage milestone it is **`NEXT.md`'s recommendation**,
-the first one in four measurements that is blocked on nothing external. The
-argument there settles the shape this section leaves open: the container is a
-Lisp hash table, because XNA's own is a managed dictionary that never crosses
-into native code — `content.h` says exactly that about the service provider a
-`ContentManager` holds — and CNA's two-slot `contains_ext` becomes a **native
-cross-check** on the two canonical keys rather than the storage for them. What
-must not happen is the container being narrowed to CNA's two slots because CNA
-has two.
+**What must not happen — and is what a two-slot object wearing this type's name
+would have been — is the container being narrowed to CNA's two identities because
+CNA has two.** `tests/native/services.lisp` is where that is prevented from
+regressing: its user-service lanes use keys CNA has no identity for at all, so a
+container backed by the native table could not pass them.
 
-A Lisp dictionary *on its own* — one that answered a program's own services and
-**invented** the two canonical ones without asking CNA whether they are
-registered — remains refused, because inventing them is the part that would be
-wrong. Cross-checking them is not inventing them.
+**The service type designator, and why it is two kinds rather than any symbol.**
+XNA keys by `System.Type`, which is not projected — a dictionary key is not a
+reason to import CLR reflection. A designator here is a CLOS class, a symbol
+naming one, or a symbol naming a protocol declared with `DEFINE-SERVICE-PROTOCOL`,
+and both kinds are normalised to a symbol so equality is `EQ`. The rule is that
+narrow because **`AddService` really does check assignability** — the IL calls
+`type.IsAssignableFrom(provider.GetType())` after the null and duplicate guards
+and throws `ArgumentException` when it fails — and a key nothing can be tested
+against would make that guard unanswerable. A protocol is a real Common Lisp type,
+so the guard is one `TYPEP` for both kinds rather than a branch that could drift.
+
+**`System.IServiceProvider` is not projected as a type either.** It is one member,
+and one generic function is what that is: `GET-SERVICE`. Anything with a method on
+it is a service provider here, which is why `ContentManager`'s canonical
+constructors accept one and are not restricted to a `GameServiceContainer`.
 
 
 ### LaunchParameters is empty unless the program fills it
@@ -1148,6 +1172,77 @@ assembly sets same-shaped defaults two instructions earlier and they are **not
 the same numbers**, 800 by 600. A projection that reasoned about "the usual XNA
 window size" would be wrong by 120 pixels.
 
+### `PreparingDeviceSettings` is mutable, and the observation-only route is not bound
+
+**This event is *the* way an XNA application overrides device settings**, and it
+was reported missing here for two closures. The reason then was
+`GraphicsDeviceInformation` not being selected; the reason before that, in CNA
+itself, was better and is worth recording because CNA fixed it at the source:
+`cna_graphics_device_manager_subscribe_preparing_device_settings` delivers its
+argument `const`, so no subscriber — in C or in C++ — could reach the mutable
+accessor, and CNA's header called that "a canonical limitation" while it lasted.
+
+`..._subscribe_preparing_device_settings_ext` is the fix. It hands the handler a
+mutable `CNA_GraphicsDeviceInformation*` whose writes "are kept and are what the
+device is then created from", and it is the only one of the two this binding
+binds. **The observation-only sibling is deliberately unbound**: projecting a
+member whose entire purpose is to change something onto a route that cannot would
+be a quieter kind of wrong than leaving it missing.
+
+The flow, and every step is load-bearing:
+
+    CNA calls back with a borrowed, mutable CNA_GraphicsDeviceInformation*
+        -> read it into ONE CLOS GRAPHICS-DEVICE-INFORMATION
+        -> wrap that in ONE PREPARING-DEVICE-SETTINGS-EVENT-ARGS
+        -> invoke the virtual ON-PREPARING-DEVICE-SETTINGS
+        -> whose default method raises the managed handler list
+        -> handlers mutate the CLOS object
+        -> write the final state back into the borrowed struct
+
+The object is a **copy that is written back**, not a view onto the pointer,
+because the pointer is borrowed for the call and a handler that stashed the
+information object would otherwise be holding a dangling one. One object serves
+the whole callback, which is what makes a mutation stick: a fresh object per
+property read would give each handler its own copy and drop every change.
+
+**A handler's condition does not unwind through C.** The callback returns `void`,
+so CNA has nowhere to put a failure and says so itself. The condition is contained
+by the standing policy and re-signalled by the call that entered device
+preparation. The write-back is **skipped** when a condition was caught, so a
+handler that died half way leaves the proposal exactly as CNA computed it rather
+than half-applied — CNA validates the structure afterwards in any case and "an
+invalid structure is ignored rather than obeyed", so a corrupted write would have
+been dropped there too; doing it here means the reason is a Lisp condition rather
+than a silent native no-op.
+
+**What is not claimed**: that every setting a handler writes is honoured. The
+multisample count is the measured example — a handler that asks for four gets four
+in the object and the HEADLESS device still reports zero, because CNA validates
+the structure and the renderer has no multisampling. The lane's discriminating
+setting is therefore the back-buffer size, which HEADLESS does honour, and both
+the no-handler and handler-removed passes are asserted beside the positive one so
+that the mutation is the reason rather than a coincidence.
+
+### The five protected `On*` raisers are real seams, and that needed the event machinery reworked
+
+`GraphicsDeviceManager`'s five `On*` methods used to be reported missing with a
+reason that was true of the binding rather than of CNA: "there is no moment at
+which this binding decides whether to raise, so an override could notify but never
+suppress". That moment did not exist because the event machinery had not been
+given one — every event in this binding took **one CNA registration per user
+handler**, so CNA called each handler directly and nothing could get in between.
+
+The manager's events are now the exception, and the only one: **one native
+registration per event *kind*** drives the CLOS generic function, whose default
+method raises the managed handler list. `CALL-NEXT-METHOD` is `base.OnX(...)`, and
+an override that omits it suppresses the public event — which is what the pinned
+IL says the member is for, since its whole body is `if (deviceCreated != null)
+deviceCreated(sender, args)`. Handlers now run oldest-first, a multicast
+delegate's own order, which a registration-per-handler design left to CNA.
+
+`Disposed` is not a seam and is not given one, because XNA has none: `Dispose(bool)`
+invokes the `Disposed` field inline and the type declares no `OnDisposed`.
+
 ### `Clear`'s three overloads, and where the quantisation comes from
 
 All three are complete. `Clear(Color)` is the shape with none of `:OPTIONS`,
@@ -1349,9 +1444,38 @@ current limitation.
   `GraphicsAdapter.MonitorHandle`, `GameWindow.Handle`,
   `EffectParameter.GetValueTexture3D` (`Texture3D` is not in the selection),
   `GraphicsDevice.new`/`Dispose`, and the eleven protected raisers.
-`GraphicsDeviceManager`'s remaining nine are the five protected `On*` raisers, the
-`PreparingDeviceSettings` event, and `FindBestDevice`/`RankDevices`/
-`CanResetDevice`, which are the device-selection algorithm rather than a setting.
+
+  **Four of those surviving reasons did not survive the services closure, and
+  two of the four were wrong in the same shape as the six above.** They are
+  listed here rather than deleted, because the pattern is the finding:
+
+  | Member | What the reason claimed | What is true |
+  | --- | --- | --- |
+  | `Game.Services` | no CNA route registers a service or hands one back | True of CNA and irrelevant: XNA's own container never crosses into native code either, and CNA's header says a consumer keeping its own container "is not working around a missing feature". |
+  | `ContentManager`'s three | this binding cannot produce an `IServiceProvider` | It is a one-member interface, and one generic function is what that projects onto. |
+  | `PreparingDeviceSettings` | `GraphicsDeviceInformation` is not in the selection | True when written, and a statement about the *selection* rather than about a limit — which is a decision this repository makes, not an obstacle it finds. The mutable `_ext` route made it worth making. |
+  | `FindBestDevice`/`RankDevices`/`CanResetDevice` | the same | The same, and these three stay **partial** for a reason the old entry did not name: no admitted CNA ABI calls them during device creation. |
+
+  A reason that says "the type is not selected" is the weakest kind, because the
+  selection is this repository's own decision. The frontier table's
+  `DEPENDENCY_NOT_SELECTED` category exists to say so; a member should not carry
+  that reason and a confident prose paragraph as well.
+
+`GraphicsDeviceManager` is **still partial, and honestly so**: six of its nine
+missing members landed complete — the five protected `On*` raisers and the
+`PreparingDeviceSettings` event — and `FindBestDevice`, `RankDevices` and
+`CanResetDevice` are implemented and reported **partial**. They answer XNA's
+semantics when called, and `FindBestDevice` ranks through the virtual
+`RankDevices` so an override participates in the algorithm XNA gives it. What
+they cannot do is influence device creation: all three are `virtual` in CNA's own
+C++ with **no call site anywhere in `GraphicsDeviceManager.cpp`**, and none is
+exposed as a C route in 0.21.0, 0.22.0 or 0.23.0. `FindBestDevice` has a second,
+independent reason: XNA's own `AddDevices` reads `GameWindow.Handle` and writes
+`PresentationParameters.DeviceWindowHandle`, both of which are missing members
+here. `tests/native/device-selection.lisp` asserts the limit directly — a real
+`ApplyChanges` and a real `CreateDevice` run and the override counters do not
+move — so a CNA that grew a seam would fail a test rather than pass quietly.
+
 The count used to read "ten" because it counted `PreparingDeviceSettingsEventArgs`
 — a type, and not one of this type's members. The generated frontier table in
 `docs/compatibility.md` is what to count from.

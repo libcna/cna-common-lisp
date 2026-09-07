@@ -471,6 +471,9 @@ other.
 | `System.String`, `System.Text.StringBuilder` | a Common Lisp `string`, converted to UTF-16 code units at the boundary. See below |
 | `TimeSpan` | an integer count of 100-nanosecond ticks |
 | `IntPtr` | not projected. `Mouse.WindowHandle` is the only member of the selection that has one, and it is classified not applicable: answering it would put a raw platform pointer in the public API, and setting it would need a window handle a CNA-Lisp program never has, because CNA owns the game's window |
+| `List<T>` | a Lisp list or vector, like any other collection. `RankDevices` is the only member that takes one, and see 10c for why it *answers* the ranked sequence rather than sorting in place |
+| `System.Type`, as a service key | a **service type designator**: a CLOS class, a symbol naming one, or a symbol naming a protocol. See 10c |
+| `System.IServiceProvider` | the single generic function `GET-SERVICE`. See 10c |
 
 A member with a return value *and* `out` parameters answers the return value
 first and the `out` parameters after it, in their declared order.
@@ -514,6 +517,59 @@ What a program gets is an ordinary stream and nothing new to learn:
 rather than this binding's: `CL:FILE-LENGTH` is specified to take a *file
 stream*, and the Gray protocol has no generic behind it. `(file-position stream
 :end)` is how a program asks how long the file is.
+
+### 10c. `System.Type`, `IServiceProvider` and `List<T>`, where the services closure meets the BCL
+
+Three base-class-library shapes reach the selected profile through
+`GameServiceContainer` and `GraphicsDeviceManager`, and **none of the three is
+added to the profile as a type**. That is the standing rule -- a BCL type is not
+projected because a signature mentions it -- and each collapses the way its kind
+collapses.
+
+**`System.Type`, as a dictionary key, becomes a service type designator.**
+`GameServiceContainer` is keyed by `Type`, and a key is not a reason to import CLR
+reflection. A designator is a CLOS class, a symbol naming one, or a symbol naming
+a protocol declared with `DEFINE-SERVICE-PROTOCOL`; all three normalise to a
+symbol, so equality is `EQ` and duplicate detection is the hash table's own.
+
+Those two kinds and no third, and the reason is a guard rather than taste:
+**`AddService` really does check `type.IsAssignableFrom(provider.GetType())`** --
+it is in the IL, after the null and duplicate guards -- so a designator whose
+membership cannot be tested would make a guard this binding reproduces
+unanswerable. A declared protocol is a real Common Lisp type, so the guard is one
+`TYPEP` either way. A symbol naming neither is refused, and the refusal says which
+two kinds it takes.
+
+**A CLR interface used as a *key* is the reason protocols exist.** This binding
+projects an interface as generic functions and gives it no class, which is right
+until the framework registers something under `typeof(IGraphicsDeviceService)` --
+and it does, twice. So `IGRAPHICS-DEVICE-MANAGER` and `IGRAPHICS-DEVICE-SERVICE`
+are exported symbols naming types, and a class states that it answers one with
+`DECLARE-SERVICE-PROTOCOL-IMPLEMENTOR`.
+
+**`System.IServiceProvider` becomes one generic function.** It has exactly one
+member, and `GET-SERVICE` is what that projects onto -- the same collapse
+`System.IAsyncResult` gets for being already-complete and `System.IO.Stream` gets
+for being a stream. The consequence is worth stating: anything with a method on
+`GET-SERVICE` is a service provider here, so `ContentManager`'s canonical
+constructors accept one and are not restricted to a `GameServiceContainer`.
+
+**`List<GraphicsDeviceInformation>` becomes an ordinary mutable Lisp sequence**,
+as every other generic collection does -- and `RANK-DEVICES` **answers** the
+ranked sequence rather than only sorting in place. XNA returns `void` and sorts
+the caller's `List<T>`; `FindBestPlatformDevice` then takes `[0]` from the list it
+passed in. A Common Lisp list cannot be reordered in place where a caller's
+variable would see it, and `CL:SORT` may destroy its argument, so both halves are
+said out loud: the argument may be destroyed, and the ranking is the return value.
+**Sorting a temporary copy and discarding it** -- the shape that would have
+satisfied the signature silently -- is exactly the failure this avoids.
+
+**`System.EventArgs` stays collapsed**, and `PreparingDeviceSettingsEventArgs`
+derives from it without a projected superclass: an empty base class with no
+members is not a type a Lisp program could use or observe, and projecting it would
+make `EventArgs` look like part of the selected profile. The rule file records
+that as a `base_type_exception` with its reason, so the verifier checks it rather
+than the absence going unnoticed.
 
 ### 10a. `System.Char` is a code unit, and so is a string's element
 
@@ -583,11 +639,36 @@ CNA's event callback returns `void`, so there is no result code and no
 diagnostic structure. It is contained and preserved on the Lisp side, and
 `docs/callbacks-and-threading.md` says what happens to it.
 
-The protected `On<Event>` methods -- `OnActivated`, `OnDeactivated` -- are the
-base class's way of letting a subclass intercept an event before its handlers
-run. CNA raises the events itself, so there is no place in this projection for a
-subclass to stand between CNA and the handlers, and those two are reported
-missing with that reason rather than projected as something they are not.
+The protected `On<Event>` methods are the base class's way of letting a subclass
+intercept an event before its handlers run, and **whether this projection can
+offer that depends on the type, not on CNA**.
+
+`GraphicsDeviceManager`'s five are **real seams**. Its events take *one* CNA
+registration per event **kind** rather than one per handler, so the registration
+calls the CLOS generic function `ON-DEVICE-CREATED` (and its four siblings) and
+the default method raises the managed handler list. `CALL-NEXT-METHOD` is
+`base.OnX(...)`, and an override that omits it suppresses the public event --
+which is what the pinned IL says the member is for, since its body is nothing but
+`if (deviceCreated != null) deviceCreated(sender, args)`. This is the only place
+in the binding with that shape, and it is why the manager's events run their
+handlers oldest-first, a multicast delegate's own order.
+
+`Game.OnActivated` and `OnDeactivated` are **still missing**, and now for a
+narrower reason than "CNA raises the events itself": there is no equivalent
+seam to build one on. CNA delivers those two only through
+`cna_game_subscribe`, whose registrations are per subscription, and neither
+`CNA_GameCallbacks` nor `CNA_GameFrameHooks` has a hook for them -- where the
+manager has a per-event-kind subscribe route that one registration can own.
+`Game.OnExiting` is projected because CNA models exiting as a *lifecycle
+callback* rather than an event subscription, which is the same distinction seen
+from the other side.
+
+The argument shape of a projected raiser is `(RECEIVER SENDER)`: `Object sender`
+is a real value and is passed, and `EventArgs` is `EventArgs.Empty` at every
+raise site in the assembly and is collapsed, exactly as it is in the public
+handler shape. `OnPreparingDeviceSettings` is the one exception and takes three,
+because its `EventArgs` carries the mutable candidate settings and collapsing it
+would throw the event's whole payload away.
 
 ## 11. Disposal
 

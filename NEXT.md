@@ -60,6 +60,15 @@ tools/qualification/media.sh
 #     CNA's storage application name is process-global and cannot be unset, and
 #     one claim is that a save written by one process is read back by another.
 tools/qualification/storage.sh
+
+# 11. the service and device-selection lanes, plus their own public-only
+#     consumer. Needs no display, no GPU, no audio device and no content
+#     fixture: everything it does is lifecycle and configuration. A sixth
+#     script rather than a section of the suite because its seven kinds are
+#     seven claims and it requires each of them by name -- and because its
+#     consumer drives the manager through the *interface* it was retrieved
+#     under, which is the actual IServiceProvider use case.
+tools/qualification/services.sh
 ```
 
 The five qualification scripts do that for themselves. `with-virtual-screen.sh`
@@ -132,6 +141,14 @@ library at all, so it has no ABI to be produced against:
 | Storage, ownership | the graph is three deep -- device to container to stream -- and **does not cascade**: a container with an open stream and a device with a live container each refused disposal, naming what was still live, and closing children first closed all three |
 | Storage, the overloads | `OpenFile`'s three keyword sets and `BeginShowSelector`'s four were accepted, and every shape XNA has not -- a subset, a superset, a mixture -- was refused |
 | Storage, the Disposing event | reached a handler taking the sender alone, stopped when the handler was removed, and left the callback registry where it found it. The last of those was a **real leak**: the container had no `:AROUND` releasing its subscriptions, and the stress lanes caught it |
+| Services, the managed container | arbitrary user-defined service types CNA has **no identity for** were added, read back by identity, removed one at a time and re-added with a different provider -- with no native route involved at any point. The lane that says the container is XNA's arbitrary dictionary rather than a projection of CNA's two slots |
+| Services, the canonical pair | a `GraphicsDeviceManager` registered itself under **both** `IGraphicsDeviceManager` and `IGraphicsDeviceService`, both keys answered the *same object*, and CNA's own `cna_game_services_contains_ext` agreed about both. Disposal then removes only the service key, and only when the entry is still the manager -- so a program's replacement provider survives it, which is XNA's `bne.un.s` and not a convenience |
+| Services, the content constructors | both canonical `ContentManager` constructors resolved a graphics device through the `IServiceProvider` protocol, `ServiceProvider` answered the **exact object** each was given, `Game.Content`'s provider is `EQ` to `Game.Services`, and the graphics-device extension constructor still works beside them |
+| Device information | `GraphicsDeviceInformation` answered a `GraphicsAdapter` **object** rather than CNA's adapter index; `Clone` shared the adapter and copied the parameters as the IL does; `Equals` compared the parameters field by field; and the `Adapter` setter's wrong-operand defect -- assigning NIL succeeds once and the *next* assignment throws -- was reproduced rather than corrected |
+| Preparing device settings | a handler wrote 1234x567 into the candidate while the manager's preference said 800x600, and **the device CNA then made was 1234x567**. The no-handler pass took the preference and the handler-removed pass took it again, so the mutation is the reason rather than a coincidence. A direct device-information observation, not a pixel inference |
+| Manager virtual events | a `GraphicsDeviceManager` subclass overriding `OnDeviceCreated` saw the public event raised when it called `CALL-NEXT-METHOD` and **suppressed when it did not** -- which is what makes a protected raiser a seam rather than a callable function, and which the old one-registration-per-handler event machinery could not have done |
+| Device selection, and its limit | `FindBestDevice` built candidates from the adapters CNA enumerates and ranked them through the **virtual** `RankDevices`; `CanResetDevice` reproduced XNA's profile comparison exactly. And a real `ApplyChanges` and a real `CreateDevice` **called none of the three**, which the suite asserts directly -- the measured reason all three are partial |
+| Services, public-only consumer | the whole flow through the two exported packages alone, under the same mechanical audit the four other consumers pass, with the manager driven through `CREATE-DEVICE`, `BEGIN-DRAW-DEVICE` and `END-DRAW-DEVICE` on the **interface** it was retrieved under rather than on its concrete class |
 | Microphone, the one ABI limit | `BufferDuration` is **partial**: XNA accepts [100, 1000] ms in steps of ten inclusive, CNA 0.21.0 accepts [100, **990**] and refuses exactly 1000, and 0.22.0 and 0.23.0 take the whole range. Nothing is rounded down to hide it; the refusal names the ABI rather than the argument, and both branches assert |
 
 HEADLESS proves lifecycle and command submission. It proves nothing about pixels
@@ -311,7 +328,7 @@ for its graph, and that defect is present in **0.22.0 and 0.23.0 too**. Dropping
 If a drop is ever wanted, the thing to write first is the deprecation policy --
 what warns, when, and against what release -- not the drop.
 
-## Eight milestone statuses, and they are eight
+## Nine milestone statuses, and they are nine
 
 **One boolean must not cover several milestones**, which is why these are stated
 separately and each names what it rests on. The heading said *four* while the
@@ -329,6 +346,7 @@ three that were missing are below.
 | `MICROPHONE_READY` | **yes on all three ABIs**, with one measured partial: `BufferDuration` refuses exactly 1000 ms on 0.21.0, which is the top of XNA's range, and both branches assert. Three environments qualified rather than two, because a capture device that enumerates is not one that delivers |
 | `MEDIA_PLAYBACK_READY` | **yes on all three ABIs**. Six complete types over the *playback* half of the namespace; the media **library** -- `MediaLibrary` and its eight companions -- and `Video`/`VideoPlayer` are deliberately not in the closure and are measured as absent, not faked |
 | `STORAGE_READY` | **yes on all three ABIs**, and it is the first closure to finish its whole namespace: three types, three complete, nothing left in `Microsoft.Xna.Framework.Storage` to be absent. The one place it is narrower than XNA is a lifetime rather than a member -- XNA lets a container be disposed with a stream still open and CNA does not |
+| `SERVICES_AND_DEVICE_SELECTION_READY` | **yes on all three ABIs**, with one honest partial that is three members. Five types, 21 members, all five complete; thirteen members of already-selected types closed, of which ten are complete and three -- `FindBestDevice`, `RankDevices`, `CanResetDevice` -- are **partial**, because no admitted CNA ABI calls them during device creation and the suite asserts that limit directly. `GraphicsDeviceManager` is therefore still a partial type, and that is the truthful outcome rather than a shortfall. The first closure whose evidence is entirely lifecycle and configuration: it needs no display, no GPU, no audio device, no capture device and no content fixture |
 
 **The template is deliberately unchanged, and the Model closure strengthens that
 decision rather than weakening it.** The canary's whole value is that it produces
@@ -407,12 +425,21 @@ run is not evidence at all -- run `33966149186`, the `Native` run for `efae9c9`,
 was cancelled by the push that followed it seconds later and must not be cited as
 green.
 
-**Foundation 1 is frozen.** The 35 missing members are not work in progress. The
-owned `GraphicsDevice`, `GameServiceContainer`, an `IntPtr` projection and the
-protected `On<Event>` raisers each have a measured reason in
+**Foundation 1 is frozen.** Its 35 missing members are not work in progress; the
+owned `GraphicsDevice`, an `IntPtr` projection and `Game`'s two protected
+`On<Event>` raisers each have a measured reason in
 `tools/api-compat/mapping-rules.json`, and reducing the missing count for its own
 sake is explicitly not the next task. A selected, qualified subset is what this
 milestone is.
+
+**Two of the items that list used to name have since landed, additively, and the
+distinction matters.** `GameServiceContainer` and `GraphicsDeviceManager`'s
+protected raisers were named here as frozen absences. Neither was reopened as
+Foundation 1 work: the container arrived as a *new selected type* in a later
+closure, and the raisers became reachable when that closure gave the event
+machinery a seam it had not had. Foundation 1's own frozen list is what is above,
+and it is shorter than it was because the profile grew around it rather than
+because the freeze was lifted.
 
 **No tag was created.** This repository has no tags and no documented
 version/tagging policy, and inventing one at a release audit would be the wrong
@@ -459,7 +486,9 @@ worth keeping:
   which is the answer the code was changed away from.
 * **a forward reference outlives the thing it points at.** Two paragraphs said
   `GameServiceContainer` "arrives with the device-settings closure". It did not,
-  and that closure is over.
+  and that closure is over. (It has arrived since, in a closure of its own, and
+  this entry stays as the record of what the audit found rather than as current
+  status -- which is the same distinction the entry itself is about.)
 
 The **third** audit ran with the streaming closure and found a fourth shape, the
 worst of the four because the reader has no way to notice it:
@@ -497,31 +526,31 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 ## The measured frontier
 
-<!-- generated:selected types=190 -->
-<!-- generated:selected members=2560 -->
-<!-- generated:complete types=166 -->
+<!-- generated:selected types=195 -->
+<!-- generated:selected members=2581 -->
+<!-- generated:complete types=171 -->
 <!-- generated:partial types=24 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2054 -->
-<!-- generated:partial members=26 -->
-<!-- generated:missing members=38 -->
-<!-- generated:not-applicable members=442 -->
+<!-- generated:complete members=2084 -->
+<!-- generated:partial members=29 -->
+<!-- generated:missing members=25 -->
+<!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 190 types, 2560 members.
+Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **166** |
+| Types complete | **171** |
 | Types partial | **24** |
 | Types missing | **0** |
-| Members complete | **2054** |
-| Members partial | **26** |
-| Members missing | **38** |
-| Members not applicable | **442** |
+| Members complete | **2084** |
+| Members partial | **29** |
+| Members missing | **25** |
+| Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -543,11 +572,9 @@ is a member of a type that is otherwise there, and this is where they are:
 <!-- generated-block:partial-frontier -->
 | Type | missing members | partial members |
 | --- | ---: | ---: |
-| `M.X.F.GraphicsDeviceManager` | 9 | 0 |
 | `M.X.F.GameWindow` | 7 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | 5 | 1 |
-| `M.X.F.Game` | 4 | 1 |
-| `M.X.F.Content.ContentManager` | 3 | 1 |
+| `M.X.F.Game` | 3 | 1 |
 | `M.X.F.Media.Song` | 3 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
@@ -557,6 +584,8 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 0 |
 | `M.X.F.TitleContainer` | 0 | 1 |
+| `M.X.F.GraphicsDeviceManager` | 0 | 3 |
+| `M.X.F.Content.ContentManager` | 0 | 1 |
 | `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
@@ -581,9 +610,9 @@ had moved. Regenerate the table after every closure and read it there.
 | Category | Members | What it means |
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_ADMITTED_ABI_LIMIT` | **45** | No admitted CNA ABI can represent the member. |
-| `PUBLIC_OBJECT_MODEL_CLOSURE` | **3** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
-| `DEPENDENCY_NOT_SELECTED` | **9** | Blocked on a type that is not in the selected profile. |
+| `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
+| `PUBLIC_OBJECT_MODEL_CLOSURE` | **2** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
+| `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
@@ -858,160 +887,112 @@ geometry on screen, for the same reason.
 **One closure, and this file carries one.** When the next one lands, this section
 is replaced rather than added to.
 
-`Storage` was the last recommendation and it has landed: three types, three
-complete, the first closure to finish its own namespace and the first surface
-that needs no `Game`. Both of the open questions that section said to answer
-first were answered, and both answers are in `docs/limitations.md` rather than
-here:
+Game services and device selection was the last recommendation and it has landed:
+five types, 21 members, all five complete, and thirteen members of already
+selected types closed. **The count in the recommendation was wrong and the
+contract corrected it**, which is the first thing to record. That section said
+five types and 17 members, listing `FrameworkDispatcher` and not
+`Graphics.IGraphicsDeviceService`. Recomputing the dependency closure over the
+pinned snapshot says:
 
-* **`Begin`/`End` became four functions and an opaque result.** Not an
-  `IAsyncResult` object with a projected interface, because `System.IAsyncResult`
-  is not in the selection and three of its four members are constants in XNA. The
-  result is opaque, `ASYNC-STATE` reads back the one thing a caller put in, and
-  the callback fires before `Begin` returns because that is what both XNA and CNA
-  do. The overloads are told apart by **complete keyword sets**, the rule this
-  binding already applies everywhere.
-* **`OpenFile` answers an ordinary Common Lisp binary stream**, over
-  `trivial-gray-streams` -- a few hundred lines of portable Common Lisp with no
-  foreign code and no build step, so the dependency costs a released binding
-  nothing that the `cffi-libffi` refusal is protecting. `WITH-OPEN-STREAM`,
-  `READ-SEQUENCE`, `FILE-POSITION` and the rest work. `FILE-LENGTH` does not,
-  because `CL:FILE-LENGTH` takes a *file stream* and the Gray protocol has no
-  generic behind it; `(file-position stream :end)` is the length.
+* `IGraphicsDeviceService` is **not optional**. The already-selected
+  `GraphicsDeviceManager` names it in its own `interfaces`, so the closure of the
+  selection *as it already stood* reached it -- a hole in the profile that
+  predated this closure and was filled by it.
+* `FrameworkDispatcher` is **reached by nothing** in the 257-type snapshot: not a
+  base type, not an interface, not a return or parameter type. It is a static
+  pump a program calls itself, and it was not selected, because
+  `cna_framework_dispatcher_update` existing is not an argument for a member.
 
-### One thing Storage measured that changes how the next one should be measured
+So: five types, **21** members. Twelve routes were bound rather than seventeen,
+for the same rule -- the manager's `dispose`, its two preferred-presentation-mode
+routes, the observation-only device-settings subscription and the framework
+dispatcher have no member behind them and stay unbound.
 
-`CNA/C/storage.h` is **byte for byte identical in 0.21.0, 0.22.0 and 0.23.0** --
-and the three libraries do not behave the same. An application name CNA cannot
-build a directory from is accepted by 0.21.0's setter and refused by the other
-two, and the two that refuse destroy the storage root on their way out. Nothing
-in the header says which.
+**`GraphicsDeviceManager` did not become complete, and that is the honest
+outcome.** Six of its nine landed complete; `FindBestDevice`, `RankDevices` and
+`CanResetDevice` are implemented, answer XNA's semantics when called, and are
+reported **partial**, because no admitted CNA ABI calls them during device
+creation -- all three are `virtual` in CNA's own C++ with no call site in
+`GraphicsDeviceManager.cpp`, and none is a C route.
+`tests/native/device-selection.lisp` asserts that limit directly rather than
+describing it.
 
-Every route-count table in this file has said "identical in all three ABIs"
-meaning *the header is identical*, and that was always a statement about surface.
-It is now demonstrably not a statement about behaviour. **A candidate whose
-headers match across the admitted set is not thereby qualified on all three**,
-and the next closure's plan must include running its lanes against each library
-rather than reading the sameness off a hash.
+### What the frontier looks like now, measured
 
-### The candidates, re-measured against all three admitted ABIs
+The generated tables above are the authority; what follows is what changed
+*category*, which a table of counts cannot say.
 
-Counts are the pinned 257-type contract's, and they are each candidate's
-**dependency closure over the selection as it now stands** -- so the three
-`Media` rows are smaller than they were, because `Song`, `SongCollection` and
-`MediaState` are selected now and no longer count against them. **Sixty-seven of
-the snapshot's 257 types are still unselected.** Route counts are
-`grep -c '^CNA_C_API'` over each family's own headers, and the "new routes" column
-is what is **not already bound**, which is the number that costs work.
+* **`PUBLIC_OBJECT_MODEL_CLOSURE` is down to two members**, and they are the same
+  two: `GraphicsDevice.new(GraphicsAdapter, GraphicsProfile,
+  PresentationParameters)` and `GraphicsDevice.Dispose()`.
+* **`DEPENDENCY_NOT_SELECTED` is down to four** -- `Song`'s three media-library
+  properties and `EffectParameter.GetValueTexture3D` -- because the four members
+  that carried that reason for `GraphicsDeviceInformation` and
+  `PreparingDeviceSettingsEventArgs` no longer do.
+* **Nothing moved into `IMPLEMENTABLE_AND_HIGH_VALUE`**, which stays empty and is
+  the release condition.
+* **Foundation 1's own frontier is unchanged.** Every member this closure touched
+  belonged to `Game`, `GraphicsDeviceManager` or `ContentManager` and was
+  measured as a *selection* absence rather than a Foundation 1 one.
+
+### The candidates, re-measured
 
 | Candidate | Types | Members | New routes | Closes, in selected types | Deterministic CI | User value | Complexity |
-| --- | ---: | ---: | ---: | ---: | --- | --- | --- |
-| **Game services and device selection** | 5 | 17 | 17 | **13 missing members** | **yes, no device** | medium | medium |
+| --- | ---: | ---: | ---: | --- | --- | --- | --- |
+| **The owned `GraphicsDevice`** | **0** | 0 | **0** | **the last 2 `PUBLIC_OBJECT_MODEL_CLOSURE` members** | **yes, no device** | medium | medium |
 | `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **build-dependent** | low | medium |
 | XACT | 7 | 72 | 62, `xact.h` | 0 | **no fixture can exist** | low | high |
 | `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 3 (`Song`'s `Artist`, `Album`, `Genre`) | **empty only** | low | high |
+| `GameWindow`'s seven | 0 | 0 | 0 | 0 | n/a | low | **blocked** |
 
-**The recommendation is the game-services and device-selection closure**, and for
-the first time in four measurements the recommendation is not blocked on anything
-external.
+**The recommendation is the owned `GraphicsDevice` closure**, and it is the first
+candidate in five measurements that adds **no types and no routes at all**.
 
-The three that are still blocked are blocked for the reasons they always were,
-re-checked rather than copied:
+`cna_graphics_device_create` takes `(adapter_index, graphics_profile,
+parameters, out_device)` and `cna_graphics_device_destroy` accepts only a
+caller-created handle and refuses a game's borrowed one -- which is the same rule
+this binding already enforces. Both have existed since 0.21.0 and neither is
+bound, because until now there was nothing to bind them *for*.
 
-* **`Video`** needs CNA's optional FFmpeg decoder and answers
-  `CNA_RESULT_NOT_SUPPORTED` without it. The pinned build does not have it, so the
-  positive branch would be build-dependent -- a worse deal than a dummy driver,
-  which is what every device closure here qualifies against.
-* **XACT** cannot be qualified at all. Its three creation routes take `.xgs`,
-  `.xwb` and `.xsb` files built by Microsoft's XACT authoring tool, and **no
-  fixture for them can be generated here**, which is the standard every other
-  fixture in this repository meets. It could be implemented and could only be
-  proved to refuse.
-* **`MediaLibrary`** scans the machine's music and picture locations, and
-  `media_library.h` says an empty library is an ordinary result -- so CI can
-  qualify *empty* and nothing else. Fifteen types that are only ever empty are not
-  a closure worth having.
+**This closure is what made it approachable, and in two specific ways rather than
+by general progress:**
 
-### What the recommended closure is, exactly
+1. **Its three arguments are now one object.** `GraphicsDeviceInformation` holds
+   exactly an adapter, a profile and presentation parameters, and
+   `%WRITE-GRAPHICS-DEVICE-INFORMATION` already converts a `GraphicsAdapter` to
+   the adapter *index* CNA's create route takes. The conversion the constructor
+   needs is written and tested.
+2. **`GraphicsAdapter` has stable identity now.** It is interned per index, which
+   it was not before, so "the adapter this device was created on" can be answered
+   by the same object the caller passed in.
 
-Five unselected types, and the thirteen already-selected members that have been
-waiting for them:
+What the closure is, and it is an object-model decision rather than two members:
+`GraphicsDevice` is currently a **parent-owned facade** that resolves the game's
+borrowed handle per call and stores none. An owned device needs a second shape --
+its own handle, its own disposal, its own children -- and every device operation
+needs to know which of the two it has. That is why it has been categorised
+`PUBLIC_OBJECT_MODEL_CLOSURE` rather than `CNA_ADMITTED_ABI_LIMIT` from the
+beginning.
 
-| Type | Members | What it is |
-| --- | ---: | --- |
-| `GameServiceContainer` | 4 | XNA's own `Dictionary<Type, object>` behind `AddService`, `GetService`, `RemoveService` |
-| `GraphicsDeviceInformation` | 7 | the adapter, profile and presentation parameters a device would be made from |
-| `IGraphicsDeviceManager` | 3 | `CreateDevice`, `BeginDraw`, `EndDraw` -- the contract `GraphicsDeviceManager` implements |
-| `PreparingDeviceSettingsEventArgs` | 2 | the mutable settings a handler may change before the device exists |
-| `FrameworkDispatcher` | 1 | `Update()`, XNA's pump for audio and media off the game thread |
+**Two questions to answer by measurement before writing any of it**, in the shape
+this file has asked for before every closure:
 
-and it closes, in types that are already selected and already partial:
-
-* `Game.Services` -- the one member that makes `GameServiceContainer` reachable;
-* **all nine** of `GraphicsDeviceManager`'s missing members -- `FindBestDevice`,
-  `CanResetDevice`, `RankDevices`, the four `OnDevice*` raisers,
-  `OnPreparingDeviceSettings` and the `PreparingDeviceSettings` event -- which
-  would take that type from partial to **complete**;
-* `ContentManager`'s two `IServiceProvider` constructors and its `ServiceProvider`
-  property, taking it from four missing members to one.
-
-**CNA has real support for it, and one measured shape that will need saying out
-loud.** `cna_graphics_device_manager_subscribe_preparing_device_settings_ext`
-hands a handler a **mutable** `CNA_GraphicsDeviceInformation*`, which the header
-says was a canonical limitation until it was fixed at the source -- so the event
-that is *the* way an XNA application overrides device settings is reachable rather
-than decorative. `cna_graphics_device_information_init` and `_clone` are pure POD
-operations on a by-value struct. Seventeen routes are unbound and would be bound:
-fourteen in `runtime_graphics_manager.h` (the four information routes,
-`create_device`, `begin_draw`, `end_draw`, `dispose`, the two type-name routes,
-the two preferred-presentation-mode routes and both `preparing_device_settings`
-subscriptions) plus `cna_game_services_contains_ext`,
-`cna_game_services_remove_ext` and `cna_framework_dispatcher_update`.
-
-**The shape to decide first**, and it is one question rather than two:
-
-> `Game.Services` is an arbitrary `Type`-keyed container in XNA and a **fixed
-> two-slot set** in CNA.
-
-`CNA_GameServiceType` has exactly two values -- `GRAPHICS_DEVICE_MANAGER` and
-`GRAPHICS_DEVICE_SERVICE` -- and the only routes are `contains_ext` and
-`remove_ext`. There is no add, and no way to name a third service. XNA's
-container holds anything a program puts in it under any type it likes.
-
-That is not the obstacle it looks like, and the argument is worth making before
-any code is written. XNA's `GameServiceContainer` **is** a managed dictionary;
-nothing about it crosses into native code, and CNA's own `content.h` says a
-service provider "is a Sharp Runtime object and never crosses the C boundary", so
-a manager created with one "behaves identically" and "the field is inert on both
-sides of the boundary". So the container should be a Lisp hash table, keyed by
-whatever a Lisp program uses for a service type, and CNA's two-slot
-`contains_ext` becomes a **native cross-check** -- after a
-`GraphicsDeviceManager` exists, CNA reports the graphics-device service present,
-and the Lisp container that reports the same thing is being checked rather than
-trusted. That is the same shape as `StorageContainer.StorageDevice`, whose
-managed answer is cross-checked against `cna_storage_container_get_storage_device`
-in `tests/native/storage.lisp`.
-
-What must **not** happen is the container being narrowed to CNA's two slots
-because CNA has two. That would be the projection taking the runtime for the
-oracle, which is the one thing this repository has been consistent about
-refusing.
-
-Two smaller questions, each answerable by measurement rather than by design:
-
-1. **Does `subscribe_preparing_device_settings_ext` actually deliver a mutable
-   argument on all three libraries?** The header is byte-identical across them
-   and, as Storage just demonstrated, that proves nothing. Measure it on each
-   before promising the event is complete.
-2. **What does `IGraphicsDeviceManager.CreateDevice` mean here?** CNA has
-   `cna_graphics_device_manager_create_device`, and
-   `GraphicsDevice.new(GraphicsAdapter, GraphicsProfile, PresentationParameters)`
-   is a *missing* member of an already-selected type. Whether the interface
-   member can be complete without the constructor is a measurement on the route,
-   not a decision.
+1. **Can a caller-created device coexist with a game's?** CNA says its resources
+   "do not gate `cna_game_destroy` -- they belong to this device, not to a game",
+   which is a statement about *ownership* and not about whether two devices may be
+   live. Measure it on each admitted library rather than reading it off the
+   header: `graphics_device.h` is identical across the three and Storage proved
+   what that is worth.
+2. **Does an owned device work under HEADLESS at all**, or does
+   `cna_graphics_device_create` answer `CNA_RESULT_PLATFORM` there? If it does,
+   that is a supported outcome to assert rather than a skip -- but it decides
+   whether the closure can be qualified on the CI renderer or needs the SOFTWARE
+   lane, and that changes the plan rather than the code.
 
 **Do not implement the recommendation yet.** This is a measurement, and the next
 task chooses.
+
 
 ## Architectural facts a future agent must not undo
 
