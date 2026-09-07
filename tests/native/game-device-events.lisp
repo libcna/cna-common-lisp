@@ -471,3 +471,70 @@ though the first one failed, and both collections are still emptied."
              did not unwind through C, the later assets were still released, ~
              and both collections were still emptied"))
       (%release-wiring-game game))))
+
+;;; --- 7. a failure after the hook is installed --------------------------------
+
+(define-condition wiring-initialize-failure (error) ()
+  (:report (lambda (c s) (declare (ignore c))
+             (format s "the game refused to finish initializing"))))
+
+(defclass exploding-initialize-game (device-wiring-game)
+  ((hooked-before-failing :initform nil :accessor hooked-before-failing))
+  (:documentation
+   "Installs the private subscriptions and then fails, inside `Initialize'.
+
+The realistic shape of a part-completed installation: `CALL-NEXT-METHOD' runs
+`HookDeviceEvents' -- so the subscriptions and their native registration exist --
+and the enclosing phase then does not complete."))
+
+(defmethod xna:initialize ((game exploding-initialize-game))
+  (call-next-method)                    ; the hook is installed by this
+  (setf (hooked-before-failing game)
+        (length (xna::%game-device-event-listeners game)))
+  (error 'wiring-initialize-failure))
+
+(define-native-test a-failure-after-the-hook-leaves-nothing-rooted
+  "The private subscriptions are transactional state, so a game that never became
+usable must not leave them behind.
+
+Installing them adds a managed listener and, for the first event kind, a native
+CNA registration and a callback token that **roots the game in the registry**. A
+game that hooked and then failed and still held them would be a leak the ordinary
+teardown could not reach.
+
+Three claims, and they are three: the condition reaches Lisp rather than
+unwinding through the C frame that called `Initialize`; the game can still be
+destroyed; and after its disposal it holds no listener. The last is what
+`UnhookDeviceEvents` is for, and it has to work on the failure path too."
+  (let ((game (make-instance 'exploding-initialize-game :exit-after 2))
+        (delivered nil))
+    (unwind-protect
+         (progn
+           (handler-case (xna:run game)
+             (wiring-initialize-failure (condition) (setf delivered condition))
+             ;; The containment machinery may present it wrapped, which is the
+             ;; documented shape for a condition that crossed a callback.
+             (xna:cna-callback-error (condition) (setf delivered condition)))
+           (is-true delivered
+                    "the failure did not reach Lisp; a condition signalled in a ~
+                     lifecycle callback must be contained and re-signalled")
+           (is (= 4 (hooked-before-failing game))
+               "the hook really was installed before the failure, or this test ~
+                proves nothing about rollback")
+           ;; The game is unusable but must still be destroyable -- children
+           ;; first, which is this binding's ordinary rule and not something the
+           ;; failure changed: CNA destroys children before their parent and
+           ;; refuses the other order.
+           (finishes (xna:dispose (manager game)))
+           (finishes (xna:dispose game))
+           (is (null (xna::%game-device-event-listeners game))
+               "a game disposed after a failed initialize still gave its private ~
+                subscriptions back")
+           (note-device-wiring
+            :installation-atomicity
+            "a game that installed the four subscriptions and then failed inside ~
+             Initialize delivered its condition to Lisp, was still destroyable, ~
+             and held no listener afterwards"))
+      (progn
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (ignore-errors (xna:dispose game))))))

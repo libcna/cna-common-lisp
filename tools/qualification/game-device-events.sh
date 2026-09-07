@@ -41,6 +41,14 @@
 #                       subscriptions in place, and Game disposal gave them back.
 #   GAME_DEVICE_TEARDOWN
 #                       the game was destroyed cleanly after the unload.
+#   GAME_DEVICE_INSTALLATION_ATOMICITY
+#                       a game that installed the four subscriptions and then
+#                       failed inside Initialize delivered its condition to Lisp
+#                       rather than unwinding through C, was still destroyable,
+#                       and held no listener afterwards. The subscriptions are
+#                       transactional state -- a managed listener, a native
+#                       registration and a callback token that roots the game --
+#                       so a game that never became usable must not keep them.
 #
 # **Nothing here claims Game.UnloadContent is called by this binding.** CNA's
 # native game already drives that callback at exactly this point -- measured, and
@@ -65,7 +73,7 @@ mkdir -p "$root/build-probe"
 cd "$root"
 
 # The kinds the suite must record, by the name the runner prints.
-kinds='hook-installation content-unload current-reference event-order failure-containment private-subscription unhook teardown'
+kinds='hook-installation content-unload current-reference event-order failure-containment private-subscription unhook teardown installation-atomicity'
 
 run_one () {
     label=$1
@@ -104,7 +112,7 @@ run_one () {
         fi
     done
     [ "$missing" -eq 0 ] || return 1
-    echo "  all 8 kinds recorded"
+    echo "  all 9 kinds recorded"
     echo
 }
 
