@@ -1595,8 +1595,7 @@
         "CubeMapFace": {
           "lisp": "render-target-binding-cube-map-face",
           "setf": false,
-          "reason": "The face, or NIL for a RenderTarget2D binding, where XNA answers CubeMapFace.PositiveX because a value type cannot be absent. **This was recorded as a LANGUAGE_PROJECTION_LIMIT and the measurement of 2026-09-07 says it is not one.** Common Lisp represents the value perfectly: CUBE-MAP-FACE is a projected and complete XNA enum whose first keyword is :POSITIVE-X, and this file already computes exactly that value on both native paths -- SetRenderTargets and the GetRenderTargets cross-check each read the face as `(or face :positive-x)', so the binding already agrees with XNA everywhere except the public reader. Nothing else requires NIL: whether a binding names a cube is answerable from RENDER-TARGET-BINDING-TARGET by type, RENDER-TARGET-BINDING-EQUAL cannot collide because a 2D and a cube binding never share a target, and MAKE-RENDER-TARGET-BINDING's two constructor shapes are XNA's own and are unaffected by what the reader answers. `NIL is clearer' is a design preference, not compatibility evidence. Reclassified IMPLEMENTABLE_AND_HIGH_VALUE; still partial because the reader still answers NIL.",
-          "status": "partial"
+          "reason": "The face this binding names. **Complete**: it always answers a CUBE-MAP-FACE, and a binding made from a RENDER-TARGET-2D answers :POSITIVE-X, which is XNA's answer rather than a stand-in for one -- RenderTargetBinding(RenderTarget2D) is `ldc.i4.0; stfld _cubeMapFace' in the pinned assembly, so the field is *stored* and not left at a zero default. This answered NIL until 2026-09-07 and was reported partial for it, filed as a LANGUAGE_PROJECTION_LIMIT; the partial-frontier audit measured that the projection expresses the value perfectly (CUBE-MAP-FACE is a projected, complete XNA enum), that both native paths here already computed :POSITIVE-X for a faceless binding, and that nothing else required the NIL -- a cube binding is told from a flat one by its target's type, in XNA as here. What was left was that NIL read better, which is a preference and not compatibility evidence. Both of XNA's constructor shapes are unchanged: a cube still requires a face and a RENDER-TARGET-2D still refuses one."
         }
       },
       "not_applicable": {
@@ -9050,7 +9049,6 @@
     "Microsoft.Xna.Framework.Graphics.ModelMesh.Draw()": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.ModelMeshPart.Effect": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.PresentationParameters.DeviceWindowHandle": "LANGUAGE_PROJECTION_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.RenderTargetBinding.CubeMapFace": "IMPLEMENTABLE_AND_HIGH_VALUE",
     "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.Texture2D.Height": "CNA_ADMITTED_ABI_LIMIT",

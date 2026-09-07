@@ -168,14 +168,22 @@ A value type in XNA -- it derives from System.ValueType -- so it is a struct her
 and not a native object: it names a target, it does not own one.
 
     (make-render-target-binding target)                ; a RENDER-TARGET-2D
-    (make-render-target-binding cube-target :positive-x) ; one face of a cube"
+    (make-render-target-binding cube-target :positive-x) ; one face of a cube
+
+RENDER-TARGET-BINDING-CUBE-MAP-FACE **always answers a CUBE-MAP-FACE**, and a
+binding made from a RENDER-TARGET-2D answers :POSITIVE-X. That is XNA's answer
+and not a stand-in for one: its RenderTargetBinding(RenderTarget2D) constructor
+stores CubeMapFace.PositiveX into the field rather than leaving it defaulted. A
+2D binding is told from a cube one by its TARGET's type, which is where XNA tells
+them apart too -- the face is not the discriminator in either."
   (target nil :read-only t)
-  ;; NIL for a 2D binding, where XNA answers CubeMapFace.PositiveX. Reported
-  ;; partial for that difference, and the frontier now calls it local work rather
-  ;; than a projection limit: :POSITIVE-X is representable, this file already
-  ;; computes it on both native paths below, and nothing else needs the NIL.
-  ;; docs/limitations.md.
-  (cube-map-face nil :read-only t))
+  ;; **Always a CUBE-MAP-FACE, never NIL**, because XNA's field always holds one:
+  ;; `RenderTargetBinding(RenderTarget2D)' does not leave `_cubeMapFace' at its
+  ;; zero default, it *stores* zero -- `ldc.i4.0; stfld _cubeMapFace' -- so a 2D
+  ;; binding answers `CubeMapFace.PositiveX' by construction and not by accident.
+  ;; This transcribes that. Whether a binding names a cube is answered by its
+  ;; TARGET's type, which is where XNA answers it too.
+  (cube-map-face :positive-x :read-only t))
 
 (defun make-render-target-binding (target &optional cube-map-face)
   "RenderTargetBinding(RenderTarget2D) and RenderTargetBinding(RenderTargetCube,
@@ -204,7 +212,8 @@ arguments."
               :format-control
               "a RENDER-TARGET-2D has no faces, so a CUBE-MAP-FACE means nothing here. ~
                XNA's RenderTargetBinding(RenderTarget2D) takes no face."))
-     (%make-render-target-binding target nil))))
+     ;; XNA's `ldc.i4.0; stfld _cubeMapFace': the face is written, not defaulted.
+     (%make-render-target-binding target :positive-x))))
 
 (defun render-target-binding-equal (a b)
   "Value equality, as a value type has."
@@ -293,8 +302,8 @@ which restores the back buffer. Each argument is a RENDER-TARGET-BINDING."))
                        (cna-lisp.internal:handle-of (render-target-binding-target binding))
                        (slot cna-lisp.internal.ffi::array-slice) 0
                        (slot cna-lisp.internal.ffi::cube-map-face)
-                       (let ((face (render-target-binding-cube-map-face binding)))
-                         (if face (cube-map-face-value face) 0)))))
+                       (cube-map-face-value
+                        (render-target-binding-cube-map-face binding)))))
       (cna-lisp.internal:check-result
        (cna-lisp.internal.ffi::%graphics-device-set-render-targets handle array count)
        "set-render-targets" :object-type 'graphics-device))
@@ -321,9 +330,10 @@ identity is more than its target handle:
   otherwise leave the rest of the array reading as zeroed bindings;
 * every slot's **target handle**, in order, so a swapped pair is caught;
 * every slot's **cube map face**, which is the half of a cube binding's identity
-  the handle does not carry. A 2D target has no face, and CNA reports positive X
-  for one -- \"meaningless for a 2D target and must then be positive X\" -- so that
-  is what a faceless binding is checked against, rather than being skipped.
+  the handle does not carry. A 2D binding's face is positive X -- XNA's own
+  constructor stores it -- and CNA says the same of a 2D target, \"meaningless for
+  a 2D target and must then be positive X\", so every slot is cross-checked and
+  none is skipped.
 
 The array slice is checked to be zero as well, which is what CNA requires of it
 in both directions.
@@ -388,12 +398,12 @@ An empty list is XNA's empty array: the back buffer is current."))
                     for index from 0
                     for expected-target = (cna-lisp.internal:handle-of
                                            (render-target-binding-target binding))
-                    for expected-face
-                      = (let ((face (render-target-binding-cube-map-face binding)))
-                          ;; A 2D binding has no face here, and CNA reports positive X
-                          ;; for one; checking against that is what makes a cube
-                          ;; binding's face a real cross-check rather than a skipped one.
-                          (cube-map-face-value (or face :positive-x)))
+                    ;; Every binding has a face -- positive X for a 2D one, as XNA's
+                    ;; own constructor stores -- and CNA reports positive X for a 2D
+                    ;; target too, so this is a real cross-check on every slot rather
+                    ;; than one skipped for the faceless.
+                    for expected-face = (cube-map-face-value
+                                         (render-target-binding-cube-map-face binding))
                     do (progn
                          (unless (= (entry index cna-lisp.internal.ffi::render-target)
                                     expected-target)

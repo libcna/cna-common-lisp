@@ -207,39 +207,51 @@ all six; SOFTWARE runs the first four and refuses to bind two targets at once
 ("SoftwareRenderer does not support multiple simultaneous render targets") or a
 cube at all, which the test states rather than passes over.
 
-### `RenderTargetBinding.CubeMapFace` answers NIL for a 2D target
+### `RenderTargetBinding.CubeMapFace` answers PositiveX for a 2D target
 
-Reported partial. XNA's struct is a value type and cannot hold "no face", so a
-binding made from a `RenderTarget2D` answers `CubeMapFace.PositiveX` there —
-a real value that means nothing. This answers `NIL`, which says "no face" without
-claiming a face. `MAKE-RENDER-TARGET-BINDING` enforces the same distinction from
-the other side: a cube requires a face and a 2D target refuses one, because those
-are exactly XNA's two constructors.
+**Complete.** It answers a `CUBE-MAP-FACE` for every binding, and a binding made
+from a `RENDER-TARGET-2D` answers `:POSITIVE-X` — which is XNA's answer and not a
+stand-in for one. Its `RenderTargetBinding(RenderTarget2D)` constructor does not
+leave the field at a zero default; it *stores* the value:
 
-**This was filed as a `LANGUAGE_PROJECTION_LIMIT` and the 2026-09-07 measurement
-says it is not one.** The category means the projection *cannot express* the
-member, and this one expresses it easily:
+    IL_001a:  ldarg.0
+    IL_001b:  ldc.i4.0
+    IL_001c:  stfld  valuetype CubeMapFace RenderTargetBinding::_cubeMapFace
+
+so this binding stores it too, in the same constructor, for the same reason.
+`MAKE-RENDER-TARGET-BINDING` is unchanged and still enforces XNA's two
+constructor shapes from the other side: a cube requires a face and a 2D target
+refuses one, because those are exactly XNA's two constructors and neither accepts
+the other's arguments. **The face is not what tells the two kinds apart** — the
+target is, in XNA as here.
+
+**This answered `NIL` until 2026-09-07 and was reported partial for it**, filed
+as a `LANGUAGE_PROJECTION_LIMIT` on the argument that XNA's value type "cannot
+hold no face" while `NIL` says "no face" without claiming one. The
+partial-frontier audit re-read that from zero and it did not survive. The
+category means the projection *cannot express* the member, and it expresses it
+easily:
 
 | Asked | Measured |
 | --- | --- |
 | Can Common Lisp hold XNA's exact value? | Yes. `CUBE-MAP-FACE` is a projected XNA enum and a **complete** type; `:POSITIVE-X` is its first keyword. |
-| Does the binding already compute it? | **Yes, on both native paths.** `SetRenderTargets` and the `GetRenderTargets` cross-check each read the face as `(or face :positive-x)`, so CNA is already told positive X for a 2D binding. |
-| Would `:POSITIVE-X` lose anything XNA exposes? | No. XNA exposes positive X and nothing else. It would lose only a distinction *this binding* added. |
-| Is that distinction otherwise available? | Yes — `RENDER-TARGET-BINDING-TARGET` answers the object, and a cube target is a `RENDER-TARGET-CUBE` by type. |
-| Does anything else require NIL? | No. `RENDER-TARGET-BINDING-EQUAL` cannot collide, because a 2D and a cube binding never share a target; and the two constructor shapes are XNA's own and do not depend on what the reader answers. |
+| Did the binding already compute it? | **Yes, on both native paths.** `SetRenderTargets` and the `GetRenderTargets` cross-check each already normalised a faceless binding to positive X before talking to CNA. |
+| Did `:POSITIVE-X` lose anything XNA exposes? | No. XNA exposes positive X and nothing else. `NIL` was an extra distinction *this binding* invented. |
+| Was that distinction otherwise available? | Yes — `RENDER-TARGET-BINDING-TARGET` answers the object, and a cube target is a `RENDER-TARGET-CUBE` by type. |
+| Did anything else require `NIL`? | No. `RENDER-TARGET-BINDING-EQUAL` cannot collide, because a 2D and a cube binding never share a target. |
 
-So the only argument for `NIL` is that it reads better, and a preference is not
-compatibility evidence. The member is reclassified
-**`IMPLEMENTABLE_AND_HIGH_VALUE`** and is still partial, because the reader still
-answers `NIL`: **this measurement changed no implementation.** What the next task
-needs is small — make the reader answer `:POSITIVE-X` for a faceless binding,
-leave both constructors exactly as they are, and turn the three tests that
-currently assert `NIL` (`tests/native/render-target-cube.lisp`, at the flat
-binding, the bound-list readback and the mutation cross-check) into assertions of
-`:POSITIVE-X`, with one new test asserting that a 2D binding and a cube binding
-of `:POSITIVE-X` are still told apart by their targets.
+So the only argument left was that `NIL` read better, and a preference is not
+compatibility evidence. The two normalisations are gone with it: the face can no
+longer be `NIL`, so neither path needs `(or face :positive-x)`, and the
+`GetRenderTargets` cross-check now checks a face on **every** slot rather than
+one it had to special-case.
 
-## Content: what loads, and the two things that do not follow XNA
+`tests/native/render-target-cube.lisp` asserts the new answer in both places it
+is observable — the constructed value and the one read back from the device — and
+adds the check the change makes necessary: that a flat binding and a cube binding
+*of the same face* are still different values, told apart by their targets.
+
+## Content: what loads, and the two things that do not follow XNA## Content: what loads, and the two things that do not follow XNA
 
 `ContentManager` is projected, `Game.Content` with it, and that is what makes a
 `SpriteFont` obtainable at all — before it, the only producer in this binding was

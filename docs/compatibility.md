@@ -120,11 +120,11 @@ genuine absence.
 
 <!-- generated:selected types=195 -->
 <!-- generated:selected members=2581 -->
-<!-- generated:complete types=171 -->
-<!-- generated:partial types=24 -->
+<!-- generated:complete types=172 -->
+<!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2086 -->
-<!-- generated:partial members=29 -->
+<!-- generated:complete members=2087 -->
+<!-- generated:partial members=28 -->
 <!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
@@ -136,11 +136,11 @@ Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **171** |
-| Types partial | **24** |
+| Types complete | **172** |
+| Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **2086** |
-| Members partial | **29** |
+| Members complete | **2087** |
+| Members partial | **28** |
 | Members missing | **23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
@@ -177,7 +177,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.GraphicsDeviceManager` | **partial** | 26 | 3 | 0 | 1 |
 | `M.X.F.Content.ContentManager` | **partial** | 6 | 1 | 0 | 3 |
 | `M.X.F.Graphics.RenderTargetCube` | **complete** | 7 | 0 | 0 | 1 |
-| `M.X.F.Graphics.RenderTargetBinding` | **partial** | 3 | 1 | 0 | 1 |
+| `M.X.F.Graphics.RenderTargetBinding` | **complete** | 4 | 0 | 0 | 1 |
 | `M.X.F.Color` | **complete** | 161 | 0 | 0 | 4 |
 | `M.X.F.Point` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Rectangle` | **complete** | 24 | 0 | 0 | 9 |
@@ -406,7 +406,6 @@ back-reference.
 | `M.X.F.TitleContainer` | 0 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 0 | 3 |
 | `M.X.F.Content.ContentManager` | 0 | 1 |
-| `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 | `M.X.F.Audio.SoundEffect` | 0 | 1 |
@@ -450,16 +449,17 @@ and so is a category left behind by a member that has since been completed.
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
-| `IMPLEMENTABLE_AND_HIGH_VALUE` | **2** | Nothing blocks it and it should be done next. |
+| `IMPLEMENTABLE_AND_HIGH_VALUE` | **1** | Nothing blocks it and it should be done next. |
 <!-- /generated-block:frontier-categories -->
 
-<!-- generated:high-value frontier members=2 --> members are in
+<!-- generated:high-value frontier members=1 --> members are in
 `IMPLEMENTABLE_AND_HIGH_VALUE`. **That row was zero when the release statement
 rested on it and is not any more**: the 2026-09-07 audit re-read all 29 partial
 reasons against the current admitted set and two did not survive --
-`RenderTargetBinding.CubeMapFace` and `Game.Content`. Neither has been
-implemented, so both are still partial and the partial count is unchanged;
-what moved is the reason, not the code. `NEXT.md` has the measurement and names
+`RenderTargetBinding.CubeMapFace` and `Game.Content`. The first has since been
+implemented and is complete, which is why the partial count is 28 and
+`RenderTargetBinding` is a complete type; `Game.Content` is the entry that
+remains, and it is still partial. `NEXT.md` has the measurement and names
 the implementation task. The remaining empty rows are rendered rather than
 dropped, because their being empty is the claim.
 

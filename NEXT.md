@@ -441,7 +441,7 @@ The eight conditions, and what each rests on:
 | Every non-complete member has a concrete reason | 57 of 57, each naming a route or an IL fact, each in one of seven categories. `verify.py` refuses an uncategorised one and refuses a category the taxonomy does not define, which is what carried the `CNA_0_21_ABI_LIMIT` rename. **This row used to add "with zero in either implementable category", and that half is no longer true**: the 2026-09-07 audit moved two members into `IMPLEMENTABLE_AND_HIGH_VALUE`. It was true at the release commit named below, and the condition it states is about *reasons being concrete*, which is unchanged -- but the parenthesis was a second claim riding on the first and it has now moved, so it is stated separately below rather than left here to age |
 
 That last row is the one to re-read before believing this.
-<!-- generated:high-value frontier members=2 --> members are
+<!-- generated:high-value frontier members=1 --> members are
 `IMPLEMENTABLE_AND_HIGH_VALUE`, and that is a *measurement*:
 `docs/compatibility.md` renders the count and `verify.py` refuses a frontier
 member that has no category. **That count was zero when Foundation 1 was
@@ -569,11 +569,11 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 <!-- generated:selected types=195 -->
 <!-- generated:selected members=2581 -->
-<!-- generated:complete types=171 -->
-<!-- generated:partial types=24 -->
+<!-- generated:complete types=172 -->
+<!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2086 -->
-<!-- generated:partial members=29 -->
+<!-- generated:complete members=2087 -->
+<!-- generated:partial members=28 -->
 <!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
@@ -585,11 +585,11 @@ Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **171** |
-| Types partial | **24** |
+| Types complete | **172** |
+| Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **2086** |
-| Members partial | **29** |
+| Members complete | **2087** |
+| Members partial | **28** |
 | Members missing | **23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
@@ -627,7 +627,6 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.TitleContainer` | 0 | 1 |
 | `M.X.F.GraphicsDeviceManager` | 0 | 3 |
 | `M.X.F.Content.ContentManager` | 0 | 1 |
-| `M.X.F.Graphics.RenderTargetBinding` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
 | `M.X.F.Audio.SoundEffect` | 0 | 1 |
@@ -656,7 +655,7 @@ had moved. Regenerate the table after every closure and read it there.
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
-| `IMPLEMENTABLE_AND_HIGH_VALUE` | **2** | Nothing blocks it and it should be done next. |
+| `IMPLEMENTABLE_AND_HIGH_VALUE` | **1** | Nothing blocks it and it should be done next. |
 <!-- /generated-block:frontier-categories -->
 
 This table replaces a boolean called `GLOBAL_ACTIONABLE_LOCAL`, which was retired
@@ -666,8 +665,9 @@ two facts are:
 * **`SELECTED_PROFILE_IMPLEMENTABLE_NOW` was 0 at the release commit and is 2
   now.** It was the release condition, and it was honestly met on the evidence
   then available; the 2026-09-07 audit re-read every partial reason from zero and
-  two did not survive, so two members are now `IMPLEMENTABLE_AND_HIGH_VALUE` and
-  neither has been implemented. The generated block above is the authority for
+  two did not survive. One of the two, `RenderTargetBinding.CubeMapFace`, has
+  since been implemented and is complete; `Game.Content` is the entry that
+  remains. The generated block above is the authority for
   the number -- **do not restate it in prose here**, which is the mistake the two
   paragraphs below this list record.
 * **Local work remains, and it is profile expansion.** Growing the selection into
@@ -988,7 +988,12 @@ The generated tables above are the authority; what follows is what changed
 
 ## The 29 partial members, re-read from zero
 
-Measured 2026-09-07 against the whole admitted set. The question asked of each
+Measured 2026-09-07 against the whole admitted set. **One of the two the audit
+found has since been implemented** -- `RenderTargetBinding.CubeMapFace`, in the
+task after it -- so the frontier is 28 now. The audit is kept as written, because
+what it found is why the member moved.
+
+The question asked of each
 was not "can the existing reason be confirmed" but "what exact XNA behaviour
 makes this partial *today*". **Twenty-seven survived. Two did not**, and both had
 been kept by the same bad implication -- *CNA cannot represent X, therefore the
@@ -997,7 +1002,8 @@ had each already disproved.
 
 ### The two that were wrong
 
-* **`RenderTargetBinding.CubeMapFace`** was a `LANGUAGE_PROJECTION_LIMIT`, a
+* **`RenderTargetBinding.CubeMapFace`** -- **implemented since, and complete.**
+  It was a `LANGUAGE_PROJECTION_LIMIT`, a
   category meaning the projection *cannot express* the member. It expresses it
   easily: `CUBE-MAP-FACE` is a projected, complete XNA enum, and this binding
   **already computes `:POSITIVE-X`** on both native paths -- `SetRenderTargets`
@@ -1005,7 +1011,11 @@ had each already disproved.
   `(or face :positive-x)`. Nothing else needs `NIL`: 2D-versus-cube is
   answerable from the target's type, value equality cannot collide, and the two
   constructor shapes are XNA's own. The only argument left was that `NIL` reads
-  better, which is a preference and not compatibility evidence.
+  better, which is a preference and not compatibility evidence. The
+  implementation then found the IL stronger than the audit had claimed: XNA's 2D
+  constructor does not leave the field defaulted, it *stores* the value --
+  `ldc.i4.0; stfld _cubeMapFace` -- so the binding stores it in the same place
+  for the same reason, and the two normalisations were deleted rather than kept.
 * **`Game.Content`** was a `CNA_ADMITTED_ABI_LIMIT` because
   `cna_game_set_content_manager_ext` copies where XNA assigns a reference. True
   of the route, irrelevant to the member, because the member need not use it.
@@ -1088,31 +1098,36 @@ process-kill route was found, so no `Model` code was changed.**
 
 ### The recommendation
 
-**Implement `RenderTargetBinding.CubeMapFace`.** It is the smaller of the two
-implementable members and the stronger candidate:
+`RenderTargetBinding.CubeMapFace` **was the recommendation and it is done**: the
+member is complete, `RenderTargetBinding` is a complete type, and the frontier
+table has lost a row. It cost one stored value, two deleted normalisations and
+four assertions, exactly as the audit predicted, and it turned out to be a
+straighter transcription than the audit knew -- XNA stores the face in its 2D
+constructor rather than defaulting it.
 
-* it is a **correctness repair**, not a new capability -- the member currently
-  answers something XNA never answers, so a ported program reading it is
-  silently told the wrong thing, where `Game.Content` merely lacks a setter and
-  fails loudly;
-* it **completes a type**: `RenderTargetBinding` has no other absence, so
-  partial types fall by one and the frontier table loses a row;
-* the risk is near zero -- the binding already computes `:POSITIVE-X` on both
-  native paths, so the change is the public reader and three tests that assert
-  `NIL` today;
-* it needs no new machinery, no new dependency and no new qualification lane.
+**The next task is `Game.Content`**, the other member the audit reclassified and
+the only entry left in `IMPLEMENTABLE_AND_HIGH_VALUE`. It is larger and
+architectural rather than local, and it should be taken on its own:
 
-`Game.Content` is the natural task after it: larger, and architectural rather
-than local, because the setter has to decide what happens to the game's own
-facade when a caller's manager replaces it, and to reproduce `DeviceDisposing`
-reaching the assigned manager. Do them in that order and separately.
+* the setter is `(setf content)` into the existing `%GAME-CONTENT` slot, with a
+  `NIL` argument refused as XNA's `ArgumentNullException()` is;
+* the decision it forces is what becomes of the game's **own** facade when a
+  caller's manager replaces it. The facade is `:PARENT-OWNED` and refuses
+  disposal; XNA simply drops its reference and lets the collector have it, and
+  this binding has no collector to hand it to. Nothing leaks natively -- CNA
+  releases its manager with the game -- but the answer has to be *chosen* rather
+  than fallen into;
+* `DeviceDisposing` must reach the **assigned** manager, because the pinned IL
+  reads the field rather than a saved reference: `this.content.Unload()`;
+* the tests are the five things the IL fixes -- identity on read-back, mutation
+  after assignment, provider identity, cache identity, and the disposing
+  `Unload` reaching the assigned manager.
 
-**Do not do either in the task that measured them.** This file records a
-measurement; the implementation is the next task's.
+**Do not also take a profile expansion in that task.** One member, measured.
 
 ### The candidates, if neither is taken
 
-Unchanged, and none of them is the recommendation while two members are
+Unchanged, and none of them is the recommendation while a member is still
 implementable inside the selection.
 
 | Candidate | Types | Members | New routes | Closes, in selected types | Deterministic CI | User value | Complexity |

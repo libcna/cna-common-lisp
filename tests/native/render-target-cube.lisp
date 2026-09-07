@@ -116,7 +116,28 @@ cube is bound one face at a time and a 2D target has no faces."
            binding (gfx:copy-render-target-binding binding))
           "a copy of a value must be equal to it"))
     (let ((flat (gfx:make-render-target-binding (flat-target game))))
-      (is (null (gfx:render-target-binding-cube-map-face flat))))
+      ;; **XNA's answer, and it is a stored value rather than a default.**
+      ;; RenderTargetBinding(RenderTarget2D) is `ldc.i4.0; stfld _cubeMapFace',
+      ;; so the property answers CubeMapFace.PositiveX for a 2D binding. This
+      ;; answered NIL until the frontier audit measured that NIL was a binding
+      ;; preference and not a projection limit.
+      (is (eq :positive-x (gfx:render-target-binding-cube-map-face flat))
+          "a 2D binding answers XNA's PositiveX, not NIL; it answered ~a"
+          (gfx:render-target-binding-cube-map-face flat))
+      ;; And the face is not what tells the two kinds apart -- the target is,
+      ;; in XNA as here. A cube binding of the same face is a different value.
+      (let ((cube (gfx:make-render-target-binding (cube-target game) :positive-x)))
+        (is (eq :positive-x (gfx:render-target-binding-cube-map-face cube)))
+        (is (not (gfx:render-target-binding-equal flat cube))
+            "same face, different targets: these are not the same binding")
+        (is (typep (gfx:render-target-binding-target cube) 'gfx:render-target-cube))
+        (is (not (typep (gfx:render-target-binding-target flat)
+                        'gfx:render-target-cube))
+            "which target it names is how a program tells a cube binding from a ~
+             flat one, now that both answer a face"))
+      (is (gfx:render-target-binding-equal
+           flat (gfx:make-render-target-binding (flat-target game)))
+          "two bindings of the same 2D target are the same value"))
     (signals xna:cna-argument-error
       (gfx:make-render-target-binding (cube-target game)))
     (signals xna:cna-argument-error
@@ -138,7 +159,9 @@ renderer measured supports."
     (let ((bound (observed game :flat-bound)))
       (is (= 1 (length bound)) "one target was bound and ~d came back" (length bound))
       (is (eq (flat-target game) (gfx:render-target-binding-target (first bound))))
-      (is (null (gfx:render-target-binding-cube-map-face (first bound)))))
+      (is (eq :positive-x (gfx:render-target-binding-cube-map-face (first bound)))
+          "a 2D binding read back from the device answers PositiveX, which is ~
+           both XNA's answer and what CNA reports for a 2D target"))
     (is (null (observed game :all-unbound))
         "SET-RENDER-TARGETS with no arguments is XNA's empty array and must ~
          restore the back buffer")))
@@ -224,10 +247,12 @@ GetRenderTargets did about it."))
         (gfx:set-render-targets device (gfx:make-render-target-binding (flat-a game)))
         (%record-cross-check
          game :unmutated device #'identity)
-        ;; A face where CNA reports none. CNA answers positive X for a 2D target
-        ;; -- "meaningless for a 2D target and must then be positive X" -- so a
-        ;; record claiming any other face is a record that does not describe the
-        ;; device, on every renderer.
+        ;; A face the device does not have. A 2D binding's face is positive X
+        ;; -- XNA's constructor stores it and CNA reports it, "meaningless for a
+        ;; 2D target and must then be positive X" -- so a record claiming any
+        ;; other face does not describe the device, on every renderer. Built
+        ;; through the *private* constructor because the public one refuses a
+        ;; face for a 2D target, which is XNA's shape and stays that way.
         (%record-cross-check
          game :wrong-face device
          (lambda (record)

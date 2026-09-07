@@ -18,14 +18,14 @@
   "types": 195,
   "members": 2581,
   "types_by_status": {
-   "partial": 24,
-   "complete": 171
+   "partial": 23,
+   "complete": 172
   },
   "members_by_status": {
-   "complete": 2086,
+   "complete": 2087,
    "missing": 23,
    "not-applicable": 443,
-   "partial": 29
+   "partial": 28
   },
   "diagnostics": 23,
   "diagnostics_by_category": {
@@ -430,12 +430,12 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.RenderTargetBinding",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(RenderTargetCube,CubeMapFace)": "complete",
     "new(RenderTarget2D)": "complete",
     "op_Implicit(RenderTarget2D)": "not-applicable",
-    "CubeMapFace": "partial",
+    "CubeMapFace": "complete",
     "RenderTarget": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:render-target-binding"
