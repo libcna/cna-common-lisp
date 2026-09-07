@@ -251,7 +251,7 @@ is observable — the constructed value and the one read back from the device �
 adds the check the change makes necessary: that a flat binding and a cube binding
 *of the same face* are still different values, told apart by their targets.
 
-## Content: what loads, and the two things that do not follow XNA## Content: what loads, and the two things that do not follow XNA
+## Content: what loads, and the two things that do not follow XNA
 
 `ContentManager` is projected, `Game.Content` with it, and that is what makes a
 `SpriteFont` obtainable at all — before it, the only producer in this binding was
@@ -565,14 +565,17 @@ argument for null and nothing else, so a manager belonging to another game, or a
 disposed one, is stored here as it would be stored there and fails where it is
 used rather than where it is assigned.
 
-**One thing the audit asked for turned out not to exist.** It said the setter
-would have to make `DeviceDisposing` reach the assigned manager, because XNA's
-private `Game.DeviceDisposing` handler calls `this.content.Unload()` and reads
-the field. That handler is real — `HookDeviceEvents` subscribes it to
-`IGraphicsDeviceService.DeviceDisposing` — but **this binding has never
-implemented it**, for `Game.Content` or for anything else, so there was nothing
-for the setter to redirect. Implementing it is a separate piece of work about the
-game's device-event hookup, not about this member, and it is not done here.
+**One thing the audit asked for did not exist yet, and now does.** It said the
+setter would have to make `DeviceDisposing` reach the assigned manager, because
+XNA's private `Game.DeviceDisposing` handler calls `this.content.Unload()` and
+reads the field. The handler is real — `HookDeviceEvents` subscribes it to
+`IGraphicsDeviceService.DeviceDisposing` — and when the setter landed this
+binding had never implemented it, for `Game.Content` or for anything else, so
+there was nothing for the setter to redirect. That was recorded here as separate
+work about the game's device-event hookup rather than about this member, and
+**it has since been done**: see *Game's private device-event wiring* below. The
+setter needed no change, which is what "separate piece of work" meant — the
+handler reads the field, and a field that holds a reference is all it needs.
 
 **A refused disposal costs the object nothing, and that took fixing.** `DISPOSE`
 invalidates through an `UNWIND-PROTECT`, and a parent-owned facade's refusal used

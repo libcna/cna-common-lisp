@@ -23,15 +23,20 @@
 ;;;; call exactly as GRAPHICS-DEVICE does. A manager built here instead is an
 ;;;; ordinary owned child of the game and is disposed like one.
 ;;;;
-;;;; **What is not projected, and why.** Both of XNA's constructors take an
-;;;; `IServiceProvider', which this binding cannot produce -- see
-;;;; `docs/limitations.md' on `Game.Services'. So construction here is a declared
-;;;; extension taking the graphics device, which is what `cna_content_manager_
-;;;; create' takes. `Game.Content`'s *setter* is not projected either, and
-;;;; that one is local work rather than an ABI limit: the reason used to be that
-;;;; `cna_game_set_content_manager_ext' copies, but nothing in CNA reads the
-;;;; manager it copies into, and XNA's own setter is a null check and a field
-;;;; store. docs/limitations.md has the measurement.
+;;;; **What is projected, and what this paragraph used to say.** Both of XNA's
+;;;; constructors take an `IServiceProvider', and until the Services closure this
+;;;; binding had none to give them -- so construction here was a declared
+;;;; extension over a graphics device, and `Game.Content''s setter was not
+;;;; projected at all. **Both of those statements are now false.**
+;;;; `GAME-SERVICE-CONTAINER' is a real `IServiceProvider', so
+;;;; `ContentManager(IServiceProvider)' and `ContentManager(IServiceProvider,
+;;;; String)' are both canonical constructors here; the graphics-device shape is
+;;;; kept beside them as the extension it always was, because a working
+;;;; constructor is not removed when a better-named one arrives. And
+;;;; `(setf CONTENT)' is a projected member: XNA's setter is a null check and a
+;;;; `stfld', which is what it is here, and it makes no native call -- see
+;;;; `src/content/game-content.lisp' for why `cna_game_set_content_manager_ext'
+;;;; is not the route it would use even if it made one.
 
 (in-package #:microsoft.xna.framework.content)
 
@@ -70,14 +75,21 @@ Reached as a game's own manager, which is the usual way:
       (setf (root-directory content) \"Content\")
       (load-asset content 'microsoft.xna.framework.graphics:sprite-font \"Arial\"))
 
-or built over a graphics device, which is a declared extension -- XNA's two
-constructors take an `IServiceProvider' and this binding has none:
+or through either of XNA's own constructors, which take an `IServiceProvider'
+and which `Game.Services' answers:
+
+    (make-instance 'content-manager :service-provider (services game))
+
+or built over a graphics device, which is this binding's declared extension and
+predates having a service provider to pass:
 
     (make-instance 'content-manager :graphics-device device
                                     :root-directory \"Content\")
 
 A game's manager is released with its game and cannot be disposed. One built
-here is an owned child of the game and must be."))
+here is an owned child of the game and must be -- **and that stays true when it
+is stored into `Game.Content'**, because a reference assignment is not an
+adoption."))
 
 ;;; --- handles ----------------------------------------------------------------
 

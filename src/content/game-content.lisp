@@ -7,18 +7,33 @@
 
 (defgeneric content (game)
   (:documentation
-   "Game.Content: the content manager this game owns.
+   "Game.Content: the ContentManager reference this game holds.
 
-The same object every time, as XNA's field is. It is a facade over the game's
-own manager -- CNA lends that one as a borrowed handle which \"answers the same
-handle every time, cannot be destroyed, and is released with its game\" -- so it
-is not disposed, and disposing it is refused with a diagnosable condition rather
-than a native failure.
+**A reference the game stores, which is not the same fact as who owns it**, and
+the two stopped being the same fact when the setter arrived. Read but never
+assigned, the property answers a facade over the game's *own* manager -- CNA
+lends that one as a borrowed handle which \"answers the same handle every time,
+cannot be destroyed, and is released with its game\" -- so that one is not
+disposed, and disposing it is refused with a diagnosable condition rather than a
+native failure. Assigned, the property answers whatever was assigned, and **its
+native ownership does not move**: a manager that was an owned child of some game
+stays that game's child and is still released with it. The field says what the
+game will load through and what its device-disposing handler will unload; it does
+not say what the game will destroy.
+
+The same object every time, as XNA's field is: repeated reads answer one object,
+and the facade is built at most once.
 
 **The setter assigns a reference**, as XNA's does: `(content game)' afterwards is
 `EQ' to the manager that was assigned, later changes to that manager are visible
 through the property because it is the same object, and its provider and its
-cache are its own. See `(setf content)'."))
+cache are its own. See `(setf content)'.
+
+**What reads this field, other than a program.** The game's own private
+`DeviceDisposing' handler does, when the graphics device is disposed, and calls
+`UNLOAD' on whatever it finds -- the current reference, not the original facade.
+That is XNA's `ldarg.0; ldfld content; callvirt Unload()', and
+`src/runtime/game-device-events.lisp' is where it lives."))
 
 (defgeneric (setf content) (value game)
   (:documentation
