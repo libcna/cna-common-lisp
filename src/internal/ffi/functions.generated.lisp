@@ -318,6 +318,22 @@
 (defcfun ("cna_graphics_device_copy_type_name" %graphics-device-copy-type-name) :uint32
   (graphics-device :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
 
+;;; CNA_Result cna_graphics_device_information_init(CNA_GraphicsDeviceInformation* out_information)
+(defcfun ("cna_graphics_device_information_init" %graphics-device-information-init) :uint32
+  (out-information :pointer))
+
+;;; CNA_Result cna_graphics_device_information_clone(const CNA_GraphicsDeviceInformation* information, CNA_GraphicsDeviceInformation* out_information)
+(defcfun ("cna_graphics_device_information_clone" %graphics-device-information-clone) :uint32
+  (information :pointer) (out-information :pointer))
+
+;;; CNA_Result cna_graphics_device_information_get_type_name_size(uint64_t* out_bytes)
+(defcfun ("cna_graphics_device_information_get_type_name_size" %graphics-device-information-get-type-name-size) :uint32
+  (out-bytes :pointer))
+
+;;; CNA_Result cna_graphics_device_information_copy_type_name(char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_graphics_device_information_copy_type_name" %graphics-device-information-copy-type-name) :uint32
+  (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
 ;;; CNA_Result cna_graphics_device_manager_create(CNA_Handle game, CNA_GraphicsDeviceManagerHandle* out_manager)
 (defcfun ("cna_graphics_device_manager_create" %graphics-device-manager-create) :uint32
   (game :uint64) (out-manager :pointer))
@@ -413,6 +429,30 @@
 ;;; CNA_Result cna_graphics_device_manager_subscribe(CNA_GraphicsDeviceManagerHandle manager, CNA_GraphicsDeviceManagerEvent event, CNA_GameEventCallback callback, void* context, CNA_GameEventRegistrationHandle* out_registration)
 (defcfun ("cna_graphics_device_manager_subscribe" %graphics-device-manager-subscribe) :uint32
   (manager :uint64) (event :uint32) (callback :pointer) (context :pointer) (out-registration :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_create_device(CNA_GraphicsDeviceManagerHandle manager)
+(defcfun ("cna_graphics_device_manager_create_device" %graphics-device-manager-create-device) :uint32
+  (manager :uint64))
+
+;;; CNA_Result cna_graphics_device_manager_begin_draw(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool* out_should_draw)
+(defcfun ("cna_graphics_device_manager_begin_draw" %graphics-device-manager-begin-draw) :uint32
+  (manager :uint64) (out-should-draw :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_end_draw(CNA_GraphicsDeviceManagerHandle manager)
+(defcfun ("cna_graphics_device_manager_end_draw" %graphics-device-manager-end-draw) :uint32
+  (manager :uint64))
+
+;;; CNA_Result cna_graphics_device_manager_get_type_name_size(CNA_GraphicsDeviceManagerHandle manager, uint64_t* out_bytes)
+(defcfun ("cna_graphics_device_manager_get_type_name_size" %graphics-device-manager-get-type-name-size) :uint32
+  (manager :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_copy_type_name(CNA_GraphicsDeviceManagerHandle manager, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_graphics_device_manager_copy_type_name" %graphics-device-manager-copy-type-name) :uint32
+  (manager :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_graphics_device_manager_subscribe_preparing_device_settings_ext(CNA_GraphicsDeviceManagerHandle manager, CNA_PreparingDeviceSettingsMutatorEXT callback, void* context, CNA_GameEventRegistrationHandle* out_registration)
+(defcfun ("cna_graphics_device_manager_subscribe_preparing_device_settings_ext" %graphics-device-manager-subscribe-preparing-device-settings-ext) :uint32
+  (manager :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
 
 ;;; CNA_Result cna_graphics_resource_get_is_disposed(CNA_Handle resource, CNA_Bool* out_is_disposed)
 (defcfun ("cna_graphics_resource_get_is_disposed" %graphics-resource-get-is-disposed) :uint32
@@ -1670,6 +1710,14 @@
 (defcfun ("cna_game_components_subscribe_removed" %game-components-subscribe-removed) :uint32
   (game :uint64) (callback :pointer) (context :pointer) (out-registration :pointer))
 
+;;; CNA_Result cna_game_services_contains_ext(CNA_Handle game, CNA_GameServiceType service, CNA_Bool* out_present)
+(defcfun ("cna_game_services_contains_ext" %game-services-contains-ext) :uint32
+  (game :uint64) (service :uint32) (out-present :pointer))
+
+;;; CNA_Result cna_game_services_remove_ext(CNA_Handle game, CNA_GameServiceType service)
+(defcfun ("cna_game_services_remove_ext" %game-services-remove-ext) :uint32
+  (game :uint64) (service :uint32))
+
 ;;; CNA_Result cna_texture2d_create(CNA_Handle graphics_device, const CNA_Texture2DCreateInfo* create_info, CNA_Handle* out_texture)
 (defcfun ("cna_texture2d_create" %texture-2d-create) :uint32
   (graphics-device :uint64) (create-info :pointer) (out-texture :pointer))
@@ -2903,6 +2951,10 @@
     ("cna_graphics_device_copy_renderer_name" %graphics-device-copy-renderer-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_get_type_name_size" %graphics-device-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_device_copy_type_name" %graphics-device-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_information_init" %graphics-device-information-init :uint32 (:pointer) :thread :any :ownership "none")
+    ("cna_graphics_device_information_clone" %graphics-device-information-clone :uint32 (:pointer :pointer) :thread :any :ownership "none")
+    ("cna_graphics_device_information_get_type_name_size" %graphics-device-information-get-type-name-size :uint32 (:pointer) :thread :any :ownership "none")
+    ("cna_graphics_device_information_copy_type_name" %graphics-device-information-copy-type-name :uint32 (:pointer :uint64 :pointer) :thread :any :ownership "none")
     ("cna_graphics_device_manager_create" %graphics-device-manager-create :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:graphics-device-manager")
     ("cna_graphics_device_manager_destroy" %graphics-device-manager-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:graphics-device-manager")
     ("cna_graphics_device_manager_apply_changes" %graphics-device-manager-apply-changes :uint32 (:uint64) :thread :owner :ownership "none")
@@ -2927,6 +2979,12 @@
     ("cna_graphics_device_manager_set_synchronize_with_vertical_retrace" %graphics-device-manager-set-synchronize-with-vertical-retrace :uint32 (:uint64 :uint8) :thread :owner :ownership "none")
     ("cna_graphics_device_manager_get_graphics_device" %graphics-device-manager-get-graphics-device :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows-callback-scoped:graphics-device")
     ("cna_graphics_device_manager_subscribe" %graphics-device-manager-subscribe :uint32 (:uint64 :uint32 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_graphics_device_manager_create_device" %graphics-device-manager-create-device :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_begin_draw" %graphics-device-manager-begin-draw :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_end_draw" %graphics-device-manager-end-draw :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_get_type_name_size" %graphics-device-manager-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_copy_type_name" %graphics-device-manager-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_graphics_device_manager_subscribe_preparing_device_settings_ext" %graphics-device-manager-subscribe-preparing-device-settings-ext :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
     ("cna_graphics_resource_get_is_disposed" %graphics-resource-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_resource_get_name_byte_count" %graphics-resource-get-name-byte-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_graphics_resource_copy_name" %graphics-resource-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
@@ -3241,6 +3299,8 @@
     ("cna_game_components_index_of" %game-components-index-of :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_game_components_subscribe_added" %game-components-subscribe-added :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
     ("cna_game_components_subscribe_removed" %game-components-subscribe-removed :uint32 (:uint64 :pointer :pointer :pointer) :thread :owner :ownership "creates")
+    ("cna_game_services_contains_ext" %game-services-contains-ext :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_game_services_remove_ext" %game-services-remove-ext :uint32 (:uint64 :uint32) :thread :owner :ownership "none")
     ("cna_texture2d_create" %texture-2d-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-2d:child-of-game")
     ("cna_texture2d_set_data" %texture-2d-set-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64) :thread :owner :ownership "none")
     ("cna_texture2d_get_data" %texture-2d-get-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64 :pointer) :thread :owner :ownership "none")

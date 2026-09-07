@@ -78,6 +78,11 @@
       "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING",
       "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET",
       "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESETTING",
+      "CNA_GAME_SERVICE_TYPE_GRAPHICS_DEVICE_MANAGER",
+      "CNA_GAME_SERVICE_TYPE_GRAPHICS_DEVICE_SERVICE",
+      "CNA_GAME_SERVICE_TYPE_MAXIMUM",
+      "CNA_GRAPHICS_DEVICE_MANAGER_DEFAULT_BACK_BUFFER_WIDTH",
+      "CNA_GRAPHICS_DEVICE_MANAGER_DEFAULT_BACK_BUFFER_HEIGHT",
       "CNA_KEY_STATE_UP",
       "CNA_KEY_STATE_DOWN",
       "CNA_MOUSE_BUTTON_NONE",
@@ -432,6 +437,11 @@
     },
     {
       "name": "CNA_PresentationParameters",
+      "direction": "in-out",
+      "versioned": true
+    },
+    {
+      "name": "CNA_GraphicsDeviceInformation",
       "direction": "in-out",
       "versioned": true
     },
@@ -830,6 +840,9 @@
     },
     {
       "name": "CNA_GameEventCallback"
+    },
+    {
+      "name": "CNA_PreparingDeviceSettingsMutatorEXT"
     },
     {
       "name": "CNA_GraphicsResourceDisposingCallback"
@@ -1325,6 +1338,30 @@
       "string_rule": "count-then-copy, no terminator, no partial write"
     },
     {
+      "name": "cna_graphics_device_information_init",
+      "header": "runtime_graphics_manager.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_information_clone",
+      "header": "runtime_graphics_manager.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_information_get_type_name_size",
+      "header": "runtime_graphics_manager.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_information_copy_type_name",
+      "header": "runtime_graphics_manager.h",
+      "thread": "any",
+      "ownership": "none"
+    },
+    {
       "name": "cna_graphics_device_manager_create",
       "header": "runtime_graphics_manager.h",
       "thread": "owner",
@@ -1464,6 +1501,42 @@
     },
     {
       "name": "cna_graphics_device_manager_subscribe",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "creates"
+    },
+    {
+      "name": "cna_graphics_device_manager_create_device",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_begin_draw",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_end_draw",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_type_name_size",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_copy_type_name",
+      "header": "runtime_graphics_manager.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_graphics_device_manager_subscribe_preparing_device_settings_ext",
       "header": "runtime_graphics_manager.h",
       "thread": "owner",
       "ownership": "creates"
@@ -3357,6 +3430,18 @@
       "header": "runtime_components.h",
       "thread": "owner",
       "ownership": "creates"
+    },
+    {
+      "name": "cna_game_services_contains_ext",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_game_services_remove_ext",
+      "header": "runtime_components.h",
+      "thread": "owner",
+      "ownership": "none"
     },
     {
       "name": "cna_texture2d_create",

@@ -286,3 +286,37 @@ Unlike every other event in this binding, this one's argument is not empty:
 directly rather than a description, so the handle is what reaches the dispatcher
 and the dispatcher resolves it to the component object."
   (callback component-collection-callback))
+
+(defvar *preparing-device-settings-dispatcher* nil
+  "Function of (TOKEN INFORMATION-POINTER), called while device settings are
+being prepared.
+
+**The only callback in this binding whose argument is mutable**, and the whole
+point of the route that installs it. CNA hands the handler a
+`CNA_GraphicsDeviceInformation*' that is borrowed for the duration of the call
+and whose fields are what the device is then created from; the older
+`CNA_PreparingDeviceSettingsCallback' takes the same structure `const' and is
+deliberately not bound, because a binding that could only observe would be
+projecting a member XNA has for changing things.
+
+The pointer is passed straight through rather than being read here. Reading it
+into a CLOS object and writing the final state back is the dispatcher's job,
+because the object the handlers see has to be one object for the whole callback
+-- see `runtime/preparing-device-settings.lisp'.
+
+Void-returning like every other event callback, so a handler's condition has
+nowhere to go through C and is contained the same way. CNA's own header says the
+same: \"a handler that cannot decide what to change simply changes nothing, and
+there is no failure for it to report that device preparation could act on\".")
+
+(defcallback preparing-device-settings-callback :void
+    ((information :pointer) (context :pointer))
+  (let ((dispatcher *preparing-device-settings-dispatcher*))
+    ;; No dispatcher means the registry was torn down under a live subscription.
+    (when dispatcher
+      (ignore-errors (funcall dispatcher (pointer-address context) information)))))
+
+(defun preparing-device-settings-callback-pointer ()
+  "The one top-level callback CNA is given for every PreparingDeviceSettings
+subscription. The token in the context names the manager and the handler set."
+  (callback preparing-device-settings-callback))

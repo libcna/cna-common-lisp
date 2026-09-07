@@ -130,6 +130,19 @@ _Static_assert(sizeof(((CNA_PresentationParameters *)0)->headless_ext) == 1, "CN
 _Static_assert(offsetof(CNA_PresentationParameters, reserved) == 42, "CNA_PresentationParameters.reserved offset");
 _Static_assert(sizeof(((CNA_PresentationParameters *)0)->reserved) == 2, "CNA_PresentationParameters.reserved size");
 
+_Static_assert(sizeof(CNA_GraphicsDeviceInformation) == 60, "CNA_GraphicsDeviceInformation size");
+_Static_assert(_Alignof(CNA_GraphicsDeviceInformation) == 4, "CNA_GraphicsDeviceInformation alignment");
+_Static_assert(offsetof(CNA_GraphicsDeviceInformation, struct_size) == 0, "CNA_GraphicsDeviceInformation.struct_size offset");
+_Static_assert(sizeof(((CNA_GraphicsDeviceInformation *)0)->struct_size) == 4, "CNA_GraphicsDeviceInformation.struct_size size");
+_Static_assert(offsetof(CNA_GraphicsDeviceInformation, struct_version) == 4, "CNA_GraphicsDeviceInformation.struct_version offset");
+_Static_assert(sizeof(((CNA_GraphicsDeviceInformation *)0)->struct_version) == 4, "CNA_GraphicsDeviceInformation.struct_version size");
+_Static_assert(offsetof(CNA_GraphicsDeviceInformation, adapter_index) == 8, "CNA_GraphicsDeviceInformation.adapter_index offset");
+_Static_assert(sizeof(((CNA_GraphicsDeviceInformation *)0)->adapter_index) == 4, "CNA_GraphicsDeviceInformation.adapter_index size");
+_Static_assert(offsetof(CNA_GraphicsDeviceInformation, graphics_profile) == 12, "CNA_GraphicsDeviceInformation.graphics_profile offset");
+_Static_assert(sizeof(((CNA_GraphicsDeviceInformation *)0)->graphics_profile) == 4, "CNA_GraphicsDeviceInformation.graphics_profile size");
+_Static_assert(offsetof(CNA_GraphicsDeviceInformation, presentation_parameters) == 16, "CNA_GraphicsDeviceInformation.presentation_parameters offset");
+_Static_assert(sizeof(((CNA_GraphicsDeviceInformation *)0)->presentation_parameters) == 44, "CNA_GraphicsDeviceInformation.presentation_parameters size");
+
 _Static_assert(sizeof(CNA_Rectangle) == 16, "CNA_Rectangle size");
 _Static_assert(_Alignof(CNA_Rectangle) == 4, "CNA_Rectangle alignment");
 _Static_assert(offsetof(CNA_Rectangle, x) == 0, "CNA_Rectangle.x offset");
@@ -1409,6 +1422,10 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_renderer_info)(CNA_Han
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_copy_renderer_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_graphics_device_copy_renderer_name;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_get_type_name_size)(CNA_Handle, uint64_t*) = cna_graphics_device_get_type_name_size;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_copy_type_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_graphics_device_copy_type_name;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_information_init)(CNA_GraphicsDeviceInformation*) = cna_graphics_device_information_init;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_information_clone)(const CNA_GraphicsDeviceInformation*, CNA_GraphicsDeviceInformation*) = cna_graphics_device_information_clone;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_information_get_type_name_size)(uint64_t*) = cna_graphics_device_information_get_type_name_size;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_information_copy_type_name)(char*, uint64_t, uint64_t*) = cna_graphics_device_information_copy_type_name;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_create)(CNA_Handle, CNA_GraphicsDeviceManagerHandle*) = cna_graphics_device_manager_create;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_destroy)(CNA_GraphicsDeviceManagerHandle) = cna_graphics_device_manager_destroy;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_apply_changes)(CNA_GraphicsDeviceManagerHandle) = cna_graphics_device_manager_apply_changes;
@@ -1433,6 +1450,12 @@ CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_synchronize_wi
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_set_synchronize_with_vertical_retrace)(CNA_GraphicsDeviceManagerHandle, CNA_Bool) = cna_graphics_device_manager_set_synchronize_with_vertical_retrace;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_graphics_device)(CNA_GraphicsDeviceManagerHandle, CNA_Handle*) = cna_graphics_device_manager_get_graphics_device;
 CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_subscribe)(CNA_GraphicsDeviceManagerHandle, CNA_GraphicsDeviceManagerEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*) = cna_graphics_device_manager_subscribe;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_create_device)(CNA_GraphicsDeviceManagerHandle) = cna_graphics_device_manager_create_device;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_begin_draw)(CNA_GraphicsDeviceManagerHandle, CNA_Bool*) = cna_graphics_device_manager_begin_draw;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_end_draw)(CNA_GraphicsDeviceManagerHandle) = cna_graphics_device_manager_end_draw;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_get_type_name_size)(CNA_GraphicsDeviceManagerHandle, uint64_t*) = cna_graphics_device_manager_get_type_name_size;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_copy_type_name)(CNA_GraphicsDeviceManagerHandle, char*, uint64_t, uint64_t*) = cna_graphics_device_manager_copy_type_name;
+CNA_Result (*const cna_lisp_probe_cna_graphics_device_manager_subscribe_preparing_device_settings_ext)(CNA_GraphicsDeviceManagerHandle, CNA_PreparingDeviceSettingsMutatorEXT, void*, CNA_GameEventRegistrationHandle*) = cna_graphics_device_manager_subscribe_preparing_device_settings_ext;
 CNA_Result (*const cna_lisp_probe_cna_graphics_resource_get_is_disposed)(CNA_Handle, CNA_Bool*) = cna_graphics_resource_get_is_disposed;
 CNA_Result (*const cna_lisp_probe_cna_graphics_resource_get_name_byte_count)(CNA_Handle, uint64_t*) = cna_graphics_resource_get_name_byte_count;
 CNA_Result (*const cna_lisp_probe_cna_graphics_resource_copy_name)(CNA_Handle, char*, uint64_t, uint64_t*) = cna_graphics_resource_copy_name;
@@ -1747,6 +1770,8 @@ CNA_Result (*const cna_lisp_probe_cna_game_components_contains)(CNA_Handle, CNA_
 CNA_Result (*const cna_lisp_probe_cna_game_components_index_of)(CNA_Handle, CNA_GameComponentHandle, int32_t*) = cna_game_components_index_of;
 CNA_Result (*const cna_lisp_probe_cna_game_components_subscribe_added)(CNA_Handle, CNA_GameComponentCollectionCallback, void*, CNA_GameComponentEventRegistrationHandle*) = cna_game_components_subscribe_added;
 CNA_Result (*const cna_lisp_probe_cna_game_components_subscribe_removed)(CNA_Handle, CNA_GameComponentCollectionCallback, void*, CNA_GameComponentEventRegistrationHandle*) = cna_game_components_subscribe_removed;
+CNA_Result (*const cna_lisp_probe_cna_game_services_contains_ext)(CNA_Handle, CNA_GameServiceType, CNA_Bool*) = cna_game_services_contains_ext;
+CNA_Result (*const cna_lisp_probe_cna_game_services_remove_ext)(CNA_Handle, CNA_GameServiceType) = cna_game_services_remove_ext;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_create)(CNA_Handle, const CNA_Texture2DCreateInfo*, CNA_Handle*) = cna_texture2d_create;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_set_data)(CNA_Handle, CNA_TextureDataType, const CNA_Texture2DTransfer*, const void*, uint64_t) = cna_texture2d_set_data;
 CNA_Result (*const cna_lisp_probe_cna_texture2d_get_data)(CNA_Handle, CNA_TextureDataType, const CNA_Texture2DTransfer*, void*, uint64_t, uint64_t*) = cna_texture2d_get_data;
@@ -2041,6 +2066,7 @@ CNA_Result (*const cna_lisp_probe_cna_content_manager_load_model)(CNA_Handle, CN
 _Static_assert(sizeof(CNA_GameLifecycleCallback) == sizeof(void (*)(void)), "CNA_GameLifecycleCallback size");
 _Static_assert(sizeof(CNA_GameBeginDrawCallback) == sizeof(void (*)(void)), "CNA_GameBeginDrawCallback size");
 _Static_assert(sizeof(CNA_GameEventCallback) == sizeof(void (*)(void)), "CNA_GameEventCallback size");
+_Static_assert(sizeof(CNA_PreparingDeviceSettingsMutatorEXT) == sizeof(void (*)(void)), "CNA_PreparingDeviceSettingsMutatorEXT size");
 _Static_assert(sizeof(CNA_GraphicsResourceDisposingCallback) == sizeof(void (*)(void)), "CNA_GraphicsResourceDisposingCallback size");
 _Static_assert(sizeof(CNA_GraphicsDeviceEventCallback) == sizeof(void (*)(void)), "CNA_GraphicsDeviceEventCallback size");
 _Static_assert(sizeof(CNA_VertexBufferContentLostCallback) == sizeof(void (*)(void)), "CNA_VertexBufferContentLostCallback size");
@@ -2235,6 +2261,9 @@ _Static_assert((int64_t)(CNA_GAME_EVENT_ACTIVATED) == INT64_C(0), "CNA_GAME_EVEN
 _Static_assert((int64_t)(CNA_GAME_EVENT_DEACTIVATED) == INT64_C(1), "CNA_GAME_EVENT_DEACTIVATED value");
 _Static_assert((int64_t)(CNA_GAME_EVENT_DISPOSED) == INT64_C(2), "CNA_GAME_EVENT_DISPOSED value");
 _Static_assert((int64_t)(CNA_GAME_EVENT_EXITING) == INT64_C(3), "CNA_GAME_EVENT_EXITING value");
+_Static_assert((int64_t)(CNA_GAME_SERVICE_TYPE_GRAPHICS_DEVICE_MANAGER) == INT64_C(0), "CNA_GAME_SERVICE_TYPE_GRAPHICS_DEVICE_MANAGER value");
+_Static_assert((int64_t)(CNA_GAME_SERVICE_TYPE_GRAPHICS_DEVICE_SERVICE) == INT64_C(1), "CNA_GAME_SERVICE_TYPE_GRAPHICS_DEVICE_SERVICE value");
+_Static_assert((int64_t)(CNA_GAME_SERVICE_TYPE_MAXIMUM) == INT64_C(1), "CNA_GAME_SERVICE_TYPE_MAXIMUM value");
 _Static_assert((int64_t)(CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED) == INT64_C(0), "CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED value");
 _Static_assert((int64_t)(CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED) == INT64_C(1), "CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED value");
 _Static_assert((int64_t)(CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED) == INT64_C(2), "CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED value");
@@ -2253,6 +2282,8 @@ _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST) == INT64_C(1), "
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET) == INT64_C(2), "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING) == INT64_C(3), "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_EVENT_DISPOSING) == INT64_C(0), "CNA_GRAPHICS_DEVICE_EVENT_DISPOSING value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_DEFAULT_BACK_BUFFER_HEIGHT) == INT64_C(480), "CNA_GRAPHICS_DEVICE_MANAGER_DEFAULT_BACK_BUFFER_HEIGHT value");
+_Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_DEFAULT_BACK_BUFFER_WIDTH) == INT64_C(800), "CNA_GRAPHICS_DEVICE_MANAGER_DEFAULT_BACK_BUFFER_WIDTH value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED) == INT64_C(1), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING) == INT64_C(2), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING value");
 _Static_assert((int64_t)(CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET) == INT64_C(3), "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET value");

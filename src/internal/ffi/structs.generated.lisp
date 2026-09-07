@@ -104,6 +104,17 @@
 (defconstant +sizeof-cna-presentation-parameters+ 44)
 (defconstant +alignof-cna-presentation-parameters+ 4)
 
+;;; CNA_GraphicsDeviceInformation -- 60 bytes, 4-byte aligned, from runtime_graphics_manager.h.
+(defcstruct (cna-graphics-device-information :size 60)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (adapter-index :int32 :offset 8)
+  (graphics-profile :uint32 :offset 12)
+  (presentation-parameters (:struct cna-presentation-parameters) :offset 16))
+
+(defconstant +sizeof-cna-graphics-device-information+ 60)
+(defconstant +alignof-cna-graphics-device-information+ 4)
+
 ;;; CNA_Rectangle -- 16 bytes, 4-byte aligned, from core.h.
 ;;; Passed by value as :uint64 :uint64 (System V AMD64 eightbyte classes: INTEGER INTEGER).
 (defcstruct (cna-rectangle :size 16)
@@ -1020,6 +1031,7 @@
     (cna-graphics-format-selection 24 4 ((struct-size 0 4) (struct-version 4 4) (exact-match 8 1) (reserved 9 3) (format 12 4) (depth-format 16 4) (multi-sample-count 20 4)))
     (cna-display-mode 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (aspect-ratio 16 4) (format 20 4)))
     (cna-presentation-parameters 44 4 ((struct-size 0 4) (struct-version 4 4) (back-buffer-format 8 4) (back-buffer-width 12 4) (back-buffer-height 16 4) (depth-stencil-format 20 4) (multi-sample-count 24 4) (presentation-interval 28 4) (display-orientation 32 4) (render-target-usage 36 4) (is-full-screen 40 1) (headless-ext 41 1) (reserved 42 2)))
+    (cna-graphics-device-information 60 4 ((struct-size 0 4) (struct-version 4 4) (adapter-index 8 4) (graphics-profile 12 4) (presentation-parameters 16 44)))
     (cna-rectangle 16 4 ((x 0 4) (y 4 4) (width 8 4) (height 12 4)))
     (cna-point 8 4 ((x 0 4) (y 4 4)))
     (cna-vector-2 8 4 ((x 0 4) (y 4 4)))

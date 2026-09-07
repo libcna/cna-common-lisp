@@ -42,6 +42,8 @@ by tools/native-abi/generate.py.")
    #:component-collection-callback-pointer #:*component-collection-dispatcher*
    #:*buffer-content-lost-dispatcher*
    #:*begin-draw-dispatcher*
+   #:preparing-device-settings-callback-pointer
+   #:*preparing-device-settings-dispatcher*
    ;; constants the runtime reads by name
    #:+mouse-button-left+ #:+mouse-button-middle+ #:+mouse-button-right+
    #:+mouse-button-x1+ #:+mouse-button-x2+

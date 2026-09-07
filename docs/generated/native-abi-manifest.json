@@ -34,11 +34,11 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 703,
-    "structs": 74,
-    "struct_fields": 550,
-    "constants": 535,
-    "callbacks": 13,
+    "functions": 715,
+    "structs": 75,
+    "struct_fields": 555,
+    "constants": 540,
+    "callbacks": 14,
     "by_value_aggregates": 6,
     "shimmed_routes": 4
   },
@@ -2111,6 +2111,89 @@
       "c_prototype": "CNA_Result cna_graphics_device_copy_type_name(CNA_Handle graphics_device, char* destination, uint64_t capacity, uint64_t* out_bytes)"
     },
     {
+      "name": "cna_graphics_device_information_init",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_information",
+          "c_type": "CNA_GraphicsDeviceInformation*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_information_init(CNA_GraphicsDeviceInformation* out_information)"
+    },
+    {
+      "name": "cna_graphics_device_information_clone",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "information",
+          "c_type": "const CNA_GraphicsDeviceInformation*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_information",
+          "c_type": "CNA_GraphicsDeviceInformation*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_information_clone(const CNA_GraphicsDeviceInformation* information, CNA_GraphicsDeviceInformation* out_information)"
+    },
+    {
+      "name": "cna_graphics_device_information_get_type_name_size",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_information_get_type_name_size(uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_graphics_device_information_copy_type_name",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "any",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_information_copy_type_name(char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
       "name": "cna_graphics_device_manager_create",
       "header": "runtime_graphics_manager.h",
       "c_returns": "CNA_Result",
@@ -2637,6 +2720,148 @@
       "ownership": "creates",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_graphics_device_manager_subscribe(CNA_GraphicsDeviceManagerHandle manager, CNA_GraphicsDeviceManagerEvent event, CNA_GameEventCallback callback, void* context, CNA_GameEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_graphics_device_manager_create_device",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_create_device(CNA_GraphicsDeviceManagerHandle manager)"
+    },
+    {
+      "name": "cna_graphics_device_manager_begin_draw",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_should_draw",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_begin_draw(CNA_GraphicsDeviceManagerHandle manager, CNA_Bool* out_should_draw)"
+    },
+    {
+      "name": "cna_graphics_device_manager_end_draw",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_end_draw(CNA_GraphicsDeviceManagerHandle manager)"
+    },
+    {
+      "name": "cna_graphics_device_manager_get_type_name_size",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_get_type_name_size(CNA_GraphicsDeviceManagerHandle manager, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_graphics_device_manager_copy_type_name",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_copy_type_name(CNA_GraphicsDeviceManagerHandle manager, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_graphics_device_manager_subscribe_preparing_device_settings_ext",
+      "header": "runtime_graphics_manager.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "manager",
+          "c_type": "CNA_GraphicsDeviceManagerHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "callback",
+          "c_type": "CNA_PreparingDeviceSettingsMutatorEXT",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_registration",
+          "c_type": "CNA_GameEventRegistrationHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_graphics_device_manager_subscribe_preparing_device_settings_ext(CNA_GraphicsDeviceManagerHandle manager, CNA_PreparingDeviceSettingsMutatorEXT callback, void* context, CNA_GameEventRegistrationHandle* out_registration)"
     },
     {
       "name": "cna_graphics_resource_get_is_disposed",
@@ -10472,6 +10697,55 @@
       "ownership": "creates",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_game_components_subscribe_removed(CNA_Handle game, CNA_GameComponentCollectionCallback callback, void* context, CNA_GameComponentEventRegistrationHandle* out_registration)"
+    },
+    {
+      "name": "cna_game_services_contains_ext",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "service",
+          "c_type": "CNA_GameServiceType",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_present",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_services_contains_ext(CNA_Handle game, CNA_GameServiceType service, CNA_Bool* out_present)"
+    },
+    {
+      "name": "cna_game_services_remove_ext",
+      "header": "runtime_components.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "service",
+          "c_type": "CNA_GameServiceType",
+          "cffi_type": ":uint32"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_game_services_remove_ext(CNA_Handle game, CNA_GameServiceType service)"
     },
     {
       "name": "cna_texture2d_create",
@@ -18491,6 +18765,61 @@
       "versioned": true
     },
     {
+      "name": "CNA_GraphicsDeviceInformation",
+      "size": 60,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "adapter_index",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "graphics_profile",
+          "c_type": "CNA_GraphicsProfile",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "presentation_parameters",
+          "c_type": "CNA_PresentationParameters",
+          "offset": 16,
+          "size": 44,
+          "count": null,
+          "cffi_type": "AGGREGATE:CNA_PresentationParameters",
+          "kind": "aggregate"
+        }
+      ],
+      "header": "runtime_graphics_manager.h",
+      "direction": "in-out",
+      "versioned": true
+    },
+    {
       "name": "CNA_Rectangle",
       "size": 16,
       "align": 4,
@@ -23809,6 +24138,23 @@
       ]
     },
     {
+      "name": "CNA_PreparingDeviceSettingsMutatorEXT",
+      "returns": ":void",
+      "c_returns": "void",
+      "params": [
+        {
+          "name": "information",
+          "c_type": "CNA_GraphicsDeviceInformation*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "context",
+          "c_type": "void*",
+          "cffi_type": ":pointer"
+        }
+      ]
+    },
+    {
       "name": "CNA_GraphicsResourceDisposingCallback",
       "returns": ":void",
       "c_returns": "void",
@@ -24136,6 +24482,9 @@
     "CNA_GAME_EVENT_DEACTIVATED": 1,
     "CNA_GAME_EVENT_DISPOSED": 2,
     "CNA_GAME_EVENT_EXITING": 3,
+    "CNA_GAME_SERVICE_TYPE_GRAPHICS_DEVICE_MANAGER": 0,
+    "CNA_GAME_SERVICE_TYPE_GRAPHICS_DEVICE_SERVICE": 1,
+    "CNA_GAME_SERVICE_TYPE_MAXIMUM": 1,
     "CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED": 0,
     "CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED": 1,
     "CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED": 2,
@@ -24154,6 +24503,8 @@
     "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET": 2,
     "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING": 3,
     "CNA_GRAPHICS_DEVICE_EVENT_DISPOSING": 0,
+    "CNA_GRAPHICS_DEVICE_MANAGER_DEFAULT_BACK_BUFFER_HEIGHT": 480,
+    "CNA_GRAPHICS_DEVICE_MANAGER_DEFAULT_BACK_BUFFER_WIDTH": 800,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_CREATED": 1,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_DISPOSING": 2,
     "CNA_GRAPHICS_DEVICE_MANAGER_EVENT_DEVICE_RESET": 3,
