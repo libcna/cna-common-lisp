@@ -814,4 +814,3 @@ member usable as evidence that pixels were produced. See docs/limitations.md."))
             (setf (aref result index)
                   (microsoft.xna.framework:color-from-packed-value
                    (cffi:mem-aref destination :uint32 index)))))))))
-
