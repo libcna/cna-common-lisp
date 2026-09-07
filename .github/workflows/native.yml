@@ -3,6 +3,9 @@
 #
 #   native      HEADLESS. Proves the lifecycle ran, handles were valid and draw
 #               commands were submitted and accepted. Proves nothing about pixels.
+#               This is also where the *no-game* claims run: the storage lanes,
+#               and the caller-owned GraphicsDevice, which is the only graphics
+#               surface here that needs no `Game' at all.
 #   rasterizer  SOFTWARE, a CPU rasteriser that needs no display and no Xvfb.
 #               Three separate proofs: a Clear reaches the back buffer and reads
 #               back; a SpriteBatch draw puts a generated opaque texture's own
@@ -453,6 +456,24 @@ jobs:
           CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
         run: tools/qualification/services.sh
 
+      # The caller-owned GraphicsDevice, in a lane of its own because the claim
+      # it makes is that a GraphicsDevice needs no `Game' -- and a suite run
+      # creates games, so a lane proving that cannot be one of its tests. Nine
+      # kinds of evidence are required by name; reading one out of another is
+      # what a single "owned device works" line would do.
+      #
+      # This job's renderer is HEADLESS, so the script takes the no-readback
+      # branch and **makes no pixel claim**: it proves the standalone device's
+      # lifecycle, its commands, its resource ownership and its disposal. The
+      # rasterizer job below runs the same script against SOFTWARE, where the
+      # pixel claim is made. The script refuses a run that produces both
+      # branches or neither.
+      - name: Owned GraphicsDevice qualification, and its no-game consumer lane
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: tools/qualification/owned-graphics-device.sh
+
       - name: Isolated consumer qualification, 60 and 600 frames
         working-directory: cna-common-lisp
         run: |
@@ -655,6 +676,17 @@ jobs:
           sbcl --non-interactive --load ~/quicklisp/setup.lisp \
                --eval '(ql-dist:install-dist "http://beta.quicklisp.org/dist/quicklisp/2026-01-01/distinfo.txt" :replace t :prompt nil)' \
                --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :trivial-gray-streams :fiveam))'
+
+      # The same script as the HEADLESS job above, against a rasterising
+      # renderer: here it takes the readback branch and checks a standalone
+      # device's pixels one by one. Both runs are needed and neither implies the
+      # other -- that is the whole evidence discipline of this repository,
+      # applied to the first graphics surface that needs no game.
+      - name: Owned GraphicsDevice qualification, with pixels it can point at
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: tools/qualification/owned-graphics-device.sh
 
       # No Xvfb and no DISPLAY: the SOFTWARE renderer is a CPU rasteriser. The
       # script fails if the run silently took the no-readback branch, which is
