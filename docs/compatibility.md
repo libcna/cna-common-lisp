@@ -123,8 +123,8 @@ genuine absence.
 <!-- generated:complete types=172 -->
 <!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2087 -->
-<!-- generated:partial members=28 -->
+<!-- generated:complete members=2088 -->
+<!-- generated:partial members=27 -->
 <!-- generated:missing members=23 -->
 <!-- generated:not-applicable members=443 -->
 <!-- generated:disagreement total=0 -->
@@ -139,8 +139,8 @@ Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
 | Types complete | **172** |
 | Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **2087** |
-| Members partial | **28** |
+| Members complete | **2088** |
+| Members partial | **27** |
 | Members missing | **23** |
 | Members not applicable | **443** |
 | **Disagreement diagnostics** | **0** |
@@ -154,7 +154,7 @@ collapsed overload family says how each of its overloads is expressed.
 <!-- generated-block:per-type-table -->
 | Type | Status | complete | partial | missing | n/a |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `M.X.F.Game` | **partial** | 32 | 1 | 3 | 2 |
+| `M.X.F.Game` | **partial** | 33 | 0 | 3 | 2 |
 | `M.X.F.GameTime` | **complete** | 6 | 0 | 0 | 0 |
 | `M.X.F.IGameComponent` | **complete** | 1 | 0 | 0 | 0 |
 | `M.X.F.IUpdateable` | **complete** | 5 | 0 | 0 | 0 |
@@ -393,7 +393,7 @@ back-reference.
 | Type | missing members | partial members |
 | --- | ---: | ---: |
 | `M.X.F.GameWindow` | 7 | 0 |
-| `M.X.F.Game` | 3 | 1 |
+| `M.X.F.Game` | 3 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | 3 | 1 |
 | `M.X.F.Media.Song` | 3 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
@@ -449,10 +449,10 @@ and so is a category left behind by a member that has since been completed.
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
-| `IMPLEMENTABLE_AND_HIGH_VALUE` | **1** | Nothing blocks it and it should be done next. |
+| `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
 <!-- /generated-block:frontier-categories -->
 
-<!-- generated:high-value frontier members=1 --> members are in
+<!-- generated:high-value frontier members=0 --> members are in
 `IMPLEMENTABLE_AND_HIGH_VALUE`. **That row was zero when the release statement
 rested on it and is not any more**: the 2026-09-07 audit re-read all 29 partial
 reasons against the current admitted set and two did not survive --

@@ -146,6 +146,120 @@ gives. Two glyphs eight wide with no bearings is sixteen by the line spacing."
   (with-content-game (game)
     (is (eq (xna:content game) (xna:content game)))))
 
+(defclass content-setter-game (graphics-game)
+  ((observations :initform '() :accessor observations)
+   ;; Held so the lane can release it: disposal does not cascade here, and an
+   ;; owned CONTENT-MANAGER left alive would refuse the game's own teardown.
+   (assigned :initform nil :accessor assigned-manager)
+   (setter-error :initform nil :accessor setter-error))
+  (:documentation
+   "Exercises Game.Content's setter inside LoadContent.
+
+Inside, because the assignment needs a second CONTENT-MANAGER and building one
+needs the game's graphics device, which CNA lends for the duration of a callback
+and no longer. The observations are booleans so the assertions can be made after
+the game has shut down."))
+
+(defmethod xna:load-content ((game content-setter-game))
+  (call-next-method)
+  (handler-case
+      (let* ((device (xna:graphics-device game))
+             (facade (xna:content game))
+             (mine (make-instance 'xna.content:content-manager :graphics-device device)))
+        (setf (assigned-manager game) mine)
+        (observe game :distinct (not (eq facade mine)))
+        ;; The assignment, and XNA's `stfld'.
+        (setf (xna:content game) mine)
+        (observe game :identity (eq mine (xna:content game)))
+        ;; A reference, not a copy: mutate the manager after assigning it.
+        (setf (xna.content:root-directory mine) "assigned-and-then-changed")
+        (observe game :mutation-visible
+                 (string= "assigned-and-then-changed"
+                          (xna.content:root-directory (xna:content game))))
+        ;; Its own provider and its own cache. The facade's provider is the
+        ;; game's services; a manager built over a device has none, and being
+        ;; assigned does not lend it one.
+        (observe game :assigned-keeps-its-provider
+                 (null (xna.content:service-provider (xna:content game))))
+        (observe game :facade-keeps-services
+                 (eq (xna.content:service-provider facade) (xna:services game)))
+        (observe game :caches-distinct
+                 (not (eq (xna.content::%content-loaded-assets mine)
+                          (xna.content::%content-loaded-assets facade))))
+        ;; Nothing is disposed -- XNA's setter disposes nothing -- and ownership
+        ;; does not move: the manager was already an owned child of this game
+        ;; before the assignment and still is one.
+        (observe game :nothing-disposed (not (xna:disposed-p facade)))
+        (observe game :ownership-unmoved
+                 (and (member mine (int:children-of game)) t))
+        ;; NIL is refused, and refused *first*, so the property does not move.
+        (observe game :null-refused
+                 (handler-case (progn (setf (xna:content game) nil) nil)
+                   (xna:cna-argument-error () t)))
+        (observe game :unmoved-by-refusal (eq mine (xna:content game)))
+        ;; The replaced facade can be put back, because it was only unreferenced.
+        (setf (xna:content game) facade)
+        (observe game :reassignable (eq facade (xna:content game))))
+    (error (condition) (setf (setter-error game) condition))))
+
+(define-native-test game-content-s-setter-assigns-a-reference-and-nothing-else
+  "Game.Content's setter, which is `stfld' in XNA and is one here too.
+
+The pinned IL is a null check throwing `ArgumentNullException()' and then
+`ldarg.0; ldarg.1; stfld content'. There is no other effect, and in particular no
+native call: CNA's `cna_game_set_content_manager_ext' **copies**, which cannot
+express a reference assignment -- but nothing needs it to, because CNA's own game
+never loads through the manager that route writes. This member was reported
+partial on the copying route's account until the 2026-09-07 frontier audit
+measured that the route had never been the obstacle.
+
+What the assignment must and must not do is the whole test."
+  (let ((game (make-instance 'content-setter-game :exit-after 2)))
+    (unwind-protect
+         (progn
+           (xna:run game)
+           (is (null (setter-error game)) "the setter lane failed: ~a"
+               (setter-error game))
+           (is-true (observed game :distinct))
+           (is-true (observed game :identity)
+                    "Game.Content answers the object that was assigned, by identity")
+           (is-true (observed game :mutation-visible)
+                    "a change made to the assigned manager is visible through the ~
+                     property, which is what makes this a reference and not CNA's copy")
+           (is-true (observed game :assigned-keeps-its-provider)
+                    "the assigned manager keeps its own provider rather than ~
+                     inheriting the facade's")
+           (is-true (observed game :facade-keeps-services)
+                    "and the facade still has the one the Game constructor gave it")
+           (is-true (observed game :caches-distinct)
+                    "two managers are two caches; assigning one does not merge them")
+           (is-true (observed game :nothing-disposed)
+                    "the replaced manager is not disposed; XNA's setter disposes nothing")
+           (is-true (observed game :ownership-unmoved)
+                    "a reference store is not an adoption: the assigned manager was ~
+                     already an owned child of this game and still is")
+           (is-true (observed game :null-refused)
+                    "NIL is refused, as XNA's ArgumentNullException refuses it")
+           (is-true (observed game :unmoved-by-refusal)
+                    "and refused before anything is stored, so the property did not move")
+           (is-true (observed game :reassignable)
+                    "the game's own facade can be put back, because it was only ~
+                     unreferenced"))
+      (progn
+        ;; The manager the lane built is an owned child and disposal does not
+        ;; cascade, so it goes before its game -- exactly as a program's would.
+        (when (assigned-manager game)
+          (ignore-errors (xna:dispose (assigned-manager game))))
+        (when (batch game) (ignore-errors (xna:dispose (batch game))))
+        (when (texture game) (ignore-errors (xna:dispose (texture game))))
+        (when (manager game) (ignore-errors (xna:dispose (manager game))))
+        (let ((teardown nil))
+          (handler-case (xna:dispose game)
+            (error (condition) (setf teardown condition)))
+          (is (null teardown)
+              "the game must shut down after Game.Content was reassigned: ~a"
+              teardown))))))
+
 (define-native-test the-root-directory-round-trips-through-cna
   "RootDirectory is set and read back through the ABI, not remembered here."
   (with-content-game (game)

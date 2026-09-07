@@ -3396,8 +3396,11 @@
             "game"
           ],
           "keywords": [],
-          "setf_fbound": false,
-          "setf_lambda_list": [],
+          "setf_fbound": true,
+          "setf_lambda_list": [
+            "value",
+            "game"
+          ],
           "class": false,
           "structure": false,
           "condition": false,
@@ -3406,7 +3409,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "Game.Content: the content manager this game owns.\n\nThe same object every time, as XNA's field is. It is a facade over the game's\nown manager -- CNA lends that one as a borrowed handle which \"answers the same\nhandle every time, cannot be destroyed, and is released with its game\" -- so it\nis not disposed, and disposing it is refused with a diagnosable condition rather\nthan a native failure.\n\n**XNA's setter is not projected, and the member is reported partial for that.**\nThe reason used to be that CNA's `cna_game_set_content_manager_ext' *copies*\nwhere XNA assigns a reference. That is true of the route and not a reason about\nthe member, because the member need not use the route: XNA's `set_Content' is a\nnull check and a plain field store, and CNA's copied manager is read by nothing\nin the engine except the route that lends the handle out. So this is local work\nrather than an ABI limit, and docs/limitations.md carries the measurement and\nwhat implementing it needs."
+          "documentation": "Game.Content: the content manager this game owns.\n\nThe same object every time, as XNA's field is. It is a facade over the game's\nown manager -- CNA lends that one as a borrowed handle which \"answers the same\nhandle every time, cannot be destroyed, and is released with its game\" -- so it\nis not disposed, and disposing it is refused with a diagnosable condition rather\nthan a native failure.\n\n**The setter assigns a reference**, as XNA's does: `(content game)' afterwards is\n`EQ' to the manager that was assigned, later changes to that manager are visible\nthrough the property because it is the same object, and its provider and its\ncache are its own. See `(setf content)'."
         },
         {
           "name": "copy-bounding-box",

@@ -496,18 +496,19 @@ selection* have a canonical XNA reader and no CNA route that could answer one:
 by a caller-registered **C++** reader, with no type to dispatch on from Lisp and
 no way to marshal the object back. Closing this needs CNA routes, not a cleverer
 caller.
-* **`Game.Content`'s setter** is not projected, which is why that member is
-  partial — **and the reason it used to give was the wrong one.** It said: XNA's
-  `Game.Content = m` assigns a reference, CNA's
-  `cna_game_set_content_manager_ext` **copies**, therefore reading the property
-  back would answer a different object. The premise is true of CNA's route and
-  says nothing about the member, because *the member does not have to use that
-  route*. That is the same implication `Game.Services` disproved and the owned
-  `GraphicsDevice` disproved again: a public managed XNA object need not use
-  CNA's narrower native representation as its own public storage. See the
-  measurement below.
+* **`Game.Content`'s setter is projected, and the member is complete.** It was
+  partial for years on this argument: XNA's `Game.Content = m` assigns a
+  reference, CNA's `cna_game_set_content_manager_ext` **copies**, therefore
+  reading the property back would answer a different object. The premise is true
+  of CNA's route and says nothing about the member, because *the member does not
+  have to use that route* — the same implication `Game.Services` disproved and
+  the owned `GraphicsDevice` disproved again. The setter makes no native call at
+  all. See below.
 
 #### `Game.Content` is a plain field in XNA, and nothing here observes CNA's copy
+
+**Implemented since; the member is complete.** What follows is the measurement
+that unblocked it, kept because it is why the member moved.
 
 Measured 2026-09-07, from the pinned `Microsoft.Xna.Framework.Game.dll` and from
 CNA's own source at the three admitted commits.
@@ -543,13 +544,35 @@ already there: a `CONTENT-MANAGER` built over a device is an ordinary owned
 native object, the game's own is a facade resolving the borrowed handle per call,
 and both are the same public class.
 
-The member is therefore reclassified **`IMPLEMENTABLE_AND_HIGH_VALUE`** and is
-still partial, because **this measurement implemented nothing**. What the next
-task needs: a `(setf content)` storing into the existing `%game-content` slot, a
-`NIL` argument refused as `ArgumentNullException` is, and tests for the five
-things XNA's IL fixes — identity on read-back, mutation after assignment,
-provider identity, cache identity, and that a device-disposing `Unload` reaches
-the assigned manager rather than the game's original facade.
+**The member is complete**, and the setter is the two instructions above and
+nothing else. `(setf (content game) m)` refuses `NIL` — before storing anything,
+as the `brtrue` is first — and otherwise stores `m` in the same slot `CONTENT`
+fills in lazily, so an assignment made before the first read simply means the
+facade is never built.
+
+**A reference store is not an adoption**, and three consequences follow that the
+tests state directly. Ownership does not move: a manager built over a graphics
+device is already an owned child of its game and is still released with it, so
+assigning it changes no ledger. Nothing is disposed: XNA's setter disposes
+nothing, so the replaced facade stays usable and can be assigned back — it was
+only unreferenced, which is what XNA's dropped reference amounts to for a binding
+with no collector to hand it to. And the assigned manager keeps *its own*
+provider and *its own* cache rather than inheriting the facade's, which is what
+makes this a reference rather than a merge.
+
+**Nothing is checked against the game**, deliberately. XNA's setter tests the
+argument for null and nothing else, so a manager belonging to another game, or a
+disposed one, is stored here as it would be stored there and fails where it is
+used rather than where it is assigned.
+
+**One thing the audit asked for turned out not to exist.** It said the setter
+would have to make `DeviceDisposing` reach the assigned manager, because XNA's
+private `Game.DeviceDisposing` handler calls `this.content.Unload()` and reads
+the field. That handler is real — `HookDeviceEvents` subscribes it to
+`IGraphicsDeviceService.DeviceDisposing` — but **this binding has never
+implemented it**, for `Game.Content` or for anything else, so there was nothing
+for the setter to redirect. Implementing it is a separate piece of work about the
+game's device-event hookup, not about this member, and it is not done here.
 
 **A refused disposal costs the object nothing, and that took fixing.** `DISPOSE`
 invalidates through an `UNWIND-PROTECT`, and a parent-owned facade's refusal used

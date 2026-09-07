@@ -22,10 +22,10 @@
    "complete": 172
   },
   "members_by_status": {
-   "complete": 2087,
+   "complete": 2088,
    "missing": 23,
    "not-applicable": 443,
-   "partial": 28
+   "partial": 27
   },
   "diagnostics": 23,
   "diagnostics_by_category": {
@@ -88,7 +88,7 @@
     "Window": "complete",
     "IsActive": "complete",
     "GraphicsDevice": "complete",
-    "Content": "partial",
+    "Content": "complete",
     "Activated": "complete",
     "Deactivated": "complete",
     "Exiting": "complete",

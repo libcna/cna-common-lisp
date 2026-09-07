@@ -74,9 +74,8 @@
         "Content": {
           "lisp": "content",
           "generic": true,
-          "setf": false,
-          "reason": "The game's own content manager, answered by identity because XNA's is a field. **The setter is not projected, and the measurement of 2026-09-07 says that is no longer a CNA limit.** The reason that used to stand here argued that XNA's Game.Content = m assigns a reference while CNA's cna_game_set_content_manager_ext copies, so reading the property back would answer a different object. That is true of CNA's route and irrelevant to the member, because the member need not use that route -- the same implication Game.Services and the owned GraphicsDevice each disproved. The pinned IL is a plain field: get_Content is `ldarg.0; ldfld content; ret' and set_Content is a null check throwing ArgumentNullException() followed by `stfld content', with no other side effect. The field is read in exactly one other place in the pinned Game assembly -- the private DeviceDisposing handler, which calls content.Unload() on whatever is currently assigned -- and is written in exactly one other, the constructor. On the CNA side Game::Content_ is touched in six places in the whole engine (construction, setGraphicsDevice, two getters, the setter and Dispose) and is *loaded through* by nothing: the only non-test, non-example caller of getContentProperty() in the entire CNA tree is cna_game_get_content_manager_ext itself. So CNA's copied manager is not observable through any selected public member, and a Lisp slot holding the assigned object would reproduce XNA's reference semantics exactly. Reclassified IMPLEMENTABLE_AND_HIGH_VALUE; still partial because it is not implemented yet. docs/limitations.md.",
-          "status": "partial"
+          "setf": true,
+          "reason": "Game.Content, answered by identity because XNA's is a field, and **assignable**, because XNA's setter is a field store. `get_Content' is `ldarg.0; ldfld content; ret'; `set_Content' is `brtrue' on the argument, else `throw new ArgumentNullException()', then `ldarg.0; ldarg.1; stfld content'. Both are transcribed exactly, and the setter makes **no native call at all**. That is the whole of what this member needed, and it was reported partial until 2026-09-07 for a reason that never applied: that CNA's cna_game_set_content_manager_ext *copies* where XNA assigns a reference. True of the route, and not a fact about the member, because the member need not use the route -- the same implication Game.Services and the owned GraphicsDevice each disproved. CNA's Game::Content_ is written by that route and by the engine's constructor and is read by exactly one caller in the whole CNA tree outside tests and examples, cna_game_get_content_manager_ext, which is what lends this binding the facade CONTENT answers before anything is assigned. So the copied manager is observable through no selected public member, and calling the setter would change a value nothing reads at the cost of a copy. A reference store is not an adoption: ownership does not move, nothing is disposed, and the replaced facade can be assigned back. NIL is refused before anything is stored. docs/limitations.md."
         },
         "Window": {
           "lisp": "window",
@@ -9020,7 +9019,6 @@
     "Microsoft.Xna.Framework.Audio.SoundEffect.Duration": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Audio.SoundEffectInstance.Apply3D(AudioListener[],AudioEmitter)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Content.ContentManager.Load(String)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Game.Content": "IMPLEMENTABLE_AND_HIGH_VALUE",
     "Microsoft.Xna.Framework.Game.OnActivated(Object,EventArgs)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Game.OnDeactivated(Object,EventArgs)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Game.ShowMissingRequirementMessage(Exception)": "CNA_ADMITTED_ABI_LIMIT",
