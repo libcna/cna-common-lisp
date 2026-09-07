@@ -142,7 +142,9 @@ of these keywords, and is reached with MICROSOFT.XNA.FRAMEWORK:GRAPHICS-DEVICE."
      (cna-lisp.internal:record-construction-undo
       device (let ((handle (cna-lisp.internal:handle-of device)))
                (lambda () (cna-lisp.internal.ffi::%graphics-device-destroy handle))))
-     (%register-owned-device device))
+     (%register-owned-device device)
+     (cna-lisp.internal:record-construction-undo
+      device (lambda () (%unregister-owned-device device))))
     ((or adapter-p profile-p parameters-p)
      (setf (slot-value device 'cna-lisp.internal::ownership) :owned)
      (microsoft.xna.framework::%check-overload-keywords
@@ -161,7 +163,14 @@ of these keywords, and is reached with MICROSOFT.XNA.FRAMEWORK:GRAPHICS-DEVICE."
      (cna-lisp.internal:ensure-abi-admitted)
      (%validate-owned-device-arguments adapter graphics-profile presentation-parameters)
      (%create-owned-device device adapter graphics-profile presentation-parameters)
-     (%register-owned-device device))
+     (%register-owned-device device)
+     ;; **Recorded last, so it is undone first.** A subclass initializer that
+     ;; signals runs after this method returns, and without this the rollback
+     ;; would give the native device back and leave the CLOS object in the live
+     ;; registry -- where an adapter query would find it and ask a question
+     ;; through a handle that had already gone back to CNA.
+     (cna-lisp.internal:record-construction-undo
+      device (lambda () (%unregister-owned-device device))))
     ((%owned-device-p device)
      (error 'microsoft.xna.framework:cna-usage-error
             :operation "make-instance 'graphics-device"

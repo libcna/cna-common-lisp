@@ -184,6 +184,29 @@
         (format t "about the stream protocol and CNA's routes, and not that the~%")
         (format t "data survives a power cut, a full disk, or a filesystem that~%")
         (format t "lies about fsync.~%")))
+    ;; The caller-owned GraphicsDevice. Eight levels and they are eight claims,
+    ;; for the reason every surface above keeps its own apart -- and one more
+    ;; reason of its own: the pixel claim is the only graphics evidence in this
+    ;; repository that needs no game, and reading it out of the others would
+    ;; lose exactly what makes it new.
+    (when (native-library-requested-p)
+      (if *owned-device-evidence*
+          (dolist (entry (reverse *owned-device-evidence*))
+            (format t "~&owned device  : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&owned device  : NOT RUN -- no owned-device test recorded evidence~%"))
+      (when (and (owned-device-proved-p :create)
+                 (not (owned-device-proved-p :coexistence)))
+        (format t "A device was constructed and two were not proved independent:~%")
+        (format t "those are two claims and this run supports one.~%"))
+      (when (and (owned-device-proved-p :headless)
+                 (not (owned-device-proved-p :software)))
+        (format t "The owned-device pixel claim was NOT made: this renderer has no~%")
+        (format t "honest back-buffer readback, so the standalone device proved its~%")
+        (format t "lifecycle and its commands and nothing about pixels.~%"))
+      (when (owned-device-proved-p :cross-device)
+        (format t "No owned-device claim above says cross-device resource use is~%")
+        (format t "refused. It is not -- by CNA, measured, or by XNA, read from the~%")
+        (format t "pinned assembly -- and this binding does not invent the refusal.~%")))
     ;; Game services and device selection. Six levels and they are six claims,
     ;; for the reason the four device surfaces above each keep theirs apart.
     (when (native-library-requested-p)

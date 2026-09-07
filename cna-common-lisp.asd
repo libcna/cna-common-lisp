@@ -298,6 +298,7 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; construction-atomicity, whose EXPLODING-GRAPHICS-DEVICE-MANAGER the
    ;; ownership lane below reuses rather than defining a second one.
    (:file "native/services")
+   (:file "native/owned-graphics-device")
    ;; GraphicsDeviceInformation, the mutable PreparingDeviceSettings event and
    ;; the manager's protected virtual surface. After native/services, whose
    ;; MANAGED-GAME fixture and stand-in service provider it reuses.

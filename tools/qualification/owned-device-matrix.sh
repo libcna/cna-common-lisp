@@ -18,7 +18,7 @@ root=$(cd "$here/../.." && pwd)
 probe="$root/build-probe/owned-device-probe"
 
 stages="create headless-ext two-devices game-then-device device-then-game resource
-        cross-device cross-game destroy-with-child game-destroy-with-owned adapters churn events
+        cross-device cross-game destroy-with-child game-destroy-with-owned adapters churn events slots
         dispose-route double-destroy clear present pixels thread"
 
 [ -x "$probe" ] || {

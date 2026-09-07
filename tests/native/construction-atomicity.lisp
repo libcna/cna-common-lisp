@@ -59,6 +59,12 @@ time this runs, which is the whole point."
 (define-exploding-subclass exploding-alpha-test-effect gfx:alpha-test-effect)
 (define-exploding-subclass exploding-content-manager xna.content:content-manager)
 (define-exploding-subclass exploding-graphics-device-manager xna:graphics-device-manager)
+;; The caller-owned device. Its exploding subclass lives here with the others
+;; rather than beside its own tests, so that the one table of families this file
+;; keeps stays the one table -- and it is exercised from
+;; tests/native/owned-graphics-device.lisp, which is where a device that needs no
+;; game can be constructed.
+(define-exploding-subclass exploding-graphics-device gfx:graphics-device)
 
 (defun %exploding-constructions (device)
   "Every (LABEL CLASS . INITARGS) this file builds, against DEVICE.

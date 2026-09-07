@@ -32,6 +32,7 @@
  *   adapters          enumerate adapters with no device, then with an owned one
  *   churn             create and destroy a device many times over
  *   events            device Disposing and resource Disposing, and their order
+ *   slots             are the device's texture slots per device, or shared?
  *   cross-game        (callback-scoped) a Game resource on an owned device and the reverse
  */
 #define _POSIX_C_SOURCE 200809L
@@ -457,6 +458,39 @@ int main(int argc, char **argv) {
         R("adapter_get_count(owned device)", p_cna_graphics_adapter_get_count(a, &count));
         STEP("count = %u", count);
         R("destroy A", p_cna_graphics_device_destroy(a));
+    } else if (!strcmp(stage, "slots")) {
+        /* Two devices, one texture each, each bound into its own slot 0. If the
+         * slots are per device both read back; if they are one shared table the
+         * second bind wipes the first, and every remembered-binding claim in
+         * the binding is about a global. */
+        CNA_TextureSlotInfo si;
+        RV("create A", make_device(0, &a), r);
+        if (r != CNA_RESULT_SUCCESS) { STEP("create refused"); return 0; }
+        R("create B", make_device(0, &b));
+        R("texture on A", make_texture(a, &tex));
+        R("texture on B", make_texture(b, &tex2));
+        STEP("tex(A)=%llu tex(B)=%llu", (unsigned long long)tex, (unsigned long long)tex2);
+        R("bind A's texture into A slot 0",
+          p_cna_graphics_device_set_texture(a, CNA_SHADER_STAGE_PIXEL, 0u, tex));
+        memset(&si, 0, sizeof si); si.struct_size = (uint32_t)sizeof si; si.struct_version = 1;
+        R("read A slot 0 (before B binds)",
+          p_cna_graphics_device_get_texture(a, CNA_SHADER_STAGE_PIXEL, 0u, &si));
+        STEP("A slot 0: bound=%d handle=%llu", (int)si.bound, (unsigned long long)si.texture);
+        R("bind B's texture into B slot 0",
+          p_cna_graphics_device_set_texture(b, CNA_SHADER_STAGE_PIXEL, 0u, tex2));
+        memset(&si, 0, sizeof si); si.struct_size = (uint32_t)sizeof si; si.struct_version = 1;
+        R("read A slot 0 (after B binds)",
+          p_cna_graphics_device_get_texture(a, CNA_SHADER_STAGE_PIXEL, 0u, &si));
+        STEP("A slot 0: bound=%d handle=%llu  <-- still A's texture?",
+             (int)si.bound, (unsigned long long)si.texture);
+        memset(&si, 0, sizeof si); si.struct_size = (uint32_t)sizeof si; si.struct_version = 1;
+        R("read B slot 0",
+          p_cna_graphics_device_get_texture(b, CNA_SHADER_STAGE_PIXEL, 0u, &si));
+        STEP("B slot 0: bound=%d handle=%llu", (int)si.bound, (unsigned long long)si.texture);
+        R("destroy A's texture", p_cna_texture2d_destroy(tex));
+        R("destroy B's texture", p_cna_texture2d_destroy(tex2));
+        R("destroy A", p_cna_graphics_device_destroy(a));
+        R("destroy B", p_cna_graphics_device_destroy(b));
     } else if (!strcmp(stage, "events")) {
         CNA_GraphicsDeviceEventRegistrationHandle dreg = CNA_INVALID_HANDLE;
         CNA_GraphicsResourceEventRegistrationHandle rreg1 = CNA_INVALID_HANDLE;

@@ -32,16 +32,38 @@
   (%resolve-device-handle object operation))
 
 (defmethod microsoft.xna.framework::%event-source-disposed-p ((object graphics-device))
-  "The device is a facade the game owns, so the game is what has been disposed.
+  "Whether the source of these events can still raise one -- per lifetime mode.
 
-Once the game is gone the device can raise nothing, so `+=' and `-=' are the
-managed list operations XNA's always were. While the game is alive they still
-need the handle CNA lends only inside a lifecycle method, which is this binding's
-own limit and is documented as one -- the two answers are different questions,
-not an inconsistency."
-  (let ((game (cna-lisp.internal:owner-of object)))
-    (or (null game) (cna-lisp.internal:disposed-state-of game)
-        (cna-lisp.internal:disposed-state-of object))))
+For a **caller-owned** device the question is only about the device: it owns its
+handle and answers for itself, and there is no game in the picture to consult --
+which matters, because consulting one would report a device in a game-free
+process permanently disposed and turn every `+=' into the managed-list operation
+it must not be while the device is live.
+
+For the **parent-owned facade** the game is what has been disposed: the facade
+is the game's and raises nothing once the game is gone, so `+=' and `-=' are
+then the managed list operations XNA's always were. While the game is alive they
+still need the handle CNA lends only inside a lifecycle method, which is this
+binding's own limit and is documented as one -- the two answers are different
+questions, not an inconsistency."
+  (if (%owned-device-p object)
+      (cna-lisp.internal:disposed-state-of object)
+      (let ((game (cna-lisp.internal:owner-of object)))
+        (or (null game) (cna-lisp.internal:disposed-state-of game)
+            (cna-lisp.internal:disposed-state-of object)))))
+
+(defmethod cna-lisp.internal:destroy-native :around ((device graphics-device))
+  "Release an owned device's event subscriptions after its native destruction.
+
+After, not before: `Disposing' is raised inside the destruction, and a
+subscription released first would swallow the last thing the device ever says.
+The same ordering GRAPHICS-RESOURCE, GAME and GRAPHICS-DEVICE-MANAGER need.
+
+A facade never reaches this method -- %CHECK-DISPOSABLE refuses its disposal --
+and its registrations are released by the game, which is what performs the
+`cna_game_destroy' CNA requires them released before."
+  (unwind-protect (call-next-method)
+    (microsoft.xna.framework::%release-event-handlers device)))
 
 (defmethod microsoft.xna.framework::%subscribe-natively
     ((object graphics-device) value token registration)
