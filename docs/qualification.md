@@ -462,6 +462,7 @@ claim that needs two processes by definition.
 | `tools/qualification/microphone.sh` | `MICROPHONE_UNAVAILABLE`, `MICROPHONE_ENUMERATION`, `MICROPHONE_CAPTURE_STATE_MACHINE`, `MICROPHONE_CAPTURE_DATA`, `MICROPHONE_BUFFER_READY`, plus a public-API-only consumer | no microphone |
 | `tools/qualification/media.sh` | `MEDIA_UNAVAILABLE`, `MEDIA_PLAYBACK`, `MEDIA_PLAY_CLOCK`, `MEDIA_QUEUE`, `MEDIA_EVENTS`, plus a public-API-only consumer | no sound card |
 | `tools/qualification/storage.sh` | `STORAGE_NO_ROOT`, `STORAGE_SUITE`, `STORAGE_PERSISTENCE`, plus a public-API-only consumer that constructs no `GAME` | a writable home directory |
+| `tools/qualification/services.sh` | `SERVICES_MANAGED`, `SERVICES_CANONICAL`, `SERVICES_CONTENT`, `DEVICE_INFORMATION`, `PREPARING_DEVICE_SETTINGS`, `GDM_VIRTUAL_EVENTS`, plus a public-API-only consumer that drives the manager through the *interface* it was retrieved under | **nothing** -- no display, no GPU, no audio or capture device, no content fixture |
 | `tools/qualification/rasterizer.sh` | the pixel proofs above | a rasterising renderer, no display |
 
 **The storage lanes are the only ones whose branch is not the environment's to

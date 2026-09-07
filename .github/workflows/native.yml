@@ -435,6 +435,24 @@ jobs:
           CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
         run: tools/qualification/storage.sh
 
+      # Game services and device selection. Seven kinds of evidence, required by
+      # name, and the lane that needs the least of the machine: no display, no
+      # GPU, no audio device, no capture device and no content fixture --
+      # everything it does is lifecycle and configuration.
+      #
+      # The discriminating check is that the device-settings lane reports the
+      # *mutated* back buffer: a run that only proved a callback fired would
+      # record the kind and not the number, and this fails on that.
+      #
+      # Nothing here claims that FindBestDevice, RankDevices or CanResetDevice
+      # influences device creation. They answer XNA's semantics when called and
+      # no admitted CNA ABI calls them, which the suite asserts directly.
+      - name: Services and device-selection qualification, and the consumer lane
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: tools/qualification/services.sh
+
       - name: Isolated consumer qualification, 60 and 600 frames
         working-directory: cna-common-lisp
         run: |
