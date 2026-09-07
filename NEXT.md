@@ -79,6 +79,25 @@ tools/qualification/services.sh
 tools/qualification/owned-graphics-device.sh
 ```
 
+Two probes are built on demand rather than by any of the above, and neither is
+part of the gate stack:
+
+```sh
+# the ABI a library actually implements, read out of the library and not the path
+cc -O1 -o build-probe/abiver tools/native-abi/abi-version-probe.c -ldl
+
+# both loaded-Model defects, one stage per subprocess, on every admitted ABI
+cc -O1 -I "$CNA_HEADERS" -o build-probe/model-defect-probe \
+   tools/native-abi/model-defect-probe.c -ldl
+tools/qualification/model-defect-matrix.sh /path/to/each/libcna_c_api.so ...
+```
+
+`abiver` is what `model-defect-matrix.sh` labels its rows with, and its source
+was missing until 2026-09-07 -- the script depended on a binary nobody could
+build. `tools/qualification/xna-reference/` is a third, and it is the one probe
+here that is expected to *fail*: read its README before believing that two
+members are unqualifiable.
+
 The six qualification scripts do that for themselves. `with-virtual-screen.sh`
 runs its command on a fresh Xvfb display **only when `DISPLAY` is set** -- so a
 developer's own screen is left alone, and CI, which runs with no display at all,
@@ -419,14 +438,19 @@ The eight conditions, and what each rests on:
 | Admitted ABI set truthful | `{0.21.0, 0.22.0, 0.23.0}`, and all three are evidenced: the whole gate set is run against a real library of each at every closure, not once. 0.23.0 was admitted on 2026-09-06 against an exact published pair, after its ABI delta was diffed, its generated layer proved unchanged, and both gates were watched refusing it first |
 | CI green | both workflows `success`, and named by run id below rather than by "the latest run" |
 | Qualification wording no stronger than its evidence | the SOFTWARE lane's claims are rendered from the registry the lane enforces, and every required proof must also be *described* |
-| Every non-complete member has a concrete reason | 57 of 57, each naming a route or an IL fact, each in one of seven categories, with **zero** in either implementable category. `verify.py` refuses an uncategorised one and refuses a category the taxonomy does not define, which is what carried the `CNA_0_21_ABI_LIMIT` rename |
+| Every non-complete member has a concrete reason | 57 of 57, each naming a route or an IL fact, each in one of seven categories. `verify.py` refuses an uncategorised one and refuses a category the taxonomy does not define, which is what carried the `CNA_0_21_ABI_LIMIT` rename. **This row used to add "with zero in either implementable category", and that half is no longer true**: the 2026-09-07 audit moved two members into `IMPLEMENTABLE_AND_HIGH_VALUE`. It was true at the release commit named below, and the condition it states is about *reasons being concrete*, which is unchanged -- but the parenthesis was a second claim riding on the first and it has now moved, so it is stated separately below rather than left here to age |
 
 That last row is the one to re-read before believing this.
-<!-- generated:high-value frontier members=0 --> members are
+<!-- generated:high-value frontier members=2 --> members are
 `IMPLEMENTABLE_AND_HIGH_VALUE`, and that is a *measurement*:
 `docs/compatibility.md` renders the count and `verify.py` refuses a frontier
-member that has no category. Nothing in the selected profile is both unblocked and
-worth doing. That is what makes this a milestone rather than a pause.
+member that has no category. **That count was zero when Foundation 1 was
+released and is two now**, because the 2026-09-07 partial-frontier audit found
+`RenderTargetBinding.CubeMapFace` and `Game.Content` kept partial by reasons that
+did not survive re-reading. Neither was implemented; both are still partial. The
+sentence that used to stand here -- "nothing in the selected profile is both
+unblocked and worth doing" -- was true of the evidence available then and is not
+true now, and saying so is the point of measuring again.
 
 **The release evidence, named exactly.** Foundation 1's release decision rests on
 these runs, at the commit where the documentation-truth condition first became
@@ -626,22 +650,26 @@ had moved. Regenerate the table after every closure and read it there.
 <!-- generated-block:frontier-categories -->
 | Category | Members | What it means |
 | --- | ---: | --- |
-| `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
+| `LANGUAGE_PROJECTION_LIMIT` | **4** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
+| `CNA_ADMITTED_ABI_LIMIT` | **40** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
-| `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
+| `IMPLEMENTABLE_AND_HIGH_VALUE` | **2** | Nothing blocks it and it should be done next. |
 <!-- /generated-block:frontier-categories -->
 
 This table replaces a boolean called `GLOBAL_ACTIONABLE_LOCAL`, which was retired
 because it was made to carry two different facts and got one of them wrong. The
 two facts are:
 
-* **`SELECTED_PROFILE_IMPLEMENTABLE_NOW = 0`.** Inside the selected profile,
-  nothing is both unblocked and worth doing. The two implementable categories are
-  empty, and that is the release condition.
+* **`SELECTED_PROFILE_IMPLEMENTABLE_NOW` was 0 at the release commit and is 2
+  now.** It was the release condition, and it was honestly met on the evidence
+  then available; the 2026-09-07 audit re-read every partial reason from zero and
+  two did not survive, so two members are now `IMPLEMENTABLE_AND_HIGH_VALUE` and
+  neither has been implemented. The generated block above is the authority for
+  the number -- **do not restate it in prose here**, which is the mistake the two
+  paragraphs below this list record.
 * **Local work remains, and it is profile expansion.** Growing the selection into
   Audio is entirely this repository's work and needs nothing from anybody. So
   "there is no more local work" would be false.
@@ -945,25 +973,147 @@ asserted in both directions so a CNA that changed would fail a test:
 The generated tables above are the authority; what follows is what changed
 *category*, which a table of counts cannot say.
 
-* **`PUBLIC_OBJECT_MODEL_CLOSURE` is empty, for the first time.** It is the first
-  frontier category ever to be emptied. Its row is still rendered because its
-  being empty is the claim: the object model now represents both native
-  ownership graphs XNA permits, rather than one of them and a note about the
-  other.
-* **`IMPLEMENTABLE_AND_HIGH_VALUE` stays empty**, which is the release condition
-  and is unchanged.
-* **Nothing else moved.** `CNA_ADMITTED_ABI_LIMIT` is still 41,
-  `LANGUAGE_PROJECTION_LIMIT` 5, `DEPENDENCY_NOT_SELECTED` 4 and
-  `QUALIFICATION_LIMIT` 2. This closure took two members out of a category and
-  put none into any.
+* **`PUBLIC_OBJECT_MODEL_CLOSURE` is empty**, and stays empty. Its row is still
+  rendered because its being empty is the claim: the object model represents
+  both native ownership graphs XNA permits, rather than one of them and a note
+  about the other. The 2026-09-07 audit checked the converse too -- that no
+  partial is parked in another category because this one used to carry the only
+  "local architecture work" concept -- and found none that belongs here.
+* **`IMPLEMENTABLE_AND_HIGH_VALUE` is no longer empty**, for the first time.
+  Two members are in it, and neither was implemented: see the audit below.
+* `LANGUAGE_PROJECTION_LIMIT` and `CNA_ADMITTED_ABI_LIMIT` each lost exactly the
+  one member that moved. `DEPENDENCY_NOT_SELECTED` and `QUALIFICATION_LIMIT` are
+  unchanged. **The partial member count did not move**: a reclassified member is
+  still partial until somebody implements it.
 
-**So there is no unblocked member left in the selected profile**, and that is
-the state this measurement has to start from rather than a candidate list. The
-next task is therefore either a new closure that grows the selection, or a
-deeper qualification of what is already here -- and the two are measured
-differently.
+## The 29 partial members, re-read from zero
 
-### The candidates, re-measured
+Measured 2026-09-07 against the whole admitted set. The question asked of each
+was not "can the existing reason be confirmed" but "what exact XNA behaviour
+makes this partial *today*". **Twenty-seven survived. Two did not**, and both had
+been kept by the same bad implication -- *CNA cannot represent X, therefore the
+public binding cannot* -- which `Game.Services` and the owned `GraphicsDevice`
+had each already disproved.
+
+### The two that were wrong
+
+* **`RenderTargetBinding.CubeMapFace`** was a `LANGUAGE_PROJECTION_LIMIT`, a
+  category meaning the projection *cannot express* the member. It expresses it
+  easily: `CUBE-MAP-FACE` is a projected, complete XNA enum, and this binding
+  **already computes `:POSITIVE-X`** on both native paths -- `SetRenderTargets`
+  and the `GetRenderTargets` cross-check each read the face as
+  `(or face :positive-x)`. Nothing else needs `NIL`: 2D-versus-cube is
+  answerable from the target's type, value equality cannot collide, and the two
+  constructor shapes are XNA's own. The only argument left was that `NIL` reads
+  better, which is a preference and not compatibility evidence.
+* **`Game.Content`** was a `CNA_ADMITTED_ABI_LIMIT` because
+  `cna_game_set_content_manager_ext` copies where XNA assigns a reference. True
+  of the route, irrelevant to the member, because the member need not use it.
+  The pinned IL is a plain field -- `get_Content` is `ldfld`, `set_Content` is a
+  null check plus `stfld`, and the only other framework reader is the private
+  `DeviceDisposing`, which calls `Unload` on whatever is *currently assigned*.
+  On CNA's side the decisive count: in the entire engine, outside tests and
+  examples, `getContentProperty()` has **one caller**, and it is
+  `cna_game_get_content_manager_ext` itself. So CNA's copy is observable through
+  no selected public member, and a Lisp slot would reproduce XNA exactly.
+
+`docs/limitations.md` carries both measurements and the test each next task
+needs. **Neither was implemented here**, which is why both are still partial.
+
+### The one thing this audit found and did not resolve
+
+`GraphicsDevice.Viewport` is partial because its setter needs the optional
+private shim. The manifest lists **four** shimmed routes, and the other three are
+`BasicEffect`'s `World`, `View` and `Projection` -- which are reported
+**complete** on the same blocker, with the same refusal, in the same condition
+class. One of the two labels is wrong. Choosing needs a decision about whether an
+optional build artifact makes a member incomplete, which would move three
+members reported complete; that is a scoreboard decision rather than a reason
+correction, so this measurement recorded it instead of making it. It is the
+first thing a reader of this frontier should be told, because it is the only
+place the scoreboard is known to be internally inconsistent.
+
+### The stale reasons, and there were more than this file claimed
+
+This file said "three of the 29 have not been re-read since the ABI set became
+three versions". Derived mechanically from the reasons themselves -- which name
+the versions they were read against -- **the three are** `ContentManager.Load`,
+`SoundEffect.Duration` and `DynamicSoundEffectInstance.new`, each still written
+against `{0.21.0, 0.22.0}`. But the same scan found a worse class the claim
+missed: **four members whose reasons still named 0.21.0 alone** -- `Texture2D`'s
+`Width`, `Height` and both `FromStream` overloads -- never re-read since the set
+became even two. All seven now carry evidence from all three, and two of them
+were factually wrong rather than merely narrow:
+
+* **`ContentManager.Load<T>` said four loaders; the registry, regenerated from
+  the running system, answers six.** The two that joined are exactly the two the
+  old text dismissed as "for types not in the selection" -- the Audio and Model
+  closures selected both. Every typed content route any admitted ABI has is now
+  projected, so the member is at CNA's ceiling; it stays partial because the
+  contract puts *no* bound on `T` and fifteen types **in this selection** have a
+  canonical XNA reader no CNA route can answer -- `Song` and fourteen value
+  types.
+* **Both `FromStream` overloads said XNA's fit lives in code "the pinned
+  assembly does not contain".** The assembly contains it:
+  `Microsoft.Xna.Framework.dll` is a mixed-mode x86 image and the call is
+  `XnaImaging.DecodeStreamToTexture` with `CallConvCdecl`, native code in that
+  same PE. The boundary is the disassembler's, not the file's.
+
+### What re-measurement rather than re-reading established
+
+Header equality was not accepted as behavioural evidence anywhere it mattered:
+
+| Member | Evidence taken |
+| --- | --- |
+| `GraphicsAdapter.Revision`, `.SubSystemId` | not the header's "current CNA returns zero" but the **function bodies** at each admitted commit: `return 0;`, a literal with no branch on renderer, platform or adapter |
+| the `GraphicsDeviceManager` trio | each whole CNA tree searched at `056e57d47`, `fb62662c9` and `5c8840657`: six hits, three declarations and three definitions, **no call site**, and no C route in any admitted header |
+| `Model.Draw`, `ModelMesh.Draw`, `ModelMeshPart.Effect` | `model-defect-matrix.sh` re-run on real libraries from all three: SIGSEGV at 0x20, 0x10, 0x20, 0x8/0x0 and 0x0, everywhere; 0.21.0 additionally dies at 0x490 loading at all |
+| `Microphone.BufferDuration` | the boundary re-run on all three, both branches asserting -- 0.21.0 refuses exactly 1000 ms and names the ABI and its 990 ceiling, 0.22.0 and 0.23.0 take the range |
+| `SoundEffect.Duration` | the literal tick counts (130000 against 125000, 450000 against 453514) are asserted per ABI by every suite run, not inferred from `audio.h`'s single SHA-256 |
+| `GraphicsAdapter.Adapters`, `.DefaultAdapter` | all **twelve** `cna_graphics_adapter_*` routes take `CNA_Handle graphics_device` first, in all three header sets: nothing enumerates adapters without a device |
+
+**Two reference experiments were attempted rather than assumed away.** This
+machine has Wine 10.0 and a prefix with Microsoft .NET Framework 4.0, so a probe
+was compiled against the pinned XNA assembly -- the compile succeeded -- and run.
+It fails at load with `BadImageFormatException`, because a mixed-mode assembly
+needs the Windows CLR's own image loader; and a Wine result would have been
+FAudio's and Wine D3D9's rather than XNA's in any case. That is what keeps both
+`QUALIFICATION_LIMIT` members where they are, and it is now a measurement rather
+than a presumption.
+
+**The `Model` safety guard was re-derived in the same pass** -- 322 functions in
+`CnaCApiEffects.cpp`, 22 reaching `GetEffectState`, 17 of them bound here -- and
+every one of the 17 is reachable only through a guarded path. **No unguarded
+process-kill route was found, so no `Model` code was changed.**
+
+### The recommendation
+
+**Implement `RenderTargetBinding.CubeMapFace`.** It is the smaller of the two
+implementable members and the stronger candidate:
+
+* it is a **correctness repair**, not a new capability -- the member currently
+  answers something XNA never answers, so a ported program reading it is
+  silently told the wrong thing, where `Game.Content` merely lacks a setter and
+  fails loudly;
+* it **completes a type**: `RenderTargetBinding` has no other absence, so
+  partial types fall by one and the frontier table loses a row;
+* the risk is near zero -- the binding already computes `:POSITIVE-X` on both
+  native paths, so the change is the public reader and three tests that assert
+  `NIL` today;
+* it needs no new machinery, no new dependency and no new qualification lane.
+
+`Game.Content` is the natural task after it: larger, and architectural rather
+than local, because the setter has to decide what happens to the game's own
+facade when a caller's manager replaces it, and to reproduce `DeviceDisposing`
+reaching the assigned manager. Do them in that order and separately.
+
+**Do not do either in the task that measured them.** This file records a
+measurement; the implementation is the next task's.
+
+### The candidates, if neither is taken
+
+Unchanged, and none of them is the recommendation while two members are
+implementable inside the selection.
 
 | Candidate | Types | Members | New routes | Closes, in selected types | Deterministic CI | User value | Complexity |
 | --- | ---: | ---: | ---: | --- | --- | --- | --- |
@@ -973,41 +1123,20 @@ differently.
 | `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 3 (`Song`'s `Artist`, `Album`, `Genre`) | **empty only** | low | high |
 | `GameWindow`'s seven | 0 | 0 | 0 | 0 | n/a | low | **blocked** |
 
-**`Texture3D` was the standing next-smallest candidate and this pass rules it
-out, by measurement.** It looked ideal: one type, about thirteen public members,
-a complete set of CNA routes in `texture_volume.h`, no unselected dependency,
-and one selected member unblocked. But `cna_texture3d_create` is documented as
-creating a Texture3D "**when the selected renderer supports volume storage**",
-and both qualification renderers were asked directly, on every admitted ABI --
-with the **HiDef** profile, so that a refusal is not the profile's doing:
+**`Texture3D` is ruled out by measurement and that measurement has not changed.**
+`cna_texture3d_create` creates one only "when the selected renderer supports
+volume storage", and both qualification renderers were asked directly, on every
+admitted ABI, with the **HiDef** profile so that a refusal is not the profile's
+doing:
 
     HEADLESS  0.21.0, 0.22.0 and 0.23.0 -> CNA_RESULT_NOT_SUPPORTED
     SOFTWARE  0.21.0, 0.22.0 and 0.23.0 -> CNA_RESULT_NOT_SUPPORTED
 
 Neither renderer can construct one **at all**, so every member of the type would
-be unreachable in CI and the type would land as a shape with no evidence behind
-it. That is a `CNA_ADMITTED_ABI_LIMIT` in everything but name, and selecting it
-would trade one honest `DEPENDENCY_NOT_SELECTED` member for thirteen members
-nothing could exercise. The probe is committed as
+be unreachable in CI. The probe is committed as
 `tools/native-abi/texture3d-support-probe.c`; run it against any library whose
-renderer set has changed, because the day a rasterising renderer grows volume
-storage is the day this candidate becomes the obvious one.
-
-The other four are unchanged and blocked for their old reasons, each of which is
-about evidence rather than difficulty.
-
-**The recommendation is therefore a qualification closure rather than a surface
-one, and the honest name for it is: measure whether any of the 29 partial
-members can be made complete.** A first pass over them says most cannot -- the
-`TextureCube` data members are partial because `cna_texturecube_set_data` takes
-`const CNA_Color*` with no texel-kind argument, `Texture2D.Width` and `Height`
-because no admitted ABI reports a loaded texture's dimensions, and
-`GraphicsDeviceManager`'s three because no admitted ABI calls them -- but
-"most cannot" is not a measurement, and three of the 29 have not been re-read
-since the ABI set became three versions.
-
-**Do not implement anything yet.** This is a measurement, and the next task
-chooses.
+renderer set has changed. The other four are unchanged and blocked for their old
+reasons, each of which is about evidence rather than difficulty.
 
 ## Architectural facts a future agent must not undo
 

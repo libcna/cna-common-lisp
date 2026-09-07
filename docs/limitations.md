@@ -216,6 +216,29 @@ claiming a face. `MAKE-RENDER-TARGET-BINDING` enforces the same distinction from
 the other side: a cube requires a face and a 2D target refuses one, because those
 are exactly XNA's two constructors.
 
+**This was filed as a `LANGUAGE_PROJECTION_LIMIT` and the 2026-09-07 measurement
+says it is not one.** The category means the projection *cannot express* the
+member, and this one expresses it easily:
+
+| Asked | Measured |
+| --- | --- |
+| Can Common Lisp hold XNA's exact value? | Yes. `CUBE-MAP-FACE` is a projected XNA enum and a **complete** type; `:POSITIVE-X` is its first keyword. |
+| Does the binding already compute it? | **Yes, on both native paths.** `SetRenderTargets` and the `GetRenderTargets` cross-check each read the face as `(or face :positive-x)`, so CNA is already told positive X for a 2D binding. |
+| Would `:POSITIVE-X` lose anything XNA exposes? | No. XNA exposes positive X and nothing else. It would lose only a distinction *this binding* added. |
+| Is that distinction otherwise available? | Yes — `RENDER-TARGET-BINDING-TARGET` answers the object, and a cube target is a `RENDER-TARGET-CUBE` by type. |
+| Does anything else require NIL? | No. `RENDER-TARGET-BINDING-EQUAL` cannot collide, because a 2D and a cube binding never share a target; and the two constructor shapes are XNA's own and do not depend on what the reader answers. |
+
+So the only argument for `NIL` is that it reads better, and a preference is not
+compatibility evidence. The member is reclassified
+**`IMPLEMENTABLE_AND_HIGH_VALUE`** and is still partial, because the reader still
+answers `NIL`: **this measurement changed no implementation.** What the next task
+needs is small — make the reader answer `:POSITIVE-X` for a faceless binding,
+leave both constructors exactly as they are, and turn the three tests that
+currently assert `NIL` (`tests/native/render-target-cube.lisp`, at the flat
+binding, the bound-list readback and the mutation cross-check) into assertions of
+`:POSITIVE-X`, with one new test asserting that a 2D binding and a cube binding
+of `:POSITIVE-X` are still told apart by their targets.
+
 ## Content: what loads, and the two things that do not follow XNA
 
 `ContentManager` is projected, `Game.Content` with it, and that is what makes a
@@ -320,7 +343,13 @@ below.
 ### A loaded `Texture2D` cannot report its size
 
 `Texture2D.Width` and `Height` are reported **partial**, and this is the reason.
-ABI 0.21.0 has no route that answers a texture's dimensions:
+**No admitted ABI** has a route that answers a texture's dimensions — this
+section named 0.21.0 alone until 2026-09-07, when it was re-measured against
+0.21.0, 0.22.0 and 0.23.0 together: `CNA_TextureInfo` is field for field
+identical in all three and carries no extent, the whole `cna_texture*` route list
+is name for name identical across the set, and so is
+`CNA_ContentManifestEntryInfo`. Nothing was added when the admitted set grew.
+Concretely:
 `cna_texture_get_info` answers the level count and the surface format,
 `cna_texture2d_get_storage_info` answers which storage is retained, and neither
 answers a width. A texture decoded through `TEXTURE-2D-FROM-PNG-BYTES` knows its
@@ -334,8 +363,8 @@ A `TextureCube` has no such problem: `cna_texturecube_get_info` reports its edge
 size, so a loaded cube is as complete as a constructed one. The asymmetry is
 CNA's.
 
-Every route that might have closed this was checked against 0.21.0's headers, so
-that the search is not repeated:
+Every route that might have closed this was checked against all three admitted
+header sets, so that the search is not repeated:
 
 | Route | What it answers |
 | --- | --- |
@@ -429,17 +458,86 @@ tried against the software renderer and all refused with `CNA_RESULT_IO`. Rather
 than keep guessing, it is written down: **the shader-source shape is unexercised,
 for want of its descriptor schema and not for want of a capability.**
 
-`Load<T>` stays **partial** because it is generic over any type with a content
-reader and this is four. CNA's `_load_sound_effect` and `_load_model` are for
-types not in the selection; `_load_foreign_ext` and `_load_object_dictionary_ext`
-are extensions rather than `Load<T>`.
+**`Load<T>` reaches six types, and that paragraph above is kept as written
+because the number in it went stale twice.** It said three, was corrected to
+four, and the 2026-09-07 audit regenerated the registry from the running system
+and got **six**: `TEXTURE-2D`, `TEXTURE-CUBE`, `SPRITE-FONT`, `EFFECT`,
+`SOUND-EFFECT` and `MODEL`. The two that joined are exactly the two the old text
+dismissed as "for types not in the selection" — the Audio and Model closures
+selected both and projected both loaders, and the sentence outlived its own
+closures. **Every typed content route any admitted ABI has is now projected**:
+the eight in 0.21.0, 0.22.0 and 0.23.0 are those six plus `_load_foreign_ext` and
+`_load_object_dictionary_ext`, which are extensions rather than `Load<T>`, and
+the eight are identical across the admitted set.
+
+`Load<T>` stays **partial**, and the gap is now named by measurement rather than
+by "generic over any type". The pinned contract puts **no bound on `T` at all** —
+no special constraints, no type constraints — and XNA ships built-in
+`ContentTypeReader`s for far more than six. Fifteen types *in this very
+selection* have a canonical XNA reader and no CNA route that could answer one:
+
+> `Song`, and the value types `Matrix`, `Vector2`, `Vector3`, `Vector4`,
+> `Quaternion`, `Plane`, `Ray`, `Rectangle`, `Point`, `Color`, `Curve`,
+> `BoundingBox`, `BoundingSphere` and `BoundingFrustum`.
+
+`_load_foreign_ext` cannot stand in for them: it answers a bare `void*` produced
+by a caller-registered **C++** reader, with no type to dispatch on from Lisp and
+no way to marshal the object back. Closing this needs CNA routes, not a cleverer
+caller.
 * **`Game.Content`'s setter** is not projected, which is why that member is
-  partial. XNA's `Game.Content = m` assigns a reference; CNA's
-  `cna_game_set_content_manager_ext` **copies** — its header says "the canonical
-  setter takes a reference and copies, so this does too: the caller keeps its own
-  manager". Reading the property back would answer a different object than the
-  one assigned, and a setter that silently means something else is worse than a
-  missing one.
+  partial — **and the reason it used to give was the wrong one.** It said: XNA's
+  `Game.Content = m` assigns a reference, CNA's
+  `cna_game_set_content_manager_ext` **copies**, therefore reading the property
+  back would answer a different object. The premise is true of CNA's route and
+  says nothing about the member, because *the member does not have to use that
+  route*. That is the same implication `Game.Services` disproved and the owned
+  `GraphicsDevice` disproved again: a public managed XNA object need not use
+  CNA's narrower native representation as its own public storage. See the
+  measurement below.
+
+#### `Game.Content` is a plain field in XNA, and nothing here observes CNA's copy
+
+Measured 2026-09-07, from the pinned `Microsoft.Xna.Framework.Game.dll` and from
+CNA's own source at the three admitted commits.
+
+**XNA's side is four facts and no framework behaviour.** `Game::content` is
+touched in exactly four places in the pinned assembly:
+
+| Where | IL |
+| --- | --- |
+| `get_Content` | `ldarg.0; ldfld content; ret` — a plain field read |
+| `set_Content` | `brtrue` on the argument, else `throw new ArgumentNullException()`; then `ldarg.0; ldarg.1; stfld content` — a null check and a plain field store, with no other effect |
+| the constructor | `content = new ContentManager(this.gameServices)` — which is where `Game.Content`'s provider being `Game.Services` comes from |
+| `DeviceDisposing` | `this.content.Unload(); this.UnloadContent();` — and it reads the *field*, so it follows whatever is currently assigned |
+
+`Game.Dispose` does not dispose it. There is no other reader and no other writer.
+
+**CNA's side is a value member nothing loads through.**
+`Game::Content_` appears in six places in the whole engine — its construction,
+`Content_.setGraphicsDevice(GraphicsDevice_)`, the two getters, the copying
+setter and `Content_.Dispose()` at teardown — and CNA never loads an asset
+through it. The decisive count is the other one: in the entire CNA tree, outside
+tests and examples, `getContentProperty()` has **exactly one caller**, and it is
+`cna_game_get_content_manager_ext` — the route that lends the handle out. So
+CNA's copied manager is not observable through any selected public member.
+
+That is case A of the three the audit had to choose between: **irrelevant to all
+selected public behaviour**, rather than synchronised where needed or genuinely
+required. A `GAME` slot holding the assigned object would reproduce XNA exactly —
+`(content game)` `EQ` to what was assigned, a `ROOT-DIRECTORY` changed after
+assignment visible because it is the same object, the provider and the cache the
+assigned manager's own — and would need no native call at all. The machinery is
+already there: a `CONTENT-MANAGER` built over a device is an ordinary owned
+native object, the game's own is a facade resolving the borrowed handle per call,
+and both are the same public class.
+
+The member is therefore reclassified **`IMPLEMENTABLE_AND_HIGH_VALUE`** and is
+still partial, because **this measurement implemented nothing**. What the next
+task needs: a `(setf content)` storing into the existing `%game-content` slot, a
+`NIL` argument refused as `ArgumentNullException` is, and tests for the five
+things XNA's IL fixes — identity on read-back, mutation after assignment,
+provider identity, cache identity, and that a device-disposing `Unload` reaches
+the assigned manager rather than the game's original facade.
 
 **A refused disposal costs the object nothing, and that took fixing.** `DISPOSE`
 invalidates through an `UNWIND-PROTECT`, and a parent-owned facade's refusal used
@@ -890,6 +988,36 @@ the variable, the command and the reason. The readers work either way.
 The qualified configuration includes the shim, and the test suite asserts both
 outcomes.
 
+**Four members need it, one is reported partial, and the 2026-09-07 audit could
+not make that consistent.** The generated manifest lists four shimmed routes and
+`basic-effect.lisp`'s own docstring calls them "the four members that need the
+optional private shim". All four refuse identically without it — the same
+`refuse-without-shim` path, the same condition — and the readers work either way.
+Yet the scoreboard says:
+
+| Member | Shimmed route | Reported |
+| --- | --- | --- |
+| `GraphicsDevice.Viewport` | `cna_graphics_device_set_viewport` | **partial** |
+| `BasicEffect.World` | `cna_effect_matrices_set_world` | complete |
+| `BasicEffect.View` | `cna_effect_matrices_set_view` | complete |
+| `BasicEffect.Projection` | `cna_effect_matrices_set_projection` | complete |
+
+No difference was found that justifies the split: neither the reader, nor an
+alternative route (`cna_graphics_device_set_viewport` is the only viewport setter
+in all three admitted header sets and has no pointer variant), nor the refusal.
+**One of the two labels is wrong**, and this measurement deliberately did not
+pick which. Deciding it means deciding whether an optional build artifact makes a
+member incomplete — if it does, three members reported complete are not; if it
+does not, this one is not partial — and that is a scoreboard decision about the
+meaning of "complete", not a reason correction. It is recorded here and in
+`NEXT.md` so that it cannot be lost, and it is the one thing this audit found
+that it did not resolve.
+
+The rest of `Viewport`'s blocker was re-measured and stands: the shim is still
+optional and still source-only, `cffi-libffi` remains a load-time
+libffi-and-C-compiler dependency a released binding must not take, and no
+admitted ABI offers a signature that avoids the 24-byte by-value aggregate.
+
 ## A fixed time step does not make a frame count an update count
 
 Measured: under CNA's fixed time step, a frame that took longer than the target
@@ -975,9 +1103,16 @@ bytes would not.
   The number is available twice over: `ProfileCapabilities.MaxTextureSize` is
   `0x800` for `Reach` and `0x1000` for `HiDef`, hardcoded in the pinned assembly,
   and `GraphicsProfile` is projected. What is not available is what XNA's fit
-  *does* — it happens inside `UnsafeNativeMethods::DecodeStreamToTexture`, a
-  P/Invoke into unmanaged code the pinned assembly does not contain, with the
-  extents passed by reference and rewritten on the way out. And CNA's fit is
+  *does* — it happens inside `UnsafeNativeMethods::DecodeStreamToTexture`, with
+  the extents passed by reference and rewritten on the way out. **That used to say
+  "a P/Invoke into unmanaged code the pinned assembly does not contain", and the
+  assembly does contain it.** `Microsoft.Xna.Framework.dll` is a mixed-mode x86
+  image and the transition is `call ... XnaImaging.DecodeStreamToTexture` with
+  `CallConvCdecl` — a native function compiled into that same PE, not a P/Invoke
+  to another DLL. The boundary is the disassembler's, not the file's: it is
+  machine code rather than IL, and `SharedConstants.XnaImageOperation` is a
+  `NativeCppClass` enum whose IL carries only `value__`, so not even the meaning
+  of operation 0 is written down in managed metadata. And CNA's fit is
   measured: a decode info with `zoom` false **scales in both directions**. A 16×8
   PNG fitted into 64×64 comes back 64×32; into 4×4 it comes back 4×2. Passing
   `MaxTextureSize` here would therefore return a 2048×2048 texture for an 8×8
@@ -998,6 +1133,40 @@ bytes would not.
   the result can say about itself: a *zooming* decode covers and crops, so `WIDTH`
   answers the requested extent, while a *fitting* decode answers something no
   larger and 0.21.0 reports no texture extent, so `WIDTH` refuses there.
+
+**A real XNA reference run was attempted rather than assumed impossible**, since
+that is the only thing that could settle operation 0. This machine has Wine 10.0
+and a prefix with Microsoft .NET Framework 4.0, so a probe was compiled against
+the pinned assembly with that prefix's own `csc.exe` — which succeeded — and run.
+It fails at load with
+
+    System.BadImageFormatException: Could not load file or assembly
+    'Microsoft.Xna.Framework, Version=4.0.0.0, ...' or one of its dependencies.
+    Bad format.
+
+because a mixed-mode assembly needs the Windows CLR's own image loader. So the
+answer is *measured* unobtainable here rather than presumed so. And it would not
+have been authority even had it loaded: `FromStream` needs a `GraphicsDevice`,
+which under Wine is Wine's D3D9 rather than Windows', and the authority order
+this project keeps asks for XNA's own behaviour and not a reimplementation's.
+
+**One blocker survives even if XNA's answer were known**, and it belongs to CNA.
+Reproducing "cap only when the image is larger than `MaxTextureSize`" needs the
+source extent *before* the decode. This binding has that for a PNG, because it
+reads the header on the way past; it has it for nothing else, and CNA decodes
+JPEG and DDS as well, which `FromStream` will hand it. No admitted ABI reports
+the finished texture's extent afterwards either. So the two-argument overload
+would stay partial for every non-PNG payload regardless.
+
+**The five-argument overload was asked the converse question** — whether Lisp
+could compute the result rather than ask CNA for it — and the answer is *not in
+general*. CNA's fit is a preserve-aspect-ratio scale, `min(w/sw, h/sh)` applied
+to both axes: measured, 16×8 into 64×64 gives 64×32 and into 4×4 gives 4×2. For a
+PNG the source extent is known, so the result is derivable up to exactly one
+unknown — **the rounding rule where the scaled extent is not integral**, which
+has not been measured and must not be guessed. For a JPEG or a DDS the source
+extent is not known at all. A computation covering one payload kind minus one
+unmeasured rule is not the member.
 
 ### The extent a decoded texture reports, and when it refuses
 
@@ -1041,13 +1210,37 @@ override made through the ABI is honoured exactly as XNA reads `TitleLocation.Pa
 Two things are not reproduced, and they are the whole of why this is partial:
 
 * XNA round-trips the cleaned name through `new Uri(name, UriKind.Relative)` and
-  turns any exception into an `ArgumentException`. No input that survives the
-  checks above has been found to fail that construction — but this binding cannot
-  *evidence* that it rejects nothing, and a step that might reject something is
-  not a step that can be claimed as reproduced.
+  turns any exception into an `ArgumentException`. **Re-derived from the IL on
+  2026-09-07 rather than from fuzzing**, and the half of it that *can* be settled
+  now is: the check runs on the forward-slash form (the IL replaces
+  `DirectorySeparatorChar` with `AltDirectorySeparatorChar` first) and constructs
+  the `Uri` only to discard it. The dominant way that constructor throws — the
+  string parsing as an *absolute* URI — is **excluded by construction here**,
+  because a URI scheme needs a colon and `:` is one of the seven characters
+  `IsCleanPathAbsolute` has already refused. What cannot be settled is the rest:
+  `System.Uri` lives in `System.dll`, which is **not one of the four assemblies
+  this project pins by hash**, and its behaviour has varied across .NET Framework
+  releases — a maximum length being the obvious residual throw. So the step is
+  unevidenced not for want of testing but because its authority is outside the
+  pinned set, and no amount of local testing could bring it inside.
 * XNA's member is static and needs no game. CNA's title-location routes take a
-  game handle for thread affinity, so this needs the process's one active game —
-  the same shape, and the same reason, as `Keyboard.GetState`.
+  game handle, so this needs the process's one active game — the same shape as
+  `Keyboard.GetState`. **This used to be attributed to thread affinity, and the
+  measurement of 2026-09-07 says the dependency is not semantic at all.** CNA's
+  `TitleLocation::path_` is a **static** member with a static getter taking no
+  arguments — process-global state, initialised once from the platform's base
+  path — so nothing about a title location belongs to a game. It is the C
+  boundary that demands one: `cna_title_location_get_path_size`, `_copy_path` and
+  `_set_path_ext` each take `CNA_Handle game` as their first parameter,
+  identically in 0.21.0, 0.22.0 and 0.23.0, and there is no route without it.
+  Deriving the path independently is refused rather than merely inconvenient: a
+  program that called `cna_title_location_set_path_ext` would then be ignored,
+  and the working directory is not what XNA reads.
+
+**Neither half is resolved, and one resolved half would not be enough.** The two
+also fail differently: (A) is a `QUALIFICATION_LIMIT` no CNA release could lift,
+while (B) would be lifted by a CNA route that takes no game. The member carries
+the first category because it is the one nothing can reach.
 
 A name that escapes the title is an **argument** failure; a name that merely names
 nothing is an **IO** failure. That is XNA's distinction between `ArgumentException`
@@ -1932,18 +2125,37 @@ which this binding raises as `NoAudioHardwareException`, and the
 
 `DynamicSoundEffectInstance`'s constructor does not.
 `cna_dynamic_sound_effect_instance_create` answers `CNA_RESULT_SUCCESS` with no
-device — measured against 0.21.0, 0.22.0 and 0.23.0, with a driver name SDL cannot
-resolve — and the handle it gives back accepts `SubmitBuffer`. The refusal
-arrives at `Play`.
+device — re-measured on 2026-09-07 against 0.21.0, 0.22.0 and 0.23.0, with a
+driver name SDL cannot resolve — and the handle it gives back accepts
+`SubmitBuffer`. The refusal arrives at `Play`.
 
 **XNA's own behaviour there is not establishable.** Its constructor calls
-`AllocateVoice()`, which calls
+`AllocateVoice()` — *virtually*, and `DynamicSoundEffectInstance` overrides it,
+so the base implementation is not the one that runs — and the override reaches
 `SoundEffectUnsafeNativeMethods.CreateDynamicSoundEffectInstance`, whose body is
-native code inside the mixed-mode assembly rather than IL. What the disassembly
-*does* establish is the shape of the failure if there is one:
-`Helpers.GetExceptionFromResult` maps XACT result `0x8ac70017` to
-`NoAudioHardwareException`, so a failure would surface as that exception and not
-as something else.
+native code inside the mixed-mode assembly rather than IL.
+
+**Re-read on 2026-09-07, and the disassembly establishes more than this section
+used to claim.** Everything up to that one call is managed and readable: the
+`sampleRate` check against `[0x1f40, 0xbb80]`, the `channels` check against
+`[1, 2]`, `AudioFormat.Create(rate, channels, 16)` into a field, then the call —
+whose result goes through `Helpers.ThrowExceptionFromErrorCode` into a literal
+`HRESULT` table. So the shape of every possible answer is known, and there are
+**two** no-device candidates rather than one: `0x8ac70017`, reached through the
+XACT switch based at `0x8ac70003`, gives `NoAudioHardwareException()`; and
+`0x80040256` gives
+`InvalidOperationException(FrameworkResources.NoAudioPlaybackDevicesFound)`.
+Exactly one thing is unknown: which code the native function returns when no
+playback device exists.
+
+**A reference run was attempted rather than assumed impossible.** A probe was
+compiled against the pinned assembly using the `csc.exe` of a Wine 10.0 prefix
+carrying Microsoft .NET Framework 4.0 — the compile succeeded — and the run fails
+at load with `BadImageFormatException`, because a mixed-mode assembly needs the
+Windows CLR's own image loader. Even had it loaded, the mixer under Wine is
+FAudio rather than Windows XAudio2, so the `HRESULT` would have been a
+reimplementation's and not XNA's. The answer is *measured* unobtainable on this
+machine rather than presumed so.
 
 So the constructor is **partial**. Adopting CNA's success is a binding-defined
 outcome standing in for an unknown one, which is legitimate for a partial member

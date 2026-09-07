@@ -444,20 +444,24 @@ and so is a category left behind by a member that has since been completed.
 <!-- generated-block:frontier-categories -->
 | Category | Members | What it means |
 | --- | ---: | --- |
-| `LANGUAGE_PROJECTION_LIMIT` | **5** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
-| `CNA_ADMITTED_ABI_LIMIT` | **41** | No admitted CNA ABI can represent the member. |
+| `LANGUAGE_PROJECTION_LIMIT` | **4** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
+| `CNA_ADMITTED_ABI_LIMIT` | **40** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
 | `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
-| `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
+| `IMPLEMENTABLE_AND_HIGH_VALUE` | **2** | Nothing blocks it and it should be done next. |
 <!-- /generated-block:frontier-categories -->
 
-<!-- generated:high-value frontier members=0 --> members are in
-`IMPLEMENTABLE_AND_HIGH_VALUE`, and that is the row the release statement rests
-on: nothing in the selected profile is both unblocked and worth doing. The two
-empty rows are rendered rather than dropped, because their being empty is the
-claim.
+<!-- generated:high-value frontier members=2 --> members are in
+`IMPLEMENTABLE_AND_HIGH_VALUE`. **That row was zero when the release statement
+rested on it and is not any more**: the 2026-09-07 audit re-read all 29 partial
+reasons against the current admitted set and two did not survive --
+`RenderTargetBinding.CubeMapFace` and `Game.Content`. Neither has been
+implemented, so both are still partial and the partial count is unchanged;
+what moved is the reason, not the code. `NEXT.md` has the measurement and names
+the implementation task. The remaining empty rows are rendered rather than
+dropped, because their being empty is the claim.
 
 **Two of these categories were named after CNA 0.21.0 and are not any more.**
 `CNA_ADMITTED_ABI_LIMIT` was `CNA_0_21_ABI_LIMIT` and `PUBLIC_OBJECT_MODEL_CLOSURE`
