@@ -280,6 +280,11 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "native/content")
    ;; The atomicity proofs need the content fixture's root and asset name.
    (:file "native/content-atomicity")
+   ;; Game's private device-event wiring. After native/content, whose fixtures
+   ;; and content root it reuses, and after native/graphics, whose GRAPHICS-GAME
+   ;; it extends: the lane needs a real loaded asset to prove a consequence
+   ;; rather than a call.
+   (:file "native/game-device-events")
    ;; The SoundEffect closure: fixtures generated here, no sample audio stored.
    (:file "native/audio")
    ;; The Microphone closure. After native/audio because it reuses that file's

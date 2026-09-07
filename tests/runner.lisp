@@ -229,6 +229,37 @@
         (format t "semantics when called, and no admitted CNA ABI calls them: an~%")
         (format t "override changes nothing the framework does, which is why all~%")
         (format t "three are reported partial rather than complete.~%")))
+    ;; Game's private device-event wiring. Seven levels and they are seven
+    ;; claims, for the reason every surface above keeps its own apart -- and one
+    ;; that is particular to this lane: none of these is a public XNA member, so
+    ;; no compatibility cell can report them and the evidence lines are the only
+    ;; record that the invariant holds. That the private handler *ran* says
+    ;; nothing about whether it read the current `Game.Content'; that it read the
+    ;; current one says nothing about whether a real loaded asset reached its
+    ;; disposed state; and none of them says anything about a condition crossing
+    ;; a C frame.
+    (when (native-library-requested-p)
+      (if *device-wiring-evidence*
+          (dolist (entry (reverse *device-wiring-evidence*))
+            (format t "~&device wiring : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&device wiring : NOT RUN -- no device-wiring test recorded evidence~%"))
+      (when (and (device-wiring-proved-p :hook-installation)
+                 (not (device-wiring-proved-p :content-unload)))
+        (format t "The private subscriptions were installed and no asset was~%")
+        (format t "proved released: a hook that is present says nothing about~%")
+        (format t "whether anything happens when it fires.~%"))
+      (when (and (device-wiring-proved-p :content-unload)
+                 (not (device-wiring-proved-p :current-reference)))
+        (format t "An asset was released and the CURRENT Game.Content was not~%")
+        (format t "proved to be the one chosen: a handler that closed over the~%")
+        (format t "manager it was installed with would pass the first and fail~%")
+        (format t "the second.~%"))
+      (when (device-wiring-proved-p :content-unload)
+        (format t "No device-wiring claim above is about Game.UnloadContent.~%")
+        (format t "CNA's native game already drives that callback at this exact~%")
+        (format t "point -- measured -- so the binding supplies ContentManager.~%")
+        (format t "Unload alone and the pair lands in XNA's order. Calling both~%")
+        (format t "would run the program's overridable method twice.~%")))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))
