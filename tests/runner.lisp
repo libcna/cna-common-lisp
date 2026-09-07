@@ -184,6 +184,28 @@
         (format t "about the stream protocol and CNA's routes, and not that the~%")
         (format t "data survives a power cut, a full disk, or a filesystem that~%")
         (format t "lies about fsync.~%")))
+    ;; Game services and device selection. Six levels and they are six claims,
+    ;; for the reason the four device surfaces above each keep theirs apart.
+    (when (native-library-requested-p)
+      (if *services-evidence*
+          (dolist (entry (reverse *services-evidence*))
+            (format t "~&services      : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&services      : NOT RUN -- no services test recorded evidence~%"))
+      (when (and (services-proved-p :managed) (not (services-proved-p :canonical)))
+        (format t "An arbitrary service dictionary worked and the manager's own two~%")
+        (format t "registrations were not observed: those are two claims and this~%")
+        (format t "run supports one.~%"))
+      (when (and (services-proved-p :virtual-events)
+                 (not (services-proved-p :preparing-device-settings)))
+        (format t "A protected raiser controlled a data-free event and the mutable~%")
+        (format t "device-settings event was not observed: a seam that suppresses~%")
+        (format t "says nothing about a seam that changes the device.~%"))
+      (when (services-proved-p :device-selection)
+        (format t "No services claim above says that FindBestDevice, RankDevices or~%")
+        (format t "CanResetDevice influences device creation. They answer XNA's~%")
+        (format t "semantics when called, and no admitted CNA ABI calls them: an~%")
+        (format t "override changes nothing the framework does, which is why all~%")
+        (format t "three are reported partial rather than complete.~%")))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))
