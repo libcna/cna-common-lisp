@@ -759,13 +759,21 @@ jobs:
       # means something different from a Lisp failure instead of it.
       - name: The native volume-transfer matrix
         working-directory: cna-common-lisp
+        env:
+          # The script builds its probe against the CNA headers; its default is a
+          # local development path that does not exist on a runner.
+          CNA_HEADERS: ${{ github.workspace }}/cna/modules/c-api/include
         run: |
           set -eu
           tools/qualification/texture3d-matrix.sh "$CNA_NATIVE_LIBRARY"
 
-      # And the negative branch, which is the claim the other two lanes make and
-      # this one must not quietly contradict.
-      - name: HEADLESS and SOFTWARE still refuse, on this ABI
+      # The same one-question probe that answers NOT_SUPPORTED on the other two
+      # renderers, asked of this one, so the two answers are produced by the same
+      # program. **The negative branch is not rebuilt here**: the `native' and
+      # `rasterizer' jobs run tests/native/texture-3d.lisp against HEADLESS and
+      # SOFTWARE and assert the refusal there, so building either renderer again
+      # in this job would be a third CNA build for a claim already gated.
+      - name: The support probe answers SUCCESS on this renderer
         working-directory: cna-common-lisp
         run: |
           set -eu
@@ -773,7 +781,6 @@ jobs:
           cc -O1 -o build-probe/texture3d-support-probe \
              -I "${GITHUB_WORKSPACE}/cna/modules/c-api/include" \
              tools/native-abi/texture3d-support-probe.c -ldl
-          echo "the EasyGL library, which must SUCCEED:"
           xvfb-run -a --server-args="-screen 0 1280x800x24" \
             ./build-probe/texture3d-support-probe "$CNA_NATIVE_LIBRARY" \
             | tee /tmp/easygl-support.log
