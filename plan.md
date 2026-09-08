@@ -345,31 +345,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=195 -->
-<!-- generated:selected members=2581 -->
-<!-- generated:complete types=172 -->
+<!-- generated:selected types=206 -->
+<!-- generated:selected members=2682 -->
+<!-- generated:complete types=183 -->
 <!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2085 -->
+<!-- generated:complete members=2152 -->
 <!-- generated:partial members=30 -->
-<!-- generated:missing members=23 -->
-<!-- generated:not-applicable members=443 -->
+<!-- generated:missing members=26 -->
+<!-- generated:not-applicable members=474 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
+Selection **Foundation 1 and the managed closures**: 206 types, 2682 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **172** |
+| Types complete | **183** |
 | Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **2085** |
+| Members complete | **2152** |
 | Members partial | **30** |
-| Members missing | **23** |
-| Members not applicable | **443** |
+| Members missing | **26** |
+| Members not applicable | **474** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

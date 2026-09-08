@@ -290,16 +290,36 @@ SELECTED = [
     # what `EffectParameter.GetValueTexture3D' is declared under for `Texture3D',
     # which is the standing precedent for a member whose type is not selected.
     #
-    # `MediaLibrary', `Picture', `Playlist', `MediaSource' and the six collection
-    # types are not here for the same reason they were not chosen:
-    # `media_library.h' says an empty library is an ordinary result, so CI could
-    # qualify *empty* and nothing else.
+    # **The library half joined on 2026-09-08, and the reason it was absent is
+    # the reason it is here now.** It used to say that `media_library.h' calls an
+    # empty library an ordinary result, so CI could qualify *empty* and nothing
+    # else. That was measuring the wrong thing: SDL resolves the user folders
+    # through `$XDG_CONFIG_HOME/user-dirs.dirs', so pointing that at a generated
+    # fixture makes the library deterministic and non-empty on every admitted
+    # ABI -- songs 2, albums 2, artists 2, genres 1, pictures 2, measured three
+    # times each. docs/media-library-audit.md has the whole audit.
+    #
+    # The music half is selected first and the picture half with it, because
+    # `MediaLibrary' itself returns `PictureCollection' and `PictureAlbum' from
+    # six of its own members: a closure that stopped at the music half would make
+    # `MediaLibrary' partial by construction rather than by any limit.
     "Microsoft.Xna.Framework.Media.MediaPlayer",
     "Microsoft.Xna.Framework.Media.MediaState",
     "Microsoft.Xna.Framework.Media.MediaQueue",
     "Microsoft.Xna.Framework.Media.Song",
     "Microsoft.Xna.Framework.Media.SongCollection",
     "Microsoft.Xna.Framework.Media.VisualizationData",
+    "Microsoft.Xna.Framework.Media.MediaLibrary",
+    "Microsoft.Xna.Framework.Media.MediaSource",
+    "Microsoft.Xna.Framework.Media.MediaSourceType",
+    "Microsoft.Xna.Framework.Media.Album",
+    "Microsoft.Xna.Framework.Media.AlbumCollection",
+    "Microsoft.Xna.Framework.Media.Artist",
+    "Microsoft.Xna.Framework.Media.ArtistCollection",
+    "Microsoft.Xna.Framework.Media.Genre",
+    "Microsoft.Xna.Framework.Media.GenreCollection",
+    "Microsoft.Xna.Framework.Media.Playlist",
+    "Microsoft.Xna.Framework.Media.PlaylistCollection",
     # --- Microsoft.Xna.Framework.Storage -----------------------------------
     # All three types of the namespace, and the closure is complete: everything
     # they reach beyond each other is the base-class library's -- `System.String',

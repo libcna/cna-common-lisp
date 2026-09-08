@@ -34,7 +34,7 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 717,
+    "functions": 820,
     "structs": 75,
     "struct_fields": 555,
     "constants": 540,
@@ -18276,6 +18276,2457 @@
       "ownership": "creates-owned:model:child-of-game",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_content_manager_load_model(CNA_Handle content_manager, CNA_StringView asset_name, CNA_ModelHandle* out_model)"
+    },
+    {
+      "name": "cna_album_collection_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_AlbumCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_collection_copy_type_name(CNA_AlbumCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_collection_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_AlbumCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_collection_destroy(CNA_AlbumCollectionHandle collection)"
+    },
+    {
+      "name": "cna_album_collection_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_AlbumCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_collection_dispose(CNA_AlbumCollectionHandle collection)"
+    },
+    {
+      "name": "cna_album_collection_get_at",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_AlbumCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_album",
+          "c_type": "CNA_AlbumHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_collection_get_at(CNA_AlbumCollectionHandle collection, int32_t index, CNA_AlbumHandle* out_album)"
+    },
+    {
+      "name": "cna_album_collection_get_count",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_AlbumCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_collection_get_count(CNA_AlbumCollectionHandle collection, int32_t* out_count)"
+    },
+    {
+      "name": "cna_album_collection_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_AlbumCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_collection_get_is_disposed(CNA_AlbumCollectionHandle collection, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_album_collection_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_AlbumCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_collection_get_type_name_size(CNA_AlbumCollectionHandle collection, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_copy_art",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_copy_art(CNA_AlbumHandle album, uint8_t* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_copy_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_copy_name(CNA_AlbumHandle album, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_copy_thumbnail",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_copy_thumbnail(CNA_AlbumHandle album, uint8_t* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_copy_type_name(CNA_AlbumHandle album, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_destroy(CNA_AlbumHandle album)"
+    },
+    {
+      "name": "cna_album_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_dispose(CNA_AlbumHandle album)"
+    },
+    {
+      "name": "cna_album_equals",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "left",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "right",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_equal",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_equals(CNA_AlbumHandle left, CNA_AlbumHandle right, CNA_Bool* out_equal)"
+    },
+    {
+      "name": "cna_album_get_art_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_art_size(CNA_AlbumHandle album, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_get_artist",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_artist",
+          "c_type": "CNA_ArtistHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_available",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_artist(CNA_AlbumHandle album, CNA_ArtistHandle* out_artist, CNA_Bool* out_available)"
+    },
+    {
+      "name": "cna_album_get_duration",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_duration(CNA_AlbumHandle album, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_album_get_genre",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_genre",
+          "c_type": "CNA_GenreHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_available",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_genre(CNA_AlbumHandle album, CNA_GenreHandle* out_genre, CNA_Bool* out_available)"
+    },
+    {
+      "name": "cna_album_get_has_art",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_has_art",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_has_art(CNA_AlbumHandle album, CNA_Bool* out_has_art)"
+    },
+    {
+      "name": "cna_album_get_hash_code",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_hash",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_hash_code(CNA_AlbumHandle album, int32_t* out_hash)"
+    },
+    {
+      "name": "cna_album_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_is_disposed(CNA_AlbumHandle album, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_album_get_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_name_size(CNA_AlbumHandle album, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_get_songs",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_songs",
+          "c_type": "CNA_SongCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_songs(CNA_AlbumHandle album, CNA_SongCollectionHandle* out_songs)"
+    },
+    {
+      "name": "cna_album_get_thumbnail_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_thumbnail_size(CNA_AlbumHandle album, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_album_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "album",
+          "c_type": "CNA_AlbumHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_album_get_type_name_size(CNA_AlbumHandle album, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_artist_collection_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ArtistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_collection_copy_type_name(CNA_ArtistCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_artist_collection_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ArtistCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_collection_destroy(CNA_ArtistCollectionHandle collection)"
+    },
+    {
+      "name": "cna_artist_collection_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ArtistCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_collection_dispose(CNA_ArtistCollectionHandle collection)"
+    },
+    {
+      "name": "cna_artist_collection_get_at",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ArtistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_artist",
+          "c_type": "CNA_ArtistHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_collection_get_at(CNA_ArtistCollectionHandle collection, int32_t index, CNA_ArtistHandle* out_artist)"
+    },
+    {
+      "name": "cna_artist_collection_get_count",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ArtistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_collection_get_count(CNA_ArtistCollectionHandle collection, int32_t* out_count)"
+    },
+    {
+      "name": "cna_artist_collection_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ArtistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_collection_get_is_disposed(CNA_ArtistCollectionHandle collection, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_artist_collection_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_ArtistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_collection_get_type_name_size(CNA_ArtistCollectionHandle collection, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_artist_copy_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_copy_name(CNA_ArtistHandle artist, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_artist_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_copy_type_name(CNA_ArtistHandle artist, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_artist_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_destroy(CNA_ArtistHandle artist)"
+    },
+    {
+      "name": "cna_artist_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_dispose(CNA_ArtistHandle artist)"
+    },
+    {
+      "name": "cna_artist_equals",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "left",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "right",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_equal",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_equals(CNA_ArtistHandle left, CNA_ArtistHandle right, CNA_Bool* out_equal)"
+    },
+    {
+      "name": "cna_artist_get_albums",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_albums",
+          "c_type": "CNA_AlbumCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_get_albums(CNA_ArtistHandle artist, CNA_AlbumCollectionHandle* out_albums)"
+    },
+    {
+      "name": "cna_artist_get_hash_code",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_hash",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_get_hash_code(CNA_ArtistHandle artist, int32_t* out_hash)"
+    },
+    {
+      "name": "cna_artist_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_get_is_disposed(CNA_ArtistHandle artist, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_artist_get_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_get_name_size(CNA_ArtistHandle artist, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_artist_get_songs",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_songs",
+          "c_type": "CNA_SongCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_get_songs(CNA_ArtistHandle artist, CNA_SongCollectionHandle* out_songs)"
+    },
+    {
+      "name": "cna_artist_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "artist",
+          "c_type": "CNA_ArtistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_artist_get_type_name_size(CNA_ArtistHandle artist, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_genre_collection_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_GenreCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_collection_copy_type_name(CNA_GenreCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_genre_collection_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_GenreCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_collection_destroy(CNA_GenreCollectionHandle collection)"
+    },
+    {
+      "name": "cna_genre_collection_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_GenreCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_collection_dispose(CNA_GenreCollectionHandle collection)"
+    },
+    {
+      "name": "cna_genre_collection_get_at",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_GenreCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_genre",
+          "c_type": "CNA_GenreHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_collection_get_at(CNA_GenreCollectionHandle collection, int32_t index, CNA_GenreHandle* out_genre)"
+    },
+    {
+      "name": "cna_genre_collection_get_count",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_GenreCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_collection_get_count(CNA_GenreCollectionHandle collection, int32_t* out_count)"
+    },
+    {
+      "name": "cna_genre_collection_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_GenreCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_collection_get_is_disposed(CNA_GenreCollectionHandle collection, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_genre_collection_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_GenreCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_collection_get_type_name_size(CNA_GenreCollectionHandle collection, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_genre_copy_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_copy_name(CNA_GenreHandle genre, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_genre_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_copy_type_name(CNA_GenreHandle genre, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_genre_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_destroy(CNA_GenreHandle genre)"
+    },
+    {
+      "name": "cna_genre_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_dispose(CNA_GenreHandle genre)"
+    },
+    {
+      "name": "cna_genre_equals",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "left",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "right",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_equal",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_equals(CNA_GenreHandle left, CNA_GenreHandle right, CNA_Bool* out_equal)"
+    },
+    {
+      "name": "cna_genre_get_albums",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_albums",
+          "c_type": "CNA_AlbumCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_get_albums(CNA_GenreHandle genre, CNA_AlbumCollectionHandle* out_albums)"
+    },
+    {
+      "name": "cna_genre_get_hash_code",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_hash",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_get_hash_code(CNA_GenreHandle genre, int32_t* out_hash)"
+    },
+    {
+      "name": "cna_genre_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_get_is_disposed(CNA_GenreHandle genre, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_genre_get_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_get_name_size(CNA_GenreHandle genre, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_genre_get_songs",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_songs",
+          "c_type": "CNA_SongCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_get_songs(CNA_GenreHandle genre, CNA_SongCollectionHandle* out_songs)"
+    },
+    {
+      "name": "cna_genre_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "genre",
+          "c_type": "CNA_GenreHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_genre_get_type_name_size(CNA_GenreHandle genre, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_library_copy_media_source_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_copy_media_source_name(CNA_MediaLibraryHandle library, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_library_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_copy_type_name(CNA_MediaLibraryHandle library, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_library_create",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_library",
+          "c_type": "CNA_MediaLibraryHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:media-library:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_create(CNA_Handle game, CNA_MediaLibraryHandle* out_library)"
+    },
+    {
+      "name": "cna_media_library_create_from_source",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "source_index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_library",
+          "c_type": "CNA_MediaLibraryHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:media-library:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_create_from_source(CNA_Handle game, uint32_t source_index, CNA_MediaLibraryHandle* out_library)"
+    },
+    {
+      "name": "cna_media_library_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:media-library",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_destroy(CNA_MediaLibraryHandle library)"
+    },
+    {
+      "name": "cna_media_library_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_dispose(CNA_MediaLibraryHandle library)"
+    },
+    {
+      "name": "cna_media_library_get_albums",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_albums",
+          "c_type": "CNA_AlbumCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_albums(CNA_MediaLibraryHandle library, CNA_AlbumCollectionHandle* out_albums)"
+    },
+    {
+      "name": "cna_media_library_get_artists",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_artists",
+          "c_type": "CNA_ArtistCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_artists(CNA_MediaLibraryHandle library, CNA_ArtistCollectionHandle* out_artists)"
+    },
+    {
+      "name": "cna_media_library_get_genres",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_genres",
+          "c_type": "CNA_GenreCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_genres(CNA_MediaLibraryHandle library, CNA_GenreCollectionHandle* out_genres)"
+    },
+    {
+      "name": "cna_media_library_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_is_disposed(CNA_MediaLibraryHandle library, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_media_library_get_media_source_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_media_source_name_size(CNA_MediaLibraryHandle library, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_library_get_media_source_type",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_type",
+          "c_type": "CNA_MediaSourceType*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_media_source_type(CNA_MediaLibraryHandle library, CNA_MediaSourceType* out_type)"
+    },
+    {
+      "name": "cna_media_library_get_playlists",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_playlists",
+          "c_type": "CNA_PlaylistCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_playlists(CNA_MediaLibraryHandle library, CNA_PlaylistCollectionHandle* out_playlists)"
+    },
+    {
+      "name": "cna_media_library_get_songs",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_songs",
+          "c_type": "CNA_SongCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_songs(CNA_MediaLibraryHandle library, CNA_SongCollectionHandle* out_songs)"
+    },
+    {
+      "name": "cna_media_library_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "library",
+          "c_type": "CNA_MediaLibraryHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_library_get_type_name_size(CNA_MediaLibraryHandle library, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_source_copy_name_at",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_source_copy_name_at(CNA_Handle game, uint32_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_source_copy_type_name_at",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_source_copy_type_name_at(CNA_Handle game, uint32_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_source_get_available_count",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "uint32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_source_get_available_count(CNA_Handle game, uint32_t* out_count)"
+    },
+    {
+      "name": "cna_media_source_get_name_size_at",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_source_get_name_size_at(CNA_Handle game, uint32_t index, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_media_source_get_type_at",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_type",
+          "c_type": "CNA_MediaSourceType*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_source_get_type_at(CNA_Handle game, uint32_t index, CNA_MediaSourceType* out_type)"
+    },
+    {
+      "name": "cna_media_source_get_type_name_size_at",
+      "header": "media.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "game",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "uint32_t",
+          "cffi_type": ":uint32"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_media_source_get_type_name_size_at(CNA_Handle game, uint32_t index, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_playlist_collection_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_PlaylistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_collection_copy_type_name(CNA_PlaylistCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_playlist_collection_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_PlaylistCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_collection_destroy(CNA_PlaylistCollectionHandle collection)"
+    },
+    {
+      "name": "cna_playlist_collection_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_PlaylistCollectionHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_collection_dispose(CNA_PlaylistCollectionHandle collection)"
+    },
+    {
+      "name": "cna_playlist_collection_get_at",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_PlaylistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "index",
+          "c_type": "int32_t",
+          "cffi_type": ":int32"
+        },
+        {
+          "name": "out_playlist",
+          "c_type": "CNA_PlaylistHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_collection_get_at(CNA_PlaylistCollectionHandle collection, int32_t index, CNA_PlaylistHandle* out_playlist)"
+    },
+    {
+      "name": "cna_playlist_collection_get_count",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_PlaylistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_count",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_collection_get_count(CNA_PlaylistCollectionHandle collection, int32_t* out_count)"
+    },
+    {
+      "name": "cna_playlist_collection_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_PlaylistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_collection_get_is_disposed(CNA_PlaylistCollectionHandle collection, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_playlist_collection_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "collection",
+          "c_type": "CNA_PlaylistCollectionHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_collection_get_type_name_size(CNA_PlaylistCollectionHandle collection, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_playlist_copy_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_copy_name(CNA_PlaylistHandle playlist, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_playlist_copy_type_name",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_copy_type_name(CNA_PlaylistHandle playlist, char* destination, uint64_t capacity, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_playlist_destroy",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "releases",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_destroy(CNA_PlaylistHandle playlist)"
+    },
+    {
+      "name": "cna_playlist_dispose",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_dispose(CNA_PlaylistHandle playlist)"
+    },
+    {
+      "name": "cna_playlist_equals",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "left",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "right",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_equal",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_equals(CNA_PlaylistHandle left, CNA_PlaylistHandle right, CNA_Bool* out_equal)"
+    },
+    {
+      "name": "cna_playlist_get_duration",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_ticks",
+          "c_type": "int64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_get_duration(CNA_PlaylistHandle playlist, int64_t* out_ticks)"
+    },
+    {
+      "name": "cna_playlist_get_hash_code",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_hash",
+          "c_type": "int32_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_get_hash_code(CNA_PlaylistHandle playlist, int32_t* out_hash)"
+    },
+    {
+      "name": "cna_playlist_get_is_disposed",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_disposed",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_get_is_disposed(CNA_PlaylistHandle playlist, CNA_Bool* out_disposed)"
+    },
+    {
+      "name": "cna_playlist_get_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_get_name_size(CNA_PlaylistHandle playlist, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_playlist_get_songs",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_songs",
+          "c_type": "CNA_SongCollectionHandle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_get_songs(CNA_PlaylistHandle playlist, CNA_SongCollectionHandle* out_songs)"
+    },
+    {
+      "name": "cna_playlist_get_type_name_size",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "playlist",
+          "c_type": "CNA_PlaylistHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_bytes",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_playlist_get_type_name_size(CNA_PlaylistHandle playlist, uint64_t* out_bytes)"
+    },
+    {
+      "name": "cna_song_get_album",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_album",
+          "c_type": "CNA_AlbumHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_available",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_album(CNA_SongHandle song, CNA_AlbumHandle* out_album, CNA_Bool* out_available)"
+    },
+    {
+      "name": "cna_song_get_artist",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_artist",
+          "c_type": "CNA_ArtistHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_available",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_artist(CNA_SongHandle song, CNA_ArtistHandle* out_artist, CNA_Bool* out_available)"
+    },
+    {
+      "name": "cna_song_get_genre",
+      "header": "media_library.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "song",
+          "c_type": "CNA_SongHandle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_genre",
+          "c_type": "CNA_GenreHandle*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_available",
+          "c_type": "CNA_Bool*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "borrows",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_song_get_genre(CNA_SongHandle song, CNA_GenreHandle* out_genre, CNA_Bool* out_available)"
     }
   ],
   "structs": [

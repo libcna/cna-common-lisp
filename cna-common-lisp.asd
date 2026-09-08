@@ -191,6 +191,10 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "media/song")
    (:file "media/media-queue")
    (:file "media/media-player")
+   ;; The media-library half. After media-player and song, because it reuses
+   ;; %MEDIA-GAME, SONG-COLLECTION and the COUNT-OF/ITEM generic functions the
+   ;; playback half declares, and because a library song is an ordinary SONG.
+   (:file "media/media-library")
    ;; --- Microsoft.Xna.Framework.Content ------------------------------------
    ;; The manager first, then the loaders that produce graphics objects, then
    ;; Game.Content, which needs both GAME and CONTENT-MANAGER to exist.

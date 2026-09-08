@@ -254,6 +254,8 @@ that a keyword-taking projection accepts no keywords at all."
    (alist-object microsoft.xna.framework.audio::*microphone-state-table*)
    "media-state"
    (alist-object microsoft.xna.framework.media::*media-state-table*)
+   "media-source-type"
+   (alist-object microsoft.xna.framework.media::*media-source-type-table*)
    "file-mode" (alist-object microsoft.xna.framework.storage::*file-mode-table*)
    "file-access" (alist-object microsoft.xna.framework.storage::*file-access-table*)
    "file-share" (alist-object microsoft.xna.framework.storage::*file-share-table*)))

@@ -2882,6 +2882,418 @@
 (defcfun ("cna_content_manager_load_model" %content-manager-load-model) :uint32
   (content-manager :uint64) (asset-name-0 :pointer) (asset-name-1 :uint64) (out-model :pointer))
 
+;;; CNA_Result cna_album_collection_copy_type_name(CNA_AlbumCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_album_collection_copy_type_name" %album-collection-copy-type-name) :uint32
+  (collection :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_collection_destroy(CNA_AlbumCollectionHandle collection)
+(defcfun ("cna_album_collection_destroy" %album-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_album_collection_dispose(CNA_AlbumCollectionHandle collection)
+(defcfun ("cna_album_collection_dispose" %album-collection-dispose) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_album_collection_get_at(CNA_AlbumCollectionHandle collection, int32_t index, CNA_AlbumHandle* out_album)
+(defcfun ("cna_album_collection_get_at" %album-collection-get-at) :uint32
+  (collection :uint64) (index :int32) (out-album :pointer))
+
+;;; CNA_Result cna_album_collection_get_count(CNA_AlbumCollectionHandle collection, int32_t* out_count)
+(defcfun ("cna_album_collection_get_count" %album-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_album_collection_get_is_disposed(CNA_AlbumCollectionHandle collection, CNA_Bool* out_disposed)
+(defcfun ("cna_album_collection_get_is_disposed" %album-collection-get-is-disposed) :uint32
+  (collection :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_album_collection_get_type_name_size(CNA_AlbumCollectionHandle collection, uint64_t* out_bytes)
+(defcfun ("cna_album_collection_get_type_name_size" %album-collection-get-type-name-size) :uint32
+  (collection :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_copy_art(CNA_AlbumHandle album, uint8_t* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_album_copy_art" %album-copy-art) :uint32
+  (album :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_copy_name(CNA_AlbumHandle album, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_album_copy_name" %album-copy-name) :uint32
+  (album :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_copy_thumbnail(CNA_AlbumHandle album, uint8_t* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_album_copy_thumbnail" %album-copy-thumbnail) :uint32
+  (album :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_copy_type_name(CNA_AlbumHandle album, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_album_copy_type_name" %album-copy-type-name) :uint32
+  (album :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_destroy(CNA_AlbumHandle album)
+(defcfun ("cna_album_destroy" %album-destroy) :uint32
+  (album :uint64))
+
+;;; CNA_Result cna_album_dispose(CNA_AlbumHandle album)
+(defcfun ("cna_album_dispose" %album-dispose) :uint32
+  (album :uint64))
+
+;;; CNA_Result cna_album_equals(CNA_AlbumHandle left, CNA_AlbumHandle right, CNA_Bool* out_equal)
+(defcfun ("cna_album_equals" %album-equals) :uint32
+  (left :uint64) (right :uint64) (out-equal :pointer))
+
+;;; CNA_Result cna_album_get_art_size(CNA_AlbumHandle album, uint64_t* out_bytes)
+(defcfun ("cna_album_get_art_size" %album-get-art-size) :uint32
+  (album :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_get_artist(CNA_AlbumHandle album, CNA_ArtistHandle* out_artist, CNA_Bool* out_available)
+(defcfun ("cna_album_get_artist" %album-get-artist) :uint32
+  (album :uint64) (out-artist :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_album_get_duration(CNA_AlbumHandle album, int64_t* out_ticks)
+(defcfun ("cna_album_get_duration" %album-get-duration) :uint32
+  (album :uint64) (out-ticks :pointer))
+
+;;; CNA_Result cna_album_get_genre(CNA_AlbumHandle album, CNA_GenreHandle* out_genre, CNA_Bool* out_available)
+(defcfun ("cna_album_get_genre" %album-get-genre) :uint32
+  (album :uint64) (out-genre :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_album_get_has_art(CNA_AlbumHandle album, CNA_Bool* out_has_art)
+(defcfun ("cna_album_get_has_art" %album-get-has-art) :uint32
+  (album :uint64) (out-has-art :pointer))
+
+;;; CNA_Result cna_album_get_hash_code(CNA_AlbumHandle album, int32_t* out_hash)
+(defcfun ("cna_album_get_hash_code" %album-get-hash-code) :uint32
+  (album :uint64) (out-hash :pointer))
+
+;;; CNA_Result cna_album_get_is_disposed(CNA_AlbumHandle album, CNA_Bool* out_disposed)
+(defcfun ("cna_album_get_is_disposed" %album-get-is-disposed) :uint32
+  (album :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_album_get_name_size(CNA_AlbumHandle album, uint64_t* out_bytes)
+(defcfun ("cna_album_get_name_size" %album-get-name-size) :uint32
+  (album :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_get_songs(CNA_AlbumHandle album, CNA_SongCollectionHandle* out_songs)
+(defcfun ("cna_album_get_songs" %album-get-songs) :uint32
+  (album :uint64) (out-songs :pointer))
+
+;;; CNA_Result cna_album_get_thumbnail_size(CNA_AlbumHandle album, uint64_t* out_bytes)
+(defcfun ("cna_album_get_thumbnail_size" %album-get-thumbnail-size) :uint32
+  (album :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_album_get_type_name_size(CNA_AlbumHandle album, uint64_t* out_bytes)
+(defcfun ("cna_album_get_type_name_size" %album-get-type-name-size) :uint32
+  (album :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_artist_collection_copy_type_name(CNA_ArtistCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_artist_collection_copy_type_name" %artist-collection-copy-type-name) :uint32
+  (collection :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_artist_collection_destroy(CNA_ArtistCollectionHandle collection)
+(defcfun ("cna_artist_collection_destroy" %artist-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_artist_collection_dispose(CNA_ArtistCollectionHandle collection)
+(defcfun ("cna_artist_collection_dispose" %artist-collection-dispose) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_artist_collection_get_at(CNA_ArtistCollectionHandle collection, int32_t index, CNA_ArtistHandle* out_artist)
+(defcfun ("cna_artist_collection_get_at" %artist-collection-get-at) :uint32
+  (collection :uint64) (index :int32) (out-artist :pointer))
+
+;;; CNA_Result cna_artist_collection_get_count(CNA_ArtistCollectionHandle collection, int32_t* out_count)
+(defcfun ("cna_artist_collection_get_count" %artist-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_artist_collection_get_is_disposed(CNA_ArtistCollectionHandle collection, CNA_Bool* out_disposed)
+(defcfun ("cna_artist_collection_get_is_disposed" %artist-collection-get-is-disposed) :uint32
+  (collection :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_artist_collection_get_type_name_size(CNA_ArtistCollectionHandle collection, uint64_t* out_bytes)
+(defcfun ("cna_artist_collection_get_type_name_size" %artist-collection-get-type-name-size) :uint32
+  (collection :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_artist_copy_name(CNA_ArtistHandle artist, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_artist_copy_name" %artist-copy-name) :uint32
+  (artist :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_artist_copy_type_name(CNA_ArtistHandle artist, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_artist_copy_type_name" %artist-copy-type-name) :uint32
+  (artist :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_artist_destroy(CNA_ArtistHandle artist)
+(defcfun ("cna_artist_destroy" %artist-destroy) :uint32
+  (artist :uint64))
+
+;;; CNA_Result cna_artist_dispose(CNA_ArtistHandle artist)
+(defcfun ("cna_artist_dispose" %artist-dispose) :uint32
+  (artist :uint64))
+
+;;; CNA_Result cna_artist_equals(CNA_ArtistHandle left, CNA_ArtistHandle right, CNA_Bool* out_equal)
+(defcfun ("cna_artist_equals" %artist-equals) :uint32
+  (left :uint64) (right :uint64) (out-equal :pointer))
+
+;;; CNA_Result cna_artist_get_albums(CNA_ArtistHandle artist, CNA_AlbumCollectionHandle* out_albums)
+(defcfun ("cna_artist_get_albums" %artist-get-albums) :uint32
+  (artist :uint64) (out-albums :pointer))
+
+;;; CNA_Result cna_artist_get_hash_code(CNA_ArtistHandle artist, int32_t* out_hash)
+(defcfun ("cna_artist_get_hash_code" %artist-get-hash-code) :uint32
+  (artist :uint64) (out-hash :pointer))
+
+;;; CNA_Result cna_artist_get_is_disposed(CNA_ArtistHandle artist, CNA_Bool* out_disposed)
+(defcfun ("cna_artist_get_is_disposed" %artist-get-is-disposed) :uint32
+  (artist :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_artist_get_name_size(CNA_ArtistHandle artist, uint64_t* out_bytes)
+(defcfun ("cna_artist_get_name_size" %artist-get-name-size) :uint32
+  (artist :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_artist_get_songs(CNA_ArtistHandle artist, CNA_SongCollectionHandle* out_songs)
+(defcfun ("cna_artist_get_songs" %artist-get-songs) :uint32
+  (artist :uint64) (out-songs :pointer))
+
+;;; CNA_Result cna_artist_get_type_name_size(CNA_ArtistHandle artist, uint64_t* out_bytes)
+(defcfun ("cna_artist_get_type_name_size" %artist-get-type-name-size) :uint32
+  (artist :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_genre_collection_copy_type_name(CNA_GenreCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_genre_collection_copy_type_name" %genre-collection-copy-type-name) :uint32
+  (collection :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_genre_collection_destroy(CNA_GenreCollectionHandle collection)
+(defcfun ("cna_genre_collection_destroy" %genre-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_genre_collection_dispose(CNA_GenreCollectionHandle collection)
+(defcfun ("cna_genre_collection_dispose" %genre-collection-dispose) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_genre_collection_get_at(CNA_GenreCollectionHandle collection, int32_t index, CNA_GenreHandle* out_genre)
+(defcfun ("cna_genre_collection_get_at" %genre-collection-get-at) :uint32
+  (collection :uint64) (index :int32) (out-genre :pointer))
+
+;;; CNA_Result cna_genre_collection_get_count(CNA_GenreCollectionHandle collection, int32_t* out_count)
+(defcfun ("cna_genre_collection_get_count" %genre-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_genre_collection_get_is_disposed(CNA_GenreCollectionHandle collection, CNA_Bool* out_disposed)
+(defcfun ("cna_genre_collection_get_is_disposed" %genre-collection-get-is-disposed) :uint32
+  (collection :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_genre_collection_get_type_name_size(CNA_GenreCollectionHandle collection, uint64_t* out_bytes)
+(defcfun ("cna_genre_collection_get_type_name_size" %genre-collection-get-type-name-size) :uint32
+  (collection :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_genre_copy_name(CNA_GenreHandle genre, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_genre_copy_name" %genre-copy-name) :uint32
+  (genre :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_genre_copy_type_name(CNA_GenreHandle genre, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_genre_copy_type_name" %genre-copy-type-name) :uint32
+  (genre :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_genre_destroy(CNA_GenreHandle genre)
+(defcfun ("cna_genre_destroy" %genre-destroy) :uint32
+  (genre :uint64))
+
+;;; CNA_Result cna_genre_dispose(CNA_GenreHandle genre)
+(defcfun ("cna_genre_dispose" %genre-dispose) :uint32
+  (genre :uint64))
+
+;;; CNA_Result cna_genre_equals(CNA_GenreHandle left, CNA_GenreHandle right, CNA_Bool* out_equal)
+(defcfun ("cna_genre_equals" %genre-equals) :uint32
+  (left :uint64) (right :uint64) (out-equal :pointer))
+
+;;; CNA_Result cna_genre_get_albums(CNA_GenreHandle genre, CNA_AlbumCollectionHandle* out_albums)
+(defcfun ("cna_genre_get_albums" %genre-get-albums) :uint32
+  (genre :uint64) (out-albums :pointer))
+
+;;; CNA_Result cna_genre_get_hash_code(CNA_GenreHandle genre, int32_t* out_hash)
+(defcfun ("cna_genre_get_hash_code" %genre-get-hash-code) :uint32
+  (genre :uint64) (out-hash :pointer))
+
+;;; CNA_Result cna_genre_get_is_disposed(CNA_GenreHandle genre, CNA_Bool* out_disposed)
+(defcfun ("cna_genre_get_is_disposed" %genre-get-is-disposed) :uint32
+  (genre :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_genre_get_name_size(CNA_GenreHandle genre, uint64_t* out_bytes)
+(defcfun ("cna_genre_get_name_size" %genre-get-name-size) :uint32
+  (genre :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_genre_get_songs(CNA_GenreHandle genre, CNA_SongCollectionHandle* out_songs)
+(defcfun ("cna_genre_get_songs" %genre-get-songs) :uint32
+  (genre :uint64) (out-songs :pointer))
+
+;;; CNA_Result cna_genre_get_type_name_size(CNA_GenreHandle genre, uint64_t* out_bytes)
+(defcfun ("cna_genre_get_type_name_size" %genre-get-type-name-size) :uint32
+  (genre :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_library_copy_media_source_name(CNA_MediaLibraryHandle library, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_media_library_copy_media_source_name" %media-library-copy-media-source-name) :uint32
+  (library :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_library_copy_type_name(CNA_MediaLibraryHandle library, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_media_library_copy_type_name" %media-library-copy-type-name) :uint32
+  (library :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_library_create(CNA_Handle game, CNA_MediaLibraryHandle* out_library)
+(defcfun ("cna_media_library_create" %media-library-create) :uint32
+  (game :uint64) (out-library :pointer))
+
+;;; CNA_Result cna_media_library_create_from_source(CNA_Handle game, uint32_t source_index, CNA_MediaLibraryHandle* out_library)
+(defcfun ("cna_media_library_create_from_source" %media-library-create-from-source) :uint32
+  (game :uint64) (source-index :uint32) (out-library :pointer))
+
+;;; CNA_Result cna_media_library_destroy(CNA_MediaLibraryHandle library)
+(defcfun ("cna_media_library_destroy" %media-library-destroy) :uint32
+  (library :uint64))
+
+;;; CNA_Result cna_media_library_dispose(CNA_MediaLibraryHandle library)
+(defcfun ("cna_media_library_dispose" %media-library-dispose) :uint32
+  (library :uint64))
+
+;;; CNA_Result cna_media_library_get_albums(CNA_MediaLibraryHandle library, CNA_AlbumCollectionHandle* out_albums)
+(defcfun ("cna_media_library_get_albums" %media-library-get-albums) :uint32
+  (library :uint64) (out-albums :pointer))
+
+;;; CNA_Result cna_media_library_get_artists(CNA_MediaLibraryHandle library, CNA_ArtistCollectionHandle* out_artists)
+(defcfun ("cna_media_library_get_artists" %media-library-get-artists) :uint32
+  (library :uint64) (out-artists :pointer))
+
+;;; CNA_Result cna_media_library_get_genres(CNA_MediaLibraryHandle library, CNA_GenreCollectionHandle* out_genres)
+(defcfun ("cna_media_library_get_genres" %media-library-get-genres) :uint32
+  (library :uint64) (out-genres :pointer))
+
+;;; CNA_Result cna_media_library_get_is_disposed(CNA_MediaLibraryHandle library, CNA_Bool* out_disposed)
+(defcfun ("cna_media_library_get_is_disposed" %media-library-get-is-disposed) :uint32
+  (library :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_media_library_get_media_source_name_size(CNA_MediaLibraryHandle library, uint64_t* out_bytes)
+(defcfun ("cna_media_library_get_media_source_name_size" %media-library-get-media-source-name-size) :uint32
+  (library :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_library_get_media_source_type(CNA_MediaLibraryHandle library, CNA_MediaSourceType* out_type)
+(defcfun ("cna_media_library_get_media_source_type" %media-library-get-media-source-type) :uint32
+  (library :uint64) (out-type :pointer))
+
+;;; CNA_Result cna_media_library_get_playlists(CNA_MediaLibraryHandle library, CNA_PlaylistCollectionHandle* out_playlists)
+(defcfun ("cna_media_library_get_playlists" %media-library-get-playlists) :uint32
+  (library :uint64) (out-playlists :pointer))
+
+;;; CNA_Result cna_media_library_get_songs(CNA_MediaLibraryHandle library, CNA_SongCollectionHandle* out_songs)
+(defcfun ("cna_media_library_get_songs" %media-library-get-songs) :uint32
+  (library :uint64) (out-songs :pointer))
+
+;;; CNA_Result cna_media_library_get_type_name_size(CNA_MediaLibraryHandle library, uint64_t* out_bytes)
+(defcfun ("cna_media_library_get_type_name_size" %media-library-get-type-name-size) :uint32
+  (library :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_source_copy_name_at(CNA_Handle game, uint32_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_media_source_copy_name_at" %media-source-copy-name-at) :uint32
+  (game :uint64) (index :uint32) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_source_copy_type_name_at(CNA_Handle game, uint32_t index, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_media_source_copy_type_name_at" %media-source-copy-type-name-at) :uint32
+  (game :uint64) (index :uint32) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_source_get_available_count(CNA_Handle game, uint32_t* out_count)
+(defcfun ("cna_media_source_get_available_count" %media-source-get-available-count) :uint32
+  (game :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_media_source_get_name_size_at(CNA_Handle game, uint32_t index, uint64_t* out_bytes)
+(defcfun ("cna_media_source_get_name_size_at" %media-source-get-name-size-at) :uint32
+  (game :uint64) (index :uint32) (out-bytes :pointer))
+
+;;; CNA_Result cna_media_source_get_type_at(CNA_Handle game, uint32_t index, CNA_MediaSourceType* out_type)
+(defcfun ("cna_media_source_get_type_at" %media-source-get-type-at) :uint32
+  (game :uint64) (index :uint32) (out-type :pointer))
+
+;;; CNA_Result cna_media_source_get_type_name_size_at(CNA_Handle game, uint32_t index, uint64_t* out_bytes)
+(defcfun ("cna_media_source_get_type_name_size_at" %media-source-get-type-name-size-at) :uint32
+  (game :uint64) (index :uint32) (out-bytes :pointer))
+
+;;; CNA_Result cna_playlist_collection_copy_type_name(CNA_PlaylistCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_playlist_collection_copy_type_name" %playlist-collection-copy-type-name) :uint32
+  (collection :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_playlist_collection_destroy(CNA_PlaylistCollectionHandle collection)
+(defcfun ("cna_playlist_collection_destroy" %playlist-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_playlist_collection_dispose(CNA_PlaylistCollectionHandle collection)
+(defcfun ("cna_playlist_collection_dispose" %playlist-collection-dispose) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_playlist_collection_get_at(CNA_PlaylistCollectionHandle collection, int32_t index, CNA_PlaylistHandle* out_playlist)
+(defcfun ("cna_playlist_collection_get_at" %playlist-collection-get-at) :uint32
+  (collection :uint64) (index :int32) (out-playlist :pointer))
+
+;;; CNA_Result cna_playlist_collection_get_count(CNA_PlaylistCollectionHandle collection, int32_t* out_count)
+(defcfun ("cna_playlist_collection_get_count" %playlist-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_playlist_collection_get_is_disposed(CNA_PlaylistCollectionHandle collection, CNA_Bool* out_disposed)
+(defcfun ("cna_playlist_collection_get_is_disposed" %playlist-collection-get-is-disposed) :uint32
+  (collection :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_playlist_collection_get_type_name_size(CNA_PlaylistCollectionHandle collection, uint64_t* out_bytes)
+(defcfun ("cna_playlist_collection_get_type_name_size" %playlist-collection-get-type-name-size) :uint32
+  (collection :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_playlist_copy_name(CNA_PlaylistHandle playlist, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_playlist_copy_name" %playlist-copy-name) :uint32
+  (playlist :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_playlist_copy_type_name(CNA_PlaylistHandle playlist, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_playlist_copy_type_name" %playlist-copy-type-name) :uint32
+  (playlist :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_playlist_destroy(CNA_PlaylistHandle playlist)
+(defcfun ("cna_playlist_destroy" %playlist-destroy) :uint32
+  (playlist :uint64))
+
+;;; CNA_Result cna_playlist_dispose(CNA_PlaylistHandle playlist)
+(defcfun ("cna_playlist_dispose" %playlist-dispose) :uint32
+  (playlist :uint64))
+
+;;; CNA_Result cna_playlist_equals(CNA_PlaylistHandle left, CNA_PlaylistHandle right, CNA_Bool* out_equal)
+(defcfun ("cna_playlist_equals" %playlist-equals) :uint32
+  (left :uint64) (right :uint64) (out-equal :pointer))
+
+;;; CNA_Result cna_playlist_get_duration(CNA_PlaylistHandle playlist, int64_t* out_ticks)
+(defcfun ("cna_playlist_get_duration" %playlist-get-duration) :uint32
+  (playlist :uint64) (out-ticks :pointer))
+
+;;; CNA_Result cna_playlist_get_hash_code(CNA_PlaylistHandle playlist, int32_t* out_hash)
+(defcfun ("cna_playlist_get_hash_code" %playlist-get-hash-code) :uint32
+  (playlist :uint64) (out-hash :pointer))
+
+;;; CNA_Result cna_playlist_get_is_disposed(CNA_PlaylistHandle playlist, CNA_Bool* out_disposed)
+(defcfun ("cna_playlist_get_is_disposed" %playlist-get-is-disposed) :uint32
+  (playlist :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_playlist_get_name_size(CNA_PlaylistHandle playlist, uint64_t* out_bytes)
+(defcfun ("cna_playlist_get_name_size" %playlist-get-name-size) :uint32
+  (playlist :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_playlist_get_songs(CNA_PlaylistHandle playlist, CNA_SongCollectionHandle* out_songs)
+(defcfun ("cna_playlist_get_songs" %playlist-get-songs) :uint32
+  (playlist :uint64) (out-songs :pointer))
+
+;;; CNA_Result cna_playlist_get_type_name_size(CNA_PlaylistHandle playlist, uint64_t* out_bytes)
+(defcfun ("cna_playlist_get_type_name_size" %playlist-get-type-name-size) :uint32
+  (playlist :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_song_get_album(CNA_SongHandle song, CNA_AlbumHandle* out_album, CNA_Bool* out_available)
+(defcfun ("cna_song_get_album" %song-get-album) :uint32
+  (song :uint64) (out-album :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_song_get_artist(CNA_SongHandle song, CNA_ArtistHandle* out_artist, CNA_Bool* out_available)
+(defcfun ("cna_song_get_artist" %song-get-artist) :uint32
+  (song :uint64) (out-artist :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_song_get_genre(CNA_SongHandle song, CNA_GenreHandle* out_genre, CNA_Bool* out_available)
+(defcfun ("cna_song_get_genre" %song-get-genre) :uint32
+  (song :uint64) (out-genre :pointer) (out-available :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -3599,6 +4011,109 @@
     ("cna_model_copy_absolute_bone_transforms" %model-copy-absolute-bone-transforms :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_model_copy_bone_transforms" %model-copy-bone-transforms :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
     ("cna_model_set_bone_transforms" %model-set-bone-transforms :uint32 (:uint64 :pointer :uint64) :thread :owner :ownership "none")
-    ("cna_content_manager_load_model" %content-manager-load-model :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates-owned:model:child-of-game"))
+    ("cna_content_manager_load_model" %content-manager-load-model :uint32 (:uint64 :pointer :uint64 :pointer) :thread :game :ownership "creates-owned:model:child-of-game")
+    ("cna_album_collection_copy_type_name" %album-collection-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_collection_destroy" %album-collection-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_album_collection_dispose" %album-collection-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_album_collection_get_at" %album-collection-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "borrows")
+    ("cna_album_collection_get_count" %album-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_collection_get_is_disposed" %album-collection-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_collection_get_type_name_size" %album-collection-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_copy_art" %album-copy-art :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_copy_name" %album-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_copy_thumbnail" %album-copy-thumbnail :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_copy_type_name" %album-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_destroy" %album-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_album_dispose" %album-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_album_equals" %album-equals :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_get_art_size" %album-get-art-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_get_artist" %album-get-artist :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_album_get_duration" %album-get-duration :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_get_genre" %album-get-genre :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_album_get_has_art" %album-get-has-art :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_get_hash_code" %album-get-hash-code :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_get_is_disposed" %album-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_get_name_size" %album-get-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_get_songs" %album-get-songs :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_album_get_thumbnail_size" %album-get-thumbnail-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_album_get_type_name_size" %album-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_collection_copy_type_name" %artist-collection-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_collection_destroy" %artist-collection-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_artist_collection_dispose" %artist-collection-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_artist_collection_get_at" %artist-collection-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "borrows")
+    ("cna_artist_collection_get_count" %artist-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_collection_get_is_disposed" %artist-collection-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_collection_get_type_name_size" %artist-collection-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_copy_name" %artist-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_copy_type_name" %artist-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_destroy" %artist-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_artist_dispose" %artist-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_artist_equals" %artist-equals :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_get_albums" %artist-get-albums :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_artist_get_hash_code" %artist-get-hash-code :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_get_is_disposed" %artist-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_get_name_size" %artist-get-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_artist_get_songs" %artist-get-songs :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_artist_get_type_name_size" %artist-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_collection_copy_type_name" %genre-collection-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_collection_destroy" %genre-collection-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_genre_collection_dispose" %genre-collection-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_genre_collection_get_at" %genre-collection-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "borrows")
+    ("cna_genre_collection_get_count" %genre-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_collection_get_is_disposed" %genre-collection-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_collection_get_type_name_size" %genre-collection-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_copy_name" %genre-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_copy_type_name" %genre-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_destroy" %genre-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_genre_dispose" %genre-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_genre_equals" %genre-equals :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_get_albums" %genre-get-albums :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_genre_get_hash_code" %genre-get-hash-code :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_get_is_disposed" %genre-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_get_name_size" %genre-get-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_genre_get_songs" %genre-get-songs :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_genre_get_type_name_size" %genre-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_library_copy_media_source_name" %media-library-copy-media-source-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_library_copy_type_name" %media-library-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_library_create" %media-library-create :uint32 (:uint64 :pointer) :thread :owner :ownership "creates-owned:media-library:child-of-game")
+    ("cna_media_library_create_from_source" %media-library-create-from-source :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "creates-owned:media-library:child-of-game")
+    ("cna_media_library_destroy" %media-library-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:media-library")
+    ("cna_media_library_dispose" %media-library-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_media_library_get_albums" %media-library-get-albums :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_artists" %media-library-get-artists :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_genres" %media-library-get-genres :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_is_disposed" %media-library-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_library_get_media_source_name_size" %media-library-get-media-source-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_library_get_media_source_type" %media-library-get-media-source-type :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_library_get_playlists" %media-library-get-playlists :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_songs" %media-library-get-songs :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_type_name_size" %media-library-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_source_copy_name_at" %media-source-copy-name-at :uint32 (:uint64 :uint32 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_source_copy_type_name_at" %media-source-copy-type-name-at :uint32 (:uint64 :uint32 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_source_get_available_count" %media-source-get-available-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_media_source_get_name_size_at" %media-source-get-name-size-at :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_media_source_get_type_at" %media-source-get-type-at :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_media_source_get_type_name_size_at" %media-source-get-type-name-size-at :uint32 (:uint64 :uint32 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_collection_copy_type_name" %playlist-collection-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_collection_destroy" %playlist-collection-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_playlist_collection_dispose" %playlist-collection-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_playlist_collection_get_at" %playlist-collection-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "borrows")
+    ("cna_playlist_collection_get_count" %playlist-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_collection_get_is_disposed" %playlist-collection-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_collection_get_type_name_size" %playlist-collection-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_copy_name" %playlist-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_copy_type_name" %playlist-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_destroy" %playlist-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_playlist_dispose" %playlist-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_playlist_equals" %playlist-equals :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_get_duration" %playlist-get-duration :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_get_hash_code" %playlist-get-hash-code :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_get_is_disposed" %playlist-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_get_name_size" %playlist-get-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_playlist_get_songs" %playlist-get-songs :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_playlist_get_type_name_size" %playlist-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_song_get_album" %song-get-album :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_song_get_artist" %song-get-artist :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_song_get_genre" %song-get-genre :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

@@ -33700,6 +33700,162 @@
           "documentation": "MediaQueue.ActiveSongIndex: which song is active, or -1 when none is.\n\n**-1 without asking the runtime when the queue is empty.** The pinned IL seeds\nthe answer with `ldc.i4.m1' and only calls native `GetActiveSongIndex' when\n`Count' is nonzero, so an empty queue answers -1 rather than whatever the runtime\nwould have said."
         },
         {
+          "name": "album",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:album",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "The `ALBUM' of a `SONG', or NIL. See `ARTIST'."
+        },
+        {
+          "name": "album-art",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "album"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Album.GetAlbumArt(): the cover art as a byte vector, or NIL when there is none.\n\n**A byte vector rather than a stream.** XNA answers a `System.Stream', which this\nbinding projects as a Common Lisp stream everywhere it can -- but CNA hands the\nimage over as a sized buffer rather than as anything streamable, so the honest\nprojection is the bytes themselves. `docs/limitations.md' records the difference;\na caller that wants a stream makes one with `FLEXI-STREAMS' or its own."
+        },
+        {
+          "name": "album-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:album-collection",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.AlbumCollection: an ordered, read-only list of albums.\n\n`ITEM' answers a **fresh** `ALBUM' each time, which is what CNA's `get_at' route\ndoes and what XNA's own indexer does. Compare with `ALBUM-EQUAL', not `EQ'."
+        },
+        {
+          "name": "album-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "a",
+            "b"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Whether two ALBUMs are the same album.\n\n**One predicate for what XNA spells three ways.** `op_Equality',\n`Equals(Object)' and `Equals(Album)' are one question in Common Lisp, and this is\nit; `op_Inequality' is its negation and is not projected, which is the universal\nrule for an operator here. XNA compares the album's native handle, and so does\n`cna_album_equals'.\n\nTwo reads of one collection index answer two facades, so `EQ' is the wrong test\nand this is the right one -- the same statement `SONG-EQUAL' makes."
+        },
+        {
+          "name": "album-thumbnail",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "album"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Album.GetThumbnail(): the thumbnail as a byte vector, or NIL. See `ALBUM-ART'."
+        },
+        {
+          "name": "albums",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The albums of a `MEDIA-LIBRARY', an `ARTIST' or a `GENRE', as an\n`ALBUM-COLLECTION'. The same object every time; see `SONGS'."
+        },
+        {
+          "name": "all-media-source-type",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Every member of MEDIA-SOURCE-TYPE, as keywords, in value order."
+        },
+        {
           "name": "all-media-state",
           "fbound": true,
           "macro": false,
@@ -33717,6 +33873,120 @@
           "constant": false,
           "value": null,
           "documentation": "Every member of MEDIA-STATE, as keywords, in value order."
+        },
+        {
+          "name": "artist",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:artist",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "The `ARTIST' of an `ALBUM' or a `SONG', or NIL when it has none.\n\n**NIL is an ordinary answer, not a failure.** XNA answers null and CNA reports it\nthrough an `out_available' flag beside the handle -- `cna_song_get_artist' says\nonly a song obtained from a media library has one, so a song built from a file\npath answers NIL here."
+        },
+        {
+          "name": "artist-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:artist-collection",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.ArtistCollection: an ordered, read-only list of artists.\n`ITEM' answers a fresh `ARTIST' each time; compare with `ARTIST-EQUAL'."
+        },
+        {
+          "name": "artist-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "a",
+            "b"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Whether two ARTISTs are the same artist. See `ALBUM-EQUAL'."
+        },
+        {
+          "name": "artists",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "library"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaLibrary.Artists. The same object every time; see `SONGS'."
+        },
+        {
+          "name": "available-media-sources",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaSource.GetAvailableMediaSources(): every source this device offers.\n\nA fresh list each call, because XNA's static answers a fresh array. **Index-based\nrather than handle-based**: CNA enumerates sources by position and hands back no\nobject, so there is nothing here to release and nothing to dispose."
         },
         {
           "name": "count-of",
@@ -33780,6 +34050,122 @@
           "constant": false,
           "value": null,
           "documentation": "VisualizationData.Frequencies: the frequency-domain buffer.\n\nXNA's property is a `ReadOnlyCollection<float>' over the object's own\n`float32[]' field. This answers **the buffer itself**, which is the same\nprojection `SpriteFont.Characters' declares for a `ReadOnlyCollection<T>' of a\nvalue type: Common Lisp has no read-only vector, and a fresh copy per call would\nbreak the one thing the type is for -- `GetVisualizationData' fills the object's\nbuffers in place, and a caller reads them afterwards.\n\nSo the vector is live: read it, do not write it. Writing it does not corrupt\nanything native -- there is nothing native -- it only writes over data the next\n`GetVisualizationData' will overwrite anyway."
+        },
+        {
+          "name": "genre",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:genre",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "The `GENRE' of an `ALBUM' or a `SONG', or NIL. See `ARTIST'."
+        },
+        {
+          "name": "genre-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:genre-collection",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.GenreCollection: an ordered, read-only list of genres.\n`ITEM' answers a fresh `GENRE' each time; compare with `GENRE-EQUAL'."
+        },
+        {
+          "name": "genre-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "a",
+            "b"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Whether two GENREs are the same genre. See `ALBUM-EQUAL'."
+        },
+        {
+          "name": "genres",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "library"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaLibrary.Genres. The same object every time; see `SONGS'."
+        },
+        {
+          "name": "has-art",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "album"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Album.HasArt: whether the album has cover art.\n\nAsk this before `ALBUM-ART': XNA answers a null stream when there is none, and a\nprogram that reads first and checks afterwards has to handle both anyway."
         },
         {
           "name": "is-disposed",
@@ -33884,6 +34270,31 @@
           "constant": false,
           "value": null,
           "documentation": "VisualizationData(): two zeroed buffers, ready to be filled.\n\nXNA's one public constructor takes no arguments and allocates both arrays. The\nlength is `CNA_VISUALIZATION_DATA_SIZE', which is CNA's own constant rather than\na number chosen here.\n\n**Zeroed, and that is CNA's documented initial value**, not an accident of\nallocation: `cna_visualization_data_init' \"receives both buffers zeroed\", and a\nLisp vector made with `:initial-element 0.0f0' is the same value without a\nforeign call for something this binding can state exactly."
+        },
+        {
+          "name": "media-library",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:media-library",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.MediaLibrary: the device's music and pictures.\n\n    (let ((library (make-instance 'media-library)))\n      (count-of (songs library)))\n\n**Opening it scans**, and an empty library is an ordinary result rather than a\nfailure -- CNA says so and this binding does not turn it into a condition. What\nis scanned is the platform's music and picture folders, which SDL resolves\nthrough `$XDG_CONFIG_HOME/user-dirs.dirs'.\n\n**Every collection it answers is the same object every time**, as XNA's fields\nare: `(eq (songs library) (songs library))' is true. The objects *inside* a\ncollection are not -- `ITEM' answers a fresh facade per read, which is what\n`SongCollection' already does.\n\n**It is an owned child of the active game and must be disposed.** Everything\nreached through it is released with it: the entities and collections hold\nborrowed handles, and disposing the library gives every one back."
         },
         {
           "name": "media-player-add-active-song-changed-handler",
@@ -34314,6 +34725,114 @@
           "documentation": "Microsoft.Xna.Framework.Media.MediaQueue: the songs the player is working through.\n\n    (let ((queue (media-player-queue)))\n      (count-of queue)\n      (active-song queue))\n\n**You do not make one.** XNA's constructor is `assembly'-private and only\n`MediaPlayer''s static constructor calls it, so there is no `MAKE-INSTANCE' here\neither: `MEDIA-PLAYER-QUEUE' answers the one that exists, and it answers **the\nsame object** every time.\n\nIt holds nothing. Every member asks the runtime, exactly as the original's do,\nand the facade needs no handle of its own because CNA's queue handle is a\nborrowed view of a process-global object rather than something to own.\n\nNeeds an active game, for the reason this package's header gives."
         },
         {
+          "name": "media-source",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "library"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:media-source",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaLibrary.MediaSource: the source this library was opened from.\n\n**The same object every time**, as XNA's private field is."
+        },
+        {
+          "name": "media-source-type",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.MediaSourceType: what kind of thing a library is on.\n\nTwo members and **they are not consecutive**: the pinned contract gives\n`LocalDevice' 0 and `WindowsMediaConnect' 4, with nothing between. A projection\nthat numbered them 0 and 1 would translate the second one into a value the\noriginal does not have, which is why this table carries the exact values rather\nthan an ordinal.\n\nOnly `:LOCAL-DEVICE' is reachable here. CNA refuses any other kind when a library\nis opened from a source -- `cna_media_library_create_from_source' answers\n`CNA_RESULT_NOT_SUPPORTED' -- and says it is refusing it \"exactly as the\ncanonical constructor refuses it\", so the refusal is XNA's rather than CNA's."
+        },
+        {
+          "name": "media-source-type-from-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "value"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The MEDIA-SOURCE-TYPE member a value names."
+        },
+        {
+          "name": "media-source-type-of",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
+          "name": "media-source-type-value",
+          "fbound": true,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [
+            "member"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The exact value of a MEDIA-SOURCE-TYPE member."
+        },
+        {
           "name": "media-state",
           "fbound": false,
           "macro": false,
@@ -34415,6 +34934,99 @@
           "constant": false,
           "value": null,
           "documentation": "Song.PlayCount: how many times the song has been played.\n\nOne of the two members that really asks the native layer on every read, rather\nthan answering a field the constructor filled."
+        },
+        {
+          "name": "playlist",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:playlist",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.Playlist: one playlist in a media library.\n\n`SONGS' answers the same object every time, as XNA's field does."
+        },
+        {
+          "name": "playlist-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:playlist-collection",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.PlaylistCollection: an ordered, read-only list of playlists.\n`ITEM' answers a fresh `PLAYLIST' each time; compare with `PLAYLIST-EQUAL'."
+        },
+        {
+          "name": "playlist-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "a",
+            "b"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Whether two PLAYLISTs are the same playlist. See `ALBUM-EQUAL'."
+        },
+        {
+          "name": "playlists",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "library"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaLibrary.Playlists. The same object every time; see `SONGS'."
         },
         {
           "name": "rating",
@@ -34551,6 +35163,27 @@
           "constant": false,
           "value": null,
           "documentation": "Song.FromUri(String, Uri): a song named NAME at URI.\n\nXNA's one static factory. `System.Uri' is not in the selection and has no\ncounterpart to project, so URI is an ordinary Lisp string holding a `file:' URI\nor a plain path -- which is exactly what `cna_song_create_from_uri' takes, and\nthe same projection `TitleContainer' already makes for a path.\n\nAnswers a `SONG' owned by the active game, like every other way of making one."
+        },
+        {
+          "name": "songs",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The songs of a `MEDIA-LIBRARY', an `ALBUM', an `ARTIST', a `GENRE' or a\n`PLAYLIST', as a `SONG-COLLECTION'.\n\n**The same object every time**, because XNA's is a private field filled on first\nread. `(eq (songs library) (songs library))' is true."
         },
         {
           "name": "songs-vector",
@@ -36080,6 +36713,10 @@
       "stopped": 0,
       "playing": 1,
       "paused": 2
+    },
+    "media-source-type": {
+      "local-device": 0,
+      "windows-media-connect": 4
     },
     "file-mode": {
       "create-new": 1,

@@ -835,6 +835,15 @@ is written down in `docs/limitations.md' as one.")
    #:song #:song-from-uri
    #:name #:duration #:is-rated #:rating #:play-count #:track-number
    #:is-protected #:is-disposed #:song-equal
+   ;; --- MediaLibrary and the music half of the library ----------------------
+   #:media-library #:media-source #:media-source-type
+   #:media-source-type-value #:media-source-type-from-value #:all-media-source-type
+   #:media-source-type-of #:available-media-sources
+   #:songs #:albums #:artists #:genres #:playlists
+   #:album #:artist #:genre #:playlist
+   #:album-collection #:artist-collection #:genre-collection #:playlist-collection
+   #:album-equal #:artist-equal #:genre-equal #:playlist-equal
+   #:has-art #:album-art #:album-thumbnail
    ;; --- SongCollection ------------------------------------------------------
    #:song-collection #:count-of #:item #:songs-vector
    ;; --- MediaQueue ----------------------------------------------------------

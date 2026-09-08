@@ -595,31 +595,31 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 ## The measured frontier
 
-<!-- generated:selected types=195 -->
-<!-- generated:selected members=2581 -->
-<!-- generated:complete types=172 -->
+<!-- generated:selected types=206 -->
+<!-- generated:selected members=2682 -->
+<!-- generated:complete types=183 -->
 <!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2085 -->
+<!-- generated:complete members=2152 -->
 <!-- generated:partial members=30 -->
-<!-- generated:missing members=23 -->
-<!-- generated:not-applicable members=443 -->
+<!-- generated:missing members=26 -->
+<!-- generated:not-applicable members=474 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
+Selection **Foundation 1 and the managed closures**: 206 types, 2682 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **172** |
+| Types complete | **183** |
 | Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **2085** |
+| Members complete | **2152** |
 | Members partial | **30** |
-| Members missing | **23** |
-| Members not applicable | **443** |
+| Members missing | **26** |
+| Members not applicable | **474** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -642,9 +642,9 @@ is a member of a type that is otherwise there, and this is where they are:
 | Type | missing members | partial members |
 | --- | ---: | ---: |
 | `M.X.F.GameWindow` | 7 | 0 |
+| `M.X.F.Media.MediaLibrary` | 6 | 0 |
 | `M.X.F.Game` | 3 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | 3 | 1 |
-| `M.X.F.Media.Song` | 3 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
@@ -681,7 +681,7 @@ had moved. Regenerate the table after every closure and read it there.
 | `PACKAGING_ABI_BRIDGE_LIMIT` | **4** | The projection and every admitted CNA route exist and work, and the member is reachable only in an installation that has built an optional compiled artifact. |
 | `CNA_ADMITTED_ABI_LIMIT` | **40** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
-| `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
+| `DEPENDENCY_NOT_SELECTED` | **7** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |

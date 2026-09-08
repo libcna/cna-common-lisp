@@ -8424,11 +8424,7 @@
       "lisp_name": "song",
       "lisp_kind": "class",
       "constructors": {},
-      "unimplemented": {
-        "Artist": "Needs Artist, which is neither projected nor in the selection: it is a media-library entity whose CNA routes are in media_library.h, and cna_song_get_artist reports it unavailable for a song created from a file path -- the only kind this closure can make, measured on all three admitted ABIs. Selecting the four library types to satisfy this member and its two siblings would add 53 members nothing here could exercise, which is the reason MediaLibrary was not the closure chosen.",
-        "Album": "Needs Album; see Artist.",
-        "Genre": "Needs Genre; see Artist."
-      },
+      "unimplemented": {},
       "not_applicable": {
         "Equals(Song)": "The IEquatable<T> half of the pair. Common Lisp has one equality predicate per type rather than one per static type of the argument, and SONG-EQUAL is it: Equals(Object) and Equals(Song) differ in the original only in which of them does the type test, and a Lisp predicate that takes two songs has already done it. Declared here rather than collapsed onto Equals(Object), because a collapse claims two members are one call and these two are one call and one type test."
       },
@@ -8506,6 +8502,24 @@
             "op_Equality(Song,Song)"
           ],
           "reason": "See op_Equality. A Lisp predicate of two songs has already made the type test that is the only difference between Equals(Object) and Equals(Song) in the original."
+        },
+        "Artist": {
+          "lisp": "artist",
+          "generic": true,
+          "setf": false,
+          "reason": "**Landed with the media-library closure, and the reason it was missing was true when written.** cna_song_get_artist reports the value unavailable for a song created from a file path -- CNA says outright that \"only a song obtained from a media library has one\" -- and a file-path song was the only kind this binding could make until `MEDIA-LIBRARY' existed. A library song answers it; a file-path song answers NIL, which is XNA's null rather than a failure. Measured on all three admitted ABIs."
+        },
+        "Album": {
+          "lisp": "album",
+          "generic": true,
+          "setf": false,
+          "reason": "**Landed with the media-library closure, and the reason it was missing was true when written.** cna_song_get_album reports the value unavailable for a song created from a file path -- CNA says outright that \"only a song obtained from a media library has one\" -- and a file-path song was the only kind this binding could make until `MEDIA-LIBRARY' existed. A library song answers it; a file-path song answers NIL, which is XNA's null rather than a failure. Measured on all three admitted ABIs."
+        },
+        "Genre": {
+          "lisp": "genre",
+          "generic": true,
+          "setf": false,
+          "reason": "**Landed with the media-library closure, and the reason it was missing was true when written.** cna_song_get_genre reports the value unavailable for a song created from a file path -- CNA says outright that \"only a song obtained from a media library has one\" -- and a file-path song was the only kind this binding could make until `MEDIA-LIBRARY' existed. A library song answers it; a file-path song answers NIL, which is XNA's null rather than a failure. Measured on all three admitted ABIs."
         }
       }
     },
@@ -8569,6 +8583,286 @@
           "reason": "The second buffer; see Frequencies."
         }
       }
+    },
+    "Microsoft.Xna.Framework.Media.MediaLibrary": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "media-library",
+      "lisp_kind": "class",
+      "constructors": {
+        "new()": "make-instance",
+        "new(MediaSource)": "make-instance"
+      },
+      "member_overrides": {
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "Gives every borrowed handle back and then the library's own, leaf first. CNA destroys the library object once no handle into it is left, so releasing the library handle first would be correct and would still strand every handle this binding holds into it."
+        },
+        "new()": {
+          "reason": "`(make-instance 'media-library)' opens the device's library from its default source, over `cna_media_library_create'. Opening scans; an empty library is an ordinary result and not a condition, which is CNA's documented behaviour and XNA's too."
+        },
+        "new(MediaSource)": {
+          "reason": "`(make-instance 'media-library :source s)'. **XNA takes a `MediaSource' and CNA's route takes an index into the enumeration**, so the source is resolved back to its position here rather than the caller being asked for a number the original never mentions; a source this device does not offer is refused before any native call. CNA refuses any kind but the local device \"exactly as the canonical constructor refuses it\"."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.MediaSource": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "media-source",
+      "lisp_kind": "class",
+      "constructors": {},
+      "member_overrides": {
+        "MediaSourceType": {
+          "lisp": "media-source-type-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Named `MEDIA-SOURCE-TYPE-OF' because `MEDIA-SOURCE-TYPE' is the enumeration itself -- the identifier rule gives the property and its type the same Lisp name, and the type wins because it is the one a program names in a `MEMBER' check. The same collision `COUNT-OF' resolves against `CL:COUNT'."
+        },
+        "GetAvailableMediaSources()": {
+          "lisp": "available-media-sources",
+          "reason": "XNA's one static factory, over `cna_media_source_get_available_count' and the four `_at' routes. **Index-based rather than handle-based**: CNA gives an enumerated source no handle, so there is nothing to release and nothing to dispose, and this answers a fresh list of value objects. Static, so the static-class naming rule applies and the type name is not repeated."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.Album": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "album",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "Equals(Album)": "The `IEquatable<T>' half of the pair. Common Lisp has one equality predicate per type rather than one per static type of the argument, and the predicate above is it."
+      },
+      "member_overrides": {
+        "op_Equality(Album,Album)": {
+          "lisp": "album-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read, exactly as `SONG-EQUAL' records for the same reason."
+        },
+        "Equals(Object)": {
+          "lisp": "album-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read, exactly as `SONG-EQUAL' records for the same reason."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The entity belongs to its media library -- `cna_album_destroy' says the album \"itself belongs to its media library and is untouched\" -- so the handle is released with the library rather than here, and the facade is parent-owned exactly as `Game.Content''s is."
+        },
+        "GetAlbumArt()": {
+          "lisp": "album-art",
+          "generic": true,
+          "reason": "**A byte vector rather than a stream.** XNA answers a `System.Stream', which this binding projects as a Common Lisp stream wherever it can -- but `cna_album_get_art_size' and `cna_album_copy_art' hand the image over as a sized buffer rather than as anything streamable, so the bytes themselves are the honest projection. NIL when the album has none, which is XNA's null stream. Named for the property it serves rather than `get-album-art', because a Lisp reader is not a getter."
+        },
+        "GetThumbnail()": {
+          "lisp": "album-thumbnail",
+          "generic": true,
+          "reason": "The thumbnail half of the pair; see `GetAlbumArt()'. Named `ALBUM-THUMBNAIL' rather than `THUMBNAIL' because `Picture' has a thumbnail of its own and the two are different routes on different types."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.AlbumCollection": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "album-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "GetEnumerator()": "IEnumerable<T>'s enumerator. Common Lisp has no IEnumerator<T> to project and the type is not in the selection; `ITEM' with `COUNT-OF' is what a program walks the collection with, which is the original's enumerator plus Count. The same statement `SongCollection' already makes."
+      },
+      "member_overrides": {
+        "Count": {
+          "lisp": "count-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, over the collection's `get_count' route. Shares the generic function with `SongCollection.Count' and `MediaQueue.Count' -- `COUNT-OF' rather than `COUNT' because `CL:COUNT' is a standard sequence function this package does not shadow."
+        },
+        "Item(Int32)": {
+          "lisp": "item",
+          "generic": true,
+          "setf": false,
+          "reason": "`index' outside [0, Count) is refused. **A fresh object each time**, over the collection's `get_at' route, which answers a new borrowed handle -- so two reads of one index are ALBUM-EQUAL and not EQ, exactly as `SongCollection''s indexer is. Each handle joins the library's ledger and goes back when the library is disposed."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The collection belongs to its media library, which owns it and releases it; the facade is parent-owned exactly as `Game.Content''s is, and disposing it would call a native route on an object the library owns."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.Artist": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "artist",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "Equals(Artist)": "The `IEquatable<T>' half of the pair. Common Lisp has one equality predicate per type rather than one per static type of the argument, and the predicate above is it."
+      },
+      "member_overrides": {
+        "op_Equality(Artist,Artist)": {
+          "lisp": "artist-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read, exactly as `SONG-EQUAL' records for the same reason."
+        },
+        "Equals(Object)": {
+          "lisp": "artist-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read, exactly as `SONG-EQUAL' records for the same reason."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The entity belongs to its media library -- `cna_album_destroy' says the album \"itself belongs to its media library and is untouched\" -- so the handle is released with the library rather than here, and the facade is parent-owned exactly as `Game.Content''s is."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.ArtistCollection": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "artist-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "GetEnumerator()": "IEnumerable<T>'s enumerator. Common Lisp has no IEnumerator<T> to project and the type is not in the selection; `ITEM' with `COUNT-OF' is what a program walks the collection with, which is the original's enumerator plus Count. The same statement `SongCollection' already makes."
+      },
+      "member_overrides": {
+        "Count": {
+          "lisp": "count-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, over the collection's `get_count' route. Shares the generic function with `SongCollection.Count' and `MediaQueue.Count' -- `COUNT-OF' rather than `COUNT' because `CL:COUNT' is a standard sequence function this package does not shadow."
+        },
+        "Item(Int32)": {
+          "lisp": "item",
+          "generic": true,
+          "setf": false,
+          "reason": "`index' outside [0, Count) is refused. **A fresh object each time**, over the collection's `get_at' route, which answers a new borrowed handle -- so two reads of one index are ARTIST-EQUAL and not EQ, exactly as `SongCollection''s indexer is. Each handle joins the library's ledger and goes back when the library is disposed."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The collection belongs to its media library, which owns it and releases it; the facade is parent-owned exactly as `Game.Content''s is, and disposing it would call a native route on an object the library owns."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.Genre": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "genre",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "Equals(Genre)": "The `IEquatable<T>' half of the pair. Common Lisp has one equality predicate per type rather than one per static type of the argument, and the predicate above is it."
+      },
+      "member_overrides": {
+        "op_Equality(Genre,Genre)": {
+          "lisp": "genre-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read, exactly as `SONG-EQUAL' records for the same reason."
+        },
+        "Equals(Object)": {
+          "lisp": "genre-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read, exactly as `SONG-EQUAL' records for the same reason."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The entity belongs to its media library -- `cna_album_destroy' says the album \"itself belongs to its media library and is untouched\" -- so the handle is released with the library rather than here, and the facade is parent-owned exactly as `Game.Content''s is."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.GenreCollection": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "genre-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "GetEnumerator()": "IEnumerable<T>'s enumerator. Common Lisp has no IEnumerator<T> to project and the type is not in the selection; `ITEM' with `COUNT-OF' is what a program walks the collection with, which is the original's enumerator plus Count. The same statement `SongCollection' already makes."
+      },
+      "member_overrides": {
+        "Count": {
+          "lisp": "count-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, over the collection's `get_count' route. Shares the generic function with `SongCollection.Count' and `MediaQueue.Count' -- `COUNT-OF' rather than `COUNT' because `CL:COUNT' is a standard sequence function this package does not shadow."
+        },
+        "Item(Int32)": {
+          "lisp": "item",
+          "generic": true,
+          "setf": false,
+          "reason": "`index' outside [0, Count) is refused. **A fresh object each time**, over the collection's `get_at' route, which answers a new borrowed handle -- so two reads of one index are GENRE-EQUAL and not EQ, exactly as `SongCollection''s indexer is. Each handle joins the library's ledger and goes back when the library is disposed."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The collection belongs to its media library, which owns it and releases it; the facade is parent-owned exactly as `Game.Content''s is, and disposing it would call a native route on an object the library owns."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.Playlist": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "playlist",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "Equals(Playlist)": "The `IEquatable<T>' half of the pair. Common Lisp has one equality predicate per type rather than one per static type of the argument, and the predicate above is it."
+      },
+      "member_overrides": {
+        "op_Equality(Playlist,Playlist)": {
+          "lisp": "playlist-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read, exactly as `SONG-EQUAL' records for the same reason."
+        },
+        "Equals(Object)": {
+          "lisp": "playlist-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read, exactly as `SONG-EQUAL' records for the same reason."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The entity belongs to its media library -- `cna_album_destroy' says the album \"itself belongs to its media library and is untouched\" -- so the handle is released with the library rather than here, and the facade is parent-owned exactly as `Game.Content''s is."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.PlaylistCollection": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "playlist-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "GetEnumerator()": "IEnumerable<T>'s enumerator. Common Lisp has no IEnumerator<T> to project and the type is not in the selection; `ITEM' with `COUNT-OF' is what a program walks the collection with, which is the original's enumerator plus Count. The same statement `SongCollection' already makes."
+      },
+      "member_overrides": {
+        "Count": {
+          "lisp": "count-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, over the collection's `get_count' route. Shares the generic function with `SongCollection.Count' and `MediaQueue.Count' -- `COUNT-OF' rather than `COUNT' because `CL:COUNT' is a standard sequence function this package does not shadow."
+        },
+        "Item(Int32)": {
+          "lisp": "item",
+          "generic": true,
+          "setf": false,
+          "reason": "`index' outside [0, Count) is refused. **A fresh object each time**, over the collection's `get_at' route, which answers a new borrowed handle -- so two reads of one index are PLAYLIST-EQUAL and not EQ, exactly as `SongCollection''s indexer is. Each handle joins the library's ledger and goes back when the library is disposed."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The collection belongs to its media library, which owns it and releases it; the facade is parent-owned exactly as `Game.Content''s is, and disposing it would call a native route on an object the library owns."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.MediaSourceType": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "media-source-type",
+      "lisp_kind": "enum"
     },
     "Microsoft.Xna.Framework.Storage.StorageDevice": {
       "lisp_package": "microsoft.xna.framework.storage",
@@ -9064,13 +9358,16 @@
     "Microsoft.Xna.Framework.GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Media.Song.Album": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.Media.Song.Artist": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.Media.Song.Genre": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT",
     "Microsoft.Xna.Framework.Graphics.BasicEffect.World": "PACKAGING_ABI_BRIDGE_LIMIT",
     "Microsoft.Xna.Framework.Graphics.BasicEffect.View": "PACKAGING_ABI_BRIDGE_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.BasicEffect.Projection": "PACKAGING_ABI_BRIDGE_LIMIT"
+    "Microsoft.Xna.Framework.Graphics.BasicEffect.Projection": "PACKAGING_ABI_BRIDGE_LIMIT",
+    "Microsoft.Xna.Framework.Media.MediaLibrary.Pictures": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.Media.MediaLibrary.RootPictureAlbum": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.Media.MediaLibrary.SavedPictures": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.Media.MediaLibrary.SavePicture(String,Byte[])": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.Media.MediaLibrary.SavePicture(String,Stream)": "DEPENDENCY_NOT_SELECTED",
+    "Microsoft.Xna.Framework.Media.MediaLibrary.GetPictureFromToken(String)": "DEPENDENCY_NOT_SELECTED"
   },
   "frontier_categories_description": "One category per non-complete selected member, keyed by '<type>.<signature>' exactly as the generated report names it. Every missing and partial member must appear here and nothing else may: verify.py reports an uncategorised_absence otherwise, so a member cannot go non-complete without saying what kind of thing is stopping it. The prose reason stays where it was -- per member in 'unimplemented' and in 'member_overrides' -- because a reason names a route and a category sorts it. See 'frontier_category_kinds'."
 }

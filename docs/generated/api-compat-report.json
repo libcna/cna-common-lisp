@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 195,
-  "member_count": 2581
+  "type_count": 206,
+  "member_count": 2682
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 195,
-  "members": 2581,
+  "types": 206,
+  "members": 2682,
   "types_by_status": {
    "partial": 23,
-   "complete": 172
+   "complete": 183
   },
   "members_by_status": {
-   "complete": 2085,
-   "missing": 23,
-   "not-applicable": 443,
+   "complete": 2152,
+   "missing": 26,
+   "not-applicable": 474,
    "partial": 30
   },
-  "diagnostics": 23,
+  "diagnostics": 26,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 23,
+   "missing_member": 26,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -3837,7 +3837,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Media.Song",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "FromUri(String,Uri)": "complete",
     "Finalize()": "not-applicable",
@@ -3850,9 +3850,9 @@
     "GetHashCode()": "not-applicable",
     "IsDisposed": "complete",
     "Name": "complete",
-    "Artist": "missing",
-    "Album": "missing",
-    "Genre": "missing",
+    "Artist": "complete",
+    "Album": "complete",
+    "Genre": "complete",
     "Duration": "complete",
     "IsRated": "complete",
     "Rating": "complete",
@@ -3884,6 +3884,184 @@
     "Samples": "complete"
    },
    "lisp": "microsoft.xna.framework.media:visualization-data"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.MediaLibrary",
+   "status": "partial",
+   "members": {
+    "new(MediaSource)": "complete",
+    "new()": "complete",
+    "SavePicture(String,Byte[])": "missing",
+    "SavePicture(String,Stream)": "missing",
+    "GetPictureFromToken(String)": "missing",
+    "Dispose()": "complete",
+    "Finalize()": "not-applicable",
+    "Pictures": "missing",
+    "RootPictureAlbum": "missing",
+    "SavedPictures": "missing",
+    "MediaSource": "complete",
+    "IsDisposed": "complete",
+    "Songs": "complete",
+    "Artists": "complete",
+    "Albums": "complete",
+    "Playlists": "complete",
+    "Genres": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:media-library"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.MediaSource",
+   "status": "complete",
+   "members": {
+    "ToString()": "not-applicable",
+    "GetAvailableMediaSources()": "complete",
+    "MediaSourceType": "complete",
+    "Name": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:media-source"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.MediaSourceType",
+   "status": "complete",
+   "members": {
+    "value__": "not-applicable",
+    "LocalDevice": "complete",
+    "WindowsMediaConnect": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:media-source-type"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.Album",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetAlbumArt()": "complete",
+    "GetThumbnail()": "complete",
+    "op_Equality(Album,Album)": "complete",
+    "op_Inequality(Album,Album)": "not-applicable",
+    "Equals(Object)": "complete",
+    "Equals(Album)": "not-applicable",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "IsDisposed": "complete",
+    "Name": "complete",
+    "Artist": "complete",
+    "Songs": "complete",
+    "Genre": "complete",
+    "Duration": "complete",
+    "HasArt": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:album"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.AlbumCollection",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetEnumerator()": "not-applicable",
+    "IsDisposed": "complete",
+    "Item(Int32)": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:album-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.Artist",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "op_Equality(Artist,Artist)": "complete",
+    "op_Inequality(Artist,Artist)": "not-applicable",
+    "Equals(Object)": "complete",
+    "Equals(Artist)": "not-applicable",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "IsDisposed": "complete",
+    "Name": "complete",
+    "Songs": "complete",
+    "Albums": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:artist"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.ArtistCollection",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetEnumerator()": "not-applicable",
+    "IsDisposed": "complete",
+    "Item(Int32)": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:artist-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.Genre",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "op_Equality(Genre,Genre)": "complete",
+    "op_Inequality(Genre,Genre)": "not-applicable",
+    "Equals(Object)": "complete",
+    "Equals(Genre)": "not-applicable",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "IsDisposed": "complete",
+    "Name": "complete",
+    "Songs": "complete",
+    "Albums": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:genre"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.GenreCollection",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetEnumerator()": "not-applicable",
+    "IsDisposed": "complete",
+    "Item(Int32)": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:genre-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.Playlist",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "op_Equality(Playlist,Playlist)": "complete",
+    "op_Inequality(Playlist,Playlist)": "not-applicable",
+    "Equals(Object)": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Playlist)": "not-applicable",
+    "IsDisposed": "complete",
+    "Name": "complete",
+    "Songs": "complete",
+    "Duration": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:playlist"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.PlaylistCollection",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetEnumerator()": "not-applicable",
+    "IsDisposed": "complete",
+    "Item(Int32)": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:playlist-collection"
   },
   {
    "name": "Microsoft.Xna.Framework.GameServiceContainer",
@@ -4101,18 +4279,33 @@
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.Song.Artist",
-   "detail": "Needs Artist, which is neither projected nor in the selection: it is a media-library entity whose CNA routes are in media_library.h, and cna_song_get_artist reports it unavailable for a song created from a file path -- the only kind this closure can make, measured on all three admitted ABIs. Selecting the four library types to satisfy this member and its two siblings would add 53 members nothing here could exercise, which is the reason MediaLibrary was not the closure chosen."
+   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.SavePicture(String,Byte[])",
+   "detail": "no exported 'save-picture' in microsoft.xna.framework.media"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.Song.Album",
-   "detail": "Needs Album; see Artist."
+   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.SavePicture(String,Stream)",
+   "detail": "no exported 'save-picture' in microsoft.xna.framework.media"
   },
   {
    "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.Song.Genre",
-   "detail": "Needs Genre; see Artist."
+   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.GetPictureFromToken(String)",
+   "detail": "no exported 'get-picture-from-token' in microsoft.xna.framework.media"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.Pictures",
+   "detail": "no exported 'pictures' in microsoft.xna.framework.media"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.RootPictureAlbum",
+   "detail": "no exported 'root-picture-album' in microsoft.xna.framework.media"
+  },
+  {
+   "category": "missing_member",
+   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.SavedPictures",
+   "detail": "no exported 'saved-pictures' in microsoft.xna.framework.media"
   }
  ]
 }

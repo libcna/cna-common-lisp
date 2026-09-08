@@ -73,7 +73,17 @@ one. `docs/limitations.md' records it as one projection limit rather than three.
   ((name :documentation "The display name, read once at construction.")
    (duration :documentation "The duration in ticks, read once at construction.")
    (rating :documentation "The rating, read once at construction.")
-   (track-number :documentation "The track number, read once at construction."))
+   (track-number :documentation "The track number, read once at construction.")
+   ;; **A song knows the library it came from, or knows it came from none.**
+   ;; `ARTIST', `ALBUM' and `GENRE' answer library entities, whose handles are
+   ;; borrowed and belong in that library's ledger; a song built from a file path
+   ;; has no library context and answers NIL for all three. The three views are
+   ;; cached because XNA's are private fields.
+   (%library :initarg :library :initform nil :reader %song-library
+             :documentation "The MEDIA-LIBRARY this song came from, or NIL.")
+   (%song-artist :initform nil)
+   (%song-album :initform nil)
+   (%song-genre :initform nil))
   (:documentation
    "Microsoft.Xna.Framework.Media.Song: one playable audio file.
 
@@ -414,7 +424,11 @@ song is never equal to `NIL', which is `op_Equality''s own null handling."
 ;;; --- SongCollection ---------------------------------------------------------
 
 (defclass song-collection (cna-lisp.internal:native-object)
-  ()
+  ((%library :initarg :library :initform nil :reader %song-collection-library
+             :documentation
+             "The MEDIA-LIBRARY this collection views, or NIL for one a program
+built. `ITEM' passes it to every song it makes, which is how a library song comes
+to answer ARTIST, ALBUM and GENRE and a program-built one does not."))
   (:documentation
    "Microsoft.Xna.Framework.Media.SongCollection: an ordered, read-only list of songs.
 
@@ -548,7 +562,8 @@ Each element is freshly made, for the reason `ITEM' gives."))
      operation
      (lambda (out)
        (cna-lisp.internal.ffi::%song-collection-get-at
-        (cna-lisp.internal:handle-of collection) index out)))))
+        (cna-lisp.internal:handle-of collection) index out))
+     (%song-collection-library collection))))
 
 (defmethod songs-vector ((collection song-collection))
   (let ((count (count-of collection)))
@@ -556,7 +571,7 @@ Each element is freshly made, for the reason `ITEM' gives."))
       (dotimes (i count result)
         (setf (aref result i) (item collection i))))))
 
-(defun %adopt-song-handle (game handle operation)
+(defun %adopt-song-handle (game handle operation &optional library)
   "Build the CLOS SONG over a handle CNA has already given us.
 
 The rule `%ADOPT-LOADED-SOUND-EFFECT' states: **whoever receives a handle from
@@ -570,6 +585,7 @@ by then, so disposing it is the undo."
   (declare (ignore operation))
   (let ((song (make-instance 'song
                              :handle handle
+                             :library library
                              :ownership :owned
                              :owner game
                              :owner-thread (cna-lisp.internal:owner-thread-of game))))
@@ -580,7 +596,7 @@ by then, so disposing it is the undo."
       (cna-lisp.internal:register-child game song)
       song)))
 
-(defun %adopt-song-from-route (operation route)
+(defun %adopt-song-from-route (operation route &optional library)
   "Make a SONG over the handle ROUTE answers, owned by the active game.
 
 Every route that hands back a song -- the collection's indexer and both of the
@@ -590,7 +606,7 @@ produces an ordinary child of the game rather than a borrowed view."
     (cffi:with-foreign-object (out :uint64)
       (cna-lisp.internal:check-result (funcall route out)
                                       operation :object-type 'song)
-      (%adopt-song-handle game (cffi:mem-ref out :uint64) operation))))
+      (%adopt-song-handle game (cffi:mem-ref out :uint64) operation library))))
 
 (defmethod xna:clr-type-name ((collection song-collection))
   "The .NET type name CNA reports for the song-collection type."

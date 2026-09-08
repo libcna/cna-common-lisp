@@ -5188,6 +5188,624 @@
       "header": "models.h",
       "thread": "game",
       "ownership": "creates-owned:model:child-of-game"
+    },
+    {
+      "name": "cna_album_collection_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_collection_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_album_collection_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_collection_get_at",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_album_collection_get_count",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_collection_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_collection_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_copy_art",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_copy_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_copy_thumbnail",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_album_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_equals",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_get_art_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_get_artist",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_album_get_duration",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_get_genre",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_album_get_has_art",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_get_hash_code",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_get_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_get_songs",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_album_get_thumbnail_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_album_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_collection_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_collection_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_artist_collection_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_collection_get_at",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_artist_collection_get_count",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_collection_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_collection_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_copy_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_artist_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_equals",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_get_albums",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_artist_get_hash_code",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_get_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_artist_get_songs",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_artist_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_collection_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_collection_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_genre_collection_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_collection_get_at",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_genre_collection_get_count",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_collection_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_collection_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_copy_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_genre_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_equals",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_get_albums",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_genre_get_hash_code",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_get_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_genre_get_songs",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_genre_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_library_copy_media_source_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_library_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_library_create",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "creates-owned:media-library:child-of-game"
+    },
+    {
+      "name": "cna_media_library_create_from_source",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "creates-owned:media-library:child-of-game"
+    },
+    {
+      "name": "cna_media_library_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "destroys:media-library"
+    },
+    {
+      "name": "cna_media_library_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_library_get_albums",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_artists",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_genres",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_library_get_media_source_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_library_get_media_source_type",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_library_get_playlists",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_songs",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_source_copy_name_at",
+      "header": "media.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_source_copy_type_name_at",
+      "header": "media.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_source_get_available_count",
+      "header": "media.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_source_get_name_size_at",
+      "header": "media.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_source_get_type_at",
+      "header": "media.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_media_source_get_type_name_size_at",
+      "header": "media.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_collection_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_collection_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_playlist_collection_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_collection_get_at",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_playlist_collection_get_count",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_collection_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_collection_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_copy_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_playlist_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_equals",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_get_duration",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_get_hash_code",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_get_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_playlist_get_songs",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_playlist_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_song_get_album",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_song_get_artist",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_song_get_genre",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
     }
   ],
   "shimmed_routes": [

@@ -198,31 +198,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=195 -->
-<!-- generated:selected members=2581 -->
-<!-- generated:complete types=172 -->
+<!-- generated:selected types=206 -->
+<!-- generated:selected members=2682 -->
+<!-- generated:complete types=183 -->
 <!-- generated:partial types=23 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2085 -->
+<!-- generated:complete members=2152 -->
 <!-- generated:partial members=30 -->
-<!-- generated:missing members=23 -->
-<!-- generated:not-applicable members=443 -->
+<!-- generated:missing members=26 -->
+<!-- generated:not-applicable members=474 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 195 types, 2581 members.
+Selection **Foundation 1 and the managed closures**: 206 types, 2682 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **172** |
+| Types complete | **183** |
 | Types partial | **23** |
 | Types missing | **0** |
-| Members complete | **2085** |
+| Members complete | **2152** |
 | Members partial | **30** |
-| Members missing | **23** |
-| Members not applicable | **443** |
+| Members missing | **26** |
+| Members not applicable | **474** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -418,9 +418,20 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Media.MediaPlayer` | **complete** | 20 | 0 | 0 | 0 |
 | `M.X.F.Media.MediaState` | **complete** | 3 | 0 | 0 | 1 |
 | `M.X.F.Media.MediaQueue` | **complete** | 4 | 0 | 0 | 0 |
-| `M.X.F.Media.Song` | **partial** | 12 | 0 | 3 | 5 |
+| `M.X.F.Media.Song` | **complete** | 15 | 0 | 0 | 5 |
 | `M.X.F.Media.SongCollection` | **complete** | 4 | 0 | 0 | 2 |
 | `M.X.F.Media.VisualizationData` | **complete** | 3 | 0 | 0 | 0 |
+| `M.X.F.Media.MediaLibrary` | **partial** | 10 | 0 | 6 | 1 |
+| `M.X.F.Media.MediaSource` | **complete** | 3 | 0 | 0 | 1 |
+| `M.X.F.Media.MediaSourceType` | **complete** | 2 | 0 | 0 | 1 |
+| `M.X.F.Media.Album` | **complete** | 12 | 0 | 0 | 5 |
+| `M.X.F.Media.AlbumCollection` | **complete** | 4 | 0 | 0 | 2 |
+| `M.X.F.Media.Artist` | **complete** | 7 | 0 | 0 | 5 |
+| `M.X.F.Media.ArtistCollection` | **complete** | 4 | 0 | 0 | 2 |
+| `M.X.F.Media.Genre` | **complete** | 7 | 0 | 0 | 5 |
+| `M.X.F.Media.GenreCollection` | **complete** | 4 | 0 | 0 | 2 |
+| `M.X.F.Media.Playlist` | **complete** | 7 | 0 | 0 | 5 |
+| `M.X.F.Media.PlaylistCollection` | **complete** | 4 | 0 | 0 | 2 |
 | `M.X.F.GameServiceContainer` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.IGraphicsDeviceManager` | **complete** | 3 | 0 | 0 | 0 |
 | `M.X.F.Graphics.IGraphicsDeviceService` | **complete** | 5 | 0 | 0 | 0 |
@@ -473,9 +484,9 @@ back-reference.
 | Type | missing members | partial members |
 | --- | ---: | ---: |
 | `M.X.F.GameWindow` | 7 | 0 |
+| `M.X.F.Media.MediaLibrary` | 6 | 0 |
 | `M.X.F.Game` | 3 | 0 |
 | `M.X.F.Graphics.GraphicsDevice` | 3 | 1 |
-| `M.X.F.Media.Song` | 3 | 0 |
 | `M.X.F.GameComponentCollection` | 1 | 0 |
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
@@ -527,7 +538,7 @@ and so is a category left behind by a member that has since been completed.
 | `PACKAGING_ABI_BRIDGE_LIMIT` | **4** | The projection and every admitted CNA route exist and work, and the member is reachable only in an installation that has built an optional compiled artifact. |
 | `CNA_ADMITTED_ABI_LIMIT` | **40** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
-| `DEPENDENCY_NOT_SELECTED` | **4** | Blocked on a type that is not in the selected profile. |
+| `DEPENDENCY_NOT_SELECTED` | **7** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
@@ -602,7 +613,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=717 -->
+<!-- generated:bound native functions=820 -->
 <!-- generated:bound native structs=75 -->
 <!-- generated:bound native struct fields=555 -->
 <!-- generated:bound native constants=540 -->
@@ -614,7 +625,7 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 717 |
+| Bound functions | 820 |
 | Bound structs | 75 |
 | Bound struct fields | 555 |
 | Bound constants | 540 |
