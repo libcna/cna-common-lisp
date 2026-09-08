@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 210,
-  "member_count": 2723
+  "type_count": 211,
+  "member_count": 2734
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 210,
-  "members": 2723,
+  "types": 211,
+  "members": 2734,
   "types_by_status": {
    "partial": 22,
-   "complete": 188
+   "complete": 189
   },
   "members_by_status": {
-   "complete": 2185,
-   "missing": 20,
-   "not-applicable": 488,
-   "partial": 30
+   "complete": 2190,
+   "missing": 19,
+   "not-applicable": 489,
+   "partial": 36
   },
-  "diagnostics": 20,
+  "diagnostics": 19,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 20,
+   "missing_member": 19,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -2289,7 +2289,7 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.EffectParameter",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "SetValue(Texture)": "complete",
     "SetValue(String)": "complete",
@@ -2332,7 +2332,7 @@
     "GetValueString()": "complete",
     "GetValueTexture2D()": "complete",
     "GetValueTextureCube()": "complete",
-    "GetValueTexture3D()": "missing",
+    "GetValueTexture3D()": "complete",
     "ParameterType": "complete",
     "ParameterClass": "complete",
     "Elements": "complete",
@@ -2640,6 +2640,24 @@
     "NegativeZ": "complete"
    },
    "lisp": "microsoft.xna.framework.graphics:cube-map-face"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Graphics.Texture3D",
+   "status": "partial",
+   "members": {
+    "new(GraphicsDevice,Int32,Int32,Int32,Boolean,SurfaceFormat)": "complete",
+    "SetData(!!0[])": "partial",
+    "SetData(!!0[],Int32,Int32)": "partial",
+    "SetData(Int32,Int32,Int32,Int32,Int32,Int32,Int32,!!0[],Int32,Int32)": "partial",
+    "GetData(!!0[])": "partial",
+    "GetData(!!0[],Int32,Int32)": "partial",
+    "GetData(Int32,Int32,Int32,Int32,Int32,Int32,Int32,!!0[],Int32,Int32)": "partial",
+    "Dispose(Boolean)": "not-applicable",
+    "Depth": "complete",
+    "Height": "complete",
+    "Width": "complete"
+   },
+   "lisp": "microsoft.xna.framework.graphics:texture-3d"
   },
   {
    "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
@@ -4330,11 +4348,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.Effect.OnApply()",
    "detail": "A protected-internal virtual (`.method famorassem`) that XNA calls from inside EffectPass.Apply, so a subclass can adjust parameters immediately before the pass is applied. CNA applies a pass in one route -- cna_effect_pass_apply(pass) takes the pass and nothing else -- with no callback into managed code in the middle, so an override here would never be called. The same shape as ContentManager.ReadAsset: a hook needs somewhere to be called from. The reason that used to stand added \"and returning true from it cancels the pass\". **In the pinned assembly OnApply returns `void`** and cancels nothing; Effect's own body is a single `ret`. That was a claim about XNA taken from somewhere other than XNA."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Graphics.EffectParameter.GetValueTexture3D()",
-   "detail": "Needs Texture3D, which is neither projected nor in the selection. The CNA route would take it as its third texture-type identity, so the gap is the type."
   },
   {
    "category": "missing_member",

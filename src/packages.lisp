@@ -512,6 +512,10 @@
    #:texture-cube #:cube-map-face #:texture-cube-size
    #:cube-map-face-value #:cube-map-face-from-value #:all-cube-map-face
    #:set-cube-data #:get-cube-data
+   ;; --- Texture3D ---------------------------------------------------------
+   ;; WIDTH, HEIGHT, LEVEL-COUNT and FORMAT-OF are already exported above; a
+   ;; volume answers the same four and adds DEPTH.
+   #:texture-3d #:depth #:effect-parameter-value-texture-3d
    #:environment-map-effect #:effect-environment-map
    #:effect-environment-map-amount #:effect-environment-map-specular
    #:effect-fresnel-factor

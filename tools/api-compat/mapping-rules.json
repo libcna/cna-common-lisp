@@ -6194,6 +6194,12 @@
           "generic": true,
           "setf": false,
           "reason": "Over CNA's TextureCube identity, guarded on the parameter's declared type as XNA's IL guards it: :TEXTURE or :TEXTURE-CUBE, else an invalid cast before the parameter is touched. It answers the TEXTURE-CUBE last set here, cross-checked against the handle CNA reports, for the reason GetValueTexture2D does. It was reported missing with a reason that said TextureCube was not a projected type -- it is -- and that the remembering had not been audited, which was the honest half. The audit found CNA's texture identities are independent storage and its base identity feeds no getter, so the remembering extends unchanged."
+        },
+        "GetValueTexture3D()": {
+          "lisp": "effect-parameter-value-texture-3d",
+          "generic": true,
+          "setf": false,
+          "reason": "Over CNA's Texture3D identity -- CNA_EFFECT_TEXTURE_3D, the third of the four and independent storage like the others -- guarded on the parameter's declared type as XNA's IL guards it: :TEXTURE or :TEXTURE-3D, else an invalid cast before the parameter is touched. It answers the TEXTURE-3D last set here, cross-checked against the handle CNA reports, for the reason GetValueTexture2D does: CNA's ABI has no route from a native handle back to the object that names it, and inventing one would hand back a volume with no owner and no disposal story. **This member stood at DEPENDENCY_NOT_SELECTED until 2026-09-08**, and the dependency was Texture3D, which was itself ruled out because the two qualification renderers have no volume storage -- a property of those renderers rather than of CNA. docs/texture3d-audit.md re-measured it against EasyGL and the dependency is now genuinely satisfied rather than waived."
         }
       },
       "overload_families": {
@@ -6205,9 +6211,6 @@
           "lisp": "effect-parameter-value",
           "reason": "Common Lisp has no overloading, so EffectParameter's eighteen SetValue overloads and their twenty-two GetValue* counterparts collapse onto two generic functions -- one for a single value, one for an array -- that take the value type as an argument. The type is what tells the overloads apart in XNA and it is what tells them apart here, named rather than inferred: the alternative, guessing the type from the Lisp object, would map a SINGLE-FLOAT to SetValue(Single) and have nothing to say about which of Matrix and MatrixTranspose was meant. SetValueTranspose is the :MATRIX-TRANSPOSE type rather than a second function, because that is exactly what it is -- the same value in transposed storage, and CNA carries it as its own CNA_EffectValueType."
         }
-      },
-      "unimplemented": {
-        "GetValueTexture3D()": "Needs Texture3D, which is neither projected nor in the selection. The CNA route would take it as its third texture-type identity, so the gap is the type."
       }
     },
     "Microsoft.Xna.Framework.Graphics.IEffectMatrices": {
@@ -7036,6 +7039,110 @@
       "not_applicable": {
         "Dispose(Boolean)": "The protected dispose(bool) pattern; disposal here is MICROSOFT.XNA.FRAMEWORK:DISPOSE."
       }
+    },
+    "Microsoft.Xna.Framework.Graphics.Texture3D": {
+      "lisp_package": "microsoft.xna.framework.graphics",
+      "lisp_name": "texture-3d",
+      "lisp_kind": "class",
+      "constructors": {
+        "new(GraphicsDevice,Int32,Int32,Int32,Boolean,SurfaceFormat)": "make-instance"
+      },
+      "member_overrides": {
+        "SetData(!!0[])": {
+          "lisp": "set-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "no-keywords",
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over any blittable T whose size divides the surface format's: Texture3D::GetAndValidateSizes<T> in the pinned Graphics assembly accepts sizeof(T) equal to the format's byte size, or smaller and dividing it exactly, and throws ArgumentException(InvalidDataSize) otherwise -- so a Color volume there takes four-, two- and one-byte elements. CNA's routes cannot express that. cna_texture3d_set_data takes `const CNA_Color* data' and cna_texture3d_get_data a `CNA_Color* destination', with a capacity counted in elements and **no texel-kind argument anywhere** -- unlike cna_texture2d_set_data, whose CNA_TEXTURE_DATA_* argument is exactly what lets Texture2D here project five element types. The member is projected and works; element types beyond COLOR are refused with that reason. **Measured across 0.21.0, 0.22.0 and 0.23.0 on 2026-09-08**, where texture_volume.h is byte-identical and the whole texture3d route list holds only copy_type_name, create, destroy, get_data, get_info, get_type_name_byte_count, set_data and set_data_bytes. cna_texture3d_set_data_bytes is the one thing TextureCube has no equivalent of -- a SetDataPointerEXT route taking tightly packed raw bytes, which works: the probe's `bytes' stage proves a raw upload lands as exactly the voxels Color would. It is **upload only**, and there is no byte read route, so using it to widen SetData alone would leave a volume that can be written as bytes and never read back as bytes -- which is not what XNA's symmetric generic pair means. Both halves stay Color and the asymmetry is recorded rather than half-resolved. docs/limitations.md and docs/texture3d-audit.md."
+        },
+        "SetData(!!0[],Int32,Int32)": {
+          "lisp": "set-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "start-index",
+            "element-count"
+          ],
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over any blittable T whose size divides the surface format's: Texture3D::GetAndValidateSizes<T> in the pinned Graphics assembly accepts sizeof(T) equal to the format's byte size, or smaller and dividing it exactly, and throws ArgumentException(InvalidDataSize) otherwise -- so a Color volume there takes four-, two- and one-byte elements. CNA's routes cannot express that. cna_texture3d_set_data takes `const CNA_Color* data' and cna_texture3d_get_data a `CNA_Color* destination', with a capacity counted in elements and **no texel-kind argument anywhere** -- unlike cna_texture2d_set_data, whose CNA_TEXTURE_DATA_* argument is exactly what lets Texture2D here project five element types. The member is projected and works; element types beyond COLOR are refused with that reason. **Measured across 0.21.0, 0.22.0 and 0.23.0 on 2026-09-08**, where texture_volume.h is byte-identical and the whole texture3d route list holds only copy_type_name, create, destroy, get_data, get_info, get_type_name_byte_count, set_data and set_data_bytes. cna_texture3d_set_data_bytes is the one thing TextureCube has no equivalent of -- a SetDataPointerEXT route taking tightly packed raw bytes, which works: the probe's `bytes' stage proves a raw upload lands as exactly the voxels Color would. It is **upload only**, and there is no byte read route, so using it to widen SetData alone would leave a volume that can be written as bytes and never read back as bytes -- which is not what XNA's symmetric generic pair means. Both halves stay Color and the asymmetry is recorded rather than half-resolved. docs/limitations.md and docs/texture3d-audit.md."
+        },
+        "SetData(Int32,Int32,Int32,Int32,Int32,Int32,Int32,!!0[],Int32,Int32)": {
+          "lisp": "set-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "level",
+            "left",
+            "top",
+            "right",
+            "bottom",
+            "front",
+            "back",
+            "start-index",
+            "element-count"
+          ],
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over any blittable T whose size divides the surface format's: Texture3D::GetAndValidateSizes<T> in the pinned Graphics assembly accepts sizeof(T) equal to the format's byte size, or smaller and dividing it exactly, and throws ArgumentException(InvalidDataSize) otherwise -- so a Color volume there takes four-, two- and one-byte elements. CNA's routes cannot express that. cna_texture3d_set_data takes `const CNA_Color* data' and cna_texture3d_get_data a `CNA_Color* destination', with a capacity counted in elements and **no texel-kind argument anywhere** -- unlike cna_texture2d_set_data, whose CNA_TEXTURE_DATA_* argument is exactly what lets Texture2D here project five element types. The member is projected and works; element types beyond COLOR are refused with that reason. **Measured across 0.21.0, 0.22.0 and 0.23.0 on 2026-09-08**, where texture_volume.h is byte-identical and the whole texture3d route list holds only copy_type_name, create, destroy, get_data, get_info, get_type_name_byte_count, set_data and set_data_bytes. cna_texture3d_set_data_bytes is the one thing TextureCube has no equivalent of -- a SetDataPointerEXT route taking tightly packed raw bytes, which works: the probe's `bytes' stage proves a raw upload lands as exactly the voxels Color would. It is **upload only**, and there is no byte read route, so using it to widen SetData alone would leave a volume that can be written as bytes and never read back as bytes -- which is not what XNA's symmetric generic pair means. Both halves stay Color and the asymmetry is recorded rather than half-resolved. docs/limitations.md and docs/texture3d-audit.md."
+        },
+        "GetData(!!0[])": {
+          "lisp": "get-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "no-keywords",
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over any blittable T whose size divides the surface format's: Texture3D::GetAndValidateSizes<T> in the pinned Graphics assembly accepts sizeof(T) equal to the format's byte size, or smaller and dividing it exactly, and throws ArgumentException(InvalidDataSize) otherwise -- so a Color volume there takes four-, two- and one-byte elements. CNA's routes cannot express that. cna_texture3d_set_data takes `const CNA_Color* data' and cna_texture3d_get_data a `CNA_Color* destination', with a capacity counted in elements and **no texel-kind argument anywhere** -- unlike cna_texture2d_set_data, whose CNA_TEXTURE_DATA_* argument is exactly what lets Texture2D here project five element types. The member is projected and works; element types beyond COLOR are refused with that reason. **Measured across 0.21.0, 0.22.0 and 0.23.0 on 2026-09-08**, where texture_volume.h is byte-identical and the whole texture3d route list holds only copy_type_name, create, destroy, get_data, get_info, get_type_name_byte_count, set_data and set_data_bytes. cna_texture3d_set_data_bytes is the one thing TextureCube has no equivalent of -- a SetDataPointerEXT route taking tightly packed raw bytes, which works: the probe's `bytes' stage proves a raw upload lands as exactly the voxels Color would. It is **upload only**, and there is no byte read route, so using it to widen SetData alone would leave a volume that can be written as bytes and never read back as bytes -- which is not what XNA's symmetric generic pair means. Both halves stay Color and the asymmetry is recorded rather than half-resolved. docs/limitations.md and docs/texture3d-audit.md."
+        },
+        "GetData(!!0[],Int32,Int32)": {
+          "lisp": "get-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "start-index",
+            "element-count"
+          ],
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over any blittable T whose size divides the surface format's: Texture3D::GetAndValidateSizes<T> in the pinned Graphics assembly accepts sizeof(T) equal to the format's byte size, or smaller and dividing it exactly, and throws ArgumentException(InvalidDataSize) otherwise -- so a Color volume there takes four-, two- and one-byte elements. CNA's routes cannot express that. cna_texture3d_set_data takes `const CNA_Color* data' and cna_texture3d_get_data a `CNA_Color* destination', with a capacity counted in elements and **no texel-kind argument anywhere** -- unlike cna_texture2d_set_data, whose CNA_TEXTURE_DATA_* argument is exactly what lets Texture2D here project five element types. The member is projected and works; element types beyond COLOR are refused with that reason. **Measured across 0.21.0, 0.22.0 and 0.23.0 on 2026-09-08**, where texture_volume.h is byte-identical and the whole texture3d route list holds only copy_type_name, create, destroy, get_data, get_info, get_type_name_byte_count, set_data and set_data_bytes. cna_texture3d_set_data_bytes is the one thing TextureCube has no equivalent of -- a SetDataPointerEXT route taking tightly packed raw bytes, which works: the probe's `bytes' stage proves a raw upload lands as exactly the voxels Color would. It is **upload only**, and there is no byte read route, so using it to widen SetData alone would leave a volume that can be written as bytes and never read back as bytes -- which is not what XNA's symmetric generic pair means. Both halves stay Color and the asymmetry is recorded rather than half-resolved. docs/limitations.md and docs/texture3d-audit.md."
+        },
+        "GetData(Int32,Int32,Int32,Int32,Int32,Int32,Int32,!!0[],Int32,Int32)": {
+          "lisp": "get-data",
+          "generic": true,
+          "status": "partial",
+          "distinguished_by": "keywords",
+          "keywords": [
+            "level",
+            "left",
+            "top",
+            "right",
+            "bottom",
+            "front",
+            "back",
+            "start-index",
+            "element-count"
+          ],
+          "reason": "**Partial, and CNA is why.** XNA's SetData<T>/GetData<T> are generic over any blittable T whose size divides the surface format's: Texture3D::GetAndValidateSizes<T> in the pinned Graphics assembly accepts sizeof(T) equal to the format's byte size, or smaller and dividing it exactly, and throws ArgumentException(InvalidDataSize) otherwise -- so a Color volume there takes four-, two- and one-byte elements. CNA's routes cannot express that. cna_texture3d_set_data takes `const CNA_Color* data' and cna_texture3d_get_data a `CNA_Color* destination', with a capacity counted in elements and **no texel-kind argument anywhere** -- unlike cna_texture2d_set_data, whose CNA_TEXTURE_DATA_* argument is exactly what lets Texture2D here project five element types. The member is projected and works; element types beyond COLOR are refused with that reason. **Measured across 0.21.0, 0.22.0 and 0.23.0 on 2026-09-08**, where texture_volume.h is byte-identical and the whole texture3d route list holds only copy_type_name, create, destroy, get_data, get_info, get_type_name_byte_count, set_data and set_data_bytes. cna_texture3d_set_data_bytes is the one thing TextureCube has no equivalent of -- a SetDataPointerEXT route taking tightly packed raw bytes, which works: the probe's `bytes' stage proves a raw upload lands as exactly the voxels Color would. It is **upload only**, and there is no byte read route, so using it to widen SetData alone would leave a volume that can be written as bytes and never read back as bytes -- which is not what XNA's symmetric generic pair means. Both halves stay Color and the asymmetry is recorded rather than half-resolved. docs/limitations.md and docs/texture3d-audit.md."
+        },
+        "Width": {
+          "lisp": "width",
+          "generic": true,
+          "setf": false,
+          "reason": "A bare managed-field read in XNA -- get_Width is ldarg.0/ldfld _width/ret with no CheckDisposed -- so it answers after disposal here too. Unlike Texture2D's, it never refuses: a volume is always constructed through cna_texture3d_create, which reports its granted extents through cna_texture3d_get_info, so there is no content-loaded volume with unknown dimensions."
+        },
+        "Height": {
+          "lisp": "height",
+          "generic": true,
+          "setf": false,
+          "reason": "See Width."
+        },
+        "Depth": {
+          "lisp": "depth",
+          "generic": true,
+          "setf": false,
+          "reason": "The third extent, and the one member of the three that is Texture3D's alone. A bare managed-field read in XNA, read back from cna_texture3d_get_info at construction rather than assumed from what was asked for."
+        }
+      },
+      "not_applicable": {
+        "Dispose(Boolean)": "The protected dispose(bool) pattern; disposal here is MICROSOFT.XNA.FRAMEWORK:DISPOSE."
+      },
+      "expected_superclass": "microsoft.xna.framework.graphics:texture"
     },
     "Microsoft.Xna.Framework.Graphics.CubeMapFace": {
       "lisp_package": "microsoft.xna.framework.graphics",
@@ -9513,9 +9620,11 @@
     "Microsoft.Xna.Framework.GameWindow.OnPaint()": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.GameWindow.OnScreenDeviceNameChanged()": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.BasicEffect.OnApply()": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.BasicEffect.Projection": "PACKAGING_ABI_BRIDGE_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.BasicEffect.View": "PACKAGING_ABI_BRIDGE_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.BasicEffect.World": "PACKAGING_ABI_BRIDGE_LIMIT",
     "Microsoft.Xna.Framework.Graphics.DirectionalLight.new(EffectParameter,EffectParameter,EffectParameter,DirectionalLight)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.Effect.OnApply()": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.EffectParameter.GetValueTexture3D()": "DEPENDENCY_NOT_SELECTED",
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter.Adapters": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter.DefaultAdapter": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter.MonitorHandle": "LANGUAGE_PROJECTION_LIMIT",
@@ -9533,6 +9642,12 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D.FromStream(GraphicsDevice,Stream,Int32,Int32,Boolean)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.Texture2D.Height": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.Texture2D.Width": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.Texture3D.GetData(!!0[])": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.Texture3D.GetData(!!0[],Int32,Int32)": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.Texture3D.GetData(Int32,Int32,Int32,Int32,Int32,Int32,Int32,!!0[],Int32,Int32)": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.Texture3D.SetData(!!0[])": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.Texture3D.SetData(!!0[],Int32,Int32)": "CNA_ADMITTED_ABI_LIMIT",
+    "Microsoft.Xna.Framework.Graphics.Texture3D.SetData(Int32,Int32,Int32,Int32,Int32,Int32,Int32,!!0[],Int32,Int32)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.TextureCube.GetData(CubeMapFace,!!0[])": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.TextureCube.GetData(CubeMapFace,!!0[],Int32,Int32)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.Graphics.TextureCube.GetData(CubeMapFace,Int32,Nullable`1,!!0[],Int32,Int32)": "CNA_ADMITTED_ABI_LIMIT",
@@ -9542,10 +9657,7 @@
     "Microsoft.Xna.Framework.GraphicsDeviceManager.CanResetDevice(GraphicsDeviceInformation)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.FindBestDevice(Boolean)": "CNA_ADMITTED_ABI_LIMIT",
     "Microsoft.Xna.Framework.GraphicsDeviceManager.RankDevices(List`1)": "CNA_ADMITTED_ABI_LIMIT",
-    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.BasicEffect.World": "PACKAGING_ABI_BRIDGE_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.BasicEffect.View": "PACKAGING_ABI_BRIDGE_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.BasicEffect.Projection": "PACKAGING_ABI_BRIDGE_LIMIT"
+    "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT"
   },
   "frontier_categories_description": "One category per non-complete selected member, keyed by '<type>.<signature>' exactly as the generated report names it. Every missing and partial member must appear here and nothing else may: verify.py reports an uncategorised_absence otherwise, so a member cannot go non-complete without saying what kind of thing is stopping it. The prose reason stays where it was -- per member in 'unimplemented' and in 'member_overrides' -- because a reason names a route and a category sorts it. See 'frontier_category_kinds'.",
   "implementation_word_exceptions": {

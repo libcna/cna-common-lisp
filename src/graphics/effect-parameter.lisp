@@ -173,7 +173,11 @@ rather than a handle. See EFFECT-PARAMETER-VALUE-TEXTURE.")
                   "The TEXTURE-CUBE last set here. A second slot rather than one
 shared with %TEXTURE, because CNA's texture identities are independent storage:
 a parameter can hold a Texture2D and a TextureCube at once, and each getter reads
-its own. See %EFFECT-TEXTURE-SLOTS."))
+its own. See %EFFECT-TEXTURE-SLOTS.")
+   (%texture-3d :initform nil :accessor %parameter-texture-3d
+                :documentation
+                "The TEXTURE-3D last set here, on the same rule as %TEXTURE-CUBE:
+CNA_EFFECT_TEXTURE_3D is a third independent slot."))
   (:documentation
    "Microsoft.Xna.Framework.Graphics.EffectParameter: one named shader input.
 
@@ -424,6 +428,7 @@ cannot disagree about a layout."))
 (defparameter %effect-texture-slots
   `((:texture . ,cna-lisp.internal.ffi::+effect-texture-base+)
     (:texture-2d . ,cna-lisp.internal.ffi::+effect-texture-2d+)
+    (:texture-3d . ,cna-lisp.internal.ffi::+effect-texture-3d+)
     (:texture-cube . ,cna-lisp.internal.ffi::+effect-texture-cube+))
   "CNA's texture-overload identities, and what each one is good for.
 
@@ -442,9 +447,11 @@ That second fact is why SETF EFFECT-PARAMETER-VALUE-TEXTURE routes by the
 texture's runtime type instead of always using the base slot: a TextureCube put
 in the base slot would be *lost*, and it was, until this was measured.
 
-CNA_EFFECT_TEXTURE_3D is here in CNA and absent here, because Texture3D is not a
-projected type. That one really is blocked by the type, which is what was
-wrongly claimed of TextureCube.")
+CNA_EFFECT_TEXTURE_3D used to be absent from this table, because Texture3D was
+not a projected type. It is one now -- the blocker was the *renderer* rather than
+CNA, and `docs/texture3d-audit.md' is the re-measurement -- so the third identity
+joins on exactly the same terms as the cube's, and
+`EffectParameter.GetValueTexture3D' stops being DEPENDENCY_NOT_SELECTED.")
 
 ;;; XNA's own guards, read from the pinned Graphics assembly. Every one of these
 ;;; is on the parameter's **declared type**, and not on what was last set:
@@ -453,6 +460,8 @@ wrongly claimed of TextureCube.")
 ;;;   GetValueTexture2D     Texture, Texture2D
 ;;;   GetValueTextureCube   Texture, TextureCube
 ;;;   GetValueTexture3D     Texture, Texture3D
+;;;
+;;; and the third one is now reachable, because Texture3D is selected.
 ;;;
 ;;; and anything else throws InvalidCastException before the parameter is
 ;;; touched. CNA enforces none of them -- a probe set a cube on a :SCALAR
@@ -508,6 +517,18 @@ not a projected type. It is -- and CNA has a full cube getter/setter pair. What
 the reason had right was that the remembering had to be audited before the claim
 could be made either way; the audit is in %EFFECT-TEXTURE-SLOTS."))
 
+(defgeneric effect-parameter-value-texture-3d (parameter)
+  (:documentation
+   "EffectParameter.GetValueTexture3D().
+
+The same shape as EFFECT-PARAMETER-VALUE-TEXTURE, over CNA's Texture3D identity,
+and guarded on :TEXTURE or :TEXTURE-3D as XNA guards it.
+
+This member stood at DEPENDENCY_NOT_SELECTED for as long as Texture3D was not a
+projected type, and the dependency is now satisfied: the type was blocked by the
+two qualification renderers having no volume storage, not by CNA, which
+docs/texture3d-audit.md re-measured."))
+
 (defgeneric (setf effect-parameter-value-texture) (texture parameter)
   (:documentation
    "EffectParameter.SetValue(Texture).
@@ -560,12 +581,20 @@ five texture types, as XNA's IL does before touching anything."))
                               (%parameter-texture-cube parameter)
                               "effect-parameter-value-texture-cube"))
 
+(defmethod effect-parameter-value-texture-3d ((parameter effect-parameter))
+  (%check-texture-parameter-type parameter '(:texture :texture-3d)
+                                 "effect-parameter-value-texture-3d")
+  (%parameter-texture-of-slot parameter :texture-3d
+                              (%parameter-texture-3d parameter)
+                              "effect-parameter-value-texture-3d"))
+
 (defmethod (setf effect-parameter-value-texture) (texture (parameter effect-parameter))
   (when texture (check-type texture texture))
   (%check-texture-parameter-type parameter %texture-setter-parameter-types
                                  "(setf effect-parameter-value-texture)")
   (let ((handle (%view-handle parameter "(setf effect-parameter-value-texture)"))
         (slot (cond ((typep texture 'texture-2d) :texture-2d)
+                    ((typep texture 'texture-3d) :texture-3d)
                     ((typep texture 'texture-cube) :texture-cube)
                     (t :texture))))
     (flet ((write-slot (slot value)
@@ -580,14 +609,16 @@ five texture types, as XNA's IL does before touching anything."))
         ;; getter would then find a handle this binding no longer remembers and
         ;; refuse. So a null is written to every identity.
         ((null texture)
-         (dolist (each '(:texture :texture-2d :texture-cube))
+         (dolist (each '(:texture :texture-2d :texture-3d :texture-cube))
            (write-slot each 0))
          (setf (%parameter-texture parameter) nil
-               (%parameter-texture-cube parameter) nil))
+               (%parameter-texture-cube parameter) nil
+               (%parameter-texture-3d parameter) nil))
         (t
          (cna-lisp.internal:check-usable texture "effect parameter texture")
          (write-slot slot (cna-lisp.internal:handle-of texture))
          (case slot
            (:texture-2d (setf (%parameter-texture parameter) texture))
+           (:texture-3d (setf (%parameter-texture-3d parameter) texture))
            (:texture-cube (setf (%parameter-texture-cube parameter) texture)))))))
   texture)

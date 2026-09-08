@@ -198,31 +198,31 @@ genuine absence.
 
 ## Current measurement
 
-<!-- generated:selected types=210 -->
-<!-- generated:selected members=2723 -->
-<!-- generated:complete types=188 -->
+<!-- generated:selected types=211 -->
+<!-- generated:selected members=2734 -->
+<!-- generated:complete types=189 -->
 <!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2185 -->
-<!-- generated:partial members=30 -->
-<!-- generated:missing members=20 -->
-<!-- generated:not-applicable members=488 -->
+<!-- generated:complete members=2190 -->
+<!-- generated:partial members=36 -->
+<!-- generated:missing members=19 -->
+<!-- generated:not-applicable members=489 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 210 types, 2723 members.
+Selection **Foundation 1 and the managed closures**: 211 types, 2734 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **188** |
+| Types complete | **189** |
 | Types partial | **22** |
 | Types missing | **0** |
-| Members complete | **2185** |
-| Members partial | **30** |
-| Members missing | **20** |
-| Members not applicable | **488** |
+| Members complete | **2190** |
+| Members partial | **36** |
+| Members missing | **19** |
+| Members not applicable | **489** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -333,7 +333,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.EffectTechniqueCollection` | **complete** | 4 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectPass` | **complete** | 3 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectPassCollection` | **complete** | 4 | 0 | 0 | 0 |
-| `M.X.F.Graphics.EffectParameter` | **partial** | 50 | 0 | 1 | 0 |
+| `M.X.F.Graphics.EffectParameter` | **complete** | 51 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectParameterCollection` | **complete** | 5 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectAnnotation` | **complete** | 14 | 0 | 0 | 0 |
 | `M.X.F.Graphics.EffectAnnotationCollection` | **complete** | 4 | 0 | 0 | 0 |
@@ -350,6 +350,7 @@ collapsed overload family says how each of its overloads is expressed.
 | `M.X.F.Graphics.EnvironmentMapEffect` | **complete** | 22 | 0 | 0 | 2 |
 | `M.X.F.Graphics.TextureCube` | **partial** | 2 | 6 | 0 | 1 |
 | `M.X.F.Graphics.CubeMapFace` | **complete** | 6 | 0 | 0 | 1 |
+| `M.X.F.Graphics.Texture3D` | **partial** | 4 | 6 | 0 | 1 |
 | `M.X.F.Graphics.PackedVector.Alpha8` | **complete** | 5 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgr565` | **complete** | 6 | 0 | 0 | 4 |
 | `M.X.F.Graphics.PackedVector.Bgra4444` | **complete** | 6 | 0 | 0 | 4 |
@@ -494,7 +495,6 @@ back-reference.
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
-| `M.X.F.Graphics.EffectParameter` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 3 |
 | `M.X.F.TitleContainer` | 0 | 1 |
@@ -502,6 +502,7 @@ back-reference.
 | `M.X.F.Content.ContentManager` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
+| `M.X.F.Graphics.Texture3D` | 0 | 6 |
 | `M.X.F.Audio.SoundEffect` | 0 | 1 |
 | `M.X.F.Audio.SoundEffectInstance` | 0 | 1 |
 | `M.X.F.Audio.DynamicSoundEffectInstance` | 0 | 1 |
@@ -539,9 +540,9 @@ and so is a category left behind by a member that has since been completed.
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **3** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
 | `PACKAGING_ABI_BRIDGE_LIMIT` | **4** | The projection and every admitted CNA route exist and work, and the member is reachable only in an installation that has built an optional compiled artifact. |
-| `CNA_ADMITTED_ABI_LIMIT` | **40** | No admitted CNA ABI can represent the member. |
+| `CNA_ADMITTED_ABI_LIMIT` | **46** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
-| `DEPENDENCY_NOT_SELECTED` | **1** | Blocked on a type that is not in the selected profile. |
+| `DEPENDENCY_NOT_SELECTED` | **0** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |
@@ -616,27 +617,27 @@ CNA also answers may be cross-checked against CNA; it is never established by it
 
 ## Native ABI
 
-<!-- generated:bound native functions=871 -->
-<!-- generated:bound native structs=75 -->
-<!-- generated:bound native struct fields=555 -->
+<!-- generated:bound native functions=879 -->
+<!-- generated:bound native structs=78 -->
+<!-- generated:bound native struct fields=584 -->
 <!-- generated:bound native constants=540 -->
 <!-- generated:bound native callbacks=14 -->
 <!-- generated:by-value aggregates=6 -->
 <!-- generated:shimmed routes=4 -->
-<!-- generated:abi version encoded=5888 -->
+<!-- generated:abi version encoded=5376 -->
 
 <!-- generated-block:native-abi-summary -->
 | | |
 | --- | --- |
-| Bound functions | 871 |
-| Bound structs | 75 |
-| Bound struct fields | 555 |
+| Bound functions | 879 |
+| Bound structs | 78 |
+| Bound struct fields | 584 |
 | Bound constants | 540 |
 | Bound callback typedefs | 14 |
 | By-value aggregates admitted | 6 |
 | Routes proved unbindable, and shimmed | 4 |
 | Admitted ABI versions | 0.21.0 (encoded 5376), 0.22.0 (encoded 5632), 0.23.0 (encoded 5888) |
-| Version constant in the generated layer | 0.23.0 (encoded 5888) |
+| Version constant in the generated layer | 0.21.0 (encoded 5376) |
 <!-- /generated-block:native-abi-summary -->
 
 See `docs/native-abi.md` for what the C compiler proves about each of those.

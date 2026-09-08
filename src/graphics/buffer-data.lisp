@@ -43,9 +43,10 @@
 ;;; method refuses the combinations its own type has no overload for.
 
 (defgeneric set-data (resource data &key start-index element-count offset-in-bytes
-                                         vertex-stride options level source)
+                                         vertex-stride options level source
+                                         left top right bottom front back)
   (:documentation
-   "SetData, on a vertex buffer, an index buffer or a Texture2D.
+   "SetData, on a vertex buffer, an index buffer, a Texture2D or a Texture3D.
 
 DATA is a Lisp sequence whose element layout this binding can prove: an octet,
 sixteen-bit or thirty-two-bit integer vector, a vector of SINGLE-FLOATs, COLORs,
@@ -54,12 +55,17 @@ layout is refused by name rather than written into native memory.
 
 Which keywords are legal depends on the resource, because XNA's overloads do:
 `:OFFSET-IN-BYTES', `:VERTEX-STRIDE' and `:OPTIONS' are a buffer's, `:LEVEL' and
-`:SOURCE' are a texture's, and each method refuses the others."))
+`:SOURCE' are a Texture2D's, and `:LEFT', `:TOP', `:RIGHT', `:BOTTOM', `:FRONT'
+and `:BACK' are a Texture3D's -- whose box overload names seven coordinates
+rather than a nullable rectangle, because XNA's does. Each method refuses the
+others by name."))
 
 (defgeneric get-data (resource into &key start-index element-count offset-in-bytes
-                                         vertex-stride level source)
+                                         vertex-stride level source
+                                         left top right bottom front back)
   (:documentation
-   "GetData, on a vertex buffer, an index buffer or a Texture2D, reading into INTO.
+   "GetData, on a vertex buffer, an index buffer, a Texture2D or a Texture3D,
+reading into INTO.
 
 XNA fills the caller's array, so this does too, and answers it. The element type
 of INTO decides what is read, by the same proven layouts SET-DATA writes."))

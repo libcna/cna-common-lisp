@@ -596,31 +596,31 @@ infinities and every NaN go, and `Unpack` has no case for exponent 31, so
 
 ## The measured frontier
 
-<!-- generated:selected types=210 -->
-<!-- generated:selected members=2723 -->
-<!-- generated:complete types=188 -->
+<!-- generated:selected types=211 -->
+<!-- generated:selected members=2734 -->
+<!-- generated:complete types=189 -->
 <!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2185 -->
-<!-- generated:partial members=30 -->
-<!-- generated:missing members=20 -->
-<!-- generated:not-applicable members=488 -->
+<!-- generated:complete members=2190 -->
+<!-- generated:partial members=36 -->
+<!-- generated:missing members=19 -->
+<!-- generated:not-applicable members=489 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 210 types, 2723 members.
+Selection **Foundation 1 and the managed closures**: 211 types, 2734 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **188** |
+| Types complete | **189** |
 | Types partial | **22** |
 | Types missing | **0** |
-| Members complete | **2185** |
-| Members partial | **30** |
-| Members missing | **20** |
-| Members not applicable | **488** |
+| Members complete | **2190** |
+| Members partial | **36** |
+| Members missing | **19** |
+| Members not applicable | **489** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 
@@ -649,7 +649,6 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.Graphics.PresentationParameters` | 1 | 0 |
 | `M.X.F.Graphics.GraphicsAdapter` | 1 | 4 |
 | `M.X.F.Graphics.Effect` | 1 | 0 |
-| `M.X.F.Graphics.EffectParameter` | 1 | 0 |
 | `M.X.F.Graphics.DirectionalLight` | 1 | 0 |
 | `M.X.F.Graphics.BasicEffect` | 1 | 3 |
 | `M.X.F.TitleContainer` | 0 | 1 |
@@ -657,6 +656,7 @@ is a member of a type that is otherwise there, and this is where they are:
 | `M.X.F.Content.ContentManager` | 0 | 1 |
 | `M.X.F.Graphics.Texture2D` | 0 | 4 |
 | `M.X.F.Graphics.TextureCube` | 0 | 6 |
+| `M.X.F.Graphics.Texture3D` | 0 | 6 |
 | `M.X.F.Audio.SoundEffect` | 0 | 1 |
 | `M.X.F.Audio.SoundEffectInstance` | 0 | 1 |
 | `M.X.F.Audio.DynamicSoundEffectInstance` | 0 | 1 |
@@ -679,9 +679,9 @@ had moved. Regenerate the table after every closure and read it there.
 | --- | ---: | --- |
 | `LANGUAGE_PROJECTION_LIMIT` | **3** | The Common Lisp projection cannot express the member, or the type it needs has no counterpart a Lisp program could use safely. |
 | `PACKAGING_ABI_BRIDGE_LIMIT` | **4** | The projection and every admitted CNA route exist and work, and the member is reachable only in an installation that has built an optional compiled artifact. |
-| `CNA_ADMITTED_ABI_LIMIT` | **40** | No admitted CNA ABI can represent the member. |
+| `CNA_ADMITTED_ABI_LIMIT` | **46** | No admitted CNA ABI can represent the member. |
 | `PUBLIC_OBJECT_MODEL_CLOSURE` | **0** | Implementable against every admitted CNA ABI, but only as a new closure in this binding's object model rather than as a member. |
-| `DEPENDENCY_NOT_SELECTED` | **1** | Blocked on a type that is not in the selected profile. |
+| `DEPENDENCY_NOT_SELECTED` | **0** | Blocked on a type that is not in the selected profile. |
 | `QUALIFICATION_LIMIT` | **2** | Implemented, but some part of it cannot be evidenced, so it is not claimed complete. |
 | `IMPLEMENTABLE_BUT_LOW_VALUE` | **0** | Nothing blocks it and it is not worth the surface. |
 | `IMPLEMENTABLE_AND_HIGH_VALUE` | **0** | Nothing blocks it and it should be done next. |

@@ -16045,6 +16045,27 @@
           "documentation": "SpriteFont.DefaultCharacter: the fallback code unit, or NIL for none.\n\nXNA's is a `Nullable<char>', and the binding's nullable rule makes the empty case\nNIL. A code unit of 0 is a real fallback and is not NIL."
         },
         {
+          "name": "depth",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": null
+        },
+        {
           "name": "depth-bias",
           "fbound": true,
           "macro": false,
@@ -18248,6 +18269,27 @@
           "documentation": "EffectParameter.GetValueTexture2D().\n\nAnswers the TEXTURE-2D this parameter was last set to, cross-checked against the\nhandle CNA reports, and NIL when nothing has been set. It has to work that way\nfor the reason GetVertexBuffers does: CNA's ABI has no route from a native handle\nback to the object that names it, so a binding can either remember what it bound\nor invent an object -- and inventing one would hand back a Texture2D with no\nowner, no dimensions and no disposal story.\n\nRefuses with CNA-INVALID-CAST-ERROR unless the parameter is declared :TEXTURE or\n:TEXTURE-2D, which is the guard XNA's own IL applies before doing anything else.\n\nThere is no getter for the base Texture overload: XNA has none, and neither does\nCNA."
         },
         {
+          "name": "effect-parameter-value-texture-3d",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "parameter"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "EffectParameter.GetValueTexture3D().\n\nThe same shape as EFFECT-PARAMETER-VALUE-TEXTURE, over CNA's Texture3D identity,\nand guarded on :TEXTURE or :TEXTURE-3D as XNA guards it.\n\nThis member stood at DEPENDENCY_NOT_SELECTED for as long as Texture3D was not a\nprojected type, and the dependency is now satisfied: the type was blocked by the\ntwo qualification renderers having no volume storage, not by CNA, which\ndocs/texture3d-audit.md re-measured."
+        },
+        {
           "name": "effect-parameter-value-texture-cube",
           "fbound": true,
           "macro": false,
@@ -19155,15 +19197,27 @@
             "vertex-stride",
             "level",
             "source",
+            "left",
+            "top",
+            "right",
+            "bottom",
+            "front",
+            "back",
             "options"
           ],
           "keywords": [
+            "back",
+            "bottom",
             "element-count",
+            "front",
+            "left",
             "level",
             "offset-in-bytes",
             "options",
+            "right",
             "source",
             "start-index",
+            "top",
             "vertex-stride"
           ],
           "setf_fbound": false,
@@ -19176,7 +19230,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "GetData, on a vertex buffer, an index buffer or a Texture2D, reading into INTO.\n\nXNA fills the caller's array, so this does too, and answers it. The element type\nof INTO decides what is read, by the same proven layouts SET-DATA writes."
+          "documentation": "GetData, on a vertex buffer, an index buffer, a Texture2D or a Texture3D,\nreading into INTO.\n\nXNA fills the caller's array, so this does too, and answers it. The element type\nof INTO decides what is read, by the same proven layouts SET-DATA writes."
         },
         {
           "name": "get-render-targets",
@@ -22344,15 +22398,27 @@
             "vertex-stride",
             "options",
             "level",
-            "source"
+            "source",
+            "left",
+            "top",
+            "right",
+            "bottom",
+            "front",
+            "back"
           ],
           "keywords": [
+            "back",
+            "bottom",
             "element-count",
+            "front",
+            "left",
             "level",
             "offset-in-bytes",
             "options",
+            "right",
             "source",
             "start-index",
+            "top",
             "vertex-stride"
           ],
           "setf_fbound": false,
@@ -22365,7 +22431,7 @@
           "type": false,
           "constant": false,
           "value": null,
-          "documentation": "SetData, on a vertex buffer, an index buffer or a Texture2D.\n\nDATA is a Lisp sequence whose element layout this binding can prove: an octet,\nsixteen-bit or thirty-two-bit integer vector, a vector of SINGLE-FLOATs, COLORs,\nVECTOR2/3/4s, or one of the standard vertex types. An element type with no proven\nlayout is refused by name rather than written into native memory.\n\nWhich keywords are legal depends on the resource, because XNA's overloads do:\n`:OFFSET-IN-BYTES', `:VERTEX-STRIDE' and `:OPTIONS' are a buffer's, `:LEVEL' and\n`:SOURCE' are a texture's, and each method refuses the others."
+          "documentation": "SetData, on a vertex buffer, an index buffer, a Texture2D or a Texture3D.\n\nDATA is a Lisp sequence whose element layout this binding can prove: an octet,\nsixteen-bit or thirty-two-bit integer vector, a vector of SINGLE-FLOATs, COLORs,\nVECTOR2/3/4s, or one of the standard vertex types. An element type with no proven\nlayout is refused by name rather than written into native memory.\n\nWhich keywords are legal depends on the resource, because XNA's overloads do:\n`:OFFSET-IN-BYTES', `:VERTEX-STRIDE' and `:OPTIONS' are a buffer's, `:LEVEL' and\n`:SOURCE' are a Texture2D's, and `:LEFT', `:TOP', `:RIGHT', `:BOTTOM', `:FRONT'\nand `:BACK' are a Texture3D's -- whose box overload names seven coordinates\nrather than a nullable rectangle, because XNA's does. Each method refuses the\nothers by name."
         },
         {
           "name": "set-data-options",
@@ -23214,6 +23280,34 @@
           "constant": false,
           "value": null,
           "documentation": "Texture2D.FromStream: decode an image a Common Lisp binary stream holds.\n\n    (texture-2d-from-stream device stream)\n    (texture-2d-from-stream device stream :width 64 :height 64 :zoom t)\n\nThe first is `FromStream(GraphicsDevice, Stream)'; the second is\n`FromStream(GraphicsDevice, Stream, Int32, Int32, Boolean)'. XNA has no overload\ntaking some of the three and not the others, so neither does this: all three or\nnone, and anything between is refused rather than treated as one of the two\nshapes that exist. `:ZOOM NIL' is a value and not an absence, exactly as it is a\n`false' and not a missing argument there.\n\nSTREAM is read to its end and is **not closed**: it is the caller's, as it is in\nXNA. See `src/framework/streams.lisp' for what a Common Lisp stream has to be."
+        },
+        {
+          "name": "texture-3d",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.graphics:texture-3d",
+            "microsoft.xna.framework.graphics:texture",
+            "microsoft.xna.framework.graphics:%native-graphics-resource",
+            "microsoft.xna.framework.graphics:graphics-resource",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Graphics.Texture3D: a volume of texels.\n\n    (make-instance 'texture-3d :graphics-device device\n                               :width 4 :height 3 :depth 2)\n\nA TEXTURE, as XNA's is. WIDTH, HEIGHT and DEPTH are its extents, LEVEL-COUNT the\nnumber of mip levels the renderer allocated and FORMAT-OF the surface format it\ngranted; all five are read back from CNA at construction rather than assumed from\nwhat was asked for.\n\nTransfers name a mip **box** -- :LEVEL, :LEFT, :TOP, :RIGHT, :BOTTOM, :FRONT and\n:BACK -- because XNA's box overload does. DATA is a sequence of COLORs and only\nof COLORs; see the file header.\n\n**Needs a renderer with volume storage.** The two renderers CNA-Lisp's ordinary\nqualification uses have none, and constructing one against them refuses with\nCNA-NOT-SUPPORTED-ERROR, which is a truthful answer rather than a defect.\n\nOwned by whatever owns the GraphicsDevice it was made from -- the game for a\ngame's device, the device itself for a caller-owned one -- and disposed with\nMICROSOFT.XNA.FRAMEWORK:DISPOSE, before it."
         },
         {
           "name": "texture-address-mode",

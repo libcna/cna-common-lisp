@@ -552,18 +552,22 @@ the caller's, which is a combination no XNA program can write."
                           (offset-in-bytes nil offset-p)
                           (vertex-stride nil stride-p)
                           (options nil options-p)
-                          (level nil level-p) (source nil source-p))
-  (declare (ignore level source))
+                          (level nil level-p) (source nil source-p)
+                          (left nil left-p) (top nil top-p)
+                          (right nil right-p) (bottom nil bottom-p)
+                          (front nil front-p) (back nil back-p))
+  (declare (ignore level source left top right bottom front back))
   ;; SET-DATA and GET-DATA are shared with Texture2D, so CLOS congruence makes
   ;; every method accept every keyword any of them uses. A texture's two are
   ;; refused here by name rather than ignored: silently ignoring one would invent
   ;; a buffer overload XNA has not got.
-  (when (or level-p source-p)
+  (when (or level-p source-p left-p top-p right-p bottom-p front-p back-p)
     (error 'microsoft.xna.framework:cna-usage-error
            :operation "set-data"
            :format-control
            ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
-            rectangle. A buffer has neither."))
+            rectangle -- and :LEFT, :TOP, :RIGHT, :BOTTOM, :FRONT and :BACK are a ~
+            Texture3D's mip box. A buffer has none of them."))
   (let ((operation "set-data"))
     (%check-transfer-shape operation start-index-p element-count-p offset-p)
     (when (and stride-p (not offset-p))
@@ -613,19 +617,23 @@ the caller's, which is a combination no XNA program can write."
                           (element-count nil element-count-p)
                           (offset-in-bytes nil offset-p)
                           (vertex-stride nil stride-p)
-                          (level nil level-p) (source nil source-p))
+                          (level nil level-p) (source nil source-p)
+                          (left nil left-p) (top nil top-p)
+                          (right nil right-p) (bottom nil bottom-p)
+                          (front nil front-p) (back nil back-p))
   (declare (ignorable stride-p))
-  (declare (ignore level source))
+  (declare (ignore level source left top right bottom front back))
   ;; SET-DATA and GET-DATA are shared with Texture2D, so CLOS congruence makes
   ;; every method accept every keyword any of them uses. A texture's two are
   ;; refused here by name rather than ignored: silently ignoring one would invent
   ;; a buffer overload XNA has not got.
-  (when (or level-p source-p)
+  (when (or level-p source-p left-p top-p right-p bottom-p front-p back-p)
     (error 'microsoft.xna.framework:cna-usage-error
            :operation "get-data"
            :format-control
            ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
-            rectangle. A buffer has neither."))
+            rectangle -- and :LEFT, :TOP, :RIGHT, :BOTTOM, :FRONT and :BACK are a ~
+            Texture3D's mip box. A buffer has none of them."))
   (let ((operation "get-data"))
     (%check-transfer-shape operation start-index-p element-count-p offset-p)
     (cna-lisp.internal:check-usable buffer operation)
@@ -692,18 +700,23 @@ says nothing about its width, so it is taken as the buffer's."
                           (offset-in-bytes nil offset-p)
                           (vertex-stride nil stride-p)
                           (options nil options-p)
-                          (level nil level-p) (source nil source-p))
-  (declare (ignore level source) (ignorable vertex-stride))
+                          (level nil level-p) (source nil source-p)
+                          (left nil left-p) (top nil top-p)
+                          (right nil right-p) (bottom nil bottom-p)
+                          (front nil front-p) (back nil back-p))
+  (declare (ignore level source left top right bottom front back)
+           (ignorable vertex-stride))
   ;; SET-DATA and GET-DATA are shared with Texture2D, so CLOS congruence makes
   ;; every method accept every keyword any of them uses. A texture's two are
   ;; refused here by name rather than ignored: silently ignoring one would invent
   ;; a buffer overload XNA has not got.
-  (when (or level-p source-p)
+  (when (or level-p source-p left-p top-p right-p bottom-p front-p back-p)
     (error 'microsoft.xna.framework:cna-usage-error
            :operation "set-data"
            :format-control
            ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
-            rectangle. A buffer has neither."))
+            rectangle -- and :LEFT, :TOP, :RIGHT, :BOTTOM, :FRONT and :BACK are a ~
+            Texture3D's mip box. A buffer has none of them."))
 
   (when stride-p
     (error 'microsoft.xna.framework:cna-usage-error
@@ -752,18 +765,23 @@ says nothing about its width, so it is taken as the buffer's."
                           (element-count nil element-count-p)
                           (offset-in-bytes nil offset-p)
                           (vertex-stride nil stride-p)
-                          (level nil level-p) (source nil source-p))
-  (declare (ignore level source) (ignorable vertex-stride offset-in-bytes))
+                          (level nil level-p) (source nil source-p)
+                          (left nil left-p) (top nil top-p)
+                          (right nil right-p) (bottom nil bottom-p)
+                          (front nil front-p) (back nil back-p))
+  (declare (ignore level source left top right bottom front back)
+           (ignorable vertex-stride offset-in-bytes))
   ;; SET-DATA and GET-DATA are shared with Texture2D, so CLOS congruence makes
   ;; every method accept every keyword any of them uses. A texture's two are
   ;; refused here by name rather than ignored: silently ignoring one would invent
   ;; a buffer overload XNA has not got.
-  (when (or level-p source-p)
+  (when (or level-p source-p left-p top-p right-p bottom-p front-p back-p)
     (error 'microsoft.xna.framework:cna-usage-error
            :operation "get-data"
            :format-control
            ":LEVEL and :SOURCE are a *texture* transfer's -- a mip level and a texel ~
-            rectangle. A buffer has neither."))
+            rectangle -- and :LEFT, :TOP, :RIGHT, :BOTTOM, :FRONT and :BACK are a ~
+            Texture3D's mip box. A buffer has none of them."))
 
   (when (or stride-p offset-p)
     (error 'microsoft.xna.framework:cna-usage-error

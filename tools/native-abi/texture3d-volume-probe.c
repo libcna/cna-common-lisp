@@ -28,6 +28,11 @@
  *   destroy      destroy the texture, then the device, and answer for both;
  *                then many volumes on one live device, which is the leak test
  *                this renderer can actually take
+ *   guards-hidef XNA's constructor guards asked of CNA on the HiDef profile:
+ *                zero extents, the profile's maximum volume extent, a format
+ *                outside ValidVolumeFormats, and two that are inside it
+ *   guards-reach the same on Reach, whose MaxVolumeExtent is 0 in XNA -- so
+ *                every Texture3D is NotSupportedException there
  *   churn        a second GraphicsDevice in the same process. **This stage is
  *                expected to fault on EasyGL** and is here to say so with a
  *                signal rather than to be believed: it is why the EasyGL lane is
@@ -158,6 +163,63 @@ static int read_info(CNA_Handle texture, CNA_Texture3DInfo *info) {
 }
 
 /* --- stages ------------------------------------------------------------- */
+
+/* XNA's constructor guards, asked of CNA so the binding knows which of them it
+ * has to apply itself. Every row is reported rather than asserted: what CNA
+ * answers is the measurement, and `docs/texture3d-audit.md' says which answers
+ * put the guard in the binding. */
+static void probe_create(CNA_Handle device, const char *what,
+                         uint32_t w, uint32_t h, uint32_t d, uint32_t format) {
+    CNA_Texture3DCreateInfo ci;
+    memset(&ci, 0, sizeof ci);
+    ci.struct_size = (uint32_t)sizeof ci;
+    ci.struct_version = 1;
+    ci.width = w; ci.height = h; ci.depth = d;
+    ci.mip_map = CNA_FALSE;
+    ci.format = format;
+    CNA_Handle t = CNA_INVALID_HANDLE;
+    CNA_Result r = t3d_create(device, &ci, &t);
+    printf("  %-44s -> %u %s\n", what, (unsigned)r,
+           r == CNA_RESULT_SUCCESS ? "(created)"
+           : r == CNA_RESULT_NOT_SUPPORTED ? "(NOT_SUPPORTED)" : "(refused)");
+    fflush(stdout);
+    if (r == CNA_RESULT_SUCCESS) t3d_destroy(t);
+}
+
+static void stage_guards(uint32_t profile) {
+    CNA_PresentationParameters pp;
+    memset(&pp, 0, sizeof pp);
+    pp_init(&pp);
+    pp.back_buffer_width = 64;
+    pp.back_buffer_height = 64;
+    CNA_Handle device = CNA_INVALID_HANDLE;
+    CNA_Result r = device_create(0u, profile, &pp, &device);
+    printf("  device create, profile %u                       %s (%u)\n",
+           profile, r == CNA_RESULT_SUCCESS ? "ok" : "FAIL", (unsigned)r);
+    fflush(stdout);
+    if (r != CNA_RESULT_SUCCESS) { ++failures; return; }
+
+    /* XNA: ArgumentOutOfRangeException on each of the three. */
+    probe_create(device, "width 0", 0, 4, 4, CNA_SURFACE_FORMAT_COLOR);
+    probe_create(device, "height 0", 4, 0, 4, CNA_SURFACE_FORMAT_COLOR);
+    probe_create(device, "depth 0", 4, 4, 0, CNA_SURFACE_FORMAT_COLOR);
+    /* XNA: HiDef MaxVolumeExtent is 256, so 257 is ProfileTooBig; Reach's is 0,
+     * so every Texture3D is ProfileFeatureNotSupported there. */
+    probe_create(device, "256 cubed (HiDef's exact maximum)", 256, 4, 4,
+                 CNA_SURFACE_FORMAT_COLOR);
+    probe_create(device, "257 wide (one past HiDef's maximum)", 257, 4, 4,
+                 CNA_SURFACE_FORMAT_COLOR);
+    /* XNA: HiDef ValidVolumeFormats excludes 4..8 -- Dxt1/3/5, NormalizedByte2/4
+     * -- so Dxt1 (4) is ProfileFormatNotSupported even on HiDef. */
+    probe_create(device, "Dxt1, not a valid volume format", 8, 8, 8, 4u);
+    /* XNA: aspect ratio max(w,h,d)/min(w,h,d) over MaxTextureAspectRatio (2048). */
+    probe_create(device, "1x1x64, an ordinary aspect ratio", 1, 1, 64,
+                 CNA_SURFACE_FORMAT_COLOR);
+    probe_create(device, "Bgr565, a valid volume format", 8, 8, 8, 3u);
+    probe_create(device, "Rgba1010102, a valid volume format", 8, 8, 8, 12u);
+    okr("graphics_device_destroy", device_destroy(device));
+}
+
 
 static void stage_create(void) {
     CNA_Handle device = make_device();
@@ -569,6 +631,8 @@ int main(int argc, char **argv) {
     else if (strcmp(stage, "destroy") == 0) stage_destroy();
     else if (strcmp(stage, "volumes") == 0) stage_volumes();
     else if (strcmp(stage, "churn") == 0) stage_churn();
+    else if (strcmp(stage, "guards-hidef") == 0) stage_guards(CNA_GRAPHICS_PROFILE_HI_DEF);
+    else if (strcmp(stage, "guards-reach") == 0) stage_guards(CNA_GRAPHICS_PROFILE_REACH);
     else { fprintf(stderr, "unknown stage %s\n", stage); return 2; }
 
     printf("STAGE %s: %d failure(s)\n", stage, failures);

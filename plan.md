@@ -345,31 +345,31 @@ moves with every test added and no report can pin it.
 
 ### Structural compatibility, as generated
 
-<!-- generated:selected types=210 -->
-<!-- generated:selected members=2723 -->
-<!-- generated:complete types=188 -->
+<!-- generated:selected types=211 -->
+<!-- generated:selected members=2734 -->
+<!-- generated:complete types=189 -->
 <!-- generated:partial types=22 -->
 <!-- generated:missing types=0 -->
-<!-- generated:complete members=2185 -->
-<!-- generated:partial members=30 -->
-<!-- generated:missing members=20 -->
-<!-- generated:not-applicable members=488 -->
+<!-- generated:complete members=2190 -->
+<!-- generated:partial members=36 -->
+<!-- generated:missing members=19 -->
+<!-- generated:not-applicable members=489 -->
 <!-- generated:disagreement total=0 -->
 
 <!-- generated-block:selection -->
-Selection **Foundation 1 and the managed closures**: 210 types, 2723 members.
+Selection **Foundation 1 and the managed closures**: 211 types, 2734 members.
 <!-- /generated-block:selection -->
 
 <!-- generated-block:scoreboard -->
 | | |
 | --- | --- |
-| Types complete | **188** |
+| Types complete | **189** |
 | Types partial | **22** |
 | Types missing | **0** |
-| Members complete | **2185** |
-| Members partial | **30** |
-| Members missing | **20** |
-| Members not applicable | **488** |
+| Members complete | **2190** |
+| Members partial | **36** |
+| Members missing | **19** |
+| Members not applicable | **489** |
 | **Disagreement diagnostics** | **0** |
 <!-- /generated-block:scoreboard -->
 

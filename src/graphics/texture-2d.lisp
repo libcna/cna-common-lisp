@@ -476,7 +476,7 @@ chosen from the element's own type rather than computed from
      ,@body))
 
 (defun %check-texture-transfer-shape (operation level rectangle start-index element-count
-                                     buffer-keywords)
+                                     buffer-keywords &optional volume-keywords)
   "Refuse every keyword combination XNA's three overloads do not have.
 
     (data)                          SetData(T[])
@@ -504,6 +504,12 @@ other."
                rectangle; a byte offset, a vertex stride and SetDataOptions are ~
                VertexBuffer's and IndexBuffer's."
               (mapcar #'symbol-name buffer-keywords) (= 1 (length buffer-keywords))))
+    (when volume-keywords
+      (refuse "~{:~a~^, ~} belong~:[~;s~] to a *Texture3D* transfer, not a ~
+               Texture2D's. XNA's Texture3D.SetData names a mip box with seven ~
+               coordinates; a Texture2D's overload takes a nullable Rectangle, ~
+               which is :SOURCE."
+              (mapcar #'symbol-name volume-keywords) (= 1 (length volume-keywords))))
     (when (and (or start-index element-count) (not (and start-index element-count)))
       (refuse ":START-INDEX and :ELEMENT-COUNT are one pair: XNA has no transfer ~
                overload that takes either without the other."))
@@ -515,12 +521,18 @@ other."
 (defmethod set-data ((texture texture-2d) data
                      &key level source start-index element-count
                           (offset-in-bytes nil offset-p) (vertex-stride nil stride-p)
-                          (options nil options-p))
-  (declare (ignore offset-in-bytes vertex-stride options))
+                          (options nil options-p)
+                          (left nil left-p) (top nil top-p)
+                          (right nil right-p) (bottom nil bottom-p)
+                          (front nil front-p) (back nil back-p))
+  (declare (ignore offset-in-bytes vertex-stride options
+                   left top right bottom front back))
   (%check-texture-transfer-shape
    "set-data" level source start-index element-count
    (append (when offset-p '(offset-in-bytes)) (when stride-p '(vertex-stride))
-           (when options-p '(options))))
+           (when options-p '(options)))
+   (append (when left-p '(left)) (when top-p '(top)) (when right-p '(right))
+           (when bottom-p '(bottom)) (when front-p '(front)) (when back-p '(back))))
   (cna-lisp.internal:check-usable texture "set-data")
   (let* ((start (or start-index 0))
          (count (or element-count (length data))))
@@ -546,12 +558,18 @@ other."
 (defmethod get-data ((texture texture-2d) into
                      &key level source start-index element-count
                           (offset-in-bytes nil offset-p) (vertex-stride nil stride-p)
-                          (options nil options-p))
-  (declare (ignore offset-in-bytes vertex-stride options))
+                          (options nil options-p)
+                          (left nil left-p) (top nil top-p)
+                          (right nil right-p) (bottom nil bottom-p)
+                          (front nil front-p) (back nil back-p))
+  (declare (ignore offset-in-bytes vertex-stride options
+                   left top right bottom front back))
   (%check-texture-transfer-shape
    "get-data" level source start-index element-count
    (append (when offset-p '(offset-in-bytes)) (when stride-p '(vertex-stride))
-           (when options-p '(options))))
+           (when options-p '(options)))
+   (append (when left-p '(left)) (when top-p '(top)) (when right-p '(right))
+           (when bottom-p '(bottom)) (when front-p '(front)) (when back-p '(back))))
   (cna-lisp.internal:check-usable texture "get-data")
   (when (zerop (length into))
     (error 'microsoft.xna.framework:cna-argument-out-of-range-error
