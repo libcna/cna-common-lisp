@@ -43,6 +43,9 @@
     "microsoft.xna.framework.graphics": [],
     "microsoft.xna.framework.input": [
       "keysp"
+    ],
+    "microsoft.xna.framework.media": [
+      "picture-from-token"
     ]
   },
   "types": {
@@ -8604,6 +8607,47 @@
         },
         "new(MediaSource)": {
           "reason": "`(make-instance 'media-library :source s)'. **XNA takes a `MediaSource' and CNA's route takes an index into the enumeration**, so the source is resolved back to its position here rather than the caller being asked for a number the original never mentions; a source this device does not offer is refused before any native call. CNA refuses any kind but the local device \"exactly as the canonical constructor refuses it\"."
+        },
+        "Pictures": {
+          "lisp": "pictures",
+          "generic": true,
+          "setf": false,
+          "reason": "Every picture in the library, as a `PICTURE-COLLECTION'. The same object every time, as XNA's private field is."
+        },
+        "SavedPictures": {
+          "lisp": "saved-pictures",
+          "generic": true,
+          "setf": false,
+          "reason": "The pictures saved through `SAVE-PICTURE'. **Empty is the ordinary state and not a gap**: CNA deliberately does not create the \"Saved Pictures\" directory until the first save, so an untouched library reports zero."
+        },
+        "RootPictureAlbum": {
+          "lisp": "root-picture-album",
+          "generic": true,
+          "setf": false,
+          "reason": "The top of the picture tree, or NIL when the device has no picture location. The album it answers has no `PARENT', which is what makes it the root."
+        },
+        "GetPictureFromToken(String)": {
+          "lisp": "picture-from-token",
+          "generic": true,
+          "reason": "**An unknown token is an ordinary answer, not a condition**: CNA says the canonical lookup returns null for one, so this answers NIL."
+        },
+        "SavePicture(String,Byte[])": {
+          "lisp": "save-picture",
+          "generic": true,
+          "reason": "One generic function for both overloads, told apart by the type of the source argument -- this one takes a byte vector. **The stream overload takes a `STORAGE-STREAM' and nothing else**, because CNA says a storage stream \"is the only byte source this ABI owns, so it is what the canonical stream-taking overload accepts\"; the stream stays the caller's to close. An image the loader cannot measure is still saved, with width and height zero, which CNA records as the canonical operation's own behaviour.",
+          "distinguished_by": "dispatch"
+        },
+        "SavePicture(String,Stream)": {
+          "lisp": "save-picture",
+          "generic": true,
+          "reason": "One generic function for both overloads, told apart by the type of the source argument -- this one takes a STORAGE-STREAM. **The stream overload takes a `STORAGE-STREAM' and nothing else**, because CNA says a storage stream \"is the only byte source this ABI owns, so it is what the canonical stream-taking overload accepts\"; the stream stays the caller's to close. An image the loader cannot measure is still saved, with width and height zero, which CNA records as the canonical operation's own behaviour.",
+          "distinguished_by": "dispatch"
+        }
+      },
+      "overload_families": {
+        "SavePicture": {
+          "lisp": "save-picture",
+          "reason": "XNA's two overloads are one generic function, told apart by **the type of the source argument** -- real CLOS dispatch rather than a tag or a keyword: a byte vector reaches `SavePicture(String, Byte[])' and a `STORAGE-STREAM' reaches `SavePicture(String, Stream)'. The two are unambiguous because CNA accepts no other stream: a storage stream \"is the only byte source this ABI owns, so it is what the canonical stream-taking overload accepts\"."
         }
       }
     },
@@ -9299,6 +9343,146 @@
           "reason": "A plain field read in the IL -- the constructor sets it once and the getter is `ldarg.0; ldfld; ret' -- so it answers **the same object for the life of the callback**, which is what makes the event's mutation work at all: a fresh object per read would give each handler its own copy and drop every change. Shares its name with the class it answers, which is the naming rule's own result and is what XNA does too."
         }
       }
+    },
+    "Microsoft.Xna.Framework.Media.Picture": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "picture",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "Equals(Picture)": "The `IEquatable<T>' half of the pair. Common Lisp has one equality predicate per type rather than one per static type of the argument."
+      },
+      "member_overrides": {
+        "op_Equality(Picture,Picture)": {
+          "lisp": "picture-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read."
+        },
+        "Equals(Object)": {
+          "lisp": "picture-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The object belongs to its media library -- the `_destroy' route releases a handle and leaves the object untouched -- so the handle goes back with the library and the facade is parent-owned exactly as `Game.Content''s is."
+        },
+        "GetImage()": {
+          "lisp": "image",
+          "generic": true,
+          "reason": "**A byte vector rather than a stream**, the same decision `Album.GetAlbumArt()' records: `cna_picture_get_image_size' and `cna_picture_copy_image' hand the image over as a sized buffer rather than as anything streamable. NIL when there is none, which is XNA's null stream."
+        },
+        "GetThumbnail()": {
+          "lisp": "thumbnail",
+          "generic": true,
+          "reason": "The thumbnail half of the pair; see `GetImage()'."
+        },
+        "Album": {
+          "lisp": "album",
+          "generic": true,
+          "setf": false,
+          "reason": "The picture album this picture sits in, or NIL. CNA reports the absence through an `out_available' flag beside the handle, which is XNA's null. Shares the generic function with `Song.Album' -- both answer \"the album this thing belongs to\" and neither is a setter."
+        },
+        "Date": {
+          "lisp": "date",
+          "generic": true,
+          "setf": false,
+          "reason": "**100-nanosecond ticks since 1970-01-01 UTC, and the first `System.DateTime' this binding projects.** A tick count rather than a time object, which is the decision `Duration' already makes for `TimeSpan': CNA's route is `cna_picture_get_date_unix_ticks' and converting to a Common Lisp universal time would throw away the sub-second part. Zero is a real answer -- a file with no timestamp reports what the scan recorded."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.PictureAlbum": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "picture-album",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "Equals(PictureAlbum)": "The `IEquatable<T>' half of the pair. Common Lisp has one equality predicate per type rather than one per static type of the argument."
+      },
+      "member_overrides": {
+        "op_Equality(PictureAlbum,PictureAlbum)": {
+          "lisp": "picture-album-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read."
+        },
+        "Equals(Object)": {
+          "lisp": "picture-album-equal",
+          "generic": true,
+          "reason": "**One predicate for what XNA spells three ways.** `op_Equality', `Equals(Object)' and the `IEquatable<T>' overload are one question in Common Lisp, and this is it. XNA compares the entity's native handle and so does the CNA route. `EQ' is *not* the comparison: a collection's indexer answers a fresh facade per read."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The object belongs to its media library -- the `_destroy' route releases a handle and leaves the object untouched -- so the handle goes back with the library and the facade is parent-owned exactly as `Game.Content''s is."
+        },
+        "Parent": {
+          "lisp": "parent",
+          "generic": true,
+          "setf": false,
+          "reason": "The album above this one, or NIL for the root. **NIL is how the root is recognised and it is the only way**: XNA marks the root no other way, and CNA reports the absence through an `out_available' flag."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.PictureCollection": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "picture-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "GetEnumerator()": "IEnumerable<T>'s enumerator. Common Lisp has no IEnumerator<T> to project and the type is not in the selection; `ITEM' with `COUNT-OF' is what a program walks the collection with. The same statement `SongCollection' makes."
+      },
+      "member_overrides": {
+        "Count": {
+          "lisp": "count-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, over the collection's `get_count' route. Shares the generic function with every other collection here."
+        },
+        "Item(Int32)": {
+          "lisp": "item",
+          "generic": true,
+          "setf": false,
+          "reason": "`index' outside [0, Count) is refused. **A fresh object each time**, over the collection's `get_at' route -- so two reads of one index are PICTURE-EQUAL and not EQ. Each handle joins the library's ledger."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The object belongs to its media library -- the `_destroy' route releases a handle and leaves the object untouched -- so the handle goes back with the library and the facade is parent-owned exactly as `Game.Content''s is."
+        }
+      }
+    },
+    "Microsoft.Xna.Framework.Media.PictureAlbumCollection": {
+      "lisp_package": "microsoft.xna.framework.media",
+      "lisp_name": "picture-album-collection",
+      "lisp_kind": "class",
+      "constructors": {},
+      "not_applicable": {
+        "GetEnumerator()": "IEnumerable<T>'s enumerator. Common Lisp has no IEnumerator<T> to project and the type is not in the selection; `ITEM' with `COUNT-OF' is what a program walks the collection with. The same statement `SongCollection' makes."
+      },
+      "member_overrides": {
+        "Count": {
+          "lisp": "count-of",
+          "generic": true,
+          "setf": false,
+          "reason": "Read-only, over the collection's `get_count' route. Shares the generic function with every other collection here."
+        },
+        "Item(Int32)": {
+          "lisp": "item",
+          "generic": true,
+          "setf": false,
+          "reason": "`index' outside [0, Count) is refused. **A fresh object each time**, over the collection's `get_at' route -- so two reads of one index are PICTURE-ALBUM-EQUAL and not EQ. Each handle joins the library's ledger."
+        },
+        "Dispose()": {
+          "lisp": "dispose",
+          "package": "microsoft.xna.framework",
+          "generic": true,
+          "reason": "**A borrowed view disposes nothing of CNA's.** The object belongs to its media library -- the `_destroy' route releases a handle and leaves the object untouched -- so the handle goes back with the library and the facade is parent-owned exactly as `Game.Content''s is."
+        }
+      }
     }
   },
   "frontier_category_kinds": {
@@ -9361,13 +9545,10 @@
     "Microsoft.Xna.Framework.TitleContainer.OpenStream(String)": "QUALIFICATION_LIMIT",
     "Microsoft.Xna.Framework.Graphics.BasicEffect.World": "PACKAGING_ABI_BRIDGE_LIMIT",
     "Microsoft.Xna.Framework.Graphics.BasicEffect.View": "PACKAGING_ABI_BRIDGE_LIMIT",
-    "Microsoft.Xna.Framework.Graphics.BasicEffect.Projection": "PACKAGING_ABI_BRIDGE_LIMIT",
-    "Microsoft.Xna.Framework.Media.MediaLibrary.Pictures": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.Media.MediaLibrary.RootPictureAlbum": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.Media.MediaLibrary.SavedPictures": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.Media.MediaLibrary.SavePicture(String,Byte[])": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.Media.MediaLibrary.SavePicture(String,Stream)": "DEPENDENCY_NOT_SELECTED",
-    "Microsoft.Xna.Framework.Media.MediaLibrary.GetPictureFromToken(String)": "DEPENDENCY_NOT_SELECTED"
+    "Microsoft.Xna.Framework.Graphics.BasicEffect.Projection": "PACKAGING_ABI_BRIDGE_LIMIT"
   },
-  "frontier_categories_description": "One category per non-complete selected member, keyed by '<type>.<signature>' exactly as the generated report names it. Every missing and partial member must appear here and nothing else may: verify.py reports an uncategorised_absence otherwise, so a member cannot go non-complete without saying what kind of thing is stopping it. The prose reason stays where it was -- per member in 'unimplemented' and in 'member_overrides' -- because a reason names a route and a category sorts it. See 'frontier_category_kinds'."
+  "frontier_categories_description": "One category per non-complete selected member, keyed by '<type>.<signature>' exactly as the generated report names it. Every missing and partial member must appear here and nothing else may: verify.py reports an uncategorised_absence otherwise, so a member cannot go non-complete without saying what kind of thing is stopping it. The prose reason stays where it was -- per member in 'unimplemented' and in 'member_overrides' -- because a reason names a route and a category sorts it. See 'frontier_category_kinds'.",
+  "implementation_word_exceptions": {
+    "microsoft.xna.framework.media:picture-from-token": "`token' here is **XNA's own word**, not this binding's callback-registry one: the member is `MediaLibrary.GetPictureFromToken(String)' and the value is a picture's library token, which CNA reads with `cna_picture_copy_token_ext'. The naming rule derives the Lisp name from the member, so renaming it to dodge the check would hide an XNA member behind a name the contract does not use. The check stays on for every other symbol, which is why this is one declared exception with a reason rather than a word removed from the list."
+  }
 }

@@ -5,8 +5,8 @@
  "selection": {
   "name": "Foundation 1 and the managed closures",
   "rationale": "Foundation 1 is the dependency closure of a real textured sprite game: create a native game, receive its lifecycle, expose its graphics device, clear, decode a PNG into a Texture2D, submit a SpriteBatch draw, read the keyboard, exit and destroy deterministically. The selection then grows one dependency-complete closure at a time, in the order NEXT.md records. Some of those closures are pure managed and touch no native route -- the 3D transform types, the bounding volumes, the Curve family and the packed vectors; others reach CNA, as the input surface and the graphics state objects do.",
-  "type_count": 206,
-  "member_count": 2682
+  "type_count": 210,
+  "member_count": 2723
  },
  "provenance": {
   "authority": "hash-pinned public metadata of the Microsoft XNA Framework 4.0 Windows runtime profile",
@@ -15,22 +15,22 @@
   "note": "Public contract metadata only. No Microsoft binary is stored in this repository or distributed with it. Reproduce with tools/api-compat/import-contract.py and a snapshot of the pinned hash."
  },
  "totals": {
-  "types": 206,
-  "members": 2682,
+  "types": 210,
+  "members": 2723,
   "types_by_status": {
-   "partial": 23,
-   "complete": 183
+   "partial": 22,
+   "complete": 188
   },
   "members_by_status": {
-   "complete": 2152,
-   "missing": 26,
-   "not-applicable": 474,
+   "complete": 2185,
+   "missing": 20,
+   "not-applicable": 488,
    "partial": 30
   },
-  "diagnostics": 26,
+  "diagnostics": 20,
   "diagnostics_by_category": {
    "missing_type": 0,
-   "missing_member": 26,
+   "missing_member": 20,
    "wrong_package": 0,
    "wrong_kind": 0,
    "wrong_superclass": 0,
@@ -3887,18 +3887,18 @@
   },
   {
    "name": "Microsoft.Xna.Framework.Media.MediaLibrary",
-   "status": "partial",
+   "status": "complete",
    "members": {
     "new(MediaSource)": "complete",
     "new()": "complete",
-    "SavePicture(String,Byte[])": "missing",
-    "SavePicture(String,Stream)": "missing",
-    "GetPictureFromToken(String)": "missing",
+    "SavePicture(String,Byte[])": "complete",
+    "SavePicture(String,Stream)": "complete",
+    "GetPictureFromToken(String)": "complete",
     "Dispose()": "complete",
     "Finalize()": "not-applicable",
-    "Pictures": "missing",
-    "RootPictureAlbum": "missing",
-    "SavedPictures": "missing",
+    "Pictures": "complete",
+    "RootPictureAlbum": "complete",
+    "SavedPictures": "complete",
     "MediaSource": "complete",
     "IsDisposed": "complete",
     "Songs": "complete",
@@ -4062,6 +4062,75 @@
     "Count": "complete"
    },
    "lisp": "microsoft.xna.framework.media:playlist-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.Picture",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetImage()": "complete",
+    "GetThumbnail()": "complete",
+    "op_Equality(Picture,Picture)": "complete",
+    "op_Inequality(Picture,Picture)": "not-applicable",
+    "Equals(Object)": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(Picture)": "not-applicable",
+    "IsDisposed": "complete",
+    "Name": "complete",
+    "Album": "complete",
+    "Width": "complete",
+    "Height": "complete",
+    "Date": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:picture"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.PictureAlbum",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "op_Equality(PictureAlbum,PictureAlbum)": "complete",
+    "op_Inequality(PictureAlbum,PictureAlbum)": "not-applicable",
+    "Equals(Object)": "complete",
+    "ToString()": "not-applicable",
+    "GetHashCode()": "not-applicable",
+    "Equals(PictureAlbum)": "not-applicable",
+    "IsDisposed": "complete",
+    "Name": "complete",
+    "Albums": "complete",
+    "Pictures": "complete",
+    "Parent": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:picture-album"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.PictureCollection",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetEnumerator()": "not-applicable",
+    "IsDisposed": "complete",
+    "Item(Int32)": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:picture-collection"
+  },
+  {
+   "name": "Microsoft.Xna.Framework.Media.PictureAlbumCollection",
+   "status": "complete",
+   "members": {
+    "Finalize()": "not-applicable",
+    "Dispose()": "complete",
+    "GetEnumerator()": "not-applicable",
+    "IsDisposed": "complete",
+    "Item(Int32)": "complete",
+    "Count": "complete"
+   },
+   "lisp": "microsoft.xna.framework.media:picture-album-collection"
   },
   {
    "name": "Microsoft.Xna.Framework.GameServiceContainer",
@@ -4276,36 +4345,6 @@
    "category": "missing_member",
    "subject": "Microsoft.Xna.Framework.Graphics.BasicEffect.OnApply()",
    "detail": "A protected-internal virtual (`.method famorassem`) that XNA calls from inside EffectPass.Apply, so a subclass can adjust parameters immediately before the pass is applied. CNA applies a pass in one route -- cna_effect_pass_apply(pass) takes the pass and nothing else -- with no callback into managed code in the middle, so an override here would never be called. The same shape as ContentManager.ReadAsset: a hook needs somewhere to be called from. The reason that used to stand added \"and returning true from it cancels the pass\". **In the pinned assembly OnApply returns `void`** and cancels nothing; Effect's own body is a single `ret`. That was a claim about XNA taken from somewhere other than XNA."
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.SavePicture(String,Byte[])",
-   "detail": "no exported 'save-picture' in microsoft.xna.framework.media"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.SavePicture(String,Stream)",
-   "detail": "no exported 'save-picture' in microsoft.xna.framework.media"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.GetPictureFromToken(String)",
-   "detail": "no exported 'get-picture-from-token' in microsoft.xna.framework.media"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.Pictures",
-   "detail": "no exported 'pictures' in microsoft.xna.framework.media"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.RootPictureAlbum",
-   "detail": "no exported 'root-picture-album' in microsoft.xna.framework.media"
-  },
-  {
-   "category": "missing_member",
-   "subject": "Microsoft.Xna.Framework.Media.MediaLibrary.SavedPictures",
-   "detail": "no exported 'saved-pictures' in microsoft.xna.framework.media"
   }
  ]
 }

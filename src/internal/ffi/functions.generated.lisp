@@ -3294,6 +3294,210 @@
 (defcfun ("cna_song_get_genre" %song-get-genre) :uint32
   (song :uint64) (out-genre :pointer) (out-available :pointer))
 
+;;; CNA_Result cna_media_library_get_picture_from_token(CNA_MediaLibraryHandle library, CNA_StringView token, CNA_PictureHandle* out_picture, CNA_Bool* out_available)
+(defcfun ("cna_media_library_get_picture_from_token" %media-library-get-picture-from-token) :uint32
+  (library :uint64) (token-0 :pointer) (token-1 :uint64) (out-picture :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_media_library_get_pictures(CNA_MediaLibraryHandle library, CNA_PictureCollectionHandle* out_pictures)
+(defcfun ("cna_media_library_get_pictures" %media-library-get-pictures) :uint32
+  (library :uint64) (out-pictures :pointer))
+
+;;; CNA_Result cna_media_library_get_root_picture_album(CNA_MediaLibraryHandle library, CNA_PictureAlbumHandle* out_album, CNA_Bool* out_available)
+(defcfun ("cna_media_library_get_root_picture_album" %media-library-get-root-picture-album) :uint32
+  (library :uint64) (out-album :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_media_library_get_saved_pictures(CNA_MediaLibraryHandle library, CNA_PictureCollectionHandle* out_pictures)
+(defcfun ("cna_media_library_get_saved_pictures" %media-library-get-saved-pictures) :uint32
+  (library :uint64) (out-pictures :pointer))
+
+;;; CNA_Result cna_media_library_save_picture(CNA_MediaLibraryHandle library, CNA_StringView name, const uint8_t* image_data, uint64_t image_byte_count, CNA_PictureHandle* out_picture)
+(defcfun ("cna_media_library_save_picture" %media-library-save-picture) :uint32
+  (library :uint64) (name-0 :pointer) (name-1 :uint64) (image-data :pointer) (image-byte-count :uint64) (out-picture :pointer))
+
+;;; CNA_Result cna_media_library_save_picture_from_stream(CNA_MediaLibraryHandle library, CNA_StringView name, CNA_Handle source, CNA_PictureHandle* out_picture)
+(defcfun ("cna_media_library_save_picture_from_stream" %media-library-save-picture-from-stream) :uint32
+  (library :uint64) (name-0 :pointer) (name-1 :uint64) (source :uint64) (out-picture :pointer))
+
+;;; CNA_Result cna_picture_album_collection_copy_type_name(CNA_PictureAlbumCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_album_collection_copy_type_name" %picture-album-collection-copy-type-name) :uint32
+  (collection :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_album_collection_destroy(CNA_PictureAlbumCollectionHandle collection)
+(defcfun ("cna_picture_album_collection_destroy" %picture-album-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_picture_album_collection_dispose(CNA_PictureAlbumCollectionHandle collection)
+(defcfun ("cna_picture_album_collection_dispose" %picture-album-collection-dispose) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_picture_album_collection_get_at(CNA_PictureAlbumCollectionHandle collection, int32_t index, CNA_PictureAlbumHandle* out_album)
+(defcfun ("cna_picture_album_collection_get_at" %picture-album-collection-get-at) :uint32
+  (collection :uint64) (index :int32) (out-album :pointer))
+
+;;; CNA_Result cna_picture_album_collection_get_count(CNA_PictureAlbumCollectionHandle collection, int32_t* out_count)
+(defcfun ("cna_picture_album_collection_get_count" %picture-album-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_picture_album_collection_get_is_disposed(CNA_PictureAlbumCollectionHandle collection, CNA_Bool* out_disposed)
+(defcfun ("cna_picture_album_collection_get_is_disposed" %picture-album-collection-get-is-disposed) :uint32
+  (collection :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_picture_album_collection_get_type_name_size(CNA_PictureAlbumCollectionHandle collection, uint64_t* out_bytes)
+(defcfun ("cna_picture_album_collection_get_type_name_size" %picture-album-collection-get-type-name-size) :uint32
+  (collection :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_album_copy_name(CNA_PictureAlbumHandle album, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_album_copy_name" %picture-album-copy-name) :uint32
+  (album :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_album_copy_type_name(CNA_PictureAlbumHandle album, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_album_copy_type_name" %picture-album-copy-type-name) :uint32
+  (album :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_album_destroy(CNA_PictureAlbumHandle album)
+(defcfun ("cna_picture_album_destroy" %picture-album-destroy) :uint32
+  (album :uint64))
+
+;;; CNA_Result cna_picture_album_dispose(CNA_PictureAlbumHandle album)
+(defcfun ("cna_picture_album_dispose" %picture-album-dispose) :uint32
+  (album :uint64))
+
+;;; CNA_Result cna_picture_album_equals(CNA_PictureAlbumHandle left, CNA_PictureAlbumHandle right, CNA_Bool* out_equal)
+(defcfun ("cna_picture_album_equals" %picture-album-equals) :uint32
+  (left :uint64) (right :uint64) (out-equal :pointer))
+
+;;; CNA_Result cna_picture_album_get_albums(CNA_PictureAlbumHandle album, CNA_PictureAlbumCollectionHandle* out_albums)
+(defcfun ("cna_picture_album_get_albums" %picture-album-get-albums) :uint32
+  (album :uint64) (out-albums :pointer))
+
+;;; CNA_Result cna_picture_album_get_hash_code(CNA_PictureAlbumHandle album, int32_t* out_hash)
+(defcfun ("cna_picture_album_get_hash_code" %picture-album-get-hash-code) :uint32
+  (album :uint64) (out-hash :pointer))
+
+;;; CNA_Result cna_picture_album_get_is_disposed(CNA_PictureAlbumHandle album, CNA_Bool* out_disposed)
+(defcfun ("cna_picture_album_get_is_disposed" %picture-album-get-is-disposed) :uint32
+  (album :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_picture_album_get_name_size(CNA_PictureAlbumHandle album, uint64_t* out_bytes)
+(defcfun ("cna_picture_album_get_name_size" %picture-album-get-name-size) :uint32
+  (album :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_album_get_parent(CNA_PictureAlbumHandle album, CNA_PictureAlbumHandle* out_parent, CNA_Bool* out_available)
+(defcfun ("cna_picture_album_get_parent" %picture-album-get-parent) :uint32
+  (album :uint64) (out-parent :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_picture_album_get_pictures(CNA_PictureAlbumHandle album, CNA_PictureCollectionHandle* out_pictures)
+(defcfun ("cna_picture_album_get_pictures" %picture-album-get-pictures) :uint32
+  (album :uint64) (out-pictures :pointer))
+
+;;; CNA_Result cna_picture_album_get_type_name_size(CNA_PictureAlbumHandle album, uint64_t* out_bytes)
+(defcfun ("cna_picture_album_get_type_name_size" %picture-album-get-type-name-size) :uint32
+  (album :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_collection_copy_type_name(CNA_PictureCollectionHandle collection, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_collection_copy_type_name" %picture-collection-copy-type-name) :uint32
+  (collection :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_collection_destroy(CNA_PictureCollectionHandle collection)
+(defcfun ("cna_picture_collection_destroy" %picture-collection-destroy) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_picture_collection_dispose(CNA_PictureCollectionHandle collection)
+(defcfun ("cna_picture_collection_dispose" %picture-collection-dispose) :uint32
+  (collection :uint64))
+
+;;; CNA_Result cna_picture_collection_get_at(CNA_PictureCollectionHandle collection, int32_t index, CNA_PictureHandle* out_picture)
+(defcfun ("cna_picture_collection_get_at" %picture-collection-get-at) :uint32
+  (collection :uint64) (index :int32) (out-picture :pointer))
+
+;;; CNA_Result cna_picture_collection_get_count(CNA_PictureCollectionHandle collection, int32_t* out_count)
+(defcfun ("cna_picture_collection_get_count" %picture-collection-get-count) :uint32
+  (collection :uint64) (out-count :pointer))
+
+;;; CNA_Result cna_picture_collection_get_is_disposed(CNA_PictureCollectionHandle collection, CNA_Bool* out_disposed)
+(defcfun ("cna_picture_collection_get_is_disposed" %picture-collection-get-is-disposed) :uint32
+  (collection :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_picture_collection_get_type_name_size(CNA_PictureCollectionHandle collection, uint64_t* out_bytes)
+(defcfun ("cna_picture_collection_get_type_name_size" %picture-collection-get-type-name-size) :uint32
+  (collection :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_copy_image(CNA_PictureHandle picture, uint8_t* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_copy_image" %picture-copy-image) :uint32
+  (picture :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_copy_name(CNA_PictureHandle picture, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_copy_name" %picture-copy-name) :uint32
+  (picture :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_copy_thumbnail(CNA_PictureHandle picture, uint8_t* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_copy_thumbnail" %picture-copy-thumbnail) :uint32
+  (picture :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_copy_token_ext(CNA_PictureHandle picture, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_copy_token_ext" %picture-copy-token-ext) :uint32
+  (picture :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_copy_type_name(CNA_PictureHandle picture, char* destination, uint64_t capacity, uint64_t* out_bytes)
+(defcfun ("cna_picture_copy_type_name" %picture-copy-type-name) :uint32
+  (picture :uint64) (destination :pointer) (capacity :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_destroy(CNA_PictureHandle picture)
+(defcfun ("cna_picture_destroy" %picture-destroy) :uint32
+  (picture :uint64))
+
+;;; CNA_Result cna_picture_dispose(CNA_PictureHandle picture)
+(defcfun ("cna_picture_dispose" %picture-dispose) :uint32
+  (picture :uint64))
+
+;;; CNA_Result cna_picture_equals(CNA_PictureHandle left, CNA_PictureHandle right, CNA_Bool* out_equal)
+(defcfun ("cna_picture_equals" %picture-equals) :uint32
+  (left :uint64) (right :uint64) (out-equal :pointer))
+
+;;; CNA_Result cna_picture_get_album(CNA_PictureHandle picture, CNA_PictureAlbumHandle* out_album, CNA_Bool* out_available)
+(defcfun ("cna_picture_get_album" %picture-get-album) :uint32
+  (picture :uint64) (out-album :pointer) (out-available :pointer))
+
+;;; CNA_Result cna_picture_get_date_unix_ticks(CNA_PictureHandle picture, int64_t* out_unix_ticks)
+(defcfun ("cna_picture_get_date_unix_ticks" %picture-get-date-unix-ticks) :uint32
+  (picture :uint64) (out-unix-ticks :pointer))
+
+;;; CNA_Result cna_picture_get_hash_code(CNA_PictureHandle picture, int32_t* out_hash)
+(defcfun ("cna_picture_get_hash_code" %picture-get-hash-code) :uint32
+  (picture :uint64) (out-hash :pointer))
+
+;;; CNA_Result cna_picture_get_height(CNA_PictureHandle picture, int32_t* out_height)
+(defcfun ("cna_picture_get_height" %picture-get-height) :uint32
+  (picture :uint64) (out-height :pointer))
+
+;;; CNA_Result cna_picture_get_image_size(CNA_PictureHandle picture, uint64_t* out_bytes)
+(defcfun ("cna_picture_get_image_size" %picture-get-image-size) :uint32
+  (picture :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_get_is_disposed(CNA_PictureHandle picture, CNA_Bool* out_disposed)
+(defcfun ("cna_picture_get_is_disposed" %picture-get-is-disposed) :uint32
+  (picture :uint64) (out-disposed :pointer))
+
+;;; CNA_Result cna_picture_get_name_size(CNA_PictureHandle picture, uint64_t* out_bytes)
+(defcfun ("cna_picture_get_name_size" %picture-get-name-size) :uint32
+  (picture :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_get_thumbnail_size(CNA_PictureHandle picture, uint64_t* out_bytes)
+(defcfun ("cna_picture_get_thumbnail_size" %picture-get-thumbnail-size) :uint32
+  (picture :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_get_token_size_ext(CNA_PictureHandle picture, uint64_t* out_bytes)
+(defcfun ("cna_picture_get_token_size_ext" %picture-get-token-size-ext) :uint32
+  (picture :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_get_type_name_size(CNA_PictureHandle picture, uint64_t* out_bytes)
+(defcfun ("cna_picture_get_type_name_size" %picture-get-type-name-size) :uint32
+  (picture :uint64) (out-bytes :pointer))
+
+;;; CNA_Result cna_picture_get_width(CNA_PictureHandle picture, int32_t* out_width)
+(defcfun ("cna_picture_get_width" %picture-get-width) :uint32
+  (picture :uint64) (out-width :pointer))
+
 (defparameter *bound-native-functions*
   '(("cna_get_abi_version" %get-abi-version :uint32 () :thread :any :ownership "none")
     ("cna_error_get_last_info" %error-get-last-info :uint32 (:pointer) :thread :any :ownership "none")
@@ -4114,6 +4318,57 @@
     ("cna_playlist_get_type_name_size" %playlist-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
     ("cna_song_get_album" %song-get-album :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
     ("cna_song_get_artist" %song-get-artist :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
-    ("cna_song_get_genre" %song-get-genre :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows"))
+    ("cna_song_get_genre" %song-get-genre :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_picture_from_token" %media-library-get-picture-from-token :uint32 (:uint64 :pointer :uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_pictures" %media-library-get-pictures :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_root_picture_album" %media-library-get-root-picture-album :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_get_saved_pictures" %media-library-get-saved-pictures :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_save_picture" %media-library-save-picture :uint32 (:uint64 :pointer :uint64 :pointer :uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_media_library_save_picture_from_stream" %media-library-save-picture-from-stream :uint32 (:uint64 :pointer :uint64 :uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_picture_album_collection_copy_type_name" %picture-album-collection-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_collection_destroy" %picture-album-collection-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_picture_album_collection_dispose" %picture-album-collection-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_picture_album_collection_get_at" %picture-album-collection-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "borrows")
+    ("cna_picture_album_collection_get_count" %picture-album-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_collection_get_is_disposed" %picture-album-collection-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_collection_get_type_name_size" %picture-album-collection-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_copy_name" %picture-album-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_copy_type_name" %picture-album-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_destroy" %picture-album-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_picture_album_dispose" %picture-album-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_picture_album_equals" %picture-album-equals :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_get_albums" %picture-album-get-albums :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_picture_album_get_hash_code" %picture-album-get-hash-code :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_get_is_disposed" %picture-album-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_get_name_size" %picture-album-get-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_album_get_parent" %picture-album-get-parent :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_picture_album_get_pictures" %picture-album-get-pictures :uint32 (:uint64 :pointer) :thread :owner :ownership "borrows")
+    ("cna_picture_album_get_type_name_size" %picture-album-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_collection_copy_type_name" %picture-collection-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_collection_destroy" %picture-collection-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_picture_collection_dispose" %picture-collection-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_picture_collection_get_at" %picture-collection-get-at :uint32 (:uint64 :int32 :pointer) :thread :owner :ownership "borrows")
+    ("cna_picture_collection_get_count" %picture-collection-get-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_collection_get_is_disposed" %picture-collection-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_collection_get_type_name_size" %picture-collection-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_copy_image" %picture-copy-image :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_copy_name" %picture-copy-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_copy_thumbnail" %picture-copy-thumbnail :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_copy_token_ext" %picture-copy-token-ext :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_copy_type_name" %picture-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_destroy" %picture-destroy :uint32 (:uint64) :thread :owner :ownership "releases")
+    ("cna_picture_dispose" %picture-dispose :uint32 (:uint64) :thread :owner :ownership "none")
+    ("cna_picture_equals" %picture-equals :uint32 (:uint64 :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_album" %picture-get-album :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "borrows")
+    ("cna_picture_get_date_unix_ticks" %picture-get-date-unix-ticks :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_hash_code" %picture-get-hash-code :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_height" %picture-get-height :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_image_size" %picture-get-image-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_is_disposed" %picture-get-is-disposed :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_name_size" %picture-get-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_thumbnail_size" %picture-get-thumbnail-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_token_size_ext" %picture-get-token-size-ext :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_type_name_size" %picture-get-type-name-size :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_picture_get_width" %picture-get-width :uint32 (:uint64 :pointer) :thread :owner :ownership "none"))
   "Every native route this binding may call: C name, Lisp name, and bound CFFI shape.")
 

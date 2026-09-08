@@ -844,6 +844,12 @@ is written down in `docs/limitations.md' as one.")
    #:album-collection #:artist-collection #:genre-collection #:playlist-collection
    #:album-equal #:artist-equal #:genre-equal #:playlist-equal
    #:has-art #:album-art #:album-thumbnail
+   ;; --- the picture half ----------------------------------------------------
+   #:picture #:picture-album #:picture-collection #:picture-album-collection
+   #:picture-equal #:picture-album-equal
+   #:pictures #:saved-pictures #:root-picture-album #:parent
+   #:width #:height #:date #:image #:thumbnail
+   #:picture-from-token #:save-picture
    ;; --- SongCollection ------------------------------------------------------
    #:song-collection #:count-of #:item #:songs-vector
    ;; --- MediaQueue ----------------------------------------------------------

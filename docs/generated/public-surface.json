@@ -34010,6 +34010,27 @@
           "documentation": "The number of elements in COLLECTION.\n\n`SongCollection.Count'. Named `COUNT-OF' rather than `COUNT' because `CL:COUNT'\nis a standard sequence function this package does not shadow -- the media package\nhas no member whose name collides badly enough to be worth shadowing one, which\nis the judgement `microsoft.xna.framework.audio' made the other way for\n`POSITION'."
         },
         {
+          "name": "date",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "picture"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Picture.Date: when the picture was taken, in 100-nanosecond ticks since\n1970-01-01 UTC.\n\n**A tick count rather than a time object**, which is the same decision `DURATION'\nmakes and the first time this binding projects a `System.DateTime'. CNA's route\nis `cna_picture_get_date_unix_ticks' and the unit is the ABI's own; converting to\na Common Lisp universal time would lose the sub-second part, and this binding\ndoes not throw away precision to make a value prettier. A caller that wants one:\n\n    (+ (encode-universal-time 0 0 0 1 1 1970 0) (floor ticks 10000000))\n\n**Zero is a real answer.** A picture whose file carries no timestamp reports\nwhatever the scan recorded, which may be zero -- CNA says so, and this passes it\nthrough rather than inventing a nil."
+        },
+        {
           "name": "duration",
           "fbound": true,
           "macro": false,
@@ -34166,6 +34187,48 @@
           "constant": false,
           "value": null,
           "documentation": "Album.HasArt: whether the album has cover art.\n\nAsk this before `ALBUM-ART': XNA answers a null stream when there is none, and a\nprogram that reads first and checks afterwards has to handle both anyway."
+        },
+        {
+          "name": "height",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "picture"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Picture.Height, in pixels."
+        },
+        {
+          "name": "image",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "picture"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Picture.GetImage(): the picture's bytes, or NIL when it has none.\n\n**A byte vector rather than a stream**, for the reason `ALBUM-ART' gives: CNA\nhands the image over as a sized buffer rather than as anything streamable."
         },
         {
           "name": "is-disposed",
@@ -34915,6 +34978,214 @@
           "documentation": "Song.Name: the display name.\n\nA **stored** value: XNA's constructor fills the `name' field and the getter\nanswers it. CNA's `cna_song_create' \"stores it verbatim, despite that\nconstructor's own documentation claiming the name defaults to the file name\" --\nso an empty name stays empty, which this binding passes through rather than\nsubstituting the path.\n\nRefuses after disposal."
         },
         {
+          "name": "parent",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "album"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "PictureAlbum.Parent: the album above this one, or NIL for the root.\n\n**NIL is how the root is recognised**, and it is the only way: XNA marks the root\nno other way, and CNA reports the absence through an `out_available' flag."
+        },
+        {
+          "name": "picture",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:picture",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.Picture: one picture in a media library.\n\nA **borrowed** view into its library, as `ALBUM' is. `IMAGE' and `THUMBNAIL'\nanswer the bytes; `ALBUM' answers the picture album it sits in, or NIL."
+        },
+        {
+          "name": "picture-album",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:picture-album",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.PictureAlbum: one album in the picture tree.\n\n`PICTURES' are its own pictures, `ALBUMS' its sub-albums and `PARENT' the album\nabove it -- NIL for the root, which is the only thing that distinguishes the\nroot, XNA giving it no other mark. All three answer the same object every time,\nas XNA's fields do."
+        },
+        {
+          "name": "picture-album-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:picture-album-collection",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.PictureAlbumCollection: an ordered, read-only list\nof picture albums. `ITEM' answers a fresh `PICTURE-ALBUM' each time; compare with\n`PICTURE-ALBUM-EQUAL'."
+        },
+        {
+          "name": "picture-album-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "a",
+            "b"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Whether two PICTURE-ALBUMs are the same album. See `ALBUM-EQUAL'."
+        },
+        {
+          "name": "picture-collection",
+          "fbound": false,
+          "macro": false,
+          "generic": false,
+          "lambda_list": [],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": true,
+          "structure": false,
+          "condition": false,
+          "metaclass": "standard-class",
+          "precedence": [
+            "microsoft.xna.framework.media:picture-collection",
+            "cna-lisp.internal:native-object",
+            "common-lisp:standard-object",
+            "sb-pcl:slot-object",
+            "common-lisp:t"
+          ],
+          "type": true,
+          "constant": false,
+          "value": null,
+          "documentation": "Microsoft.Xna.Framework.Media.PictureCollection: an ordered, read-only list of pictures.\n`ITEM' answers a fresh `PICTURE' each time; compare with `PICTURE-EQUAL'."
+        },
+        {
+          "name": "picture-equal",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "a",
+            "b"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Whether two PICTUREs are the same picture. See `ALBUM-EQUAL'."
+        },
+        {
+          "name": "picture-from-token",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "library",
+            "token"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaLibrary.GetPictureFromToken(String): the picture a token names, or NIL.\n\n**An unknown token is an ordinary answer**, not a condition: CNA says the\ncanonical lookup returns null for one, so this answers NIL."
+        },
+        {
+          "name": "pictures",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "object"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "The pictures of a `MEDIA-LIBRARY' or a `PICTURE-ALBUM', as a\n`PICTURE-COLLECTION'. The same object every time; see `SONGS'."
+        },
+        {
           "name": "play-count",
           "fbound": true,
           "macro": false,
@@ -35050,6 +35321,27 @@
           "documentation": "Song.Rating: the song's rating, or zero when it has none.\n\nA **stored** value. `IS-RATED' is `Rating > 0' over it.\n\nRefuses after disposal."
         },
         {
+          "name": "root-picture-album",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "library"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaLibrary.RootPictureAlbum: the top of the picture tree, or NIL.\n\nNIL when the device has no picture location to scan. The album it answers has no\n`PARENT', which is what makes it the root."
+        },
+        {
           "name": "samples",
           "fbound": true,
           "macro": false,
@@ -35069,6 +35361,50 @@
           "constant": false,
           "value": null,
           "documentation": "VisualizationData.Samples: the sample-domain buffer. See `FREQUENCIES'."
+        },
+        {
+          "name": "save-picture",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "library",
+            "name",
+            "source"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaLibrary.SavePicture(String, ...): write a new picture into the library.\n\nTwo overloads and they take different kinds of SOURCE, which is what tells them\napart -- the same discrimination-by-argument-type this binding uses everywhere a\nCLR overload set projects onto one generic function:\n\n    (save-picture library \"shot\" bytes)    ; SavePicture(String, Byte[])\n    (save-picture library \"shot\" stream)   ; SavePicture(String, Stream)\n\n**The stream overload takes a `STORAGE-STREAM' and nothing else.** CNA says a\nstorage stream \"is the only byte source this ABI owns, so it is what the\ncanonical stream-taking overload accepts\", and the stream stays the caller's to\nclose. Answers the saved `PICTURE'.\n\nAn image the loader cannot measure is still saved, with width and height zero --\nCNA records that as the canonical operation's own behaviour rather than as a\nfailure."
+        },
+        {
+          "name": "saved-pictures",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "library"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "MediaLibrary.SavedPictures: the pictures saved through `SAVE-PICTURE'.\n\n**Empty is the ordinary state of a library nothing has saved into**, and it is\nnot a gap: CNA deliberately does not create the \"Saved Pictures\" directory\nuntil the first save, so an untouched library reports zero. The same object every\ntime; see `SONGS'."
         },
         {
           "name": "song",
@@ -35207,6 +35543,27 @@
           "documentation": "Every song in COLLECTION, as a fresh simple vector.\n\nA CNA-Lisp addition rather than an XNA member. XNA's collection is\n`IEnumerable<Song>' and a program walks it with `foreach'; Common Lisp has no\n`IEnumerator<T>' to project, and `GetEnumerator' is therefore declared not\napplicable. This is what a program uses instead, and it is a *vector* so that the\ncount is O(1) and the elements are indexable, which is what the original's\nenumerator plus `Count' gives.\n\nEach element is freshly made, for the reason `ITEM' gives."
         },
         {
+          "name": "thumbnail",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "picture"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Picture.GetThumbnail(): the thumbnail's bytes, or NIL. See `IMAGE'."
+        },
+        {
           "name": "track-number",
           "fbound": true,
           "macro": false,
@@ -35250,6 +35607,27 @@
           "constant": false,
           "value": null,
           "documentation": "Microsoft.Xna.Framework.Media.VisualizationData: two buffers the player fills.\n\n    (let ((data (make-visualization-data)))\n      (setf (media-player-is-visualization-enabled) t)\n      (media-player-get-visualization-data data)\n      (frequencies data))\n\n**Not sealed in XNA**, which is unusual for this namespace and is reproduced by\nleaving the class open: a program may subclass it, and `GetVisualizationData'\ntakes whatever it is given.\n\nIt owns nothing native. `MAKE-VISUALIZATION-DATA' allocates the two buffers at\nthe size CNA's own `CNA_VISUALIZATION_DATA_SIZE' names, and\n`MEDIA-PLAYER-GET-VISUALIZATION-DATA' writes into them in place -- so the object\na program keeps is the object that gets filled, exactly as in XNA."
+        },
+        {
+          "name": "width",
+          "fbound": true,
+          "macro": false,
+          "generic": true,
+          "lambda_list": [
+            "picture"
+          ],
+          "keywords": [],
+          "setf_fbound": false,
+          "setf_lambda_list": [],
+          "class": false,
+          "structure": false,
+          "condition": false,
+          "metaclass": null,
+          "precedence": [],
+          "type": false,
+          "constant": false,
+          "value": null,
+          "documentation": "Picture.Width, in pixels."
         }
       ]
     },

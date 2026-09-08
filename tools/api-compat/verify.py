@@ -1020,20 +1020,31 @@ def verify_frontier_categories(report, rules, statuses):
                        "does not define" % category)
 
 
-def verify_leaks(report, packages):
+def verify_leaks(report, packages, rules):
     """No exported name may mention an ABI concept.
 
     The match is on whole hyphen-separated words, not on substrings: HANDLER is
     not HANDLE, and a substring test reports every ADD-<EVENT>-HANDLER as a leak.
     A false positive here is worse than it looks, because the obvious repair is
     to delete the forbidden word and stop checking for it at all.
+
+    Which is exactly why `implementation_word_exceptions' exists and is keyed by
+    the **whole symbol** with a reason attached, rather than by the word. One
+    XNA member genuinely uses one of these words in its own name --
+    `MediaLibrary.GetPictureFromToken', whose token is a picture's library token
+    and not a callback registration -- and the alternatives were both worse:
+    renaming the member away from the contract, or deleting `token' from the
+    list and never checking for it again.
     """
+    exceptions = rules.get("implementation_word_exceptions", {})
     forbidden_words = ("handle", "cffi", "pointer", "foreign", "registry", "token",
                        "generation", "defcfun")
     forbidden_pairs = (("struct", "size"),)
     for package, symbols in packages.items():
         for name in symbols:
             words = name.split("-")
+            if "%s:%s" % (package, name) in exceptions:
+                continue
             for bad in forbidden_words:
                 if bad in words:
                     report.add("private_implementation_leak", "%s:%s" % (package, name),
@@ -1073,7 +1084,7 @@ def main(argv):
         report.types.append(
             verify_type(report, rules, contract_type, surface, packages, claimed))
     verify_unexpected(report, rules, surface, packages, claimed)
-    verify_leaks(report, packages)
+    verify_leaks(report, packages, rules)
     statuses = {"types": {entry["name"]: entry["status"] for entry in report.types},
                 "members": {entry["name"]: entry["members"] for entry in report.types}}
     verify_declared_absences(report, surface, statuses)

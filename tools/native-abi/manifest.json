@@ -5806,6 +5806,312 @@
       "header": "media_library.h",
       "thread": "owner",
       "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_picture_from_token",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_pictures",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_root_picture_album",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_get_saved_pictures",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_save_picture",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_media_library_save_picture_from_stream",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_picture_album_collection_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_collection_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_picture_album_collection_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_collection_get_at",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_picture_album_collection_get_count",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_collection_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_collection_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_copy_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_picture_album_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_equals",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_get_albums",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_picture_album_get_hash_code",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_get_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_album_get_parent",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_picture_album_get_pictures",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_picture_album_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_collection_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_collection_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_picture_collection_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_collection_get_at",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_picture_collection_get_count",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_collection_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_collection_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_copy_image",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_copy_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_copy_thumbnail",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_copy_token_ext",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_copy_type_name",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_destroy",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "releases"
+    },
+    {
+      "name": "cna_picture_dispose",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_equals",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_album",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "borrows"
+    },
+    {
+      "name": "cna_picture_get_date_unix_ticks",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_hash_code",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_height",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_image_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_is_disposed",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_thumbnail_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_token_size_ext",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_type_name_size",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_picture_get_width",
+      "header": "media_library.h",
+      "thread": "owner",
+      "ownership": "none"
     }
   ],
   "shimmed_routes": [

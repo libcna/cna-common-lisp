@@ -191,10 +191,6 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "media/song")
    (:file "media/media-queue")
    (:file "media/media-player")
-   ;; The media-library half. After media-player and song, because it reuses
-   ;; %MEDIA-GAME, SONG-COLLECTION and the COUNT-OF/ITEM generic functions the
-   ;; playback half declares, and because a library song is an ordinary SONG.
-   (:file "media/media-library")
    ;; --- Microsoft.Xna.Framework.Content ------------------------------------
    ;; The manager first, then the loaders that produce graphics objects, then
    ;; Game.Content, which needs both GAME and CONTENT-MANAGER to exist.
@@ -222,6 +218,15 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    (:file "storage/storage-stream")
    (:file "storage/storage-container")
    (:file "storage/storage-device")
+   ;; --- Microsoft.Xna.Framework.Media, the library half ---------------------
+   ;; **After Storage, and that is the only reason it is not beside its own
+   ;; namespace.** It reuses %MEDIA-GAME, SONG-COLLECTION and the COUNT-OF/ITEM
+   ;; generic functions the playback half declares, so it must follow those; and
+   ;; `MediaLibrary.SavePicture(String, Stream)' specialises on
+   ;; `STORAGE-STREAM', which CNA calls "the only byte source this ABI owns", so
+   ;; it must follow that class too. A method cannot be defined on a class that
+   ;; does not exist yet.
+   (:file "media/media-library")
    ;; --- declared capabilities and deliberate absences ----------------------
    (:file "capabilities"))
   :in-order-to ((test-op (test-op "cna-common-lisp/tests"))))

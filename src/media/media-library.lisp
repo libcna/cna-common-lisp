@@ -107,6 +107,8 @@ as a second copy of the construction walk leaks whatever the two disagree about.
    ;; each property answers one object forever.
    (%songs :initform nil) (%albums :initform nil) (%artists :initform nil)
    (%genres :initform nil) (%playlists :initform nil)
+   (%pictures :initform nil) (%saved-pictures :initform nil)
+   (%root-picture-album :initform nil)
    (%media-source :initform nil))
   (:documentation
    "Microsoft.Xna.Framework.Media.MediaLibrary: the device's music and pictures.
@@ -838,3 +840,311 @@ object, so there is nothing here to release and nothing to dispose."
 (%define-library-type-name playlist-collection
   cna-lisp.internal.ffi::%playlist-collection-get-type-name-size
   cna-lisp.internal.ffi::%playlist-collection-copy-type-name)
+
+;;; --- the picture half --------------------------------------------------------
+;;;
+;;; `Picture' and `PictureAlbum' are the same borrowed-view shape as the music
+;;; entities, with one thing neither of those has: **a tree**. A picture album
+;;; holds pictures and sub-albums and knows its parent, and the root has no
+;;; parent -- which is how a caller tells the root from the rest, since XNA gives
+;;; it no other mark.
+;;;
+;;; They are in this closure rather than a later one because `MediaLibrary'
+;;; itself returns them from six of its own members. A closure that stopped at
+;;; the music half would leave `MediaLibrary' partial by construction rather than
+;;; by any limit, which is not a closure.
+
+(%define-library-entity picture
+  "Microsoft.Xna.Framework.Media.Picture: one picture in a media library.
+
+A **borrowed** view into its library, as `ALBUM' is. `IMAGE' and `THUMBNAIL'
+answer the bytes; `ALBUM' answers the picture album it sits in, or NIL."
+  :extra-slots ((%picture-album :initform nil)))
+
+(%define-library-entity picture-album
+  "Microsoft.Xna.Framework.Media.PictureAlbum: one album in the picture tree.
+
+`PICTURES' are its own pictures, `ALBUMS' its sub-albums and `PARENT' the album
+above it -- NIL for the root, which is the only thing that distinguishes the
+root, XNA giving it no other mark. All three answer the same object every time,
+as XNA's fields do."
+  :extra-slots ((%picture-collection :initform nil)
+                (%picture-albums :initform nil)
+                (%parent :initform nil)))
+
+(%define-library-collection picture-collection picture
+  "Microsoft.Xna.Framework.Media.PictureCollection: an ordered, read-only list of pictures.
+`ITEM' answers a fresh `PICTURE' each time; compare with `PICTURE-EQUAL'.")
+
+(%define-library-collection picture-album-collection picture-album
+  "Microsoft.Xna.Framework.Media.PictureAlbumCollection: an ordered, read-only list
+of picture albums. `ITEM' answers a fresh `PICTURE-ALBUM' each time; compare with
+`PICTURE-ALBUM-EQUAL'.")
+
+(%define-entity-name picture cna-lisp.internal.ffi::%picture-get-name-size
+                             cna-lisp.internal.ffi::%picture-copy-name)
+(%define-entity-name picture-album cna-lisp.internal.ffi::%picture-album-get-name-size
+                                   cna-lisp.internal.ffi::%picture-album-copy-name)
+
+(%define-entity-equal picture-equal picture cna-lisp.internal.ffi::%picture-equals
+  "Whether two PICTUREs are the same picture. See `ALBUM-EQUAL'.")
+(%define-entity-equal picture-album-equal picture-album
+  cna-lisp.internal.ffi::%picture-album-equals
+  "Whether two PICTURE-ALBUMs are the same album. See `ALBUM-EQUAL'.")
+
+(%define-collection-access picture-collection picture
+  cna-lisp.internal.ffi::%picture-collection-get-count
+  cna-lisp.internal.ffi::%picture-collection-get-at
+  cna-lisp.internal.ffi::%picture-destroy)
+
+(%define-collection-access picture-album-collection picture-album
+  cna-lisp.internal.ffi::%picture-album-collection-get-count
+  cna-lisp.internal.ffi::%picture-album-collection-get-at
+  cna-lisp.internal.ffi::%picture-album-destroy)
+
+(%define-library-is-disposed picture cna-lisp.internal.ffi::%picture-get-is-disposed)
+(%define-library-is-disposed picture-album cna-lisp.internal.ffi::%picture-album-get-is-disposed)
+(%define-library-is-disposed picture-collection
+  cna-lisp.internal.ffi::%picture-collection-get-is-disposed)
+(%define-library-is-disposed picture-album-collection
+  cna-lisp.internal.ffi::%picture-album-collection-get-is-disposed)
+
+(%define-library-type-name picture
+  cna-lisp.internal.ffi::%picture-get-type-name-size
+  cna-lisp.internal.ffi::%picture-copy-type-name)
+(%define-library-type-name picture-album
+  cna-lisp.internal.ffi::%picture-album-get-type-name-size
+  cna-lisp.internal.ffi::%picture-album-copy-type-name)
+(%define-library-type-name picture-collection
+  cna-lisp.internal.ffi::%picture-collection-get-type-name-size
+  cna-lisp.internal.ffi::%picture-collection-copy-type-name)
+(%define-library-type-name picture-album-collection
+  cna-lisp.internal.ffi::%picture-album-collection-get-type-name-size
+  cna-lisp.internal.ffi::%picture-album-collection-copy-type-name)
+
+;;; The picture tree.
+
+(defgeneric pictures (object)
+  (:documentation
+   "The pictures of a `MEDIA-LIBRARY' or a `PICTURE-ALBUM', as a
+`PICTURE-COLLECTION'. The same object every time; see `SONGS'."))
+
+(defgeneric parent (album)
+  (:documentation
+   "PictureAlbum.Parent: the album above this one, or NIL for the root.
+
+**NIL is how the root is recognised**, and it is the only way: XNA marks the root
+no other way, and CNA reports the absence through an `out_available' flag."))
+
+(%define-cached-view pictures picture-album %picture-collection
+  cna-lisp.internal.ffi::%picture-album-get-pictures picture-collection
+  cna-lisp.internal.ffi::%picture-collection-destroy
+  "PictureAlbum.Pictures: the album's own pictures.")
+
+(%define-cached-view albums picture-album %picture-albums
+  cna-lisp.internal.ffi::%picture-album-get-albums picture-album-collection
+  cna-lisp.internal.ffi::%picture-album-collection-destroy
+  "PictureAlbum.Albums: the album's sub-albums.")
+
+(%define-optional-view parent picture-album %parent
+  cna-lisp.internal.ffi::%picture-album-get-parent picture-album
+  cna-lisp.internal.ffi::%picture-album-destroy
+  "PictureAlbum.Parent: the album above this one, or NIL for the root.")
+
+(%define-optional-view album picture %picture-album
+  cna-lisp.internal.ffi::%picture-get-album picture-album
+  cna-lisp.internal.ffi::%picture-album-destroy
+  "Picture.Album: the album this picture sits in, or NIL.")
+
+;;; Picture's own data.
+
+(defgeneric width (picture) (:documentation "Picture.Width, in pixels."))
+(defgeneric height (picture) (:documentation "Picture.Height, in pixels."))
+(defgeneric date (picture)
+  (:documentation
+   "Picture.Date: when the picture was taken, in 100-nanosecond ticks since
+1970-01-01 UTC.
+
+**A tick count rather than a time object**, which is the same decision `DURATION'
+makes and the first time this binding projects a `System.DateTime'. CNA's route
+is `cna_picture_get_date_unix_ticks' and the unit is the ABI's own; converting to
+a Common Lisp universal time would lose the sub-second part, and this binding
+does not throw away precision to make a value prettier. A caller that wants one:
+
+    (+ (encode-universal-time 0 0 0 1 1 1970 0) (floor ticks 10000000))
+
+**Zero is a real answer.** A picture whose file carries no timestamp reports
+whatever the scan recorded, which may be zero -- CNA says so, and this passes it
+through rather than inventing a nil."))
+
+(defmethod width ((picture picture))
+  (cna-lisp.internal:check-usable picture "width")
+  (cffi:with-foreign-object (out :int32)
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%picture-get-width (cna-lisp.internal:handle-of picture) out)
+     "width")
+    (cffi:mem-ref out :int32)))
+
+(defmethod height ((picture picture))
+  (cna-lisp.internal:check-usable picture "height")
+  (cffi:with-foreign-object (out :int32)
+    (cna-lisp.internal:check-result
+     (cna-lisp.internal.ffi::%picture-get-height (cna-lisp.internal:handle-of picture) out)
+     "height")
+    (cffi:mem-ref out :int32)))
+
+(%define-tick-reader date picture cna-lisp.internal.ffi::%picture-get-date-unix-ticks
+  "Picture.Date, in 100-nanosecond ticks since the Unix epoch. See the generic function.")
+
+(defgeneric image (picture)
+  (:documentation
+   "Picture.GetImage(): the picture's bytes, or NIL when it has none.
+
+**A byte vector rather than a stream**, for the reason `ALBUM-ART' gives: CNA
+hands the image over as a sized buffer rather than as anything streamable."))
+
+(defgeneric thumbnail (picture)
+  (:documentation "Picture.GetThumbnail(): the thumbnail's bytes, or NIL. See `IMAGE'."))
+
+(defmethod image ((picture picture))
+  (%picture-blob picture #'cna-lisp.internal.ffi::%picture-get-image-size
+                 #'cna-lisp.internal.ffi::%picture-copy-image "image"))
+
+(defmethod thumbnail ((picture picture))
+  (%picture-blob picture #'cna-lisp.internal.ffi::%picture-get-thumbnail-size
+                 #'cna-lisp.internal.ffi::%picture-copy-thumbnail "thumbnail"))
+
+(defun %picture-blob (picture size-route copy-route operation)
+  "The bytes of one of PICTURE's two images, or NIL when it has none."
+  (cna-lisp.internal:check-usable picture operation)
+  (let ((handle (cna-lisp.internal:handle-of picture)))
+    (cffi:with-foreign-object (size :uint64)
+      (cna-lisp.internal:check-result (funcall size-route handle size) operation)
+      (let ((bytes (cffi:mem-ref size :uint64)))
+        (when (zerop bytes) (return-from %picture-blob nil))
+        (let ((buffer (make-array bytes :element-type '(unsigned-byte 8))))
+          (cffi:with-foreign-object (raw :uint8 bytes)
+            (cffi:with-foreign-object (written :uint64)
+              (cna-lisp.internal:check-result
+               (funcall copy-route handle raw bytes written) operation)
+              (dotimes (i (min bytes (cffi:mem-ref written :uint64)))
+                (setf (aref buffer i) (cffi:mem-aref raw :uint8 i)))))
+          buffer)))))
+
+;;; --- MediaLibrary's picture members ------------------------------------------
+;;;
+;;; These six are why the picture half is part of this closure rather than a
+;;; later one: they are members of `MediaLibrary' itself, and without the picture
+;;; types they could only be reported missing.
+
+(%define-cached-view pictures media-library %pictures
+  cna-lisp.internal.ffi::%media-library-get-pictures picture-collection
+  cna-lisp.internal.ffi::%picture-collection-destroy
+  "MediaLibrary.Pictures: every picture in the library.")
+
+(defgeneric saved-pictures (library)
+  (:documentation
+   "MediaLibrary.SavedPictures: the pictures saved through `SAVE-PICTURE'.
+
+**Empty is the ordinary state of a library nothing has saved into**, and it is
+not a gap: CNA deliberately does not create the \"Saved Pictures\" directory
+until the first save, so an untouched library reports zero. The same object every
+time; see `SONGS'."))
+
+(%define-cached-view saved-pictures media-library %saved-pictures
+  cna-lisp.internal.ffi::%media-library-get-saved-pictures picture-collection
+  cna-lisp.internal.ffi::%picture-collection-destroy
+  "MediaLibrary.SavedPictures: the pictures saved into the library.")
+
+(defgeneric root-picture-album (library)
+  (:documentation
+   "MediaLibrary.RootPictureAlbum: the top of the picture tree, or NIL.
+
+NIL when the device has no picture location to scan. The album it answers has no
+`PARENT', which is what makes it the root."))
+
+(%define-optional-view root-picture-album media-library %root-picture-album
+  cna-lisp.internal.ffi::%media-library-get-root-picture-album picture-album
+  cna-lisp.internal.ffi::%picture-album-destroy
+  "MediaLibrary.RootPictureAlbum: the top of the picture tree, or NIL.")
+
+(defgeneric picture-from-token (library token)
+  (:documentation
+   "MediaLibrary.GetPictureFromToken(String): the picture a token names, or NIL.
+
+**An unknown token is an ordinary answer**, not a condition: CNA says the
+canonical lookup returns null for one, so this answers NIL."))
+
+(defmethod picture-from-token ((library media-library) token)
+  (let ((operation "picture-from-token"))
+    (cna-lisp.internal:check-usable library operation)
+    (check-type token string)
+    (cna-lisp.internal:with-utf8-view (data length token)
+      (cffi:with-foreign-objects ((out :uint64) (available :uint8))
+        (cna-lisp.internal:check-result
+         (cna-lisp.internal.ffi::%media-library-get-picture-from-token
+          (cna-lisp.internal:handle-of library) data length out available)
+         operation :object-type 'media-library)
+        (unless (zerop (cffi:mem-ref available :uint8))
+          (let ((handle (cffi:mem-ref out :uint64)))
+            (%library-retain-handle library handle
+                                    #'cna-lisp.internal.ffi::%picture-destroy)
+            (%adopt-borrowed 'picture library handle)))))))
+
+(defgeneric save-picture (library name source)
+  (:documentation
+   "MediaLibrary.SavePicture(String, ...): write a new picture into the library.
+
+Two overloads and they take different kinds of SOURCE, which is what tells them
+apart -- the same discrimination-by-argument-type this binding uses everywhere a
+CLR overload set projects onto one generic function:
+
+    (save-picture library \"shot\" bytes)    ; SavePicture(String, Byte[])
+    (save-picture library \"shot\" stream)   ; SavePicture(String, Stream)
+
+**The stream overload takes a `STORAGE-STREAM' and nothing else.** CNA says a
+storage stream \"is the only byte source this ABI owns, so it is what the
+canonical stream-taking overload accepts\", and the stream stays the caller's to
+close. Answers the saved `PICTURE'.
+
+An image the loader cannot measure is still saved, with width and height zero --
+CNA records that as the canonical operation's own behaviour rather than as a
+failure."))
+
+(defmethod save-picture ((library media-library) name (source vector))
+  (let ((operation "save-picture"))
+    (cna-lisp.internal:check-usable library operation)
+    (check-type name string)
+    (let ((bytes (coerce source '(vector (unsigned-byte 8)))))
+      (cna-lisp.internal:with-utf8-view (name-data name-length name)
+        (cffi:with-foreign-object (image :uint8 (max 1 (length bytes)))
+          (dotimes (i (length bytes))
+            (setf (cffi:mem-aref image :uint8 i) (aref bytes i)))
+          (cffi:with-foreign-object (out :uint64)
+            (cna-lisp.internal:check-result
+             (cna-lisp.internal.ffi::%media-library-save-picture
+              (cna-lisp.internal:handle-of library) name-data name-length
+              image (length bytes) out)
+             operation :object-type 'media-library)
+            (let ((handle (cffi:mem-ref out :uint64)))
+              (%library-retain-handle library handle
+                                      #'cna-lisp.internal.ffi::%picture-destroy)
+              (%adopt-borrowed 'picture library handle))))))))
+
+(defmethod save-picture ((library media-library) name
+                         (source microsoft.xna.framework.storage:storage-stream))
+  (let ((operation "save-picture"))
+    (cna-lisp.internal:check-usable library operation)
+    (cna-lisp.internal:check-usable source operation)
+    (check-type name string)
+    (cna-lisp.internal:with-utf8-view (name-data name-length name)
+      (cffi:with-foreign-object (out :uint64)
+        (cna-lisp.internal:check-result
+         (cna-lisp.internal.ffi::%media-library-save-picture-from-stream
+          (cna-lisp.internal:handle-of library) name-data name-length
+          (cna-lisp.internal:handle-of source) out)
+         operation :object-type 'media-library)
+        (let ((handle (cffi:mem-ref out :uint64)))
+          (%library-retain-handle library handle
+                                  #'cna-lisp.internal.ffi::%picture-destroy)
+          (%adopt-borrowed 'picture library handle))))))

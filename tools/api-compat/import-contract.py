@@ -320,6 +320,10 @@ SELECTED = [
     "Microsoft.Xna.Framework.Media.GenreCollection",
     "Microsoft.Xna.Framework.Media.Playlist",
     "Microsoft.Xna.Framework.Media.PlaylistCollection",
+    "Microsoft.Xna.Framework.Media.Picture",
+    "Microsoft.Xna.Framework.Media.PictureAlbum",
+    "Microsoft.Xna.Framework.Media.PictureCollection",
+    "Microsoft.Xna.Framework.Media.PictureAlbumCollection",
     # --- Microsoft.Xna.Framework.Storage -----------------------------------
     # All three types of the namespace, and the closure is complete: everything
     # they reach beyond each other is the base-class library's -- `System.String',
