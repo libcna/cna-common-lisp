@@ -124,7 +124,7 @@ A callback that failed has already been contained: CNA saw CNA_RESULT_CALLBACK
 and stopped the loop, and the Lisp condition it contained is waiting here. That
 condition is attached to the CNA-CALLBACK-ERROR signalled now -- after control has
 come back out of C, where signalling is safe again."
-  (let ((code (funcall thunk)))
+  (let ((code (with-foreign-float-environment (funcall thunk))))
     (unwind-protect
          (if (= code ffi::+result-callback+)
              (check-result code operation :object-type object-type

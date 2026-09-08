@@ -83,9 +83,13 @@ SUCCESS on every admitted ABI."
       ((native '(:struct cna-lisp.internal.ffi::cna-presentation-parameters))
        (out :uint64))
     (%write-presentation-parameters native presentation-parameters)
+    ;; Building a renderer context is where the GL driver raises: measured, Mesa
+    ;; llvmpipe raises `invalid' and `divide-by-zero' inside this call. See
+    ;; src/internal/float-semantics.lisp.
     (cna-lisp.internal:check-result
-     (cna-lisp.internal.ffi::%graphics-device-create
-      (%adapter-index adapter) (graphics-profile-value graphics-profile) native out)
+     (cna-lisp.internal:with-foreign-float-environment
+       (cna-lisp.internal.ffi::%graphics-device-create
+        (%adapter-index adapter) (graphics-profile-value graphics-profile) native out))
      "make-instance 'graphics-device" :object-type 'graphics-device)
     (let ((handle (cffi:mem-ref out :uint64)))
       (cna-lisp.internal:record-construction-undo

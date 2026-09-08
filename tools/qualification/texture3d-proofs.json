@@ -40,6 +40,11 @@
       "claim": "after Dispose the five dimension members and GraphicsDevice still answered, as XNA's bare managed-field reads do, and both transfers refused, as CopyData's CheckDisposed does. Not every getter refusing is the point"
     },
     {
+      "kind": "foreign-fp-environment",
+      "group": "volume",
+      "claim": "the group ran with SBCL's ordinary floating-point traps enabled, on the one renderer here that raises them: Mesa llvmpipe raises invalid and divide-by-zero while it builds a GL context, and an enabled trap inside a foreign call arrives as a Lisp condition. The binding masks exactly those two traps for the extent of the foreign call and restores the caller's whole environment afterwards, so the trap set, the rounding mode and the accrued exception flags were all unchanged at the end of the group and the caller's :INVALID trap still fired. HEADLESS and SOFTWARE cannot support this claim because they never raise"
+    },
+    {
       "kind": "mip",
       "group": "mip",
       "claim": "a mipmapped 8x4x3 volume reported its level count, every level CNA claims exists round-tripped at that level's own dimensions, and one past the last was refused. The count itself is recorded and not asserted against XNA: EasyGL computes it from width and height where XNA's D3D9 chain uses all three, and docs/texture3d-audit.md has the divergence"

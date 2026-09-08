@@ -115,9 +115,12 @@ game's GRAPHICS-DEVICE facade rather than a second object with a second lifetime
 
 (defmethod apply-changes ((manager graphics-device-manager))
   (cna-lisp.internal:check-usable manager "apply-changes")
+  ;; ApplyChanges is where a manager builds or rebuilds its device, so it
+  ;; reaches the same renderer-context work the device constructor does.
   (cna-lisp.internal:check-result
-   (cna-lisp.internal.ffi::%graphics-device-manager-apply-changes
-    (cna-lisp.internal:handle-of manager))
+   (cna-lisp.internal:with-foreign-float-environment
+     (cna-lisp.internal.ffi::%graphics-device-manager-apply-changes
+      (cna-lisp.internal:handle-of manager)))
    "apply-changes" :object-type 'graphics-device-manager)
   (values))
 
@@ -127,8 +130,9 @@ game's GRAPHICS-DEVICE facade rather than a second object with a second lifetime
 (defmethod toggle-full-screen ((manager graphics-device-manager))
   (cna-lisp.internal:check-usable manager "toggle-full-screen")
   (cna-lisp.internal:check-result
-   (cna-lisp.internal.ffi::%graphics-device-manager-toggle-full-screen
-    (cna-lisp.internal:handle-of manager))
+   (cna-lisp.internal:with-foreign-float-environment
+     (cna-lisp.internal.ffi::%graphics-device-manager-toggle-full-screen
+      (cna-lisp.internal:handle-of manager)))
    "toggle-full-screen" :object-type 'graphics-device-manager)
   (values))
 

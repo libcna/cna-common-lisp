@@ -381,7 +381,7 @@ proof is absent.
 
 | Lane | Renderer | What it proves |
 | --- | --- | --- |
-| `Texture3D` | `OPENGL33` (EasyGL) | volume storage keeps the voxels it is given: <!-- generated:texture3d claim count=11 --> claims, on a software OpenGL stack. **Nothing else** — it does not run the suite |
+| `Texture3D` | `OPENGL33` (EasyGL) | volume storage keeps the voxels it is given: <!-- generated:texture3d claim count=12 --> claims, on a software OpenGL stack. **Nothing else** — it does not run the suite |
 
 **This lane runs on every push, and it did not always.** CNA's EasyGL renderer
 references `metagl::InternalFormat::Rgba16` at all three admitted commits, and
@@ -420,7 +420,7 @@ the lane holds one open for the whole process; and SBCL traps the floating-point
 exceptions Mesa raises, so the lane masks them.
 
 <!-- generated-block:texture3d-claim-kinds -->
-11 claims -- `construction`, `owned-device`, `whole-volume`, `box`, `color-only`, `box-shape`, `disposal`, `mip`, `game-device`, `effect-parameter` and `reach-refused`.
+12 claims -- `construction`, `owned-device`, `whole-volume`, `box`, `color-only`, `box-shape`, `disposal`, `foreign-fp-environment`, `mip`, `game-device`, `effect-parameter` and `reach-refused`.
 <!-- /generated-block:texture3d-claim-kinds -->
 
 <!-- generated-block:texture3d-claims -->
@@ -433,6 +433,7 @@ exceptions Mesa raises, so the lane masks them.
 | `color-only` | `volume` | a transfer of non-COLOR elements was refused with the reason, rather than reinterpreted as CNA_Color -- the narrowing that makes the six transfer members partial, asserted rather than described |
 | `box-shape` | `volume` | naming some of the seven box coordinates was refused: XNA's third overload takes all seven or none, because they are seven parameters of one overload rather than a nullable region |
 | `disposal` | `volume` | after Dispose the five dimension members and GraphicsDevice still answered, as XNA's bare managed-field reads do, and both transfers refused, as CopyData's CheckDisposed does. Not every getter refusing is the point |
+| `foreign-fp-environment` | `volume` | the group ran with SBCL's ordinary floating-point traps enabled, on the one renderer here that raises them: Mesa llvmpipe raises invalid and divide-by-zero while it builds a GL context, and an enabled trap inside a foreign call arrives as a Lisp condition. The binding masks exactly those two traps for the extent of the foreign call and restores the caller's whole environment afterwards, so the trap set, the rounding mode and the accrued exception flags were all unchanged at the end of the group and the caller's :INVALID trap still fired. HEADLESS and SOFTWARE cannot support this claim because they never raise |
 | `mip` | `mip` | a mipmapped 8x4x3 volume reported its level count, every level CNA claims exists round-tripped at that level's own dimensions, and one past the last was refused. The count itself is recorded and not asserted against XNA: EasyGL computes it from width and height where XNA's D3D9 chain uses all three, and docs/texture3d-audit.md has the divergence |
 | `game-device` | `game-device` | a Texture3D made on a Game's own GraphicsDevice answered that device from GraphicsResource.GraphicsDevice, transferred its voxels, and was disposed with the game -- the other half of the dual-device ownership model, with no special case back to the active game |
 | `effect-parameter` | `game-device` | EffectParameter.SetValue(Texture3D) then GetValueTexture3D answered the same object; the Texture2D and TextureCube identities stayed empty, because CNA's four texture identities are independent storage; and clearing cleared all of them, because XNA has one texture value |
@@ -455,6 +456,7 @@ claim can never join the gate without joining the prose.
 | `color-only` | offer a sequence of `(unsigned-byte 8)` elements to `SetData` | the narrowing that makes the six transfer members partial is **refused by name with the reason**, not reinterpreted as `CNA_Color`. XNA's generic pair is broader; CNA's routes take `CNA_Color` with no texel-kind argument |
 | `box-shape` | pass `:LEVEL` and `:LEFT` and none of the other five box coordinates | a partial box is refused: XNA's third overload takes all seven together, because they are seven parameters of one overload and not a nullable region. Accepting a subset would invent an overload XNA has not got |
 | `disposal` | `Dispose`, then read all five dimension members and `GraphicsDevice`, then try both transfers | **not every getter refuses.** `Width`, `Height`, `Depth`, `LevelCount` and `Format` are bare managed-field reads in the pinned IL with no `CheckDisposed`, so they answer; `CopyData` calls `CheckDisposed` first, so the transfers refuse |
+| `foreign-fp-environment` | run the whole group with SBCL's ordinary traps enabled, then read the floating-point modes back and divide `0f0` by `0f0` | **the foreign boundary is scoped and reversible.** Mesa raises `invalid` and `divide-by-zero` while it builds a GL context, and SBCL enables both, so this lane is the only one that can break — HEADLESS and SOFTWARE never raise, so a pass there proves nothing. The trap set, the rounding mode and the **accrued flags** all come back unchanged, and the caller's `:INVALID` trap still fires, which is the difference between restored and merely looking restored |
 | `mip` | make a mipmapped 8×4×3 volume, transfer every level CNA says it has at that level's own dimensions, then try one past the last | every allocated level is reachable and one past it is not. **The level count is recorded, not asserted against XNA**: EasyGL computes it from width and height where XNA's D3D9 chain uses all three, and `docs/texture3d-audit.md` measures the divergence |
 | `game-device` | build the same volume inside a `Game`'s `LoadContent`, transfer its voxels, compare `GraphicsResource.GraphicsDevice` against the game's device | the other half of the dual-device ownership model. The native owner differs — a game's device makes the *game* the owner — and the public answer is still the device object, with no special case back to the active game |
 | `effect-parameter` | set the volume on a parameter declared `TEXTURE-3D` and read it back; call `GetValueTexture2D` on it; then set it on a parameter declared `TEXTURE` and read all three getters | `GetValueTexture3D` answers **the same object**, `GetValueTexture2D` refuses on a `TEXTURE-3D` parameter as XNA's IL refuses it, and on a `TEXTURE` parameter the other two identities stay empty — which is CNA's four texture slots being independent storage, provable only where all three getters are legal |

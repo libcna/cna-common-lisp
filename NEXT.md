@@ -147,7 +147,7 @@ library at all, so it has no ABI to be produced against:
 | Audio, state machine | `SDL_AUDIODRIVER=dummy`: a device opened with no speaker behind it, and play/pause/resume/stop transitioned |
 | Audio, dynamic streaming | the same device: generated PCM16 submitted, the pending-buffer count observed rising to two, and the native streaming state machine observed consuming both while the game loop ran |
 | Texture3D, unsupported branch | HEADLESS and SOFTWARE: `cna_texture3d_create` answers `NOT_SUPPORTED` on all three admitted ABIs and the binding reports it as a condition. Asserted, not skipped, and the constructor's own profile guards run there too because XNA applies them before the device is touched |
-| Texture3D, EasyGL branch | `tools/qualification/texture3d.sh` against an OPENGL33 build on Mesa llvmpipe under Xvfb: every claim its registry requires (<!-- generated:texture3d claim count=11 -->), on 0.21.0, 0.22.0 and 0.23.0 -- whole-volume, sub-volume with the rest proven unmoved, per-level, both device lifetimes, and `GetValueTexture3D` |
+| Texture3D, EasyGL branch | `tools/qualification/texture3d.sh` against an OPENGL33 build on Mesa llvmpipe under Xvfb: every claim its registry requires (<!-- generated:texture3d claim count=12 -->), on 0.21.0, 0.22.0 and 0.23.0 -- whole-volume, sub-volume with the rest proven unmoved, per-level, both device lifetimes, and `GetValueTexture3D` |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
 | Construction atomicity | an exploding subclass of twelve resource families, plus `Game` and `GraphicsDeviceManager`, leaves no live child and lets the game shut down -- and one that **subscribed before it failed** leaves no registration and no rooted token either |
@@ -1325,35 +1325,44 @@ exactly the mistake `Texture3D` was:
   here**, and doing so silently would be the failure this file exists to prevent.
   Nothing here starts that work either.
 
+### The floating-point boundary, now closed
+
+**The traps are masked at the foreign boundary, scoped and reversible, and the
+lane's workaround is gone.** The question the Texture3D closure left open —
+whether to mask, and where — was answered by measurement rather than by
+assumption, and the measurements are worth keeping because each one ruled out an
+answer that looked reasonable.
+
+| question | measured answer |
+| --- | --- |
+| Is it a CNA or Mesa defect? | **No.** The same call sequence in a plain C program completes and answers one adapter. The same C program with `feenableexcept(FE_INVALID)` dies with `SIGFPE` at the same call. It is an SBCL caller environment a C library was never written for |
+| Which traps? | `:invalid` **and** `:divide-by-zero`, exactly. Either alone still fails, with the other's condition. `:overflow` adds nothing |
+| Where? | Building a renderer context: `cna_game_create`, `cna_graphics_device_create`, both `Reset` forms, `ApplyChanges`, `ToggleFullScreen`, and the game-loop routes. **Not** the transfer routes — with only device construction masked, a whole Texture3D round trip runs with the caller's traps live |
+| Every route instead? | **No.** The boundary costs ~300 ns against ~8 ns for the cheapest bare `defcfun`, about 39×. Free on a lifecycle route, a per-sprite tax in a `SpriteBatch` loop |
+| Do callbacks inherit it? | **They did.** With an outer mask every lifecycle method saw `traps=(:OVERFLOW)`. `WITH-CALLER-FLOAT-ENVIRONMENT` in both callback paths restores the caller's environment for the body and puts the foreign one back on the way out |
+| Do the sticky flags come back? | **Only because the binding puts them back.** SBCL's own `WITH-FLOAT-TRAPS-MASKED` deliberately lets the body's accrued flags survive, so an unrestored boundary hands the caller `:INVALID` it never raised |
+
+`docs/native-abi.md` has the whole of it. The lane no longer masks anything, and
+carries a `foreign-fp-environment` claim so that a regression shows up as a
+failed claim rather than as a mysterious condition — on the one renderer that can
+show it, because HEADLESS and SOFTWARE never raise and a pass there proves
+nothing.
+
+**What is not claimed.** The mechanism's unit tests run on both qualified
+runtimes, reference and distro, because they need no native library. The
+*renderer* half — that these two traps are what Mesa needs — is measured on the
+reference runtime under Mesa llvmpipe only. A future SBCL that changed
+`SB-INT:SET-FLOATING-POINT-MODES` would break `tests/unit/float-boundary.lisp`
+first, which is where it should break.
+
 ### The one thing to do next
 
-**Mask the floating-point traps around CNA-Lisp's foreign calls, or decide
-deliberately not to.** This closure found it and deliberately did not fix it,
-because it is a question about every foreign call this binding makes and not
-about `Texture3D`.
-
-SBCL unmasks `invalid`, `overflow` and `divide-by-zero` by default. Mesa's
-llvmpipe raises them in the ordinary course of rasterising, and the trap arrives
-as a condition signalled from *inside* a foreign call -- measured during
-`GraphicsAdapter.Adapters`, before any `Texture3D` existed. The EasyGL lane masks
-them itself and works; a program a user writes would not, and would see
-`FLOATING-POINT-INVALID-OPERATION` out of a graphics call it made no arithmetic
-in.
-
-It has never come up because the two renderers the ordinary suite uses never
-raise one. That is the shape of the problem: **the binding is qualified against
-exactly the renderers that cannot show this**, and the first renderer that could
-showed it immediately.
-
-The decision is a real one and it is not obvious. `src/internal/float-semantics.lisp`
-already owns "how a particular implementation spells masking the traps", and
-`WITH-BINARY32-SEMANTICS` masks them around *projected arithmetic* so that XNA's
-IEEE 754 default semantics reach the caller. Extending that to foreign calls
-would mean deciding where the boundary is -- every `check-result` site, or a
-wrapper around the whole public surface -- and what a caller's own trap settings
-should survive. Do it as its own task, with its own measurement of which routes
-can raise one, or record the decision not to and say what a user on a GL renderer
-must do instead.
+**Measure `Video`, then decide.** `docs/limitations.md` records the namespace as
+unqualifiable rather than absent, and the reason was that the admitted CNA builds
+had no FFmpeg. That is a build-configuration claim and it has not been
+re-measured since; build an admitted CNA source with FFmpeg available and ask
+whether `Video` and `VideoPlayer` become positively qualifiable. Do not implement
+on the strength of the question.
 
 ## Architectural facts a future agent must not undo
 

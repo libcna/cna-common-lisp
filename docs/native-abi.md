@@ -313,6 +313,80 @@ file, and every diagnostic names the exact path that was attempted.
 
 CNA native binaries are not packaged inside CNA-Lisp.
 
+## The floating-point environment at the boundary
+
+**C libraries assume the IEEE traps are masked. SBCL does not mask them.** A C
+program begins with every IEEE exception masked — that is the C ecosystem's
+default — so C code raises `invalid` and `divide-by-zero` freely and reads the
+answers as NaN and infinity. SBCL instead *enables* `:invalid`,
+`:divide-by-zero` and `:overflow`, and an enabled trap raised inside a foreign
+call arrives as a Lisp condition signalled from a frame containing no Lisp
+arithmetic at all.
+
+Measured 2026-09-08 on SBCL 2.5.2, with CNA built for the `OPENGL33` (EasyGL)
+renderer on Mesa llvmpipe:
+
+| question | answer |
+| --- | --- |
+| Where | `cna_graphics_device_create`, reached by `GraphicsAdapter.Adapters` in a process with no device |
+| What | `FLOATING-POINT-INVALID-OPERATION`, from `SIGFPE-HANDLER`, with no Lisp operation or operands |
+| Is it a CNA or Mesa defect | **No.** The same sequence in a plain C program runs to completion and answers one adapter. The same C program with `feenableexcept(FE_INVALID)` dies with `SIGFPE` at the same call |
+| Which traps | `:invalid` **and** `:divide-by-zero`. Masking either alone still fails — with the other one's condition. Adding `:overflow` changes nothing |
+| How wide | Narrow. With only device construction masked, a whole Texture3D round trip runs with the caller's traps live and round-trips byte for byte. The renderer raises while it builds a context, not while it moves texels |
+
+### What the binding does
+
+`WITH-FOREIGN-FLOAT-ENVIRONMENT`, in `src/internal/float-semantics.lisp`, masks
+exactly those two traps for the dynamic extent of one foreign call and then
+restores the caller's **complete** environment: trap enables, rounding mode, and
+the accrued exception flags the foreign code raised while they were masked.
+That last part is not free — SBCL's own `WITH-FLOAT-TRAPS-MASKED` deliberately
+lets the body's accrued flags survive — so the binding puts them back itself.
+Measured: entering with `accrued=(:INEXACT)` and returning with
+`accrued=(:INEXACT)`, where the unrestored version returns
+`(:INEXACT :INVALID :DIVIDE-BY-ZERO)`.
+
+It is applied where a renderer context is built or rebuilt, and nowhere else:
+`cna_game_create`, `cna_graphics_device_create` (both the caller-owned
+constructor and the transient enumeration device), `cna_graphics_device_reset`
+and its parameterised form, `GraphicsDeviceManager.ApplyChanges` and
+`ToggleFullScreen`, and the three game-loop routes through `CALL-NATIVE-FRAME`.
+
+**Not on every route, and that is a measurement.** The boundary costs about
+300 ns, against about 8 ns for the cheapest bare `defcfun` — some 39× — because
+restoring the x87 control word and `MXCSR` flushes the floating-point pipeline.
+On a lifecycle route that runs once, 300 ns is nothing. On a getter in a
+`SpriteBatch` loop it would be a tax on every sprite, and the routes in that
+loop were measured not to need it.
+
+### Callbacks get the caller's environment back
+
+CNA calls Lisp back from inside those calls, and a callback body would otherwise
+inherit the mask. Measured, before the fix: with an outer mask, every lifecycle
+method saw `traps=(:OVERFLOW)` — the user's `:invalid` and `:divide-by-zero`
+silently gone inside their own `Update` and `Draw`.
+
+So the boundary has two directions. `WITH-CALLER-FLOAT-ENVIRONMENT` restores the
+Lisp caller's environment for the duration of a callback and puts the foreign
+one back on the way out, and it is installed in `CALL-WITH-CALLBACK-SCOPE` and
+`CALL-WITH-EVENT-DISPATCH` — both callback paths. A floating-point condition
+raised by callback code is contained and re-signalled by the existing machinery,
+exactly like any other serious condition: it is never unwound through C.
+
+### What this does not do
+
+It does not change the process's floating-point modes globally, and **you should
+not either**. XNA arithmetic has its own, separate reason to mask traps —
+`WITH-BINARY32-SEMANTICS`, because the CLR's rules are IEEE 754's *default*
+rules where an overflow answers an infinity — and that is a projection decision
+about `MathHelper`, `Vector` and `Matrix`, not a workaround for a C library. The
+two are independent and neither is allowed to widen into the other.
+
+`SB-INT:WITH-FLOAT-TRAPS-MASKED` and `SB-INT:SET-FLOATING-POINT-MODES` are SBCL
+internals, and the native host is qualified as SBCL on Linux x86-64 anyway. They
+are confined to `src/internal/float-semantics.lisp`; nothing in the public XNA
+projection exposes a trap keyword or an SBCL floating-point mode.
+
 ## What a consumer needs
 
 To *use* a released CNA-Lisp: SBCL, the ASDF systems it depends on, and a

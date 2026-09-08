@@ -70,7 +70,7 @@ a skip. Its GL stack is Xvfb plus Mesa llvmpipe, so no GPU is a prerequisite, an
 it has a registry of its own on the same terms:
 
 <!-- generated-block:texture3d-claim-kinds -->
-11 claims -- `construction`, `owned-device`, `whole-volume`, `box`, `color-only`, `box-shape`, `disposal`, `mip`, `game-device`, `effect-parameter` and `reach-refused`.
+12 claims -- `construction`, `owned-device`, `whole-volume`, `box`, `color-only`, `box-shape`, `disposal`, `foreign-fp-environment`, `mip`, `game-device`, `effect-parameter` and `reach-refused`.
 <!-- /generated-block:texture3d-claim-kinds -->
 
 `docs/qualification.md` defines the claims and `docs/limitations.md` bounds

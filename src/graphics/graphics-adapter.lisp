@@ -640,7 +640,8 @@ the caller as a CNA-NOT-SUPPORTED-ERROR rather than as a silent no-op."))
   (let ((handle (%resolve-device-handle device "reset-graphics-device")))
     (if (not parameters-p)
         (cna-lisp.internal:check-result
-         (cna-lisp.internal.ffi::%graphics-device-reset handle)
+         (cna-lisp.internal:with-foreign-float-environment
+           (cna-lisp.internal.ffi::%graphics-device-reset handle))
          "reset-graphics-device" :object-type 'graphics-device)
         (progn
           (check-type presentation-parameters presentation-parameters)
@@ -652,7 +653,8 @@ the caller as a CNA-NOT-SUPPORTED-ERROR rather than as a silent no-op."))
             (when adapter-p
               (setf (cffi:mem-ref index :uint32) (%adapter-index adapter)))
             (cna-lisp.internal:check-result
-             (cna-lisp.internal.ffi::%graphics-device-reset-with-parameters
-              handle native (if adapter-p index (cffi:null-pointer)))
+             (cna-lisp.internal:with-foreign-float-environment
+               (cna-lisp.internal.ffi::%graphics-device-reset-with-parameters
+                handle native (if adapter-p index (cffi:null-pointer))))
              "reset-graphics-device" :object-type 'graphics-device)))))
   (values))

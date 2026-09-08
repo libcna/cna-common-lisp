@@ -80,8 +80,13 @@ returns."
   (plusp *callback-depth*))
 
 (defun call-with-callback-scope (function)
+  ;; WITH-CALLER-FLOAT-ENVIRONMENT is the inbound half of the foreign boundary:
+  ;; CNA calls this back from inside a foreign call the binding masked traps
+  ;; around, and a user's Update or Draw must see the floating-point environment
+  ;; their own program set up rather than the one the C code needed. See
+  ;; src/internal/float-semantics.lisp for the measurements.
   (let ((*callback-depth* (1+ *callback-depth*)))
-    (funcall function)))
+    (with-caller-float-environment (funcall function))))
 
 ;;; --- a lifecycle callback's condition ----------------------------------
 
@@ -139,8 +144,11 @@ Answers NIL inside any CNA callback, where signalling would unwind through C."
 
 (defun call-with-event-dispatch (function)
   "Run FUNCTION as the body of a void-returning CNA callback."
+  ;; The same inbound restoration as CALL-WITH-CALLBACK-SCOPE, and needed for the
+  ;; same reason: an event handler is user Lisp reached from inside a foreign
+  ;; call. It does not raise *CALLBACK-DEPTH*, so it cannot share that path.
   (let ((*in-event-dispatch* t))
-    (funcall function)))
+    (with-caller-float-environment (funcall function))))
 
 (defmacro with-event-dispatch (&body body)
   "Run BODY as the body of a void-returning CNA callback, containing everything.

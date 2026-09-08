@@ -359,8 +359,12 @@ answers true, exactly as the original's does.")
                      view '(:struct cna-lisp.internal.ffi::cna-string-view)
                      'cna-lisp.internal.ffi::byte-length) title-length)))
           (cffi:with-foreign-object (out :uint64)
+            ;; Bringing the native game up builds the renderer's context, which
+            ;; is where the GL driver raises. Same boundary as the device
+            ;; constructor; see src/internal/float-semantics.lisp.
             (cna-lisp.internal:check-result
-             (cna-lisp.internal.ffi::%game-create info out)
+             (cna-lisp.internal:with-foreign-float-environment
+               (cna-lisp.internal.ffi::%game-create info out))
              "make-instance game" :object-type (type-of game))
             (setf (cna-lisp.internal:handle-of game) (cffi:mem-ref out :uint64))))))
     ;; The native game exists from here on, so it is the next thing undone --

@@ -522,9 +522,13 @@ nothing about them matters to a question about adapters."
     (cna-lisp.internal:check-result
      (cna-lisp.internal.ffi::%presentation-parameters-init parameters)
      operation :object-type 'graphics-device)
+    ;; The call the whole boundary was found through: GraphicsAdapter.Adapters
+    ;; in a process with no device signalled FLOATING-POINT-INVALID-OPERATION
+    ;; from here. See src/internal/float-semantics.lisp.
     (cna-lisp.internal:check-result
-     (cna-lisp.internal.ffi::%graphics-device-create
-      0 cna-lisp.internal.ffi::+graphics-profile-reach+ parameters out)
+     (cna-lisp.internal:with-foreign-float-environment
+       (cna-lisp.internal.ffi::%graphics-device-create
+        0 cna-lisp.internal.ffi::+graphics-profile-reach+ parameters out))
      operation :object-type 'graphics-device)
     (let ((device (make-instance 'graphics-device
                                  :ownership :owned

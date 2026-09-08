@@ -327,7 +327,41 @@ cannot be read as a run that did both."
                            "after Dispose the five dimension members and ~
                             GraphicsDevice still answer, as XNA's bare field reads ~
                             do, and both transfers refuse, as CopyData's ~
-                            CheckDisposed does"))
+                            CheckDisposed does")
+
+           ;;; The floating-point boundary, proven on the renderer that can break it.
+           ;;; HEADLESS and SOFTWARE never raise, so they cannot support this claim; this
+           ;;; lane can, because Mesa raises `invalid' and `divide-by-zero' while it builds
+           ;;; a GL context. Everything above ran with SBCL's ordinary traps enabled -- the
+           ;;; lane no longer masks anything -- so reaching this line at all is half the
+           ;;; claim, and the environment being unchanged is the other half.
+           (let ((modes (sb-int:get-floating-point-modes)))
+             (claim (member :invalid (getf modes :traps))
+                    "the :INVALID trap was not enabled after the foreign boundary")
+             (claim (member :divide-by-zero (getf modes :traps))
+                    "the :DIVIDE-BY-ZERO trap was not enabled after the foreign boundary")
+             (claim (equal (getf modes :traps) (getf *entry-float-modes* :traps))
+                    "the trap set changed across the lane: entered ~s, left ~s"
+                    (getf *entry-float-modes* :traps) (getf modes :traps))
+             (claim (eq (getf modes :rounding-mode) (getf *entry-float-modes* :rounding-mode))
+                    "the rounding mode changed across the lane")
+             (claim (equal (getf modes :accrued-exceptions)
+                           (getf *entry-float-modes* :accrued-exceptions))
+                    "the renderer's accrued exception flags leaked to the caller: entered ~
+                     ~s, left ~s"
+                    (getf *entry-float-modes* :accrued-exceptions)
+                    (getf modes :accrued-exceptions))
+             ;; And the traps still fire, which is the difference between "restored" and
+             ;; "looks restored".
+             (claim (handler-case (progn (/ 0f0 0f0) nil)
+                      (floating-point-invalid-operation () t))
+                    "the caller's :INVALID trap no longer fires after the boundary")
+             (note-texture3d :foreign-fp-environment
+                             "the whole group ran with SBCL's ordinary float traps live, ~
+                              through a renderer that raises invalid and divide-by-zero ~
+                              while it builds a GL context, and the trap set, rounding mode ~
+                              and accrued flags were unchanged afterwards -- and the ~
+                              caller's :INVALID trap still fires")))
       (ignore-errors (xna:dispose device)))))
 
 (defun texture3d-claim-effect-parameter (effect texture)
@@ -551,31 +585,46 @@ GRAPHICS-DEVICE object would invite a claim to use it."
                                :size ffi::+sizeof-cna-presentation-parameters+ :void)
          (int:check-result (ffi::%presentation-parameters-init ,parameters)
                            "easygl video subsystem")
+         ;; A raw FFI device create, so the binding's own boundary is not in the
+         ;; way of it; scaffolding gets the same scoped environment the public
+         ;; constructor gets.
          (int:check-result
-          (ffi::%graphics-device-create 0 ffi::+graphics-profile-hi-def+
-                                        ,parameters ,out)
+          (int:with-foreign-float-environment
+            (ffi::%graphics-device-create 0 ffi::+graphics-profile-hi-def+
+                                          ,parameters ,out))
           "easygl video subsystem")
          (let ((,handle (cffi:mem-ref ,out :uint64)))
            (unwind-protect (progn ,@body)
              (ffi::%graphics-device-destroy ,handle)))))))
 
+(defvar *entry-float-modes* nil
+  "The floating-point environment this process had before any CNA call.
+
+The `foreign-fp-environment' claim compares against it, so it has to be read
+before the video subsystem is brought up rather than after.")
+
 (defun run-texture3d-claim (name)
   "Run one EasyGL claim group and print what it proved.
 
-Called by `tools/qualification/texture3d.sh', one group per process. The two
-things wrapped around every group are both measured properties of running this
-binding on a GL renderer under SBCL rather than anything about Texture3D:
-WITH-EASYGL-VIDEO-SUBSYSTEM keeps EasyGL's subsystem up, and the float traps are
-masked because Mesa raises exceptions SBCL turns into conditions."
-  (sb-int:with-float-traps-masked (:invalid :overflow :divide-by-zero :underflow
-                                   :inexact)
-    (with-easygl-video-subsystem
-      (let ((*texture3d-evidence* '()))
-        (ecase name
-          (:volume (texture3d-claim-volume))
-          (:mip (texture3d-claim-mip))
-          (:game-device (texture3d-claim-game-device))
-          (:reach (texture3d-claim-reach)))
-        (dolist (entry (reverse *texture3d-evidence*))
-          (format t "~&texture3d : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
-        (finish-output)))))
+Called by `tools/qualification/texture3d.sh', one group per process.
+WITH-EASYGL-VIDEO-SUBSYSTEM keeps EasyGL's subsystem up, which is a measured
+property of this renderer rather than anything about Texture3D.
+
+**The float traps are not masked here, and that is the claim.** This lane used to
+wrap every group in `sb-int:with-float-traps-masked', because Mesa raises
+`invalid' and `divide-by-zero' while it builds a GL context and SBCL turns an
+enabled trap into a condition. That workaround is gone: the binding now
+establishes the scoped environment itself, at the foreign boundary, and puts the
+caller's back afterwards. So these groups run under SBCL's ordinary traps -- and
+if the boundary regressed, this lane is where it would show."
+  (setf *entry-float-modes* (sb-int:get-floating-point-modes))
+  (with-easygl-video-subsystem
+    (let ((*texture3d-evidence* '()))
+      (ecase name
+        (:volume (texture3d-claim-volume))
+        (:mip (texture3d-claim-mip))
+        (:game-device (texture3d-claim-game-device))
+        (:reach (texture3d-claim-reach)))
+      (dolist (entry (reverse *texture3d-evidence*))
+        (format t "~&texture3d : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+      (finish-output))))

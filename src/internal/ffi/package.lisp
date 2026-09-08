@@ -101,6 +101,8 @@ registry. Private; not part of the published API.")
    #:call-with-event-dispatch #:with-event-dispatch
    ;; floating point ---------------------------------------------------------
    #:with-binary32-semantics #:nan-p #:infinity-p #:negative-zero-p
+   #:with-foreign-float-environment #:with-caller-float-environment
+   #:*caller-float-environment*
    #:single-float-bits #:bits-single-float))
 
 (defpackage #:cna-lisp.internal.framework

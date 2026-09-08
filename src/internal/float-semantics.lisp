@@ -32,6 +32,95 @@ in XNA, instead of signalling."
             ;; is claimed.
             ,@body))
 
+;;; --- the foreign boundary ----------------------------------------------
+;;;
+;;; **C libraries assume the IEEE traps are masked, and SBCL does not mask
+;;; them.** A C program starts with every IEEE exception masked -- that is the C
+;;; ecosystem's default -- so C code raises `invalid' and `divide-by-zero' freely
+;;; and reads the results as NaN and infinity. SBCL instead *enables* the
+;;; `:invalid', `:divide-by-zero' and `:overflow' traps, and an enabled trap
+;;; inside a foreign call arrives as a Lisp condition signalled from a stack
+;;; frame that has no Lisp arithmetic in it at all.
+;;;
+;;; Measured on 2026-09-08, SBCL 2.5.2.debian, CNA built with the OPENGL33
+;;; (EasyGL) renderer on Mesa 25.0.7 llvmpipe:
+;;;
+;;;   * `GraphicsAdapter.Adapters' with no game and no device alive creates a
+;;;     transient enumeration device, and `cna_graphics_device_create' signals
+;;;     FLOATING-POINT-INVALID-OPERATION from inside the foreign call.
+;;;   * The same sequence in a plain C program, with the traps masked as C leaves
+;;;     them, runs to completion and answers one adapter. The same C program with
+;;;     `feenableexcept(FE_INVALID)' dies with SIGFPE at the same call. **So this
+;;;     is not a CNA or Mesa defect**; it is an SBCL caller environment a C
+;;;     library was never written for.
+;;;   * `:invalid' alone is not enough -- the call then signals DIVISION-BY-ZERO
+;;;     -- and `:divide-by-zero' alone is not enough either. Both together are
+;;;     enough, and adding `:overflow' changes nothing. So exactly two traps are
+;;;     masked here, and no more: masking a trap that was not measured to need it
+;;;     buys no compatibility and hides real arithmetic.
+;;;   * The extent is narrow. With only device construction masked, a whole
+;;;     Texture3D round trip -- create, SetData, GetData, Dispose -- runs with
+;;;     the caller's ordinary traps live and round-trips byte for byte. The
+;;;     renderer raises while it builds a context, not while it moves texels.
+;;;
+;;; Two directions, because CNA calls back into Lisp. A callback body running
+;;; inside a masked foreign call would inherit the mask -- measured: every
+;;; lifecycle method saw `traps=(:OVERFLOW)' -- and a user's Update or Draw must
+;;; not silently lose the traps their own arithmetic relies on. So
+;;; WITH-CALLER-FLOAT-ENVIRONMENT puts the caller's environment back for the
+;;; duration of a callback, and the foreign one back on the way out.
+
+(defvar *caller-float-environment* nil
+  "The floating-point environment the Lisp caller had at the outermost boundary.
+
+NIL outside any foreign boundary. Bound by WITH-FOREIGN-FLOAT-ENVIRONMENT to the
+environment as it stood before the *first* mask, so that a nested boundary does
+not record an already-masked environment as though it were the caller's.")
+
+(defmacro with-foreign-float-environment (&body body)
+  "Run BODY -- a foreign call -- with the traps C code assumes are masked.
+
+Masks exactly `:invalid' and `:divide-by-zero', which is the measured minimum,
+and restores the caller's *complete* floating-point environment afterwards:
+trap enables, rounding mode, and the accrued exception flags the foreign code
+raised while they were masked. A caller who deliberately runs with traps enabled
+gets them back, and does not inherit Mesa's sticky flags either."
+  #+sbcl
+  (let ((saved (gensym "SAVED")) (outer (gensym "OUTER")))
+    `(let* ((,outer *caller-float-environment*)
+            (,saved (sb-int:get-floating-point-modes))
+            (*caller-float-environment* (or ,outer ,saved)))
+       (unwind-protect
+            (sb-int:with-float-traps-masked (:invalid :divide-by-zero) ,@body)
+         ;; WITH-FLOAT-TRAPS-MASKED restores the control bits but deliberately
+         ;; keeps whatever accrued flags the body raised. This puts those back
+         ;; too, so the boundary is reversible in full.
+         (apply #'sb-int:set-floating-point-modes ,saved))))
+  #-sbcl
+  ;; Only SBCL is qualified as a native host. Elsewhere this is a plain PROGN
+  ;; and a foreign call may signal where a C caller would not -- which is one
+  ;; more reason no other implementation is claimed.
+  `(progn ,@body))
+
+(defmacro with-caller-float-environment (&body body)
+  "Run BODY under the Lisp caller's own floating-point environment.
+
+The inbound half of the boundary, for code that C calls back into: a callback
+body must see the environment the program set up, not the masked one the foreign
+call needed. Outside any foreign boundary this is a plain PROGN, because there is
+nothing to restore."
+  #+sbcl
+  (let ((inner (gensym "INNER")) (caller (gensym "CALLER")))
+    `(let ((,caller *caller-float-environment*))
+       (if (null ,caller)
+           (progn ,@body)
+           (let ((,inner (sb-int:get-floating-point-modes)))
+             (unwind-protect
+                  (progn (apply #'sb-int:set-floating-point-modes ,caller)
+                         ,@body)
+               (apply #'sb-int:set-floating-point-modes ,inner))))))
+  #-sbcl `(progn ,@body))
+
 ;;; Two predicates the projected arithmetic needs and Common Lisp does not define.
 ;;; They live here with the trap masking because they are the same kind of thing:
 ;;; the parts of IEEE 754 the standard leaves to the implementation.
