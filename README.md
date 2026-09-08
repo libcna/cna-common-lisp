@@ -61,7 +61,9 @@ the following is rendered from, so this list cannot drift from the gate:
 <!-- /generated-block:rasterizer-proofs -->
 
 A third lane, `tools/qualification/texture3d.sh`, qualifies the one capability
-neither of those renderers has: **volume storage**. `Texture3D` has two truthful
+neither of those renderers has: **volume storage**. It runs locally today and is
+dispatch-gated in CI, because a meta-gl commit CNA's EasyGL renderer needs is not
+published yet; `docs/qualification.md` has the measurement. `Texture3D` has two truthful
 answers — HEADLESS and SOFTWARE answer `NOT_SUPPORTED` on every admitted ABI and
 the suite asserts that refusal, and a CNA built with the desktop-core EasyGL
 profile keeps every voxel it is given — so both branches are gated and neither is

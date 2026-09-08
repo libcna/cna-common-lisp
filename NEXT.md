@@ -312,7 +312,29 @@ they have never executed is stale.
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
 | `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless every kind of pixel proof its registry requires was obtained, and fails too on a kind the registry does not name |
-| `Native` / texture3d | a third CNA with the **OPENGL33** (EasyGL) renderer, under Xvfb and Mesa llvmpipe, for the one capability the other two have not got: volume storage. It runs the native matrix and then eleven named claims, and **it does not run the suite** -- a suite run creates and destroys devices hundreds of times, which is what this renderer cannot survive. It changes nothing about the two lanes above; adding a renderer must not make an existing gate conditional |
+| `Native` / texture3d | a third CNA with the **OPENGL33** (EasyGL) renderer, under Xvfb and Mesa llvmpipe, for the one capability the other two have not got: volume storage. It runs the native matrix and then eleven named claims, and **it does not run the suite** -- a suite run creates and destroys devices hundreds of times, which is what this renderer cannot survive. It changes nothing about the two lanes above; adding a renderer must not make an existing gate conditional. **Dispatch-gated and cannot pass yet -- see below** |
+
+**The `texture3d` job is blocked on an unpublished meta-gl commit, and that is a
+measurement rather than a caveat.** CNA's EasyGL renderer references
+`metagl::InternalFormat::Rgba16` at all three admitted commits; that enumerator
+exists only in meta-gl `20c8b2dc5`, and meta-gl's `origin/develop` is `2520173`,
+whose `Enums.hpp` has no `Rgba16`. Run `34210794619` measured it: the checkout
+step fails with `upload-pack: not our ref 20c8b2dc5...`.
+
+**This is the sharp-runtime break of 2026-09 again, in a different repository.**
+That one was `cna:next` calling `SetIsolatedStorageRootOverride` while the
+sharp-runtime commit defining it sat unpushed for four measurements, and its fix
+was to publish the commit. This one's fix is the same: **push meta-gl
+`20c8b2dc5`**, then set `texture3d_lane: on` once to confirm, then delete the
+job's `if:` so it runs on every push. It is one focused build with no suite run,
+so it costs about what the rasterizer lane costs.
+
+Pinning the published tip instead would produce a library that does not compile,
+so there would be nothing to run; the lane is gated rather than pointed at
+something broken. The evidence itself is not in doubt -- eleven claims on all
+three admitted ABIs, locally, from exact commits, reproducible with
+`tools/qualification/texture3d.sh` -- and it is **local** evidence until CI can
+take it, which is the distinction `docs/qualification.md` already draws.
 
 **A run has three outcomes and they are three, not two.** `success` is evidence.
 `failure` is evidence of a defect. `cancelled` is **neither** -- the workflows use
