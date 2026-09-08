@@ -77,6 +77,16 @@ tools/qualification/services.sh
 #     branches -- the pixel claim under a rasterising renderer, the lifecycle
 #     claim under HEADLESS, and never both or neither.
 tools/qualification/owned-graphics-device.sh
+
+# 13. the volume-storage lane, which needs a CNA built with a renderer that has
+#     it. Neither HEADLESS nor SOFTWARE does -- they answer NOT_SUPPORTED and
+#     the suite asserts that, which is the other branch of the same claim. An
+#     eighth script because it is the only lane that needs a display, and it
+#     needs a *virtual* one on purpose: Xvfb plus Mesa llvmpipe, so that no GPU
+#     is ever a prerequisite. It runs four focused claim groups rather than the
+#     suite, one per process, for two measured reasons in
+#     docs/texture3d-audit.md.
+tools/qualification/texture3d.sh   # defaults to ~/deps/cna-c-abi-*-opengl33
 ```
 
 Two probes are built on demand rather than by any of the above, and neither is
@@ -98,7 +108,7 @@ build. `tools/qualification/xna-reference/` is a third, and it is the one probe
 here that is expected to *fail*: read its README before believing that two
 members are unqualifiable.
 
-The six qualification scripts do that for themselves. `with-virtual-screen.sh`
+The qualification scripts do that for themselves. `with-virtual-screen.sh`
 runs its command on a fresh Xvfb display **only when `DISPLAY` is set** -- so a
 developer's own screen is left alone, and CI, which runs with no display at all,
 is unchanged. That last part is deliberate: the `Native` workflow proves the
@@ -136,6 +146,8 @@ library at all, so it has no ABI to be produced against:
 | Audio, streaming unavailable branch | the same driver: `DynamicSoundEffectInstance`'s constructor **succeeded** anyway and took a buffer, and the refusal arrived at `Play`. Recorded because it is CNA's asymmetry with `SoundEffect`, not asserted away |
 | Audio, state machine | `SDL_AUDIODRIVER=dummy`: a device opened with no speaker behind it, and play/pause/resume/stop transitioned |
 | Audio, dynamic streaming | the same device: generated PCM16 submitted, the pending-buffer count observed rising to two, and the native streaming state machine observed consuming both while the game loop ran |
+| Texture3D, unsupported branch | HEADLESS and SOFTWARE: `cna_texture3d_create` answers `NOT_SUPPORTED` on all three admitted ABIs and the binding reports it as a condition. Asserted, not skipped, and the constructor's own profile guards run there too because XNA applies them before the device is touched |
+| Texture3D, EasyGL branch | `tools/qualification/texture3d.sh` against an OPENGL33 build on Mesa llvmpipe under Xvfb: every claim its registry requires (<!-- generated:texture3d claim count=11 -->), on 0.21.0, 0.22.0 and 0.23.0 -- whole-volume, sub-volume with the rest proven unmoved, per-level, both device lifetimes, and `GetValueTexture3D` |
 | Isolated consumer | CNA-Lisp loaded from the artifact, not the checkout |
 | Native stress | 20 plain cycles + 20 graphics cycles, registry empty after each |
 | Construction atomicity | an exploding subclass of twelve resource families, plus `Game` and `GraphicsDeviceManager`, leaves no live child and lets the game shut down -- and one that **subscribed before it failed** leaves no registration and no rooted token either |
@@ -300,6 +312,7 @@ they have never executed is stale.
 | `Lisp` / distro | the same gates on ubuntu-24.04's own SBCL, as a secondary compatibility test |
 | `Native` | builds the CNA C ABI from source, then the ABI gate, both runtime configurations and the isolated consumer, on the reference runtime, with the HEADLESS renderer |
 | `Native` / rasterizer | a second CNA with the SOFTWARE renderer, and the same suite: it fails unless every kind of pixel proof its registry requires was obtained, and fails too on a kind the registry does not name |
+| `Native` / texture3d | a third CNA with the **OPENGL33** (EasyGL) renderer, under Xvfb and Mesa llvmpipe, for the one capability the other two have not got: volume storage. It runs the native matrix and then eleven named claims, and **it does not run the suite** -- a suite run creates and destroys devices hundreds of times, which is what this renderer cannot survive. It changes nothing about the two lanes above; adding a renderer must not make an existing gate conditional |
 
 **A run has three outcomes and they are three, not two.** `success` is evidence.
 `failure` is evidence of a defect. `cancelled` is **neither** -- the workflows use
@@ -1222,48 +1235,110 @@ Three things it established that a future closure should not have to rediscover:
   album is *borrowed*; and nine routes carry an `out_available` flag that a
   two-parameter reading silently corrupts.
 
-So the next task is a **profile expansion** again, and the remaining candidates
-are below. Each is blocked on evidence rather than on difficulty, and each was
-re-measured on 2026-09-07 rather than carried forward:
+**The `Texture3D` closure landed on 2026-09-08, and it landed because the
+recommendation above was acted on rather than repeated.** The section that used
+to sit here said `Texture3D` was ruled out by measurement, that "neither renderer
+can construct one at all, so every member of the type would be unreachable in
+CI", and -- in the same breath -- that the honest next step was to re-measure
+those blockers against a CNA built with the capability. It was re-measured. The
+six `NOT_SUPPORTED` rows are all still true and were re-run; what they say is that
+*those two renderers* have no volume storage, which is what
+`cna_texture3d_create`'s own documentation says it means. A desktop-core EasyGL
+build has it, and the whole transfer surface works there on all three admitted
+ABIs. `docs/texture3d-audit.md` is the audit and
+`tools/qualification/texture3d.sh` is the standing lane.
 
-**Recommendation: none of the three, and that is a measurement rather than a
-shrug.** `Texture3D` cannot be constructed at all by either qualification
-renderer on any admitted ABI; `Video` needs an optional decoder this build does
-not have; XACT needs an authoring-tool fixture that cannot be produced here. Two
-of those three are properties of the CNA build rather than of this binding, so
-the honest next step is to **re-measure them against a CNA built with the
-capability**, rather than to open a closure whose members would be unreachable in
-CI. Until then the frontier is what it is, and the remaining twenty missing
-members each carry a concrete reason.
+One type and eleven members -- the pinned contract's count, not the plan's "~13"
+-- with an empty dependency closure, and it closed
+`EffectParameter.GetValueTexture3D`, which had stood at
+`DEPENDENCY_NOT_SELECTED` for exactly this reason. 210 types and 2723 members
+became 211 and 2734.
 
-### The candidates, measured
+Four things it established that a future closure should not have to rediscover:
 
-Re-measured on 2026-09-07 rather than carried forward. `MediaLibrary` is the
-recommendation above; the other three stay ruled out for the reasons in their
-rows.
+* **"Re-measure a blocker before believing it" applies twice, and the second time
+  is subtler.** `MediaLibrary` established the rule; this closure needed it again
+  *within itself*. The first measurement of EasyGL's device limit said "a second
+  GraphicsDevice in one process faults", which would have forced every claim onto
+  a `Game` and given up the caller-owned device path this type's ownership claim
+  needs. What actually faults is a device created across a **gap with none
+  alive**: four devices created and destroyed beside one that stays alive all
+  work. A blocker measured coarsely is still a blocker measured wrongly.
+* **A capability flag is not a measurement.** EasyGL advertises `Texture3D` and
+  its mip level count is still not XNA's: XNA hands `Levels = 0` to D3D9, which
+  is a complete chain to 1×1×1, and EasyGL computes the count from width and
+  height alone, citing FNA. They agree for 8×4×3 and differ for 2×2×8. Nothing
+  short of asking the library would have said so.
+* **CNA applies none of XNA's profile guards, and two of them change what the
+  type *is*.** CNA creates a `Texture3D` on the **Reach** profile, where XNA has
+  none at all (`MaxVolumeExtent` 0), and at 257 wide where XNA's HiDef maximum is
+  256. Those guards live in this binding or nowhere, and their values are the
+  pinned `ProfileCapabilities`.
+* **A route that exists is not a route that closes a member.**
+  `cna_texture3d_set_data_bytes` works and would widen `SetData` beyond `Color` --
+  and there is no byte *read* route, so using it would leave a volume writable as
+  bytes and never readable as bytes. XNA's generic pair is symmetric; both halves
+  stay `Color` and both are reported partial.
+
+### The candidates, re-measured 2026-09-08
 
 | Candidate | Types | Members | New routes | Closes, in selected types | Deterministic CI | User value | Complexity |
 | --- | ---: | ---: | ---: | --- | --- | --- | --- |
-| `Texture3D` | 1 | ~13 | 8, `texture_volume.h` | 1 (`EffectParameter.GetValueTexture3D`) | **no -- see below** | low | low |
-| `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **build-dependent** | low | medium |
-| XACT | 7 | 72 | 62, `xact.h` | 0 | **no fixture can exist** | low | high |
+| ~~`Texture3D`~~ | ~~1~~ | ~~11~~ | ~~8~~ | ~~1~~ | **DONE 2026-09-08** | — | — |
 | ~~`Media` / `MediaLibrary`~~ | ~~15~~ | ~~142~~ | ~~148~~ | ~~3~~ | **DONE 2026-09-08** | — | — |
+| `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **unmeasured — see below** | low | medium |
+| XACT | 7 | 72 | 62, `xact.h` | 0 | **unmeasured — see below** | low | high |
 | `GameWindow`'s seven | 0 | 0 | 0 | 0 | n/a | low | **blocked** |
 
-**`Texture3D` is ruled out by measurement and that measurement has not changed.**
-`cna_texture3d_create` creates one only "when the selected renderer supports
-volume storage", and both qualification renderers were asked directly, on every
-admitted ABI, with the **HiDef** profile so that a refusal is not the profile's
-doing:
+**The two remaining rows changed their reasons on 2026-09-08, and neither changed
+to "possible".** Both used to be recorded as impossible. Both are now recorded as
+*unmeasured*, which is a different and more honest thing, and the difference is
+exactly the mistake `Texture3D` was:
 
-    HEADLESS  0.21.0, 0.22.0 and 0.23.0 -> CNA_RESULT_NOT_SUPPORTED
-    SOFTWARE  0.21.0, 0.22.0 and 0.23.0 -> CNA_RESULT_NOT_SUPPORTED
+* **`Video` is conditional on FFmpeg, and this build has none.** CNA's
+  `CNA_ENABLE_VIDEO` is `AUTO`, so a build resolves it from what is installed;
+  every library in the admitted set was built without it. "Needs an optional
+  decoder this build does not have" was true of *this build* and says nothing
+  about CNA. **Re-measuring it means building with `CNA_FFMPEG_AVAILABLE` and
+  asking the routes**, exactly as `Texture3D` was re-measured against a renderer
+  that had the capability. Nothing here starts that work.
+* **XACT's "no fixture can exist" is too strong.** CNA's own test suite contains
+  **source-generated XGS/XSB fixtures**, so a fixture can plainly be produced.
+  The unresolved question is a different one: whether a fixture produced without
+  the Microsoft XACT authoring tool is admissible as *XNA-authority* evidence, or
+  only as evidence about CNA. **Those fixtures are not promoted to authority
+  here**, and doing so silently would be the failure this file exists to prevent.
+  Nothing here starts that work either.
 
-Neither renderer can construct one **at all**, so every member of the type would
-be unreachable in CI. The probe is committed as
-`tools/native-abi/texture3d-support-probe.c`; run it against any library whose
-renderer set has changed. The other four are unchanged and blocked for their old
-reasons, each of which is about evidence rather than difficulty.
+### The one thing to do next
+
+**Mask the floating-point traps around CNA-Lisp's foreign calls, or decide
+deliberately not to.** This closure found it and deliberately did not fix it,
+because it is a question about every foreign call this binding makes and not
+about `Texture3D`.
+
+SBCL unmasks `invalid`, `overflow` and `divide-by-zero` by default. Mesa's
+llvmpipe raises them in the ordinary course of rasterising, and the trap arrives
+as a condition signalled from *inside* a foreign call -- measured during
+`GraphicsAdapter.Adapters`, before any `Texture3D` existed. The EasyGL lane masks
+them itself and works; a program a user writes would not, and would see
+`FLOATING-POINT-INVALID-OPERATION` out of a graphics call it made no arithmetic
+in.
+
+It has never come up because the two renderers the ordinary suite uses never
+raise one. That is the shape of the problem: **the binding is qualified against
+exactly the renderers that cannot show this**, and the first renderer that could
+showed it immediately.
+
+The decision is a real one and it is not obvious. `src/internal/float-semantics.lisp`
+already owns "how a particular implementation spells masking the traps", and
+`WITH-BINARY32-SEMANTICS` masks them around *projected arithmetic* so that XNA's
+IEEE 754 default semantics reach the caller. Extending that to foreign calls
+would mean deciding where the boundary is -- every `check-result` site, or a
+wrapper around the whole public surface -- and what a caller's own trap settings
+should survive. Do it as its own task, with its own measurement of which routes
+can raise one, or record the decision not to and say what a user on a GL renderer
+must do instead.
 
 ## Architectural facts a future agent must not undo
 

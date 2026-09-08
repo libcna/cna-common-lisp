@@ -462,6 +462,21 @@ parameter's stored object identity and not about what a pass does with it.
 `asdf:test-system`. A suite run creates and destroys devices hundreds of times,
 which is precisely what this renderer cannot survive.
 
+**A public-only consumer, and that is a decision rather than an omission.** Every
+other no-game surface here has one — an installed artifact driven from outside
+the test image, which is what catches a symbol that was implemented and never
+exported. `Texture3D` does not, for two reasons. The reachability half is already
+gated: `tools/api-compat/verify.py` measures the *live public surface* against the
+mapping rules, so a member that is not exported, or is exported under another
+name, is a disagreement and the strict gate is red. And the `owned-device` claim
+above already runs with no `Game` in the process at all — adapter enumeration,
+caller-owned device, construction, both transfers and disposal. What a consumer
+would add beyond that is a second copy of this renderer's two workarounds, the
+float-trap mask and the held-open device, inside a program written to look like a
+user's. That would teach a reader that a CNA-Lisp program needs them, which is
+the opposite of what `docs/limitations.md` says: it needs them *today*, and the
+next task is to decide whether the binding should do it for them.
+
 ### What is not in the rasterizer lane
 
 **Every draw shape but the ones above.** Each proof is one shape. The sprite
