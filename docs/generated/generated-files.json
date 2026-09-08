@@ -2,14 +2,14 @@
   "schema_version": 1,
   "generator": "tools/native-abi/generate.py",
   "abi_version": {
-    "encoded": 5376,
+    "encoded": 5888,
     "major": 0,
-    "minor": 21,
+    "minor": 23,
     "patch": 0,
-    "runtime": 5376
+    "runtime": 5888
   },
   "files": {
-    "src/internal/ffi/constants.generated.lisp": "44051bc2959212eabc8cbb84bb0e86148bfe23039b32356227db4f5504f05cfb",
+    "src/internal/ffi/constants.generated.lisp": "c73a96f98d50ce8e05c2f4f4f1eb6e465952e835fdf086b3e5e0891f2b6df960",
     "src/internal/ffi/structs.generated.lisp": "d07c477c6015bee3897f531ada6cea759c4f64d21419b5039918f2fc0032d821",
     "src/internal/ffi/functions.generated.lisp": "3ce6557d38d06d37997e8333f9d2225290a5426e3a75d83685530ddff0f08877",
     "src/framework/predefined-colors.generated.lisp": "5be663877e30a59cb49eb8e11cc7a4b174ccfa65a2c22df52eec1cc5240b6cb0",

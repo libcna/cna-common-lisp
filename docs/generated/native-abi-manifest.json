@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "abi_version": {
-    "encoded": 5376,
+    "encoded": 5888,
     "major": 0,
-    "minor": 21,
+    "minor": 23,
     "patch": 0,
-    "runtime": 5376
+    "runtime": 5888
   },
   "admitted_abi_versions": [
     {
@@ -28587,9 +28587,9 @@
     }
   ],
   "constants": {
-    "CNA_ABI_VERSION": 5376,
+    "CNA_ABI_VERSION": 5888,
     "CNA_ABI_VERSION_MAJOR": 0,
-    "CNA_ABI_VERSION_MINOR": 21,
+    "CNA_ABI_VERSION_MINOR": 23,
     "CNA_ABI_VERSION_PATCH": 0,
     "CNA_AUDIO_CHANNELS_MONO": 1,
     "CNA_AUDIO_CHANNELS_STEREO": 2,
