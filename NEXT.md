@@ -1380,7 +1380,7 @@ What it establishes is that the blocker recorded is gone; what it does not
 establish is anything about `VideoPlayer` — playback, `GetTexture`, the
 looping and volume members, or what XNA's `.wmv`-shaped expectations demand of a
 decoder that will read anything FFmpeg reads. Those are the next measurement, not
-this one. `build-probe/fp-video-probe.c` is the probe.
+this one. `tools/qualification/video-capability-probe.c` is the probe.
 
 **XACT's fixtures are CNA parser fixtures, and CNA's own source says so.** The
 three creation routes take `.xgs`, `.xwb` and `.xsb` files, and the question was

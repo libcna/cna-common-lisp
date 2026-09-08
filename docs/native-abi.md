@@ -330,7 +330,7 @@ renderer on Mesa llvmpipe:
 | --- | --- |
 | Where | `cna_graphics_device_create`, reached by `GraphicsAdapter.Adapters` in a process with no device |
 | What | `FLOATING-POINT-INVALID-OPERATION`, from `SIGFPE-HANDLER`, with no Lisp operation or operands |
-| Is it a CNA or Mesa defect | **No.** The same sequence in a plain C program runs to completion and answers one adapter. The same C program with `feenableexcept(FE_INVALID)` dies with `SIGFPE` at the same call |
+| Is it a CNA or Mesa defect | **No.** The same sequence in a plain C program runs to completion and answers one adapter. The same C program with `feenableexcept(FE_INVALID)` dies with `SIGFPE` at the same call — `tools/qualification/foreign-fp-probe.c` runs both halves |
 | Which traps | `:invalid` **and** `:divide-by-zero`. Masking either alone still fails — with the other one's condition. Adding `:overflow` changes nothing |
 | How wide | Narrow. With only device construction masked, a whole Texture3D round trip runs with the caller's traps live and round-trips byte for byte. The renderer raises while it builds a context, not while it moves texels |
 
