@@ -12,9 +12,7 @@
 #               capability the other two renderers do not have: volume storage.
 #               It does NOT run the suite, and it changes nothing about the two
 #               lanes below; adding a renderer must not make an existing gate
-#               conditional. **It is dispatch-gated and cannot pass yet** -- a
-#               meta-gl commit CNA's EasyGL renderer needs is unpublished; the
-#               job's own comment has the measurement and the fix.
+#               conditional.
 #   rasterizer  SOFTWARE, a CPU rasteriser that needs no display and no Xvfb.
 #               Three separate proofs: a Clear reaches the back buffer and reads
 #               back; a SpriteBatch draw puts a generated opaque texture's own
@@ -65,16 +63,6 @@ on:
           CHANGELOG says so -- so the pairing is this workflow's to choose.
         required: false
         default: 'next'
-      texture3d_lane:
-        description: >
-          Set to 'on' to run the EasyGL volume-storage lane. It is off by default
-          because it cannot pass yet: CNA's EasyGL renderer references
-          metagl::InternalFormat::Rgba16, which exists only in meta-gl commit
-          20c8b2dc5, and that commit is not published -- origin/develop is
-          2520173 and its Enums.hpp has no Rgba16. Turn this on the moment
-          meta-gl publishes it, and then make the job unconditional.
-        required: false
-        default: 'off'
 
 concurrency:
   group: native-${{ github.ref }}
@@ -145,9 +133,10 @@ env:
   # against; a lane that followed `develop' would qualify whatever the branch
   # happened to be that hour.
   #
-  # **`META_GL_REF` is not reachable from GitHub yet**, which is why the
-  # `texture3d' job is dispatch-gated; the job's own comment has the measurement
-  # and the fix. `EASY_GL_REF' is published and checks out fine.
+  # Both are published and check out from GitHub. `META_GL_REF' is the commit
+  # that adds `metagl::InternalFormat::Rgba16' (`GL_RGBA16', 0x805B), which CNA's
+  # EasyGL renderer maps `SurfaceFormat::Rgba64' to; it was unpublished until
+  # 2026-09-08, which is what the `texture3d' job's dispatch gate existed for.
   EASY_GL_REF: deda7a426c3c166c0e03a4790f1ede610e2e46fb
   META_GL_REF: 20c8b2dc5bb80e32706784066db9fd9e15b3f46a
 
@@ -623,27 +612,22 @@ jobs:
   # whether they are ready.
   texture3d:
     name: Volume storage on a software OpenGL stack
-    # **Explicitly triggered, and that is a blocked dependency rather than a
-    # design choice.** The lane is qualified -- eleven claims on all three
-    # admitted ABIs, locally, from exact commits -- and it cannot run here,
-    # because CNA's EasyGL renderer references `metagl::InternalFormat::Rgba16'
-    # and that enumerator exists only in meta-gl `20c8b2dc5', which is not
-    # published: `origin/develop' is `2520173' and its `Enums.hpp' has no
-    # `Rgba16'. A checkout of the pinned commit fails with
-    # "upload-pack: not our ref", measured on run 34210794619.
+    # **An ordinary per-push job, and it was not always one.** Until 2026-09-08
+    # this lane was dispatch-gated, because CNA's EasyGL renderer references
+    # `metagl::InternalFormat::Rgba16' and that enumerator existed only in an
+    # unpublished meta-gl commit: a checkout of the pin failed with
+    # "upload-pack: not our ref", measured on run 34210794619. meta-gl published
+    # it -- `20c8b2dc5' on `libcna/meta-gl' `develop', with `eaf07887' beneath it
+    # -- and run 34215911608 then recorded all eleven claims here, on Xvfb and
+    # Mesa llvmpipe, with no GPU. The gate came off in the same commit as this
+    # comment.
     #
-    # This is the same break the sharp-runtime pairing had in 2026-09 and it has
-    # the same fix: publish the commit. When meta-gl does, set META_GL_REF to it,
-    # delete this `if', and the lane becomes a per-push job -- it is a single
-    # focused build and does not run the suite, so it costs about what the
-    # rasterizer lane costs.
-    #
-    # Deliberately **not** pinned to the published tip instead: that would be a
-    # library that does not compile, so there would be nothing to run. And
-    # deliberately not silently skipped: an `if' that reads `false' in the job
-    # list is visible, and a lane that quietly required less would be the failure
-    # this repository's whole evidence discipline exists to prevent.
-    if: ${{ github.event.inputs.texture3d_lane == 'on' }}
+    # It is a single focused build and does not run the suite, so it costs about
+    # what the rasterizer lane costs. It changes nothing about the two lanes
+    # beside it: HEADLESS and SOFTWARE have no volume storage, answer
+    # NOT_SUPPORTED, and `tests/native/texture-3d.lisp' asserts that refusal.
+    # Three renderers, three different claims, and none of them conditional on
+    # another.
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:

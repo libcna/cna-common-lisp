@@ -383,16 +383,16 @@ proof is absent.
 | --- | --- | --- |
 | `Texture3D` | `OPENGL33` (EasyGL) | volume storage keeps the voxels it is given: <!-- generated:texture3d claim count=11 --> claims, on a software OpenGL stack. **Nothing else** — it does not run the suite |
 
-**In CI this lane is dispatch-gated and cannot pass yet, and the reason is a
-dependency rather than the lane.** CNA's EasyGL renderer references
-`metagl::InternalFormat::Rgba16` at all three admitted commits, and that
-enumerator exists only in meta-gl `20c8b2dc5`, which is not published —
-`origin/develop` is `2520173` and its `Enums.hpp` has no `Rgba16`. Run
-`34210794619` measured it: `upload-pack: not our ref`. So the lane's evidence is
-**local** evidence, produced from exact commits and reproducible with
-`tools/qualification/texture3d.sh`, and this document's own rule applies to it —
-a local run and a CI run are different claims. Publishing that meta-gl commit is
-the whole of the fix; `NEXT.md` carries it.
+**This lane runs on every push, and it did not always.** CNA's EasyGL renderer
+references `metagl::InternalFormat::Rgba16` at all three admitted commits, and
+that enumerator existed only in an unpublished meta-gl commit; run
+`34210794619` measured the consequence, `upload-pack: not our ref`, and the job
+was dispatch-gated until the dependency was published. meta-gl `20c8b2dc5` is now
+on `libcna/meta-gl` `develop`, and run `34215911608` recorded all eleven claims
+here, on GitHub's runner, under Xvfb and Mesa llvmpipe with no GPU. The pin is
+still an exact commit rather than `develop`, for the reason every other pin here
+is exact. So the lane's evidence is now **both** local and CI evidence, which
+this document treats as two claims and not one.
 
 `tools/qualification/texture3d.sh` exists because `Texture3D` has **two truthful
 answers and the ordinary lanes can only give one of them**. `HEADLESS` and
