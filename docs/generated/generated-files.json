@@ -2,18 +2,18 @@
   "schema_version": 1,
   "generator": "tools/native-abi/generate.py",
   "abi_version": {
-    "encoded": 5888,
+    "encoded": 5376,
     "major": 0,
-    "minor": 23,
+    "minor": 21,
     "patch": 0,
-    "runtime": 5888
+    "runtime": 5376
   },
   "files": {
-    "src/internal/ffi/constants.generated.lisp": "c73a96f98d50ce8e05c2f4f4f1eb6e465952e835fdf086b3e5e0891f2b6df960",
-    "src/internal/ffi/structs.generated.lisp": "5d388a0f4a2bade92eda462c4b6fc74cdba32d3f712b8d12f5c1f20c9293ff7f",
-    "src/internal/ffi/functions.generated.lisp": "c775b44bc21c2c40322f2a77b3445436366187ea79010634c1193d6f8a1da7a2",
+    "src/internal/ffi/constants.generated.lisp": "44051bc2959212eabc8cbb84bb0e86148bfe23039b32356227db4f5504f05cfb",
+    "src/internal/ffi/structs.generated.lisp": "d07c477c6015bee3897f531ada6cea759c4f64d21419b5039918f2fc0032d821",
+    "src/internal/ffi/functions.generated.lisp": "3ce6557d38d06d37997e8333f9d2225290a5426e3a75d83685530ddff0f08877",
     "src/framework/predefined-colors.generated.lisp": "5be663877e30a59cb49eb8e11cc7a4b174ccfa65a2c22df52eec1cc5240b6cb0",
-    "tools/native-abi/probe.generated.c": "94b0a8fd0c97153d076d58116276e95e4a054126f6b0f116e1233e52a415a2ab",
+    "tools/native-abi/probe.generated.c": "6792bf523ec6531f0d8b82ba901a156ffc78c125e3297298ff59e6894cd843b8",
     "tools/native-abi/valueprobe.generated.c": "e86674a8d414911a16b249e091c0181bb9d9185ef413cc69ddf65a6ffef6d779",
     "tools/native-abi/shim.generated.c": "053ceb6ed5a6ba9946b78a105bbd85f4383b62c9a355a54067278d684a3654c1"
   }

@@ -754,6 +754,21 @@
       "versioned": true
     },
     {
+      "name": "CNA_Texture3DCreateInfo",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture3DTransfer",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture3DInfo",
+      "direction": "out",
+      "versioned": true
+    },
+    {
       "name": "CNA_TextureCubeCreateInfo",
       "direction": "in",
       "versioned": true
@@ -3470,6 +3485,54 @@
     {
       "name": "cna_texture2d_get_data",
       "header": "texture.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture3d_create",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "creates-owned:texture-3d:child-of-game"
+    },
+    {
+      "name": "cna_texture3d_destroy",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "destroys:texture-3d"
+    },
+    {
+      "name": "cna_texture3d_get_info",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture3d_get_type_name_byte_count",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture3d_copy_type_name",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture3d_set_data",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture3d_get_data",
+      "header": "texture_volume.h",
+      "thread": "owner",
+      "ownership": "none"
+    },
+    {
+      "name": "cna_texture3d_set_data_bytes",
+      "header": "texture_volume.h",
       "thread": "owner",
       "ownership": "none"
     },

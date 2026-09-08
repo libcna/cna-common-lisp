@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "abi_version": {
-    "encoded": 5888,
+    "encoded": 5376,
     "major": 0,
-    "minor": 23,
+    "minor": 21,
     "patch": 0,
-    "runtime": 5888
+    "runtime": 5376
   },
   "admitted_abi_versions": [
     {
@@ -34,9 +34,9 @@
     "why": "CFFI cannot pass a structure by value without cffi-libffi, and cffi-libffi requires libffi headers and a C compiler at load time, which a released CNA-Lisp must not. Flattening is not a guess: tools/native-abi/valueprobe.generated.c declares each admitted aggregate with its real by-value prototype, and the run-time test calls it through the flattened shape and compares the bytes that arrived. See docs/native-abi.md."
   },
   "counts": {
-    "functions": 871,
-    "structs": 75,
-    "struct_fields": 555,
+    "functions": 879,
+    "structs": 78,
+    "struct_fields": 584,
     "constants": 540,
     "callbacks": 14,
     "by_value_aggregates": 6,
@@ -10901,6 +10901,227 @@
       "ownership": "none",
       "string_rule": null,
       "c_prototype": "CNA_Result cna_texture2d_get_data(CNA_Handle texture, CNA_TextureDataType data_type, const CNA_Texture2DTransfer* transfer, void* destination, uint64_t destination_capacity, uint64_t* out_required_elements)"
+    },
+    {
+      "name": "cna_texture3d_create",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "graphics_device",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "create_info",
+          "c_type": "const CNA_Texture3DCreateInfo*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "out_texture",
+          "c_type": "CNA_Handle*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "creates-owned:texture-3d:child-of-game",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture3d_create(CNA_Handle graphics_device, const CNA_Texture3DCreateInfo* create_info, CNA_Handle* out_texture)"
+    },
+    {
+      "name": "cna_texture3d_destroy",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "destroys:texture-3d",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture3d_destroy(CNA_Handle texture)"
+    },
+    {
+      "name": "cna_texture3d_get_info",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_info",
+          "c_type": "CNA_Texture3DInfo*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture3d_get_info(CNA_Handle texture, CNA_Texture3DInfo* out_info)"
+    },
+    {
+      "name": "cna_texture3d_get_type_name_byte_count",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture3d_get_type_name_byte_count(CNA_Handle texture, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_texture3d_copy_type_name",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "destination",
+          "c_type": "char*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_byte_count",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture3d_copy_type_name(CNA_Handle texture, char* destination, uint64_t capacity, uint64_t* out_byte_count)"
+    },
+    {
+      "name": "cna_texture3d_set_data",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_Texture3DTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data",
+          "c_type": "const CNA_Color*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data_capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture3d_set_data(CNA_Handle texture, const CNA_Texture3DTransfer* transfer, const CNA_Color* data, uint64_t data_capacity)"
+    },
+    {
+      "name": "cna_texture3d_get_data",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_Texture3DTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination",
+          "c_type": "CNA_Color*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "destination_capacity",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "out_required_elements",
+          "c_type": "uint64_t*",
+          "cffi_type": ":pointer"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture3d_get_data(CNA_Handle texture, const CNA_Texture3DTransfer* transfer, CNA_Color* destination, uint64_t destination_capacity, uint64_t* out_required_elements)"
+    },
+    {
+      "name": "cna_texture3d_set_data_bytes",
+      "header": "texture_volume.h",
+      "c_returns": "CNA_Result",
+      "returns": ":uint32",
+      "params": [
+        {
+          "name": "texture",
+          "c_type": "CNA_Handle",
+          "cffi_type": ":uint64"
+        },
+        {
+          "name": "transfer",
+          "c_type": "const CNA_Texture3DTransfer*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data",
+          "c_type": "const uint8_t*",
+          "cffi_type": ":pointer"
+        },
+        {
+          "name": "data_byte_count",
+          "c_type": "uint64_t",
+          "cffi_type": ":uint64"
+        }
+      ],
+      "thread": "owner",
+      "ownership": "none",
+      "string_rule": null,
+      "c_prototype": "CNA_Result cna_texture3d_set_data_bytes(CNA_Handle texture, const CNA_Texture3DTransfer* transfer, const uint8_t* data, uint64_t data_byte_count)"
     },
     {
       "name": "cna_texturecube_create",
@@ -26981,6 +27202,297 @@
       "versioned": true
     },
     {
+      "name": "CNA_Texture3DCreateInfo",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth",
+          "c_type": "uint32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "mip_map",
+          "c_type": "CNA_Bool",
+          "offset": 20,
+          "size": 1,
+          "count": null,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved0",
+          "c_type": "uint8_t",
+          "offset": 21,
+          "size": 3,
+          "count": 3,
+          "cffi_type": ":uint8",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved1",
+          "c_type": "uint32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture_volume.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture3DTransfer",
+      "size": 56,
+      "align": 8,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "level",
+          "c_type": "int32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "left",
+          "c_type": "int32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "top",
+          "c_type": "int32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "right",
+          "c_type": "int32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "bottom",
+          "c_type": "int32_t",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "front",
+          "c_type": "int32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "back",
+          "c_type": "int32_t",
+          "offset": 32,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":int32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 36,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "start_index",
+          "c_type": "uint64_t",
+          "offset": 40,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        },
+        {
+          "name": "element_count",
+          "c_type": "uint64_t",
+          "offset": 48,
+          "size": 8,
+          "count": null,
+          "cffi_type": ":uint64",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture_volume.h",
+      "direction": "in",
+      "versioned": true
+    },
+    {
+      "name": "CNA_Texture3DInfo",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "struct_size",
+          "c_type": "uint32_t",
+          "offset": 0,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "struct_version",
+          "c_type": "uint32_t",
+          "offset": 4,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "width",
+          "c_type": "uint32_t",
+          "offset": 8,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "height",
+          "c_type": "uint32_t",
+          "offset": 12,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "depth",
+          "c_type": "uint32_t",
+          "offset": 16,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "level_count",
+          "c_type": "uint32_t",
+          "offset": 20,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "format",
+          "c_type": "CNA_SurfaceFormat",
+          "offset": 24,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        },
+        {
+          "name": "reserved",
+          "c_type": "uint32_t",
+          "offset": 28,
+          "size": 4,
+          "count": null,
+          "cffi_type": ":uint32",
+          "kind": "scalar"
+        }
+      ],
+      "header": "texture_volume.h",
+      "direction": "out",
+      "versioned": true
+    },
+    {
       "name": "CNA_TextureCubeCreateInfo",
       "size": 24,
       "align": 4,
@@ -28075,9 +28587,9 @@
     }
   ],
   "constants": {
-    "CNA_ABI_VERSION": 5888,
+    "CNA_ABI_VERSION": 5376,
     "CNA_ABI_VERSION_MAJOR": 0,
-    "CNA_ABI_VERSION_MINOR": 23,
+    "CNA_ABI_VERSION_MINOR": 21,
     "CNA_ABI_VERSION_PATCH": 0,
     "CNA_AUDIO_CHANNELS_MONO": 1,
     "CNA_AUDIO_CHANNELS_STEREO": 2,

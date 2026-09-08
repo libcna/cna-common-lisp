@@ -13,9 +13,9 @@
 ;;; Every integral constant this binding depends on, exactly as the
 ;;; canonical headers define it.
 
-(defconstant +abi-version+ 5888)
+(defconstant +abi-version+ 5376)
 (defconstant +abi-version-major+ 0)
-(defconstant +abi-version-minor+ 23)
+(defconstant +abi-version-minor+ 21)
 (defconstant +abi-version-patch+ 0)
 (defconstant +audio-channels-mono+ 1)
 (defconstant +audio-channels-stereo+ 2)

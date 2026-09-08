@@ -864,6 +864,53 @@
 (defconstant +sizeof-cna-texture-2d-create-info+ 24)
 (defconstant +alignof-cna-texture-2d-create-info+ 4)
 
+;;; CNA_Texture3DCreateInfo -- 32 bytes, 4-byte aligned, from texture_volume.h.
+(defcstruct (cna-texture-3d-create-info :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (width :uint32 :offset 8)
+  (height :uint32 :offset 12)
+  (depth :uint32 :offset 16)
+  (mip-map :uint8 :offset 20)
+  (reserved-0 :uint8 :offset 21 :count 3)
+  (format :uint32 :offset 24)
+  (reserved-1 :uint32 :offset 28))
+
+(defconstant +sizeof-cna-texture-3d-create-info+ 32)
+(defconstant +alignof-cna-texture-3d-create-info+ 4)
+
+;;; CNA_Texture3DTransfer -- 56 bytes, 8-byte aligned, from texture_volume.h.
+(defcstruct (cna-texture-3d-transfer :size 56)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (level :int32 :offset 8)
+  (left :int32 :offset 12)
+  (top :int32 :offset 16)
+  (right :int32 :offset 20)
+  (bottom :int32 :offset 24)
+  (front :int32 :offset 28)
+  (back :int32 :offset 32)
+  (reserved :uint32 :offset 36)
+  (start-index :uint64 :offset 40)
+  (element-count :uint64 :offset 48))
+
+(defconstant +sizeof-cna-texture-3d-transfer+ 56)
+(defconstant +alignof-cna-texture-3d-transfer+ 8)
+
+;;; CNA_Texture3DInfo -- 32 bytes, 4-byte aligned, from texture_volume.h.
+(defcstruct (cna-texture-3d-info :size 32)
+  (struct-size :uint32 :offset 0)
+  (struct-version :uint32 :offset 4)
+  (width :uint32 :offset 8)
+  (height :uint32 :offset 12)
+  (depth :uint32 :offset 16)
+  (level-count :uint32 :offset 20)
+  (format :uint32 :offset 24)
+  (reserved :uint32 :offset 28))
+
+(defconstant +sizeof-cna-texture-3d-info+ 32)
+(defconstant +alignof-cna-texture-3d-info+ 4)
+
 ;;; CNA_TextureCubeCreateInfo -- 24 bytes, 4-byte aligned, from texture_volume.h.
 (defcstruct (cna-texture-cube-create-info :size 24)
   (struct-size :uint32 :offset 0)
@@ -1086,6 +1133,9 @@
     (cna-game-component-callbacks 64 8 ((struct-size 0 4) (struct-version 4 4) (initialize 8 8) (update 16 8) (draw 24 8) (load-content 32 8) (unload-content 40 8) (dispose 48 8) (context 56 8)))
     (cna-texture-2d-transfer 48 8 ((struct-size 0 4) (struct-version 4 4) (level 8 4) (has-rectangle 12 1) (reserved 13 3) (rectangle 16 16) (start-index 32 8) (element-count 40 8)))
     (cna-texture-2d-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (mip-map 16 1) (reserved 17 3) (format 20 4)))
+    (cna-texture-3d-create-info 32 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (depth 16 4) (mip-map 20 1) (reserved-0 21 3) (format 24 4) (reserved-1 28 4)))
+    (cna-texture-3d-transfer 56 8 ((struct-size 0 4) (struct-version 4 4) (level 8 4) (left 12 4) (top 16 4) (right 20 4) (bottom 24 4) (front 28 4) (back 32 4) (reserved 36 4) (start-index 40 8) (element-count 48 8)))
+    (cna-texture-3d-info 32 4 ((struct-size 0 4) (struct-version 4 4) (width 8 4) (height 12 4) (depth 16 4) (level-count 20 4) (format 24 4) (reserved 28 4)))
     (cna-texture-cube-create-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (mip-map 12 1) (reserved-0 13 3) (format 16 4) (reserved-1 20 4)))
     (cna-texture-cube-transfer 56 8 ((struct-size 0 4) (struct-version 4 4) (face 8 4) (level 12 4) (has-rectangle 16 1) (reserved-0 17 3) (rectangle 20 16) (reserved-1 36 4) (start-index 40 8) (element-count 48 8)))
     (cna-texture-cube-info 24 4 ((struct-size 0 4) (struct-version 4 4) (size 8 4) (level-count 12 4) (format 16 4) (reserved 20 4)))

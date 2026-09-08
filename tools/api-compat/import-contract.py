@@ -140,6 +140,23 @@ SELECTED = [
     "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect",
     "Microsoft.Xna.Framework.Graphics.TextureCube",
     "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+    # `Texture3D' joined on 2026-09-08, and the reason it was absent is worth
+    # keeping because it was a measurement error rather than a limit. It used to
+    # say that `cna_texture3d_create' answers CNA_RESULT_NOT_SUPPORTED on
+    # HEADLESS and on SOFTWARE, on all three admitted ABIs -- six combinations,
+    # one answer -- so every member would be unreachable in CI. All six rows are
+    # still true and were re-run. What they say is that *those two renderers*
+    # have no volume storage, which is what the route's own documentation says
+    # it means; CNA's EasyGL family has it on every non-ES2 GL profile, and the
+    # whole transfer surface was measured there on Mesa llvmpipe under Xvfb,
+    # on each of the three admitted ABIs. docs/texture3d-audit.md is the audit.
+    #
+    # The dependency closure is empty: `GraphicsDevice', `SurfaceFormat',
+    # `Texture' and `GraphicsResource' have all been selected since Foundation 1,
+    # so this adds exactly one type. It also closes
+    # `EffectParameter.GetValueTexture3D', which has stood at
+    # DEPENDENCY_NOT_SELECTED for exactly this reason.
+    "Microsoft.Xna.Framework.Graphics.Texture3D",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
     "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",

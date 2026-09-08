@@ -1738,6 +1738,38 @@
 (defcfun ("cna_texture2d_get_data" %texture-2d-get-data) :uint32
   (texture :uint64) (data-type :uint32) (transfer :pointer) (destination :pointer) (destination-capacity :uint64) (out-required-elements :pointer))
 
+;;; CNA_Result cna_texture3d_create(CNA_Handle graphics_device, const CNA_Texture3DCreateInfo* create_info, CNA_Handle* out_texture)
+(defcfun ("cna_texture3d_create" %texture-3d-create) :uint32
+  (graphics-device :uint64) (create-info :pointer) (out-texture :pointer))
+
+;;; CNA_Result cna_texture3d_destroy(CNA_Handle texture)
+(defcfun ("cna_texture3d_destroy" %texture-3d-destroy) :uint32
+  (texture :uint64))
+
+;;; CNA_Result cna_texture3d_get_info(CNA_Handle texture, CNA_Texture3DInfo* out_info)
+(defcfun ("cna_texture3d_get_info" %texture-3d-get-info) :uint32
+  (texture :uint64) (out-info :pointer))
+
+;;; CNA_Result cna_texture3d_get_type_name_byte_count(CNA_Handle texture, uint64_t* out_byte_count)
+(defcfun ("cna_texture3d_get_type_name_byte_count" %texture-3d-get-type-name-byte-count) :uint32
+  (texture :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_texture3d_copy_type_name(CNA_Handle texture, char* destination, uint64_t capacity, uint64_t* out_byte_count)
+(defcfun ("cna_texture3d_copy_type_name" %texture-3d-copy-type-name) :uint32
+  (texture :uint64) (destination :pointer) (capacity :uint64) (out-byte-count :pointer))
+
+;;; CNA_Result cna_texture3d_set_data(CNA_Handle texture, const CNA_Texture3DTransfer* transfer, const CNA_Color* data, uint64_t data_capacity)
+(defcfun ("cna_texture3d_set_data" %texture-3d-set-data) :uint32
+  (texture :uint64) (transfer :pointer) (data :pointer) (data-capacity :uint64))
+
+;;; CNA_Result cna_texture3d_get_data(CNA_Handle texture, const CNA_Texture3DTransfer* transfer, CNA_Color* destination, uint64_t destination_capacity, uint64_t* out_required_elements)
+(defcfun ("cna_texture3d_get_data" %texture-3d-get-data) :uint32
+  (texture :uint64) (transfer :pointer) (destination :pointer) (destination-capacity :uint64) (out-required-elements :pointer))
+
+;;; CNA_Result cna_texture3d_set_data_bytes(CNA_Handle texture, const CNA_Texture3DTransfer* transfer, const uint8_t* data, uint64_t data_byte_count)
+(defcfun ("cna_texture3d_set_data_bytes" %texture-3d-set-data-bytes) :uint32
+  (texture :uint64) (transfer :pointer) (data :pointer) (data-byte-count :uint64))
+
 ;;; CNA_Result cna_texturecube_create(CNA_Handle graphics_device, const CNA_TextureCubeCreateInfo* create_info, CNA_Handle* out_texture)
 (defcfun ("cna_texturecube_create" %texturecube-create) :uint32
   (graphics-device :uint64) (create-info :pointer) (out-texture :pointer))
@@ -3930,6 +3962,14 @@
     ("cna_texture2d_create" %texture-2d-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-2d:child-of-game")
     ("cna_texture2d_set_data" %texture-2d-set-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64) :thread :owner :ownership "none")
     ("cna_texture2d_get_data" %texture-2d-get-data :uint32 (:uint64 :uint32 :pointer :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_texture3d_create" %texture-3d-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-3d:child-of-game")
+    ("cna_texture3d_destroy" %texture-3d-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:texture-3d")
+    ("cna_texture3d_get_info" %texture-3d-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_texture3d_get_type_name_byte_count" %texture-3d-get-type-name-byte-count :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_texture3d_copy_type_name" %texture-3d-copy-type-name :uint32 (:uint64 :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_texture3d_set_data" %texture-3d-set-data :uint32 (:uint64 :pointer :pointer :uint64) :thread :owner :ownership "none")
+    ("cna_texture3d_get_data" %texture-3d-get-data :uint32 (:uint64 :pointer :pointer :uint64 :pointer) :thread :owner :ownership "none")
+    ("cna_texture3d_set_data_bytes" %texture-3d-set-data-bytes :uint32 (:uint64 :pointer :pointer :uint64) :thread :owner :ownership "none")
     ("cna_texturecube_create" %texturecube-create :uint32 (:uint64 :pointer :pointer) :thread :owner :ownership "creates-owned:texture-cube:child-of-game")
     ("cna_texturecube_destroy" %texturecube-destroy :uint32 (:uint64) :thread :owner :ownership "destroys:texture-cube")
     ("cna_texturecube_get_info" %texturecube-get-info :uint32 (:uint64 :pointer) :thread :owner :ownership "none")
