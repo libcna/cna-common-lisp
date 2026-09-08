@@ -324,6 +324,33 @@ for.
   device creation, and the suite asserts that rather than the type being called
   complete.
 
+  *(Two later closures were not added here when they landed and are recorded now,
+  in the order they happened, rather than being left out because the omission was
+  someone else's.)*
+* the **caller-owned `GraphicsDevice`**, which is one public type over **two
+  native ownership graphs**: a game's device is a facade whose resources the game
+  owns, and a caller's device owns its own. Every native graphics resource derives
+  its owner from one function rather than reaching for the active game, and
+  `GraphicsResource.GraphicsDevice` answers the object the constructor was given
+  because XNA's is a bare field read;
+* the whole **`Microsoft.Xna.Framework.Media`** namespace -- the playback half
+  first, then `MediaLibrary` and the fifteen types around it, in one closure
+  because `MediaLibrary` returns `PictureCollection` and `PictureAlbum` from six
+  of its own members. It closed `Song.Artist`, `.Album` and `.Genre`, whose
+  recorded reason -- a file-path song has no library context -- had been true of
+  the only kind of song the binding could then make;
+* **`Texture3D`**, one type and eleven members, and the closure that had been
+  declined the longest. The recorded blocker was that `cna_texture3d_create`
+  answers `NOT_SUPPORTED` on both qualification renderers, which is true and is a
+  fact about *those renderers*: a desktop-core EasyGL build has volume storage and
+  keeps every voxel it is given. It closed `EffectParameter.GetValueTexture3D`,
+  it added a **third CI lane** for the capability rather than changing either
+  existing one, and its six transfer members are partial for the reason
+  `TextureCube`'s are -- CNA's volume routes take `CNA_Color` and name no texel
+  kind. Two of XNA's constructor guards live in the binding because CNA applies
+  neither: `Texture3D` is a HiDef-only type and CNA will make one on a Reach
+  device.
+
 ## 6. Measured status
 
 Generated reports are the authority:
