@@ -274,6 +274,27 @@
         (format t "installation cannot reach any of the four setters. See~%")
         (format t "docs/compatibility.md on what complete means across~%")
         (format t "configurations.~%")))
+    ;; The MediaLibrary closure. Six kinds and they are six claims, for the
+    ;; reason every surface above keeps its own apart -- and one of its own: the
+    ;; counts are exact rather than non-zero, because a "non-empty" assertion
+    ;; passes against whatever music the machine happens to hold, which is the
+    ;; non-determinism the generated XDG fixture exists to remove.
+    (when (native-library-requested-p)
+      (if *media-library-evidence*
+          (dolist (entry (reverse *media-library-evidence*))
+            (format t "~&media library : ~(~a~) -- ~a~%" (car entry) (cdr entry)))
+          (format t "~&media library : NOT RUN -- no media-library test recorded evidence~%"))
+      (when (and (media-library-proved-p :lifetime)
+                 (not (media-library-proved-p :counts)))
+        (format t "A library opened and released cleanly and its contents were~%")
+        (format t "not checked: this run had no fixture, so it says nothing about~%")
+        (format t "what a library enumerates. tools/qualification/media-library.sh~%")
+        (format t "supplies one.~%"))
+      (when (media-library-proved-p :song-members)
+        (format t "No media-library claim above is that a library song can be~%")
+        (format t "PLAYED. The fixture's tagged MP3 indexes and does not decode;~%")
+        (format t "playback is MediaPlayer's surface and is qualified in its own~%")
+        (format t "lane.~%")))
     (format t "-------------------------------~%")
     (when failed
       (error "~d CNA-Lisp test failure~:p" (length failed)))

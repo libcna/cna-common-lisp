@@ -411,7 +411,7 @@ guard, which is exactly the kind of assertion that looks like a missing test."
 Binding into one device's slot displaces what another device had in the same
 slot: CNA has one native sampler table and XNA has one per device. The binding
 does not paper over it -- its collection answers what it *can* truthfully say,
-which is NIL for "this binding has nothing bound here", and never the cached
+which is NIL for \"this binding has nothing bound here\", and never the cached
 object it can no longer vouch for."
   (with-owned-device (a)
     (with-owned-device (b)

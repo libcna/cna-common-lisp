@@ -309,6 +309,10 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; the same PCM16 file the SoundEffect tests generate. Both branches assert:
    ;; a song is created with no playback device and the refusal arrives at Play.
    (:file "native/media")
+   ;; The media-library closure. After native/media, whose SONG and
+   ;; SONG-COLLECTION it reaches through, and after native/graphics for
+   ;; GRAPHICS-GAME's counting fixture.
+   (:file "native/media-library")
    ;; The first closure that needs no game: storage opens the ABI gate itself,
    ;; writes real files under a root the tests name, and deletes every container
    ;; it opens. Its two branches are forced rather than environmental.
