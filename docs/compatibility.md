@@ -14,6 +14,26 @@ prose that does not match it.
    subset into `tools/api-compat/reference/xna40-selected-contract.json`. No
    Microsoft binary is stored here or distributed.
 
+   **The snapshot itself is not committed, and on 2026-09-08 no copy of it
+   existed on the machine any more.** That is the failure mode a hash pin has:
+   it is exactly as available as the file it names. What survived was a *newer
+   serialization of the same metadata* — CNA-Swift pins the same profile, and its
+   copy is `schemaVersion` 2, which adds one field, `readonly`, to every field
+   member and changes nothing else.
+
+   `tools/api-compat/recover-contract-snapshot.py` reconstructs the pinned bytes
+   from such a copy by removing exactly that field, and **refuses to write
+   anything unless the result hashes to the pinned value**. It does:
+   `7207908e…`, byte for byte, and the unmodified importer then regenerates the
+   committed selected contract identically — 195 types, 2581 members, no diff.
+
+   So **the pin was recovered and not changed**. That distinction is the whole
+   point: re-pinning to whatever file happens to survive would make the hash a
+   record of what was found rather than of what was chosen, and the next such
+   loss would have nothing to check against. If a future source does *not*
+   reconstruct the hash, the tool fails and says so, and the answer is a full
+   257-type equivalence diff and a deliberate decision — not a new pin.
+
 2. **The projection** is `tools/api-compat/mapping-rules.json`: the deterministic
    rules that turn a CLR element into a Lisp one, plus every declared exception
    with its reason. `docs/common-lisp-mapping.md` is the prose for the same
