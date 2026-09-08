@@ -1355,14 +1355,67 @@ reference runtime under Mesa llvmpipe only. A future SBCL that changed
 `SB-INT:SET-FLOATING-POINT-MODES` would break `tests/unit/float-boundary.lisp`
 first, which is where it should break.
 
+### Two measurements taken and not acted on
+
+**`Video` is qualifiable now, and the recorded reason it was not is stale.** The
+reason on file was that `Video` and `VideoPlayer` "need CNA's optional FFmpeg
+decoder", which read as a build-configuration blocker. It is not one. Measured
+2026-09-08 against the prebuilt admitted ABIs, with no rebuild:
+
+| measurement | 0.21.0 | 0.22.0 | 0.23.0 |
+| --- | --- | --- | --- |
+| `cna_video*` routes exported | 42 | 42 | 42 |
+| FFmpeg libraries linked (`ldd`) | 4 | 4 | 4 |
+| `cna_video_create` on a real file | `SUCCESS` | `SUCCESS` | `SUCCESS` |
+| metadata read back | 64×48, 10.000 fps, 2.000 s | same | same |
+
+The fixture was a 64×48, 10 fps, two-second H.264 file, and every field came back
+matching it. `cna_video_create` documents `CNA_RESULT_NOT_SUPPORTED` for a build
+without the decoder and documents that an undecodable file leaves the metadata at
+zero — so **neither of the two ways this could have been a negative result
+happened**. The decoder is present, it ran, and it reported the file.
+
+That is a capability measurement and **not** a decision to bind the namespace.
+What it establishes is that the blocker recorded is gone; what it does not
+establish is anything about `VideoPlayer` — playback, `GetTexture`, the
+looping and volume members, or what XNA's `.wmv`-shaped expectations demand of a
+decoder that will read anything FFmpeg reads. Those are the next measurement, not
+this one. `build-probe/fp-video-probe.c` is the probe.
+
+**XACT's fixtures are CNA parser fixtures, and CNA's own source says so.** The
+three creation routes take `.xgs`, `.xwb` and `.xsb` files, and the question was
+which of three things CNA's fixtures are: a parser/unit fixture, a byte shape
+demonstrably identical to XACT authoring output, or an actual Microsoft-authored
+file. Measured: **the first, and not the other two.**
+
+They are hand-authored byte builders in C++ test code — `BuildXsbFixtureBytes`
+and its neighbours in `modules/audio/tests` — emitting a minimal `SDBK` header
+with `toolVersion` 0, `CRC` 0 and a zeroed `lastModified`. The decisive evidence
+is not the byte shape though; it is that **CNA carries production code to
+compensate for the difference**. `Cue.cpp`'s `IsBuiltInCueVariable` recognises
+`Distance`, `DopplerPitchScalar`, `OrientationAngle`, `AttackTime` and
+`ReleaseTime` as always-present, with the comment that CNA's parser "only sees
+what a hand-authored test fixture includes, unlike the real XACT Auditioning
+Tool which adds these by default."
+
+So a binding qualified against these fixtures would be qualifying **the
+compensation path rather than the real one** — the behaviour CNA has on a file no
+XNA program would ever load. That is a sharper reason than "no fixture can be
+generated here", and it settles the evidence standard: these fixtures are
+admissible as evidence about CNA's parser and **not** as XNA-authority evidence.
+The standard XACT would need is a file the authoring tool produced, or a byte
+shape shown equal to one; nothing here can produce either, and promoting these
+would be exactly the substitution this file exists to prevent.
+
 ### The one thing to do next
 
-**Measure `Video`, then decide.** `docs/limitations.md` records the namespace as
-unqualifiable rather than absent, and the reason was that the admitted CNA builds
-had no FFmpeg. That is a build-configuration claim and it has not been
-re-measured since; build an admitted CNA source with FFmpeg available and ask
-whether `Video` and `VideoPlayer` become positively qualifiable. Do not implement
-on the strength of the question.
+**Measure `VideoPlayer`, then decide.** `Video` construction and metadata are
+now known to work on every admitted ABI. Whether the namespace is qualifiable
+turns on playback, which is unmeasured: `Play`, `GetTexture` into a real
+`Texture2D`, `Stop`/`Pause`/`Resume`, and the state machine XNA's `MediaState`
+describes. Measure it on the EasyGL renderer, because `GetTexture` needs a
+graphics device that can hold the frame. Do not bind anything on the strength of
+the construction result alone — that is one member of two types.
 
 ## Architectural facts a future agent must not undo
 

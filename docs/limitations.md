@@ -3303,7 +3303,13 @@ These are absent, and measured as absent, not faked:
   *playback* closure is selected, and what is still absent within it is the
   media **library** -- `MediaLibrary`, `Album`, `Artist`, `Genre`, `Picture`,
   `Playlist`, `MediaSource` and the six collection types -- plus `Video` and
-  `VideoPlayer`, which need CNA's optional FFmpeg decoder. Audio was on this list and is not any more: the
+  `VideoPlayer`. The reason recorded for those two used to be "they need CNA's
+  optional FFmpeg decoder", and that is **measured stale**: every admitted ABI
+  exports the 42 `cna_video*` routes, links four FFmpeg libraries, and answers
+  `SUCCESS` from `cna_video_create` with the real width, height, frame rate and
+  duration of a file on disk. The decoder is there. What is unmeasured is
+  `VideoPlayer` -- playback and `GetTexture` -- which is what the namespace now
+  waits on. Audio was on this list and is not any more: the
   eight-type `SoundEffect` closure is selected and complete. What is still absent
   *within* audio is XACT — `AudioEngine`, `SoundBank`, `WaveBank`, `Cue`,
   `AudioCategory`, `RendererDetail` — and the reason given here used to be "CNA
@@ -3312,7 +3318,15 @@ These are absent, and measured as absent, not faked:
   qualified — its three creation routes take `.xgs`, `.xwb` and `.xsb` files
   built by Microsoft's XACT authoring tool, so no fixture for them can be
   generated here, which is the standard every other fixture in this repository
-  meets. Nothing else within audio is absent: `DynamicSoundEffectInstance` and
+  meets. CNA does have fixtures, and measuring what they are sharpens the reason
+  rather than softening it: they are hand-authored byte builders in CNA's own
+  C++ tests, and CNA carries **production code to compensate for how they differ
+  from authored output** — `Cue.cpp`'s `IsBuiltInCueVariable` treats five cue
+  variables as always present because "CNA's XactParser only sees what a
+  hand-authored test fixture includes, unlike the real XACT Auditioning Tool
+  which adds these by default." So qualifying against them would qualify that
+  compensation path and not the one an XNA program takes. They are evidence about
+  CNA's parser; they are not XNA authority. Nothing else within audio is absent: `DynamicSoundEffectInstance` and
   the three `Microphone` types were on this list while each was a closure of its
   own, and both closures have landed — **which is exactly the staleness the
   paragraph below warns about, caught twice in one sentence**;
