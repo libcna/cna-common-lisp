@@ -89,7 +89,7 @@ tools/qualification/owned-graphics-device.sh
 tools/qualification/texture3d.sh   # defaults to ~/deps/cna-c-abi-*-opengl33
 ```
 
-Two probes are built on demand rather than by any of the above, and neither is
+Several probes are built on demand rather than by any of the above, and none is
 part of the gate stack:
 
 ```sh
@@ -100,6 +100,20 @@ cc -O1 -o build-probe/abiver tools/native-abi/abi-version-probe.c -ldl
 cc -O1 -I "$CNA_HEADERS" -o build-probe/model-defect-probe \
    tools/native-abi/model-defect-probe.c -ldl
 tools/qualification/model-defect-matrix.sh /path/to/each/libcna_c_api.so ...
+
+# the Video family, which is measured and *not* selected -- see
+# docs/video-audit.md. One stage per subprocess, like the Texture3D probe.
+python3 tools/qualification/make-video-fixture.py build-probe/video-fixtures
+cc -O1 -I "$CNA_HEADERS" -o build-probe/video-player-probe \
+   tools/native-abi/video-player-probe.c -ldl -lpthread -lm
+build-probe/video-player-probe /path/to/libcna_c_api.so frame build-probe/video-fixtures
+
+# and the producer half, which is the one that answers no
+python3 tools/qualification/make-video-xnb.py \
+   build-probe/video-fixtures/clip.xnb fixture.wmv 2000 64 48 10.0 2
+cc -O1 -I "$CNA_HEADERS" -o build-probe/video-producer-probe \
+   tools/native-abi/video-producer-probe.c -ldl
+build-probe/video-producer-probe /path/to/libcna_c_api.so build-probe/video-fixtures clip
 ```
 
 `abiver` is what `model-defect-matrix.sh` labels its rows with, and its source
@@ -1301,22 +1315,17 @@ Four things it established that a future closure should not have to rediscover:
 | --- | ---: | ---: | ---: | --- | --- | --- | --- |
 | ~~`Texture3D`~~ | ~~1~~ | ~~11~~ | ~~8~~ | ~~1~~ | **DONE 2026-09-08** | — | — |
 | ~~`Media` / `MediaLibrary`~~ | ~~15~~ | ~~142~~ | ~~148~~ | ~~3~~ | **DONE 2026-09-08** | — | — |
-| `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **unmeasured — see below** | low | medium |
+| `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **measured — blocked, see below** | low | **blocked** |
 | XACT | 7 | 72 | 62, `xact.h` | 0 | **unmeasured — see below** | low | high |
 | `GameWindow`'s seven | 0 | 0 | 0 | 0 | n/a | low | **blocked** |
 
-**The two remaining rows changed their reasons on 2026-09-08, and neither changed
-to "possible".** Both used to be recorded as impossible. Both are now recorded as
-*unmeasured*, which is a different and more honest thing, and the difference is
-exactly the mistake `Texture3D` was:
+**`Video` has now been measured to the end and is blocked for a reason that is
+neither of the two it was recorded under.** It was "needs an optional decoder";
+then, on 2026-09-08, "unmeasured". It is now measured, and the blocker is a
+missing C route -- `docs/video-audit.md` is the whole of it and the summary is
+below. **XACT is still unmeasured**, which is a different and more honest thing
+than the "impossible" it used to be recorded as:
 
-* **`Video` is conditional on FFmpeg, and this build has none.** CNA's
-  `CNA_ENABLE_VIDEO` is `AUTO`, so a build resolves it from what is installed;
-  every library in the admitted set was built without it. "Needs an optional
-  decoder this build does not have" was true of *this build* and says nothing
-  about CNA. **Re-measuring it means building with `CNA_FFMPEG_AVAILABLE` and
-  asking the routes**, exactly as `Texture3D` was re-measured against a renderer
-  that had the capability. Nothing here starts that work.
 * **XACT's "no fixture can exist" is too strong.** CNA's own test suite contains
   **source-generated XGS/XSB fixtures**, so a fixture can plainly be produced.
   The unresolved question is a different one: whether a fixture produced without
@@ -1355,32 +1364,64 @@ reference runtime under Mesa llvmpipe only. A future SBCL that changed
 `SB-INT:SET-FLOATING-POINT-MODES` would break `tests/unit/float-boundary.lisp`
 first, which is where it should break.
 
-### Two measurements taken and not acted on
+### The Video family: measured to the end, and blocked
 
-**`Video` is qualifiable now, and the recorded reason it was not is stale.** The
-reason on file was that `Video` and `VideoPlayer` "need CNA's optional FFmpeg
-decoder", which read as a build-configuration blocker. It is not one. Measured
-2026-09-08 against the prebuilt admitted ABIs, with no rebuild:
+**`VideoPlayer` works. `Video` cannot be produced.** Both halves were measured on
+2026-09-08 against all three admitted ABIs, and a namespace needs both.
+`docs/video-audit.md` is the full audit; this is what a future agent needs before
+opening it.
 
-| measurement | 0.21.0 | 0.22.0 | 0.23.0 |
-| --- | --- | --- | --- |
-| `cna_video*` routes exported | 42 | 42 | 42 |
-| FFmpeg libraries linked (`ldd`) | 4 | 4 | 4 |
-| `cna_video_create` on a real file | `SUCCESS` | `SUCCESS` | `SUCCESS` |
-| metadata read back | 64×48, 10.000 fps, 2.000 s | same | same |
+**Gate A passes.** `VideoPlayer` creates, plays, pauses, resumes, stops, loops,
+and hands back real decoded frames. Four samples across the fixture's four
+sections come back red, green, blue, yellow **in order**, with a monotonic frame
+generation and presentation times 0.300 through 1.800 s; the readback is 3072
+texels, exactly 64x48; `PlayPosition` advances 0.300 s over a 0.300 s wait and
+holds stable to the tick while paused. 156 observations across the three ABIs,
+and the only four differences are microsecond clock jitter. Frames come back on
+HEADLESS and SOFTWARE as well as EasyGL, so unlike `Texture3D` this needs no
+positive renderer. `tools/native-abi/video-player-probe.c` and
+`tools/qualification/make-video-fixture.py` are the instruments, both committed.
 
-The fixture was a 64×48, 10 fps, two-second H.264 file, and every field came back
-matching it. `cna_video_create` documents `CNA_RESULT_NOT_SUPPORTED` for a build
-without the decoder and documents that an undecodable file leaves the metadata at
-zero — so **neither of the two ways this could have been a negative result
-happened**. The decoder is present, it ran, and it reported the file.
+**Gate B fails, and that is the whole blocker.** XNA's `Video` has **no public
+constructor** -- the pinned IL declares its one constructor `assembly`, while
+`VideoPlayer` in the same file carries an ordinary `public .ctor()`. Its only
+public producer is `ContentManager.Load<Video>`. **No admitted C ABI exposes
+it**: `cna_content_manager_load_video` is absent from all three, `video.h` is
+byte-identical across them, and the typed loaders that exist are texture2d,
+texture_cube, sprite_font, model, effect and sound_effect.
 
-That is a capability measurement and **not** a decision to bind the namespace.
-What it establishes is that the blocker recorded is gone; what it does not
-establish is anything about `VideoPlayer` — playback, `GetTexture`, the
-looping and volume members, or what XNA's `.wmv`-shaped expectations demand of a
-decoder that will read anything FFmpeg reads. Those are the next measurement, not
-this one. `tools/qualification/video-capability-probe.c` is the probe.
+The three ways around it were tried and measured, not reasoned about:
+
+| way round | measured answer |
+| --- | --- |
+| `cna_content_manager_load_foreign_ext` on a real Video `.xnb` | `IO`: *"The asset's root type reader is not a caller-registered reader, so it did not produce a foreign object."* The reader ran and made a native `Video`; the C ABI discarded it |
+| register a Lisp reader as `Microsoft.Xna.Framework.Content.VideoReader` | `INVALID_STATE` -- `RegisterBuiltinLoaders` owns the name. The mechanism is fine: the same table under an unowned name registers and its callback runs |
+| parse the payload in Lisp | `ReadObject<string>`/`<int32>`/`<float32>` and a 7-bit-int read are **all absent** from the reader surface. That is a second content pipeline, for one type |
+
+**So the one thing that would unblock this is one C route**, and CNA's C++ already
+has the implementation behind it:
+
+```c
+CNA_C_API CNA_Result cna_content_manager_load_video(
+    CNA_Handle content_manager, CNA_StringView asset_name,
+    CNA_VideoHandle* out_video);
+```
+
+**Two things a future agent must not do.** Do not project `make-instance 'video`
+over `cna_video_create` -- that invents a public constructor XNA does not have,
+and it is the exact failure the stop rule exists to catch. Do not qualify against
+CNA's own Video `.xnb` fixture: `DecodeVideoXnbData` has two paths chosen by
+counting the type-reader table, CNA's fixture writes the one-entry form, and that
+form is a **compensation path** kept for "CNA's established runtime reader ...
+historical full-container fixtures". `tools/qualification/make-video-xnb.py`
+defaults to the dispatching form for that reason.
+
+**Two divergences already found, owed by any future closure.** `Volume`: XNA
+throws `ArgumentOutOfRangeException` outside [0,1], CNA clamps silently and lets
+NaN through unchanged. `GetTexture`: XNA holds `Texture2D[] frameTextures` with a
+`currentTextureId` and returns one of two **stable player-owned** textures, while
+CNA returns a handle that becomes `INVALID_HANDLE` on the very next call of any
+kind -- `get_state` is enough -- and mints a new handle value each time.
 
 **XACT's fixtures are CNA parser fixtures, and CNA's own source says so.** The
 three creation routes take `.xgs`, `.xwb` and `.xsb` files, and the question was
@@ -1388,8 +1429,8 @@ which of three things CNA's fixtures are: a parser/unit fixture, a byte shape
 demonstrably identical to XACT authoring output, or an actual Microsoft-authored
 file. Measured: **the first, and not the other two.**
 
-They are hand-authored byte builders in C++ test code — `BuildXsbFixtureBytes`
-and its neighbours in `modules/audio/tests` — emitting a minimal `SDBK` header
+They are hand-authored byte builders in C++ test code -- `BuildXsbFixtureBytes`
+and its neighbours in `modules/audio/tests` -- emitting a minimal `SDBK` header
 with `toolVersion` 0, `CRC` 0 and a zeroed `lastModified`. The decisive evidence
 is not the byte shape though; it is that **CNA carries production code to
 compensate for the difference**. `Cue.cpp`'s `IsBuiltInCueVariable` recognises
@@ -1399,7 +1440,7 @@ what a hand-authored test fixture includes, unlike the real XACT Auditioning
 Tool which adds these by default."
 
 So a binding qualified against these fixtures would be qualifying **the
-compensation path rather than the real one** — the behaviour CNA has on a file no
+compensation path rather than the real one** -- the behaviour CNA has on a file no
 XNA program would ever load. That is a sharper reason than "no fixture can be
 generated here", and it settles the evidence standard: these fixtures are
 admissible as evidence about CNA's parser and **not** as XNA-authority evidence.
@@ -1407,15 +1448,31 @@ The standard XACT would need is a file the authoring tool produced, or a byte
 shape shown equal to one; nothing here can produce either, and promoting these
 would be exactly the substitution this file exists to prevent.
 
+**The Video finding is the same standard reaching the same verdict twice in a
+row, and that is worth noticing rather than filing.** Both namespaces are now
+blocked not by capability but by evidence: XACT by a fixture that would qualify
+CNA's compensation path, `Video` by a producer that exists in CNA's C++ and not
+in its C ABI. Neither is a reason to lower the standard.
+
 ### The one thing to do next
 
-**Measure `VideoPlayer`, then decide.** `Video` construction and metadata are
-now known to work on every admitted ABI. Whether the namespace is qualifiable
-turns on playback, which is unmeasured: `Play`, `GetTexture` into a real
-`Texture2D`, `Stop`/`Pause`/`Resume`, and the state machine XNA's `MediaState`
-describes. Measure it on the EasyGL renderer, because `GetTexture` needs a
-graphics device that can hold the frame. Do not bind anything on the strength of
-the construction result alone — that is one member of two types.
+**Nothing in `Video`, and nothing in XACT.** Both are blocked on evidence rather
+than effort, and both blockers are now written down precisely enough for someone
+else to remove: a `cna_content_manager_load_video` route in CNA's C ABI for the
+first, an authored XACT file or a byte-equivalence proof for the second. Neither
+is work this binding can do to itself.
+
+The selection is 211 types and 2734 members with **zero disagreements**, 189
+types complete and 22 partial. The `Media` namespace is 21 of its 24 types, and
+the three it lacks are exactly `Video`, `VideoPlayer` and `VideoSoundtrackType` --
+so `Media` cannot become the second fully-selected namespace after `Storage`
+until that one C route exists.
+
+The honest recommendation is therefore **upstream, not here**: open the missing
+`cna_content_manager_load_video` against CNA with `docs/video-audit.md` as the
+case for it. It is a small route in front of a working implementation, and it is
+the only thing standing between a measured, working `VideoPlayer` and a namespace
+that closes.
 
 ## Architectural facts a future agent must not undo
 

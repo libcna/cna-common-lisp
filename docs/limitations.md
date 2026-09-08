@@ -3299,17 +3299,32 @@ These are absent, and measured as absent, not faked:
   networking**. Storage was on this list and is not any more: the namespace is
   three types and all three are projected complete, so there is nothing left in
   it to be absent — the only closure so far that finished its whole namespace.
-  Media was on this list and is not any more: the six-type
-  *playback* closure is selected, and what is still absent within it is the
-  media **library** -- `MediaLibrary`, `Album`, `Artist`, `Genre`, `Picture`,
-  `Playlist`, `MediaSource` and the six collection types -- plus `Video` and
-  `VideoPlayer`. The reason recorded for those two used to be "they need CNA's
-  optional FFmpeg decoder", and that is **measured stale**: every admitted ABI
-  exports the 42 `cna_video*` routes, links four FFmpeg libraries, and answers
-  `SUCCESS` from `cna_video_create` with the real width, height, frame rate and
-  duration of a file on disk. The decoder is there. What is unmeasured is
-  `VideoPlayer` -- playback and `GetTexture` -- which is what the namespace now
-  waits on. Audio was on this list and is not any more: the
+  Media was on this list and is not any more: both the
+  *playback* closure and the media **library** are selected, and 21 of the
+  namespace's 24 types are projected. What is still absent within it is exactly
+  the video family -- `Video`, `VideoPlayer` and `VideoSoundtrackType`.
+
+  **Their recorded reason has now been wrong twice, and the third one is
+  measured.** It was "they need CNA's optional FFmpeg decoder"; that was
+  measured stale on 2026-09-08, since every admitted ABI exports the 42
+  `cna_video*` routes, links four FFmpeg libraries, and reads a real file's
+  metadata. It then became "`VideoPlayer` is unmeasured"; that was measured too,
+  and **`VideoPlayer` works** -- it plays, keeps a real clock, loops, and hands
+  back decoded frames as `Texture2D` pixels on all three admitted ABIs and all
+  three renderers.
+
+  The actual blocker is neither. **XNA's `Video` has no public constructor** --
+  the pinned IL declares its only constructor `assembly`, where `VideoPlayer` in
+  the same assembly has an ordinary public one -- so its only public producer is
+  `ContentManager.Load<Video>`. **No admitted C ABI exposes that route.**
+  `cna_content_manager_load_video` is absent from all three;
+  `cna_content_manager_load_foreign_ext` refuses an asset whose root reader is
+  one of CNA's own; and the canonical `VideoReader` name cannot be registered
+  over, because CNA owns it. Binding the player anyway would publish a method
+  whose only argument no XNA program could construct, and projecting
+  `cna_video_create` as a public constructor would invent API XNA does not have.
+  `docs/video-audit.md` is the measurement, and the one route that would remove
+  the blocker is named there. Audio was on this list and is not any more: the
   eight-type `SoundEffect` closure is selected and complete. What is still absent
   *within* audio is XACT — `AudioEngine`, `SoundBank`, `WaveBank`, `Cue`,
   `AudioCategory`, `RendererDetail` — and the reason given here used to be "CNA
