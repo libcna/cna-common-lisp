@@ -1338,7 +1338,7 @@ answer that looked reasonable.
 | Is it a CNA or Mesa defect? | **No.** The same call sequence in a plain C program completes and answers one adapter. The same C program with `feenableexcept(FE_INVALID)` dies with `SIGFPE` at the same call. It is an SBCL caller environment a C library was never written for |
 | Which traps? | `:invalid` **and** `:divide-by-zero`, exactly. Either alone still fails, with the other's condition. `:overflow` adds nothing |
 | Where? | Building a renderer context: `cna_game_create`, `cna_graphics_device_create`, both `Reset` forms, `ApplyChanges`, `ToggleFullScreen`, and the game-loop routes. **Not** the transfer routes — with only device construction masked, a whole Texture3D round trip runs with the caller's traps live |
-| Every route instead? | **No.** The boundary costs ~300 ns against ~8 ns for the cheapest bare `defcfun`, about 39×. Free on a lifecycle route, a per-sprite tax in a `SpriteBatch` loop |
+| Every route instead? | **No.** Against ~8 ns for the cheapest bare `defcfun`, masking alone is ~300 ns and the full boundary ~0.8–1.1 µs. Free on a lifecycle route; two orders of magnitude per sprite in a `SpriteBatch` loop. On the game loop it is ~1.8 µs/frame, 0.011% of a 60 Hz budget |
 | Do callbacks inherit it? | **They did.** With an outer mask every lifecycle method saw `traps=(:OVERFLOW)`. `WITH-CALLER-FLOAT-ENVIRONMENT` in both callback paths restores the caller's environment for the body and puts the foreign one back on the way out |
 | Do the sticky flags come back? | **Only because the binding puts them back.** SBCL's own `WITH-FLOAT-TRAPS-MASKED` deliberately lets the body's accrued flags survive, so an unrestored boundary hands the caller `:INVALID` it never raised |
 

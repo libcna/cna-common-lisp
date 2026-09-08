@@ -352,12 +352,17 @@ constructor and the transient enumeration device), `cna_graphics_device_reset`
 and its parameterised form, `GraphicsDeviceManager.ApplyChanges` and
 `ToggleFullScreen`, and the three game-loop routes through `CALL-NATIVE-FRAME`.
 
-**Not on every route, and that is a measurement.** The boundary costs about
-300 ns, against about 8 ns for the cheapest bare `defcfun` — some 39× — because
-restoring the x87 control word and `MXCSR` flushes the floating-point pipeline.
-On a lifecycle route that runs once, 300 ns is nothing. On a getter in a
-`SpriteBatch` loop it would be a tax on every sprite, and the routes in that
-loop were measured not to need it.
+**Not on every route, and that is a measurement.** Against about 8 ns for the
+cheapest bare `defcfun`, masking alone costs about 300 ns and the full boundary —
+masking plus the complete restore — costs about 0.8–1.1 µs, because writing the
+x87 control word and `MXCSR` flushes the floating-point pipeline and the restore
+does it twice. On a lifecycle route that runs once, that is nothing. On a getter
+in a `SpriteBatch` loop it would be a tax of two orders of magnitude on every
+sprite, and the routes in that loop were measured not to need it.
+
+On the one hot path the boundary is on — the game loop — it is one outbound
+crossing plus one inbound restore per lifecycle callback: about 1.8 µs per frame,
+or 0.011% of a 60 Hz frame budget.
 
 ### Callbacks get the caller's environment back
 
