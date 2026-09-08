@@ -60,6 +60,18 @@ the following is rendered from, so this list cannot drift from the gate:
 | `model` | a Model loaded through ContentManager.Load<Model>, whose mesh geometry lives in a VertexBuffer and an IndexBuffer the model owns, reached the back buffer through ModelMesh.Draw -- each of its two meshes painting its own colour on the pixels its own triangle covers, and neither on the other's |
 <!-- /generated-block:rasterizer-proofs -->
 
+A third lane, `tools/qualification/texture3d.sh`, qualifies the one capability
+neither of those renderers has: **volume storage**. `Texture3D` has two truthful
+answers — HEADLESS and SOFTWARE answer `NOT_SUPPORTED` on every admitted ABI and
+the suite asserts that refusal, and a CNA built with the desktop-core EasyGL
+profile keeps every voxel it is given — so both branches are gated and neither is
+a skip. Its GL stack is Xvfb plus Mesa llvmpipe, so no GPU is a prerequisite, and
+it has a registry of its own on the same terms:
+
+<!-- generated-block:texture3d-claim-kinds -->
+11 claims -- `construction`, `owned-device`, `whole-volume`, `box`, `color-only`, `box-shape`, `disposal`, `mip`, `game-device`, `effect-parameter` and `reach-refused`.
+<!-- /generated-block:texture3d-claim-kinds -->
+
 `docs/qualification.md` defines the claims and `docs/limitations.md` bounds
 them.
 

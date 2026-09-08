@@ -101,7 +101,8 @@ a single failure.
 | `range` — bad level, box past the edge, short array | pass | pass | pass |
 | `destroy` — destroy, then refuse every use of the handle | pass | pass | pass |
 | `volumes` — 32 volumes made, written and destroyed on one device | pass | pass | pass |
-| `churn` — **a second GraphicsDevice in one process** | **faults** | **faults** | **faults** |
+| `overlap` — four devices beside one that stays alive | pass | pass | pass |
+| `churn` — **a device created with none alive in between** | **faults** | **faults** | **faults** |
 
 ### 3.1 The voxel pattern is nonuniform on every axis
 
@@ -171,29 +172,62 @@ would answer XNA's number through the same code. The binding therefore reads the
 level count from `cna_texture3d_get_info` and never computes one, and the
 divergence is recorded in `docs/limitations.md` rather than asserted away.
 
-## 5. The second GraphicsDevice, which is why the lane is one per process
+## 5. EasyGL's video subsystem does not come back up
 
-`churn` creates a caller-owned `GraphicsDevice`, destroys it, and creates
-another. The second `cna_graphics_device_create` **segfaults**, on all three
-ABIs, with no Texture3D involved anywhere in the stage.
+**The first version of this section said "EasyGL cannot create a second
+GraphicsDevice in one process". That was measured, and it was wrong** — or
+rather, it was the coarse form of something narrower, and the narrower version is
+what the lane could be built on. It is recorded here in both forms because
+believing the coarse one cost a lane design.
 
-It is EasyGL's, not Texture3D's, and not the ABI's:
+Two stages, and the difference between them is the whole finding:
 
-| Renderer | second device in one process |
+| Stage | What it does | EasyGL |
+| --- | --- | --- |
+| `churn` | create a device, destroy it, create another — **no device alive in between** | **SIGSEGV inside the second create** |
+| `overlap` | create A, then B beside it, destroy B, create C **while A is still alive** | every one succeeds |
+
+So EasyGL is *not* limited to one device at a time. It brings its video subsystem
+down with the **last** device and cannot bring it back up. A process that never
+lets the live count reach zero uses the ordinary public API exactly as it would
+on any other renderer.
+
+It is the renderer's and not the ABI's or Texture3D's — no Texture3D appears in
+either stage:
+
+| Renderer | a device created across a gap |
 | --- | --- |
 | HEADLESS 0.23.0 | fine — four cycles, no fault |
 | SOFTWARE 0.23.0 | fine — four cycles, no fault |
-| OPENGL33 (EasyGL) | **SIGSEGV inside the second create** |
+| OPENGL33 (EasyGL) | **SIGSEGV inside the create** |
 
-Two consequences, both of which shape the closure rather than block it:
+Three consequences, all of which shape the closure rather than block it:
 
-* the EasyGL lane is **one device per process**, which is why the matrix runs one
-  stage per process and why the Lisp lane does the same. The ordinary suite —
-  which creates and destroys games hundreds of times in one image — must keep
-  running on HEADLESS, and does.
+* the matrix runs **one stage per process**, so a stage that faults names itself
+  rather than taking the rest with it;
+* the Lisp lane holds **one native device open for the whole process**
+  (`WITH-EASYGL-VIDEO-SUBSYSTEM`) and then uses the public API normally —
+  including `GraphicsAdapter.Adapters`, whose transient enumeration device would
+  otherwise take the subsystem down before the first real device was made. That
+  is what makes the caller-owned `GraphicsDevice` path provable here at all;
 * it is not a leak in the volume path. `volumes` makes, writes and destroys 32
   mipmapped volumes on **one live device** and the device then tears down
   cleanly, which is the teardown evidence this renderer can actually give.
+
+### 5.1 SBCL traps the floating-point exceptions Mesa raises
+
+A second thing this lane had to deal with, found the same way and unrelated to
+Texture3D. SBCL unmasks `invalid`, `overflow` and `divide-by-zero` by default;
+llvmpipe raises them in the ordinary course of rasterising; and the trap arrives
+as `FLOATING-POINT-INVALID-OPERATION` signalled from inside a foreign call —
+during `GraphicsAdapter.Adapters`, before any Texture3D exists. Masking them
+makes every one of these claims run.
+
+**The binding does not mask them for its callers**, and that is worth recording
+rather than fixing here: it is a question about every foreign call CNA-Lisp makes
+and not about this type. `docs/limitations.md` carries it and NEXT.md recommends
+it. The two renderers the ordinary suite uses never raise one, which is why it
+has never come up.
 
 ## 6. The routes, against the members
 
@@ -262,3 +296,9 @@ worth keeping:
   evidence too — it is asserted, not skipped.
 * a renderer that claims a capability still has to be measured. EasyGL's mip
   level count is not XNA's, and no capability flag would have said so.
+* **and a blocker measured coarsely is still a blocker measured wrongly.** "A
+  second GraphicsDevice faults" and "a device created after the last one was
+  destroyed faults" are different statements, the first would have forced the
+  lane onto a `Game` and given up the caller-owned path this type's ownership
+  claim needs, and only the second is true. That is the same mistake in miniature
+  as the one this whole audit exists to correct.

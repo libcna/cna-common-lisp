@@ -330,6 +330,11 @@ Microsoft XNA Framework 4.0 Windows runtime contract, over the CNA C ABI."
    ;; ownership lane below reuses rather than defining a second one.
    (:file "native/services")
    (:file "native/owned-graphics-device")
+   ;; Texture3D. **After native/owned-graphics-device**, whose MAKE-OWNED-DEVICE
+   ;; and WITH-OWNED-DEVICE it uses: a volume needs a device and the guards it
+   ;; asserts are per-profile, so a caller-owned device of a chosen profile is
+   ;; exactly the fixture, and no game is needed for any of them.
+   (:file "native/texture-3d")
    ;; GraphicsDeviceInformation, the mutable PreparingDeviceSettings event and
    ;; the manager's protected virtual surface. After native/services, whose
    ;; MANAGED-GAME fixture and stand-in service provider it reuses.

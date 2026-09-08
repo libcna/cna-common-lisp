@@ -6,6 +6,13 @@
 #               This is also where the *no-game* claims run: the storage lanes,
 #               and the caller-owned GraphicsDevice, which is the only graphics
 #               surface here that needs no `Game' at all.
+#   texture3d   OPENGL33 (EasyGL) under Xvfb and Mesa llvmpipe. The one lane
+#               here that needs a display, and it needs a *virtual* one --
+#               deliberately, so no GPU is a prerequisite. It proves the single
+#               capability the other two renderers do not have: volume storage.
+#               It does NOT run the suite, and it changes nothing about the two
+#               lanes below; adding a renderer must not make an existing gate
+#               conditional.
 #   rasterizer  SOFTWARE, a CPU rasteriser that needs no display and no Xvfb.
 #               Three separate proofs: a Clear reaches the back buffer and reads
 #               back; a SpriteBatch draw puts a generated opaque texture's own
@@ -118,6 +125,15 @@ env:
   # move it. bfc826e1 is what docs/qualification.md records for both 0.22.0 and
   # 0.23.0.
   SHARP_RUNTIME_REF: ${{ github.event.inputs.sharp_runtime_ref || 'bfc826e1fa7eef1adb36df1c64782e9939a0af37' }}
+  # The GL family, for the `texture3d' lane alone. CNA consumes easy-gl as a
+  # sibling checkout and easy-gl consumes meta-gl the same way, and CNA pins a
+  # revision of neither -- so, exactly as with sharp-runtime, the pairing is this
+  # workflow's to make and both halves are pinned rather than following a branch.
+  # These are the commits docs/texture3d-audit.md recorded its measurements
+  # against; a lane that followed `develop' would qualify whatever the branch
+  # happened to be that hour.
+  EASY_GL_REF: deda7a426c3c166c0e03a4790f1ede610e2e46fb
+  META_GL_REF: 20c8b2dc5bb80e32706784066db9fd9e15b3f46a
 
 jobs:
   native:
@@ -589,6 +605,227 @@ jobs:
   # against it. Its own job, so that a failure here cannot take down the lane
   # above: they support different claims and are allowed to disagree about
   # whether they are ready.
+  texture3d:
+    name: Volume storage on a software OpenGL stack
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout CNA-Lisp
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: cna-common-lisp
+
+      - name: Checkout CNA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: libcna/cna
+          ref: ${{ env.CNA_REF }}
+          path: cna
+
+      - name: Checkout sharp-runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: libcna/sharp-runtime
+          ref: ${{ env.SHARP_RUNTIME_REF }}
+          path: sharp-runtime
+
+      # EasyGL is a **sibling checkout**, not a submodule -- CNA's own
+      # RendererSelection.cmake says so and looks for `../easy-gl' relative to
+      # its own source directory -- and easy-gl looks for `../meta-gl' the same
+      # way. `git submodule update --init' fetches neither.
+      - name: Checkout easy-gl
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: libcna/easy-gl
+          ref: ${{ env.EASY_GL_REF }}
+          path: easy-gl
+
+      - name: Checkout meta-gl
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: libcna/meta-gl
+          ref: ${{ env.META_GL_REF }}
+          path: meta-gl
+
+      - name: Initialise exactly the CNA submodules this build needs
+        working-directory: cna
+        run: |
+          set -eu
+          paths="third_party/SDL third_party/SDL_image third_party/SDL_mixer third_party/draco"
+          # shellcheck disable=SC2086
+          git submodule update --init --jobs 4 $paths
+
+      # A pair is two commits, and this lane's is four: the GL family is two more
+      # sibling repositories that CNA pins no revision of either.
+      - name: Record the source commits
+        id: cna_source
+        run: |
+          set -eu
+          sha=$(git -C cna rev-parse HEAD)
+          easygl=$(git -C easy-gl rev-parse HEAD)
+          metagl=$(git -C meta-gl rev-parse HEAD)
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Texture3D lane"
+            echo
+            echo "| what | value |"
+            echo "| --- | --- |"
+            echo "| CNA commit | \`${sha}\` |"
+            echo "| sharp-runtime commit | \`$(git -C sharp-runtime rev-parse HEAD)\` |"
+            echo "| easy-gl commit | \`${easygl}\` |"
+            echo "| meta-gl commit | \`${metagl}\` |"
+            echo "| renderer | \`OPENGL33\` (EasyGL, desktop core) |"
+            echo "| GL stack | Xvfb + Mesa llvmpipe, no GPU |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install build and Lisp toolchains
+        run: |
+          set -eu
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build build-essential ccache pkg-config python3 \
+            xvfb mesa-utils libgl1-mesa-dri
+          packages="libasound2-dev libpulse-dev libjack-dev libpipewire-0.3-dev
+                    libsamplerate0-dev libx11-dev libxext-dev libxrandr-dev
+                    libxcursor-dev libxi-dev libxfixes-dev libxss-dev libxtst-dev
+                    libxrender-dev libxkbcommon-dev libwayland-dev wayland-protocols
+                    libdecor-0-dev libegl-dev libgles-dev libgl-dev libdrm-dev
+                    libgbm-dev libdbus-1-dev libudev-dev libibus-1.0-dev
+                    libavcodec-dev libavformat-dev libavutil-dev libswresample-dev
+                    libswscale-dev"
+          # shellcheck disable=SC2086
+          sudo apt-get install -y --no-install-recommends $packages || {
+            for package in $packages; do
+              sudo apt-get install -y --no-install-recommends "$package" \
+                || echo "note: $package is not available on this runner image"
+            done
+          }
+
+      - name: Install the reference SBCL
+        uses: ./cna-common-lisp/.github/actions/reference-sbcl
+
+      - name: Cache key for the vendored SDL install root
+        id: sdlkey
+        working-directory: cna
+        run: |
+          set -eu
+          key=$(git submodule status third_party/SDL third_party/SDL_image third_party/SDL_mixer \
+                  | awk '{print $1}' | tr -d ' -+U' | tr '\n' '-')
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+
+      - name: Cache the vendored SDL install root
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: cna/.sdl-prebuilt-*
+          key: cna-sdl-${{ runner.os }}-${{ steps.sdlkey.outputs.key }}
+
+      - name: Cache ccache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ccache
+          key: cna-ccache-opengl33-${{ runner.os }}-${{ steps.cna_source.outputs.sha }}
+          restore-keys: |
+            cna-ccache-opengl33-${{ runner.os }}-
+            cna-ccache-${{ runner.os }}-
+
+      # OPENGL33 is the identity cmake/RendererRegistry.cmake maps to
+      # EasyGL|GetDescriptorOpenGL33 -- the desktop-core profile. OPENGLES2 and
+      # WEBGL1 are deliberately not used: EasyGL reports Texture3D unsupported for
+      # the ES2 API generation, so a refusal there would be the profile's answer
+      # rather than the renderer's.
+      - name: Build an OPENGL33 CNA C API
+        working-directory: cna
+        env:
+          CCACHE_MAXSIZE: 2G
+        run: |
+          set -eu
+          cmake -S . -B build-opengl33 -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCNA_BUILD_C_API=ON \
+            -DCNA_BUILD_TESTS=OFF \
+            -DCNA_BUILD_EXAMPLES=OFF \
+            -DCNA_PLATFORM=SDL3 \
+            -DCNA_AUDIO_PLATFORM=SDL3 \
+            -DCNA_GRAPHICS_RENDERER=OPENGL33 \
+            -DCNA_SHARP_RUNTIME_ROOT="${GITHUB_WORKSPACE}/sharp-runtime"
+          cmake --build build-opengl33 --target cna_c_api -j"$(nproc)"
+          echo "CNA_NATIVE_LIBRARY=$(readlink -f build-opengl33/modules/c-api/libcna_c_api.so)" \
+            >> "$GITHUB_ENV"
+
+      # The C-level measurement first, with no binding in the path: it is what
+      # decides whether the capability exists at all, and a Lisp failure after it
+      # means something different from a Lisp failure instead of it.
+      - name: The native volume-transfer matrix
+        working-directory: cna-common-lisp
+        run: |
+          set -eu
+          tools/qualification/texture3d-matrix.sh "$CNA_NATIVE_LIBRARY"
+
+      # And the negative branch, which is the claim the other two lanes make and
+      # this one must not quietly contradict.
+      - name: HEADLESS and SOFTWARE still refuse, on this ABI
+        working-directory: cna-common-lisp
+        run: |
+          set -eu
+          mkdir -p build-probe
+          cc -O1 -o build-probe/texture3d-support-probe \
+             -I "${GITHUB_WORKSPACE}/cna/modules/c-api/include" \
+             tools/native-abi/texture3d-support-probe.c -ldl
+          echo "the EasyGL library, which must SUCCEED:"
+          xvfb-run -a --server-args="-screen 0 1280x800x24" \
+            ./build-probe/texture3d-support-probe "$CNA_NATIVE_LIBRARY" \
+            | tee /tmp/easygl-support.log
+          grep -q 'texture3d_create -> 0 (SUCCESS)' /tmp/easygl-support.log
+
+      - name: Cache Quicklisp
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/quicklisp
+            ~/.cache/common-lisp
+          key: quicklisp-${{ runner.os }}-reference-2026-01-01-${{ hashFiles('cna-common-lisp/cna-common-lisp.asd') }}
+          restore-keys: quicklisp-${{ runner.os }}-reference-2026-01-01-
+
+      - name: Install Quicklisp and the pinned dependencies
+        run: |
+          if [ ! -f "$HOME/quicklisp/setup.lisp" ]; then
+            curl -sSLo /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
+            sbcl --non-interactive --load /tmp/quicklisp.lisp \
+                 --eval '(quicklisp-quickstart:install :path "~/quicklisp/")'
+          fi
+          sbcl --non-interactive --load ~/quicklisp/setup.lisp \
+               --eval '(ql-dist:install-dist "http://beta.quicklisp.org/dist/quicklisp/2026-01-01/distinfo.txt" :replace t :prompt nil)' \
+               --eval '(ql:quickload (list :cffi :babel :bordeaux-threads :trivial-gray-streams :fiveam))'
+
+      - name: Build the by-value aggregate probe
+        working-directory: cna-common-lisp
+        run: tools/native-abi/verify.sh "${GITHUB_WORKSPACE}/cna/modules/c-api/include"
+        env:
+          CNA_ABI_BASELINE: ${{ github.workspace }}/cna/tools/c-api/abi_baseline.json
+
+      # Every claim by name. The lane refuses a run that produces a claim its
+      # registry does not name, and one that fails to produce one it does.
+      - name: Texture3D qualification, the TEXTURE3D_TRANSFER capability
+        working-directory: cna-common-lisp
+        env:
+          CNA_LISP_VALUEPROBE: ${{ github.workspace }}/cna-common-lisp/build-probe/libcna-lisp-valueprobe.so
+        run: tools/qualification/texture3d.sh "$CNA_NATIVE_LIBRARY"
+
+      - name: Record what this lane proved
+        if: always()
+        working-directory: cna-common-lisp
+        run: |
+          set -eu
+          {
+            echo
+            echo '```'
+            cat build-probe/texture3d-*-volume.log 2>/dev/null \
+              | grep '^texture3d : ' || echo "no claims were recorded"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
   rasterizer:
     name: Real rasterization, and pixels read back
     runs-on: ubuntu-24.04

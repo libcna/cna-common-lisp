@@ -180,8 +180,15 @@ which one XNA would have named first."
 (defmethod initialize-instance :after ((texture texture-3d)
                                        &key graphics-device width height depth
                                             (mip-map nil) (format :color))
-  "Texture3D(GraphicsDevice, Int32, Int32, Int32, Boolean, SurfaceFormat)."
-  (when (and graphics-device (zerop (cna-lisp.internal:handle-of texture)))
+  "Texture3D(GraphicsDevice, Int32, Int32, Int32, Boolean, SurfaceFormat).
+
+**A NIL device reaches XNA's null check rather than skipping construction**, and
+that is the one place this differs in shape from TEXTURE-2D and TEXTURE-CUBE.
+Those two guard on `graphics-device' being given, because a content-loaded
+texture is adopted through the same constructor with a handle and no device.
+`Texture3D' has no such path -- no content reader here makes one -- so a missing
+device is what XNA says it is: ArgumentNullException(\"graphicsDevice\")."
+  (when (zerop (cna-lisp.internal:handle-of texture))
     (let ((operation "make-instance 'texture-3d"))
       (%check-volume-construction graphics-device width height depth format operation)
       (let ((device-handle (device-handle-for-child graphics-device operation)))

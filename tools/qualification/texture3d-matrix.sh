@@ -15,10 +15,13 @@
 # measurement here:
 #
 #   * a stage that faults must name itself rather than take the rest with it, and
-#   * EasyGL cannot create a second GraphicsDevice in one process -- the second
-#     `cna_graphics_device_create' segfaults after the first device is destroyed.
-#     That is a renderer defect, not a Texture3D one: HEADLESS and SOFTWARE churn
-#     devices happily. The `churn' stage exists to keep saying so, and it is the
+#   * EasyGL cannot create a GraphicsDevice once the **last** one has been
+#     destroyed -- `cna_graphics_device_create' segfaults across such a gap,
+#     because the video subsystem comes down with the last device and does not go
+#     back up. It is *not* limited to one device at a time: the `overlap' stage
+#     creates and destroys four devices beside one that stays alive and every one
+#     of them works. HEADLESS and SOFTWARE survive the gap too, so this is the
+#     renderer's and not the ABI's. The `churn' stage keeps saying so and is the
 #     one stage expected to fail.
 #
 # The GL stack is Xvfb plus Mesa's llvmpipe, forced with `LIBGL_ALWAYS_SOFTWARE'.
@@ -33,7 +36,7 @@ HEADERS=${CNA_HEADERS:-$HOME/deps/cna-c-abi-0.21.0/include}
 
 # The stages, in the order a reader wants them: can it exist, does it keep what
 # it is given, does it keep the rest, does it do so per level, and does it let go.
-STAGES="create whole box mip depth-levels bytes range destroy volumes"
+STAGES="create whole box mip depth-levels bytes range destroy volumes overlap"
 # Measured separately, because it is expected to fault and its failing is the
 # result rather than a regression.
 FAULT_STAGES="churn"
@@ -106,11 +109,12 @@ for library in "$@"; do
         fi
     done
     for stage in $FAULT_STAGES; do
-        echo "--- $stage (expected to fault on EasyGL)"
+        echo "--- $stage (a device created across a gap; expected to fault on EasyGL)"
         if run_stage "$library" "$stage"; then
-            echo "  NOTE: this renderer survived a second device in one process."
+            echo "  NOTE: this renderer brought its video subsystem back up."
         else
-            echo "  as expected: a second GraphicsDevice in one process did not survive."
+            echo "  as expected: a device created after the last one was destroyed"
+            echo "  did not survive. See the 'overlap' stage for what does work."
         fi
     done
     echo

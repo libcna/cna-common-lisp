@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "description": "The Texture3D claims the EasyGL lane requires, and what each one claims. This file is the single source of truth for both the gate and the prose: tools/qualification/texture3d.sh requires exactly these kinds and refuses a run that produces a kind not listed here, and tools/qualification/verify-numbers.py renders the count and the list into the documents. A claim added to the suite and not to this file is not required by the lane and does not appear in the prose; one added here and not to the suite fails the lane. The shape is rasterizer-proofs.json's, deliberately, because the failure it prevents is the same one: a hand-written count of kinds in three places that drift apart. Each claim names the process group that produces it -- EasyGL cannot create a second GraphicsDevice in one process, so a group is one device and the groups are the lane's units.",
+  "capability": "TEXTURE3D_TRANSFER",
+  "capability_description": "A CNA build whose renderer has volume storage, so that cna_texture3d_create succeeds. The HEADLESS and SOFTWARE renderers the ordinary qualification uses do not have it and answer CNA_RESULT_NOT_SUPPORTED on every admitted ABI; the ordinary suite asserts that refusal as a result. This lane is the other branch and requires a desktop-core EasyGL build. Neither branch is optional and neither is a skip.",
+  "proofs": [
+    {
+      "kind": "construction",
+      "group": "volume",
+      "claim": "a 4x3x2 Color volume was created on a caller-owned HiDef device, and its width, height, depth, level count and format were read back out of cna_texture3d_get_info rather than assumed from what was asked for"
+    },
+    {
+      "kind": "owned-device",
+      "group": "volume",
+      "claim": "GraphicsResource.GraphicsDevice answered the EQ same caller-owned device object the constructor was given, in a process with no game in it -- XNA's _parent, read with a bare ldfld, and not a lookup of the active game"
+    },
+    {
+      "kind": "whole-volume",
+      "group": "volume",
+      "claim": "every voxel of level 0 round-tripped byte for byte through SetData and GetData, over a pattern whose R, G and B each vary on their own axis, so a transposed axis or a pitch mistake could not have passed"
+    },
+    {
+      "kind": "box",
+      "group": "volume",
+      "claim": "a sub-volume write reached exactly its own voxels: read back through the box it named, and read back again over the whole level, where the voxels outside it were still the seed. Two claims, and the second is the one a wholesale rewrite would fail"
+    },
+    {
+      "kind": "color-only",
+      "group": "volume",
+      "claim": "a transfer of non-COLOR elements was refused with the reason, rather than reinterpreted as CNA_Color -- the narrowing that makes the six transfer members partial, asserted rather than described"
+    },
+    {
+      "kind": "box-shape",
+      "group": "volume",
+      "claim": "naming some of the seven box coordinates was refused: XNA's third overload takes all seven or none, because they are seven parameters of one overload rather than a nullable region"
+    },
+    {
+      "kind": "disposal",
+      "group": "volume",
+      "claim": "after Dispose the five dimension members and GraphicsDevice still answered, as XNA's bare managed-field reads do, and both transfers refused, as CopyData's CheckDisposed does. Not every getter refusing is the point"
+    },
+    {
+      "kind": "mip",
+      "group": "mip",
+      "claim": "a mipmapped 8x4x3 volume reported its level count, every level CNA claims exists round-tripped at that level's own dimensions, and one past the last was refused. The count itself is recorded and not asserted against XNA: EasyGL computes it from width and height where XNA's D3D9 chain uses all three, and docs/texture3d-audit.md has the divergence"
+    },
+    {
+      "kind": "game-device",
+      "group": "game-device",
+      "claim": "a Texture3D made on a Game's own GraphicsDevice answered that device from GraphicsResource.GraphicsDevice, transferred its voxels, and was disposed with the game -- the other half of the dual-device ownership model, with no special case back to the active game"
+    },
+    {
+      "kind": "effect-parameter",
+      "group": "game-device",
+      "claim": "EffectParameter.SetValue(Texture3D) then GetValueTexture3D answered the same object; the Texture2D and TextureCube identities stayed empty, because CNA's four texture identities are independent storage; and clearing cleared all of them, because XNA has one texture value"
+    },
+    {
+      "kind": "reach-refused",
+      "group": "reach",
+      "claim": "a Reach device refused a Texture3D on a renderer that HAS volume storage -- so the refusal is XNA's ProfileCapabilities, whose Reach MaxVolumeExtent is 0, and not the renderer's. CNA creates one here, which is why the guard is the binding's"
+    }
+  ]
+}

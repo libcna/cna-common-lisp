@@ -151,6 +151,108 @@ rather than for want of a stream. `TEXTURE-2D-FROM-PNG-BYTES` and
 `TEXTURE-2D-FROM-PNG-FILE` remain declared extensions, now as conveniences beside
 the contract members rather than as substitutes for them.
 
+## Texture3D needs a renderer with volume storage, and two of them have none
+
+`Texture3D`'s constructor and its `Width`, `Height` and `Depth` are complete; its
+three `SetData` and three `GetData` overloads are **partial**. There are four
+separate things to say and they are four different kinds of limit.
+
+### The two qualification renderers cannot make one, and that is a result
+
+`cna_texture3d_create` creates a volume texture "when the selected renderer
+supports volume storage", and neither `HEADLESS` nor `SOFTWARE` does:
+`CNA_RESULT_NOT_SUPPORTED` on all three admitted ABIs, six combinations and one
+answer, re-run on 2026-09-08. **The binding reports that as a condition and the
+suite asserts it**, so a CNA whose `HEADLESS` renderer grew volume storage would
+fail a test rather than quietly change what is claimed here.
+
+The positive branch is `tools/qualification/texture3d.sh`, against a CNA built
+with the desktop-core EasyGL profile and run on Mesa llvmpipe under Xvfb. Both
+branches are evidence; neither is a skip. `docs/texture3d-audit.md` is the audit.
+
+For a long time the first fact alone was recorded as "CNA cannot create a
+Texture3D", which is not what it says. **Re-measure a blocker against a build
+that has the capability before believing it.**
+
+### The transfers are Color-only, and CNA is why
+
+XNA's `SetData<T>` and `GetData<T>` accept any blittable `T` whose size divides
+the surface format's. From `Texture3D::GetAndValidateSizes<T>` in the pinned
+Graphics assembly, exactly: `sizeof(T)` equal to the format's byte size is
+accepted, smaller and dividing it exactly is accepted, and anything else throws
+`ArgumentException(InvalidDataSize)`. A `Color` volume there takes four-, two-
+and one-byte elements.
+
+`cna_texture3d_set_data` takes `const CNA_Color*` and `cna_texture3d_get_data` a
+`CNA_Color*`, with a capacity counted in elements and **no texel-kind argument
+anywhere** — unlike `cna_texture2d_set_data`, whose `CNA_TEXTURE_DATA_*` argument
+is exactly what lets `Texture2D` project five element types above. This is the
+same narrowing `TextureCube` has and for the same reason, and an element type
+beyond `COLOR` is refused by name rather than reinterpreted.
+
+**`cna_texture3d_set_data_bytes` is the one thing `TextureCube` has no equivalent
+of**, and it does work: a `SetDataPointerEXT` route taking tightly packed raw
+bytes, which the probe's `bytes` stage proves lands as exactly the voxels `Color`
+would. It is **upload only**. There is no byte read route, so using it to widen
+`SetData` alone would leave a volume that can be written as bytes and never read
+back as bytes — which is not what XNA's symmetric generic pair means. Both halves
+stay `Color`, and the asymmetry is recorded here rather than half-resolved.
+
+### The profile guards are the binding's, because CNA applies none of them
+
+XNA's constructor refuses on the device's `ProfileCapabilities` before it touches
+the device, and CNA does not. Measured on all three admitted ABIs against a
+renderer that *has* volume storage, so the answers are not the renderer standing
+in for a guard:
+
+| | XNA | CNA |
+| --- | --- | --- |
+| a `Texture3D` on the **Reach** profile | `NotSupportedException` — `MaxVolumeExtent` is 0 | **created** |
+| 257 wide on HiDef | `NotSupportedException` — `MaxVolumeExtent` is 256 | **created** |
+| `Dxt1`, outside `ValidVolumeFormats` | `NotSupportedException` | `NOT_SUPPORTED` |
+| zero or negative extents | `ArgumentOutOfRangeException` | refused |
+
+So the first two guards live in this binding or nowhere, and the
+`ProfileCapabilities` values they read are the pinned ones. `Texture3D` is a
+**HiDef-only type**, which is easy to miss because CNA will happily make one on a
+Reach device.
+
+The other direction is a narrowing rather than a missing guard: XNA's HiDef
+`ValidVolumeFormats` holds fifteen entries and CNA answers `NOT_SUPPORTED` for
+every one but `Color` — `Bgr565` and `Rgba1010102` were measured refused. The
+constructor passes the format through and reports CNA's refusal, because a
+format XNA accepts is not one this binding should pretend to reject.
+
+### EasyGL's mip level count is not XNA's, where depth is the largest axis
+
+XNA passes `Levels = 0` to `IDirect3DDevice9::CreateVolumeTexture`, which is
+D3D9's request for a complete chain down to 1×1×1, so its level count is
+`1 + floor(log2(max(width, height, depth)))`. EasyGL computes it from width and
+height only, citing FNA in a source comment. Measured: 8×4×3 gives 4 on both, and
+2×2×8 gives 4 in XNA and **2** in CNA. Per-level dimensions are not in dispute —
+level 1 of the 2×2×8 volume measures 1×1×4, so depth does halve per level.
+
+**This is a renderer property, not a binding narrowing.** `LEVEL-COUNT` is read
+from `cna_texture3d_get_info` and never computed here, so a CNA on a renderer
+that counts the way D3D9 does would answer XNA's number through the same code.
+
+### EasyGL and SBCL: two things the lane has to do that the binding does not
+
+Both were found qualifying this type and neither is about it.
+
+* **SBCL traps the floating-point exceptions Mesa raises.** SBCL unmasks
+  `invalid`, `overflow` and `divide-by-zero` by default, llvmpipe raises them in
+  the ordinary course of rasterising, and the trap arrives as a condition from
+  inside a foreign call — during `GraphicsAdapter.Adapters`, before any Texture3D
+  exists. The lane masks them. **The binding does not mask them for its callers**,
+  which is a question about every foreign call CNA-Lisp makes rather than about
+  this type, and the two renderers the ordinary suite uses never raise one.
+* **EasyGL's video subsystem does not come back up.** It comes down with the
+  *last* `GraphicsDevice` and `cna_graphics_device_create` segfaults across a gap
+  with none alive. It is not a one-device-at-a-time limit — four devices created
+  and destroyed beside one that stays alive all work — so the lane holds one open
+  for the whole process and then uses the public API normally.
+
 ## Cube render targets exist, and only some renderers will bind one
 
 `RenderTargetCube` and `RenderTargetBinding` complete the render-target family,

@@ -95,6 +95,18 @@ def rasterizer_proofs():
     return load("tools/qualification/rasterizer-proofs.json")["proofs"]
 
 
+def texture3d_claims():
+    """The Texture3D claims the EasyGL lane requires, from its one registry.
+
+    The same shape as `rasterizer_proofs`, and for the same reason:
+    `tools/qualification/texture3d-proofs.json` is a policy statement about what
+    the lane demands, `texture3d.sh` enforces it in both directions, and
+    rendering the count and the table from it is what stops a second copy of the
+    list appearing in the prose. The rasterizer lane learnt that the hard way.
+    """
+    return load("tools/qualification/texture3d-proofs.json")["proofs"]
+
+
 def loadable_asset_types():
     """The asset types `ContentManager.Load<T>` has a route for.
 
@@ -125,6 +137,7 @@ def loadable_asset_types():
 def facts_of(abi, compat):
     return {
         "rasterizer proof count": len(rasterizer_proofs()),
+        "texture3d claim count": len(texture3d_claims()),
         "loadable asset types": len(loadable_asset_types()),
         "high-value frontier members": sum(
             1 for category in load(
@@ -320,6 +333,19 @@ def block_rasterizer_proof_kinds(abi, compat):
     return "%d kinds -- %s and %s." % (len(kinds), ", ".join(kinds[:-1]), kinds[-1])
 
 
+def block_texture3d_claims(abi, compat):
+    lines = ["| Claim | Process group | What it claims |", "| --- | --- | --- |"]
+    for claim in texture3d_claims():
+        lines.append("| `%s` | `%s` | %s |"
+                     % (claim["kind"], claim["group"], claim["claim"]))
+    return "\n".join(lines)
+
+
+def block_texture3d_claim_kinds(abi, compat):
+    kinds = ["`%s`" % claim["kind"] for claim in texture3d_claims()]
+    return "%d claims -- %s and %s." % (len(kinds), ", ".join(kinds[:-1]), kinds[-1])
+
+
 def block_loadable_asset_types(abi, compat):
     lines = ["| Asset type | `load-asset` argument |", "| --- | --- |"]
     for xna, lisp in loadable_asset_types():
@@ -379,6 +405,8 @@ BLOCKS = {
     "selection": block_selection,
     "rasterizer-proofs": block_rasterizer_proofs,
     "rasterizer-proof-kinds": block_rasterizer_proof_kinds,
+    "texture3d-claims": block_texture3d_claims,
+    "texture3d-claim-kinds": block_texture3d_claim_kinds,
     "loadable-asset-types": block_loadable_asset_types,
     "loadable-asset-type-names": block_loadable_asset_type_names,
     "native-abi-headline": block_native_abi_headline,
@@ -485,6 +513,17 @@ def main():
                 "docs/qualification.md: the rasterizer proof %r is required by "
                 "tools/qualification/rasterizer-proofs.json and no row of the proof "
                 "table describes it" % proof["kind"])
+
+    # The same rule for the Texture3D lane, and it is the same failure it
+    # prevents: a claim added to the registry and to the suite, with the count
+    # marker moving, and the table that says what the claim actually does never
+    # growing the row.
+    for claim in texture3d_claims():
+        if ("| `%s` |" % claim["kind"]) not in described:
+            problems.append(
+                "docs/qualification.md: the Texture3D claim %r is required by "
+                "tools/qualification/texture3d-proofs.json and no row of the claim "
+                "table describes it" % claim["kind"])
 
     if compat["totals"]["disagreement_total"]:
         problems.append("the compatibility report has %d disagreement diagnostics"

@@ -28,7 +28,7 @@
                     (#:int   #:cna-lisp.internal)
                     (#:ffi   #:cna-lisp.internal.ffi))
   (:shadow #:run-all-tests)
-  (:export #:run-all-tests #:all-tests))
+  (:export #:run-all-tests #:all-tests #:run-texture3d-claim))
 
 (in-package #:cna-common-lisp.tests)
 

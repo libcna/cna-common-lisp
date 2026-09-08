@@ -377,6 +377,91 @@ renderer that is actually present and asserts the truth for it, the runner print
 one line per proof that was obtained, and `rasterizer.sh` fails when a required
 proof is absent.
 
+## The EasyGL lane, which is the third renderer and one capability
+
+| Lane | Renderer | What it proves |
+| --- | --- | --- |
+| `Texture3D` | `OPENGL33` (EasyGL) | volume storage keeps the voxels it is given: <!-- generated:texture3d claim count=11 --> claims, on a software OpenGL stack. **Nothing else** — it does not run the suite |
+
+`tools/qualification/texture3d.sh` exists because `Texture3D` has **two truthful
+answers and the ordinary lanes can only give one of them**. `HEADLESS` and
+`SOFTWARE` have no volume storage, `cna_texture3d_create` answers
+`CNA_RESULT_NOT_SUPPORTED` on every admitted ABI, and the suite asserts that
+refusal as a result rather than skipping it. This lane is the positive branch and
+its capability has a name, `TEXTURE3D_TRANSFER`, so that a run which does not have
+it stands the claims down out loud instead of quietly requiring less.
+
+It does **not** replace or modify the two native lanes: they run unchanged on the
+renderers they always ran on. Adding a renderer must not make an existing gate
+conditional, so nothing about `Native` or `Rasterizer` moved.
+
+**The GL stack is deliberately not a GPU.** Xvfb plus Mesa's llvmpipe, with
+`LIBGL_ALWAYS_SOFTWARE=1` and `GALLIUM_DRIVER=llvmpipe`, so the evidence is about
+a software OpenGL implementation any CI machine can reproduce — and where a card
+is present it is kept out of the answer. Measured: `OpenGL 4.5 (Core Profile)
+Mesa 25.0.7`, renderer `llvmpipe (LLVM 19.1.7, 256 bits)`.
+
+**One claim group per process, and two things wrapped around each group.** Both
+are properties of driving a GL renderer from SBCL rather than anything about
+`Texture3D`, and `docs/texture3d-audit.md` measures both: EasyGL's video
+subsystem comes down with the last `GraphicsDevice` and cannot come back up, so
+the lane holds one open for the whole process; and SBCL traps the floating-point
+exceptions Mesa raises, so the lane masks them.
+
+<!-- generated-block:texture3d-claim-kinds -->
+11 claims -- `construction`, `owned-device`, `whole-volume`, `box`, `color-only`, `box-shape`, `disposal`, `mip`, `game-device`, `effect-parameter` and `reach-refused`.
+<!-- /generated-block:texture3d-claim-kinds -->
+
+<!-- generated-block:texture3d-claims -->
+| Claim | Process group | What it claims |
+| --- | --- | --- |
+| `construction` | `volume` | a 4x3x2 Color volume was created on a caller-owned HiDef device, and its width, height, depth, level count and format were read back out of cna_texture3d_get_info rather than assumed from what was asked for |
+| `owned-device` | `volume` | GraphicsResource.GraphicsDevice answered the EQ same caller-owned device object the constructor was given, in a process with no game in it -- XNA's _parent, read with a bare ldfld, and not a lookup of the active game |
+| `whole-volume` | `volume` | every voxel of level 0 round-tripped byte for byte through SetData and GetData, over a pattern whose R, G and B each vary on their own axis, so a transposed axis or a pitch mistake could not have passed |
+| `box` | `volume` | a sub-volume write reached exactly its own voxels: read back through the box it named, and read back again over the whole level, where the voxels outside it were still the seed. Two claims, and the second is the one a wholesale rewrite would fail |
+| `color-only` | `volume` | a transfer of non-COLOR elements was refused with the reason, rather than reinterpreted as CNA_Color -- the narrowing that makes the six transfer members partial, asserted rather than described |
+| `box-shape` | `volume` | naming some of the seven box coordinates was refused: XNA's third overload takes all seven or none, because they are seven parameters of one overload rather than a nullable region |
+| `disposal` | `volume` | after Dispose the five dimension members and GraphicsDevice still answered, as XNA's bare managed-field reads do, and both transfers refused, as CopyData's CheckDisposed does. Not every getter refusing is the point |
+| `mip` | `mip` | a mipmapped 8x4x3 volume reported its level count, every level CNA claims exists round-tripped at that level's own dimensions, and one past the last was refused. The count itself is recorded and not asserted against XNA: EasyGL computes it from width and height where XNA's D3D9 chain uses all three, and docs/texture3d-audit.md has the divergence |
+| `game-device` | `game-device` | a Texture3D made on a Game's own GraphicsDevice answered that device from GraphicsResource.GraphicsDevice, transferred its voxels, and was disposed with the game -- the other half of the dual-device ownership model, with no special case back to the active game |
+| `effect-parameter` | `game-device` | EffectParameter.SetValue(Texture3D) then GetValueTexture3D answered the same object; the Texture2D and TextureCube identities stayed empty, because CNA's four texture identities are independent storage; and clearing cleared all of them, because XNA has one texture value |
+| `reach-refused` | `reach` | a Reach device refused a Texture3D on a renderer that HAS volume storage -- so the refusal is XNA's ProfileCapabilities, whose Reach MaxVolumeExtent is 0, and not the renderer's. CNA creates one here, which is why the guard is the binding's |
+<!-- /generated-block:texture3d-claims -->
+
+The registry is `tools/qualification/texture3d-proofs.json` and it is the single
+source of truth in both directions, exactly as the rasterizer's is: the lane
+requires each kind by name and refuses a run that produces a kind the registry
+does not name, and `verify-numbers.py` renders the count and the table above from
+the same file — and requires a row of the table below describing each kind, so a
+claim can never join the gate without joining the prose.
+
+| Claim | What is actually done | What it establishes |
+| --- | --- | --- |
+| `construction` | make a 4×3×2 `Color` volume on a caller-owned HiDef device and read `Width`, `Height`, `Depth`, `LevelCount` and `Format` back | the type exists on a renderer with volume storage, and its five dimension members are the *granted* values `cna_texture3d_get_info` reports rather than the ones asked for. Three different extents, so a transposed pair would show |
+| `owned-device` | compare `GraphicsResource.GraphicsDevice` against the device object the constructor was given, `EQ` | **the resource remembers the object**, which is XNA's `_parent` read with a bare `ldfld`. In a process with no `Game` in it at all, so nothing could have been answered by looking one up |
+| `whole-volume` | `SetData` the whole of level 0 and `GetData` it back, over `R = 16+40x`, `G = 16+40y`, `B = 16+40z`, `A = 255` | **the voxels survive**, byte for byte. The pattern varies on all three axes independently, so a transposed axis, a reversed slice or a row- or slice-pitch mistake cannot round-trip by accident |
+| `box` | seed the level, write `x ∈ [1,3), y ∈ [1,3), z ∈ [1,2)` with a different pattern, read that box back, then read the **whole level** back and check every voxel | **two claims and the second is the discriminating one**: inside the box the patch, outside it the seed unmoved. A sub-volume write that quietly rewrote the level would pass the first check and fail the second |
+| `color-only` | offer a sequence of `(unsigned-byte 8)` elements to `SetData` | the narrowing that makes the six transfer members partial is **refused by name with the reason**, not reinterpreted as `CNA_Color`. XNA's generic pair is broader; CNA's routes take `CNA_Color` with no texel-kind argument |
+| `box-shape` | pass `:LEVEL` and `:LEFT` and none of the other five box coordinates | a partial box is refused: XNA's third overload takes all seven together, because they are seven parameters of one overload and not a nullable region. Accepting a subset would invent an overload XNA has not got |
+| `disposal` | `Dispose`, then read all five dimension members and `GraphicsDevice`, then try both transfers | **not every getter refuses.** `Width`, `Height`, `Depth`, `LevelCount` and `Format` are bare managed-field reads in the pinned IL with no `CheckDisposed`, so they answer; `CopyData` calls `CheckDisposed` first, so the transfers refuse |
+| `mip` | make a mipmapped 8×4×3 volume, transfer every level CNA says it has at that level's own dimensions, then try one past the last | every allocated level is reachable and one past it is not. **The level count is recorded, not asserted against XNA**: EasyGL computes it from width and height where XNA's D3D9 chain uses all three, and `docs/texture3d-audit.md` measures the divergence |
+| `game-device` | build the same volume inside a `Game`'s `LoadContent`, transfer its voxels, compare `GraphicsResource.GraphicsDevice` against the game's device | the other half of the dual-device ownership model. The native owner differs — a game's device makes the *game* the owner — and the public answer is still the device object, with no special case back to the active game |
+| `effect-parameter` | set the volume on a parameter declared `TEXTURE-3D` and read it back; call `GetValueTexture2D` on it; then set it on a parameter declared `TEXTURE` and read all three getters | `GetValueTexture3D` answers **the same object**, `GetValueTexture2D` refuses on a `TEXTURE-3D` parameter as XNA's IL refuses it, and on a `TEXTURE` parameter the other two identities stay empty — which is CNA's four texture slots being independent storage, provable only where all three getters are legal |
+| `reach-refused` | ask a **Reach** device for a volume, on a renderer that has volume storage | the refusal is **XNA's `ProfileCapabilities`**, whose Reach `MaxVolumeExtent` is 0, and not the renderer's. CNA creates one here, which is why the guard is the binding's or nobody's |
+
+### What is not in the EasyGL lane
+
+**Sampling.** Every claim above is about voxel *transfer* — what `SetData` wrote
+and `GetData` read. EasyGL has `BindTexture3D` and advertises the capability, and
+nothing here draws with a volume or samples one from a shader. No selected member
+of `Texture3D` needs it: the type's eleven members are a constructor, three
+extents and six transfers. `EffectParameter.GetValueTexture3D` is about the
+parameter's stored object identity and not about what a pass does with it.
+
+**The suite.** This lane runs four focused claim groups, not
+`asdf:test-system`. A suite run creates and destroys devices hundreds of times,
+which is precisely what this renderer cannot survive.
+
 ### What is not in the rasterizer lane
 
 **Every draw shape but the ones above.** Each proof is one shape. The sprite

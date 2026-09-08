@@ -33,10 +33,20 @@
  *                outside ValidVolumeFormats, and two that are inside it
  *   guards-reach the same on Reach, whose MaxVolumeExtent is 0 in XNA -- so
  *                every Texture3D is NotSupportedException there
- *   churn        a second GraphicsDevice in the same process. **This stage is
- *                expected to fault on EasyGL** and is here to say so with a
- *                signal rather than to be believed: it is why the EasyGL lane is
- *                one device per process. HEADLESS and SOFTWARE survive it.
+ *   overlap      a second GraphicsDevice created **while the first is still
+ *                alive**, then a third after the second is destroyed. Works
+ *                everywhere, EasyGL included.
+ *   churn        a device created after the last one was destroyed -- a *gap*
+ *                with no device alive in it. **This stage is expected to fault
+ *                on EasyGL** and is here to say so with a signal rather than to
+ *                be believed. HEADLESS and SOFTWARE survive it.
+ *
+ *                Those two together are the rule, and the difference between
+ *                them matters: EasyGL is not limited to one device per process,
+ *                it cannot bring its video subsystem back up once the last
+ *                device has taken it down. So a process that keeps one device
+ *                alive throughout can create and destroy as many others as it
+ *                likes, which is exactly what the Lisp lane does.
  *
  * The voxel pattern is deliberately nonuniform on every axis --
  *
@@ -575,11 +585,12 @@ static void stage_volumes(void) {
     okr("graphics_device_destroy", device_destroy(device));
 }
 
-/* The second device. Reported rather than asserted: on EasyGL this faults, and a
- * fault is the measurement. The exit status is what the matrix script reads. */
+/* A device created after the last one was destroyed. Reported rather than
+ * asserted: on EasyGL this faults, and a fault is the measurement. The exit
+ * status is what the matrix script reads. */
 static void stage_churn(void) {
     for (int i = 0; i < 4; ++i) {
-        printf("  cycle %d: creating a device\n", i);
+        printf("  cycle %d: creating a device with none alive\n", i);
         fflush(stdout);
         CNA_Handle d = make_device();
         if (d == CNA_INVALID_HANDLE) return;
@@ -589,6 +600,28 @@ static void stage_churn(void) {
     }
     printf("  four device cycles survived in one process\n");
     fflush(stdout);
+}
+
+/* The same churn with **one device kept alive throughout**. This is the shape
+ * the Lisp lane uses, and the reason it can use the ordinary public API on a
+ * renderer that cannot survive `stage_churn': the subsystem never comes down,
+ * so nothing has to bring it back up. */
+static void stage_overlap(void) {
+    CNA_Handle keep = make_device();
+    if (keep == CNA_INVALID_HANDLE) return;
+    int cycles = 0;
+    for (int i = 0; i < 4; ++i) {
+        CNA_Handle d = make_device();
+        if (d == CNA_INVALID_HANDLE) break;
+        CNA_Handle t = make_volume(d, 4, 3, 2, 0);
+        if (t == CNA_INVALID_HANDLE) break;
+        if (t3d_destroy(t) != CNA_RESULT_SUCCESS) break;
+        if (device_destroy(d) != CNA_RESULT_SUCCESS) break;
+        ++cycles;
+    }
+    ok("four devices and volumes came and went beside a live one", cycles == 4);
+    okr("the kept device is still usable", t3d_destroy(make_volume(keep, 2, 2, 2, 0)));
+    okr("graphics_device_destroy (the kept one, last)", device_destroy(keep));
 }
 
 int main(int argc, char **argv) {
@@ -631,6 +664,7 @@ int main(int argc, char **argv) {
     else if (strcmp(stage, "destroy") == 0) stage_destroy();
     else if (strcmp(stage, "volumes") == 0) stage_volumes();
     else if (strcmp(stage, "churn") == 0) stage_churn();
+    else if (strcmp(stage, "overlap") == 0) stage_overlap();
     else if (strcmp(stage, "guards-hidef") == 0) stage_guards(CNA_GRAPHICS_PROFILE_HI_DEF);
     else if (strcmp(stage, "guards-reach") == 0) stage_guards(CNA_GRAPHICS_PROFILE_REACH);
     else { fprintf(stderr, "unknown stage %s\n", stage); return 2; }
