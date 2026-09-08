@@ -1398,7 +1398,16 @@ The three ways around it were tried and measured, not reasoned about:
 | register a Lisp reader as `Microsoft.Xna.Framework.Content.VideoReader` | `INVALID_STATE` -- `RegisterBuiltinLoaders` owns the name. The mechanism is fine: the same table under an unowned name registers and its callback runs |
 | parse the payload in Lisp | `ReadObject<string>`/`<int32>`/`<float32>` and a 7-bit-int read are **all absent** from the reader surface. That is a second content pipeline, for one type |
 
-**So the one thing that would unblock this is one C route**, and CNA's C++ already
+**`Song` is the control that makes this a fact about `Video`.** It has no public
+constructor either, and there is no `cna_content_manager_load_song` either -- and
+it is selected and complete, because XNA gives it a public static `Song.FromUri`
+and CNA exposes the matching route. `src/media/song.lisp` already says so in as
+many words. `Video` has no factory, no static anything, and five property getters
+for a public surface; CNA's own `cna_video_create_from_uri_ext` header says the
+`EXT` marks it "an extension beyond XNA 4.0". So the difference between a bound
+`Song` and an unbindable `Video` is XNA's, not this project's.
+
+**The one thing that would unblock this is one C route**, and CNA's C++ already
 has the implementation behind it:
 
 ```c

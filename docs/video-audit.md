@@ -206,6 +206,22 @@ It has exactly one constructor, and the IL says what it is:
 same file is the proof this is not a metadata artefact: `VideoPlayer` carries an
 ordinary `public .ctor()` and `Video` does not.
 
+**`Song` is the control, and it is the reason this is a finding about `Video`
+rather than a complaint about the C ABI.** `Song` sits in the same namespace with
+the same problem -- no public constructor, and no `cna_content_manager_load_song`
+either -- and it is nonetheless selected and complete. It is producible because
+XNA gives it a public static `Song.FromUri`, and CNA exposes the matching route.
+
+`Video` has no such method. Its public surface is five property getters and
+nothing else: no constructor, no factory, no static anything. CNA does ship
+`cna_video_create_from_uri_ext`, and its own header says what that is --
+"carries an `EXT` suffix because it is an extension beyond XNA 4.0". CNA agrees
+there is no XNA-public URI factory for a video.
+
+So the difference between a bound `Song` and an unbindable `Video` is not this
+project's standard being applied unevenly. It is that XNA published a producer
+for one and only an internal constructor for the other.
+
 Its one public producer is `ContentManager.Load<Video>`, through the private
 `Microsoft.Xna.Framework.Content.VideoReader`, whose `Read` is six field reads
 and a constructor call:
