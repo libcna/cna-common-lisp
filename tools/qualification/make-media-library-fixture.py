@@ -13,7 +13,9 @@ writes::
 
     <root>/config/user-dirs.dirs      XDG_MUSIC_DIR and XDG_PICTURES_DIR
     <root>/Music/cna-lisp-probe.mp3   one tag-only MP3
-    <root>/Pictures/                  empty
+    <root>/Music/cna-lisp-probe.wav   one real, decodable WAV
+    <root>/Pictures/cna-lisp-mark.png one picture at the root
+    <root>/Pictures/Nested/quadrant-4.png  one in a sub-album
 
 and prints the ``XDG_CONFIG_HOME`` a probe should run with.
 
@@ -21,6 +23,18 @@ and prints the ``XDG_CONFIG_HOME`` a probe should run with.
 album and genre from its ID3 tags, so a frame-only file produces a real song,
 album, artist and genre without a recording in the tree.  That is CNA's own
 technique, not an invention here.
+
+**The WAV is real and decodable, and it is there for the half the MP3 cannot
+cover**: a tag-only MP3 indexes but will not decode, so a library song that is
+meant to be *played* needs this one.  It carries no tags, and CNA does not leave
+its artist and album empty -- it derives them from the directory names.  Those
+derived names are therefore a function of where this fixture lives, so a test may
+assert the counts and the *tagged* song's names and must not assert the untagged
+song's.  See docs/media-library-audit.md section 3.3.
+
+The expected library, on every admitted ABI:
+
+    songs 2   albums 2   artists 2   genres 1   playlists 0   pictures 2
 """
 import os
 import struct
@@ -64,8 +78,27 @@ def main(argv):
         handle.write('XDG_PICTURES_DIR="%s"\n' % pictures)
     with open(os.path.join(music, "cna-lisp-probe.mp3"), "wb") as handle:
         handle.write(tagged_mp3())
+
+    # The decodable half, and the pictures, come from the committed fixtures --
+    # generating a real encoded file here would mean shipping an encoder.
+    here = os.path.dirname(os.path.abspath(__file__))
+    fixtures = os.path.join(os.path.dirname(here), "..", "tests", "fixtures")
+    copies = [(os.path.join(fixtures, "test-tone.wav"),
+               os.path.join(music, "cna-lisp-probe.wav")),
+              (os.path.join(fixtures, "cna-lisp-mark.png"),
+               os.path.join(pictures, "cna-lisp-mark.png")),
+              (os.path.join(fixtures, "quadrant-4.png"),
+               os.path.join(pictures, "Nested", "quadrant-4.png"))]
+    for source, destination in copies:
+        os.makedirs(os.path.dirname(destination), exist_ok=True)
+        with open(source, "rb") as src, open(destination, "wb") as dst:
+            dst.write(src.read())
+
     print("fixture root : %s" % root)
-    print("one song     : %s / %s / %s / %s" % (TITLE, ARTIST, ALBUM, GENRE))
+    print("tagged song  : %s / %s / %s / %s" % (TITLE, ARTIST, ALBUM, GENRE))
+    print("plain song   : cna-lisp-probe.wav (decodable, no tags)")
+    print("pictures     : one at the root, one in Nested/")
+    print("expected     : songs 2, albums 2, artists 2, genres 1, pictures 2")
     print("run with     : XDG_CONFIG_HOME=%s" % config)
 
 
