@@ -2735,15 +2735,20 @@ one — a song a caller created from a file path has no library context, so the
 route reports `CNA_FALSE`. Measured true on all three admitted ABIs, for the only
 kind of song this closure can make.
 
-So selecting them to satisfy three members would have added **53 members that
-nothing in this repository could exercise**, which is precisely the reason
-`MediaLibrary` was not the closure chosen. The three are declared missing under
-`DEPENDENCY_NOT_SELECTED` instead — the same category
-`EffectParameter.GetValueTexture3D` carries for `Texture3D`, which is the
-standing precedent for a member whose type is not in the selection.
+**That was the state until 2026-09-08, and the library closure has since
+landed.** The reason above was never wrong about a file-path song — it is still
+exactly what `cna_song_get_artist` reports for one — but it was wrong about what
+could be measured. The belief that a `MediaLibrary` could only ever be qualified
+*empty* rested on `media_library.h` calling an empty library an ordinary result;
+what it missed is that SDL resolves the user folders through
+`$XDG_CONFIG_HOME/user-dirs.dirs`, so a generated fixture makes the library
+deterministic and non-empty on every admitted ABI.
 
-`Song` is therefore the one partial type in this closure, and those three members
-are the whole of why.
+So `Song.Artist`, `Song.Album` and `Song.Genre` are **complete**. A library song
+answers all three; a file-path song answers NIL, which is XNA's null rather than
+a failure, and both are asserted. `docs/media-library-audit.md` is the audit that
+preceded the work and `tools/qualification/media-library.sh` is the lane that
+qualifies it.
 
 ### `MediaPlayer` is a static class, and its events are static too
 

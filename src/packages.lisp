@@ -794,21 +794,34 @@ naming what is missing, which is a projection limit and is written down in
   (:documentation
    "Common Lisp projection of the Microsoft.Xna.Framework.Media namespace.
 
-The **playback** part of it: `MediaPlayer', the one `MediaQueue' it owns, `Song'
-and `SongCollection', the `MediaState' enumeration and the `VisualizationData'
-buffer pair. That is the closure a game reaches to play background music, and it
-is dependency-complete once three members of `Song' are set aside -- see below.
+**Both halves of it.** The *playback* half is `MediaPlayer', the one `MediaQueue'
+it owns, `Song' and `SongCollection', the `MediaState' enumeration and the
+`VisualizationData' buffer pair -- what a game reaches to play background music.
+The *library* half is `MediaLibrary' and the fourteen types reachable from it:
+`Album', `Artist', `Genre', `Playlist', `Picture', `PictureAlbum', their six
+collections, `MediaSource' and `MediaSourceType'.
 
-**`MediaLibrary` is not selected, and neither are the four types it owns.**
-`Album', `Artist', `Genre' and `AlbumCollection' are *media-library* entities:
-their CNA routes live in `media_library.h' rather than in `media.h', and
-`cna_song_get_album' and its two siblings say in as many words that only a song
-obtained from a media library has one -- a song a caller created from a file path
-has no library context. So `Song.Artist', `Song.Album' and `Song.Genre' are
-declared missing under DEPENDENCY_NOT_SELECTED, exactly as
-`EffectParameter.GetValueTexture3D' is for `Texture3D'. Selecting the four types
-to satisfy three members would add fifty-three members that nothing in this
-repository could exercise, which is the reason the library closure was not chosen.
+**The library half landed on 2026-09-08, and it is what made `Song.Artist',
+`Song.Album' and `Song.Genre' reachable.** Those three were declared missing for
+a reason that was true when it was written: `cna_song_get_artist' and its two
+siblings say only a song obtained from a media library has one, and a song built
+from a file path -- the only kind this binding could make -- has no library
+context. A library song has one, and answers all three; a file-path song answers
+NIL, which is XNA's null rather than a failure.
+
+**Everything reached through a library is borrowed, with one exception.** CNA
+says the library owns every album, artist, genre, playlist, song and collection
+reached through it, and that the library object dies once no handle into it is
+left -- so the handles are a reference count and the facades are released with
+the library. The exception is a `SONG': `cna_song_collection_get_at' answers an
+**owned** song that is a child of the game and that the caller must dispose,
+where `cna_album_collection_get_at' borrows. That asymmetry is CNA's, not this
+binding's, and a program that walks a library's songs has to release them.
+
+**Each collection property answers the same object every time**, because XNA's
+are private fields: `(eq (songs library) (songs library))' is true. The objects
+*inside* a collection are not -- `ITEM' answers a fresh facade per read, so
+`ALBUM-EQUAL' and its siblings are the comparison rather than `EQ'.
 
 **`MediaPlayer' is a static class and its two events are static.** Its members are
 therefore named `MEDIA-PLAYER-<member>', the static-class naming rule, and its

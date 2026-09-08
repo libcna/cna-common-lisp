@@ -449,7 +449,7 @@ than papered over.
 
 ## The device lanes, which need no device
 
-Nine qualification scripts prove branches the suite alone cannot, and most of
+Ten qualification scripts prove branches the suite alone cannot, and most of
 them run their lanes in **separate processes** because something the branch
 depends on is process-global and latches once.
 
@@ -463,9 +463,20 @@ latches in CNA-Lisp's own loader: a run that reported both the present and the
 absent branch would be reporting one of them from memory, and the script fails a
 run that does.
 
-`game-device-events.sh` and `shim-policy.sh` also sweep **all three admitted
-ABIs** rather than one. Identical headers across the set are surface evidence
-only — the Storage closure established that — so both measure behaviour on each.
+`game-device-events.sh`, `shim-policy.sh` and `media-library.sh` also sweep **all
+three admitted ABIs** rather than one. Identical headers across the set are
+surface evidence only — the Storage closure established that — so each measures
+behaviour on every version.
+
+**`media-library.sh` is the only lane that manufactures the thing it measures**,
+and that is deliberate rather than convenient. Every other lane here observes
+something the machine already has or has not got; a media library is *whatever
+music the machine happens to hold*, so observing one proves nothing repeatable —
+on this machine it was 48 pictures out of a home directory. SDL resolves the user
+folders through `$XDG_CONFIG_HOME/user-dirs.dirs`, so the lane writes a tree and
+points that at it, which is also how CNA's own C-API suite makes its
+`MediaLibrarySmoke` deterministic. The counts it asserts are exact for the same
+reason.
 
 | Script | Lanes | Needs |
 | --- | --- | --- |
@@ -478,6 +489,7 @@ only — the Storage closure established that — so both measure behaviour on e
 | `tools/qualification/rasterizer.sh` | the pixel proofs above | a rasterising renderer, no display |
 | `tools/qualification/game-device-events.sh` | `GAME_DEVICE_HOOK_INSTALLATION`, `GAME_DEVICE_CONTENT_UNLOAD`, `GAME_DEVICE_CONTENT_CURRENT_REFERENCE`, `GAME_DEVICE_EVENT_ORDER`, `GAME_DEVICE_UNLOAD_FAILURE_CONTAINMENT`, `GAME_DEVICE_PRIVATE_SUBSCRIPTION`, `GAME_DEVICE_TEARDOWN` — eight kinds, each required by name, on **each** admitted ABI | a content fixture; no display, no GPU, no audio |
 | `tools/qualification/shim-policy.sh` | `SHIM_ABSENT_ALL_FOUR` and `SHIM_PRESENT_ALL_FOUR`, in separate processes, on **each** admitted ABI | the built shim, for the present branch |
+| `tools/qualification/media-library.sh` | `MEDIA_LIBRARY_LIFETIME`, `_IDENTITY`, `_COUNTS`, `_SONG_MEMBERS`, `_CROSS_PATH`, `_PICTURE_TREE`, `_ORDINARY_ABSENCES` — seven kinds, required by name, on **each** admitted ABI | **nothing of the machine's own**: it generates its library and points `XDG_CONFIG_HOME` at it |
 
 **The owned-device script is the only graphics lane that must contain no game**,
 and that is why it is a script rather than a section of the suite: a suite run

@@ -380,7 +380,8 @@ three that were missing are below.
 | `DYNAMIC_AUDIO_READY` | **yes**. `BufferNeeded` is complete for real now: its `+=` and `-=` match the IL before *and* after disposal, and a handler's condition is delivered rather than lost. Both were overclaimed until the pre-Model audit and both are fixed |
 | `MODEL_READY` | **on 0.22.0 and 0.23.0**, and that is a measurement rather than a hedge: on 0.21.0 `Load<Model>` refuses because a loaded model cannot be released there, so the family has no public producer on that ABI. 0.23.0 was measured, not assumed -- it fixes the destroy defect that 0.22.0 already fixed, and fixes neither the effect-graph one |
 | `MICROPHONE_READY` | **yes on all three ABIs**, with one measured partial: `BufferDuration` refuses exactly 1000 ms on 0.21.0, which is the top of XNA's range, and both branches assert. Three environments qualified rather than two, because a capture device that enumerates is not one that delivers |
-| `MEDIA_PLAYBACK_READY` | **yes on all three ABIs**. Six complete types over the *playback* half of the namespace; the media **library** -- `MediaLibrary` and its eight companions -- and `Video`/`VideoPlayer` are deliberately not in the closure and are measured as absent, not faked |
+| `MEDIA_PLAYBACK_READY` | **yes on all three ABIs**. Six complete types over the *playback* half of the namespace |
+| `MEDIA_LIBRARY_READY` | **yes on all three ABIs**, since 2026-09-08. Fifteen types over the *library* half, qualified against a generated XDG fixture with exact counts rather than a non-zero assertion. `Video`/`VideoPlayer` remain outside the closure and are measured as absent, not faked |
 | `STORAGE_READY` | **yes on all three ABIs**, and it is the first closure to finish its whole namespace: three types, three complete, nothing left in `Microsoft.Xna.Framework.Storage` to be absent. The one place it is narrower than XNA is a lifetime rather than a member -- XNA lets a container be disposed with a stream still open and CNA does not |
 | `SERVICES_AND_DEVICE_SELECTION_READY` | **yes on all three ABIs**, with one honest partial that is three members. Five types, 21 members, all five complete; thirteen members of already-selected types closed, of which ten are complete and three -- `FindBestDevice`, `RankDevices`, `CanResetDevice` -- are **partial**, because no admitted CNA ABI calls them during device creation and the suite asserts that limit directly. `GraphicsDeviceManager` is therefore still a partial type, and that is the truthful outcome rather than a shortfall. The first closure whose evidence is entirely lifecycle and configuration: it needs no display, no GPU, no audio device, no capture device and no content fixture |
 
@@ -1189,70 +1190,51 @@ is packaging and not the public API.
 
 **Nothing inside the selected profile is both unblocked and worth doing.**
 `IMPLEMENTABLE_AND_HIGH_VALUE` is empty, and it is empty because the work was
-done: the two members the audit found are implemented, the lifecycle hole it
-uncovered is closed, and the classification contradiction it declined to settle
-is settled. The frontier is 53 members, each with a concrete reason in one of
-eight categories.
+done rather than because nothing was found.
 
-So the next task is a **profile expansion**, and the candidates are below. Each
-is blocked on evidence rather than on difficulty, and the evidence was re-measured
-on 2026-09-07 rather than carried forward:
+**The `MediaLibrary` closure landed on 2026-09-08 and it was the recommendation
+this section carried.** Fifteen types and 142 members, in one dependency-complete
+closure rather than two: `MediaLibrary` returns `PictureCollection` and
+`PictureAlbum` from six of its own members, so a closure that stopped at the
+music half would have left it partial by construction. It closed
+`Song.Artist`, `.Album` and `.Genre` -- three of the twenty-three then missing --
+and it moved the binding to 210 types and 2723 members.
 
-**Recommendation: `Media` / `MediaLibrary`, and its blocker has now been
-measured away.** It is the only candidate that closes members already in the
-selection -- `Song`'s `Artist`, `Album` and `Genre`, three of the 23 missing --
-and the open question was whether a runner could be made to enumerate a
-*non-empty* library, or whether the closure would have to be honest about
-enumeration being empty-only. **That probe has been run, and the answer is that
-positive, deterministic evidence is producible.**
+Three things it established that a future closure should not have to rediscover:
 
-`media_library.h` says opening "scans the device's music and picture locations"
-and that an empty library is an ordinary result -- so a zero count proves nothing
-either way. `tools/native-abi/media-library-probe.c` asks the question directly
-and `tools/qualification/make-media-library-fixture.py` builds the fixture.
-Measured 2026-09-07, `SDL_AUDIODRIVER=dummy`:
+* **A blocker can be a measurement error rather than a limit.** This closure was
+  declined for months because `media_library.h` calls an empty library an
+  ordinary result, so CI was believed able to qualify *empty* and nothing else.
+  What that missed is that SDL resolves the user folders through
+  `$XDG_CONFIG_HOME/user-dirs.dirs` -- a generated fixture makes the library
+  deterministic and non-empty on every admitted ABI. **Re-measure a blocker
+  before believing it**, which is what `docs/media-library-audit.md` is.
+* **The pinned contract snapshot went missing and was recovered, not re-pinned.**
+  No file with the pinned hash existed on the machine any more. Stripping the one
+  additive field from a newer serialization reproduces the pinned bytes exactly,
+  so the authority was recovered and the hash is unchanged;
+  `tools/api-compat/recover-contract-snapshot.py` refuses to write anything that
+  does not hash to it.
+* **Route coverage is not closure evidence.** All 148 routes existed and all 142
+  members mapped, and the closure still turned on three things no route list
+  shows: XNA caches its collection properties in private fields where CNA answers
+  a fresh handle per call; a song from a library collection is *owned* where an
+  album is *borrowed*; and nine routes carry an `out_available` flag that a
+  two-parameter reading silently corrupts.
 
-| Run | Music/picture roots | songs | albums | artists | genres | playlists | pictures |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| A | this machine's real XDG folders | 0 | 0 | 0 | 0 | 0 | **48** |
-| B | generated fixture, one tagged MP3 | **1** | **1** | **1** | **1** | 0 | 0 |
-| C | the same fixture, emptied | 0 | 0 | 0 | 0 | 0 | 0 |
+So the next task is a **profile expansion** again, and the remaining candidates
+are below. Each is blocked on evidence rather than on difficulty, and each was
+re-measured on 2026-09-07 rather than carried forward:
 
-**B is identical on 0.21.0, 0.22.0 and 0.23.0, and repeated three times without
-varying.** A is what the fear was about: 48 pictures that are whatever happens to
-be in the developer's home directory. C is the control -- same override, no
-music -- and it proves the count follows the fixture rather than something else
-on the machine.
-
-The mechanism is CNA's own, not an invention here: SDL resolves the user folders
-through `$XDG_CONFIG_HOME/user-dirs.dirs`, and CNA's C-API suite builds its
-`MediaLibrarySmoke` fixture exactly that way, saying in its CMake that this
-"keeps the test from ever reading or writing a real user directory". The fixture
-MP3 carries ID3v2.3 tags and no audio frames, which is also CNA's technique --
-the index reads a song's title, artist, album and genre from its tags, so a
-frame-only file produces a real song, album, artist and genre with no recording
-in the source tree.
-
-**One thing that fixture cannot support, recorded so it is not discovered late:**
-a tag-only MP3 indexes but will not decode -- the probe run prints ffmpeg's
-"Failed to find two consecutive MPEG audio frames". A closure that wants to
-*play* a library song needs a real encoded file, which is a different fixture
-question from enumeration and was not measured here.
-
-So the remaining cost is size, not evidence: 15 types, ~142 members, 148 routes,
-none of them bound today. That is a large closure and should be planned as one.
-
-The other three stay ruled out, and none of their reasons changed:
-
-* **`Texture3D`** -- re-measured on 2026-09-07 across all six combinations
-  (HEADLESS and SOFTWARE x 0.21.0, 0.22.0, 0.23.0): `cna_texture3d_create`
-  answers `CNA_RESULT_NOT_SUPPORTED` every time, with the HiDef profile so the
-  refusal is not the profile's doing. Neither qualification renderer can
-  construct one at all, so every member would be unreachable in CI.
-* **`Video`** -- still an optional decoder, so still build-dependent.
-* **XACT** -- still needs an authoring-tool fixture that cannot be produced here.
-
-Do not implement any of them without first measuring the blocker again.
+**Recommendation: none of the three, and that is a measurement rather than a
+shrug.** `Texture3D` cannot be constructed at all by either qualification
+renderer on any admitted ABI; `Video` needs an optional decoder this build does
+not have; XACT needs an authoring-tool fixture that cannot be produced here. Two
+of those three are properties of the CNA build rather than of this binding, so
+the honest next step is to **re-measure them against a CNA built with the
+capability**, rather than to open a closure whose members would be unreachable in
+CI. Until then the frontier is what it is, and the remaining twenty missing
+members each carry a concrete reason.
 
 ### The candidates, measured
 
@@ -1265,7 +1247,7 @@ rows.
 | `Texture3D` | 1 | ~13 | 8, `texture_volume.h` | 1 (`EffectParameter.GetValueTexture3D`) | **no -- see below** | low | low |
 | `Media` / `Video` | 3 | 24 | 42, `video.h` | 0 | **build-dependent** | low | medium |
 | XACT | 7 | 72 | 62, `xact.h` | 0 | **no fixture can exist** | low | high |
-| `Media` / `MediaLibrary` | 15 | 142 | 148, `media_library.h` | 3 (`Song`'s `Artist`, `Album`, `Genre`) | **yes -- measured, see below** | low | high |
+| ~~`Media` / `MediaLibrary`~~ | ~~15~~ | ~~142~~ | ~~148~~ | ~~3~~ | **DONE 2026-09-08** | — | — |
 | `GameWindow`'s seven | 0 | 0 | 0 | 0 | n/a | low | **blocked** |
 
 **`Texture3D` is ruled out by measurement and that measurement has not changed.**
